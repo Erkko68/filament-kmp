@@ -12,6 +12,14 @@ void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self) {
     delete reinterpret_cast<filament::BufferObject::Builder*>(self);
 }
 
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount) {
+    return reinterpret_cast<FilaBufferObjectBuilder*>(&reinterpret_cast<filament::BufferObject::Builder*>(self)->size(byteCount));
+}
+
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType) {
+    return reinterpret_cast<FilaBufferObjectBuilder*>(&reinterpret_cast<filament::BufferObject::Builder*>(self)->bindingType(static_cast<filament::backend::BufferObjectBinding>(bindingType)));
+}
+
 FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaBufferObject*>(reinterpret_cast<filament::BufferObject::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

@@ -10,17 +10,11 @@ extern "C" {
 
 // filament::SkinningBuffer::Builder
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_create(void);
-// TODO(handwritten) FilaSkinningBufferBuilder_create_Builder: filament::SkinningBuffer::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaSkinningBufferBuilder_create_Builder: filament::SkinningBuffer::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self);
-// TODO(handwritten) FilaSkinningBufferBuilder_boneCount: Builder & filament::SkinningBuffer::Builder::boneCount(uint32_t boneCount)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaSkinningBufferBuilder_initialize: Builder & filament::SkinningBuffer::Builder::initialize(bool initialize)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_boneCount(FilaSkinningBufferBuilder* self, uint32_t boneCount);
+FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* self, bool initialize);
 // TODO(handwritten) FilaSkinningBufferBuilder_name: Builder & filament::SkinningBuffer::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* self, FilaEngine* engine);
 
 // filament::SkinningBuffer

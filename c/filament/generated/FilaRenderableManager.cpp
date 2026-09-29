@@ -348,4 +348,8 @@ bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManag
     return reinterpret_cast<const filament::RenderableManager*>(self)->isGlobalBlendOrderEnabledAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex));
 }
 
+uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex) {
+    return (reinterpret_cast<const filament::RenderableManager*>(self)->getEnabledAttributesAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex))).getValue();
+}
+
 } // extern "C"

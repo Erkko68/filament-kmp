@@ -131,7 +131,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         // A method of the same name (Box::getCenter) already reads it.
         val getter = "${self}_get$accessor"
         if (getter !in functionNames) emit(getter, cpp, section) {
-            val result = bridges.result(field.type)
+            val result = bridges.result(field.type, lvalue = true)
             val read = "reinterpret_cast<const ${record.name}*>(self)->${field.name}"
             if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read)
             else "${result.c} $getter(const $self* self)" to "return ${result.convert(read)};"

@@ -12,6 +12,14 @@ void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self) {
     delete reinterpret_cast<filament::SkinningBuffer::Builder*>(self);
 }
 
+FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_boneCount(FilaSkinningBufferBuilder* self, uint32_t boneCount) {
+    return reinterpret_cast<FilaSkinningBufferBuilder*>(&reinterpret_cast<filament::SkinningBuffer::Builder*>(self)->boneCount(boneCount));
+}
+
+FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* self, bool initialize) {
+    return reinterpret_cast<FilaSkinningBufferBuilder*>(&reinterpret_cast<filament::SkinningBuffer::Builder*>(self)->initialize(initialize));
+}
+
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaSkinningBuffer*>(reinterpret_cast<filament::SkinningBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

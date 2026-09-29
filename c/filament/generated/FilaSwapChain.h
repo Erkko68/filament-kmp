@@ -12,8 +12,7 @@ extern "C" {
 bool FilaSwapChain_isProtectedContentSupported(FilaEngine* engine);
 bool FilaSwapChain_isSRGBSwapChainSupported(FilaEngine* engine);
 bool FilaSwapChain_isMSAASwapChainSupported(FilaEngine* engine, uint32_t samples);
-// TODO(handwritten) FilaSwapChain_isFrameRateChangeSupported: utils::tribool filament::SwapChain::isFrameRateChangeSupported() const
-//     utils::tribool: utils::tribool
+int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self);
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy);
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* self);
 // TODO(handwritten) FilaSwapChain_setFrameScheduledCallback: void filament::SwapChain::setFrameScheduledCallback(backend::CallbackHandler * _Nullable handler, FrameScheduledCallback && callback, uint64_t flags)

@@ -12,8 +12,52 @@ void FilaTextureBuilder_destroy(FilaTextureBuilder* self) {
     delete reinterpret_cast<filament::Texture::Builder*>(self);
 }
 
+FilaTextureBuilder* FilaTextureBuilder_width(FilaTextureBuilder* self, uint32_t width) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->width(width));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_height(FilaTextureBuilder* self, uint32_t height) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->height(height));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_depth(FilaTextureBuilder* self, uint32_t depth) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->depth(depth));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_levels(FilaTextureBuilder* self, uint32_t levels) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->levels(static_cast<uint8_t>(levels)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_samples(FilaTextureBuilder* self, uint32_t samples) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->samples(static_cast<uint8_t>(samples)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_sampler(FilaTextureBuilder* self, FilaSamplerType target) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->sampler(static_cast<filament::backend::SamplerType>(target)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_format(FilaTextureBuilder* self, FilaTextureFormat format) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->format(static_cast<filament::backend::TextureFormat>(format)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_usage(FilaTextureBuilder* self, FilaTextureUsage usage) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->usage(static_cast<filament::backend::TextureUsage>(usage)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_swizzle(FilaTextureBuilder* self, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->swizzle(static_cast<filament::backend::TextureSwizzle>(r), static_cast<filament::backend::TextureSwizzle>(g), static_cast<filament::backend::TextureSwizzle>(b), static_cast<filament::backend::TextureSwizzle>(a)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->external());
+}
+
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaTexture*>(reinterpret_cast<filament::Texture::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_import(FilaTextureBuilder* self, int64_t id) {
+    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->import(static_cast<intptr_t>(id)));
 }
 
 bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureFormat format) {

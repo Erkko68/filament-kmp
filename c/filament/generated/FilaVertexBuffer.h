@@ -10,27 +10,17 @@ extern "C" {
 
 // filament::VertexBuffer::Builder
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_create(void);
-// TODO(handwritten) FilaVertexBufferBuilder_create_Builder: filament::VertexBuffer::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaVertexBufferBuilder_create_Builder: filament::VertexBuffer::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* self);
-// TODO(handwritten) FilaVertexBufferBuilder_bufferCount: Builder & filament::VertexBuffer::Builder::bufferCount(uint8_t bufferCount)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaVertexBufferBuilder_vertexCount: Builder & filament::VertexBuffer::Builder::vertexCount(uint32_t vertexCount)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaVertexBufferBuilder_enableBufferObjects: Builder & filament::VertexBuffer::Builder::enableBufferObjects(bool enabled)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaVertexBufferBuilder_attribute: Builder & filament::VertexBuffer::Builder::attribute(VertexAttribute attribute, uint8_t bufferIndex, AttributeType attributeType, uint32_t byteOffset, uint8_t byteStride)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaVertexBufferBuilder_normalized: Builder & filament::VertexBuffer::Builder::normalized(VertexAttribute attribute, bool normalized)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaVertexBufferBuilder_advancedSkinning: Builder & filament::VertexBuffer::Builder::advancedSkinning(bool enabled)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* self, uint32_t bufferCount);
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_vertexCount(FilaVertexBufferBuilder* self, uint32_t vertexCount);
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* self, bool enabled);
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaElementType attributeType, uint32_t byteOffset, uint32_t byteStride);
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, bool normalized);
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* self, bool enabled);
 // TODO(handwritten) FilaVertexBufferBuilder_name: Builder & filament::VertexBuffer::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
 // TODO(handwritten) FilaVertexBufferBuilder_async: Builder & filament::VertexBuffer::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     AsyncCompletionCallback: std::function
 FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* self, FilaEngine* engine);
 
 // filament::VertexBuffer

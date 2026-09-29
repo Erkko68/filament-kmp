@@ -51,7 +51,8 @@ internal class CppScopes {
         for (enclosing in enclosing(scope)) {
             val candidates = listOfNotNull(qualify(enclosing, head), usingNames[enclosing]?.get(head)) +
                 usingNamespaces[enclosing].orEmpty().map { qualify(it, head) } +
-                inherited(enclosing).map { qualify(it, head) }
+                // A base template's parameters aren't its members (BuilderNameMixin<Builder>'s Builder).
+                inherited(enclosing).map { qualify(it, head) }.filter { names[it] != Decl.TEMPLATE_PARAMETER }
             val found = candidates.firstOrNull { it in names } ?: continue
             return if (rest.isEmpty()) found else member(found, rest)
         }

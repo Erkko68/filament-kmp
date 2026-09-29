@@ -156,6 +156,10 @@ float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* self) {
     return reinterpret_cast<const filament::Material*>(self)->getSpecularAntiAliasingThreshold();
 }
 
+uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* self) {
+    return (reinterpret_cast<const filament::Material*>(self)->getRequiredAttributes()).getValue();
+}
+
 FilaRefractionMode FilaMaterial_getRefractionMode(const FilaMaterial* self) {
     return static_cast<FilaRefractionMode>(reinterpret_cast<const filament::Material*>(self)->getRefractionMode());
 }
@@ -184,8 +188,16 @@ bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name) 
     return reinterpret_cast<const filament::Material*>(self)->hasParameter(name);
 }
 
+bool FilaMaterial_hasParameter_string_view(const FilaMaterial* self, const char* name) {
+    return reinterpret_cast<const filament::Material*>(self)->hasParameter(std::string_view(name));
+}
+
 bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name) {
     return reinterpret_cast<const filament::Material*>(self)->isSampler(name);
+}
+
+const char* FilaMaterial_getSource(const FilaMaterial* self) {
+    return (reinterpret_cast<const filament::Material*>(self)->getSource()).data();
 }
 
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, const char* samplerName) {

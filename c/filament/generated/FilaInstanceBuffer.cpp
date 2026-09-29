@@ -4,12 +4,16 @@
 
 extern "C" {
 
-FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(uint32_t instanceCount) {
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create(uint32_t instanceCount) {
     return reinterpret_cast<FilaInstanceBufferBuilder*>(new filament::InstanceBuffer::Builder(static_cast<size_t>(instanceCount)));
 }
 
 void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self) {
     delete reinterpret_cast<filament::InstanceBuffer::Builder*>(self);
+}
+
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_localTransforms(FilaInstanceBufferBuilder* self, const FilaMat4f* localTransforms) {
+    return reinterpret_cast<FilaInstanceBufferBuilder*>(&reinterpret_cast<filament::InstanceBuffer::Builder*>(self)->localTransforms(reinterpret_cast<const filament::math::mat4f*>(localTransforms)));
 }
 
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine) {

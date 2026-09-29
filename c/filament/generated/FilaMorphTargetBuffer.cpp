@@ -12,6 +12,26 @@ void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self) {
     delete reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self);
 }
 
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_vertexCount(FilaMorphTargetBufferBuilder* self, uint32_t vertexCount) {
+    return reinterpret_cast<FilaMorphTargetBufferBuilder*>(&reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->vertexCount(static_cast<size_t>(vertexCount)));
+}
+
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTargetBufferBuilder* self, uint32_t count) {
+    return reinterpret_cast<FilaMorphTargetBufferBuilder*>(&reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->count(static_cast<size_t>(count)));
+}
+
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable) {
+    return reinterpret_cast<FilaMorphTargetBufferBuilder*>(&reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->withPositions(enable));
+}
+
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withTangents(FilaMorphTargetBufferBuilder* self, bool enable) {
+    return reinterpret_cast<FilaMorphTargetBufferBuilder*>(&reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->withTangents(enable));
+}
+
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(FilaMorphTargetBufferBuilder* self, bool enable) {
+    return reinterpret_cast<FilaMorphTargetBufferBuilder*>(&reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->enableCustomMorphing(enable));
+}
+
 FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaMorphTargetBuffer*>(reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

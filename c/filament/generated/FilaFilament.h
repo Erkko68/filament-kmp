@@ -9,10 +9,9 @@ extern "C" {
 #endif
 
 // filament
-// TODO(handwritten) Fila_to_string: static std::string_view filament::to_string(VertexAttribute attr)
-//     std::string_view: std::string_view
+const char* Fila_to_string(FilaVertexAttribute attr);
 // TODO(handwritten) Fila_builderMakeName: static void filament::builderMakeName(utils::ImmutableCString & outName, const char * name, size_t len)
-//     utils::ImmutableCString &: utils::ImmutableCString
+//     utils::ImmutableCString by pointer
 
 
 #ifdef __cplusplus

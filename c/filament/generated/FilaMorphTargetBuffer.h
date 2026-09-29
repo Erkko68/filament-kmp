@@ -10,23 +10,14 @@ extern "C" {
 
 // filament::MorphTargetBuffer::Builder
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create(void);
-// TODO(handwritten) FilaMorphTargetBufferBuilder_create_Builder: filament::MorphTargetBuffer::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaMorphTargetBufferBuilder_create_Builder: filament::MorphTargetBuffer::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self);
-// TODO(handwritten) FilaMorphTargetBufferBuilder_vertexCount: Builder & filament::MorphTargetBuffer::Builder::vertexCount(size_t vertexCount)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaMorphTargetBufferBuilder_count: Builder & filament::MorphTargetBuffer::Builder::count(size_t count)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_vertexCount(FilaMorphTargetBufferBuilder* self, uint32_t vertexCount);
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTargetBufferBuilder* self, uint32_t count);
 // TODO(handwritten) FilaMorphTargetBufferBuilder_name: Builder & filament::MorphTargetBuffer::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaMorphTargetBufferBuilder_withPositions: Builder & filament::MorphTargetBuffer::Builder::withPositions(bool enable)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaMorphTargetBufferBuilder_withTangents: Builder & filament::MorphTargetBuffer::Builder::withTangents(bool enable)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaMorphTargetBufferBuilder_enableCustomMorphing: Builder & filament::MorphTargetBuffer::Builder::enableCustomMorphing(bool enable)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable);
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withTangents(FilaMorphTargetBufferBuilder* self, bool enable);
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(FilaMorphTargetBufferBuilder* self, bool enable);
 FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferBuilder* self, FilaEngine* engine);
 
 // filament::MorphTargetBuffer

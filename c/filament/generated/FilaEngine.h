@@ -213,7 +213,7 @@ bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);
 //     std::optional<bool>: std::optional
 bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* self, const char* name);
 // TODO(handwritten) FilaEngine_compile: void filament::Engine::compile(backend::CompilerPriorityQueue priority, const Material * _Nonnull material, const View * _Nonnull view, utils::tribool shadowReceiver, utils::tribool skinning, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback)
-//     utils::tribool: utils::tribool
+//     utils::Invocable<void (Material * _Nonnull)> &&: rvalue reference
 
 
 #ifdef __cplusplus

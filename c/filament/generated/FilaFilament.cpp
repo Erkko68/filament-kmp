@@ -4,4 +4,8 @@
 
 extern "C" {
 
+const char* Fila_to_string(FilaVertexAttribute attr) {
+    return (filament::to_string(static_cast<filament::VertexAttribute>(attr))).data();
+}
+
 } // extern "C"

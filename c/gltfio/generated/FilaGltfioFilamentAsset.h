@@ -37,8 +37,7 @@ void FilaGltfioFilamentAsset_releaseSourceData(FilaGltfioFilamentAsset* self);
 const void* FilaGltfioFilamentAsset_getSourceAsset(FilaGltfioFilamentAsset* self);
 uint32_t FilaGltfioFilamentAsset_getSceneCount(const FilaGltfioFilamentAsset* self);
 const char* FilaGltfioFilamentAsset_getSceneName(const FilaGltfioFilamentAsset* self, uint32_t sceneIndex);
-// TODO(handwritten) FilaGltfioFilamentAsset_addEntitiesToScene: void filament::gltfio::FilamentAsset::addEntitiesToScene(filament::Scene & targetScene, const Entity * entities, size_t count, SceneMask sceneFilter) const
-//     SceneMask: utils::bitset32
+void FilaGltfioFilamentAsset_addEntitiesToScene(const FilaGltfioFilamentAsset* self, FilaScene* targetScene, const FilaEntity* entities, uint32_t count, uint32_t sceneFilter);
 void FilaGltfioFilamentAsset_detachFilamentComponents(FilaGltfioFilamentAsset* self);
 bool FilaGltfioFilamentAsset_areFilamentComponentsDetached(const FilaGltfioFilamentAsset* self);
 FilaGltfioFilamentInstance* FilaGltfioFilamentAsset_getInstance(FilaGltfioFilamentAsset* self);

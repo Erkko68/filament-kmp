@@ -12,6 +12,14 @@ void FilaStreamBuilder_destroy(FilaStreamBuilder* self) {
     delete reinterpret_cast<filament::Stream::Builder*>(self);
 }
 
+FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width) {
+    return reinterpret_cast<FilaStreamBuilder*>(&reinterpret_cast<filament::Stream::Builder*>(self)->width(width));
+}
+
+FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height) {
+    return reinterpret_cast<FilaStreamBuilder*>(&reinterpret_cast<filament::Stream::Builder*>(self)->height(height));
+}
+
 FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaStream*>(reinterpret_cast<filament::Stream::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

@@ -4,8 +4,28 @@
 
 extern "C" {
 
+FilaFilamatMaterialBuilderPreprocessorDefine* FilaFilamatMaterialBuilderPreprocessorDefine_create(const char* name, const char* value) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderPreprocessorDefine*>(new filamat::MaterialBuilder::PreprocessorDefine(std::string(name), std::string(value)));
+}
+
 void FilaFilamatMaterialBuilderPreprocessorDefine_destroy(FilaFilamatMaterialBuilderPreprocessorDefine* self) {
     delete reinterpret_cast<filamat::MaterialBuilder::PreprocessorDefine*>(self);
+}
+
+const char* FilaFilamatMaterialBuilderPreprocessorDefine_getName(const FilaFilamatMaterialBuilderPreprocessorDefine* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::PreprocessorDefine*>(self)->name).c_str();
+}
+
+void FilaFilamatMaterialBuilderPreprocessorDefine_setName(FilaFilamatMaterialBuilderPreprocessorDefine* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::PreprocessorDefine*>(self)->name = std::string(value);
+}
+
+const char* FilaFilamatMaterialBuilderPreprocessorDefine_getValue(const FilaFilamatMaterialBuilderPreprocessorDefine* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::PreprocessorDefine*>(self)->value).c_str();
+}
+
+void FilaFilamatMaterialBuilderPreprocessorDefine_setValue(FilaFilamatMaterialBuilderPreprocessorDefine* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::PreprocessorDefine*>(self)->value = std::string(value);
 }
 
 FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create(void) {
@@ -34,6 +54,14 @@ bool FilaFilamatMaterialBuilderParameter_isUniform(const FilaFilamatMaterialBuil
 
 bool FilaFilamatMaterialBuilderParameter_isSubpass(const FilaFilamatMaterialBuilderParameter* self) {
     return reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->isSubpass();
+}
+
+const char* FilaFilamatMaterialBuilderParameter_getName(const FilaFilamatMaterialBuilderParameter* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->name).c_str();
+}
+
+void FilaFilamatMaterialBuilderParameter_setName(FilaFilamatMaterialBuilderParameter* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->name = utils::CString(value);
 }
 
 uint32_t FilaFilamatMaterialBuilderParameter_getSize(const FilaFilamatMaterialBuilderParameter* self) {
@@ -100,6 +128,14 @@ void FilaFilamatMaterialBuilderParameter_setMultisample(FilaFilamatMaterialBuild
     reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->multisample = value;
 }
 
+const char* FilaFilamatMaterialBuilderParameter_getTransformName(const FilaFilamatMaterialBuilderParameter* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->transformName).c_str();
+}
+
+void FilaFilamatMaterialBuilderParameter_setTransformName(FilaFilamatMaterialBuilderParameter* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->transformName = utils::CString(value);
+}
+
 FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create(void) {
     return reinterpret_cast<FilaFilamatMaterialBuilderOutput*>(new filamat::MaterialBuilder::Output());
 }
@@ -110,6 +146,14 @@ FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create_char_V
 
 void FilaFilamatMaterialBuilderOutput_destroy(FilaFilamatMaterialBuilderOutput* self) {
     delete reinterpret_cast<filamat::MaterialBuilder::Output*>(self);
+}
+
+const char* FilaFilamatMaterialBuilderOutput_getName(const FilaFilamatMaterialBuilderOutput* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::Output*>(self)->name).c_str();
+}
+
+void FilaFilamatMaterialBuilderOutput_setName(FilaFilamatMaterialBuilderOutput* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::Output*>(self)->name = utils::CString(value);
 }
 
 FilaFilamatMaterialBuilderVariableQualifier FilaFilamatMaterialBuilderOutput_getQualifier(const FilaFilamatMaterialBuilderOutput* self) {
@@ -160,6 +204,14 @@ void FilaFilamatMaterialBuilderConstant_destroy(FilaFilamatMaterialBuilderConsta
     delete reinterpret_cast<filamat::MaterialBuilder::Constant*>(self);
 }
 
+const char* FilaFilamatMaterialBuilderConstant_getName(const FilaFilamatMaterialBuilderConstant* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::Constant*>(self)->name).c_str();
+}
+
+void FilaFilamatMaterialBuilderConstant_setName(FilaFilamatMaterialBuilderConstant* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::Constant*>(self)->name = utils::CString(value);
+}
+
 FilaConstantType FilaFilamatMaterialBuilderConstant_getType(const FilaFilamatMaterialBuilderConstant* self) {
     return static_cast<FilaConstantType>(reinterpret_cast<const filamat::MaterialBuilder::Constant*>(self)->type);
 }
@@ -182,6 +234,14 @@ FilaFilamatMaterialBuilderPushConstant* FilaFilamatMaterialBuilderPushConstant_c
 
 void FilaFilamatMaterialBuilderPushConstant_destroy(FilaFilamatMaterialBuilderPushConstant* self) {
     delete reinterpret_cast<filamat::MaterialBuilder::PushConstant*>(self);
+}
+
+const char* FilaFilamatMaterialBuilderPushConstant_getName(const FilaFilamatMaterialBuilderPushConstant* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::PushConstant*>(self)->name).c_str();
+}
+
+void FilaFilamatMaterialBuilderPushConstant_setName(FilaFilamatMaterialBuilderPushConstant* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::PushConstant*>(self)->name = utils::CString(value);
 }
 
 FilaConstantType FilaFilamatMaterialBuilderPushConstant_getType(const FilaFilamatMaterialBuilderPushConstant* self) {
@@ -208,6 +268,14 @@ void FilaFilamatMaterialBuilderCustomVariable_destroy(FilaFilamatMaterialBuilder
     delete reinterpret_cast<filamat::MaterialBuilder::CustomVariable*>(self);
 }
 
+const char* FilaFilamatMaterialBuilderCustomVariable_getName(const FilaFilamatMaterialBuilderCustomVariable* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::CustomVariable*>(self)->name).c_str();
+}
+
+void FilaFilamatMaterialBuilderCustomVariable_setName(FilaFilamatMaterialBuilderCustomVariable* self, const char* value) {
+    reinterpret_cast<filamat::MaterialBuilder::CustomVariable*>(self)->name = utils::CString(value);
+}
+
 FilaPrecision FilaFilamatMaterialBuilderCustomVariable_getPrecision(const FilaFilamatMaterialBuilderCustomVariable* self) {
     return static_cast<FilaPrecision>(reinterpret_cast<const filamat::MaterialBuilder::CustomVariable*>(self)->precision);
 }
@@ -230,6 +298,10 @@ FilaFilamatMaterialBuilderAttribute* FilaFilamatMaterialBuilderAttribute_create(
 
 void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttribute* self) {
     delete reinterpret_cast<filamat::MaterialBuilder::Attribute*>(self);
+}
+
+const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMaterialBuilderAttribute* self) {
+    return (reinterpret_cast<const filamat::MaterialBuilder::Attribute*>(self)->name).data();
 }
 
 FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self) {
@@ -506,6 +578,10 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMate
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self) {
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->useDefaultDepthVariant());
+}
+
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialSource(FilaFilamatMaterialBuilder* self, const char* source) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->materialSource(std::string_view(source)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_setApiLevel(FilaFilamatMaterialBuilder* self, uint32_t apiLevel) {

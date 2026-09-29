@@ -10,19 +10,13 @@ extern "C" {
 
 // filament::IndexBuffer::Builder
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void);
-// TODO(handwritten) FilaIndexBufferBuilder_create_Builder: filament::IndexBuffer::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaIndexBufferBuilder_create_Builder: filament::IndexBuffer::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
-// TODO(handwritten) FilaIndexBufferBuilder_indexCount: Builder & filament::IndexBuffer::Builder::indexCount(uint32_t indexCount)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaIndexBufferBuilder_bufferType: Builder & filament::IndexBuffer::Builder::bufferType(IndexType indexType)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount);
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType);
 // TODO(handwritten) FilaIndexBufferBuilder_name: Builder & filament::IndexBuffer::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
 // TODO(handwritten) FilaIndexBufferBuilder_async: Builder & filament::IndexBuffer::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     AsyncCompletionCallback: std::function
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine);
 
 // filament::IndexBuffer

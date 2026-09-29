@@ -12,6 +12,30 @@ void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* self) {
     delete reinterpret_cast<filament::VertexBuffer::Builder*>(self);
 }
 
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* self, uint32_t bufferCount) {
+    return reinterpret_cast<FilaVertexBufferBuilder*>(&reinterpret_cast<filament::VertexBuffer::Builder*>(self)->bufferCount(static_cast<uint8_t>(bufferCount)));
+}
+
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_vertexCount(FilaVertexBufferBuilder* self, uint32_t vertexCount) {
+    return reinterpret_cast<FilaVertexBufferBuilder*>(&reinterpret_cast<filament::VertexBuffer::Builder*>(self)->vertexCount(vertexCount));
+}
+
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* self, bool enabled) {
+    return reinterpret_cast<FilaVertexBufferBuilder*>(&reinterpret_cast<filament::VertexBuffer::Builder*>(self)->enableBufferObjects(enabled));
+}
+
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaElementType attributeType, uint32_t byteOffset, uint32_t byteStride) {
+    return reinterpret_cast<FilaVertexBufferBuilder*>(&reinterpret_cast<filament::VertexBuffer::Builder*>(self)->attribute(static_cast<filament::VertexAttribute>(attribute), static_cast<uint8_t>(bufferIndex), static_cast<filament::backend::ElementType>(attributeType), byteOffset, static_cast<uint8_t>(byteStride)));
+}
+
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, bool normalized) {
+    return reinterpret_cast<FilaVertexBufferBuilder*>(&reinterpret_cast<filament::VertexBuffer::Builder*>(self)->normalized(static_cast<filament::VertexAttribute>(attribute), normalized));
+}
+
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* self, bool enabled) {
+    return reinterpret_cast<FilaVertexBufferBuilder*>(&reinterpret_cast<filament::VertexBuffer::Builder*>(self)->advancedSkinning(enabled));
+}
+
 FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaVertexBuffer*>(reinterpret_cast<const filament::VertexBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

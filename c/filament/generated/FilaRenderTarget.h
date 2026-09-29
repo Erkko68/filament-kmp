@@ -10,23 +10,13 @@ extern "C" {
 
 // filament::RenderTarget::Builder
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_create(void);
-// TODO(handwritten) FilaRenderTargetBuilder_create_Builder: filament::RenderTarget::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaRenderTargetBuilder_create_Builder: filament::RenderTarget::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* self);
-// TODO(handwritten) FilaRenderTargetBuilder_texture: Builder & filament::RenderTarget::Builder::texture(AttachmentPoint attachment, Texture * _Nullable texture)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaRenderTargetBuilder_mipLevel: Builder & filament::RenderTarget::Builder::mipLevel(AttachmentPoint attachment, uint8_t level)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaRenderTargetBuilder_face: Builder & filament::RenderTarget::Builder::face(AttachmentPoint attachment, CubemapFace face)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaRenderTargetBuilder_layer: Builder & filament::RenderTarget::Builder::layer(AttachmentPoint attachment, uint32_t layer)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaRenderTargetBuilder_multiview: Builder & filament::RenderTarget::Builder::multiview(AttachmentPoint attachment, uint8_t layerCount, uint8_t baseLayer)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaRenderTargetBuilder_samples: Builder & filament::RenderTarget::Builder::samples(uint8_t samples)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_texture(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTexture* texture);
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t level);
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_face(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTextureCubemapFace face);
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layer);
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layerCount, uint32_t baseLayer);
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* self, uint32_t samples);
 FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* self, FilaEngine* engine);
 
 // filament::RenderTarget

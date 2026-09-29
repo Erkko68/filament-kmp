@@ -10,17 +10,11 @@ extern "C" {
 
 // filament::Stream::Builder
 FilaStreamBuilder* FilaStreamBuilder_create(void);
-// TODO(handwritten) FilaStreamBuilder_create_Builder: filament::Stream::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaStreamBuilder_create_Builder: filament::Stream::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaStreamBuilder_destroy(FilaStreamBuilder* self);
-// TODO(handwritten) FilaStreamBuilder_width: Builder & filament::Stream::Builder::width(uint32_t width)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaStreamBuilder_height: Builder & filament::Stream::Builder::height(uint32_t height)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width);
+FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height);
 // TODO(handwritten) FilaStreamBuilder_name: Builder & filament::Stream::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
 FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine);
 
 // filament::Stream

@@ -17,6 +17,29 @@ internal class CBridge(
     val store: (String) -> String = { "*out = ${convert(it)};" },
 )
 
+/** A C++ type C holds as the scalar [c]: [toCpp] builds it from a C value, [toC] reads one back. */
+internal class Scalar(val c: String, val toCpp: (String) -> String, val toC: (String) -> String)
+
+private const val STEADY = "std::chrono::steady_clock"
+
+/** Durations and time points are nanoseconds (since the steady clock's epoch); a tribool is 0, 1, or 2 for indeterminate. */
+private val SCALARS = mapOf(
+    "std::chrono::nanoseconds" to Scalar("int64_t", { "std::chrono::nanoseconds($it)" }, { "($it).count()" }),
+    "$STEADY::time_point" to Scalar(
+        "int64_t",
+        { "$STEADY::time_point(std::chrono::duration_cast<$STEADY::duration>(std::chrono::nanoseconds($it)))" },
+        { "std::chrono::duration_cast<std::chrono::nanoseconds>(($it).time_since_epoch()).count()" },
+    ),
+    "utils::bitset32" to Scalar("uint32_t", { "utils::bitset32($it)" }, { "($it).getValue()" }),
+    "utils::tribool" to Scalar(
+        "int32_t",
+        { "utils::tribool(static_cast<utils::tribool::Value>($it))" },
+        { "[](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }($it)" },
+    ),
+)
+
+private val STRINGS = setOf("std::string_view", "std::string", "utils::CString", "utils::ImmutableCString")
+
 /** Why a declaration stays hand-written; the generator leaves a comment saying so instead of code. */
 internal class Unsupported(reason: String) : Exception(reason)
 
@@ -27,8 +50,8 @@ internal class CBridges(private val api: CppApi) {
     /** [type] as a parameter: [CBridge.convert] turns the C argument into C++'s. */
     fun param(type: CppType) = of(type, result = false)
 
-    /** [type] as a return value: [CBridge.convert] turns C++'s result into C's. */
-    fun result(type: CppType) = of(type, result = true)
+    /** [type] as a return value: [CBridge.convert] turns C++'s result into C's. [lvalue]: it outlives the call (a field). */
+    fun result(type: CppType, lvalue: Boolean = false) = of(type, result = true, lvalue)
 
     /** A record with public fields. C holds it by pointer like any other, but copies it in and out like a value. */
     fun isValue(record: String) = api.records.getValue(record).fields.any { it.isPublic }
@@ -37,12 +60,13 @@ internal class CBridges(private val api: CppApi) {
     fun creatable(record: CppRecord) = !record.template && record.allocatable && record.destructible && record.constructors.isNotEmpty()
 
     /** A pointer to plain data (`const char*`, `void*`): a struct keeping it would outlive the caller's buffer. */
-    fun borrowsPointer(type: CppType) = type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()
+    fun borrowsPointer(type: CppType) =
+        (type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()) || type.decl == "std::string_view"
 
     /** The integer typedef of an enum too wide for a C enum (whose enumerators are ints), or null. */
     fun wideEnumType(enum: CppEnum) = if (enum.constants.all { it.second.bitLength() < 32 }) null else CAbi.byValue(enum.underlying ?: "uint64_t")
 
-    private fun of(type: CppType, result: Boolean): CBridge {
+    private fun of(type: CppType, result: Boolean, lvalue: Boolean = false): CBridge {
         val shape = shape(type.spelling)
         if (shape.indirection.size > 1) throw Unsupported("${type.spelling}: pointer to pointer")
         val indirection = shape.indirection.firstOrNull()
@@ -56,12 +80,14 @@ internal class CBridges(private val api: CppApi) {
         }
         if ('[' in type.spelling || '[' in target.spelling) throw Unsupported("${type.spelling}: array")
         val decl = target.decl
-        val bridge = Bridge(shape.const, indirection, result)
+        val bridge = Bridge(shape.const, indirection, result, lvalue)
         return when {
             target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
             target.kind == Kind.FUNCTION -> throw Unsupported("${type.spelling}: function type")
             decl == null -> throw Unsupported("${type.spelling}: ${target.kind.name.lowercase()}")
             decl in api.enums -> bridge.enum(decl, wideEnumType(api.enums.getValue(decl)))
+            decl in SCALARS -> bridge.scalar(decl, SCALARS.getValue(decl))
+            decl in STRINGS -> bridge.string(decl)
             decl == "utils::Entity" -> bridge.entity()
             decl == "utils::EntityInstance" && alias != null -> bridge.instance(alias)
             decl.startsWith("filament::math::") && mathMirror(decl) != null -> bridge.math(decl).also { mathTypes += decl }
@@ -71,9 +97,26 @@ internal class CBridges(private val api: CppApi) {
         }
     }
 
-    private class Bridge(val const: Boolean, val indirection: String?, val result: Boolean) {
+    private class Bridge(val const: Boolean, val indirection: String?, val result: Boolean, val lvalue: Boolean) {
         val byValue = indirection == null || (indirection == "&" && const)
         val c = if (const) "const " else ""
+
+        fun scalar(decl: String, scalar: Scalar): CBridge {
+            if (!byValue) throw Unsupported("$decl by pointer")
+            return CBridge(scalar.c, if (result) scalar.toC else scalar.toCpp, out = result && CAbi.returnsThroughPointer(scalar.c))
+        }
+
+        /** Strings cross as NUL-terminated `const char*`: copied in, and out only when the C++ string outlives the call. */
+        fun string(decl: String): CBridge {
+            if (!byValue) throw Unsupported("$decl by pointer")
+            return when {
+                !result -> CBridge("const char*", { "$decl($it)" })
+                // ponytail: assumes the view is NUL-terminated (literals, CString storage); an out length if one isn't.
+                decl == "std::string_view" -> CBridge("const char*", { "($it).data()" })
+                indirection == null && !lvalue -> throw Unsupported("$decl result: C would point into a destroyed temporary")
+                else -> CBridge("const char*", { "($it).c_str()" })
+            }
+        }
 
         fun builtin(base: String): CBridge {
             if (byValue) {

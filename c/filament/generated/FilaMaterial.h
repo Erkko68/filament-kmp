@@ -59,8 +59,7 @@ bool FilaMaterial_hasShadowMultiplier(const FilaMaterial* self);
 bool FilaMaterial_hasSpecularAntiAliasing(const FilaMaterial* self);
 float FilaMaterial_getSpecularAntiAliasingVariance(const FilaMaterial* self);
 float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* self);
-// TODO(handwritten) FilaMaterial_getRequiredAttributes: AttributeBitset filament::Material::getRequiredAttributes() const
-//     AttributeBitset: utils::bitset32
+uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* self);
 FilaRefractionMode FilaMaterial_getRefractionMode(const FilaMaterial* self);
 FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self);
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self);
@@ -68,11 +67,9 @@ FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self);
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self);
 uint32_t FilaMaterial_getParameters(const FilaMaterial* self, FilaMaterialParameterInfo* parameters, uint32_t count);
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name);
-// TODO(handwritten) FilaMaterial_hasParameter_string_view: bool filament::Material::hasParameter(std::string_view name) const
-//     std::string_view: std::string_view
+bool FilaMaterial_hasParameter_string_view(const FilaMaterial* self, const char* name);
 bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name);
-// TODO(handwritten) FilaMaterial_getSource: std::string_view filament::Material::getSource() const
-//     std::string_view: std::string_view
+const char* FilaMaterial_getSource(const FilaMaterial* self);
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, const char* samplerName);
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color);

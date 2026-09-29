@@ -17,14 +17,10 @@ void FilaGltfioNodeManager_destroy(FilaGltfioNodeManager* self, FilaEntity e);
 //     utils::FixedCapacityVector<CString>: utils::FixedCapacityVector
 // TODO(handwritten) FilaGltfioNodeManager_getMorphTargetNames: const utils::FixedCapacityVector<CString> & filament::gltfio::NodeManager::getMorphTargetNames(Instance ci) const
 //     const utils::FixedCapacityVector<CString> &: utils::FixedCapacityVector
-// TODO(handwritten) FilaGltfioNodeManager_setExtras: void filament::gltfio::NodeManager::setExtras(Instance ci, CString extras)
-//     CString: utils::CString
-// TODO(handwritten) FilaGltfioNodeManager_getExtras: const CString & filament::gltfio::NodeManager::getExtras(Instance ci) const
-//     const CString &: utils::CString
-// TODO(handwritten) FilaGltfioNodeManager_setSceneMembership: void filament::gltfio::NodeManager::setSceneMembership(Instance ci, SceneMask scenes)
-//     SceneMask: utils::bitset32
-// TODO(handwritten) FilaGltfioNodeManager_getSceneMembership: SceneMask filament::gltfio::NodeManager::getSceneMembership(Instance ci) const
-//     SceneMask: utils::bitset32
+void FilaGltfioNodeManager_setExtras(FilaGltfioNodeManager* self, uint32_t ci, const char* extras);
+const char* FilaGltfioNodeManager_getExtras(const FilaGltfioNodeManager* self, uint32_t ci);
+void FilaGltfioNodeManager_setSceneMembership(FilaGltfioNodeManager* self, uint32_t ci, uint32_t scenes);
+uint32_t FilaGltfioNodeManager_getSceneMembership(const FilaGltfioNodeManager* self, uint32_t ci);
 
 
 #ifdef __cplusplus

@@ -288,12 +288,24 @@ void FilaRenderer_setPresentationTime_int64_t(FilaRenderer* self, int64_t monoto
     reinterpret_cast<filament::Renderer*>(self)->setPresentationTime(monotonic_clock_ns);
 }
 
+void FilaRenderer_setPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock) {
+    reinterpret_cast<filament::Renderer*>(self)->setPresentationTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+}
+
 void FilaRenderer_setDesiredPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns) {
     reinterpret_cast<filament::Renderer*>(self)->setDesiredPresentationTime(monotonic_clock_ns);
 }
 
+void FilaRenderer_setDesiredPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock) {
+    reinterpret_cast<filament::Renderer*>(self)->setDesiredPresentationTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+}
+
 void FilaRenderer_setRenderingDeadline_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns) {
     reinterpret_cast<filament::Renderer*>(self)->setRenderingDeadline(monotonic_clock_ns);
+}
+
+void FilaRenderer_setRenderingDeadline_time_point(FilaRenderer* self, int64_t monotonic_clock) {
+    reinterpret_cast<filament::Renderer*>(self)->setRenderingDeadline(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
 }
 
 void FilaRenderer_render(FilaRenderer* self, const FilaView* view) {
@@ -324,6 +336,10 @@ void FilaRenderer_setMaterialTimeEpoch_int64_t(FilaRenderer* self, int64_t monot
     reinterpret_cast<filament::Renderer*>(self)->setMaterialTimeEpoch(monotonic_clock_ns);
 }
 
+void FilaRenderer_setMaterialTimeEpoch_time_point(FilaRenderer* self, int64_t monotonic_clock) {
+    reinterpret_cast<filament::Renderer*>(self)->setMaterialTimeEpoch(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+}
+
 void FilaRenderer_resetUserTime(FilaRenderer* self) {
     reinterpret_cast<filament::Renderer*>(self)->resetUserTime();
 }
@@ -338,6 +354,10 @@ uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self) {
 
 bool FilaRenderer_hasGpuFallenBehind(const FilaRenderer* self) {
     return reinterpret_cast<const filament::Renderer*>(self)->hasGpuFallenBehind();
+}
+
+void FilaRenderer_setFrameScheduleTime_time_point(FilaRenderer* self, int64_t time) {
+    reinterpret_cast<filament::Renderer*>(self)->setFrameScheduleTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(time))));
 }
 
 void FilaRenderer_setFrameScheduleTime_uint64_t(FilaRenderer* self, uint64_t timeSteadyClockNano) {

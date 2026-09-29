@@ -16,6 +16,10 @@ bool FilaSwapChain_isMSAASwapChainSupported(FilaEngine* engine, uint32_t samples
     return filament::SwapChain::isMSAASwapChainSupported(*reinterpret_cast<filament::Engine*>(engine), samples);
 }
 
+int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self) {
+    return [](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }(reinterpret_cast<const filament::SwapChain*>(self)->isFrameRateChangeSupported());
+}
+
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy) {
     reinterpret_cast<filament::SwapChain*>(self)->setFrameRate(frameRate, static_cast<filament::backend::Platform::FrameRateCompatibility>(compatibility), static_cast<filament::backend::Platform::ChangeFrameRateStrategy>(strategy));
 }

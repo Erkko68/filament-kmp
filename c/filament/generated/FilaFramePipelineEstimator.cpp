@@ -12,6 +12,14 @@ void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorklo
     delete reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self);
 }
 
+void FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(const FilaFramePipelineEstimatorWorkload* self, int64_t* out) {
+    *out = (reinterpret_cast<const filament::FramePipelineEstimator::Workload*>(self)->idealFrameDuration).count();
+}
+
+void FilaFramePipelineEstimatorWorkload_setIdealFrameDuration(FilaFramePipelineEstimatorWorkload* self, int64_t value) {
+    reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self)->idealFrameDuration = std::chrono::nanoseconds(value);
+}
+
 float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self) {
     return reinterpret_cast<const filament::FramePipelineEstimator::Workload*>(self)->idealFrameRate;
 }
@@ -34,6 +42,14 @@ uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFrame
 
 void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value) {
     reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self)->latencyFrames = value;
+}
+
+void FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(const FilaFramePipelineEstimatorPacingSizing* self, int64_t* out) {
+    *out = (reinterpret_cast<const filament::FramePipelineEstimator::PacingSizing*>(self)->safeDelayDuration).count();
+}
+
+void FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration(FilaFramePipelineEstimatorPacingSizing* self, int64_t value) {
+    reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self)->safeDelayDuration = std::chrono::nanoseconds(value);
 }
 
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile) {

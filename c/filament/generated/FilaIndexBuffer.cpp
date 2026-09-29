@@ -12,6 +12,14 @@ void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self) {
     delete reinterpret_cast<filament::IndexBuffer::Builder*>(self);
 }
 
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount) {
+    return reinterpret_cast<FilaIndexBufferBuilder*>(&reinterpret_cast<filament::IndexBuffer::Builder*>(self)->indexCount(indexCount));
+}
+
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType) {
+    return reinterpret_cast<FilaIndexBufferBuilder*>(&reinterpret_cast<filament::IndexBuffer::Builder*>(self)->bufferType(static_cast<filament::IndexBuffer::IndexType>(indexType)));
+}
+
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaIndexBuffer*>(reinterpret_cast<filament::IndexBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

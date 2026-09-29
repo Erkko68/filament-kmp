@@ -10,17 +10,11 @@ extern "C" {
 
 // filament::BufferObject::Builder
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void);
-// TODO(handwritten) FilaBufferObjectBuilder_create_Builder: filament::BufferObject::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaBufferObjectBuilder_create_Builder: filament::BufferObject::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self);
-// TODO(handwritten) FilaBufferObjectBuilder_size: Builder & filament::BufferObject::Builder::size(uint32_t byteCount)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaBufferObjectBuilder_bindingType: Builder & filament::BufferObject::Builder::bindingType(BindingType bindingType)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount);
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType);
 // TODO(handwritten) FilaBufferObjectBuilder_name: Builder & filament::BufferObject::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
 FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine);
 
 // filament::BufferObject

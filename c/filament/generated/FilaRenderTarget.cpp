@@ -12,6 +12,30 @@ void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* self) {
     delete reinterpret_cast<filament::RenderTarget::Builder*>(self);
 }
 
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_texture(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTexture* texture) {
+    return reinterpret_cast<FilaRenderTargetBuilder*>(&reinterpret_cast<filament::RenderTarget::Builder*>(self)->texture(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), reinterpret_cast<filament::Texture*>(texture)));
+}
+
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t level) {
+    return reinterpret_cast<FilaRenderTargetBuilder*>(&reinterpret_cast<filament::RenderTarget::Builder*>(self)->mipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<uint8_t>(level)));
+}
+
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_face(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTextureCubemapFace face) {
+    return reinterpret_cast<FilaRenderTargetBuilder*>(&reinterpret_cast<filament::RenderTarget::Builder*>(self)->face(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<filament::backend::TextureCubemapFace>(face)));
+}
+
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layer) {
+    return reinterpret_cast<FilaRenderTargetBuilder*>(&reinterpret_cast<filament::RenderTarget::Builder*>(self)->layer(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), layer));
+}
+
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layerCount, uint32_t baseLayer) {
+    return reinterpret_cast<FilaRenderTargetBuilder*>(&reinterpret_cast<filament::RenderTarget::Builder*>(self)->multiview(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<uint8_t>(layerCount), static_cast<uint8_t>(baseLayer)));
+}
+
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* self, uint32_t samples) {
+    return reinterpret_cast<FilaRenderTargetBuilder*>(&reinterpret_cast<filament::RenderTarget::Builder*>(self)->samples(static_cast<uint8_t>(samples)));
+}
+
 FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaRenderTarget*>(reinterpret_cast<filament::RenderTarget::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

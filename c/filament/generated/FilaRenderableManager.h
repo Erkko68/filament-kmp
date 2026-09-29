@@ -101,8 +101,7 @@ void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* self, uint32_t
 uint32_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
 void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, bool enabled);
 bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
-// TODO(handwritten) FilaRenderableManager_getEnabledAttributesAt: AttributeBitset filament::RenderableManager::getEnabledAttributesAt(Instance instance, size_t primitiveIndex) const
-//     AttributeBitset: utils::bitset32
+uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
 
 
 #ifdef __cplusplus

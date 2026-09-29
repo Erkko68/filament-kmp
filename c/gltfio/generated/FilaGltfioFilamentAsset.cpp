@@ -108,6 +108,10 @@ const char* FilaGltfioFilamentAsset_getSceneName(const FilaGltfioFilamentAsset* 
     return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getSceneName(static_cast<size_t>(sceneIndex));
 }
 
+void FilaGltfioFilamentAsset_addEntitiesToScene(const FilaGltfioFilamentAsset* self, FilaScene* targetScene, const FilaEntity* entities, uint32_t count, uint32_t sceneFilter) {
+    reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->addEntitiesToScene(*reinterpret_cast<filament::Scene*>(targetScene), reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count), utils::bitset32(sceneFilter));
+}
+
 void FilaGltfioFilamentAsset_detachFilamentComponents(FilaGltfioFilamentAsset* self) {
     reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->detachFilamentComponents();
 }

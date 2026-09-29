@@ -9,17 +9,12 @@ extern "C" {
 #endif
 
 // filamat::MaterialBuilder::PreprocessorDefine
-// TODO(handwritten) FilaFilamatMaterialBuilderPreprocessorDefine_create: filamat::MaterialBuilder::PreprocessorDefine(std::string name, std::string value)
-//     std::string: std::string
+FilaFilamatMaterialBuilderPreprocessorDefine* FilaFilamatMaterialBuilderPreprocessorDefine_create(const char* name, const char* value);
 void FilaFilamatMaterialBuilderPreprocessorDefine_destroy(FilaFilamatMaterialBuilderPreprocessorDefine* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderPreprocessorDefine_getName: std::string filamat::MaterialBuilder::PreprocessorDefine::name
-//     std::string: std::string
-// TODO(handwritten) FilaFilamatMaterialBuilderPreprocessorDefine_setName: std::string filamat::MaterialBuilder::PreprocessorDefine::name
-//     std::string: std::string
-// TODO(handwritten) FilaFilamatMaterialBuilderPreprocessorDefine_getValue: std::string filamat::MaterialBuilder::PreprocessorDefine::value
-//     std::string: std::string
-// TODO(handwritten) FilaFilamatMaterialBuilderPreprocessorDefine_setValue: std::string filamat::MaterialBuilder::PreprocessorDefine::value
-//     std::string: std::string
+const char* FilaFilamatMaterialBuilderPreprocessorDefine_getName(const FilaFilamatMaterialBuilderPreprocessorDefine* self);
+void FilaFilamatMaterialBuilderPreprocessorDefine_setName(FilaFilamatMaterialBuilderPreprocessorDefine* self, const char* value);
+const char* FilaFilamatMaterialBuilderPreprocessorDefine_getValue(const FilaFilamatMaterialBuilderPreprocessorDefine* self);
+void FilaFilamatMaterialBuilderPreprocessorDefine_setValue(FilaFilamatMaterialBuilderPreprocessorDefine* self, const char* value);
 
 // filamat::MaterialBuilder::Parameter
 FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create(void);
@@ -31,10 +26,8 @@ void FilaFilamatMaterialBuilderParameter_destroy(FilaFilamatMaterialBuilderParam
 bool FilaFilamatMaterialBuilderParameter_isSampler(const FilaFilamatMaterialBuilderParameter* self);
 bool FilaFilamatMaterialBuilderParameter_isUniform(const FilaFilamatMaterialBuilderParameter* self);
 bool FilaFilamatMaterialBuilderParameter_isSubpass(const FilaFilamatMaterialBuilderParameter* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_getName: utils::CString filamat::MaterialBuilder::Parameter::name
-//     utils::CString: utils::CString
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_setName: utils::CString filamat::MaterialBuilder::Parameter::name
-//     utils::CString: utils::CString
+const char* FilaFilamatMaterialBuilderParameter_getName(const FilaFilamatMaterialBuilderParameter* self);
+void FilaFilamatMaterialBuilderParameter_setName(FilaFilamatMaterialBuilderParameter* self, const char* value);
 uint32_t FilaFilamatMaterialBuilderParameter_getSize(const FilaFilamatMaterialBuilderParameter* self);
 void FilaFilamatMaterialBuilderParameter_setSize(FilaFilamatMaterialBuilderParameter* self, uint32_t value);
 FilaUniformType FilaFilamatMaterialBuilderParameter_getUniformType(const FilaFilamatMaterialBuilderParameter* self);
@@ -51,10 +44,8 @@ bool FilaFilamatMaterialBuilderParameter_getFilterable(const FilaFilamatMaterial
 void FilaFilamatMaterialBuilderParameter_setFilterable(FilaFilamatMaterialBuilderParameter* self, bool value);
 bool FilaFilamatMaterialBuilderParameter_getMultisample(const FilaFilamatMaterialBuilderParameter* self);
 void FilaFilamatMaterialBuilderParameter_setMultisample(FilaFilamatMaterialBuilderParameter* self, bool value);
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_getTransformName: utils::CString filamat::MaterialBuilder::Parameter::transformName
-//     utils::CString: utils::CString
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_setTransformName: utils::CString filamat::MaterialBuilder::Parameter::transformName
-//     utils::CString: utils::CString
+const char* FilaFilamatMaterialBuilderParameter_getTransformName(const FilaFilamatMaterialBuilderParameter* self);
+void FilaFilamatMaterialBuilderParameter_setTransformName(FilaFilamatMaterialBuilderParameter* self, const char* value);
 // TODO(handwritten) FilaFilamatMaterialBuilderParameter_getStages: std::optional<ShaderStageFlags> filamat::MaterialBuilder::Parameter::stages
 //     std::optional<ShaderStageFlags>: std::optional
 // TODO(handwritten) FilaFilamatMaterialBuilderParameter_setStages: std::optional<ShaderStageFlags> filamat::MaterialBuilder::Parameter::stages
@@ -68,10 +59,8 @@ void FilaFilamatMaterialBuilderParameter_setMultisample(FilaFilamatMaterialBuild
 FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create(void);
 FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create_char_VariableQualifier_OutputTarget_Precision_OutputType_int(const char* outputName, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, int32_t location);
 void FilaFilamatMaterialBuilderOutput_destroy(FilaFilamatMaterialBuilderOutput* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderOutput_getName: utils::CString filamat::MaterialBuilder::Output::name
-//     utils::CString: utils::CString
-// TODO(handwritten) FilaFilamatMaterialBuilderOutput_setName: utils::CString filamat::MaterialBuilder::Output::name
-//     utils::CString: utils::CString
+const char* FilaFilamatMaterialBuilderOutput_getName(const FilaFilamatMaterialBuilderOutput* self);
+void FilaFilamatMaterialBuilderOutput_setName(FilaFilamatMaterialBuilderOutput* self, const char* value);
 FilaFilamatMaterialBuilderVariableQualifier FilaFilamatMaterialBuilderOutput_getQualifier(const FilaFilamatMaterialBuilderOutput* self);
 void FilaFilamatMaterialBuilderOutput_setQualifier(FilaFilamatMaterialBuilderOutput* self, FilaFilamatMaterialBuilderVariableQualifier value);
 FilaFilamatMaterialBuilderOutputTarget FilaFilamatMaterialBuilderOutput_getTarget(const FilaFilamatMaterialBuilderOutput* self);
@@ -86,10 +75,8 @@ void FilaFilamatMaterialBuilderOutput_setLocation(FilaFilamatMaterialBuilderOutp
 // filamat::MaterialBuilder::Constant
 FilaFilamatMaterialBuilderConstant* FilaFilamatMaterialBuilderConstant_create(void);
 void FilaFilamatMaterialBuilderConstant_destroy(FilaFilamatMaterialBuilderConstant* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderConstant_getName: utils::CString filamat::MaterialBuilder::Constant::name
-//     utils::CString: utils::CString
-// TODO(handwritten) FilaFilamatMaterialBuilderConstant_setName: utils::CString filamat::MaterialBuilder::Constant::name
-//     utils::CString: utils::CString
+const char* FilaFilamatMaterialBuilderConstant_getName(const FilaFilamatMaterialBuilderConstant* self);
+void FilaFilamatMaterialBuilderConstant_setName(FilaFilamatMaterialBuilderConstant* self, const char* value);
 FilaConstantType FilaFilamatMaterialBuilderConstant_getType(const FilaFilamatMaterialBuilderConstant* self);
 void FilaFilamatMaterialBuilderConstant_setType(FilaFilamatMaterialBuilderConstant* self, FilaConstantType value);
 void FilaFilamatMaterialBuilderConstant_getDefaultValue(const FilaFilamatMaterialBuilderConstant* self, FilaConstantValue* out);
@@ -98,10 +85,8 @@ void FilaFilamatMaterialBuilderConstant_setDefaultValue(FilaFilamatMaterialBuild
 // filamat::MaterialBuilder::PushConstant
 FilaFilamatMaterialBuilderPushConstant* FilaFilamatMaterialBuilderPushConstant_create(void);
 void FilaFilamatMaterialBuilderPushConstant_destroy(FilaFilamatMaterialBuilderPushConstant* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderPushConstant_getName: utils::CString filamat::MaterialBuilder::PushConstant::name
-//     utils::CString: utils::CString
-// TODO(handwritten) FilaFilamatMaterialBuilderPushConstant_setName: utils::CString filamat::MaterialBuilder::PushConstant::name
-//     utils::CString: utils::CString
+const char* FilaFilamatMaterialBuilderPushConstant_getName(const FilaFilamatMaterialBuilderPushConstant* self);
+void FilaFilamatMaterialBuilderPushConstant_setName(FilaFilamatMaterialBuilderPushConstant* self, const char* value);
 FilaConstantType FilaFilamatMaterialBuilderPushConstant_getType(const FilaFilamatMaterialBuilderPushConstant* self);
 void FilaFilamatMaterialBuilderPushConstant_setType(FilaFilamatMaterialBuilderPushConstant* self, FilaConstantType value);
 FilaShaderStage FilaFilamatMaterialBuilderPushConstant_getStage(const FilaFilamatMaterialBuilderPushConstant* self);
@@ -110,10 +95,8 @@ void FilaFilamatMaterialBuilderPushConstant_setStage(FilaFilamatMaterialBuilderP
 // filamat::MaterialBuilder::CustomVariable
 FilaFilamatMaterialBuilderCustomVariable* FilaFilamatMaterialBuilderCustomVariable_create(void);
 void FilaFilamatMaterialBuilderCustomVariable_destroy(FilaFilamatMaterialBuilderCustomVariable* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderCustomVariable_getName: utils::CString filamat::MaterialBuilder::CustomVariable::name
-//     utils::CString: utils::CString
-// TODO(handwritten) FilaFilamatMaterialBuilderCustomVariable_setName: utils::CString filamat::MaterialBuilder::CustomVariable::name
-//     utils::CString: utils::CString
+const char* FilaFilamatMaterialBuilderCustomVariable_getName(const FilaFilamatMaterialBuilderCustomVariable* self);
+void FilaFilamatMaterialBuilderCustomVariable_setName(FilaFilamatMaterialBuilderCustomVariable* self, const char* value);
 FilaPrecision FilaFilamatMaterialBuilderCustomVariable_getPrecision(const FilaFilamatMaterialBuilderCustomVariable* self);
 void FilaFilamatMaterialBuilderCustomVariable_setPrecision(FilaFilamatMaterialBuilderCustomVariable* self, FilaPrecision value);
 bool FilaFilamatMaterialBuilderCustomVariable_getHasPrecision(const FilaFilamatMaterialBuilderCustomVariable* self);
@@ -123,13 +106,12 @@ void FilaFilamatMaterialBuilderCustomVariable_setHasPrecision(FilaFilamatMateria
 FilaFilamatMaterialBuilderAttribute* FilaFilamatMaterialBuilderAttribute_create(void);
 void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttribute* self);
 // TODO(handwritten) FilaFilamatMaterialBuilderAttribute_getAttributeName: std::string filamat::MaterialBuilder::Attribute::getAttributeName() const
-//     std::string: std::string
+//     std::string result: C would point into a destroyed temporary
 // TODO(handwritten) FilaFilamatMaterialBuilderAttribute_getDefineName: std::string filamat::MaterialBuilder::Attribute::getDefineName() const
-//     std::string: std::string
-// TODO(handwritten) FilaFilamatMaterialBuilderAttribute_getName: std::string_view filamat::MaterialBuilder::Attribute::name
-//     std::string_view: std::string_view
+//     std::string result: C would point into a destroyed temporary
+const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMaterialBuilderAttribute* self);
 // TODO(handwritten) FilaFilamatMaterialBuilderAttribute_setName: std::string_view filamat::MaterialBuilder::Attribute::name
-//     std::string_view: std::string_view
+//     std::string_view: the struct would keep the caller's pointer
 FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self);
 void FilaFilamatMaterialBuilderAttribute_setType(FilaFilamatMaterialBuilderAttribute* self, FilaUniformType value);
 FilaVertexAttribute FilaFilamatMaterialBuilderAttribute_getLocation(const FilaFilamatMaterialBuilderAttribute* self);
@@ -205,8 +187,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_vertexDomainDeviceJittere
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useLegacyMorphing(FilaFilamatMaterialBuilder* self);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, const FilaUint3* groupSize);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self);
-// TODO(handwritten) FilaFilamatMaterialBuilder_materialSource: MaterialBuilder & filamat::MaterialBuilder::materialSource(std::string_view source)
-//     std::string_view: std::string_view
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialSource(FilaFilamatMaterialBuilder* self, const char* source);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_setApiLevel(FilaFilamatMaterialBuilder* self, uint32_t apiLevel);
 // TODO(handwritten) FilaFilamatMaterialBuilder_build: Package filamat::MaterialBuilder::build(utils::JobSystem & jobSystem)
 //     filamat::Package by value
@@ -215,7 +196,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_SamplerFormat_cha
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_ParameterPrecision_char(FilaFilamatMaterialBuilder* self, FilaSubpassType subpassType, FilaPrecision precision, const char* name);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_char(FilaFilamatMaterialBuilder* self, FilaSubpassType subpassType, const char* name);
 // TODO(handwritten) FilaFilamatMaterialBuilder_peek: std::string filamat::MaterialBuilder::peek(filament::backend::ShaderStage stage, const CodeGenParams & params, const PropertyList & properties)
-//     std::string: std::string
+//     std::string result: C would point into a destroyed temporary
 bool FilaFilamatMaterialBuilder_hasSamplerType(const FilaFilamatMaterialBuilder* self, FilaSamplerType samplerType);
 uint32_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialBuilder* self);
 // TODO(handwritten) FilaFilamatMaterialBuilder_getParameters: const ParameterList & filamat::MaterialBuilder::getParameters() const

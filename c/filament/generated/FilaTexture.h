@@ -10,38 +10,23 @@ extern "C" {
 
 // filament::Texture::Builder
 FilaTextureBuilder* FilaTextureBuilder_create(void);
-// TODO(handwritten) FilaTextureBuilder_create_Builder: filament::Texture::Builder(const Builder & rhs)
-//     const Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_create_Builder: filament::Texture::Builder(Builder && rhs)
-//     Builder &&: rvalue reference
 void FilaTextureBuilder_destroy(FilaTextureBuilder* self);
-// TODO(handwritten) FilaTextureBuilder_width: Builder & filament::Texture::Builder::width(uint32_t width)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_height: Builder & filament::Texture::Builder::height(uint32_t height)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_depth: Builder & filament::Texture::Builder::depth(uint32_t depth)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_levels: Builder & filament::Texture::Builder::levels(uint8_t levels)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_samples: Builder & filament::Texture::Builder::samples(uint8_t samples)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_sampler: Builder & filament::Texture::Builder::sampler(Sampler target)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_format: Builder & filament::Texture::Builder::format(InternalFormat format)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_usage: Builder & filament::Texture::Builder::usage(Usage usage)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_swizzle: Builder & filament::Texture::Builder::swizzle(Swizzle r, Swizzle g, Swizzle b, Swizzle a)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaTextureBuilder* FilaTextureBuilder_width(FilaTextureBuilder* self, uint32_t width);
+FilaTextureBuilder* FilaTextureBuilder_height(FilaTextureBuilder* self, uint32_t height);
+FilaTextureBuilder* FilaTextureBuilder_depth(FilaTextureBuilder* self, uint32_t depth);
+FilaTextureBuilder* FilaTextureBuilder_levels(FilaTextureBuilder* self, uint32_t levels);
+FilaTextureBuilder* FilaTextureBuilder_samples(FilaTextureBuilder* self, uint32_t samples);
+FilaTextureBuilder* FilaTextureBuilder_sampler(FilaTextureBuilder* self, FilaSamplerType target);
+FilaTextureBuilder* FilaTextureBuilder_format(FilaTextureBuilder* self, FilaTextureFormat format);
+FilaTextureBuilder* FilaTextureBuilder_usage(FilaTextureBuilder* self, FilaTextureUsage usage);
+FilaTextureBuilder* FilaTextureBuilder_swizzle(FilaTextureBuilder* self, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a);
 // TODO(handwritten) FilaTextureBuilder_name: Builder & filament::Texture::Builder::name(const utils::StaticString & name)
-//     Builder &: filament::BuilderNameMixin::Builder
-// TODO(handwritten) FilaTextureBuilder_external: Builder & filament::Texture::Builder::external()
-//     Builder &: filament::BuilderNameMixin::Builder
+//     const utils::StaticString &: utils::StaticString
+FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self);
 // TODO(handwritten) FilaTextureBuilder_async: Builder & filament::Texture::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     Builder &: filament::BuilderNameMixin::Builder
+//     AsyncCompletionCallback: std::function
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* self, FilaEngine* engine);
-// TODO(handwritten) FilaTextureBuilder_import: Builder & filament::Texture::Builder::import(intptr_t id)
-//     Builder &: filament::BuilderNameMixin::Builder
+FilaTextureBuilder* FilaTextureBuilder_import(FilaTextureBuilder* self, int64_t id);
 
 // filament::Texture
 bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureFormat format);

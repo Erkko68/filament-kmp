@@ -90,14 +90,11 @@ void FilaRenderer_skipFrame(FilaRenderer* self, uint64_t vsyncSteadyClockTimeNan
 bool FilaRenderer_shouldRenderFrame(const FilaRenderer* self);
 bool FilaRenderer_beginFrame(FilaRenderer* self, FilaSwapChain* swapChain, uint64_t vsyncSteadyClockTimeNano);
 void FilaRenderer_setPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
-// TODO(handwritten) FilaRenderer_setPresentationTime_time_point: void filament::Renderer::setPresentationTime(std::chrono::steady_clock::time_point monotonic_clock)
-//     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point
+void FilaRenderer_setPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock);
 void FilaRenderer_setDesiredPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
-// TODO(handwritten) FilaRenderer_setDesiredPresentationTime_time_point: void filament::Renderer::setDesiredPresentationTime(std::chrono::steady_clock::time_point monotonic_clock)
-//     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point
+void FilaRenderer_setDesiredPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock);
 void FilaRenderer_setRenderingDeadline_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
-// TODO(handwritten) FilaRenderer_setRenderingDeadline_time_point: void filament::Renderer::setRenderingDeadline(std::chrono::steady_clock::time_point monotonic_clock)
-//     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point
+void FilaRenderer_setRenderingDeadline_time_point(FilaRenderer* self, int64_t monotonic_clock);
 void FilaRenderer_render(FilaRenderer* self, const FilaView* view);
 void FilaRenderer_copyFrame(FilaRenderer* self, FilaSwapChain* dstSwapChain, const FilaViewport* dstViewport, const FilaViewport* srcViewport, uint32_t flags);
 // TODO(handwritten) FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor: void filament::Renderer::readPixels(uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, backend::PixelBufferDescriptor && buffer)
@@ -109,14 +106,12 @@ void FilaRenderer_renderStandaloneView(FilaRenderer* self, const FilaView* view)
 double FilaRenderer_getMaterialTime(const FilaRenderer* self);
 double FilaRenderer_getUserTime(const FilaRenderer* self);
 void FilaRenderer_setMaterialTimeEpoch_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
-// TODO(handwritten) FilaRenderer_setMaterialTimeEpoch_time_point: void filament::Renderer::setMaterialTimeEpoch(std::chrono::steady_clock::time_point monotonic_clock)
-//     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point
+void FilaRenderer_setMaterialTimeEpoch_time_point(FilaRenderer* self, int64_t monotonic_clock);
 void FilaRenderer_resetUserTime(FilaRenderer* self);
 void FilaRenderer_skipNextFrames(FilaRenderer* self, uint32_t frameCount);
 uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self);
 bool FilaRenderer_hasGpuFallenBehind(const FilaRenderer* self);
-// TODO(handwritten) FilaRenderer_setFrameScheduleTime_time_point: void filament::Renderer::setFrameScheduleTime(std::chrono::steady_clock::time_point time)
-//     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point
+void FilaRenderer_setFrameScheduleTime_time_point(FilaRenderer* self, int64_t time);
 void FilaRenderer_setFrameScheduleTime_uint64_t(FilaRenderer* self, uint64_t timeSteadyClockNano);
 void FilaRenderer_pauseRenderThread(FilaRenderer* self, uint64_t duration_ns);
 

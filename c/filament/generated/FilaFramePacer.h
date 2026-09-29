@@ -11,30 +11,20 @@ extern "C" {
 // filament::FramePacer::HardwareTimeline
 FilaFramePacerHardwareTimeline* FilaFramePacerHardwareTimeline_create(void);
 void FilaFramePacerHardwareTimeline_destroy(FilaFramePacerHardwareTimeline* self);
-// TODO(handwritten) FilaFramePacerHardwareTimeline_getExpectedPresentationTime: time_point_t filament::FramePacer::HardwareTimeline::expectedPresentationTime
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacerHardwareTimeline_setExpectedPresentationTime: time_point_t filament::FramePacer::HardwareTimeline::expectedPresentationTime
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacerHardwareTimeline_getDeadline: time_point_t filament::FramePacer::HardwareTimeline::deadline
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacerHardwareTimeline_setDeadline: time_point_t filament::FramePacer::HardwareTimeline::deadline
-//     time_point_t: std::chrono::steady_clock::time_point
+void FilaFramePacerHardwareTimeline_getExpectedPresentationTime(const FilaFramePacerHardwareTimeline* self, int64_t* out);
+void FilaFramePacerHardwareTimeline_setExpectedPresentationTime(FilaFramePacerHardwareTimeline* self, int64_t value);
+void FilaFramePacerHardwareTimeline_getDeadline(const FilaFramePacerHardwareTimeline* self, int64_t* out);
+void FilaFramePacerHardwareTimeline_setDeadline(FilaFramePacerHardwareTimeline* self, int64_t value);
 
 // filament::FramePacer::VsyncTick
 FilaFramePacerVsyncTick* FilaFramePacerVsyncTick_create(void);
 void FilaFramePacerVsyncTick_destroy(FilaFramePacerVsyncTick* self);
-// TODO(handwritten) FilaFramePacerVsyncTick_getBaseTime: time_point_t filament::FramePacer::VsyncTick::baseTime
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacerVsyncTick_setBaseTime: time_point_t filament::FramePacer::VsyncTick::baseTime
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacerVsyncTick_getVsyncPeriod: duration_t filament::FramePacer::VsyncTick::vsyncPeriod
-//     duration_t: std::chrono::nanoseconds
-// TODO(handwritten) FilaFramePacerVsyncTick_setVsyncPeriod: duration_t filament::FramePacer::VsyncTick::vsyncPeriod
-//     duration_t: std::chrono::nanoseconds
-// TODO(handwritten) FilaFramePacerVsyncTick_getFrameScheduleTime: time_point_t filament::FramePacer::VsyncTick::frameScheduleTime
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacerVsyncTick_setFrameScheduleTime: time_point_t filament::FramePacer::VsyncTick::frameScheduleTime
-//     time_point_t: std::chrono::steady_clock::time_point
+void FilaFramePacerVsyncTick_getBaseTime(const FilaFramePacerVsyncTick* self, int64_t* out);
+void FilaFramePacerVsyncTick_setBaseTime(FilaFramePacerVsyncTick* self, int64_t value);
+void FilaFramePacerVsyncTick_getVsyncPeriod(const FilaFramePacerVsyncTick* self, int64_t* out);
+void FilaFramePacerVsyncTick_setVsyncPeriod(FilaFramePacerVsyncTick* self, int64_t value);
+void FilaFramePacerVsyncTick_getFrameScheduleTime(const FilaFramePacerVsyncTick* self, int64_t* out);
+void FilaFramePacerVsyncTick_setFrameScheduleTime(FilaFramePacerVsyncTick* self, int64_t value);
 // TODO(handwritten) FilaFramePacerVsyncTick_getTimelines: Timelines filament::FramePacer::VsyncTick::timelines
 //     Timelines: utils::Slice
 // TODO(handwritten) FilaFramePacerVsyncTick_setTimelines: Timelines filament::FramePacer::VsyncTick::timelines
@@ -45,17 +35,14 @@ FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void);
 void FilaFramePacerConfiguration_destroy(FilaFramePacerConfiguration* self);
 float FilaFramePacerConfiguration_getTargetFrameRate(const FilaFramePacerConfiguration* self);
 void FilaFramePacerConfiguration_setTargetFrameRate(FilaFramePacerConfiguration* self, float value);
-// TODO(handwritten) FilaFramePacerConfiguration_getLatency: std::chrono::nanoseconds filament::FramePacer::Configuration::latency
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
-// TODO(handwritten) FilaFramePacerConfiguration_setLatency: std::chrono::nanoseconds filament::FramePacer::Configuration::latency
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
+void FilaFramePacerConfiguration_getLatency(const FilaFramePacerConfiguration* self, int64_t* out);
+void FilaFramePacerConfiguration_setLatency(FilaFramePacerConfiguration* self, int64_t value);
 
 // filament::FramePacer::Builder
 FilaFramePacerBuilder* FilaFramePacerBuilder_create(void);
 void FilaFramePacerBuilder_destroy(FilaFramePacerBuilder* self);
 FilaFramePacerBuilder* FilaFramePacerBuilder_targetFrameRate(FilaFramePacerBuilder* self, float fps);
-// TODO(handwritten) FilaFramePacerBuilder_latency: Builder & filament::FramePacer::Builder::latency(std::chrono::nanoseconds latency)
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
+FilaFramePacerBuilder* FilaFramePacerBuilder_latency(FilaFramePacerBuilder* self, int64_t latency);
 FilaFramePacerBuilder* FilaFramePacerBuilder_latencyFrames(FilaFramePacerBuilder* self, uint32_t frames);
 FilaFramePacer* FilaFramePacerBuilder_build(const FilaFramePacerBuilder* self, FilaEngine* engine);
 
@@ -66,12 +53,9 @@ FilaFramePacerFrameStatus FilaFramePacer_setupFrame(FilaFramePacer* self, const 
 bool FilaFramePacer_setupExtraFrame(FilaFramePacer* self);
 bool FilaFramePacer_hasGpuFallenBehind(FilaFramePacer* self, FilaRenderer* renderer);
 void FilaFramePacer_applyPresentationTime(FilaFramePacer* self, FilaRenderer* renderer);
-// TODO(handwritten) FilaFramePacer_getExpectedPresentationTime: time_point_t filament::FramePacer::getExpectedPresentationTime() const
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacer_getRenderingDeadline: time_point_t filament::FramePacer::getRenderingDeadline() const
-//     time_point_t: std::chrono::steady_clock::time_point
-// TODO(handwritten) FilaFramePacer_getEffectiveLatency: std::chrono::nanoseconds filament::FramePacer::getEffectiveLatency() const
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
+void FilaFramePacer_getExpectedPresentationTime(const FilaFramePacer* self, int64_t* out);
+void FilaFramePacer_getRenderingDeadline(const FilaFramePacer* self, int64_t* out);
+void FilaFramePacer_getEffectiveLatency(const FilaFramePacer* self, int64_t* out);
 FilaFramePacerPacingStatus FilaFramePacer_getPacingStatus(const FilaFramePacer* self);
 void FilaFramePacer_resetPacing(FilaFramePacer* self);
 float FilaFramePacer_getSelectedFrameRate(const FilaFramePacer* self);

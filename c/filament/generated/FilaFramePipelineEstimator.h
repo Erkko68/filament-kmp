@@ -11,10 +11,8 @@ extern "C" {
 // filament::FramePipelineEstimator::Workload
 FilaFramePipelineEstimatorWorkload* FilaFramePipelineEstimatorWorkload_create(void);
 void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorkload* self);
-// TODO(handwritten) FilaFramePipelineEstimatorWorkload_getIdealFrameDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::Workload::idealFrameDuration
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
-// TODO(handwritten) FilaFramePipelineEstimatorWorkload_setIdealFrameDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::Workload::idealFrameDuration
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
+void FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(const FilaFramePipelineEstimatorWorkload* self, int64_t* out);
+void FilaFramePipelineEstimatorWorkload_setIdealFrameDuration(FilaFramePipelineEstimatorWorkload* self, int64_t value);
 float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self);
 void FilaFramePipelineEstimatorWorkload_setIdealFrameRate(FilaFramePipelineEstimatorWorkload* self, float value);
 
@@ -23,10 +21,8 @@ FilaFramePipelineEstimatorPacingSizing* FilaFramePipelineEstimatorPacingSizing_c
 void FilaFramePipelineEstimatorPacingSizing_destroy(FilaFramePipelineEstimatorPacingSizing* self);
 uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFramePipelineEstimatorPacingSizing* self);
 void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value);
-// TODO(handwritten) FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::PacingSizing::safeDelayDuration
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
-// TODO(handwritten) FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::PacingSizing::safeDelayDuration
-//     std::chrono::nanoseconds: std::chrono::nanoseconds
+void FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(const FilaFramePipelineEstimatorPacingSizing* self, int64_t* out);
+void FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration(FilaFramePipelineEstimatorPacingSizing* self, int64_t value);
 
 // filament::FramePipelineEstimator
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile);
