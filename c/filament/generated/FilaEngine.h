@@ -186,8 +186,7 @@ uint32_t FilaEngine_getTextureCount(const FilaEngine* self);
 uint32_t FilaEngine_getSkyboxeCount(const FilaEngine* self);
 uint32_t FilaEngine_getColorGradingCount(const FilaEngine* self);
 uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self);
-// TODO(handwritten) FilaEngine_runCommandAsync: AsyncCallId filament::Engine::runCommandAsync(utils::Invocable<void ()> && command, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback onComplete, void * _Nullable user)
-//     AsyncCompletionCallback: std::function
+uint32_t FilaEngine_runCommandAsync(FilaEngine* self, FilaCallback command, void* commandUser, FilaCallbackHandler* handler, FilaEngineAsyncCompletionCallback onComplete, void* user);
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id);
 void FilaEngine_flushAndWait(FilaEngine* self);
 bool FilaEngine_flushAndWait_uint64_t(FilaEngine* self, uint64_t timeout);

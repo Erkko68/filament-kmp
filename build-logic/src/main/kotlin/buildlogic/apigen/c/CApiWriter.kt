@@ -186,14 +186,14 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val body = StringBuilder()
         if (module == baseModule) {
             body.appendLine("typedef int32_t FilaEntity;\n")
-            bridges.callbackTypes.values.forEach { body.appendLine(it) }
-            body.appendLine()
             bridges.mathTypes.forEach { body.appendLine(mathMirror(it)) }
             body.appendLine()
         }
         moduleRecords(module).forEach { body.appendLine("typedef struct ${CNames.type(it.name)} ${CNames.type(it.name)};") }
         surface.mapNotNull { api.enums[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
             .forEach { body.appendLine().append(enum(it)) }
+        // Callbacks take the handles and enums above.
+        if (module == baseModule) bridges.callbackTypes.values.joinTo(body, "\n", prefix = "\n", postfix = "\n")
         val include = if (module == baseModule) "#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>"
             else "#include \"../../$baseModule/generated/Types.h\""
         return header("${module}_Types", include, body.toString())

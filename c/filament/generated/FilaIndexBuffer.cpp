@@ -24,12 +24,20 @@ FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self
     return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
 }
 
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* self, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user) {
+    return fila::c(&fila::cpp(self)->async(fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
+}
+
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
     fila::cpp(self)->setBuffer(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+}
+
+uint32_t FilaIndexBuffer_setBufferAsync(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user) {
+    return fila::cpp(self)->setBufferAsync(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset, fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
 uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self) {

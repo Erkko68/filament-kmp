@@ -12,12 +12,6 @@ extern "C" {
 
 typedef int32_t FilaEntity;
 
-typedef void (*FilaArgCallback)(void* arg, void* user);
-typedef void (*FilaBufferDescriptorCallback)(void* buffer, size_t size, void* user);
-typedef void (*FilaCallback)(void* user);
-typedef void (*FilaKtxreaderKtx1ReaderCallback)(void *);
-typedef void (*FilaStreamCallback)(void *, void *);
-
 typedef struct FilaDouble2 { double v[2]; } FilaDouble2;
 typedef struct FilaDouble3 { double v[3]; } FilaDouble3;
 typedef struct FilaDouble4 { double v[4]; } FilaDouble4;
@@ -156,6 +150,8 @@ typedef struct FilaPlatformExternalImage FilaPlatformExternalImage;
 typedef struct FilaPlatformExternalImageHandle FilaPlatformExternalImageHandle;
 typedef struct FilaPlatformFrameTimestamps FilaPlatformFrameTimestamps;
 typedef struct FilaPlatformSwapChain FilaPlatformSwapChain;
+typedef struct FilaPlatformSync FilaPlatformSync;
+typedef struct FilaPresentCallable FilaPresentCallable;
 typedef struct FilaSamplerParams FilaSamplerParams;
 typedef struct FilaColorColorSpace FilaColorColorSpace;
 typedef struct FilaColorGamut FilaColorGamut;
@@ -515,6 +511,12 @@ typedef enum FilaVertexDomain {
     FILA_VERTEX_DOMAIN_DEVICE = 3,
 } FilaVertexDomain;
 
+// filament::backend::AsyncCallStatus
+typedef enum FilaAsyncCallStatus {
+    FILA_ASYNC_CALL_STATUS_COMPLETED = 0,
+    FILA_ASYNC_CALL_STATUS_CANCELED = 1,
+} FilaAsyncCallStatus;
+
 // filament::backend::Backend
 typedef enum FilaBackend {
     FILA_BACKEND_DEFAULT = 0,
@@ -838,6 +840,15 @@ typedef enum FilaShaderStage {
     FILA_SHADER_STAGE_COMPUTE = 2,
 } FilaShaderStage;
 
+// filament::backend::ShaderStageFlags
+typedef enum FilaShaderStageFlags {
+    FILA_SHADER_STAGE_FLAGS_NONE = 0,
+    FILA_SHADER_STAGE_FLAGS_VERTEX = 1,
+    FILA_SHADER_STAGE_FLAGS_FRAGMENT = 2,
+    FILA_SHADER_STAGE_FLAGS_COMPUTE = 4,
+    FILA_SHADER_STAGE_FLAGS_ALL_SHADER_STAGE_FLAGS = 7,
+} FilaShaderStageFlags;
+
 // filament::backend::StencilFace
 typedef enum FilaStencilFace {
     FILA_STENCIL_FACE_FRONT = 1,
@@ -1040,6 +1051,16 @@ typedef enum FilaUniformType {
     FILA_UNIFORM_TYPE_MAT4 = 17,
     FILA_UNIFORM_TYPE_STRUCT = 18,
 } FilaUniformType;
+
+typedef void (*FilaArgCallback)(void* arg, void* user);
+typedef void (*FilaBufferDescriptorCallback)(void* buffer, size_t size, void* user);
+typedef void (*FilaCallback)(void* user);
+typedef void (*FilaEngineAsyncCompletionCallback)(void*, FilaAsyncCallStatus);
+typedef void (*FilaIndexBufferAsyncCompletionCallback)(FilaIndexBuffer*, void*, FilaAsyncCallStatus);
+typedef void (*FilaKtxreaderKtx1ReaderCallback)(void *);
+typedef void (*FilaStreamCallback)(void *, void *);
+typedef void (*FilaTextureAsyncCompletionCallback)(FilaTexture*, void*, FilaAsyncCallStatus);
+typedef void (*FilaVertexBufferAsyncCompletionCallback)(FilaVertexBuffer*, void*, FilaAsyncCallStatus);
 
 #ifdef __cplusplus
 }

@@ -56,6 +56,10 @@ FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self) {
     return fila::c(&fila::cpp(self)->external());
 }
 
+FilaTextureBuilder* FilaTextureBuilder_async(FilaTextureBuilder* self, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+    return fila::c(&fila::cpp(self)->async(fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
+}
+
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
@@ -134,6 +138,18 @@ void FilaTexture_setImage_PixelBufferDescriptor(const FilaTexture* self, FilaEng
 
 void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
     fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+}
+
+uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+    return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, zoffset, width, height, depth, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
+}
+
+uint32_t FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+    return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
+}
+
+uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+    return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
 void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, uint32_t plane) {

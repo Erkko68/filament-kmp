@@ -32,7 +32,7 @@ internal class CppScopes {
     }
 
     fun resolve(spelling: String, scope: String): CppType {
-        val base = baseName(spelling) ?: return CppType(spelling, null, Kind.FUNCTION)
+        val base = baseName(spelling) ?: return CppType(spelling, null, Kind.FUNCTION, functionTypes(spelling).map { resolve(it, scope) })
         if (isBuiltin(base)) return CppType(spelling, null, Kind.BUILTIN)
         val decl = lookup(base, scope) ?: return CppType(spelling, null, Kind.UNRESOLVED)
         val kind = when (names[decl]) {
@@ -93,15 +93,34 @@ internal class CppScopes {
             val open = spelling.indexOf('<')
             val close = spelling.lastIndexOf('>')
             if (open < 0 || close < open) return emptyList()
-            val args = ArrayList<String>()
+            return splitTopLevel(spelling.substring(open + 1, close))
+        }
+
+        /** A function type's return and parameter types: `R (A, B)` and `R (*)(A, B)` give R, A, B. */
+        fun functionTypes(spelling: String): List<String> {
+            val close = spelling.lastIndexOf(')')
+            var open = close
             var depth = 0
-            var start = open + 1
-            for (i in start until close) when (spelling[i]) {
-                '<', '(' -> depth++
-                '>', ')' -> depth--
-                ',' -> if (depth == 0) { args += spelling.substring(start, i).trim(); start = i + 1 }
+            while (open > 0) {
+                if (spelling[open] == ')') depth++ else if (spelling[open] == '(' && --depth == 0) break
+                open--
             }
-            return args + spelling.substring(start, close).trim()
+            val params = splitTopLevel(spelling.substring(open + 1, close)).filter { it.isNotEmpty() && it != "void" }
+            return listOf(spelling.substringBefore('(').trim()) + params
+        }
+
+        private fun splitTopLevel(list: String): List<String> {
+            val parts = ArrayList<String>()
+            var depth = 0
+            var start = 0
+            list.forEachIndexed { i, c ->
+                when (c) {
+                    '<', '(' -> depth++
+                    '>', ')' -> depth--
+                    ',' -> if (depth == 0) { parts += list.substring(start, i).trim(); start = i + 1 }
+                }
+            }
+            return parts + list.substring(start).trim()
         }
 
         fun isBuiltin(base: String) = base.split(' ').all { it in BUILTIN_WORDS } || BUILTIN_TYPEDEFS.matches(base)

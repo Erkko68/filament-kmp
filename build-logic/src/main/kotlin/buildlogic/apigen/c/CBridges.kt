@@ -157,6 +157,7 @@ internal class CBridges(private val api: CppApi) {
             target.kind == Kind.FUNCTION && lastAlias != null && indirection == null -> functionPointer(lastAlias, target.spelling)
             decl in UPLOADS -> bridge.upload(decl!!, pixels = decl == PIXEL_BUFFER).also { callbackTypes += BUFFER_CALLBACK }
             decl == VECTOR -> vector(target, bridge)
+            decl == "std::function" && lastAlias != null -> function(lastAlias, target.args.single(), bridge)
             decl == "utils::Invocable" -> bridge.invocable(target.spelling).let { (b, typedef) -> callbackTypes += typedef; b }
             indirection == "&&" -> throw Unsupported("${type.spelling}: rvalue reference")
             target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
@@ -197,6 +198,24 @@ internal class CBridges(private val api: CppApi) {
             { call -> "fila::copy($call, outCapacity, [&](auto& x, uint32_t i) { $store })" },
             extra = listOf((if (handles) "${e.c}* const*" else "${e.c}*") to "out", "uint32_t" to "outCapacity"),
         )
+    }
+
+    /**
+     * A `std::function` alias C passes as a function pointer of the same shape, declared under the alias's name: its
+     * arguments cross as results do. NULL is an empty function. Filament's take their user data as an argument.
+     */
+    private fun function(alias: String, signature: CppType, bridge: Bridge): CBridge {
+        if (bridge.result || !bridge.byValue) throw Unsupported("$alias by reference or as a result")
+        val returns = signature.args.first()
+        if (returns.spelling != "void") throw Unsupported("$alias: returns a value")
+        val args = signature.args.drop(1).map { result(it) }
+        if (args.any { it.out || it.extra.isNotEmpty() }) throw Unsupported("$alias: arguments C takes in pieces")
+        val name = CNames.type(alias)
+        callbackTypes[name] = "typedef void (*$name)(${args.joinToString { it.c }.ifEmpty { "void" }});"
+        val params = args.indices.joinToString { "auto a$it" }
+        return CBridge(name, { n ->
+            "$n ? ${cpp(alias)}([=]($params) { $n(${args.withIndex().joinToString { (i, a) -> a.convert("a$i") }}); }) : nullptr"
+        })
     }
 
     /** A function pointer alias whose parameters are all C types: C declares the same type under the alias's name. */

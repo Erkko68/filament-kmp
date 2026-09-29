@@ -624,6 +624,10 @@ uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getRenderTargetCount());
 }
 
+uint32_t FilaEngine_runCommandAsync(FilaEngine* self, FilaCallback command, void* commandUser, FilaCallbackHandler* handler, FilaEngineAsyncCompletionCallback onComplete, void* user) {
+    return fila::cpp(self)->runCommandAsync([=] { command(commandUser); }, fila::cpp(handler), onComplete ? filament::Engine::AsyncCompletionCallback([=](auto a0, auto a1) { onComplete(a0, static_cast<FilaAsyncCallStatus>(a1)); }) : nullptr, user);
+}
+
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id) {
     return fila::cpp(self)->cancelAsyncCall(id);
 }

@@ -18,18 +18,15 @@ FilaVertexBufferBuilder* FilaVertexBufferBuilder_attribute(FilaVertexBufferBuild
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, bool normalized);
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* self, bool enabled);
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_name(FilaVertexBufferBuilder* self, const char* name);
-// TODO(handwritten) FilaVertexBufferBuilder_async: Builder & filament::VertexBuffer::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     AsyncCompletionCallback: std::function
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_async(FilaVertexBufferBuilder* self, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user);
 FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* self, FilaEngine* engine);
 
 // filament::VertexBuffer
 uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* self);
 void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
-// TODO(handwritten) FilaVertexBuffer_setBufferAtAsync: AsyncCallId filament::VertexBuffer::setBufferAtAsync(Engine & engine, uint8_t bufferIndex, BufferDescriptor && buffer, uint32_t byteOffset, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     AsyncCompletionCallback: std::function
+uint32_t FilaVertexBuffer_setBufferAtAsync(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user);
 void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject);
-// TODO(handwritten) FilaVertexBuffer_setBufferObjectAtAsync: AsyncCallId filament::VertexBuffer::setBufferObjectAtAsync(Engine & engine, uint8_t bufferIndex, const BufferObject * _Nonnull bufferObject, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     AsyncCompletionCallback: std::function
+uint32_t FilaVertexBuffer_setBufferObjectAtAsync(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user);
 bool FilaVertexBuffer_isCreationComplete(const FilaVertexBuffer* self);
 
 

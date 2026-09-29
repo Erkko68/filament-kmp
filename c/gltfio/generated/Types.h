@@ -35,6 +35,13 @@ typedef enum FilaGltfioTextureProviderTextureFlags {
     FILA_GLTFIO_TEXTURE_PROVIDER_TEXTURE_FLAGS_S_RGB = 1,
 } FilaGltfioTextureProviderTextureFlags;
 
+// filament::gltfio::UvSet
+typedef enum FilaGltfioUvSet {
+    FILA_GLTFIO_UV_SET_UNUSED = 0,
+    FILA_GLTFIO_UV_SET_UV0 = 1,
+    FILA_GLTFIO_UV_SET_UV1 = 2,
+} FilaGltfioUvSet;
+
 #ifdef __cplusplus
 }
 #endif

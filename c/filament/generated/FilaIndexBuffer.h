@@ -14,14 +14,12 @@ void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name);
-// TODO(handwritten) FilaIndexBufferBuilder_async: Builder & filament::IndexBuffer::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     AsyncCompletionCallback: std::function
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* self, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user);
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine);
 
 // filament::IndexBuffer
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
-// TODO(handwritten) FilaIndexBuffer_setBufferAsync: AsyncCallId filament::IndexBuffer::setBufferAsync(Engine & engine, BufferDescriptor && buffer, uint32_t byteOffset, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     AsyncCompletionCallback: std::function
+uint32_t FilaIndexBuffer_setBufferAsync(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user);
 uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self);
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self);
 

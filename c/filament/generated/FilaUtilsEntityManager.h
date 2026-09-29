@@ -14,7 +14,7 @@ void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerLi
 // utils::EntityManager
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void);
 // TODO(handwritten) FilaUtilsEntityManager_registerChangeCallback: void utils::EntityManager::registerChangeCallback(const void * token, ChangeCallback callback)
-//     ChangeCallback: std::function
+//     Slice<const Entity>: utils::Slice
 void FilaUtilsEntityManager_unregisterChangeCallback(FilaUtilsEntityManager* self, const void* token);
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self);
 uint32_t FilaUtilsEntityManager_getMaxEntityCount(void);

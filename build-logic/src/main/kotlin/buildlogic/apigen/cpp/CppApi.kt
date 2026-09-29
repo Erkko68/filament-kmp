@@ -24,24 +24,30 @@ class CppApi(
     fun surface(headers: Set<String>): Set<String> {
         val seen = LinkedHashSet<String>()
         val queue = ArrayDeque(apiRecords(headers).map { it.name })
-        apiFunctions(headers).flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).mapNotNull { it.decl } }
+        apiFunctions(headers).flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).flatMap { it.withArgs() }.mapNotNull { it.decl } }
         while (queue.isNotEmpty()) {
             val name = queue.removeFirst()
             if (!seen.add(name)) continue
             records[name]?.let { record ->
                 val methods = record.methods.filter { it.isPublic && it.isApi && !it.isDeprecated }
                 (methods.flatMap { m -> m.params.map { it.type } + m.returns } + record.fields.filter { it.isPublic }.map { it.type })
-                    .mapNotNullTo(queue) { it.decl }
+                    .flatMap { it.withArgs() }.mapNotNullTo(queue) { it.decl }
             }
-            aliases[name]?.decl?.let(queue::add)
+            aliases[name]?.withArgs()?.mapNotNullTo(queue) { it.decl }
         }
         return seen
     }
 }
 
-/** A type as the header spells it, the declaration its base name resolves to (see [Kind]), and its template arguments. */
+/**
+ * A type as the header spells it, the declaration its base name resolves to (see [Kind]), and its template arguments
+ * ([args]; a function type's are its return and parameter types).
+ */
 class CppType(val spelling: String, val decl: String?, val kind: Kind, val args: List<CppType> = emptyList()) {
     enum class Kind { BUILTIN, DECLARED, EXTERNAL, FUNCTION, TEMPLATE_PARAMETER, UNRESOLVED }
+
+    /** This type and, recursively, its [args]. */
+    fun withArgs(): List<CppType> = listOf(this) + args.flatMap { it.withArgs() }
 
     override fun toString() = when (kind) {
         Kind.DECLARED, Kind.TEMPLATE_PARAMETER -> "$spelling{$decl}"
