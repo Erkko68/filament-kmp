@@ -118,6 +118,25 @@ The Filament half is the half we control. Concretely: build Filament with the We
 enabled on desktop (`WEBGPU_OPTION` / `-Wj` in `build.sh`) and run the existing samples against it
 to gauge how close that half already is. skiko's half we can only watch.
 
+### Findings: reaching skiko's context (2026-09-29)
+
+Wrapping a foreign texture on skiko's Ganesh context has been public API since 2021
+(`BackendRenderTarget.makeMetal` / `makeDirect3D` / `makeGL` → `Surface.makeFromBackendRenderTarget`
+→ `makeImageSnapshot`). The missing piece is *finding Compose's context*, which the macOS path does
+by reflection.
+
+- **`Canvas.recordingContext` doesn't help inside Compose.** skiko 0.152 made it public
+  ([JetBrains/skiko#1219](https://github.com/JetBrains/skiko/pull/1219), shipped with Compose
+  `1.13.0-alpha01`). Probed on macOS/Metal: it returns `null` on every frame, both in
+  `drawBehind` and in a wrapped `SkiaLayer.renderDelegate`. On AWT, skiko records every public
+  draw hook into a `PictureRecorder`; only its internal redrawer ever touches the GPU surface.
+- **skiko-graphite doesn't help yet.** `Surface.wrapBackendTexture` needs a Graphite `Recorder`,
+  and Compose's AWT redrawers are still Ganesh-only.
+- **Vulkan can't be forced.** `SKIKO_RENDER_API` has no `VULKAN` value (it falls back to the OS
+  default), and there's no Vulkan AWT redrawer, so Filament Vulkan ↔ skiko Vulkan isn't possible yet.
+
+Recheck when Compose exposes its context publicly or skiko ships a Graphite AWT redrawer.
+
 ### Track these
 
 - **skiko: Switch from Ganesh to Graphite** — https://github.com/JetBrains/skiko/issues/982
