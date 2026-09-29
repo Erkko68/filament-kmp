@@ -12,6 +12,7 @@ extern "C" {
 FilaGT7ToneMapper* FilaGT7ToneMapper_create(void);
 void FilaGT7ToneMapper_destroy(FilaGT7ToneMapper* self);
 FilaToneMapper* FilaGT7ToneMapper_asToneMapper(FilaGT7ToneMapper* self);
+void FilaGT7ToneMapper_invoke(const FilaGT7ToneMapper* self, const FilaFloat3* color, FilaFloat3* out);
 bool FilaGT7ToneMapper_isOneDimensional(const FilaGT7ToneMapper* self);
 bool FilaGT7ToneMapper_isLDR(const FilaGT7ToneMapper* self);
 

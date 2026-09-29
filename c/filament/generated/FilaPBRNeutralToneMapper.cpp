@@ -16,6 +16,10 @@ FilaToneMapper* FilaPBRNeutralToneMapper_asToneMapper(FilaPBRNeutralToneMapper* 
     return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
+void FilaPBRNeutralToneMapper_invoke(const FilaPBRNeutralToneMapper* self, const FilaFloat3* color, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->operator()(std::bit_cast<filament::math::float3>(*color)));
+}
+
 bool FilaPBRNeutralToneMapper_isOneDimensional(const FilaPBRNeutralToneMapper* self) {
     return fila::cpp(self)->isOneDimensional();
 }

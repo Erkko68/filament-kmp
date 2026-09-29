@@ -92,7 +92,7 @@ internal class CppScopes {
     private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
 
     private companion object {
-        val QUALIFIERS = Regex("""\b(const|volatile|struct|class|enum|typename|_Nonnull|_Nullable|_Null_unspecified)\b|[*&]|\[\d*]""")
+        val QUALIFIERS = Regex("""\b(const|volatile|struct|class|enum|typename|__restrict|_Nonnull|_Nullable|_Null_unspecified)\b|[*&]|\[\d*]""")
         val TEMPLATE_ARGS = Regex("<[^<>]*>")
         val ELABORATED = Regex("""^(const\s+)?(class|struct)\s""")
         val BUILTIN_WORDS = setOf("void", "bool", "char", "short", "int", "long", "float", "double", "signed", "unsigned")

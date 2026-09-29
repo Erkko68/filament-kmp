@@ -335,6 +335,8 @@ FILA_TYPE(FilaColorGamut, filament::color::Gamut)
 FILA_TYPE(FilaColorPartialColorSpace, filament::color::PartialColorSpace)
 FILA_TYPE(FilaColorPrimaries, filament::color::Primaries)
 FILA_TYPE(FilaColorTransferFunction, filament::color::TransferFunction)
+FILA_TYPE(FilaGeometrySurfaceOrientation, filament::geometry::SurfaceOrientation)
+FILA_TYPE(FilaGeometrySurfaceOrientationBuilder, filament::geometry::SurfaceOrientation::Builder)
 FILA_TYPE(FilaUtilsEntityManager, utils::EntityManager)
 FILA_TYPE(FilaUtilsEntityManagerListener, utils::EntityManager::Listener)
 

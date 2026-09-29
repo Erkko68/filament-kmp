@@ -29,7 +29,9 @@ import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.utils.Bookmark
 import io.github.erkko68.filament.utils.Manipulator
+import io.github.erkko68.filament.utils.Mode
 import io.github.erkko68.filament.utils.radians
 import kotlin.math.ln
 
@@ -53,10 +55,10 @@ interface CameraController {
     fun resetToHome()
 
     /** Capture the current camera pose as a bookmark to restore later with [jumpToBookmark]. */
-    fun saveBookmark(): Manipulator.Bookmark
+    fun saveBookmark(): Bookmark
 
     /** Restore a pose previously captured with [saveBookmark]. */
-    fun jumpToBookmark(bookmark: Manipulator.Bookmark)
+    fun jumpToBookmark(bookmark: Bookmark)
 }
 
 // Like foundation's awaitFirstDown, minus its "mouse down means primary button only" rule
@@ -178,9 +180,9 @@ class OrbitCameraController internal constructor(
 
     override fun resetToHome() { manipulator.jumpToBookmark(manipulator.homeBookmark); sync() }
 
-    override fun saveBookmark(): Manipulator.Bookmark = manipulator.currentBookmark
+    override fun saveBookmark(): Bookmark = manipulator.currentBookmark
 
-    override fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
+    override fun jumpToBookmark(bookmark: Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
 }
@@ -228,9 +230,9 @@ fun rememberOrbitCameraController(
             .zoomSpeed(zoomSpeed)
             .orbitSpeed(orbitSpeedX, orbitSpeedY)
             .panning(panningEnabled)
-            .build(Manipulator.Mode.ORBIT)
+            .build(Mode.ORBIT)
         // Carry the current pose across a tuning rebuild so the camera doesn't move.
-        previous[0]?.let { manipulator.jumpToBookmark(it.currentBookmark) }
+        previous[0]?.currentBookmark?.use { manipulator.jumpToBookmark(it) }
         previous[0] = manipulator
         OrbitCameraController(manipulator, cameraState).also { it.sync() }
     }
@@ -263,8 +265,8 @@ class MapCameraController internal constructor(
 ) : CameraController {
     override fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
     override fun resetToHome() { manipulator.jumpToBookmark(manipulator.homeBookmark); sync() }
-    override fun saveBookmark(): Manipulator.Bookmark = manipulator.currentBookmark
-    override fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
+    override fun saveBookmark(): Bookmark = manipulator.currentBookmark
+    override fun jumpToBookmark(bookmark: Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
 }
@@ -300,9 +302,9 @@ fun rememberMapCameraController(
             .zoomSpeed(zoomSpeed)
             .mapExtent(mapWidth, mapHeight)
             .mapMinDistance(minDistance)
-            .build(Manipulator.Mode.MAP)
+            .build(Mode.MAP)
         // Carry the current pose across a tuning rebuild so the camera doesn't move.
-        previous[0]?.let { manipulator.jumpToBookmark(it.currentBookmark) }
+        previous[0]?.currentBookmark?.use { manipulator.jumpToBookmark(it) }
         previous[0] = manipulator
         MapCameraController(manipulator, cameraState).also { it.sync() }
     }
@@ -359,9 +361,9 @@ class FlightCameraController internal constructor(
     /** Snap back to the flight start position/orientation set at creation. */
     override fun resetToHome() { manipulator.jumpToBookmark(manipulator.homeBookmark); sync() }
 
-    override fun saveBookmark(): Manipulator.Bookmark = manipulator.currentBookmark
+    override fun saveBookmark(): Bookmark = manipulator.currentBookmark
 
-    override fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
+    override fun jumpToBookmark(bookmark: Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
 }
@@ -418,7 +420,7 @@ fun rememberFlightCameraController(
             .flightSpeedSteps(speedSteps)
             .flightMoveDamping(moveDamping)
             .flightPanSpeed(panSpeedX, panSpeedY)
-            .build(Manipulator.Mode.FLIGHT)
+            .build(Mode.FREE_FLIGHT)
         // The manipulator's speed is maxMoveSpeed^(wheel/half), i.e. always 1.0 at wheel 0 —
         // maxMoveSpeed alone has no effect until you scroll. Seed the wheel so the camera
         // actually starts at initialMoveSpeed, and re-apply it after a tuning rebuild.
@@ -433,7 +435,7 @@ fun rememberFlightCameraController(
         manipulator.scroll(0, 0, speedWheel[0])
         // Carry the current pose across a tuning rebuild so the camera doesn't move (same as
         // orbit/map); without this, orientation would snap back to startPitch/startYaw.
-        previous[0]?.let { manipulator.jumpToBookmark(it.currentBookmark) }
+        previous[0]?.currentBookmark?.use { manipulator.jumpToBookmark(it) }
         previous[0] = manipulator
         FlightCameraController(manipulator, cameraState, focusRequester, speedWheel, speedSteps)
             .also { it.sync() }

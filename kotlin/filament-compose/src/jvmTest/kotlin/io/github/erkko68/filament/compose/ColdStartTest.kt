@@ -7,6 +7,7 @@ import io.github.erkko68.filament.SurfaceOrientation
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.filamat.MaterialBuilder
 import io.github.erkko68.filament.utils.Manipulator
+import io.github.erkko68.filament.utils.Mode
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -16,7 +17,7 @@ private val coldStarts: Map<String, () -> Unit> = mapOf(
     "Engine.Builder" to { Engine.Builder().backend(Engine.Backend.NOOP).build().destroy() },
     "Engine.steadyClockTimeNano" to { Engine.steadyClockTimeNano },
     "EntityManager.get" to { EntityManager.get().create() },
-    "Manipulator.Builder" to { Manipulator.Builder().viewport(1, 1).build(Manipulator.Mode.ORBIT).destroy() },
+    "Manipulator.Builder" to { Manipulator.Builder().viewport(1, 1).build(Mode.ORBIT).destroy() },
     "SurfaceOrientation.Builder" to {
         SurfaceOrientation.Builder().vertexCount(1).normals(floatArrayOf(0f, 0f, 1f)).build().destroy()
     },

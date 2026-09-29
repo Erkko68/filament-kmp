@@ -4,26 +4,6 @@
 
 extern "C" {
 
-FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedPixelDataType(const FilaImageKtxInfo* info) {
-    return static_cast<FilaCompressedPixelDataType>(ktxreader::Ktx1Reader::toCompressedPixelDataType(*fila::cpp(info)));
-}
-
-FilaPixelDataType FilaKtxreaderKtx1Reader_toPixelDataType(const FilaImageKtxInfo* info) {
-    return static_cast<FilaPixelDataType>(ktxreader::Ktx1Reader::toPixelDataType(*fila::cpp(info)));
-}
-
-FilaPixelDataFormat FilaKtxreaderKtx1Reader_toPixelDataFormat(const FilaImageKtxInfo* info) {
-    return static_cast<FilaPixelDataFormat>(ktxreader::Ktx1Reader::toPixelDataFormat(*fila::cpp(info)));
-}
-
-bool FilaKtxreaderKtx1Reader_isCompressed(const FilaImageKtxInfo* info) {
-    return ktxreader::Ktx1Reader::isCompressed(*fila::cpp(info));
-}
-
-FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo* info) {
-    return static_cast<FilaTextureFormat>(ktxreader::Ktx1Reader::toTextureFormat(*fila::cpp(info)));
-}
-
 FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedFilamentEnum(uint32_t format) {
     return static_cast<FilaCompressedPixelDataType>(ktxreader::Ktx1Reader::toCompressedFilamentEnum<filament::backend::CompressedPixelDataType>(format));
 }

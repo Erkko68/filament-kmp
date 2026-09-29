@@ -18,6 +18,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Changed
 - **gltfio follows its C++ API** (`gltfio`): `AssetLoader.create(AssetConfiguration)`, `ResourceLoader(ResourceConfiguration)` with explicit `addTextureProvider`, `createUbershaderProvider`/`createStbProvider`/`createKtx2Provider`/`createWebpProvider`, a concrete `MaterialProvider`, `UvMap` of `UvSet` and C++-named per-index getters.
+- **filament-utils follows its C++ API** (`filament-utils`): top-level `Mode` (`FREE_FLIGHT`), `Fov` and closeable `Bookmark` with `interpolate`/`duration`, `raycast` returns a hit, `getRay`; `IBLPrefilterContext` nests its filters as `operator invoke` with `Config`/`Options` plus `IrradianceFilter`; `Ktx1Bundle`/`Ktx1Reader` replace `KTX1Loader`; new `Ktx2Reader`, `TangentSpaceMesh`, `Transcoder`.
 - **`MaterialBuilder.init()`/`shutdown()`/`initJs` replace the `Filamat` object** (`filamat`), matching filamat's C++.
 - **`MaterialBuilder.parameter(name, …)` replaces `uniformParameter`/`uniformParameterArray`/`samplerParameter`** and `MaterialPackage.data` replaces `buffer` (`filamat`), matching filamat's C++.
 - **Android runs on our own C API over JNI** (`filament-jni` + `filament-jni-android`, `libfilament-c.so` per ABI) instead of the upstream `filament-android`/`gltfio-android`/`filament-utils-android`/`filamat-android` artifacts; Android `nativeObject` is now the C handle as a `Long`.

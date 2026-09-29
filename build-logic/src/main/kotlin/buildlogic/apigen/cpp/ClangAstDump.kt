@@ -11,7 +11,8 @@ internal class ClangAstDump(private val exec: ExecOperations, private val workDi
         dump.outputStream().use { out ->
             exec.exec {
                 commandLine(
-                    "clang++", "-std=c++20", "-fsyntax-only", "-I", includeDir.path,
+                    // No NEON: the API is what every target has (ToneMapper's float32x4_t overloads are ARM-only).
+                    "clang++", "-std=c++20", "-fsyntax-only", "-U__ARM_NEON", "-I", includeDir.path,
                     "-Xclang", "-ast-dump=json", "-Xclang", "-ast-dump-filter=$filter", unit.path,
                 )
                 standardOutput = out

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 private val MODULE_ARCHIVES = mapOf(
     "filament" to listOf("filament", "backend", "utils", "geometry", "ibl-lite", "filaflat", "filabridge", "smol-v", "zstd", "meshoptimizer"),
     "filamat" to listOf("filamat", "shaders", "filabridge", "filaflat"),
-    "filament-utils" to listOf("filament-iblprefilter", "camutils", "image", "imageio-lite", "ktxreader", "stb"),
+    "filament-utils" to listOf("filament-iblprefilter", "camutils", "image", "imageio-lite", "ktxreader", "basis_transcoder", "stb"),
     "gltfio" to listOf("gltfio_core", "dracodec", "basis_transcoder", "mikktspace", "stb", "image", "imageio-lite", "ktxreader", "uberarchive", "uberzlib"),
 )
 

@@ -1,7 +1,7 @@
 public abstract interface class io/github/erkko68/filament/compose/CameraController {
-	public abstract fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public abstract fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public abstract fun resetToHome ()V
-	public abstract fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public abstract fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public abstract fun setViewport (II)V
 }
 
@@ -68,9 +68,9 @@ public final class io/github/erkko68/filament/compose/FilamentViewStateKt {
 public final class io/github/erkko68/filament/compose/FlightCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
 	public final fun adjustSpeed (F)V
-	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public fun resetToHome ()V
-	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public fun setViewport (II)V
 	public final fun update (F)V
 }
@@ -107,17 +107,17 @@ public final class io/github/erkko68/filament/compose/InteractionKt {
 
 public final class io/github/erkko68/filament/compose/MapCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public fun resetToHome ()V
-	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public fun setViewport (II)V
 }
 
 public final class io/github/erkko68/filament/compose/OrbitCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public fun resetToHome ()V
-	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public fun setViewport (II)V
 }
 

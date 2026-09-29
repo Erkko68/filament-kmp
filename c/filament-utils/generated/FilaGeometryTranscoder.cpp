@@ -44,4 +44,16 @@ void FilaGeometryTranscoderConfig_setInputStrideBytes(FilaGeometryTranscoderConf
     fila::cpp(self)->inputStrideBytes = value;
 }
 
+FilaGeometryTranscoder* FilaGeometryTranscoder_create(const FilaGeometryTranscoderConfig* config) {
+    return fila::c(new filament::geometry::Transcoder(*fila::cpp(config)));
+}
+
+void FilaGeometryTranscoder_destroy(FilaGeometryTranscoder* self) {
+    delete fila::cpp(self);
+}
+
+uint32_t FilaGeometryTranscoder_invoke(const FilaGeometryTranscoder* self, float* target, const void* source, uint32_t count) {
+    return static_cast<uint32_t>(fila::cpp(self)->operator()(target, source, static_cast<size_t>(count)));
+}
+
 } // extern "C"

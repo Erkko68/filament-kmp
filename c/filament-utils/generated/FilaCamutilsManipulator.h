@@ -8,57 +8,6 @@
 extern "C" {
 #endif
 
-// filament::camutils::Manipulator::Config
-FilaCamutilsManipulatorConfig* FilaCamutilsManipulatorConfig_create(void);
-void FilaCamutilsManipulatorConfig_destroy(FilaCamutilsManipulatorConfig* self);
-uint32_t FilaCamutilsManipulatorConfig_getViewport(const FilaCamutilsManipulatorConfig* self, int32_t* out, uint32_t outCapacity);
-void FilaCamutilsManipulatorConfig_setViewport(FilaCamutilsManipulatorConfig* self, const int32_t* value, uint32_t valueCount);
-void FilaCamutilsManipulatorConfig_getTargetPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
-void FilaCamutilsManipulatorConfig_setTargetPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
-void FilaCamutilsManipulatorConfig_getUpVector(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
-void FilaCamutilsManipulatorConfig_setUpVector(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
-float FilaCamutilsManipulatorConfig_getZoomSpeed(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setZoomSpeed(FilaCamutilsManipulatorConfig* self, float value);
-void FilaCamutilsManipulatorConfig_getOrbitHomePosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
-void FilaCamutilsManipulatorConfig_setOrbitHomePosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
-void FilaCamutilsManipulatorConfig_getOrbitSpeed(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out);
-void FilaCamutilsManipulatorConfig_setOrbitSpeed(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value);
-FilaCamutilsFov FilaCamutilsManipulatorConfig_getFovDirection(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFovDirection(FilaCamutilsManipulatorConfig* self, FilaCamutilsFov value);
-float FilaCamutilsManipulatorConfig_getFovDegrees(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFovDegrees(FilaCamutilsManipulatorConfig* self, float value);
-float FilaCamutilsManipulatorConfig_getFarPlane(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFarPlane(FilaCamutilsManipulatorConfig* self, float value);
-void FilaCamutilsManipulatorConfig_getMapExtent(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out);
-void FilaCamutilsManipulatorConfig_setMapExtent(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value);
-float FilaCamutilsManipulatorConfig_getMapMinDistance(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setMapMinDistance(FilaCamutilsManipulatorConfig* self, float value);
-void FilaCamutilsManipulatorConfig_getFlightStartPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
-void FilaCamutilsManipulatorConfig_setFlightStartPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
-float FilaCamutilsManipulatorConfig_getFlightStartPitch(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFlightStartPitch(FilaCamutilsManipulatorConfig* self, float value);
-float FilaCamutilsManipulatorConfig_getFlightStartYaw(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFlightStartYaw(FilaCamutilsManipulatorConfig* self, float value);
-float FilaCamutilsManipulatorConfig_getFlightMaxSpeed(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFlightMaxSpeed(FilaCamutilsManipulatorConfig* self, float value);
-float FilaCamutilsManipulatorConfig_getFlightSpeedSteps(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFlightSpeedSteps(FilaCamutilsManipulatorConfig* self, float value);
-void FilaCamutilsManipulatorConfig_getFlightPanSpeed(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out);
-void FilaCamutilsManipulatorConfig_setFlightPanSpeed(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value);
-float FilaCamutilsManipulatorConfig_getFlightMoveDamping(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setFlightMoveDamping(FilaCamutilsManipulatorConfig* self, float value);
-void FilaCamutilsManipulatorConfig_getGroundPlane(const FilaCamutilsManipulatorConfig* self, FilaFloat4* out);
-void FilaCamutilsManipulatorConfig_setGroundPlane(FilaCamutilsManipulatorConfig* self, const FilaFloat4* value);
-// TODO(handwritten) FilaCamutilsManipulatorConfig_getRaycastCallback: RayCallback filament::camutils::Manipulator::Config::raycastCallback
-//     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
-// TODO(handwritten) FilaCamutilsManipulatorConfig_setRaycastCallback: RayCallback filament::camutils::Manipulator::Config::raycastCallback
-//     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
-void* FilaCamutilsManipulatorConfig_getRaycastUserdata(const FilaCamutilsManipulatorConfig* self);
-// TODO(handwritten) FilaCamutilsManipulatorConfig_setRaycastUserdata: void * filament::camutils::Manipulator::Config::raycastUserdata
-//     void *: the struct would keep the caller's pointer
-bool FilaCamutilsManipulatorConfig_getPanning(const FilaCamutilsManipulatorConfig* self);
-void FilaCamutilsManipulatorConfig_setPanning(FilaCamutilsManipulatorConfig* self, bool value);
-
 // filament::camutils::Manipulator::Builder
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_create(void);
 void FilaCamutilsManipulatorBuilder_destroy(FilaCamutilsManipulatorBuilder* self);
@@ -84,8 +33,7 @@ FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_groundPlane(FilaC
 //     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_panning(FilaCamutilsManipulatorBuilder* self, bool enabled);
 FilaCamutilsManipulator* FilaCamutilsManipulatorBuilder_build(FilaCamutilsManipulatorBuilder* self, FilaCamutilsMode mode);
-void FilaCamutilsManipulatorBuilder_getDetails(const FilaCamutilsManipulatorBuilder* self, FilaCamutilsManipulatorConfig* out);
-void FilaCamutilsManipulatorBuilder_setDetails(FilaCamutilsManipulatorBuilder* self, const FilaCamutilsManipulatorConfig* value);
+// skipped filament::camutils::Manipulator::Builder::details: uses filament::camutils::Manipulator::Config
 
 // filament::camutils::Manipulator
 void FilaCamutilsManipulator_destroy(FilaCamutilsManipulator* self);

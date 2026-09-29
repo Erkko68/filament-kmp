@@ -176,7 +176,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             isConst = qualifiers.split(' ').contains("const"),
             isPublic = isPublic,
             isDeprecated = node.children().any { it["kind"] == "DeprecatedAttr" },
-            isApi = node["isImplicit"] != true && node["explicitlyDeleted"] != true && !name.startsWith("operator"),
+            isApi = node["isImplicit"] != true && node["explicitlyDeleted"] != true && (!name.startsWith("operator") || name == "operator()"),
             templateParameters = templateParameters,
         )
     }

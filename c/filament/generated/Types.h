@@ -157,6 +157,8 @@ typedef struct FilaColorGamut FilaColorGamut;
 typedef struct FilaColorPartialColorSpace FilaColorPartialColorSpace;
 typedef struct FilaColorPrimaries FilaColorPrimaries;
 typedef struct FilaColorTransferFunction FilaColorTransferFunction;
+typedef struct FilaGeometrySurfaceOrientation FilaGeometrySurfaceOrientation;
+typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientationBuilder;
 typedef struct FilaUtilsEntityManager FilaUtilsEntityManager;
 typedef struct FilaUtilsEntityManagerListener FilaUtilsEntityManagerListener;
 

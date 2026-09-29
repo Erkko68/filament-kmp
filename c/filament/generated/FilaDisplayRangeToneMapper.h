@@ -12,6 +12,7 @@ extern "C" {
 FilaDisplayRangeToneMapper* FilaDisplayRangeToneMapper_create(void);
 void FilaDisplayRangeToneMapper_destroy(FilaDisplayRangeToneMapper* self);
 FilaToneMapper* FilaDisplayRangeToneMapper_asToneMapper(FilaDisplayRangeToneMapper* self);
+void FilaDisplayRangeToneMapper_invoke(const FilaDisplayRangeToneMapper* self, const FilaFloat3* c, FilaFloat3* out);
 bool FilaDisplayRangeToneMapper_isOneDimensional(const FilaDisplayRangeToneMapper* self);
 bool FilaDisplayRangeToneMapper_isLDR(const FilaDisplayRangeToneMapper* self);
 

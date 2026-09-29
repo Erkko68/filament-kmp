@@ -9,8 +9,9 @@ internal object CNames {
     fun type(qualified: String) = "Fila" + qualified.split("::").filter { it !in DROPPED }
         .joinToString("") { it.substringBefore('<').replaceFirstChar(Char::uppercaseChar) }
 
+    /** `operator()` is `invoke`, as Kotlin calls it. */
     fun function(owner: String, method: String, suffix: String = "") =
-        "${type(owner)}_$method" + if (suffix.isEmpty()) "" else "_$suffix"
+        "${type(owner)}_${if (method == "operator()") "invoke" else method}" + if (suffix.isEmpty()) "" else "_$suffix"
 
     fun enumConstant(enum: String, constant: String) = "${upperSnake(type(enum))}_${upperSnake(constant)}"
 

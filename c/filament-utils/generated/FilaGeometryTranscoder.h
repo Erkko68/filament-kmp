@@ -20,6 +20,11 @@ void FilaGeometryTranscoderConfig_setComponentCount(FilaGeometryTranscoderConfig
 uint32_t FilaGeometryTranscoderConfig_getInputStrideBytes(const FilaGeometryTranscoderConfig* self);
 void FilaGeometryTranscoderConfig_setInputStrideBytes(FilaGeometryTranscoderConfig* self, uint32_t value);
 
+// filament::geometry::Transcoder
+FilaGeometryTranscoder* FilaGeometryTranscoder_create(const FilaGeometryTranscoderConfig* config);
+void FilaGeometryTranscoder_destroy(FilaGeometryTranscoder* self);
+uint32_t FilaGeometryTranscoder_invoke(const FilaGeometryTranscoder* self, float* target, const void* source, uint32_t count);
+
 
 #ifdef __cplusplus
 }

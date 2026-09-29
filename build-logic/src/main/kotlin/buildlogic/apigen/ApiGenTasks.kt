@@ -18,6 +18,7 @@ private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio"
 /** C modules on the generated API, by the Kotlin package of their externals; the rest still use c/<module>/{c,cpp}. */
 private val GENERATED_MODULES = mapOf(
     "filamat" to "io.github.erkko68.filament.filamat.capi",
+    "filament-utils" to "io.github.erkko68.filament.utils.capi",
     "gltfio" to "io.github.erkko68.filament.gltfio.capi",
 )
 

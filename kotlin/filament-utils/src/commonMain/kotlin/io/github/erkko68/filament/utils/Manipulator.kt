@@ -1,26 +1,36 @@
 package io.github.erkko68.filament.utils
 
-import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.Filament
-import io.github.erkko68.filament.interop.*
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.interop.*
+import io.github.erkko68.filament.utils.capi.*
 
-/** The axis held constant when the viewport changes in MAP mode. */
-typealias Fov = Camera.Fov
+/** The interaction style of a [Manipulator]. */
+enum class Mode {
+    /** Rotates and dollies around a target point. */
+    ORBIT,
+    /** Pans and zooms over a flat ground plane. */
+    MAP,
+    /** First-person free-flight camera. */
+    FREE_FLIGHT,
+}
+
+/** The axis held constant when the viewport changes in [Mode.MAP]. */
+enum class Fov { VERTICAL, HORIZONTAL }
 
 /**
  * Helper that enables camera interaction similar to sketchfab or Google Maps.
  *
  * Clients notify the manipulator of various mouse or touch events, then periodically call
  * [getLookAt] so that they can adjust their camera. Three modes are supported: [Mode.ORBIT],
- * [Mode.MAP], and [Mode.FLIGHT]. To construct a manipulator, use [Builder] and pass the desired
- * mode to [Builder.build].
+ * [Mode.MAP], and [Mode.FREE_FLIGHT]. To construct a manipulator, use [Builder] and pass the
+ * desired mode to [Builder.build].
  *
  * Usage example:
  * ```kotlin
  * val manip = Manipulator.Builder()
  *     .viewport(1024, 768)
- *     .build(Manipulator.Mode.ORBIT)
+ *     .build(Mode.ORBIT)
  *
  * // In mouse-down handler:
  * manip.grabBegin(x, y, false)
@@ -44,18 +54,8 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
-    /** Camera manipulation mode. */
-    enum class Mode {
-        /** Rotates and dollies around a target point. */
-        ORBIT,
-        /** Pans and zooms over a flat ground plane. */
-        MAP,
-        /** First-person free-flight camera. */
-        FLIGHT
-    }
-
     /**
-     * Keys used to translate the camera in [Mode.FLIGHT] mode.
+     * Keys used to translate the camera in [Mode.FREE_FLIGHT] mode.
      *
      * FORWARD and BACKWARD dolly the camera forwards and backwards.
      * LEFT and RIGHT strafe the camera left and right.
@@ -63,193 +63,109 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
      */
     enum class Key { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
 
-    /**
-     * Builder for [Manipulator] instances.
-     */
+    /** Builder for [Manipulator] instances. */
     class Builder() {
         init { Filament.init() } // usable before any Engine exists
-        private val nativeBuilder = FilaManipulatorBuilder_create()
+        private val nativeBuilder = FilaCamutilsManipulatorBuilder_create()
 
         /** Width and height of the viewing area. */
-        fun viewport(width: Int, height: Int): Builder {
-            FilaManipulatorBuilder_viewport(nativeBuilder, width, height)
-            return this
-        }
+        fun viewport(width: Int, height: Int): Builder = apply { FilaCamutilsManipulatorBuilder_viewport(nativeBuilder, width, height) }
 
         /** World-space position of interest; defaults to (0, 0, 0). */
-        fun targetPosition(x: Float, y: Float, z: Float): Builder {
-            FilaManipulatorBuilder_targetPosition(nativeBuilder, x, y, z)
-            return this
-        }
+        fun targetPosition(x: Float, y: Float, z: Float): Builder = apply { FilaCamutilsManipulatorBuilder_targetPosition(nativeBuilder, x, y, z) }
 
         /** Orientation for the home position; defaults to (0, 1, 0). */
-        fun upVector(x: Float, y: Float, z: Float): Builder {
-            FilaManipulatorBuilder_upVector(nativeBuilder, x, y, z)
-            return this
-        }
+        fun upVector(x: Float, y: Float, z: Float): Builder = apply { FilaCamutilsManipulatorBuilder_upVector(nativeBuilder, x, y, z) }
 
         /** Multiplied with scroll delta; defaults to 0.01. */
-        fun zoomSpeed(speed: Float): Builder {
-            FilaManipulatorBuilder_zoomSpeed(nativeBuilder, speed)
-            return this
-        }
+        fun zoomSpeed(value: Float): Builder = apply { FilaCamutilsManipulatorBuilder_zoomSpeed(nativeBuilder, value) }
 
         /** Initial eye position in world space for [Mode.ORBIT]; defaults to (0, 0, 1). */
-        fun orbitHomePosition(x: Float, y: Float, z: Float): Builder {
-            FilaManipulatorBuilder_orbitHomePosition(nativeBuilder, x, y, z)
-            return this
-        }
+        fun orbitHomePosition(x: Float, y: Float, z: Float): Builder = apply { FilaCamutilsManipulatorBuilder_orbitHomePosition(nativeBuilder, x, y, z) }
 
         /** Multiplied with viewport delta for [Mode.ORBIT]; defaults to 0.01. */
-        fun orbitSpeed(x: Float, y: Float): Builder {
-            FilaManipulatorBuilder_orbitSpeed(nativeBuilder, x, y)
-            return this
-        }
+        fun orbitSpeed(x: Float, y: Float): Builder = apply { FilaCamutilsManipulatorBuilder_orbitSpeed(nativeBuilder, x, y) }
 
-        /** The axis held constant when viewport changes in [Mode.MAP]. */
-        fun fovDirection(fov: Fov): Builder {
-            FilaManipulatorBuilder_fovDirection(nativeBuilder, fov.ordinal)
-            return this
-        }
+        /** The axis held constant when the viewport changes in [Mode.MAP]. */
+        fun fovDirection(fov: Fov): Builder = apply { FilaCamutilsManipulatorBuilder_fovDirection(nativeBuilder, fov.ordinal) }
 
         /** The full field of view in degrees (not half-angle) for [Mode.MAP]. */
-        fun fovDegrees(degrees: Float): Builder {
-            FilaManipulatorBuilder_fovDegrees(nativeBuilder, degrees)
-            return this
-        }
+        fun fovDegrees(degrees: Float): Builder = apply { FilaCamutilsManipulatorBuilder_fovDegrees(nativeBuilder, degrees) }
 
         /** The distance to the far plane for [Mode.MAP]. */
-        fun farPlane(distance: Float): Builder {
-            FilaManipulatorBuilder_farPlane(nativeBuilder, distance)
-            return this
-        }
+        fun farPlane(distance: Float): Builder = apply { FilaCamutilsManipulatorBuilder_farPlane(nativeBuilder, distance) }
 
-        /** The ground size for computing home position in [Mode.MAP]. */
-        fun mapExtent(width: Float, height: Float): Builder {
-            FilaManipulatorBuilder_mapExtent(nativeBuilder, width, height)
-            return this
-        }
+        /** The ground size for computing the home position in [Mode.MAP]. */
+        fun mapExtent(worldWidth: Float, worldHeight: Float): Builder = apply { FilaCamutilsManipulatorBuilder_mapExtent(nativeBuilder, worldWidth, worldHeight) }
 
         /** Constrains the zoom-in level in [Mode.MAP]. */
-        fun mapMinDistance(distance: Float): Builder {
-            FilaManipulatorBuilder_mapMinDistance(nativeBuilder, distance)
-            return this
-        }
+        fun mapMinDistance(mindist: Float): Builder = apply { FilaCamutilsManipulatorBuilder_mapMinDistance(nativeBuilder, mindist) }
 
-        /** Initial eye position in world space for [Mode.FLIGHT]; defaults to (0, 0, 0). */
-        fun flightStartPosition(x: Float, y: Float, z: Float): Builder {
-            FilaManipulatorBuilder_flightStartPosition(nativeBuilder, x, y, z)
-            return this
-        }
+        /** Initial eye position in world space for [Mode.FREE_FLIGHT]; defaults to (0, 0, 0). */
+        fun flightStartPosition(x: Float, y: Float, z: Float): Builder = apply { FilaCamutilsManipulatorBuilder_flightStartPosition(nativeBuilder, x, y, z) }
 
-        /** Initial pitch and yaw orientation in radians for [Mode.FLIGHT]; defaults to (0, 0). */
-        fun flightStartOrientation(pitch: Float, yaw: Float): Builder {
-            FilaManipulatorBuilder_flightStartOrientation(nativeBuilder, pitch, yaw)
-            return this
-        }
+        /** Initial pitch and yaw orientation in radians for [Mode.FREE_FLIGHT]; defaults to (0, 0). */
+        fun flightStartOrientation(pitch: Float, yaw: Float): Builder = apply { FilaCamutilsManipulatorBuilder_flightStartOrientation(nativeBuilder, pitch, yaw) }
 
-        /** Maximum camera speed in world units per second for [Mode.FLIGHT]; defaults to 10. */
-        fun flightMaxMoveSpeed(maxSpeed: Float): Builder {
-            FilaManipulatorBuilder_flightMaxMoveSpeed(nativeBuilder, maxSpeed)
-            return this
-        }
+        /** Maximum camera speed in world units per second for [Mode.FREE_FLIGHT]; defaults to 10. */
+        fun flightMaxMoveSpeed(maxSpeed: Float): Builder = apply { FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed(nativeBuilder, maxSpeed) }
 
-        /** Number of speed steps adjustable with the scroll wheel in [Mode.FLIGHT]; defaults to 80. */
-        fun flightSpeedSteps(steps: Int): Builder {
-            FilaManipulatorBuilder_flightSpeedSteps(nativeBuilder, steps)
-            return this
-        }
+        /** Number of speed steps adjustable with the scroll wheel in [Mode.FREE_FLIGHT]; defaults to 80. */
+        fun flightSpeedSteps(steps: Int): Builder = apply { FilaCamutilsManipulatorBuilder_flightSpeedSteps(nativeBuilder, steps) }
 
-        /** Multiplied with viewport delta for panning in [Mode.FLIGHT]; defaults to (0.01, 0.01). */
-        fun flightPanSpeed(x: Float, y: Float): Builder {
-            FilaManipulatorBuilder_flightPanSpeed(nativeBuilder, x, y)
-            return this
-        }
+        /** Multiplied with viewport delta for panning in [Mode.FREE_FLIGHT]; defaults to (0.01, 0.01). */
+        fun flightPanSpeed(x: Float, y: Float): Builder = apply { FilaCamutilsManipulatorBuilder_flightPanSpeed(nativeBuilder, x, y) }
 
         /**
-         * Applies a deceleration to camera movement in [Mode.FLIGHT]; defaults to 0 (no damping).
-         *
-         * Lower values give slower damping times. A good default is 15. Too high a value may
-         * lead to instability.
+         * Applies a deceleration to camera movement in [Mode.FREE_FLIGHT]; defaults to 0 (no damping).
+         * Lower values give slower damping times. A good default is 15. Too high a value may lead to instability.
          */
-        fun flightMoveDamping(damping: Float): Builder {
-            FilaManipulatorBuilder_flightMoveDamping(nativeBuilder, damping)
-            return this
-        }
+        fun flightMoveDamping(damping: Float): Builder = apply { FilaCamutilsManipulatorBuilder_flightMoveDamping(nativeBuilder, damping) }
 
         /** Plane equation (ax + by + cz + d = 0) used as a raycast fallback for grab-and-pan. */
-        fun groundPlane(a: Float, b: Float, c: Float, d: Float): Builder {
-            FilaManipulatorBuilder_groundPlane(nativeBuilder, a, b, c, d)
-            return this
-        }
+        fun groundPlane(a: Float, b: Float, c: Float, d: Float): Builder = apply { FilaCamutilsManipulatorBuilder_groundPlane(nativeBuilder, a, b, c, d) }
 
         /** Sets whether panning is enabled. */
-        fun panning(enabled: Boolean): Builder {
-            FilaManipulatorBuilder_panning(nativeBuilder, enabled)
-            return this
-        }
+        fun panning(enabled: Boolean): Builder = apply { FilaCamutilsManipulatorBuilder_panning(nativeBuilder, enabled) }
 
-        /**
-         * Creates a new camera manipulator in the specified mode.
-         *
-         * @param mode the interaction mode: [Mode.ORBIT], [Mode.MAP], or [Mode.FLIGHT]
-         * @return a new [Manipulator] instance
-         */
+        /** Creates a new camera manipulator in [mode]. The builder can't be used afterwards. */
         fun build(mode: Mode): Manipulator {
-            val handle = FilaManipulatorBuilder_build(nativeBuilder, mode.ordinal)
-            FilaManipulatorBuilder_destroy(nativeBuilder)
+            val handle = FilaCamutilsManipulatorBuilder_build(nativeBuilder, mode.ordinal)
+            FilaCamutilsManipulatorBuilder_destroy(nativeBuilder)
             return Manipulator(handle)
         }
     }
 
     /** Destroys the manipulator and releases all resources. */
-    fun destroy() {
-        FilaManipulator_destroy(nativeHandle)
-    }
+    fun destroy() = FilaCamutilsManipulator_destroy(nativeHandle)
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()
 
-    /**
-     * Gets the immutable mode of the manipulator.
-     *
-     * @return the [Mode] this manipulator was created with
-     */
-    val mode: Mode get() = Mode.entries[FilaManipulator_getMode(nativeHandle)]
+    /** The immutable mode of the manipulator. */
+    val mode: Mode get() = Mode.entries[FilaCamutilsManipulator_getMode(nativeHandle)]
+
+    /** Sets the viewport dimensions. The manipulator uses this to process grab events and raycasts. */
+    fun setViewport(width: Int, height: Int) = FilaCamutilsManipulator_setViewport(nativeHandle, width, height)
 
     /**
-     * Sets the viewport dimensions. The manipulator uses this to process grab events and raycasts.
-     *
-     * @param width the viewport width in pixels
-     * @param height the viewport height in pixels
+     * Gets the current orthonormal basis; this is usually called once per frame. Each array
+     * (size ≥ 3) receives a world-space position or direction.
      */
-    fun setViewport(width: Int, height: Int) {
-        FilaManipulator_setViewport(nativeHandle, width, height)
+    fun getLookAt(eyePosition: FloatArray, targetPosition: FloatArray, upward: FloatArray) {
+        eyePosition.usePinned { e -> targetPosition.usePinned { t -> upward.usePinned { u -> FilaCamutilsManipulator_getLookAt(nativeHandle, e, t, u) } } }
     }
 
     /**
-     * Gets the current orthonormal basis; this is usually called once per frame.
+     * Given a viewport coordinate, picks a point in the ground plane into [result] (size ≥ 3).
      *
-     * @param outEye float array of size ≥ 3 filled with the eye position in world space
-     * @param outTarget float array of size ≥ 3 filled with the target position in world space
-     * @param outUp float array of size ≥ 3 filled with the up vector in world space
+     * @return whether the ray hit the ground plane
      */
-    fun getLookAt(outEye: FloatArray, outTarget: FloatArray, outUp: FloatArray) = interopScope {
-        val eye = toInterop(outEye); val target = toInterop(outTarget); val up = toInterop(outUp)
-        FilaManipulator_getLookAt(nativeHandle, eye, target, up)
-        eye.fromInterop(outEye); target.fromInterop(outTarget); up.fromInterop(outUp)
-    }
+    fun raycast(x: Int, y: Int, result: FloatArray): Boolean = result.usePinned { FilaCamutilsManipulator_raycast(nativeHandle, x, y, it) }
 
-    /**
-     * Given a viewport coordinate, picks a point in the ground plane, or in the actual scene if
-     * a raycast callback was configured.
-     *
-     * @param x X-coordinate in viewport space
-     * @param y Y-coordinate in viewport space
-     * @param outResult float array of size ≥ 3 filled with the world-space intersection point
-     */
-    fun raycast(x: Int, y: Int, outResult: FloatArray) {
-        outResult.usePinned { FilaManipulator_raycast(nativeHandle, x, y, it) }
+    /** Given a viewport coordinate, computes a picking ray: its [origin] and direction [dir] (each size ≥ 3). */
+    fun getRay(x: Int, y: Int, origin: FloatArray, dir: FloatArray) {
+        origin.usePinned { o -> dir.usePinned { d -> FilaCamutilsManipulator_getRay(nativeHandle, x, y, o, d) } }
     }
 
     /**
@@ -257,223 +173,87 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
      *
      * In [Mode.MAP] mode, this starts a panning session.
      * In [Mode.ORBIT] mode, this starts either rotating or strafing.
-     * In [Mode.FLIGHT] mode, this starts a nodal panning session.
+     * In [Mode.FREE_FLIGHT] mode, this starts a nodal panning session.
      *
-     * @param x X-coordinate for the point of interest in viewport space
-     * @param y Y-coordinate for the point of interest in viewport space
      * @param strafe [Mode.ORBIT] only: if true, starts a translation rather than a rotation
      */
-    fun grabBegin(x: Int, y: Int, strafe: Boolean) {
-        FilaManipulator_grabBegin(nativeHandle, x, y, strafe)
-    }
+    fun grabBegin(x: Int, y: Int, strafe: Boolean) = FilaCamutilsManipulator_grabBegin(nativeHandle, x, y, strafe)
 
-    /**
-     * Updates a grabbing session.
-     *
-     * Must be called at least once between [grabBegin] and [grabEnd] to dirty the camera.
-     *
-     * @param x current X-coordinate in viewport space
-     * @param y current Y-coordinate in viewport space
-     */
-    fun grabUpdate(x: Int, y: Int) {
-        FilaManipulator_grabUpdate(nativeHandle, x, y)
-    }
+    /** Updates a grabbing session. Must be called at least once between [grabBegin] and [grabEnd] to dirty the camera. */
+    fun grabUpdate(x: Int, y: Int) = FilaCamutilsManipulator_grabUpdate(nativeHandle, x, y)
 
-    /**
-     * Ends a grabbing session.
-     */
-    fun grabEnd() {
-        FilaManipulator_grabEnd(nativeHandle)
-    }
+    /** Ends a grabbing session. */
+    fun grabEnd() = FilaCamutilsManipulator_grabEnd(nativeHandle)
 
     /**
      * Signals that a key is now in the down state.
      *
-     * In [Mode.FLIGHT] mode, the camera is translated forward/backward and strafed left/right
-     * depending on the depressed keys, enabling WASD-style movement.
-     *
-     * @param key the key that was pressed
+     * In [Mode.FREE_FLIGHT] mode, the camera is translated forward/backward and strafed
+     * left/right depending on the depressed keys, enabling WASD-style movement.
      */
-    fun keyDown(key: Key) {
-        FilaManipulator_keyDown(nativeHandle, key.ordinal)
-    }
+    fun keyDown(key: Key) = FilaCamutilsManipulator_keyDown(nativeHandle, key.ordinal)
 
-    /**
-     * Signals that a key is now in the up state.
-     *
-     * @param key the key that was released
-     * @see keyDown
-     */
-    fun keyUp(key: Key) {
-        FilaManipulator_keyUp(nativeHandle, key.ordinal)
-    }
+    /** Signals that a key is now in the up state. */
+    fun keyUp(key: Key) = FilaCamutilsManipulator_keyUp(nativeHandle, key.ordinal)
 
     /**
      * In [Mode.MAP] and [Mode.ORBIT] modes, dollys the camera along the viewing direction.
-     * In [Mode.FLIGHT] mode, adjusts the move speed of the camera.
+     * In [Mode.FREE_FLIGHT] mode, adjusts the move speed of the camera.
      *
-     * @param x X-coordinate for the point of interest in viewport space; ignored in [Mode.FLIGHT]
-     * @param y Y-coordinate for the point of interest in viewport space; ignored in [Mode.FLIGHT]
-     * @param delta in [Mode.MAP] and [Mode.ORBIT]: negative means "zoom in", positive means "zoom out";
-     *              in [Mode.FLIGHT]: negative means "slower", positive means "faster"
+     * @param x X-coordinate for the point of interest in viewport space; ignored in [Mode.FREE_FLIGHT]
+     * @param y Y-coordinate for the point of interest in viewport space; ignored in [Mode.FREE_FLIGHT]
+     * @param scrolldelta in [Mode.MAP] and [Mode.ORBIT]: negative means "zoom in", positive means "zoom out";
+     *                    in [Mode.FREE_FLIGHT]: negative means "slower", positive means "faster"
      */
-    fun scroll(x: Int, y: Int, delta: Float) {
-        FilaManipulator_scroll(nativeHandle, x, y, delta)
-    }
+    fun scroll(x: Int, y: Int, scrolldelta: Float) = FilaCamutilsManipulator_scroll(nativeHandle, x, y, scrolldelta)
 
     /**
-     * Processes input and updates internal state.
-     *
-     * Must be called once every frame before [getLookAt] is valid.
+     * Processes input and updates internal state. Must be called once every frame before
+     * [getLookAt] is valid.
      *
      * @param deltaTime the amount of time in seconds passed since the previous call to update
      */
-    fun update(deltaTime: Float) {
-        FilaManipulator_update(nativeHandle, deltaTime)
-    }
+    fun update(deltaTime: Float) = FilaCamutilsManipulator_update(nativeHandle, deltaTime)
 
-    /**
-     * Gets a handle that can be used to reset the manipulator back to its current position.
-     *
-     * @return a [Bookmark] representing the current camera state
-     * @see jumpToBookmark
-     */
-    val currentBookmark: Bookmark get() = Bookmark(FilaManipulator_getCurrentBookmark(nativeHandle))
+    /** A new [Bookmark] of the current position, for [jumpToBookmark]. */
+    val currentBookmark: Bookmark get() = Bookmark().also { FilaCamutilsManipulator_getCurrentBookmark(nativeHandle, it.nativeHandle) }
 
-    /**
-     * Gets a handle that can be used to reset the manipulator back to its home position.
-     *
-     * @return a [Bookmark] representing the home camera state
-     * @see jumpToBookmark
-     */
-    val homeBookmark: Bookmark get() = Bookmark(FilaManipulator_getHomeBookmark(nativeHandle))
+    /** A new [Bookmark] of the home position, for [jumpToBookmark]. */
+    val homeBookmark: Bookmark get() = Bookmark().also { FilaCamutilsManipulator_getHomeBookmark(nativeHandle, it.nativeHandle) }
 
-    /**
-     * Sets the manipulator position and orientation back to a previously stashed state.
-     *
-     * @param bookmark a [Bookmark] obtained from [getCurrentBookmark] or [getHomeBookmark]
-     * @see getCurrentBookmark
-     * @see getHomeBookmark
-     */
-    fun jumpToBookmark(bookmark: Bookmark) {
-        FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
-    }
-
-    /** Opaque handle to a viewing position and orientation, used to animate the camera. */
-    class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: NativePointer) {
-        /** The native bookmark, for interop with code calling the Fila* C API directly. */
-        @InternalFilamentApi
-        val nativeObject: NativePointer get() = nativeHandle
-    }
+    /** Sets the manipulator position and orientation back to a stashed state. */
+    fun jumpToBookmark(bookmark: Bookmark) = FilaCamutilsManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
 }
 
-@ExternalSymbolName("FilaManipulatorBuilder_create")
-private external fun FilaManipulatorBuilder_create(): NativePointer
+/**
+ * Opaque memento to a viewing position and orientation (e.g. the "home" camera position), used
+ * to track camera animation between waypoints. In map mode this implements Van Wijk interpolation.
+ *
+ * @see Manipulator.currentBookmark
+ * @see Manipulator.jumpToBookmark
+ */
+class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: NativePointer) : AutoCloseable {
+    internal constructor() : this(FilaCamutilsBookmark_create())
 
-@ExternalSymbolName("FilaManipulatorBuilder_viewport")
-private external fun FilaManipulatorBuilder_viewport(builder: NativePointer, width: Int, height: Int)
+    /** The native bookmark, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
 
-@ExternalSymbolName("FilaManipulatorBuilder_targetPosition")
-private external fun FilaManipulatorBuilder_targetPosition(builder: NativePointer, x: Float, y: Float, z: Float)
+    /** Frees the bookmark. */
+    fun destroy() = FilaCamutilsBookmark_destroy(nativeHandle)
 
-@ExternalSymbolName("FilaManipulatorBuilder_upVector")
-private external fun FilaManipulatorBuilder_upVector(builder: NativePointer, x: Float, y: Float, z: Float)
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close() = destroy()
 
-@ExternalSymbolName("FilaManipulatorBuilder_zoomSpeed")
-private external fun FilaManipulatorBuilder_zoomSpeed(builder: NativePointer, speed: Float)
+    companion object {
+        /**
+         * Interpolates between two bookmarks. [t] must be between 0 and 1 (inclusive), and the
+         * two endpoints must have the same mode (ORBIT or MAP).
+         */
+        fun interpolate(a: Bookmark, b: Bookmark, t: Double): Bookmark =
+            Bookmark().also { FilaCamutilsBookmark_interpolate(a.nativeHandle, b.nativeHandle, t, it.nativeHandle) }
 
-@ExternalSymbolName("FilaManipulatorBuilder_orbitHomePosition")
-private external fun FilaManipulatorBuilder_orbitHomePosition(builder: NativePointer, x: Float, y: Float, z: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_orbitSpeed")
-private external fun FilaManipulatorBuilder_orbitSpeed(builder: NativePointer, x: Float, y: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_fovDirection")
-private external fun FilaManipulatorBuilder_fovDirection(builder: NativePointer, fov: Int)
-
-@ExternalSymbolName("FilaManipulatorBuilder_fovDegrees")
-private external fun FilaManipulatorBuilder_fovDegrees(builder: NativePointer, degrees: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_farPlane")
-private external fun FilaManipulatorBuilder_farPlane(builder: NativePointer, distance: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_mapExtent")
-private external fun FilaManipulatorBuilder_mapExtent(builder: NativePointer, width: Float, height: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_mapMinDistance")
-private external fun FilaManipulatorBuilder_mapMinDistance(builder: NativePointer, distance: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_flightStartPosition")
-private external fun FilaManipulatorBuilder_flightStartPosition(builder: NativePointer, x: Float, y: Float, z: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_flightStartOrientation")
-private external fun FilaManipulatorBuilder_flightStartOrientation(builder: NativePointer, pitch: Float, yaw: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_flightMaxMoveSpeed")
-private external fun FilaManipulatorBuilder_flightMaxMoveSpeed(builder: NativePointer, maxSpeed: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_flightSpeedSteps")
-private external fun FilaManipulatorBuilder_flightSpeedSteps(builder: NativePointer, steps: Int)
-
-@ExternalSymbolName("FilaManipulatorBuilder_flightPanSpeed")
-private external fun FilaManipulatorBuilder_flightPanSpeed(builder: NativePointer, x: Float, y: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_flightMoveDamping")
-private external fun FilaManipulatorBuilder_flightMoveDamping(builder: NativePointer, damping: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_groundPlane")
-private external fun FilaManipulatorBuilder_groundPlane(builder: NativePointer, a: Float, b: Float, c: Float, d: Float)
-
-@ExternalSymbolName("FilaManipulatorBuilder_panning")
-private external fun FilaManipulatorBuilder_panning(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaManipulatorBuilder_build")
-private external fun FilaManipulatorBuilder_build(builder: NativePointer, mode: Int): NativePointer
-
-@ExternalSymbolName("FilaManipulatorBuilder_destroy")
-private external fun FilaManipulatorBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaManipulator_destroy")
-private external fun FilaManipulator_destroy(manip: NativePointer)
-
-@ExternalSymbolName("FilaManipulator_getMode")
-private external fun FilaManipulator_getMode(manip: NativePointer): Int
-
-@ExternalSymbolName("FilaManipulator_setViewport")
-private external fun FilaManipulator_setViewport(manip: NativePointer, width: Int, height: Int)
-
-@ExternalSymbolName("FilaManipulator_getLookAt")
-private external fun FilaManipulator_getLookAt(manip: NativePointer, outEye: NativePointer, outTarget: NativePointer, outUp: NativePointer)
-
-@ExternalSymbolName("FilaManipulator_raycast")
-private external fun FilaManipulator_raycast(manip: NativePointer, x: Int, y: Int, outResult: NativePointer)
-
-@ExternalSymbolName("FilaManipulator_grabBegin")
-private external fun FilaManipulator_grabBegin(manip: NativePointer, x: Int, y: Int, strafe: Boolean)
-
-@ExternalSymbolName("FilaManipulator_grabUpdate")
-private external fun FilaManipulator_grabUpdate(manip: NativePointer, x: Int, y: Int)
-
-@ExternalSymbolName("FilaManipulator_grabEnd")
-private external fun FilaManipulator_grabEnd(manip: NativePointer)
-
-@ExternalSymbolName("FilaManipulator_keyDown")
-private external fun FilaManipulator_keyDown(manip: NativePointer, key: Int)
-
-@ExternalSymbolName("FilaManipulator_keyUp")
-private external fun FilaManipulator_keyUp(manip: NativePointer, key: Int)
-
-@ExternalSymbolName("FilaManipulator_scroll")
-private external fun FilaManipulator_scroll(manip: NativePointer, x: Int, y: Int, delta: Float)
-
-@ExternalSymbolName("FilaManipulator_update")
-private external fun FilaManipulator_update(manip: NativePointer, deltaTime: Float)
-
-@ExternalSymbolName("FilaManipulator_getCurrentBookmark")
-private external fun FilaManipulator_getCurrentBookmark(manip: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaManipulator_getHomeBookmark")
-private external fun FilaManipulator_getHomeBookmark(manip: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaManipulator_jumpToBookmark")
-private external fun FilaManipulator_jumpToBookmark(manip: NativePointer, bookmark: NativePointer)
+        /** Recommends a duration for animation between two MAP endpoints, as a unitless multiplier. */
+        fun duration(a: Bookmark, b: Bookmark): Double = FilaCamutilsBookmark_duration(a.nativeHandle, b.nativeHandle)
+    }
+}

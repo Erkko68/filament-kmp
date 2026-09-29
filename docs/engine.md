@@ -160,7 +160,7 @@ provider.destroy()
 ```
 
 `filament-utils` similarly gives you `Manipulator` (orbit / map / flight camera control),
-`KTX1Loader` and `HDRLoader` with no Compose involved.
+`Ktx1Reader`/`Ktx2Reader`, `IBLPrefilterContext` and `HDRLoader` with no Compose involved.
 
 ## Lifecycle
 

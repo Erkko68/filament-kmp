@@ -19,6 +19,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private val surface = api.surface(headers)
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
+    /** Records the API's functions and constructors take (IBLPrefilterContext, only passed to its filters). */
+    private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
+        .plus(api.records.values.flatMap { it.constructors })
+        .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
     private val files = LinkedHashMap<String, Section>()
 
     /** One generated header and its forwarders. */
@@ -61,10 +65,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private fun record(record: CppRecord, file: Section) {
         val section = Section(file.module)
         val self = CNames.type(record.name)
-        // Constructing is only worth it for something to call: filamat::Enums, say, only holds static templates.
+        // Constructing is only worth it for something to call or something taking it: not for Color's static helpers.
         val instanceMethods = record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated }
         val cpp = bridges.cpp(record.name)
-        if (!bridges.uninstantiated(record) && record.allocatable && (instanceMethods || bridges.isValue(record.name))) {
+        if (!bridges.uninstantiated(record) && record.allocatable && (instanceMethods || bridges.isValue(record.name) || record.name in parameterTypes)) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
             skipped.forEach { section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), "")) }
             constructors.zip(suffixes(constructors.map { ctor -> ctor.map { it.type.spelling } })).forEach { (params, suffix) ->

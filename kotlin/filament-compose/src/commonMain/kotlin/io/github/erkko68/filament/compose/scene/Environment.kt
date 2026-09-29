@@ -8,11 +8,10 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.utils.EquirectangularToCubemap
 import io.github.erkko68.filament.utils.HDRLoader
 import io.github.erkko68.filament.utils.IBLPrefilterContext
-import io.github.erkko68.filament.utils.KTX1Loader
-import io.github.erkko68.filament.utils.SpecularFilter
+import io.github.erkko68.filament.utils.Ktx1Bundle
+import io.github.erkko68.filament.utils.Ktx1Reader
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -47,7 +46,7 @@ class Environment internal constructor(
 
 /**
  * Loads an IBL environment (and optional skybox) from KTX1 data and wires it into the scene's
- * indirect-light/skybox state. This is the convenience path over hand-wiring [KTX1Loader],
+ * indirect-light/skybox state. This is the convenience path over hand-wiring [Ktx1Reader],
  * texture lifetimes, and [IndirectLightState]/[SkyboxState].
  *
  * Call it **outside** `rememberFilamentScene { }` (its result feeds the scene's parameters), so
@@ -89,9 +88,9 @@ fun rememberKTXEnvironment(
     }
     iblBytes?.let { bytes ->
         val reflections = remember(engine, bytes) {
-            KTX1Loader.createTexture(engine, bytes, KTX1Loader.Options())
+            Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
         }
-        val sh = remember(bytes) { KTX1Loader.getSphericalHarmonics(bytes) }
+        val sh = remember(bytes) { Ktx1Bundle(bytes).use { bundle -> FloatArray(9 * 3).takeIf { bundle.getSphericalHarmonics(it) } } }
         DisposableEffect(reflections, sh) {
             if (reflections != null) {
                 indirectLightState.reflections = reflections
@@ -114,7 +113,7 @@ fun rememberKTXEnvironment(
         }
         skyBytes?.let { bytes ->
             val texture = remember(engine, bytes) {
-                KTX1Loader.createTexture(engine, bytes, KTX1Loader.Options())
+                Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
             }
             DisposableEffect(texture) {
                 if (texture != null) {
@@ -136,7 +135,7 @@ fun rememberKTXEnvironment(
 /**
  * Builds an [Environment] from an equirectangular **HDR** image instead of pre-baked KTX —
  * no `cmgen` step, just ship the `.hdr`. The reflection cubemap and skybox are prefiltered on
- * the GPU at load via [IBLPrefilterContext]/[EquirectangularToCubemap]/[SpecularFilter].
+ * the GPU at load via [IBLPrefilterContext]'s EquirectangularToCubemap and SpecularFilter.
  *
  * The sibling of [rememberKTXEnvironment] (which loads pre-baked KTX) — same returned type, same
  * scene wiring:
@@ -220,11 +219,11 @@ private class PrefilteredHdr(val skybox: Texture, val reflections: Texture)
 private fun prefilterHdr(engine: Engine, bytes: ByteArray, format: Texture.InternalFormat): PrefilteredHdr? {
     val equirect = HDRLoader.createTexture(engine, bytes, format) ?: return null
     val context = IBLPrefilterContext(engine)
-    val toCubemap = EquirectangularToCubemap(context)
-    val specular = SpecularFilter(context)
+    val toCubemap = IBLPrefilterContext.EquirectangularToCubemap(context)
+    val specular = IBLPrefilterContext.SpecularFilter(context)
     try {
-        val skybox = toCubemap.run(equirect)
-        val reflections = specular.run(skybox)
+        val skybox = toCubemap(equirect)
+        val reflections = specular(skybox)
         return PrefilteredHdr(skybox, reflections)
     } finally {
         // GPU reads of `equirect`/`skybox` are already enqueued before these destroy commands, so

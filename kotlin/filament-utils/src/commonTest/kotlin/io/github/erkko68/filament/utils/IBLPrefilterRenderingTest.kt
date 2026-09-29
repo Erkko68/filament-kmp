@@ -3,16 +3,16 @@ package io.github.erkko68.filament.utils
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.utils.testutils.UtilsRenderingTestFixture
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
- * Real-backend coverage for IBLPrefilter run() bindings, driven by a synthetic
+ * Real-backend coverage for the IBLPrefilter filters, driven by a synthetic
  * in-memory equirectangular texture (no external HDR asset needed).
  */
 class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
     @Test
-    fun testEquirectangularToCubemapAndSpecularFilterRun() {
+    fun testFiltersInvoke() {
         val engine = engine ?: return
 
         // 16x8 (2:1) RGBA16F equirectangular source, filled with mid-grey half-floats.
@@ -40,15 +40,24 @@ class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
         engine.flushAndWait()
 
         val context = IBLPrefilterContext(engine)
-        val cubemap = EquirectangularToCubemap(context).run(equirect)
-        assertNotNull(cubemap)
+        val toCubemap = IBLPrefilterContext.EquirectangularToCubemap(context)
+        val specular = IBLPrefilterContext.SpecularFilter(context)
+        val irradiance = IBLPrefilterContext.IrradianceFilter(context)
+        val cubemap = toCubemap(equirect)
         assertTrue(engine.isValidTexture(cubemap))
 
-        val filtered = SpecularFilter(context).run(cubemap)
-        assertNotNull(filtered)
+        val filtered = specular(IBLPrefilterContext.SpecularFilter.Options(lodOffset = 2f), cubemap)
+        assertTrue(engine.isValidTexture(filtered))
+        // Given an output texture, the filters write into it and hand it back.
+        val irradianceOut = irradiance(cubemap)
+        assertSame(irradianceOut, irradiance(cubemap, irradianceOut))
 
         engine.flushAndWait()
+        irradiance.destroy()
+        specular.destroy()
+        toCubemap.destroy()
         context.destroy()
+        engine.destroyTexture(irradianceOut)
         engine.destroyTexture(filtered)
         engine.destroyTexture(cubemap)
         engine.destroyTexture(equirect)

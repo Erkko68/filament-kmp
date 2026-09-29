@@ -33,6 +33,8 @@ class CppApi(
     fun skipReason(params: List<CppParam>): String? = usesSkipped(params.map { it.type })
 
     private fun usesSkipped(types: List<CppType>) = types.flatMap { it.withArgs() }.mapNotNull { it.decl }
+        // Through aliases too: Ktx1Reader takes image::KtxInfo as ktxreader::KtxInfo.
+        .map { decl -> generateSequence(decl) { aliases[it]?.decl }.last() }
         .firstNotNullOfOrNull { decl -> decl.takeIf { it in records }?.let(::skipReason)?.let { "uses $decl" } }
 
     /** [skipped] entries that name nothing, stale after an upstream rename or removal. */
@@ -115,7 +117,7 @@ class CppRecord(
 
 /**
  * A method, or a namespace-level function ([owner] is the namespace, [isStatic] set). [mangled] is null for members
- * of class templates. [isApi]: written by hand, not deleted, not an operator.
+ * of class templates. [isApi]: written by hand, not deleted, not an operator but `()`.
  */
 class CppMethod(
     val owner: String,

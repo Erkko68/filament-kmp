@@ -10,6 +10,7 @@ extern "C" {
 
 // filament::ToneMapper
 void FilaToneMapper_destroy(FilaToneMapper* self);
+void FilaToneMapper_invoke(const FilaToneMapper* self, const FilaFloat3* c, FilaFloat3* out);
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self);
 bool FilaToneMapper_isLDR(const FilaToneMapper* self);
 

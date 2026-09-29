@@ -16,6 +16,10 @@ FilaToneMapper* FilaACESLegacyToneMapper_asToneMapper(FilaACESLegacyToneMapper* 
     return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
+void FilaACESLegacyToneMapper_invoke(const FilaACESLegacyToneMapper* self, const FilaFloat3* c, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->operator()(std::bit_cast<filament::math::float3>(*c)));
+}
+
 bool FilaACESLegacyToneMapper_isOneDimensional(const FilaACESLegacyToneMapper* self) {
     return fila::cpp(self)->isOneDimensional();
 }

@@ -9,11 +9,6 @@ extern "C" {
 #endif
 
 // ktxreader::Ktx1Reader
-FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedPixelDataType(const FilaImageKtxInfo* info);
-FilaPixelDataType FilaKtxreaderKtx1Reader_toPixelDataType(const FilaImageKtxInfo* info);
-FilaPixelDataFormat FilaKtxreaderKtx1Reader_toPixelDataFormat(const FilaImageKtxInfo* info);
-bool FilaKtxreaderKtx1Reader_isCompressed(const FilaImageKtxInfo* info);
-FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo* info);
 FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedFilamentEnum(uint32_t format);
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture_Callback_void(FilaEngine* engine, const FilaImageKtx1Bundle* ktx, bool srgb, FilaKtxreaderKtx1ReaderCallback callback, void* userdata);
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb);
