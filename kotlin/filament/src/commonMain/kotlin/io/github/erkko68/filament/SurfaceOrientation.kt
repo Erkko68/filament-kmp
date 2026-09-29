@@ -35,6 +35,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
      * (Volume 2, Chapter 7).
      */
     class Builder() {
+        init { Filament.init() } // CPU-only, usable before any Engine exists
         private val nativeBuilder = FilaSurfaceOrientationBuilder_create()
         // The C++ builder keeps the array pointers until build(), so the native copies live until then.
         private val heap = InteropScope() // the C++ builder keeps the pointers until build()

@@ -200,6 +200,7 @@ class Engine internal constructor(
      * Builder for creating and configuring an Engine instance.
      */
     class Builder() {
+        init { Filament.init() }
         private val nativeBuilder = FilaEngineBuilder_create()
         private var mConfig: Config? = null
         private var backend = Backend.DEFAULT
@@ -310,6 +311,7 @@ class Engine internal constructor(
     }
 
     companion object {
+        init { Filament.init() } // statics are callable before any Engine exists
         /**
          * Create an Engine with the platform's optimal backend (usually Vulkan or Metal).
          *
