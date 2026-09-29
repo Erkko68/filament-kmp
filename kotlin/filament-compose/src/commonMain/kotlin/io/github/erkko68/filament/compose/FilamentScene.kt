@@ -2,7 +2,6 @@ package io.github.erkko68.filament.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
@@ -13,6 +12,7 @@ import io.github.erkko68.filament.compose.scene.IndirectLightState
 import io.github.erkko68.filament.compose.scene.LocalStandardMaterials
 import io.github.erkko68.filament.compose.scene.SkyboxState
 import io.github.erkko68.filament.compose.scene.StandardMaterialCache
+import io.github.erkko68.filament.compose.internal.rememberOwned
 
 /**
  * A handle to a Filament [Scene] and its [Engine], produced by [rememberFilamentScene] and
@@ -56,22 +56,14 @@ fun rememberFilamentScene(
     indirectLightState: IndirectLightState? = null,
     content: @Composable FilamentSceneScope.() -> Unit,
 ): FilamentScene {
-    val scene = remember(engine) { engine.createScene() }
-
-    // Registered before the content's effects so it disposes *after* them — entities are
-    // removed from the scene before the scene itself is destroyed.
-    DisposableEffect(engine, scene) {
-        onDispose { engine.destroyScene(scene) }
-    }
+    // Remembered before the content so it's destroyed *after* it — entities leave the scene first.
+    val scene = rememberOwned(engine, create = { engine.createScene() }) { engine.destroyScene(it) }
 
     val handle = remember(engine, scene) { FilamentScene(engine, scene) }
 
     // Shared, lazily-built cache of the built-in materials, scoped to this scene so repeated
     // convenience-helper calls reuse one base Material per type. Disposed with the scene.
-    val standardMaterials = remember(engine) { StandardMaterialCache(engine) }
-    DisposableEffect(standardMaterials) {
-        onDispose { standardMaterials.dispose() }
-    }
+    val standardMaterials = rememberOwned(engine, create = { StandardMaterialCache(engine) }) { it.dispose() }
 
     CompositionLocalProvider(
         LocalFilamentEngine    provides engine,

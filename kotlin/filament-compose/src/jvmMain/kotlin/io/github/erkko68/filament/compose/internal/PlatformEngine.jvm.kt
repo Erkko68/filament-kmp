@@ -1,7 +1,6 @@
 package io.github.erkko68.filament.compose.internal
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.awt.LocalAwtWindow
@@ -22,7 +21,7 @@ import io.github.erkko68.filament.compose.internal.target.unavailable
 @Composable
 internal actual fun rememberPlatformEngine(backend: Engine.Backend): Engine {
     val window = LocalAwtWindow.current
-    val engine = remember(backend) {
+    return remember(backend) {
         Filament.init()
         val shared = if (!GpuFrameSharing.enabled) null else {
             GpuFrameSharing.guard("creating the Filament engine", window, null, {
@@ -35,12 +34,7 @@ internal actual fun rememberPlatformEngine(backend: Engine.Backend): Engine {
                 }
             }, { null })
         }
-        shared?.also(GpuFrameSharing::optIn) ?: Engine.create(backend)
-    }
-    // The Windows engine's platform outlives it; Engine.destroy() is idempotent, so this is safe
-    // whichever of this and rememberFilamentEngine's own dispose runs first.
-    DisposableEffect(engine) {
-        onDispose { D3DEngines.destroy(engine) }
-    }
-    return engine
+        // D3DEngines.destroy also frees the Windows engine's platform, which Filament doesn't own.
+        Owned(shared?.also(GpuFrameSharing::optIn) ?: Engine.create(backend), emptyList(), D3DEngines::destroy)
+    }.value
 }

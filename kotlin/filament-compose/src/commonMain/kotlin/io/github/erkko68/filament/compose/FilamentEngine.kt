@@ -1,7 +1,6 @@
 package io.github.erkko68.filament.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.internal.rememberPlatformEngine
 
@@ -14,10 +13,5 @@ import io.github.erkko68.filament.compose.internal.rememberPlatformEngine
  * [FilamentSceneView] create a dedicated one scoped to that call site.
  */
 @Composable
-fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine {
-    val engine = rememberPlatformEngine(backend)
-    DisposableEffect(engine) {
-        onDispose { engine.destroy() }
-    }
-    return engine
-}
+fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine =
+    rememberPlatformEngine(backend)

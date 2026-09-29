@@ -20,8 +20,10 @@ API-surface enforcement) are done, and the focus shifts to tracking upstream and
 
 ## A C API generated from Filament's headers
 
+> **In progress** on `feat/c-api-generator`, not merged yet: `c/` on `main` is still hand-written.
+
 Every platform calls the same C wrapper (`c/`): JVM and Android over JNI, iOS through Kotlin/Native,
-web as wasm. That wrapper is **generated from Filament's public C++ headers**, so the Kotlin API
+web as wasm. That wrapper will be **generated from Filament's public C++ headers**, so the Kotlin API
 tracks C++ (names, owners, defaults) instead of drifting the way hand-written bindings do.
 
 ```

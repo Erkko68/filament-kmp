@@ -7,4 +7,4 @@ import io.github.erkko68.filament.Filament
 
 @Composable
 internal actual fun rememberPlatformEngine(backend: Engine.Backend): Engine =
-    remember(backend) { Filament.init(); Engine.create(backend) }
+    remember(backend) { Filament.init(); Owned(Engine.create(backend), emptyList()) { it.destroy() } }.value

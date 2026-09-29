@@ -3,10 +3,8 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.IndexBuffer
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.RenderableManager
@@ -20,6 +18,7 @@ import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.noFilamentScene
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.compose.scene.LocalGroupVisible
 import io.github.erkko68.filament.compose.scene.LocalParentEntity
@@ -136,15 +135,13 @@ internal fun Mesh(
     // A hidden enclosing Group hides its whole subtree.
     val effectiveVisible = visible && LocalGroupVisible.current
 
-    val handles = remember(mesh) { mesh.upload(engine) }
-    DisposableEffect(handles) {
-        onDispose {
-            engine.destroyVertexBuffer(handles.vertexBuffer)
-            engine.destroyIndexBuffer(handles.indexBuffer)
-        }
+    val handles = rememberOwned(engine, mesh, create = { mesh.upload(engine) }) {
+        engine.destroyVertexBuffer(it.vertexBuffer)
+        engine.destroyIndexBuffer(it.indexBuffer)
     }
 
-    val entity = remember(handles, material, castShadows, receiveShadows) {
+    val entity = rememberOwned(engine, handles, material, castShadows, receiveShadows,
+                               dependsOn = listOf(handles, material), create = {
         engine.entityManager.create().also { e ->
             RenderableManager.Builder(1)
                 .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, handles.vertexBuffer, handles.indexBuffer)
@@ -154,16 +151,14 @@ internal fun Mesh(
                 .receiveShadows(receiveShadows)
                 .build(engine, e)
         }
+    }) { e ->
+        engine.renderableManager.destroy(e)
+        engine.entityManager.destroy(e)
     }
 
-    // Registered before the membership effect so it disposes *after* it — the entity is
-    // removed from the scene before its components are destroyed.
     DisposableEffect(entity) {
         EntityScopeImpl(entity, engine).onCreate()
-        onDispose {
-            engine.renderableManager.destroy(entity)
-            engine.entityManager.destroy(entity)
-        }
+        onDispose { }
     }
 
     // Scene membership tracks `visible` — hiding removes the entity from the scene without

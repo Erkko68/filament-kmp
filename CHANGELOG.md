@@ -31,6 +31,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Fixed
 - **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform; they now reach Filament.
+- **Compose teardown no longer aborts the app** when scenes sit in a `LazyColumn` or other subcomposition, a composition pass is discarded, a glTF asset leaves mid-load, or `rememberRenderTargetTexture` resizes: Filament objects are now destroyed after everything created from them. Reported by [@kdroidFilter](https://github.com/kdroidFilter) in [#166](https://github.com/Erkko68/filament-kmp/pull/166).
 - **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph target count/weights, gltfio instance/material queries, shadow options, `customLut`, `geometryType` and more now work on web.
 
 ### Removed
