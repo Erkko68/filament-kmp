@@ -4,6 +4,38 @@
 
 extern "C" {
 
+FilaFramePipelineEstimatorWorkload* FilaFramePipelineEstimatorWorkload_create(void) {
+    return reinterpret_cast<FilaFramePipelineEstimatorWorkload*>(new filament::FramePipelineEstimator::Workload());
+}
+
+void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorkload* self) {
+    delete reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self);
+}
+
+float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self) {
+    return reinterpret_cast<const filament::FramePipelineEstimator::Workload*>(self)->idealFrameRate;
+}
+
+void FilaFramePipelineEstimatorWorkload_setIdealFrameRate(FilaFramePipelineEstimatorWorkload* self, float value) {
+    reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self)->idealFrameRate = value;
+}
+
+FilaFramePipelineEstimatorPacingSizing* FilaFramePipelineEstimatorPacingSizing_create(void) {
+    return reinterpret_cast<FilaFramePipelineEstimatorPacingSizing*>(new filament::FramePipelineEstimator::PacingSizing());
+}
+
+void FilaFramePipelineEstimatorPacingSizing_destroy(FilaFramePipelineEstimatorPacingSizing* self) {
+    delete reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self);
+}
+
+uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFramePipelineEstimatorPacingSizing* self) {
+    return reinterpret_cast<const filament::FramePipelineEstimator::PacingSizing*>(self)->latencyFrames;
+}
+
+void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value) {
+    reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self)->latencyFrames = value;
+}
+
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile) {
     return filament::FramePipelineEstimator::getZScore(static_cast<filament::FramePipelineEstimator::TargetPercentile>(targetPercentile));
 }

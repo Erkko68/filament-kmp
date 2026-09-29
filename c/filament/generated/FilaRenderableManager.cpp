@@ -4,6 +4,38 @@
 
 extern "C" {
 
+FilaRenderableManagerBone* FilaRenderableManagerBone_create(void) {
+    return reinterpret_cast<FilaRenderableManagerBone*>(new filament::RenderableManager::Bone());
+}
+
+void FilaRenderableManagerBone_destroy(FilaRenderableManagerBone* self) {
+    delete reinterpret_cast<filament::RenderableManager::Bone*>(self);
+}
+
+void FilaRenderableManagerBone_getUnitQuaternion(const FilaRenderableManagerBone* self, FilaQuatf* out) {
+    *out = std::bit_cast<FilaQuatf>(reinterpret_cast<const filament::RenderableManager::Bone*>(self)->unitQuaternion);
+}
+
+void FilaRenderableManagerBone_setUnitQuaternion(FilaRenderableManagerBone* self, const FilaQuatf* value) {
+    reinterpret_cast<filament::RenderableManager::Bone*>(self)->unitQuaternion = std::bit_cast<filament::math::quatf>(*value);
+}
+
+void FilaRenderableManagerBone_getTranslation(const FilaRenderableManagerBone* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::RenderableManager::Bone*>(self)->translation);
+}
+
+void FilaRenderableManagerBone_setTranslation(FilaRenderableManagerBone* self, const FilaFloat3* value) {
+    reinterpret_cast<filament::RenderableManager::Bone*>(self)->translation = std::bit_cast<filament::math::float3>(*value);
+}
+
+float FilaRenderableManagerBone_getReserved(const FilaRenderableManagerBone* self) {
+    return reinterpret_cast<const filament::RenderableManager::Bone*>(self)->reserved;
+}
+
+void FilaRenderableManagerBone_setReserved(FilaRenderableManagerBone* self, float value) {
+    reinterpret_cast<filament::RenderableManager::Bone*>(self)->reserved = value;
+}
+
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count) {
     return reinterpret_cast<FilaRenderableManagerBuilder*>(new filament::RenderableManager::Builder(static_cast<size_t>(count)));
 }
@@ -38,6 +70,10 @@ FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometryType(FilaRend
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* self, uint32_t index, const FilaMaterialInstance* materialInstance) {
     return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->material(static_cast<size_t>(index), reinterpret_cast<const filament::MaterialInstance*>(materialInstance)));
+}
+
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* self, const FilaBox* axisAlignedBoundingBox) {
+    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->boundingBox(*reinterpret_cast<const filament::Box*>(axisAlignedBoundingBox)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* self, uint32_t select, uint32_t values) {
@@ -86,6 +122,10 @@ FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_SkinningBuff
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_mat4f(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaMat4f* transforms) {
     return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->skinning(static_cast<size_t>(boneCount), reinterpret_cast<const filament::math::mat4f*>(transforms)));
+}
+
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_Bone(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaRenderableManagerBone* bones) {
+    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->skinning(static_cast<size_t>(boneCount), reinterpret_cast<const filament::RenderableManager::Bone*>(bones)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, uint32_t boneCount) {
@@ -154,6 +194,14 @@ const FilaEntity* FilaRenderableManager_getEntities(const FilaRenderableManager*
 
 void FilaRenderableManager_destroy(FilaRenderableManager* self, FilaEntity e) {
     reinterpret_cast<filament::RenderableManager*>(self)->destroy(utils::Entity::import(e));
+}
+
+void FilaRenderableManager_setAxisAlignedBoundingBox(FilaRenderableManager* self, uint32_t instance, const FilaBox* aabb) {
+    reinterpret_cast<filament::RenderableManager*>(self)->setAxisAlignedBoundingBox(filament::RenderableManager::Instance(instance), *reinterpret_cast<const filament::Box*>(aabb));
+}
+
+void FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager* self, uint32_t instance, FilaBox* out) {
+    *reinterpret_cast<filament::Box*>(out) = reinterpret_cast<const filament::RenderableManager*>(self)->getAxisAlignedBoundingBox(filament::RenderableManager::Instance(instance));
 }
 
 void FilaRenderableManager_setLayerMask(FilaRenderableManager* self, uint32_t instance, uint32_t select, uint32_t values) {
@@ -226,6 +274,10 @@ bool FilaRenderableManager_isShadowReceiver(const FilaRenderableManager* self, u
 
 bool FilaRenderableManager_isScreenSpaceContactShadowsEnabled(const FilaRenderableManager* self, uint32_t instance) {
     return reinterpret_cast<const filament::RenderableManager*>(self)->isScreenSpaceContactShadowsEnabled(filament::RenderableManager::Instance(instance));
+}
+
+void FilaRenderableManager_setBones_Bone_size_t_size_t(FilaRenderableManager* self, uint32_t instance, const FilaRenderableManagerBone* transforms, uint32_t boneCount, uint32_t offset) {
+    reinterpret_cast<filament::RenderableManager*>(self)->setBones(filament::RenderableManager::Instance(instance), reinterpret_cast<const filament::RenderableManager::Bone*>(transforms), static_cast<size_t>(boneCount), static_cast<size_t>(offset));
 }
 
 void FilaRenderableManager_setBones_mat4f_size_t_size_t(FilaRenderableManager* self, uint32_t instance, const FilaMat4f* transforms, uint32_t boneCount, uint32_t offset) {

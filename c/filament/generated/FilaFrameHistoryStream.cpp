@@ -8,6 +8,10 @@ FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create(void) {
     return reinterpret_cast<FilaFrameHistoryStreamResult*>(new filament::FrameHistoryStream::Result());
 }
 
+FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_FrameInfo(const FilaRendererFrameInfo* info) {
+    return reinterpret_cast<FilaFrameHistoryStreamResult*>(new filament::FrameHistoryStream::Result(*reinterpret_cast<const filament::Renderer::FrameInfo*>(info)));
+}
+
 FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_uint32_t(uint32_t frameId) {
     return reinterpret_cast<FilaFrameHistoryStreamResult*>(new filament::FrameHistoryStream::Result(frameId));
 }

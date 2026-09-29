@@ -9,30 +9,31 @@ extern "C" {
 #endif
 
 // filament::Aabb::Corners
-// TODO(handwritten) FilaAabbCorners_begin: value_type * filament::Aabb::Corners::begin()
-//     member of a value struct
-// TODO(handwritten) FilaAabbCorners_end: value_type * filament::Aabb::Corners::end()
-//     member of a value struct
-// TODO(handwritten) FilaAabbCorners_data: value_type * filament::Aabb::Corners::data()
-//     member of a value struct
-// TODO(handwritten) FilaAabbCorners_size: size_t filament::Aabb::Corners::size() const
-//     member of a value struct
+FilaAabbCorners* FilaAabbCorners_create(void);
+void FilaAabbCorners_destroy(FilaAabbCorners* self);
+FilaFloat3* FilaAabbCorners_begin(FilaAabbCorners* self);
+FilaFloat3* FilaAabbCorners_end(FilaAabbCorners* self);
+FilaFloat3* FilaAabbCorners_data(FilaAabbCorners* self);
+uint32_t FilaAabbCorners_size(const FilaAabbCorners* self);
+// TODO(handwritten) FilaAabbCorners_getVertices: value_type[8] filament::Aabb::Corners::vertices
+//     value_type[8]: array
+// TODO(handwritten) FilaAabbCorners_setVertices: value_type[8] filament::Aabb::Corners::vertices
+//     value_type[8]: array
 
 // filament::Aabb
-// TODO(handwritten) FilaAabb_center: math::float3 filament::Aabb::center() const
-//     member of a value struct
-// TODO(handwritten) FilaAabb_extent: math::float3 filament::Aabb::extent() const
-//     member of a value struct
-// TODO(handwritten) FilaAabb_isEmpty: bool filament::Aabb::isEmpty() const
-//     member of a value struct
-// TODO(handwritten) FilaAabb_getCorners: Corners filament::Aabb::getCorners() const
-//     member of a value struct
-// TODO(handwritten) FilaAabb_contains: float filament::Aabb::contains(math::float3 p) const
-//     member of a value struct
-// TODO(handwritten) FilaAabb_transform_mat3f_float3_Aabb: static Aabb filament::Aabb::transform(const math::mat3f & m, const math::float3 & t, const Aabb & box)
-//     Aabb: value struct
-// TODO(handwritten) FilaAabb_transform_mat4f: Aabb filament::Aabb::transform(const math::mat4f & m) const
-//     member of a value struct
+FilaAabb* FilaAabb_create(void);
+void FilaAabb_destroy(FilaAabb* self);
+void FilaAabb_center(const FilaAabb* self, FilaFloat3* out);
+void FilaAabb_extent(const FilaAabb* self, FilaFloat3* out);
+bool FilaAabb_isEmpty(const FilaAabb* self);
+void FilaAabb_getCorners(const FilaAabb* self, FilaAabbCorners* out);
+float FilaAabb_contains(const FilaAabb* self, const FilaFloat3* p);
+void FilaAabb_transform_mat3f_float3_Aabb(const FilaMat3f* m, const FilaFloat3* t, const FilaAabb* box, FilaAabb* out);
+void FilaAabb_transform_mat4f(const FilaAabb* self, const FilaMat4f* m, FilaAabb* out);
+void FilaAabb_getMin(const FilaAabb* self, FilaFloat3* out);
+void FilaAabb_setMin(FilaAabb* self, const FilaFloat3* value);
+void FilaAabb_getMax(const FilaAabb* self, FilaFloat3* out);
+void FilaAabb_setMax(FilaAabb* self, const FilaFloat3* value);
 
 
 #ifdef __cplusplus

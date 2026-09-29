@@ -24,6 +24,14 @@ uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self
     return reinterpret_cast<const image::Ktx1Bundle*>(self)->getSerializedLength();
 }
 
+void FilaImageKtx1Bundle_getInfo(const FilaImageKtx1Bundle* self, FilaImageKtxInfo* out) {
+    *reinterpret_cast<image::KtxInfo*>(out) = reinterpret_cast<const image::Ktx1Bundle*>(self)->getInfo();
+}
+
+FilaImageKtxInfo* FilaImageKtx1Bundle_info(FilaImageKtx1Bundle* self) {
+    return reinterpret_cast<FilaImageKtxInfo*>(&reinterpret_cast<image::Ktx1Bundle*>(self)->info());
+}
+
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value) {
     reinterpret_cast<image::Ktx1Bundle*>(self)->setMetadata(key, value);
 }
@@ -38,6 +46,14 @@ uint32_t FilaImageKtx1Bundle_getArrayLength(const FilaImageKtx1Bundle* self) {
 
 bool FilaImageKtx1Bundle_isCubemap(const FilaImageKtx1Bundle* self) {
     return reinterpret_cast<const image::Ktx1Bundle*>(self)->isCubemap();
+}
+
+bool FilaImageKtx1Bundle_setBlob(FilaImageKtx1Bundle* self, const FilaImageKtxBlobIndex* index, const uint8_t* data, uint32_t size) {
+    return reinterpret_cast<image::Ktx1Bundle*>(self)->setBlob(*reinterpret_cast<const image::KtxBlobIndex*>(index), data, size);
+}
+
+bool FilaImageKtx1Bundle_allocateBlob(FilaImageKtx1Bundle* self, const FilaImageKtxBlobIndex* index, uint32_t size) {
+    return reinterpret_cast<image::Ktx1Bundle*>(self)->allocateBlob(*reinterpret_cast<const image::KtxBlobIndex*>(index), size);
 }
 
 } // extern "C"

@@ -4,6 +4,26 @@
 
 extern "C" {
 
+FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedPixelDataType(const FilaImageKtxInfo* info) {
+    return static_cast<FilaCompressedPixelDataType>(ktxreader::Ktx1Reader::toCompressedPixelDataType(*reinterpret_cast<const image::KtxInfo*>(info)));
+}
+
+FilaPixelDataType FilaKtxreaderKtx1Reader_toPixelDataType(const FilaImageKtxInfo* info) {
+    return static_cast<FilaPixelDataType>(ktxreader::Ktx1Reader::toPixelDataType(*reinterpret_cast<const image::KtxInfo*>(info)));
+}
+
+FilaPixelDataFormat FilaKtxreaderKtx1Reader_toPixelDataFormat(const FilaImageKtxInfo* info) {
+    return static_cast<FilaPixelDataFormat>(ktxreader::Ktx1Reader::toPixelDataFormat(*reinterpret_cast<const image::KtxInfo*>(info)));
+}
+
+bool FilaKtxreaderKtx1Reader_isCompressed(const FilaImageKtxInfo* info) {
+    return ktxreader::Ktx1Reader::isCompressed(*reinterpret_cast<const image::KtxInfo*>(info));
+}
+
+FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo* info) {
+    return static_cast<FilaTextureFormat>(ktxreader::Ktx1Reader::toTextureFormat(*reinterpret_cast<const image::KtxInfo*>(info)));
+}
+
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb) {
     return reinterpret_cast<FilaTexture*>(ktxreader::Ktx1Reader::createTexture(reinterpret_cast<filament::Engine*>(engine), reinterpret_cast<image::Ktx1Bundle*>(ktx), srgb));
 }

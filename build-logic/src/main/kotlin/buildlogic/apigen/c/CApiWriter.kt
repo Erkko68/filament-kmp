@@ -3,6 +3,7 @@ package buildlogic.apigen.c
 import buildlogic.apigen.ApiHeaders
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
+import buildlogic.apigen.cpp.CppField
 import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppParam
 import buildlogic.apigen.cpp.CppRecord
@@ -59,7 +60,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val self = CNames.type(record.name)
         // Constructing is only worth it for something to call: filamat::Enums, say, only holds static templates.
         val instanceMethods = record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated }
-        if (bridges.isHandle(record.name) && !record.template && record.allocatable && instanceMethods) {
+        if (!record.template && record.allocatable && (instanceMethods || bridges.isValue(record.name))) {
             record.constructors.zip(suffixes(record.constructors)).forEach { (params, suffix) ->
                 val name = CNames.function(record.name, "create", suffix)
                 emit(name, "${record.name}(${spelled(params)})", section) {
@@ -73,10 +74,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                 }
             }
         }
-        if (bridges.isHandle(record.name) && !record.template) {
+        if (!record.template) {
             // C can't upcast: a base's functions take the base's handle.
             record.bases.mapNotNull { api.records[it] }.filter { base ->
-                bridges.isHandle(base.name) && !base.template && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
+                !base.template && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
             }.forEach { base ->
                 val baseType = CNames.type(base.name)
                 val name = "${self}_as${baseType.removePrefix("Fila")}"
@@ -91,6 +92,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             // A const overload and its non-const twin take the same C arguments; the non-const one covers both.
             .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
         overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
+        if (bridges.isValue(record.name) && !record.template) record.fields.filter { it.isPublic }.forEach { field(record, it, section) }
         if (section.declarations.isEmpty()) return
         file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
         file.definitions.append(section.definitions)
@@ -108,7 +110,6 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
 
     private fun forwarder(method: CppMethod, name: String): Pair<String, String> {
         if (method.mangled == null) throw Unsupported("member of a class template")
-        if (!method.isStatic && !bridges.isHandle(method.owner)) throw Unsupported("member of a value struct")
         val returns = bridges.result(method.returns)
         val params = bridge(method.params)
         val const = if (method.isConst) "const " else ""
@@ -116,9 +117,30 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val target = if (method.isStatic) "${method.owner}::" else "reinterpret_cast<$const${method.owner}*>(self)->"
         val call = "$target${method.name}(${args(params)})"
         return when {
-            returns.out -> "void $name(${cParams(self, params, out = "${returns.c}* out")})" to "*out = ${returns.convert(call)};"
+            returns.out -> "void $name(${cParams(self, params, out = "${returns.c}* out")})" to returns.store(call)
             returns.c == "void" -> "void $name(${cParams(self, params)})" to "$call;"
             else -> "${returns.c} $name(${cParams(self, params)})" to "return ${returns.convert(call)};"
+        }
+    }
+
+    /** A value struct's field: a getter, and a setter unless the struct would keep the caller's pointer. */
+    private fun field(record: CppRecord, field: CppField, section: Section) {
+        val self = CNames.type(record.name)
+        val cpp = "${field.type.spelling} ${record.name}::${field.name}"
+        val accessor = field.name.replaceFirstChar(Char::uppercaseChar)
+        // A method of the same name (Box::getCenter) already reads it.
+        val getter = "${self}_get$accessor"
+        if (getter !in functionNames) emit(getter, cpp, section) {
+            val result = bridges.result(field.type)
+            val read = "reinterpret_cast<const ${record.name}*>(self)->${field.name}"
+            if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read)
+            else "${result.c} $getter(const $self* self)" to "return ${result.convert(read)};"
+        }
+        val setter = "${self}_set$accessor"
+        if (setter !in functionNames) emit(setter, cpp, section) {
+            if (bridges.borrowsPointer(field.type)) throw Unsupported("${field.type.spelling}: the struct would keep the caller's pointer")
+            val param = bridges.param(field.type)
+            "void $setter($self* self, ${param.c} value)" to "reinterpret_cast<${record.name}*>(self)->${field.name} = ${param.convert("value")};"
         }
     }
 
@@ -162,7 +184,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             bridges.mathTypes.forEach { body.appendLine(mathMirror(it)) }
             body.appendLine()
         }
-        surface.mapNotNull { api.records[it] }.filter { moduleOf(it.header) == module && bridges.isHandle(it.name) }.sortedBy { it.name }
+        surface.mapNotNull { api.records[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
             .forEach { body.appendLine("typedef struct ${CNames.type(it.name)} ${CNames.type(it.name)};") }
         surface.mapNotNull { api.enums[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
             .forEach { body.appendLine().append(enum(it)) }

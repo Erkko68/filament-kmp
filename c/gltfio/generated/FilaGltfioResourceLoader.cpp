@@ -4,8 +4,16 @@
 
 extern "C" {
 
+FilaGltfioResourceLoader* FilaGltfioResourceLoader_create(const FilaGltfioResourceConfiguration* config) {
+    return reinterpret_cast<FilaGltfioResourceLoader*>(new filament::gltfio::ResourceLoader(*reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(config)));
+}
+
 void FilaGltfioResourceLoader_destroy(FilaGltfioResourceLoader* self) {
     delete reinterpret_cast<filament::gltfio::ResourceLoader*>(self);
+}
+
+void FilaGltfioResourceLoader_setConfiguration(FilaGltfioResourceLoader* self, const FilaGltfioResourceConfiguration* config) {
+    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->setConfiguration(*reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(config));
 }
 
 void FilaGltfioResourceLoader_addTextureProvider(FilaGltfioResourceLoader* self, const char* mimeType, FilaGltfioTextureProvider* provider) {

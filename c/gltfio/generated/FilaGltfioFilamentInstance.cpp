@@ -76,6 +76,10 @@ void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstanc
     reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->recomputeBoundingBoxes();
 }
 
+void FilaGltfioFilamentInstance_getBoundingBox(const FilaGltfioFilamentInstance* self, FilaAabb* out) {
+    *reinterpret_cast<filament::Aabb*>(out) = reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getBoundingBox();
+}
+
 uint32_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self) {
     return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getMaterialInstanceCount());
 }

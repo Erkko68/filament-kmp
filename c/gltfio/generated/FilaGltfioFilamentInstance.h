@@ -27,8 +27,7 @@ void FilaGltfioFilamentInstance_attachSkin(FilaGltfioFilamentInstance* self, uin
 void FilaGltfioFilamentInstance_detachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target);
 const FilaMat4f* FilaGltfioFilamentInstance_getInverseBindMatricesAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
 void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstance* self);
-// TODO(handwritten) FilaGltfioFilamentInstance_getBoundingBox: Aabb filament::gltfio::FilamentInstance::getBoundingBox() const
-//     Aabb: value struct
+void FilaGltfioFilamentInstance_getBoundingBox(const FilaGltfioFilamentInstance* self, FilaAabb* out);
 // TODO(handwritten) FilaGltfioFilamentInstance_getMaterialInstances: MaterialInstance *const * filament::gltfio::FilamentInstance::getMaterialInstances()
 //     MaterialInstance *const *: pointer to pointer
 uint32_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self);

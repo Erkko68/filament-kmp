@@ -9,22 +9,20 @@ extern "C" {
 #endif
 
 // filament::Box
-// TODO(handwritten) FilaBox_isEmpty: bool filament::Box::isEmpty() const
-//     member of a value struct
-// TODO(handwritten) FilaBox_getMin: math::float3 filament::Box::getMin() const
-//     member of a value struct
-// TODO(handwritten) FilaBox_getMax: math::float3 filament::Box::getMax() const
-//     member of a value struct
-// TODO(handwritten) FilaBox_set: Box & filament::Box::set(const math::float3 & min, const math::float3 & max)
-//     member of a value struct
-// TODO(handwritten) FilaBox_unionSelf: Box & filament::Box::unionSelf(const Box & box)
-//     member of a value struct
-// TODO(handwritten) FilaBox_translateTo: Box filament::Box::translateTo(const math::float3 & tr) const
-//     member of a value struct
-// TODO(handwritten) FilaBox_getBoundingSphere: math::float4 filament::Box::getBoundingSphere() const
-//     member of a value struct
-// TODO(handwritten) FilaBox_transform: static Box filament::Box::transform(const math::mat3f & m, const math::float3 & t, const Box & box)
-//     Box: value struct
+FilaBox* FilaBox_create(void);
+void FilaBox_destroy(FilaBox* self);
+bool FilaBox_isEmpty(const FilaBox* self);
+void FilaBox_getMin(const FilaBox* self, FilaFloat3* out);
+void FilaBox_getMax(const FilaBox* self, FilaFloat3* out);
+FilaBox* FilaBox_set(FilaBox* self, const FilaFloat3* min, const FilaFloat3* max);
+FilaBox* FilaBox_unionSelf(FilaBox* self, const FilaBox* box);
+void FilaBox_translateTo(const FilaBox* self, const FilaFloat3* tr, FilaBox* out);
+void FilaBox_getBoundingSphere(const FilaBox* self, FilaFloat4* out);
+void FilaBox_transform(const FilaMat3f* m, const FilaFloat3* t, const FilaBox* box, FilaBox* out);
+void FilaBox_getCenter(const FilaBox* self, FilaFloat3* out);
+void FilaBox_setCenter(FilaBox* self, const FilaFloat3* value);
+void FilaBox_getHalfExtent(const FilaBox* self, FilaFloat3* out);
+void FilaBox_setHalfExtent(FilaBox* self, const FilaFloat3* value);
 
 
 #ifdef __cplusplus

@@ -8,13 +8,77 @@
 extern "C" {
 #endif
 
+// filament::Engine::Config
+FilaEngineConfig* FilaEngineConfig_create(void);
+void FilaEngineConfig_destroy(FilaEngineConfig* self);
+uint32_t FilaEngineConfig_getCommandBufferSizeMB(const FilaEngineConfig* self);
+void FilaEngineConfig_setCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getPerRenderPassArenaSizeMB(const FilaEngineConfig* self);
+void FilaEngineConfig_setPerRenderPassArenaSizeMB(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getDriverHandleArenaSizeMB(const FilaEngineConfig* self);
+void FilaEngineConfig_setDriverHandleArenaSizeMB(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getMinCommandBufferSizeMB(const FilaEngineConfig* self);
+void FilaEngineConfig_setMinCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getPerFrameCommandsSizeMB(const FilaEngineConfig* self);
+void FilaEngineConfig_setPerFrameCommandsSizeMB(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getJobSystemThreadCount(const FilaEngineConfig* self);
+void FilaEngineConfig_setJobSystemThreadCount(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getMetalUploadBufferSizeBytes(const FilaEngineConfig* self);
+void FilaEngineConfig_setMetalUploadBufferSizeBytes(FilaEngineConfig* self, uint32_t value);
+bool FilaEngineConfig_getMetalDisablePanicOnDrawableFailure(const FilaEngineConfig* self);
+void FilaEngineConfig_setMetalDisablePanicOnDrawableFailure(FilaEngineConfig* self, bool value);
+bool FilaEngineConfig_getDisableParallelShaderCompile(const FilaEngineConfig* self);
+void FilaEngineConfig_setDisableParallelShaderCompile(FilaEngineConfig* self, bool value);
+FilaPlatformStereoscopicType FilaEngineConfig_getStereoscopicType(const FilaEngineConfig* self);
+void FilaEngineConfig_setStereoscopicType(FilaEngineConfig* self, FilaPlatformStereoscopicType value);
+uint32_t FilaEngineConfig_getStereoscopicEyeCount(const FilaEngineConfig* self);
+void FilaEngineConfig_setStereoscopicEyeCount(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getResourceAllocatorCacheSizeMB(const FilaEngineConfig* self);
+void FilaEngineConfig_setResourceAllocatorCacheSizeMB(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getResourceAllocatorCacheMaxAge(const FilaEngineConfig* self);
+void FilaEngineConfig_setResourceAllocatorCacheMaxAge(FilaEngineConfig* self, uint32_t value);
+bool FilaEngineConfig_getDisableHandleUseAfterFreeCheck(const FilaEngineConfig* self);
+void FilaEngineConfig_setDisableHandleUseAfterFreeCheck(FilaEngineConfig* self, bool value);
+FilaEngineConfigShaderLanguage FilaEngineConfig_getPreferredShaderLanguage(const FilaEngineConfig* self);
+void FilaEngineConfig_setPreferredShaderLanguage(FilaEngineConfig* self, FilaEngineConfigShaderLanguage value);
+bool FilaEngineConfig_getForceGLES2Context(const FilaEngineConfig* self);
+void FilaEngineConfig_setForceGLES2Context(FilaEngineConfig* self, bool value);
+bool FilaEngineConfig_getAssertNativeWindowIsValid(const FilaEngineConfig* self);
+void FilaEngineConfig_setAssertNativeWindowIsValid(FilaEngineConfig* self, bool value);
+FilaPlatformGpuContextPriority FilaEngineConfig_getGpuContextPriority(const FilaEngineConfig* self);
+void FilaEngineConfig_setGpuContextPriority(FilaEngineConfig* self, FilaPlatformGpuContextPriority value);
+uint32_t FilaEngineConfig_getSharedUboInitialSizeInBytes(const FilaEngineConfig* self);
+void FilaEngineConfig_setSharedUboInitialSizeInBytes(FilaEngineConfig* self, uint32_t value);
+FilaPlatformAsynchronousMode FilaEngineConfig_getAsynchronousMode(const FilaEngineConfig* self);
+void FilaEngineConfig_setAsynchronousMode(FilaEngineConfig* self, FilaPlatformAsynchronousMode value);
+uint32_t FilaEngineConfig_getMaterialCacheCapacity(const FilaEngineConfig* self);
+void FilaEngineConfig_setMaterialCacheCapacity(FilaEngineConfig* self, uint32_t value);
+uint32_t FilaEngineConfig_getProgramCacheCapacity(const FilaEngineConfig* self);
+void FilaEngineConfig_setProgramCacheCapacity(FilaEngineConfig* self, uint32_t value);
+bool FilaEngineConfig_getEnableMultipleDirectionalLights(const FilaEngineConfig* self);
+void FilaEngineConfig_setEnableMultipleDirectionalLights(FilaEngineConfig* self, bool value);
+
+// filament::Engine::FeatureFlag
+FilaEngineFeatureFlag* FilaEngineFeatureFlag_create(void);
+void FilaEngineFeatureFlag_destroy(FilaEngineFeatureFlag* self);
+const char* FilaEngineFeatureFlag_getName(const FilaEngineFeatureFlag* self);
+// TODO(handwritten) FilaEngineFeatureFlag_setName: const char * _Nonnull filament::Engine::FeatureFlag::name
+//     const char * _Nonnull: the struct would keep the caller's pointer
+const char* FilaEngineFeatureFlag_getDescription(const FilaEngineFeatureFlag* self);
+// TODO(handwritten) FilaEngineFeatureFlag_setDescription: const char * _Nonnull filament::Engine::FeatureFlag::description
+//     const char * _Nonnull: the struct would keep the caller's pointer
+const bool* FilaEngineFeatureFlag_getValue(const FilaEngineFeatureFlag* self);
+// TODO(handwritten) FilaEngineFeatureFlag_setValue: const bool * _Nonnull filament::Engine::FeatureFlag::value
+//     const bool * _Nonnull: the struct would keep the caller's pointer
+bool FilaEngineFeatureFlag_getConstant(const FilaEngineFeatureFlag* self);
+void FilaEngineFeatureFlag_setConstant(FilaEngineFeatureFlag* self, bool value);
+
 // filament::Engine::Builder
 FilaEngineBuilder* FilaEngineBuilder_create(void);
 void FilaEngineBuilder_destroy(FilaEngineBuilder* self);
 FilaEngineBuilder* FilaEngineBuilder_backend(FilaEngineBuilder* self, FilaBackend backend);
 FilaEngineBuilder* FilaEngineBuilder_platform(FilaEngineBuilder* self, FilaPlatform* platform);
-// TODO(handwritten) FilaEngineBuilder_config: Builder & filament::Engine::Builder::config(const Config * _Nullable config)
-//     const Config * _Nullable: value struct
+FilaEngineBuilder* FilaEngineBuilder_config(FilaEngineBuilder* self, const FilaEngineConfig* config);
 FilaEngineBuilder* FilaEngineBuilder_sharedContext(FilaEngineBuilder* self, void* sharedContext);
 FilaEngineBuilder* FilaEngineBuilder_featureLevel(FilaEngineBuilder* self, FilaFeatureLevel featureLevel);
 FilaEngineBuilder* FilaEngineBuilder_paused(FilaEngineBuilder* self, bool paused);
@@ -29,8 +93,7 @@ FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 // filament::Engine
 // TODO(handwritten) FilaEngine_getFeatureFlags: utils::Slice<const FeatureFlag> filament::Engine::getFeatureFlags() const
 //     utils::Slice<const FeatureFlag>: utils::Slice
-// TODO(handwritten) FilaEngine_create: static Engine * _Nullable filament::Engine::create(Backend backend, Platform * _Nullable platform, void * _Nullable sharedContext, const Config * _Nullable config)
-//     const Config * _Nullable: value struct
+FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
 // TODO(handwritten) FilaEngine_createAsync: static void filament::Engine::createAsync(CreateCallback * callback, void * _Nullable user, Backend backend, Platform * _Nullable platform, void * _Nullable sharedContext, const Config * _Nullable config)
 //     CreateCallback *: function type
 FilaEngine* FilaEngine_getEngine(void* token);
@@ -68,8 +131,7 @@ uint32_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self);
 bool FilaEngine_isStereoSupported(const FilaEngine* self, FilaPlatformStereoscopicType stereoscopicType);
 bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* self);
 bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self);
-// TODO(handwritten) FilaEngine_getConfig: const Config & filament::Engine::getConfig() const
-//     const Config &: value struct
+void FilaEngine_getConfig(const FilaEngine* self, FilaEngineConfig* out);
 uint32_t FilaEngine_getMaxStereoscopicEyes(void);
 FilaUtilsEntityManager* FilaEngine_getEntityManager(FilaEngine* self);
 FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* self);

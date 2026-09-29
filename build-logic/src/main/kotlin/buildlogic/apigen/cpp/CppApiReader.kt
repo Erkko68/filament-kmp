@@ -99,9 +99,10 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     methods += method(child, qualified, isPublic)
                     if (child["name"] == "operator new" && (child["explicitlyDeleted"] == true || !isPublic)) allocatable = false
                 }
-                "CXXConstructorDecl" -> if (!abstract && isPublic && child["explicitlyDeleted"] != true && child["isImplicit"] != true) {
+                "CXXConstructorDecl" -> if (!abstract && isPublic && child["explicitlyDeleted"] != true) {
                     val params = method(child, qualified, isPublic).params
-                    // Copies and moves take the record itself; C holds handles, never copies.
+                    // Copies and moves take the record itself; C holds handles, never copies. Implicit ones count: an
+                    // aggregate's default constructor is declared once a header uses it.
                     if (params.singleOrNull()?.type?.decl != qualified) constructors += params
                 }
                 "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
@@ -110,7 +111,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic)
                 }
                 "CXXRecordDecl", "ClassTemplateDecl" ->
-                    visit(child, qualified, exported = public && isPublic, accessible = accessible && isPublic)
+                    visit(child, qualified, exported = public && isPublic, accessible = accessible && isPublic, template = template)
                 else -> visit(child, qualified, exported = false, accessible = accessible && isPublic)
             }
         }

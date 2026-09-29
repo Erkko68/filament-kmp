@@ -53,7 +53,7 @@ class CppType(val spelling: String, val decl: String?, val kind: Kind) {
 
 /**
  * [header]: relative to the include dir, null outside it. [exported]: `*_PUBLIC`, or publicly nested in an exported
- * class. [accessible]: nameable from outside the class. [template]: a class template, named without its arguments.
+ * class. [accessible]: nameable from outside the class. [template]: a class template or nested in one, named without the arguments.
  * [constructors]: the public ones' parameters, copies and moves aside. [destructible]: publicly. [allocatable]: no
  * base deletes `operator new` (Filament's handle classes do: only the Engine creates them).
  */

@@ -4,6 +4,10 @@
 
 extern "C" {
 
+FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config) {
+    return reinterpret_cast<FilaGltfioAssetLoader*>(filament::gltfio::AssetLoader::create(*reinterpret_cast<const filament::gltfio::AssetConfiguration*>(config)));
+}
+
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes) {
     return reinterpret_cast<FilaGltfioFilamentAsset*>(reinterpret_cast<filament::gltfio::AssetLoader*>(self)->createAsset(bytes, numBytes));
 }

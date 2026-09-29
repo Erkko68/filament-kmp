@@ -4,6 +4,206 @@
 
 extern "C" {
 
+FilaLightManagerShadowOptionsVsm* FilaLightManagerShadowOptionsVsm_create(void) {
+    return reinterpret_cast<FilaLightManagerShadowOptionsVsm*>(new filament::LightManager::ShadowOptions::Vsm());
+}
+
+void FilaLightManagerShadowOptionsVsm_destroy(FilaLightManagerShadowOptionsVsm* self) {
+    delete reinterpret_cast<filament::LightManager::ShadowOptions::Vsm*>(self);
+}
+
+bool FilaLightManagerShadowOptionsVsm_getElvsm(const FilaLightManagerShadowOptionsVsm* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions::Vsm*>(self)->elvsm;
+}
+
+void FilaLightManagerShadowOptionsVsm_setElvsm(FilaLightManagerShadowOptionsVsm* self, bool value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions::Vsm*>(self)->elvsm = value;
+}
+
+float FilaLightManagerShadowOptionsVsm_getBlurWidth(const FilaLightManagerShadowOptionsVsm* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions::Vsm*>(self)->blurWidth;
+}
+
+void FilaLightManagerShadowOptionsVsm_setBlurWidth(FilaLightManagerShadowOptionsVsm* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions::Vsm*>(self)->blurWidth = value;
+}
+
+FilaLightManagerShadowOptions* FilaLightManagerShadowOptions_create(void) {
+    return reinterpret_cast<FilaLightManagerShadowOptions*>(new filament::LightManager::ShadowOptions());
+}
+
+void FilaLightManagerShadowOptions_destroy(FilaLightManagerShadowOptions* self) {
+    delete reinterpret_cast<filament::LightManager::ShadowOptions*>(self);
+}
+
+uint32_t FilaLightManagerShadowOptions_getMapSize(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->mapSize;
+}
+
+void FilaLightManagerShadowOptions_setMapSize(FilaLightManagerShadowOptions* self, uint32_t value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->mapSize = value;
+}
+
+uint32_t FilaLightManagerShadowOptions_getShadowCascades(const FilaLightManagerShadowOptions* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->shadowCascades);
+}
+
+void FilaLightManagerShadowOptions_setShadowCascades(FilaLightManagerShadowOptions* self, uint32_t value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->shadowCascades = static_cast<uint8_t>(value);
+}
+
+float FilaLightManagerShadowOptions_getConstantBias(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->constantBias;
+}
+
+void FilaLightManagerShadowOptions_setConstantBias(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->constantBias = value;
+}
+
+float FilaLightManagerShadowOptions_getNormalBias(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->normalBias;
+}
+
+void FilaLightManagerShadowOptions_setNormalBias(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->normalBias = value;
+}
+
+float FilaLightManagerShadowOptions_getShadowFar(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->shadowFar;
+}
+
+void FilaLightManagerShadowOptions_setShadowFar(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->shadowFar = value;
+}
+
+float FilaLightManagerShadowOptions_getShadowNearHint(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->shadowNearHint;
+}
+
+void FilaLightManagerShadowOptions_setShadowNearHint(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->shadowNearHint = value;
+}
+
+float FilaLightManagerShadowOptions_getShadowFarHint(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->shadowFarHint;
+}
+
+void FilaLightManagerShadowOptions_setShadowFarHint(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->shadowFarHint = value;
+}
+
+bool FilaLightManagerShadowOptions_getStable(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->stable;
+}
+
+void FilaLightManagerShadowOptions_setStable(FilaLightManagerShadowOptions* self, bool value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->stable = value;
+}
+
+bool FilaLightManagerShadowOptions_getLispsm(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->lispsm;
+}
+
+void FilaLightManagerShadowOptions_setLispsm(FilaLightManagerShadowOptions* self, bool value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->lispsm = value;
+}
+
+float FilaLightManagerShadowOptions_getPolygonOffsetConstant(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->polygonOffsetConstant;
+}
+
+void FilaLightManagerShadowOptions_setPolygonOffsetConstant(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->polygonOffsetConstant = value;
+}
+
+float FilaLightManagerShadowOptions_getPolygonOffsetSlope(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->polygonOffsetSlope;
+}
+
+void FilaLightManagerShadowOptions_setPolygonOffsetSlope(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->polygonOffsetSlope = value;
+}
+
+bool FilaLightManagerShadowOptions_getScreenSpaceContactShadows(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->screenSpaceContactShadows;
+}
+
+void FilaLightManagerShadowOptions_setScreenSpaceContactShadows(FilaLightManagerShadowOptions* self, bool value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->screenSpaceContactShadows = value;
+}
+
+uint32_t FilaLightManagerShadowOptions_getStepCount(const FilaLightManagerShadowOptions* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->stepCount);
+}
+
+void FilaLightManagerShadowOptions_setStepCount(FilaLightManagerShadowOptions* self, uint32_t value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->stepCount = static_cast<uint8_t>(value);
+}
+
+float FilaLightManagerShadowOptions_getMaxShadowDistance(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->maxShadowDistance;
+}
+
+void FilaLightManagerShadowOptions_setMaxShadowDistance(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->maxShadowDistance = value;
+}
+
+void FilaLightManagerShadowOptions_getVsm(const FilaLightManagerShadowOptions* self, FilaLightManagerShadowOptionsVsm* out) {
+    *reinterpret_cast<filament::LightManager::ShadowOptions::Vsm*>(out) = reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->vsm;
+}
+
+void FilaLightManagerShadowOptions_setVsm(FilaLightManagerShadowOptions* self, const FilaLightManagerShadowOptionsVsm* value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->vsm = *reinterpret_cast<const filament::LightManager::ShadowOptions::Vsm*>(value);
+}
+
+float FilaLightManagerShadowOptions_getShadowBulbRadius(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->shadowBulbRadius;
+}
+
+void FilaLightManagerShadowOptions_setShadowBulbRadius(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->shadowBulbRadius = value;
+}
+
+void FilaLightManagerShadowOptions_getTransform(const FilaLightManagerShadowOptions* self, FilaQuatf* out) {
+    *out = std::bit_cast<FilaQuatf>(reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->transform);
+}
+
+void FilaLightManagerShadowOptions_setTransform(FilaLightManagerShadowOptions* self, const FilaQuatf* value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->transform = std::bit_cast<filament::math::quatf>(*value);
+}
+
+float FilaLightManagerShadowOptions_getPenumbraScale(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->penumbraScale;
+}
+
+void FilaLightManagerShadowOptions_setPenumbraScale(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->penumbraScale = value;
+}
+
+float FilaLightManagerShadowOptions_getPenumbraRatioScale(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->penumbraRatioScale;
+}
+
+void FilaLightManagerShadowOptions_setPenumbraRatioScale(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->penumbraRatioScale = value;
+}
+
+float FilaLightManagerShadowOptions_getMaxPenumbraRatio(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->maxPenumbraRatio;
+}
+
+void FilaLightManagerShadowOptions_setMaxPenumbraRatio(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->maxPenumbraRatio = value;
+}
+
+float FilaLightManagerShadowOptions_getMaxSearchRadius(const FilaLightManagerShadowOptions* self) {
+    return reinterpret_cast<const filament::LightManager::ShadowOptions*>(self)->maxSearchRadius;
+}
+
+void FilaLightManagerShadowOptions_setMaxSearchRadius(FilaLightManagerShadowOptions* self, float value) {
+    reinterpret_cast<filament::LightManager::ShadowOptions*>(self)->maxSearchRadius = value;
+}
+
 void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint32_t cascades) {
     filament::LightManager::ShadowCascades::computeUniformSplits(splitPositions, static_cast<uint8_t>(cascades));
 }
@@ -30,6 +230,10 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBu
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable) {
     return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->castShadows(enable));
+}
+
+FilaLightManagerBuilder* FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* self, const FilaLightManagerShadowOptions* options) {
+    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->shadowOptions(*reinterpret_cast<const filament::LightManager::ShadowOptions*>(options)));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* self, bool enable) {
@@ -218,6 +422,14 @@ void FilaLightManager_setSunHaloFalloff(FilaLightManager* self, uint32_t i, floa
 
 float FilaLightManager_getSunHaloFalloff(const FilaLightManager* self, uint32_t i) {
     return reinterpret_cast<const filament::LightManager*>(self)->getSunHaloFalloff(filament::LightManager::Instance(i));
+}
+
+void FilaLightManager_getShadowOptions(const FilaLightManager* self, uint32_t i, FilaLightManagerShadowOptions* out) {
+    *reinterpret_cast<filament::LightManager::ShadowOptions*>(out) = reinterpret_cast<const filament::LightManager*>(self)->getShadowOptions(filament::LightManager::Instance(i));
+}
+
+void FilaLightManager_setShadowOptions(FilaLightManager* self, uint32_t i, const FilaLightManagerShadowOptions* options) {
+    reinterpret_cast<filament::LightManager*>(self)->setShadowOptions(filament::LightManager::Instance(i), *reinterpret_cast<const filament::LightManager::ShadowOptions*>(options));
 }
 
 void FilaLightManager_setShadowCaster(FilaLightManager* self, uint32_t i, bool shadowCaster) {

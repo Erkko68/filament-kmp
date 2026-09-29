@@ -9,11 +9,9 @@ extern "C" {
 #endif
 
 // filament::color::Gamut
-// TODO(handwritten) FilaColorGamut_create_Primaries: filament::color::Gamut(const Primaries primaries)
-//     const Primaries: value struct
+FilaColorGamut* FilaColorGamut_create_Primaries(const FilaColorPrimaries* primaries);
 FilaColorGamut* FilaColorGamut_create_float2_float2_float2(const FilaFloat2* r, const FilaFloat2* g, const FilaFloat2* b);
-// TODO(handwritten) FilaColorGamut_getPrimaries: const Primaries & filament::color::Gamut::getPrimaries() const
-//     const Primaries &: value struct
+void FilaColorGamut_getPrimaries(const FilaColorGamut* self, FilaColorPrimaries* out);
 
 
 #ifdef __cplusplus

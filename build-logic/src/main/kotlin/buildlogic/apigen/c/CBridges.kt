@@ -2,14 +2,20 @@ package buildlogic.apigen.c
 
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
+import buildlogic.apigen.cpp.CppRecord
 import buildlogic.apigen.cpp.CppType
 import buildlogic.apigen.cpp.CppType.Kind
 
 /**
  * How a C++ value crosses into C: its C spelling, and the expression converting it to the other side. [out]: a
- * result C returns through a trailing `out` pointer ([CAbi]).
+ * result C returns through a trailing `out` pointer ([CAbi]), which [store] writes.
  */
-internal class CBridge(val c: String, val convert: (String) -> String, val out: Boolean = false)
+internal class CBridge(
+    val c: String,
+    val convert: (String) -> String,
+    val out: Boolean = false,
+    val store: (String) -> String = { "*out = ${convert(it)};" },
+)
 
 /** Why a declaration stays hand-written; the generator leaves a comment saying so instead of code. */
 internal class Unsupported(reason: String) : Exception(reason)
@@ -24,8 +30,14 @@ internal class CBridges(private val api: CppApi) {
     /** [type] as a return value: [CBridge.convert] turns C++'s result into C's. */
     fun result(type: CppType) = of(type, result = true)
 
-    /** A record C only ever holds a pointer to: no public fields to mirror. */
-    fun isHandle(record: String) = api.records.getValue(record).fields.none { it.isPublic }
+    /** A record with public fields. C holds it by pointer like any other, but copies it in and out like a value. */
+    fun isValue(record: String) = api.records.getValue(record).fields.any { it.isPublic }
+
+    /** A record C can create, so it has one to copy a result into. */
+    fun creatable(record: CppRecord) = !record.template && record.allocatable && record.destructible && record.constructors.isNotEmpty()
+
+    /** A pointer to plain data (`const char*`, `void*`): a struct keeping it would outlive the caller's buffer. */
+    fun borrowsPointer(type: CppType) = type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()
 
     /** The integer typedef of an enum too wide for a C enum (whose enumerators are ints), or null. */
     fun wideEnumType(enum: CppEnum) = if (enum.constants.all { it.second.bitLength() < 32 }) null else CAbi.byValue(enum.underlying ?: "uint64_t")
@@ -42,6 +54,7 @@ internal class CBridges(private val api: CppApi) {
             target = api.aliases.getValue(target.decl!!)
             if (shape(target.spelling).indirection.isNotEmpty()) throw Unsupported("${type.spelling}: alias of a pointer")
         }
+        if ('[' in type.spelling || '[' in target.spelling) throw Unsupported("${type.spelling}: array")
         val decl = target.decl
         val bridge = Bridge(shape.const, indirection, result)
         return when {
@@ -52,8 +65,8 @@ internal class CBridges(private val api: CppApi) {
             decl == "utils::Entity" -> bridge.entity()
             decl == "utils::EntityInstance" && alias != null -> bridge.instance(alias)
             decl.startsWith("filament::math::") && mathMirror(decl) != null -> bridge.math(decl).also { mathTypes += decl }
-            decl in api.records && isHandle(decl) -> bridge.handle(decl)
-            decl in api.records -> throw Unsupported("${type.spelling}: value struct")
+            decl in api.records && !api.records.getValue(decl).accessible -> throw Unsupported("${type.spelling}: not accessible")
+            decl in api.records -> api.records.getValue(decl).let { bridge.record(decl, isValue(decl), creatable(it) && it.defaultConstructible) }
             else -> throw Unsupported("${type.spelling}: $decl")
         }
     }
@@ -102,9 +115,16 @@ internal class CBridges(private val api: CppApi) {
             }
         }
 
-        fun handle(decl: String): CBridge {
-            if (indirection == null) throw Unsupported("$decl by value")
-            return pointer(CNames.type(decl), decl)
+        /** A value struct taken or returned by value is copied: in from a `const` pointer, out into one C created. */
+        fun record(decl: String, value: Boolean, copyable: Boolean): CBridge {
+            val name = CNames.type(decl)
+            return when {
+                !value && indirection == null -> throw Unsupported("$decl by value")
+                !value || !byValue -> pointer(name, decl)
+                !result -> CBridge("const $name*", { "*reinterpret_cast<const $decl*>($it)" })
+                !copyable -> throw Unsupported("$decl result: C can't create one to copy it into")
+                else -> CBridge(name, { it }, out = true, store = { "*reinterpret_cast<$decl*>(out) = $it;" })
+            }
         }
 
         /** Casts to C's [cType] for a result, to C++'s [cpp] for a parameter. */

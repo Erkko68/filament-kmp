@@ -14,15 +14,15 @@ const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance*
 const char* FilaMaterialInstance_getName(const FilaMaterialInstance* self);
 void FilaMaterialInstance_setParameter_char_size_t_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaTexture* texture, const FilaTextureSampler* sampler);
 // TODO(handwritten) FilaMaterialInstance_setParameter_StringLiteral_Texture_TextureSampler: void filament::MaterialInstance::setParameter(const StringLiteral name, const Texture * _Nullable texture, const TextureSampler & sampler)
-//     const StringLiteral: value struct
+//     const StringLiteral: not accessible
 void FilaMaterialInstance_setParameter_char_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
 void FilaMaterialInstance_setParameter_char_size_t_RgbType_float3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbType type, const FilaFloat3* color);
 // TODO(handwritten) FilaMaterialInstance_setParameter_StringLiteral_RgbType_float3: void filament::MaterialInstance::setParameter(const StringLiteral name, const RgbType type, const math::float3 color)
-//     const StringLiteral: value struct
+//     const StringLiteral: not accessible
 void FilaMaterialInstance_setParameter_char_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color);
 void FilaMaterialInstance_setParameter_char_size_t_RgbaType_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbaType type, const FilaFloat4* color);
 // TODO(handwritten) FilaMaterialInstance_setParameter_StringLiteral_RgbaType_float4: void filament::MaterialInstance::setParameter(const StringLiteral name, const RgbaType type, const math::float4 color)
-//     const StringLiteral: value struct
+//     const StringLiteral: not accessible
 void FilaMaterialInstance_setParameter_char_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
 // TODO(handwritten) FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable: void filament::MaterialInstance::compile(CompilerPriorityQueue priority, UserVariantFilterMask variants, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (MaterialInstance * _Nonnull)> && callback)
 //     utils::Invocable<void (MaterialInstance * _Nonnull)> &&: rvalue reference

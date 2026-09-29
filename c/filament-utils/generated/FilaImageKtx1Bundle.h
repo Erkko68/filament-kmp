@@ -14,10 +14,8 @@ FilaImageKtx1Bundle* FilaImageKtx1Bundle_create_uint8_t_uint32_t(const uint8_t* 
 void FilaImageKtx1Bundle_destroy(FilaImageKtx1Bundle* self);
 bool FilaImageKtx1Bundle_serialize(const FilaImageKtx1Bundle* self, uint8_t* destination, uint32_t numBytes);
 uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self);
-// TODO(handwritten) FilaImageKtx1Bundle_getInfo: const KtxInfo & image::Ktx1Bundle::getInfo() const
-//     const KtxInfo &: value struct
-// TODO(handwritten) FilaImageKtx1Bundle_info: KtxInfo & image::Ktx1Bundle::info()
-//     KtxInfo &: value struct
+void FilaImageKtx1Bundle_getInfo(const FilaImageKtx1Bundle* self, FilaImageKtxInfo* out);
+FilaImageKtxInfo* FilaImageKtx1Bundle_info(FilaImageKtx1Bundle* self);
 // TODO(handwritten) FilaImageKtx1Bundle_getMetadata: const char * image::Ktx1Bundle::getMetadata(const char * key, size_t * valueSize) const
 //     size_t*: its width differs across targets
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value);
@@ -27,11 +25,9 @@ uint32_t FilaImageKtx1Bundle_getNumMipLevels(const FilaImageKtx1Bundle* self);
 uint32_t FilaImageKtx1Bundle_getArrayLength(const FilaImageKtx1Bundle* self);
 bool FilaImageKtx1Bundle_isCubemap(const FilaImageKtx1Bundle* self);
 // TODO(handwritten) FilaImageKtx1Bundle_getBlob: bool image::Ktx1Bundle::getBlob(KtxBlobIndex index, uint8_t ** data, uint32_t * size) const
-//     KtxBlobIndex: value struct
-// TODO(handwritten) FilaImageKtx1Bundle_setBlob: bool image::Ktx1Bundle::setBlob(KtxBlobIndex index, const uint8_t * data, uint32_t size)
-//     KtxBlobIndex: value struct
-// TODO(handwritten) FilaImageKtx1Bundle_allocateBlob: bool image::Ktx1Bundle::allocateBlob(KtxBlobIndex index, uint32_t size)
-//     KtxBlobIndex: value struct
+//     uint8_t **: pointer to pointer
+bool FilaImageKtx1Bundle_setBlob(FilaImageKtx1Bundle* self, const FilaImageKtxBlobIndex* index, const uint8_t* data, uint32_t size);
+bool FilaImageKtx1Bundle_allocateBlob(FilaImageKtx1Bundle* self, const FilaImageKtxBlobIndex* index, uint32_t size);
 
 
 #ifdef __cplusplus

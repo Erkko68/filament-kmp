@@ -10,8 +10,7 @@ extern "C" {
 
 // filament::FrameHistoryStream::Result
 FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create(void);
-// TODO(handwritten) FilaFrameHistoryStreamResult_create_FrameInfo: filament::FrameHistoryStream::Result(const Renderer::FrameInfo & info)
-//     const Renderer::FrameInfo &: value struct
+FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_FrameInfo(const FilaRendererFrameInfo* info);
 FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_uint32_t(uint32_t frameId);
 uint32_t FilaFrameHistoryStreamResult_getFrameId(const FilaFrameHistoryStreamResult* self);
 uint32_t FilaFrameHistoryStreamResult_getMissingId(const FilaFrameHistoryStreamResult* self);

@@ -10,8 +10,7 @@ extern "C" {
 
 // filament::TextureSampler
 FilaTextureSampler* FilaTextureSampler_create(void);
-// TODO(handwritten) FilaTextureSampler_create_SamplerParams: filament::TextureSampler(backend::SamplerParams params)
-//     backend::SamplerParams: value struct
+FilaTextureSampler* FilaTextureSampler_create_SamplerParams(const FilaSamplerParams* params);
 FilaTextureSampler* FilaTextureSampler_create_MagFilter_WrapMode(FilaSamplerMagFilter minMag, FilaSamplerWrapMode str);
 FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode str);
 FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapMode_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode s, FilaSamplerWrapMode t, FilaSamplerWrapMode r);
@@ -33,7 +32,7 @@ float FilaTextureSampler_getAnisotropy(const FilaTextureSampler* self);
 FilaSamplerCompareMode FilaTextureSampler_getCompareMode(const FilaTextureSampler* self);
 FilaSamplerCompareFunc FilaTextureSampler_getCompareFunc(const FilaTextureSampler* self);
 // TODO(handwritten) FilaTextureSampler_getSamplerParams: backend::SamplerParams filament::TextureSampler::getSamplerParams() const
-//     backend::SamplerParams: value struct
+//     filament::backend::SamplerParams result: C can't create one to copy it into
 
 
 #ifdef __cplusplus

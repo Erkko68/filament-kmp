@@ -8,6 +8,21 @@
 extern "C" {
 #endif
 
+// filament::Material::ParameterInfo
+FilaMaterialParameterInfo* FilaMaterialParameterInfo_create(void);
+void FilaMaterialParameterInfo_destroy(FilaMaterialParameterInfo* self);
+const char* FilaMaterialParameterInfo_getName(const FilaMaterialParameterInfo* self);
+// TODO(handwritten) FilaMaterialParameterInfo_setName: const char * _Nonnull filament::Material::ParameterInfo::name
+//     const char * _Nonnull: the struct would keep the caller's pointer
+bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value);
+bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, bool value);
+uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setCount(FilaMaterialParameterInfo* self, uint32_t value);
+FilaPrecision FilaMaterialParameterInfo_getPrecision(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, FilaPrecision value);
+
 // filament::Material::Builder
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
@@ -51,8 +66,7 @@ FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self);
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self);
 FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self);
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self);
-// TODO(handwritten) FilaMaterial_getParameters: size_t filament::Material::getParameters(ParameterInfo * _Nonnull parameters, size_t count) const
-//     ParameterInfo * _Nonnull: value struct
+uint32_t FilaMaterial_getParameters(const FilaMaterial* self, FilaMaterialParameterInfo* parameters, uint32_t count);
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name);
 // TODO(handwritten) FilaMaterial_hasParameter_string_view: bool filament::Material::hasParameter(std::string_view name) const
 //     std::string_view: std::string_view

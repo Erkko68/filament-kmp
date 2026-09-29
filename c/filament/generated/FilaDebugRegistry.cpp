@@ -4,6 +4,98 @@
 
 extern "C" {
 
+FilaDebugRegistryDataSource* FilaDebugRegistryDataSource_create(void) {
+    return reinterpret_cast<FilaDebugRegistryDataSource*>(new filament::DebugRegistry::DataSource());
+}
+
+void FilaDebugRegistryDataSource_destroy(FilaDebugRegistryDataSource* self) {
+    delete reinterpret_cast<filament::DebugRegistry::DataSource*>(self);
+}
+
+const void* FilaDebugRegistryDataSource_getData(const FilaDebugRegistryDataSource* self) {
+    return reinterpret_cast<const filament::DebugRegistry::DataSource*>(self)->data;
+}
+
+uint32_t FilaDebugRegistryDataSource_getCount(const FilaDebugRegistryDataSource* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::DebugRegistry::DataSource*>(self)->count);
+}
+
+void FilaDebugRegistryDataSource_setCount(FilaDebugRegistryDataSource* self, uint32_t value) {
+    reinterpret_cast<filament::DebugRegistry::DataSource*>(self)->count = static_cast<size_t>(value);
+}
+
+FilaDebugRegistryFrameHistory* FilaDebugRegistryFrameHistory_create(void) {
+    return reinterpret_cast<FilaDebugRegistryFrameHistory*>(new filament::DebugRegistry::FrameHistory());
+}
+
+void FilaDebugRegistryFrameHistory_destroy(FilaDebugRegistryFrameHistory* self) {
+    delete reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self);
+}
+
+float FilaDebugRegistryFrameHistory_getTarget(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->target;
+}
+
+void FilaDebugRegistryFrameHistory_setTarget(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->target = value;
+}
+
+float FilaDebugRegistryFrameHistory_getTargetWithHeadroom(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->targetWithHeadroom;
+}
+
+void FilaDebugRegistryFrameHistory_setTargetWithHeadroom(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->targetWithHeadroom = value;
+}
+
+float FilaDebugRegistryFrameHistory_getFrameTime(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->frameTime;
+}
+
+void FilaDebugRegistryFrameHistory_setFrameTime(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->frameTime = value;
+}
+
+float FilaDebugRegistryFrameHistory_getFrameTimeDenoised(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->frameTimeDenoised;
+}
+
+void FilaDebugRegistryFrameHistory_setFrameTimeDenoised(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->frameTimeDenoised = value;
+}
+
+float FilaDebugRegistryFrameHistory_getScale(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->scale;
+}
+
+void FilaDebugRegistryFrameHistory_setScale(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->scale = value;
+}
+
+float FilaDebugRegistryFrameHistory_getPid_e(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->pid_e;
+}
+
+void FilaDebugRegistryFrameHistory_setPid_e(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->pid_e = value;
+}
+
+float FilaDebugRegistryFrameHistory_getPid_i(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->pid_i;
+}
+
+void FilaDebugRegistryFrameHistory_setPid_i(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->pid_i = value;
+}
+
+float FilaDebugRegistryFrameHistory_getPid_d(const FilaDebugRegistryFrameHistory* self) {
+    return reinterpret_cast<const filament::DebugRegistry::FrameHistory*>(self)->pid_d;
+}
+
+void FilaDebugRegistryFrameHistory_setPid_d(FilaDebugRegistryFrameHistory* self, float value) {
+    reinterpret_cast<filament::DebugRegistry::FrameHistory*>(self)->pid_d = value;
+}
+
 bool FilaDebugRegistry_hasProperty(const FilaDebugRegistry* self, const char* name) {
     return reinterpret_cast<const filament::DebugRegistry*>(self)->hasProperty(name);
 }
@@ -58,6 +150,10 @@ bool FilaDebugRegistry_getProperty_float3(const FilaDebugRegistry* self, const c
 
 bool FilaDebugRegistry_getProperty_float4(const FilaDebugRegistry* self, const char* name, FilaFloat4* v) {
     return reinterpret_cast<const filament::DebugRegistry*>(self)->getProperty(name, reinterpret_cast<filament::math::float4*>(v));
+}
+
+void FilaDebugRegistry_getDataSource(const FilaDebugRegistry* self, const char* name, FilaDebugRegistryDataSource* out) {
+    *reinterpret_cast<filament::DebugRegistry::DataSource*>(out) = reinterpret_cast<const filament::DebugRegistry*>(self)->getDataSource(name);
 }
 
 } // extern "C"

@@ -9,7 +9,12 @@ extern "C" {
 #endif
 
 // filament::gltfio::AssetConfigurationExtended
+FilaGltfioAssetConfigurationExtended* FilaGltfioAssetConfigurationExtended_create(void);
+void FilaGltfioAssetConfigurationExtended_destroy(FilaGltfioAssetConfigurationExtended* self);
 bool FilaGltfioAssetConfigurationExtended_isSupported(void);
+const char* FilaGltfioAssetConfigurationExtended_getGltfPath(const FilaGltfioAssetConfigurationExtended* self);
+// TODO(handwritten) FilaGltfioAssetConfigurationExtended_setGltfPath: const char * filament::gltfio::AssetConfigurationExtended::gltfPath
+//     const char *: the struct would keep the caller's pointer
 
 
 #ifdef __cplusplus

@@ -9,8 +9,7 @@ extern "C" {
 #endif
 
 // filament::gltfio::AssetLoader
-// TODO(handwritten) FilaGltfioAssetLoader_create: static AssetLoader * filament::gltfio::AssetLoader::create(const AssetConfiguration & config)
-//     const AssetConfiguration &: value struct
+FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config);
 // TODO(handwritten) FilaGltfioAssetLoader_destroy: static void filament::gltfio::AssetLoader::destroy(AssetLoader ** loader)
 //     AssetLoader **: pointer to pointer
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes);

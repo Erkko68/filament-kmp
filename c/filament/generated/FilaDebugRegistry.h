@@ -8,6 +8,35 @@
 extern "C" {
 #endif
 
+// filament::DebugRegistry::DataSource
+FilaDebugRegistryDataSource* FilaDebugRegistryDataSource_create(void);
+void FilaDebugRegistryDataSource_destroy(FilaDebugRegistryDataSource* self);
+const void* FilaDebugRegistryDataSource_getData(const FilaDebugRegistryDataSource* self);
+// TODO(handwritten) FilaDebugRegistryDataSource_setData: const void * _Nullable filament::DebugRegistry::DataSource::data
+//     const void * _Nullable: the struct would keep the caller's pointer
+uint32_t FilaDebugRegistryDataSource_getCount(const FilaDebugRegistryDataSource* self);
+void FilaDebugRegistryDataSource_setCount(FilaDebugRegistryDataSource* self, uint32_t value);
+
+// filament::DebugRegistry::FrameHistory
+FilaDebugRegistryFrameHistory* FilaDebugRegistryFrameHistory_create(void);
+void FilaDebugRegistryFrameHistory_destroy(FilaDebugRegistryFrameHistory* self);
+float FilaDebugRegistryFrameHistory_getTarget(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setTarget(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getTargetWithHeadroom(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setTargetWithHeadroom(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getFrameTime(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setFrameTime(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getFrameTimeDenoised(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setFrameTimeDenoised(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getScale(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setScale(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getPid_e(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setPid_e(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getPid_i(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setPid_i(FilaDebugRegistryFrameHistory* self, float value);
+float FilaDebugRegistryFrameHistory_getPid_d(const FilaDebugRegistryFrameHistory* self);
+void FilaDebugRegistryFrameHistory_setPid_d(FilaDebugRegistryFrameHistory* self, float value);
+
 // filament::DebugRegistry
 bool FilaDebugRegistry_hasProperty(const FilaDebugRegistry* self, const char* name);
 void* FilaDebugRegistry_getPropertyAddress(FilaDebugRegistry* self, const char* name);
@@ -23,8 +52,7 @@ bool FilaDebugRegistry_getProperty_float(const FilaDebugRegistry* self, const ch
 bool FilaDebugRegistry_getProperty_float2(const FilaDebugRegistry* self, const char* name, FilaFloat2* v);
 bool FilaDebugRegistry_getProperty_float3(const FilaDebugRegistry* self, const char* name, FilaFloat3* v);
 bool FilaDebugRegistry_getProperty_float4(const FilaDebugRegistry* self, const char* name, FilaFloat4* v);
-// TODO(handwritten) FilaDebugRegistry_getDataSource: DataSource filament::DebugRegistry::getDataSource(const char * _Nonnull name) const
-//     DataSource: value struct
+void FilaDebugRegistry_getDataSource(const FilaDebugRegistry* self, const char* name, FilaDebugRegistryDataSource* out);
 
 
 #ifdef __cplusplus

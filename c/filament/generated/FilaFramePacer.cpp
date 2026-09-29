@@ -4,6 +4,38 @@
 
 extern "C" {
 
+FilaFramePacerHardwareTimeline* FilaFramePacerHardwareTimeline_create(void) {
+    return reinterpret_cast<FilaFramePacerHardwareTimeline*>(new filament::FramePacer::HardwareTimeline());
+}
+
+void FilaFramePacerHardwareTimeline_destroy(FilaFramePacerHardwareTimeline* self) {
+    delete reinterpret_cast<filament::FramePacer::HardwareTimeline*>(self);
+}
+
+FilaFramePacerVsyncTick* FilaFramePacerVsyncTick_create(void) {
+    return reinterpret_cast<FilaFramePacerVsyncTick*>(new filament::FramePacer::VsyncTick());
+}
+
+void FilaFramePacerVsyncTick_destroy(FilaFramePacerVsyncTick* self) {
+    delete reinterpret_cast<filament::FramePacer::VsyncTick*>(self);
+}
+
+FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void) {
+    return reinterpret_cast<FilaFramePacerConfiguration*>(new filament::FramePacer::Configuration());
+}
+
+void FilaFramePacerConfiguration_destroy(FilaFramePacerConfiguration* self) {
+    delete reinterpret_cast<filament::FramePacer::Configuration*>(self);
+}
+
+float FilaFramePacerConfiguration_getTargetFrameRate(const FilaFramePacerConfiguration* self) {
+    return reinterpret_cast<const filament::FramePacer::Configuration*>(self)->targetFrameRate;
+}
+
+void FilaFramePacerConfiguration_setTargetFrameRate(FilaFramePacerConfiguration* self, float value) {
+    reinterpret_cast<filament::FramePacer::Configuration*>(self)->targetFrameRate = value;
+}
+
 FilaFramePacerBuilder* FilaFramePacerBuilder_create(void) {
     return reinterpret_cast<FilaFramePacerBuilder*>(new filament::FramePacer::Builder());
 }
@@ -22,6 +54,18 @@ FilaFramePacerBuilder* FilaFramePacerBuilder_latencyFrames(FilaFramePacerBuilder
 
 FilaFramePacer* FilaFramePacerBuilder_build(const FilaFramePacerBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaFramePacer*>(reinterpret_cast<const filament::FramePacer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+}
+
+void FilaFramePacer_configure(FilaFramePacer* self, const FilaFramePacerConfiguration* config) {
+    reinterpret_cast<filament::FramePacer*>(self)->configure(*reinterpret_cast<const filament::FramePacer::Configuration*>(config));
+}
+
+void FilaFramePacer_getConfiguration(const FilaFramePacer* self, FilaFramePacerConfiguration* out) {
+    *reinterpret_cast<filament::FramePacer::Configuration*>(out) = reinterpret_cast<const filament::FramePacer*>(self)->getConfiguration();
+}
+
+FilaFramePacerFrameStatus FilaFramePacer_setupFrame(FilaFramePacer* self, const FilaFramePacerVsyncTick* tick) {
+    return static_cast<FilaFramePacerFrameStatus>(reinterpret_cast<filament::FramePacer*>(self)->setupFrame(*reinterpret_cast<const filament::FramePacer::VsyncTick*>(tick)));
 }
 
 bool FilaFramePacer_setupExtraFrame(FilaFramePacer* self) {

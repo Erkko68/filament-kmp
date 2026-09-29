@@ -9,16 +9,11 @@ extern "C" {
 #endif
 
 // ktxreader::Ktx1Reader
-// TODO(handwritten) FilaKtxreaderKtx1Reader_toCompressedPixelDataType: static CompressedPixelDataType ktxreader::Ktx1Reader::toCompressedPixelDataType(const KtxInfo & info)
-//     const KtxInfo &: value struct
-// TODO(handwritten) FilaKtxreaderKtx1Reader_toPixelDataType: static PixelDataType ktxreader::Ktx1Reader::toPixelDataType(const KtxInfo & info)
-//     const KtxInfo &: value struct
-// TODO(handwritten) FilaKtxreaderKtx1Reader_toPixelDataFormat: static PixelDataFormat ktxreader::Ktx1Reader::toPixelDataFormat(const KtxInfo & info)
-//     const KtxInfo &: value struct
-// TODO(handwritten) FilaKtxreaderKtx1Reader_isCompressed: static bool ktxreader::Ktx1Reader::isCompressed(const KtxInfo & info)
-//     const KtxInfo &: value struct
-// TODO(handwritten) FilaKtxreaderKtx1Reader_toTextureFormat: static TextureFormat ktxreader::Ktx1Reader::toTextureFormat(const KtxInfo & info)
-//     const KtxInfo &: value struct
+FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedPixelDataType(const FilaImageKtxInfo* info);
+FilaPixelDataType FilaKtxreaderKtx1Reader_toPixelDataType(const FilaImageKtxInfo* info);
+FilaPixelDataFormat FilaKtxreaderKtx1Reader_toPixelDataFormat(const FilaImageKtxInfo* info);
+bool FilaKtxreaderKtx1Reader_isCompressed(const FilaImageKtxInfo* info);
+FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo* info);
 // TODO(handwritten) FilaKtxreaderKtx1Reader_createTexture_Callback_void: static Texture * ktxreader::Ktx1Reader::createTexture(Engine * engine, const Ktx1Bundle & ktx, bool srgb, Callback callback, void * userdata)
 //     Callback: function type
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb);

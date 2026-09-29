@@ -8,16 +8,36 @@
 extern "C" {
 #endif
 
+// filament::FramePipelineEstimator::Workload
+FilaFramePipelineEstimatorWorkload* FilaFramePipelineEstimatorWorkload_create(void);
+void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorkload* self);
+// TODO(handwritten) FilaFramePipelineEstimatorWorkload_getIdealFrameDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::Workload::idealFrameDuration
+//     std::chrono::nanoseconds: std::chrono::nanoseconds
+// TODO(handwritten) FilaFramePipelineEstimatorWorkload_setIdealFrameDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::Workload::idealFrameDuration
+//     std::chrono::nanoseconds: std::chrono::nanoseconds
+float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self);
+void FilaFramePipelineEstimatorWorkload_setIdealFrameRate(FilaFramePipelineEstimatorWorkload* self, float value);
+
+// filament::FramePipelineEstimator::PacingSizing
+FilaFramePipelineEstimatorPacingSizing* FilaFramePipelineEstimatorPacingSizing_create(void);
+void FilaFramePipelineEstimatorPacingSizing_destroy(FilaFramePipelineEstimatorPacingSizing* self);
+uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFramePipelineEstimatorPacingSizing* self);
+void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value);
+// TODO(handwritten) FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::PacingSizing::safeDelayDuration
+//     std::chrono::nanoseconds: std::chrono::nanoseconds
+// TODO(handwritten) FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration: std::chrono::nanoseconds filament::FramePipelineEstimator::PacingSizing::safeDelayDuration
+//     std::chrono::nanoseconds: std::chrono::nanoseconds
+
 // filament::FramePipelineEstimator
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile);
 // TODO(handwritten) FilaFramePipelineEstimator_estimateWorkload_TargetPercentile: static Workload filament::FramePipelineEstimator::estimateWorkload(FrameInfoHistory history, TargetPercentile targetPercentile)
-//     Workload: value struct
+//     FrameInfoHistory: utils::Slice
 // TODO(handwritten) FilaFramePipelineEstimator_estimateWorkload_double: static Workload filament::FramePipelineEstimator::estimateWorkload(FrameInfoHistory history, double zScore)
-//     Workload: value struct
+//     FrameInfoHistory: utils::Slice
 // TODO(handwritten) FilaFramePipelineEstimator_estimatePacing_TargetPercentile: static PacingSizing filament::FramePipelineEstimator::estimatePacing(FrameInfoHistory history, std::chrono::nanoseconds pacingPeriod, TargetPercentile targetPercentile)
-//     PacingSizing: value struct
+//     FrameInfoHistory: utils::Slice
 // TODO(handwritten) FilaFramePipelineEstimator_estimatePacing_double: static PacingSizing filament::FramePipelineEstimator::estimatePacing(FrameInfoHistory history, std::chrono::nanoseconds pacingPeriod, double zScore)
-//     PacingSizing: value struct
+//     FrameInfoHistory: utils::Slice
 
 
 #ifdef __cplusplus

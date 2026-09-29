@@ -4,6 +4,226 @@
 
 extern "C" {
 
+FilaEngineConfig* FilaEngineConfig_create(void) {
+    return reinterpret_cast<FilaEngineConfig*>(new filament::Engine::Config());
+}
+
+void FilaEngineConfig_destroy(FilaEngineConfig* self) {
+    delete reinterpret_cast<filament::Engine::Config*>(self);
+}
+
+uint32_t FilaEngineConfig_getCommandBufferSizeMB(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->commandBufferSizeMB;
+}
+
+void FilaEngineConfig_setCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->commandBufferSizeMB = value;
+}
+
+uint32_t FilaEngineConfig_getPerRenderPassArenaSizeMB(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->perRenderPassArenaSizeMB;
+}
+
+void FilaEngineConfig_setPerRenderPassArenaSizeMB(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->perRenderPassArenaSizeMB = value;
+}
+
+uint32_t FilaEngineConfig_getDriverHandleArenaSizeMB(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->driverHandleArenaSizeMB;
+}
+
+void FilaEngineConfig_setDriverHandleArenaSizeMB(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->driverHandleArenaSizeMB = value;
+}
+
+uint32_t FilaEngineConfig_getMinCommandBufferSizeMB(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->minCommandBufferSizeMB;
+}
+
+void FilaEngineConfig_setMinCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->minCommandBufferSizeMB = value;
+}
+
+uint32_t FilaEngineConfig_getPerFrameCommandsSizeMB(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->perFrameCommandsSizeMB;
+}
+
+void FilaEngineConfig_setPerFrameCommandsSizeMB(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->perFrameCommandsSizeMB = value;
+}
+
+uint32_t FilaEngineConfig_getJobSystemThreadCount(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->jobSystemThreadCount;
+}
+
+void FilaEngineConfig_setJobSystemThreadCount(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->jobSystemThreadCount = value;
+}
+
+uint32_t FilaEngineConfig_getMetalUploadBufferSizeBytes(const FilaEngineConfig* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine::Config*>(self)->metalUploadBufferSizeBytes);
+}
+
+void FilaEngineConfig_setMetalUploadBufferSizeBytes(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->metalUploadBufferSizeBytes = static_cast<size_t>(value);
+}
+
+bool FilaEngineConfig_getMetalDisablePanicOnDrawableFailure(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->metalDisablePanicOnDrawableFailure;
+}
+
+void FilaEngineConfig_setMetalDisablePanicOnDrawableFailure(FilaEngineConfig* self, bool value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->metalDisablePanicOnDrawableFailure = value;
+}
+
+bool FilaEngineConfig_getDisableParallelShaderCompile(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->disableParallelShaderCompile;
+}
+
+void FilaEngineConfig_setDisableParallelShaderCompile(FilaEngineConfig* self, bool value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->disableParallelShaderCompile = value;
+}
+
+FilaPlatformStereoscopicType FilaEngineConfig_getStereoscopicType(const FilaEngineConfig* self) {
+    return static_cast<FilaPlatformStereoscopicType>(reinterpret_cast<const filament::Engine::Config*>(self)->stereoscopicType);
+}
+
+void FilaEngineConfig_setStereoscopicType(FilaEngineConfig* self, FilaPlatformStereoscopicType value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->stereoscopicType = static_cast<filament::backend::Platform::StereoscopicType>(value);
+}
+
+uint32_t FilaEngineConfig_getStereoscopicEyeCount(const FilaEngineConfig* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine::Config*>(self)->stereoscopicEyeCount);
+}
+
+void FilaEngineConfig_setStereoscopicEyeCount(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->stereoscopicEyeCount = static_cast<uint8_t>(value);
+}
+
+uint32_t FilaEngineConfig_getResourceAllocatorCacheSizeMB(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->resourceAllocatorCacheSizeMB;
+}
+
+void FilaEngineConfig_setResourceAllocatorCacheSizeMB(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->resourceAllocatorCacheSizeMB = value;
+}
+
+uint32_t FilaEngineConfig_getResourceAllocatorCacheMaxAge(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->resourceAllocatorCacheMaxAge;
+}
+
+void FilaEngineConfig_setResourceAllocatorCacheMaxAge(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->resourceAllocatorCacheMaxAge = value;
+}
+
+bool FilaEngineConfig_getDisableHandleUseAfterFreeCheck(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->disableHandleUseAfterFreeCheck;
+}
+
+void FilaEngineConfig_setDisableHandleUseAfterFreeCheck(FilaEngineConfig* self, bool value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->disableHandleUseAfterFreeCheck = value;
+}
+
+FilaEngineConfigShaderLanguage FilaEngineConfig_getPreferredShaderLanguage(const FilaEngineConfig* self) {
+    return static_cast<FilaEngineConfigShaderLanguage>(reinterpret_cast<const filament::Engine::Config*>(self)->preferredShaderLanguage);
+}
+
+void FilaEngineConfig_setPreferredShaderLanguage(FilaEngineConfig* self, FilaEngineConfigShaderLanguage value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->preferredShaderLanguage = static_cast<filament::Engine::Config::ShaderLanguage>(value);
+}
+
+bool FilaEngineConfig_getForceGLES2Context(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->forceGLES2Context;
+}
+
+void FilaEngineConfig_setForceGLES2Context(FilaEngineConfig* self, bool value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->forceGLES2Context = value;
+}
+
+bool FilaEngineConfig_getAssertNativeWindowIsValid(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->assertNativeWindowIsValid;
+}
+
+void FilaEngineConfig_setAssertNativeWindowIsValid(FilaEngineConfig* self, bool value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->assertNativeWindowIsValid = value;
+}
+
+FilaPlatformGpuContextPriority FilaEngineConfig_getGpuContextPriority(const FilaEngineConfig* self) {
+    return static_cast<FilaPlatformGpuContextPriority>(reinterpret_cast<const filament::Engine::Config*>(self)->gpuContextPriority);
+}
+
+void FilaEngineConfig_setGpuContextPriority(FilaEngineConfig* self, FilaPlatformGpuContextPriority value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->gpuContextPriority = static_cast<filament::backend::Platform::GpuContextPriority>(value);
+}
+
+uint32_t FilaEngineConfig_getSharedUboInitialSizeInBytes(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->sharedUboInitialSizeInBytes;
+}
+
+void FilaEngineConfig_setSharedUboInitialSizeInBytes(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->sharedUboInitialSizeInBytes = value;
+}
+
+FilaPlatformAsynchronousMode FilaEngineConfig_getAsynchronousMode(const FilaEngineConfig* self) {
+    return static_cast<FilaPlatformAsynchronousMode>(reinterpret_cast<const filament::Engine::Config*>(self)->asynchronousMode);
+}
+
+void FilaEngineConfig_setAsynchronousMode(FilaEngineConfig* self, FilaPlatformAsynchronousMode value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->asynchronousMode = static_cast<filament::backend::Platform::AsynchronousMode>(value);
+}
+
+uint32_t FilaEngineConfig_getMaterialCacheCapacity(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->materialCacheCapacity;
+}
+
+void FilaEngineConfig_setMaterialCacheCapacity(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->materialCacheCapacity = value;
+}
+
+uint32_t FilaEngineConfig_getProgramCacheCapacity(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->programCacheCapacity;
+}
+
+void FilaEngineConfig_setProgramCacheCapacity(FilaEngineConfig* self, uint32_t value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->programCacheCapacity = value;
+}
+
+bool FilaEngineConfig_getEnableMultipleDirectionalLights(const FilaEngineConfig* self) {
+    return reinterpret_cast<const filament::Engine::Config*>(self)->enableMultipleDirectionalLights;
+}
+
+void FilaEngineConfig_setEnableMultipleDirectionalLights(FilaEngineConfig* self, bool value) {
+    reinterpret_cast<filament::Engine::Config*>(self)->enableMultipleDirectionalLights = value;
+}
+
+FilaEngineFeatureFlag* FilaEngineFeatureFlag_create(void) {
+    return reinterpret_cast<FilaEngineFeatureFlag*>(new filament::Engine::FeatureFlag());
+}
+
+void FilaEngineFeatureFlag_destroy(FilaEngineFeatureFlag* self) {
+    delete reinterpret_cast<filament::Engine::FeatureFlag*>(self);
+}
+
+const char* FilaEngineFeatureFlag_getName(const FilaEngineFeatureFlag* self) {
+    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->name;
+}
+
+const char* FilaEngineFeatureFlag_getDescription(const FilaEngineFeatureFlag* self) {
+    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->description;
+}
+
+const bool* FilaEngineFeatureFlag_getValue(const FilaEngineFeatureFlag* self) {
+    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->value;
+}
+
+bool FilaEngineFeatureFlag_getConstant(const FilaEngineFeatureFlag* self) {
+    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->constant;
+}
+
+void FilaEngineFeatureFlag_setConstant(FilaEngineFeatureFlag* self, bool value) {
+    reinterpret_cast<filament::Engine::FeatureFlag*>(self)->constant = value;
+}
+
 FilaEngineBuilder* FilaEngineBuilder_create(void) {
     return reinterpret_cast<FilaEngineBuilder*>(new filament::Engine::Builder());
 }
@@ -18,6 +238,10 @@ FilaEngineBuilder* FilaEngineBuilder_backend(FilaEngineBuilder* self, FilaBacken
 
 FilaEngineBuilder* FilaEngineBuilder_platform(FilaEngineBuilder* self, FilaPlatform* platform) {
     return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->platform(reinterpret_cast<filament::backend::Platform*>(platform)));
+}
+
+FilaEngineBuilder* FilaEngineBuilder_config(FilaEngineBuilder* self, const FilaEngineConfig* config) {
+    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->config(reinterpret_cast<const filament::Engine::Config*>(config)));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_sharedContext(FilaEngineBuilder* self, void* sharedContext) {
@@ -42,6 +266,10 @@ FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const
 
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self) {
     return reinterpret_cast<FilaEngine*>(reinterpret_cast<const filament::Engine::Builder*>(self)->build());
+}
+
+FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config) {
+    return reinterpret_cast<FilaEngine*>(filament::Engine::create(static_cast<filament::backend::Backend>(backend), reinterpret_cast<filament::backend::Platform*>(platform), sharedContext, reinterpret_cast<const filament::Engine::Config*>(config)));
 }
 
 FilaEngine* FilaEngine_getEngine(void* token) {
@@ -166,6 +394,10 @@ bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* self) {
 
 bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self) {
     return reinterpret_cast<const filament::Engine*>(self)->hasUnrecoverableFailure();
+}
+
+void FilaEngine_getConfig(const FilaEngine* self, FilaEngineConfig* out) {
+    *reinterpret_cast<filament::Engine::Config*>(out) = reinterpret_cast<const filament::Engine*>(self)->getConfig();
 }
 
 uint32_t FilaEngine_getMaxStereoscopicEyes(void) {

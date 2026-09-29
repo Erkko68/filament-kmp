@@ -16,6 +16,10 @@ void FilaViewport_destroy(FilaViewport* self) {
     delete reinterpret_cast<filament::Viewport*>(self);
 }
 
+FilaViewport* FilaViewport_asViewport(FilaViewport* self) {
+    return reinterpret_cast<FilaViewport*>(static_cast<filament::backend::Viewport*>(reinterpret_cast<filament::Viewport*>(self)));
+}
+
 bool FilaViewport_empty(const FilaViewport* self) {
     return reinterpret_cast<const filament::Viewport*>(self)->empty();
 }

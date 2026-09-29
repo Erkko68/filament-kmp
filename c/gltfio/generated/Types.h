@@ -9,11 +9,15 @@ extern "C" {
 #endif
 
 typedef struct FilaGltfioAnimator FilaGltfioAnimator;
+typedef struct FilaGltfioAssetConfiguration FilaGltfioAssetConfiguration;
+typedef struct FilaGltfioAssetConfigurationExtended FilaGltfioAssetConfigurationExtended;
 typedef struct FilaGltfioAssetLoader FilaGltfioAssetLoader;
 typedef struct FilaGltfioFilamentAsset FilaGltfioFilamentAsset;
 typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;
+typedef struct FilaGltfioMaterialKey FilaGltfioMaterialKey;
 typedef struct FilaGltfioMaterialProvider FilaGltfioMaterialProvider;
 typedef struct FilaGltfioNodeManager FilaGltfioNodeManager;
+typedef struct FilaGltfioResourceConfiguration FilaGltfioResourceConfiguration;
 typedef struct FilaGltfioResourceLoader FilaGltfioResourceLoader;
 typedef struct FilaGltfioTextureProvider FilaGltfioTextureProvider;
 typedef struct FilaGltfioTrsTransformManager FilaGltfioTrsTransformManager;

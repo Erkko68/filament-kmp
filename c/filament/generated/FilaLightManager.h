@@ -8,6 +8,64 @@
 extern "C" {
 #endif
 
+// filament::LightManager::ShadowOptions::Vsm
+FilaLightManagerShadowOptionsVsm* FilaLightManagerShadowOptionsVsm_create(void);
+void FilaLightManagerShadowOptionsVsm_destroy(FilaLightManagerShadowOptionsVsm* self);
+bool FilaLightManagerShadowOptionsVsm_getElvsm(const FilaLightManagerShadowOptionsVsm* self);
+void FilaLightManagerShadowOptionsVsm_setElvsm(FilaLightManagerShadowOptionsVsm* self, bool value);
+float FilaLightManagerShadowOptionsVsm_getBlurWidth(const FilaLightManagerShadowOptionsVsm* self);
+void FilaLightManagerShadowOptionsVsm_setBlurWidth(FilaLightManagerShadowOptionsVsm* self, float value);
+
+// filament::LightManager::ShadowOptions
+FilaLightManagerShadowOptions* FilaLightManagerShadowOptions_create(void);
+void FilaLightManagerShadowOptions_destroy(FilaLightManagerShadowOptions* self);
+uint32_t FilaLightManagerShadowOptions_getMapSize(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setMapSize(FilaLightManagerShadowOptions* self, uint32_t value);
+uint32_t FilaLightManagerShadowOptions_getShadowCascades(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setShadowCascades(FilaLightManagerShadowOptions* self, uint32_t value);
+// TODO(handwritten) FilaLightManagerShadowOptions_getCascadeSplitPositions: float[3] filament::LightManager::ShadowOptions::cascadeSplitPositions
+//     float[3]: array
+// TODO(handwritten) FilaLightManagerShadowOptions_setCascadeSplitPositions: float[3] filament::LightManager::ShadowOptions::cascadeSplitPositions
+//     float[3]: array
+float FilaLightManagerShadowOptions_getConstantBias(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setConstantBias(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getNormalBias(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setNormalBias(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getShadowFar(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setShadowFar(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getShadowNearHint(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setShadowNearHint(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getShadowFarHint(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setShadowFarHint(FilaLightManagerShadowOptions* self, float value);
+bool FilaLightManagerShadowOptions_getStable(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setStable(FilaLightManagerShadowOptions* self, bool value);
+bool FilaLightManagerShadowOptions_getLispsm(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setLispsm(FilaLightManagerShadowOptions* self, bool value);
+float FilaLightManagerShadowOptions_getPolygonOffsetConstant(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setPolygonOffsetConstant(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getPolygonOffsetSlope(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setPolygonOffsetSlope(FilaLightManagerShadowOptions* self, float value);
+bool FilaLightManagerShadowOptions_getScreenSpaceContactShadows(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setScreenSpaceContactShadows(FilaLightManagerShadowOptions* self, bool value);
+uint32_t FilaLightManagerShadowOptions_getStepCount(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setStepCount(FilaLightManagerShadowOptions* self, uint32_t value);
+float FilaLightManagerShadowOptions_getMaxShadowDistance(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setMaxShadowDistance(FilaLightManagerShadowOptions* self, float value);
+void FilaLightManagerShadowOptions_getVsm(const FilaLightManagerShadowOptions* self, FilaLightManagerShadowOptionsVsm* out);
+void FilaLightManagerShadowOptions_setVsm(FilaLightManagerShadowOptions* self, const FilaLightManagerShadowOptionsVsm* value);
+float FilaLightManagerShadowOptions_getShadowBulbRadius(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setShadowBulbRadius(FilaLightManagerShadowOptions* self, float value);
+void FilaLightManagerShadowOptions_getTransform(const FilaLightManagerShadowOptions* self, FilaQuatf* out);
+void FilaLightManagerShadowOptions_setTransform(FilaLightManagerShadowOptions* self, const FilaQuatf* value);
+float FilaLightManagerShadowOptions_getPenumbraScale(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setPenumbraScale(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getPenumbraRatioScale(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setPenumbraRatioScale(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getMaxPenumbraRatio(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setMaxPenumbraRatio(FilaLightManagerShadowOptions* self, float value);
+float FilaLightManagerShadowOptions_getMaxSearchRadius(const FilaLightManagerShadowOptions* self);
+void FilaLightManagerShadowOptions_setMaxSearchRadius(FilaLightManagerShadowOptions* self, float value);
+
 // filament::LightManager::ShadowCascades
 void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint32_t cascades);
 void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint32_t cascades, float near, float far);
@@ -18,8 +76,7 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType typ
 void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self);
 FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, uint32_t channel, bool enable);
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable);
-// TODO(handwritten) FilaLightManagerBuilder_shadowOptions: Builder & filament::LightManager::Builder::shadowOptions(const ShadowOptions & options)
-//     const ShadowOptions &: value struct
+FilaLightManagerBuilder* FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* self, const FilaLightManagerShadowOptions* options);
 FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* self, bool enable);
 FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, const FilaFloat3* position);
 FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, const FilaFloat3* direction);
@@ -69,10 +126,8 @@ void FilaLightManager_setSunHaloSize(FilaLightManager* self, uint32_t i, float h
 float FilaLightManager_getSunHaloSize(const FilaLightManager* self, uint32_t i);
 void FilaLightManager_setSunHaloFalloff(FilaLightManager* self, uint32_t i, float haloFalloff);
 float FilaLightManager_getSunHaloFalloff(const FilaLightManager* self, uint32_t i);
-// TODO(handwritten) FilaLightManager_getShadowOptions: const ShadowOptions & filament::LightManager::getShadowOptions(Instance i) const
-//     const ShadowOptions &: value struct
-// TODO(handwritten) FilaLightManager_setShadowOptions: void filament::LightManager::setShadowOptions(Instance i, const ShadowOptions & options)
-//     const ShadowOptions &: value struct
+void FilaLightManager_getShadowOptions(const FilaLightManager* self, uint32_t i, FilaLightManagerShadowOptions* out);
+void FilaLightManager_setShadowOptions(FilaLightManager* self, uint32_t i, const FilaLightManagerShadowOptions* options);
 void FilaLightManager_setShadowCaster(FilaLightManager* self, uint32_t i, bool shadowCaster);
 bool FilaLightManager_isShadowCaster(const FilaLightManager* self, uint32_t i);
 

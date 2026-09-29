@@ -16,8 +16,7 @@ void FilaFrustum_setProjection(FilaFrustum* self, const FilaMat4f* pv);
 void FilaFrustum_getNormalizedPlane(const FilaFrustum* self, FilaFrustumPlane plane, FilaFloat4* out);
 void FilaFrustum_getNormalizedPlanes_float4(const FilaFrustum* self, FilaFloat4* planes);
 const FilaFloat4* FilaFrustum_getNormalizedPlanes(const FilaFrustum* self);
-// TODO(handwritten) FilaFrustum_intersects_Box: bool filament::Frustum::intersects(const Box & box) const
-//     const Box &: value struct
+bool FilaFrustum_intersects_Box(const FilaFrustum* self, const FilaBox* box);
 bool FilaFrustum_intersects_float4(const FilaFrustum* self, const FilaFloat4* sphere);
 float FilaFrustum_contains(const FilaFrustum* self, const FilaFloat3* p);
 

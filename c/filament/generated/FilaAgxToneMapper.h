@@ -9,10 +9,13 @@ extern "C" {
 #endif
 
 // filament::AgxToneMapper
-// TODO(handwritten) FilaAgxToneMapper_isOneDimensional: bool filament::AgxToneMapper::isOneDimensional() const
-//     member of a value struct
-// TODO(handwritten) FilaAgxToneMapper_isLDR: bool filament::AgxToneMapper::isLDR() const
-//     member of a value struct
+FilaAgxToneMapper* FilaAgxToneMapper_create(FilaAgxToneMapperAgxLook look);
+void FilaAgxToneMapper_destroy(FilaAgxToneMapper* self);
+FilaToneMapper* FilaAgxToneMapper_asToneMapper(FilaAgxToneMapper* self);
+bool FilaAgxToneMapper_isOneDimensional(const FilaAgxToneMapper* self);
+bool FilaAgxToneMapper_isLDR(const FilaAgxToneMapper* self);
+FilaAgxToneMapperAgxLook FilaAgxToneMapper_getLook(const FilaAgxToneMapper* self);
+void FilaAgxToneMapper_setLook(FilaAgxToneMapper* self, FilaAgxToneMapperAgxLook value);
 
 
 #ifdef __cplusplus

@@ -16,6 +16,10 @@ FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* s
     return reinterpret_cast<FilaSkinningBuffer*>(reinterpret_cast<filament::SkinningBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
+void FilaSkinningBuffer_setBones_Bone_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaRenderableManagerBone* transforms, uint32_t count, uint32_t offset) {
+    reinterpret_cast<filament::SkinningBuffer*>(self)->setBones(*reinterpret_cast<filament::Engine*>(engine), reinterpret_cast<const filament::RenderableManager::Bone*>(transforms), static_cast<size_t>(count), static_cast<size_t>(offset));
+}
+
 void FilaSkinningBuffer_setBones_mat4f_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaMat4f* transforms, uint32_t count, uint32_t offset) {
     reinterpret_cast<filament::SkinningBuffer*>(self)->setBones(*reinterpret_cast<filament::Engine*>(engine), reinterpret_cast<const filament::math::mat4f*>(transforms), static_cast<size_t>(count), static_cast<size_t>(offset));
 }

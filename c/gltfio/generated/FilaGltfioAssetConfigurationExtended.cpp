@@ -4,8 +4,20 @@
 
 extern "C" {
 
+FilaGltfioAssetConfigurationExtended* FilaGltfioAssetConfigurationExtended_create(void) {
+    return reinterpret_cast<FilaGltfioAssetConfigurationExtended*>(new filament::gltfio::AssetConfigurationExtended());
+}
+
+void FilaGltfioAssetConfigurationExtended_destroy(FilaGltfioAssetConfigurationExtended* self) {
+    delete reinterpret_cast<filament::gltfio::AssetConfigurationExtended*>(self);
+}
+
 bool FilaGltfioAssetConfigurationExtended_isSupported(void) {
     return filament::gltfio::AssetConfigurationExtended::isSupported();
+}
+
+const char* FilaGltfioAssetConfigurationExtended_getGltfPath(const FilaGltfioAssetConfigurationExtended* self) {
+    return reinterpret_cast<const filament::gltfio::AssetConfigurationExtended*>(self)->gltfPath;
 }
 
 } // extern "C"

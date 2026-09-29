@@ -32,6 +32,10 @@ const FilaFloat4* FilaFrustum_getNormalizedPlanes(const FilaFrustum* self) {
     return reinterpret_cast<const FilaFloat4*>(reinterpret_cast<const filament::Frustum*>(self)->getNormalizedPlanes());
 }
 
+bool FilaFrustum_intersects_Box(const FilaFrustum* self, const FilaBox* box) {
+    return reinterpret_cast<const filament::Frustum*>(self)->intersects(*reinterpret_cast<const filament::Box*>(box));
+}
+
 bool FilaFrustum_intersects_float4(const FilaFrustum* self, const FilaFloat4* sphere) {
     return reinterpret_cast<const filament::Frustum*>(self)->intersects(std::bit_cast<filament::math::float4>(*sphere));
 }

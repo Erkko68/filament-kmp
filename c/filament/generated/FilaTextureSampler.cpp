@@ -8,6 +8,10 @@ FilaTextureSampler* FilaTextureSampler_create(void) {
     return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler());
 }
 
+FilaTextureSampler* FilaTextureSampler_create_SamplerParams(const FilaSamplerParams* params) {
+    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(*reinterpret_cast<const filament::backend::SamplerParams*>(params)));
+}
+
 FilaTextureSampler* FilaTextureSampler_create_MagFilter_WrapMode(FilaSamplerMagFilter minMag, FilaSamplerWrapMode str) {
     return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMagFilter>(minMag), static_cast<filament::backend::SamplerWrapMode>(str)));
 }

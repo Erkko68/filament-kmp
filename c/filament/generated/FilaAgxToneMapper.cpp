@@ -4,4 +4,32 @@
 
 extern "C" {
 
+FilaAgxToneMapper* FilaAgxToneMapper_create(FilaAgxToneMapperAgxLook look) {
+    return reinterpret_cast<FilaAgxToneMapper*>(new filament::AgxToneMapper(static_cast<filament::AgxToneMapper::AgxLook>(look)));
+}
+
+void FilaAgxToneMapper_destroy(FilaAgxToneMapper* self) {
+    delete reinterpret_cast<filament::AgxToneMapper*>(self);
+}
+
+FilaToneMapper* FilaAgxToneMapper_asToneMapper(FilaAgxToneMapper* self) {
+    return reinterpret_cast<FilaToneMapper*>(static_cast<filament::ToneMapper*>(reinterpret_cast<filament::AgxToneMapper*>(self)));
+}
+
+bool FilaAgxToneMapper_isOneDimensional(const FilaAgxToneMapper* self) {
+    return reinterpret_cast<const filament::AgxToneMapper*>(self)->isOneDimensional();
+}
+
+bool FilaAgxToneMapper_isLDR(const FilaAgxToneMapper* self) {
+    return reinterpret_cast<const filament::AgxToneMapper*>(self)->isLDR();
+}
+
+FilaAgxToneMapperAgxLook FilaAgxToneMapper_getLook(const FilaAgxToneMapper* self) {
+    return static_cast<FilaAgxToneMapperAgxLook>(reinterpret_cast<const filament::AgxToneMapper*>(self)->look);
+}
+
+void FilaAgxToneMapper_setLook(FilaAgxToneMapper* self, FilaAgxToneMapperAgxLook value) {
+    reinterpret_cast<filament::AgxToneMapper*>(self)->look = static_cast<filament::AgxToneMapper::AgxLook>(value);
+}
+
 } // extern "C"

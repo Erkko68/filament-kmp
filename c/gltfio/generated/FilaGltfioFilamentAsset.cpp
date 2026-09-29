@@ -52,6 +52,10 @@ uint32_t FilaGltfioFilamentAsset_getResourceUriCount(const FilaGltfioFilamentAss
     return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getResourceUriCount());
 }
 
+void FilaGltfioFilamentAsset_getBoundingBox(const FilaGltfioFilamentAsset* self, FilaAabb* out) {
+    *reinterpret_cast<filament::Aabb*>(out) = reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getBoundingBox();
+}
+
 const char* FilaGltfioFilamentAsset_getName(const FilaGltfioFilamentAsset* self, FilaEntity arg0) {
     return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getName(utils::Entity::import(arg0));
 }

@@ -4,8 +4,264 @@
 
 extern "C" {
 
+FilaRendererDisplayInfo* FilaRendererDisplayInfo_create(void) {
+    return reinterpret_cast<FilaRendererDisplayInfo*>(new filament::Renderer::DisplayInfo());
+}
+
+void FilaRendererDisplayInfo_destroy(FilaRendererDisplayInfo* self) {
+    delete reinterpret_cast<filament::Renderer::DisplayInfo*>(self);
+}
+
+float FilaRendererDisplayInfo_getRefreshRate(const FilaRendererDisplayInfo* self) {
+    return reinterpret_cast<const filament::Renderer::DisplayInfo*>(self)->refreshRate;
+}
+
+void FilaRendererDisplayInfo_setRefreshRate(FilaRendererDisplayInfo* self, float value) {
+    reinterpret_cast<filament::Renderer::DisplayInfo*>(self)->refreshRate = value;
+}
+
+void FilaRendererDisplayInfo_getPresentationDeadlineNanos(const FilaRendererDisplayInfo* self, uint64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::DisplayInfo*>(self)->presentationDeadlineNanos;
+}
+
+void FilaRendererDisplayInfo_setPresentationDeadlineNanos(FilaRendererDisplayInfo* self, uint64_t value) {
+    reinterpret_cast<filament::Renderer::DisplayInfo*>(self)->presentationDeadlineNanos = value;
+}
+
+void FilaRendererDisplayInfo_getVsyncOffsetNanos(const FilaRendererDisplayInfo* self, uint64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::DisplayInfo*>(self)->vsyncOffsetNanos;
+}
+
+void FilaRendererDisplayInfo_setVsyncOffsetNanos(FilaRendererDisplayInfo* self, uint64_t value) {
+    reinterpret_cast<filament::Renderer::DisplayInfo*>(self)->vsyncOffsetNanos = value;
+}
+
+FilaRendererFrameInfo* FilaRendererFrameInfo_create(void) {
+    return reinterpret_cast<FilaRendererFrameInfo*>(new filament::Renderer::FrameInfo());
+}
+
+void FilaRendererFrameInfo_destroy(FilaRendererFrameInfo* self) {
+    delete reinterpret_cast<filament::Renderer::FrameInfo*>(self);
+}
+
+uint32_t FilaRendererFrameInfo_getFrameId(const FilaRendererFrameInfo* self) {
+    return reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->frameId;
+}
+
+void FilaRendererFrameInfo_setFrameId(FilaRendererFrameInfo* self, uint32_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->frameId = value;
+}
+
+void FilaRendererFrameInfo_getGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->gpuFrameDuration;
+}
+
+void FilaRendererFrameInfo_setGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->gpuFrameDuration = value;
+}
+
+void FilaRendererFrameInfo_getDenoisedGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->denoisedGpuFrameDuration;
+}
+
+void FilaRendererFrameInfo_setDenoisedGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->denoisedGpuFrameDuration = value;
+}
+
+void FilaRendererFrameInfo_getBeginFrame(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->beginFrame;
+}
+
+void FilaRendererFrameInfo_setBeginFrame(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->beginFrame = value;
+}
+
+void FilaRendererFrameInfo_getEndFrame(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->endFrame;
+}
+
+void FilaRendererFrameInfo_setEndFrame(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->endFrame = value;
+}
+
+void FilaRendererFrameInfo_getBackendBeginFrame(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->backendBeginFrame;
+}
+
+void FilaRendererFrameInfo_setBackendBeginFrame(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->backendBeginFrame = value;
+}
+
+void FilaRendererFrameInfo_getBackendEndFrame(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->backendEndFrame;
+}
+
+void FilaRendererFrameInfo_setBackendEndFrame(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->backendEndFrame = value;
+}
+
+void FilaRendererFrameInfo_getGpuFrameComplete(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->gpuFrameComplete;
+}
+
+void FilaRendererFrameInfo_setGpuFrameComplete(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->gpuFrameComplete = value;
+}
+
+void FilaRendererFrameInfo_getVsync(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->vsync;
+}
+
+void FilaRendererFrameInfo_setVsync(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->vsync = value;
+}
+
+void FilaRendererFrameInfo_getDisplayPresent(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->displayPresent;
+}
+
+void FilaRendererFrameInfo_setDisplayPresent(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->displayPresent = value;
+}
+
+void FilaRendererFrameInfo_getPresentDeadline(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->presentDeadline;
+}
+
+void FilaRendererFrameInfo_setPresentDeadline(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->presentDeadline = value;
+}
+
+void FilaRendererFrameInfo_getDisplayPresentInterval(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->displayPresentInterval;
+}
+
+void FilaRendererFrameInfo_setDisplayPresentInterval(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->displayPresentInterval = value;
+}
+
+void FilaRendererFrameInfo_getCompositionToPresentLatency(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->compositionToPresentLatency;
+}
+
+void FilaRendererFrameInfo_setCompositionToPresentLatency(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->compositionToPresentLatency = value;
+}
+
+void FilaRendererFrameInfo_getExpectedPresentLatency(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->expectedPresentLatency;
+}
+
+void FilaRendererFrameInfo_setExpectedPresentLatency(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->expectedPresentLatency = value;
+}
+
+void FilaRendererFrameInfo_getFrameScheduleTime(const FilaRendererFrameInfo* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Renderer::FrameInfo*>(self)->frameScheduleTime;
+}
+
+void FilaRendererFrameInfo_setFrameScheduleTime(FilaRendererFrameInfo* self, int64_t value) {
+    reinterpret_cast<filament::Renderer::FrameInfo*>(self)->frameScheduleTime = value;
+}
+
+FilaRendererFrameRateOptions* FilaRendererFrameRateOptions_create(void) {
+    return reinterpret_cast<FilaRendererFrameRateOptions*>(new filament::Renderer::FrameRateOptions());
+}
+
+void FilaRendererFrameRateOptions_destroy(FilaRendererFrameRateOptions* self) {
+    delete reinterpret_cast<filament::Renderer::FrameRateOptions*>(self);
+}
+
+float FilaRendererFrameRateOptions_getHeadRoomRatio(const FilaRendererFrameRateOptions* self) {
+    return reinterpret_cast<const filament::Renderer::FrameRateOptions*>(self)->headRoomRatio;
+}
+
+void FilaRendererFrameRateOptions_setHeadRoomRatio(FilaRendererFrameRateOptions* self, float value) {
+    reinterpret_cast<filament::Renderer::FrameRateOptions*>(self)->headRoomRatio = value;
+}
+
+float FilaRendererFrameRateOptions_getScaleRate(const FilaRendererFrameRateOptions* self) {
+    return reinterpret_cast<const filament::Renderer::FrameRateOptions*>(self)->scaleRate;
+}
+
+void FilaRendererFrameRateOptions_setScaleRate(FilaRendererFrameRateOptions* self, float value) {
+    reinterpret_cast<filament::Renderer::FrameRateOptions*>(self)->scaleRate = value;
+}
+
+uint32_t FilaRendererFrameRateOptions_getHistory(const FilaRendererFrameRateOptions* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Renderer::FrameRateOptions*>(self)->history);
+}
+
+void FilaRendererFrameRateOptions_setHistory(FilaRendererFrameRateOptions* self, uint32_t value) {
+    reinterpret_cast<filament::Renderer::FrameRateOptions*>(self)->history = static_cast<uint8_t>(value);
+}
+
+uint32_t FilaRendererFrameRateOptions_getInterval(const FilaRendererFrameRateOptions* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Renderer::FrameRateOptions*>(self)->interval);
+}
+
+void FilaRendererFrameRateOptions_setInterval(FilaRendererFrameRateOptions* self, uint32_t value) {
+    reinterpret_cast<filament::Renderer::FrameRateOptions*>(self)->interval = static_cast<uint8_t>(value);
+}
+
+FilaRendererClearOptions* FilaRendererClearOptions_create(void) {
+    return reinterpret_cast<FilaRendererClearOptions*>(new filament::Renderer::ClearOptions());
+}
+
+void FilaRendererClearOptions_destroy(FilaRendererClearOptions* self) {
+    delete reinterpret_cast<filament::Renderer::ClearOptions*>(self);
+}
+
+void FilaRendererClearOptions_getClearColor(const FilaRendererClearOptions* self, FilaDouble4* out) {
+    *out = std::bit_cast<FilaDouble4>(reinterpret_cast<const filament::Renderer::ClearOptions*>(self)->clearColor);
+}
+
+void FilaRendererClearOptions_setClearColor(FilaRendererClearOptions* self, const FilaDouble4* value) {
+    reinterpret_cast<filament::Renderer::ClearOptions*>(self)->clearColor = std::bit_cast<filament::math::double4>(*value);
+}
+
+uint32_t FilaRendererClearOptions_getClearStencil(const FilaRendererClearOptions* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Renderer::ClearOptions*>(self)->clearStencil);
+}
+
+void FilaRendererClearOptions_setClearStencil(FilaRendererClearOptions* self, uint32_t value) {
+    reinterpret_cast<filament::Renderer::ClearOptions*>(self)->clearStencil = static_cast<uint8_t>(value);
+}
+
+bool FilaRendererClearOptions_getClear(const FilaRendererClearOptions* self) {
+    return reinterpret_cast<const filament::Renderer::ClearOptions*>(self)->clear;
+}
+
+void FilaRendererClearOptions_setClear(FilaRendererClearOptions* self, bool value) {
+    reinterpret_cast<filament::Renderer::ClearOptions*>(self)->clear = value;
+}
+
+bool FilaRendererClearOptions_getDiscard(const FilaRendererClearOptions* self) {
+    return reinterpret_cast<const filament::Renderer::ClearOptions*>(self)->discard;
+}
+
+void FilaRendererClearOptions_setDiscard(FilaRendererClearOptions* self, bool value) {
+    reinterpret_cast<filament::Renderer::ClearOptions*>(self)->discard = value;
+}
+
 uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self) {
     return static_cast<uint32_t>(reinterpret_cast<const filament::Renderer*>(self)->getMaxFrameHistorySize());
+}
+
+void FilaRenderer_setDisplayInfo(FilaRenderer* self, const FilaRendererDisplayInfo* info) {
+    reinterpret_cast<filament::Renderer*>(self)->setDisplayInfo(*reinterpret_cast<const filament::Renderer::DisplayInfo*>(info));
+}
+
+void FilaRenderer_setFrameRateOptions(FilaRenderer* self, const FilaRendererFrameRateOptions* options) {
+    reinterpret_cast<filament::Renderer*>(self)->setFrameRateOptions(*reinterpret_cast<const filament::Renderer::FrameRateOptions*>(options));
+}
+
+void FilaRenderer_setClearOptions(FilaRenderer* self, const FilaRendererClearOptions* options) {
+    reinterpret_cast<filament::Renderer*>(self)->setClearOptions(*reinterpret_cast<const filament::Renderer::ClearOptions*>(options));
+}
+
+void FilaRenderer_getClearOptions(const FilaRenderer* self, FilaRendererClearOptions* out) {
+    *reinterpret_cast<filament::Renderer::ClearOptions*>(out) = reinterpret_cast<const filament::Renderer*>(self)->getClearOptions();
 }
 
 FilaEngine* FilaRenderer_getEngine(FilaRenderer* self) {

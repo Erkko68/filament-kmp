@@ -9,13 +9,11 @@ extern "C" {
 #endif
 
 // filament::color::ColorSpace
-// TODO(handwritten) FilaColorColorSpace_create: filament::color::ColorSpace(const Primaries primaries, const TransferFunction transferFunction, const WhitePoint whitePoint)
-//     const Primaries: value struct
+FilaColorColorSpace* FilaColorColorSpace_create(const FilaColorPrimaries* primaries, const FilaColorTransferFunction* transferFunction, const FilaFloat2* whitePoint);
 void FilaColorColorSpace_destroy(FilaColorColorSpace* self);
-// TODO(handwritten) FilaColorColorSpace_getPrimaries: const Primaries & filament::color::ColorSpace::getPrimaries() const
-//     const Primaries &: value struct
+void FilaColorColorSpace_getPrimaries(const FilaColorColorSpace* self, FilaColorPrimaries* out);
 // TODO(handwritten) FilaColorColorSpace_getTransferFunction: const TransferFunction & filament::color::ColorSpace::getTransferFunction() const
-//     const TransferFunction &: value struct
+//     filament::color::TransferFunction result: C can't create one to copy it into
 void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out);
 
 

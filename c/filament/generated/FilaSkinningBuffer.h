@@ -24,8 +24,7 @@ void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self);
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* self, FilaEngine* engine);
 
 // filament::SkinningBuffer
-// TODO(handwritten) FilaSkinningBuffer_setBones_Bone_size_t_size_t: void filament::SkinningBuffer::setBones(Engine & engine, const RenderableManager::Bone * _Nonnull transforms, size_t count, size_t offset)
-//     const RenderableManager::Bone * _Nonnull: value struct
+void FilaSkinningBuffer_setBones_Bone_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaRenderableManagerBone* transforms, uint32_t count, uint32_t offset);
 void FilaSkinningBuffer_setBones_mat4f_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaMat4f* transforms, uint32_t count, uint32_t offset);
 uint32_t FilaSkinningBuffer_getBoneCount(const FilaSkinningBuffer* self);
 

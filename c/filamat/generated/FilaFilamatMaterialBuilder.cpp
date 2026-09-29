@@ -4,6 +4,250 @@
 
 extern "C" {
 
+void FilaFilamatMaterialBuilderPreprocessorDefine_destroy(FilaFilamatMaterialBuilderPreprocessorDefine* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::PreprocessorDefine*>(self);
+}
+
+FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create(void) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderParameter*>(new filamat::MaterialBuilder::Parameter());
+}
+
+FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create_char_UniformType_size_t_ParameterPrecision(const char* paramName, FilaUniformType t, uint32_t typeSize, FilaPrecision p) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderParameter*>(new filamat::MaterialBuilder::Parameter(paramName, static_cast<filament::backend::UniformType>(t), static_cast<size_t>(typeSize), static_cast<filament::backend::Precision>(p)));
+}
+
+FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create_char_SubpassType_SamplerFormat_ParameterPrecision(const char* paramName, FilaSubpassType t, FilaSamplerFormat f, FilaPrecision p) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderParameter*>(new filamat::MaterialBuilder::Parameter(paramName, static_cast<filament::backend::SubpassType>(t), static_cast<filament::backend::SamplerFormat>(f), static_cast<filament::backend::Precision>(p)));
+}
+
+void FilaFilamatMaterialBuilderParameter_destroy(FilaFilamatMaterialBuilderParameter* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self);
+}
+
+bool FilaFilamatMaterialBuilderParameter_isSampler(const FilaFilamatMaterialBuilderParameter* self) {
+    return reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->isSampler();
+}
+
+bool FilaFilamatMaterialBuilderParameter_isUniform(const FilaFilamatMaterialBuilderParameter* self) {
+    return reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->isUniform();
+}
+
+bool FilaFilamatMaterialBuilderParameter_isSubpass(const FilaFilamatMaterialBuilderParameter* self) {
+    return reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->isSubpass();
+}
+
+uint32_t FilaFilamatMaterialBuilderParameter_getSize(const FilaFilamatMaterialBuilderParameter* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->size);
+}
+
+void FilaFilamatMaterialBuilderParameter_setSize(FilaFilamatMaterialBuilderParameter* self, uint32_t value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->size = static_cast<size_t>(value);
+}
+
+FilaUniformType FilaFilamatMaterialBuilderParameter_getUniformType(const FilaFilamatMaterialBuilderParameter* self) {
+    return static_cast<FilaUniformType>(reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->uniformType);
+}
+
+void FilaFilamatMaterialBuilderParameter_setUniformType(FilaFilamatMaterialBuilderParameter* self, FilaUniformType value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->uniformType = static_cast<filament::backend::UniformType>(value);
+}
+
+FilaPrecision FilaFilamatMaterialBuilderParameter_getPrecision(const FilaFilamatMaterialBuilderParameter* self) {
+    return static_cast<FilaPrecision>(reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->precision);
+}
+
+void FilaFilamatMaterialBuilderParameter_setPrecision(FilaFilamatMaterialBuilderParameter* self, FilaPrecision value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->precision = static_cast<filament::backend::Precision>(value);
+}
+
+FilaSamplerType FilaFilamatMaterialBuilderParameter_getSamplerType(const FilaFilamatMaterialBuilderParameter* self) {
+    return static_cast<FilaSamplerType>(reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->samplerType);
+}
+
+void FilaFilamatMaterialBuilderParameter_setSamplerType(FilaFilamatMaterialBuilderParameter* self, FilaSamplerType value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->samplerType = static_cast<filament::backend::SamplerType>(value);
+}
+
+FilaSubpassType FilaFilamatMaterialBuilderParameter_getSubpassType(const FilaFilamatMaterialBuilderParameter* self) {
+    return static_cast<FilaSubpassType>(reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->subpassType);
+}
+
+void FilaFilamatMaterialBuilderParameter_setSubpassType(FilaFilamatMaterialBuilderParameter* self, FilaSubpassType value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->subpassType = static_cast<filament::backend::SubpassType>(value);
+}
+
+FilaSamplerFormat FilaFilamatMaterialBuilderParameter_getFormat(const FilaFilamatMaterialBuilderParameter* self) {
+    return static_cast<FilaSamplerFormat>(reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->format);
+}
+
+void FilaFilamatMaterialBuilderParameter_setFormat(FilaFilamatMaterialBuilderParameter* self, FilaSamplerFormat value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->format = static_cast<filament::backend::SamplerFormat>(value);
+}
+
+bool FilaFilamatMaterialBuilderParameter_getFilterable(const FilaFilamatMaterialBuilderParameter* self) {
+    return reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->filterable;
+}
+
+void FilaFilamatMaterialBuilderParameter_setFilterable(FilaFilamatMaterialBuilderParameter* self, bool value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->filterable = value;
+}
+
+bool FilaFilamatMaterialBuilderParameter_getMultisample(const FilaFilamatMaterialBuilderParameter* self) {
+    return reinterpret_cast<const filamat::MaterialBuilder::Parameter*>(self)->multisample;
+}
+
+void FilaFilamatMaterialBuilderParameter_setMultisample(FilaFilamatMaterialBuilderParameter* self, bool value) {
+    reinterpret_cast<filamat::MaterialBuilder::Parameter*>(self)->multisample = value;
+}
+
+FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create(void) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderOutput*>(new filamat::MaterialBuilder::Output());
+}
+
+FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create_char_VariableQualifier_OutputTarget_Precision_OutputType_int(const char* outputName, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, int32_t location) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderOutput*>(new filamat::MaterialBuilder::Output(outputName, static_cast<filamat::MaterialBuilder::VariableQualifier>(qualifier), static_cast<filamat::MaterialBuilder::OutputTarget>(target), static_cast<filament::backend::Precision>(precision), static_cast<filamat::MaterialBuilder::OutputType>(type), static_cast<int>(location)));
+}
+
+void FilaFilamatMaterialBuilderOutput_destroy(FilaFilamatMaterialBuilderOutput* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::Output*>(self);
+}
+
+FilaFilamatMaterialBuilderVariableQualifier FilaFilamatMaterialBuilderOutput_getQualifier(const FilaFilamatMaterialBuilderOutput* self) {
+    return static_cast<FilaFilamatMaterialBuilderVariableQualifier>(reinterpret_cast<const filamat::MaterialBuilder::Output*>(self)->qualifier);
+}
+
+void FilaFilamatMaterialBuilderOutput_setQualifier(FilaFilamatMaterialBuilderOutput* self, FilaFilamatMaterialBuilderVariableQualifier value) {
+    reinterpret_cast<filamat::MaterialBuilder::Output*>(self)->qualifier = static_cast<filamat::MaterialBuilder::VariableQualifier>(value);
+}
+
+FilaFilamatMaterialBuilderOutputTarget FilaFilamatMaterialBuilderOutput_getTarget(const FilaFilamatMaterialBuilderOutput* self) {
+    return static_cast<FilaFilamatMaterialBuilderOutputTarget>(reinterpret_cast<const filamat::MaterialBuilder::Output*>(self)->target);
+}
+
+void FilaFilamatMaterialBuilderOutput_setTarget(FilaFilamatMaterialBuilderOutput* self, FilaFilamatMaterialBuilderOutputTarget value) {
+    reinterpret_cast<filamat::MaterialBuilder::Output*>(self)->target = static_cast<filamat::MaterialBuilder::OutputTarget>(value);
+}
+
+FilaPrecision FilaFilamatMaterialBuilderOutput_getPrecision(const FilaFilamatMaterialBuilderOutput* self) {
+    return static_cast<FilaPrecision>(reinterpret_cast<const filamat::MaterialBuilder::Output*>(self)->precision);
+}
+
+void FilaFilamatMaterialBuilderOutput_setPrecision(FilaFilamatMaterialBuilderOutput* self, FilaPrecision value) {
+    reinterpret_cast<filamat::MaterialBuilder::Output*>(self)->precision = static_cast<filament::backend::Precision>(value);
+}
+
+FilaFilamatMaterialBuilderOutputType FilaFilamatMaterialBuilderOutput_getType(const FilaFilamatMaterialBuilderOutput* self) {
+    return static_cast<FilaFilamatMaterialBuilderOutputType>(reinterpret_cast<const filamat::MaterialBuilder::Output*>(self)->type);
+}
+
+void FilaFilamatMaterialBuilderOutput_setType(FilaFilamatMaterialBuilderOutput* self, FilaFilamatMaterialBuilderOutputType value) {
+    reinterpret_cast<filamat::MaterialBuilder::Output*>(self)->type = static_cast<filamat::MaterialBuilder::OutputType>(value);
+}
+
+int32_t FilaFilamatMaterialBuilderOutput_getLocation(const FilaFilamatMaterialBuilderOutput* self) {
+    return static_cast<int32_t>(reinterpret_cast<const filamat::MaterialBuilder::Output*>(self)->location);
+}
+
+void FilaFilamatMaterialBuilderOutput_setLocation(FilaFilamatMaterialBuilderOutput* self, int32_t value) {
+    reinterpret_cast<filamat::MaterialBuilder::Output*>(self)->location = static_cast<int>(value);
+}
+
+FilaFilamatMaterialBuilderConstant* FilaFilamatMaterialBuilderConstant_create(void) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderConstant*>(new filamat::MaterialBuilder::Constant());
+}
+
+void FilaFilamatMaterialBuilderConstant_destroy(FilaFilamatMaterialBuilderConstant* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::Constant*>(self);
+}
+
+FilaConstantType FilaFilamatMaterialBuilderConstant_getType(const FilaFilamatMaterialBuilderConstant* self) {
+    return static_cast<FilaConstantType>(reinterpret_cast<const filamat::MaterialBuilder::Constant*>(self)->type);
+}
+
+void FilaFilamatMaterialBuilderConstant_setType(FilaFilamatMaterialBuilderConstant* self, FilaConstantType value) {
+    reinterpret_cast<filamat::MaterialBuilder::Constant*>(self)->type = static_cast<filament::backend::ConstantType>(value);
+}
+
+void FilaFilamatMaterialBuilderConstant_getDefaultValue(const FilaFilamatMaterialBuilderConstant* self, FilaConstantValue* out) {
+    *reinterpret_cast<filament::backend::ConstantValue*>(out) = reinterpret_cast<const filamat::MaterialBuilder::Constant*>(self)->defaultValue;
+}
+
+void FilaFilamatMaterialBuilderConstant_setDefaultValue(FilaFilamatMaterialBuilderConstant* self, const FilaConstantValue* value) {
+    reinterpret_cast<filamat::MaterialBuilder::Constant*>(self)->defaultValue = *reinterpret_cast<const filament::backend::ConstantValue*>(value);
+}
+
+FilaFilamatMaterialBuilderPushConstant* FilaFilamatMaterialBuilderPushConstant_create(void) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderPushConstant*>(new filamat::MaterialBuilder::PushConstant());
+}
+
+void FilaFilamatMaterialBuilderPushConstant_destroy(FilaFilamatMaterialBuilderPushConstant* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::PushConstant*>(self);
+}
+
+FilaConstantType FilaFilamatMaterialBuilderPushConstant_getType(const FilaFilamatMaterialBuilderPushConstant* self) {
+    return static_cast<FilaConstantType>(reinterpret_cast<const filamat::MaterialBuilder::PushConstant*>(self)->type);
+}
+
+void FilaFilamatMaterialBuilderPushConstant_setType(FilaFilamatMaterialBuilderPushConstant* self, FilaConstantType value) {
+    reinterpret_cast<filamat::MaterialBuilder::PushConstant*>(self)->type = static_cast<filament::backend::ConstantType>(value);
+}
+
+FilaShaderStage FilaFilamatMaterialBuilderPushConstant_getStage(const FilaFilamatMaterialBuilderPushConstant* self) {
+    return static_cast<FilaShaderStage>(reinterpret_cast<const filamat::MaterialBuilder::PushConstant*>(self)->stage);
+}
+
+void FilaFilamatMaterialBuilderPushConstant_setStage(FilaFilamatMaterialBuilderPushConstant* self, FilaShaderStage value) {
+    reinterpret_cast<filamat::MaterialBuilder::PushConstant*>(self)->stage = static_cast<filament::backend::ShaderStage>(value);
+}
+
+FilaFilamatMaterialBuilderCustomVariable* FilaFilamatMaterialBuilderCustomVariable_create(void) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderCustomVariable*>(new filamat::MaterialBuilder::CustomVariable());
+}
+
+void FilaFilamatMaterialBuilderCustomVariable_destroy(FilaFilamatMaterialBuilderCustomVariable* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::CustomVariable*>(self);
+}
+
+FilaPrecision FilaFilamatMaterialBuilderCustomVariable_getPrecision(const FilaFilamatMaterialBuilderCustomVariable* self) {
+    return static_cast<FilaPrecision>(reinterpret_cast<const filamat::MaterialBuilder::CustomVariable*>(self)->precision);
+}
+
+void FilaFilamatMaterialBuilderCustomVariable_setPrecision(FilaFilamatMaterialBuilderCustomVariable* self, FilaPrecision value) {
+    reinterpret_cast<filamat::MaterialBuilder::CustomVariable*>(self)->precision = static_cast<filament::backend::Precision>(value);
+}
+
+bool FilaFilamatMaterialBuilderCustomVariable_getHasPrecision(const FilaFilamatMaterialBuilderCustomVariable* self) {
+    return reinterpret_cast<const filamat::MaterialBuilder::CustomVariable*>(self)->hasPrecision;
+}
+
+void FilaFilamatMaterialBuilderCustomVariable_setHasPrecision(FilaFilamatMaterialBuilderCustomVariable* self, bool value) {
+    reinterpret_cast<filamat::MaterialBuilder::CustomVariable*>(self)->hasPrecision = value;
+}
+
+FilaFilamatMaterialBuilderAttribute* FilaFilamatMaterialBuilderAttribute_create(void) {
+    return reinterpret_cast<FilaFilamatMaterialBuilderAttribute*>(new filamat::MaterialBuilder::Attribute());
+}
+
+void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttribute* self) {
+    delete reinterpret_cast<filamat::MaterialBuilder::Attribute*>(self);
+}
+
+FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self) {
+    return static_cast<FilaUniformType>(reinterpret_cast<const filamat::MaterialBuilder::Attribute*>(self)->type);
+}
+
+void FilaFilamatMaterialBuilderAttribute_setType(FilaFilamatMaterialBuilderAttribute* self, FilaUniformType value) {
+    reinterpret_cast<filamat::MaterialBuilder::Attribute*>(self)->type = static_cast<filament::backend::UniformType>(value);
+}
+
+FilaVertexAttribute FilaFilamatMaterialBuilderAttribute_getLocation(const FilaFilamatMaterialBuilderAttribute* self) {
+    return static_cast<FilaVertexAttribute>(reinterpret_cast<const filamat::MaterialBuilder::Attribute*>(self)->location);
+}
+
+void FilaFilamatMaterialBuilderAttribute_setLocation(FilaFilamatMaterialBuilderAttribute* self, FilaVertexAttribute value) {
+    reinterpret_cast<filamat::MaterialBuilder::Attribute*>(self)->location = static_cast<filament::VertexAttribute>(value);
+}
+
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_create(void) {
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(new filamat::MaterialBuilder());
 }

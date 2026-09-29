@@ -8,6 +8,60 @@
 extern "C" {
 #endif
 
+// filament::View::FroxelConfigurationInfo
+FilaViewFroxelConfigurationInfo* FilaViewFroxelConfigurationInfo_create(void);
+void FilaViewFroxelConfigurationInfo_destroy(FilaViewFroxelConfigurationInfo* self);
+uint32_t FilaViewFroxelConfigurationInfo_getWidth(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value);
+uint32_t FilaViewFroxelConfigurationInfo_getHeight(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value);
+uint32_t FilaViewFroxelConfigurationInfo_getDepth(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setDepth(FilaViewFroxelConfigurationInfo* self, uint32_t value);
+uint32_t FilaViewFroxelConfigurationInfo_getViewportWidth(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setViewportWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value);
+uint32_t FilaViewFroxelConfigurationInfo_getViewportHeight(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setViewportHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value);
+void FilaViewFroxelConfigurationInfo_getFroxelDimension(const FilaViewFroxelConfigurationInfo* self, FilaUint2* out);
+void FilaViewFroxelConfigurationInfo_setFroxelDimension(FilaViewFroxelConfigurationInfo* self, const FilaUint2* value);
+float FilaViewFroxelConfigurationInfo_getZLightFar(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setZLightFar(FilaViewFroxelConfigurationInfo* self, float value);
+float FilaViewFroxelConfigurationInfo_getLinearizer(const FilaViewFroxelConfigurationInfo* self);
+void FilaViewFroxelConfigurationInfo_setLinearizer(FilaViewFroxelConfigurationInfo* self, float value);
+void FilaViewFroxelConfigurationInfo_getP(const FilaViewFroxelConfigurationInfo* self, FilaMat4f* out);
+void FilaViewFroxelConfigurationInfo_setP(FilaViewFroxelConfigurationInfo* self, const FilaMat4f* value);
+void FilaViewFroxelConfigurationInfo_getClipTransform(const FilaViewFroxelConfigurationInfo* self, FilaFloat4* out);
+void FilaViewFroxelConfigurationInfo_setClipTransform(FilaViewFroxelConfigurationInfo* self, const FilaFloat4* value);
+
+// filament::View::FroxelConfigurationInfoWithAge
+FilaViewFroxelConfigurationInfoWithAge* FilaViewFroxelConfigurationInfoWithAge_create(void);
+void FilaViewFroxelConfigurationInfoWithAge_destroy(FilaViewFroxelConfigurationInfoWithAge* self);
+void FilaViewFroxelConfigurationInfoWithAge_getInfo(const FilaViewFroxelConfigurationInfoWithAge* self, FilaViewFroxelConfigurationInfo* out);
+void FilaViewFroxelConfigurationInfoWithAge_setInfo(FilaViewFroxelConfigurationInfoWithAge* self, const FilaViewFroxelConfigurationInfo* value);
+uint32_t FilaViewFroxelConfigurationInfoWithAge_getAge(const FilaViewFroxelConfigurationInfoWithAge* self);
+void FilaViewFroxelConfigurationInfoWithAge_setAge(FilaViewFroxelConfigurationInfoWithAge* self, uint32_t value);
+
+// filament::View::PickingQueryResult
+FilaViewPickingQueryResult* FilaViewPickingQueryResult_create(void);
+void FilaViewPickingQueryResult_destroy(FilaViewPickingQueryResult* self);
+FilaEntity FilaViewPickingQueryResult_getRenderable(const FilaViewPickingQueryResult* self);
+void FilaViewPickingQueryResult_setRenderable(FilaViewPickingQueryResult* self, FilaEntity value);
+float FilaViewPickingQueryResult_getDepth(const FilaViewPickingQueryResult* self);
+void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float value);
+uint32_t FilaViewPickingQueryResult_getReserved1(const FilaViewPickingQueryResult* self);
+void FilaViewPickingQueryResult_setReserved1(FilaViewPickingQueryResult* self, uint32_t value);
+uint32_t FilaViewPickingQueryResult_getReserved2(const FilaViewPickingQueryResult* self);
+void FilaViewPickingQueryResult_setReserved2(FilaViewPickingQueryResult* self, uint32_t value);
+void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out);
+void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, const FilaFloat3* value);
+
+// filament::View::PickingQuery
+FilaViewPickingQuery* FilaViewPickingQuery_create(void);
+void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self);
+// TODO(handwritten) FilaViewPickingQuery_getStorage: void * _Nullable[4] filament::View::PickingQuery::storage
+//     void * _Nullable[4]: array
+// TODO(handwritten) FilaViewPickingQuery_setStorage: void * _Nullable[4] filament::View::PickingQuery::storage
+//     void * _Nullable[4]: array
+
 // filament::View
 void FilaView_setName(FilaView* self, const char* name);
 const char* FilaView_getName(const FilaView* self);
@@ -33,69 +87,43 @@ void FilaView_setScreenSpaceRefractionEnabled(FilaView* self, bool enabled);
 bool FilaView_isScreenSpaceRefractionEnabled(const FilaView* self);
 void FilaView_setAntiAliasing(FilaView* self, FilaAntiAliasing type);
 FilaAntiAliasing FilaView_getAntiAliasing(const FilaView* self);
-// TODO(handwritten) FilaView_setTemporalAntiAliasingOptions: void filament::View::setTemporalAntiAliasingOptions(TemporalAntiAliasingOptions options)
-//     TemporalAntiAliasingOptions: value struct
-// TODO(handwritten) FilaView_getTemporalAntiAliasingOptions: const TemporalAntiAliasingOptions & filament::View::getTemporalAntiAliasingOptions() const
-//     const TemporalAntiAliasingOptions &: value struct
-// TODO(handwritten) FilaView_setScreenSpaceReflectionsOptions: void filament::View::setScreenSpaceReflectionsOptions(ScreenSpaceReflectionsOptions options)
-//     ScreenSpaceReflectionsOptions: value struct
-// TODO(handwritten) FilaView_getScreenSpaceReflectionsOptions: const ScreenSpaceReflectionsOptions & filament::View::getScreenSpaceReflectionsOptions() const
-//     const ScreenSpaceReflectionsOptions &: value struct
-// TODO(handwritten) FilaView_setGuardBandOptions: void filament::View::setGuardBandOptions(GuardBandOptions options)
-//     GuardBandOptions: value struct
-// TODO(handwritten) FilaView_getGuardBandOptions: const GuardBandOptions & filament::View::getGuardBandOptions() const
-//     const GuardBandOptions &: value struct
-// TODO(handwritten) FilaView_setMultiSampleAntiAliasingOptions: void filament::View::setMultiSampleAntiAliasingOptions(MultiSampleAntiAliasingOptions options)
-//     MultiSampleAntiAliasingOptions: value struct
-// TODO(handwritten) FilaView_getMultiSampleAntiAliasingOptions: const MultiSampleAntiAliasingOptions & filament::View::getMultiSampleAntiAliasingOptions() const
-//     const MultiSampleAntiAliasingOptions &: value struct
+void FilaView_setTemporalAntiAliasingOptions(FilaView* self, const FilaTemporalAntiAliasingOptions* options);
+void FilaView_getTemporalAntiAliasingOptions(const FilaView* self, FilaTemporalAntiAliasingOptions* out);
+void FilaView_setScreenSpaceReflectionsOptions(FilaView* self, const FilaScreenSpaceReflectionsOptions* options);
+void FilaView_getScreenSpaceReflectionsOptions(const FilaView* self, FilaScreenSpaceReflectionsOptions* out);
+void FilaView_setGuardBandOptions(FilaView* self, const FilaGuardBandOptions* options);
+void FilaView_getGuardBandOptions(const FilaView* self, FilaGuardBandOptions* out);
+void FilaView_setMultiSampleAntiAliasingOptions(FilaView* self, const FilaMultiSampleAntiAliasingOptions* options);
+void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* self, FilaMultiSampleAntiAliasingOptions* out);
 void FilaView_setColorGrading(FilaView* self, FilaColorGrading* colorGrading);
 const FilaColorGrading* FilaView_getColorGrading(const FilaView* self);
-// TODO(handwritten) FilaView_setAmbientOcclusionOptions: void filament::View::setAmbientOcclusionOptions(const AmbientOcclusionOptions & options)
-//     const AmbientOcclusionOptions &: value struct
-// TODO(handwritten) FilaView_getAmbientOcclusionOptions: const AmbientOcclusionOptions & filament::View::getAmbientOcclusionOptions() const
-//     const AmbientOcclusionOptions &: value struct
-// TODO(handwritten) FilaView_setBloomOptions: void filament::View::setBloomOptions(BloomOptions options)
-//     BloomOptions: value struct
-// TODO(handwritten) FilaView_getBloomOptions: BloomOptions filament::View::getBloomOptions() const
-//     BloomOptions: value struct
-// TODO(handwritten) FilaView_setFogOptions: void filament::View::setFogOptions(FogOptions options)
-//     FogOptions: value struct
-// TODO(handwritten) FilaView_getFogOptions: FogOptions filament::View::getFogOptions() const
-//     FogOptions: value struct
-// TODO(handwritten) FilaView_setDepthOfFieldOptions: void filament::View::setDepthOfFieldOptions(DepthOfFieldOptions options)
-//     DepthOfFieldOptions: value struct
-// TODO(handwritten) FilaView_getDepthOfFieldOptions: DepthOfFieldOptions filament::View::getDepthOfFieldOptions() const
-//     DepthOfFieldOptions: value struct
-// TODO(handwritten) FilaView_setVignetteOptions: void filament::View::setVignetteOptions(VignetteOptions options)
-//     VignetteOptions: value struct
-// TODO(handwritten) FilaView_getVignetteOptions: VignetteOptions filament::View::getVignetteOptions() const
-//     VignetteOptions: value struct
+void FilaView_setAmbientOcclusionOptions(FilaView* self, const FilaAmbientOcclusionOptions* options);
+void FilaView_getAmbientOcclusionOptions(const FilaView* self, FilaAmbientOcclusionOptions* out);
+void FilaView_setBloomOptions(FilaView* self, const FilaBloomOptions* options);
+void FilaView_getBloomOptions(const FilaView* self, FilaBloomOptions* out);
+void FilaView_setFogOptions(FilaView* self, const FilaFogOptions* options);
+void FilaView_getFogOptions(const FilaView* self, FilaFogOptions* out);
+void FilaView_setDepthOfFieldOptions(FilaView* self, const FilaDepthOfFieldOptions* options);
+void FilaView_getDepthOfFieldOptions(const FilaView* self, FilaDepthOfFieldOptions* out);
+void FilaView_setVignetteOptions(FilaView* self, const FilaVignetteOptions* options);
+void FilaView_getVignetteOptions(const FilaView* self, FilaVignetteOptions* out);
 void FilaView_setDithering(FilaView* self, FilaDithering dithering);
 FilaDithering FilaView_getDithering(const FilaView* self);
-// TODO(handwritten) FilaView_setDynamicResolutionOptions: void filament::View::setDynamicResolutionOptions(const DynamicResolutionOptions & options)
-//     const DynamicResolutionOptions &: value struct
-// TODO(handwritten) FilaView_getDynamicResolutionOptions: DynamicResolutionOptions filament::View::getDynamicResolutionOptions() const
-//     DynamicResolutionOptions: value struct
+void FilaView_setDynamicResolutionOptions(FilaView* self, const FilaDynamicResolutionOptions* options);
+void FilaView_getDynamicResolutionOptions(const FilaView* self, FilaDynamicResolutionOptions* out);
 void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out);
-// TODO(handwritten) FilaView_setRenderQuality: void filament::View::setRenderQuality(const RenderQuality & renderQuality)
-//     const RenderQuality &: value struct
-// TODO(handwritten) FilaView_getRenderQuality: RenderQuality filament::View::getRenderQuality() const
-//     RenderQuality: value struct
+void FilaView_setRenderQuality(FilaView* self, const FilaRenderQuality* renderQuality);
+void FilaView_getRenderQuality(const FilaView* self, FilaRenderQuality* out);
 void FilaView_setDynamicLightingOptions(FilaView* self, float zLightNear, float zLightFar);
 void FilaView_setGridSize(FilaView* self, double size);
 double FilaView_getGridSize(const FilaView* self);
 double FilaView_getEffectiveGridSize(const FilaView* self);
 void FilaView_setShadowType(FilaView* self, FilaShadowType shadow);
 FilaShadowType FilaView_getShadowType(const FilaView* self);
-// TODO(handwritten) FilaView_setVsmShadowOptions: void filament::View::setVsmShadowOptions(const VsmShadowOptions & options)
-//     const VsmShadowOptions &: value struct
-// TODO(handwritten) FilaView_getVsmShadowOptions: VsmShadowOptions filament::View::getVsmShadowOptions() const
-//     VsmShadowOptions: value struct
-// TODO(handwritten) FilaView_setSoftShadowOptions: void filament::View::setSoftShadowOptions(const SoftShadowOptions & options)
-//     const SoftShadowOptions &: value struct
-// TODO(handwritten) FilaView_getSoftShadowOptions: SoftShadowOptions filament::View::getSoftShadowOptions() const
-//     SoftShadowOptions: value struct
+void FilaView_setVsmShadowOptions(FilaView* self, const FilaVsmShadowOptions* options);
+void FilaView_getVsmShadowOptions(const FilaView* self, FilaVsmShadowOptions* out);
+void FilaView_setSoftShadowOptions(FilaView* self, const FilaSoftShadowOptions* options);
+void FilaView_getSoftShadowOptions(const FilaView* self, FilaSoftShadowOptions* out);
 void FilaView_setPostProcessingEnabled(FilaView* self, bool enabled);
 bool FilaView_isPostProcessingEnabled(const FilaView* self);
 void FilaView_setFrontFaceWindingInverted(FilaView* self, bool inverted);
@@ -104,20 +132,17 @@ void FilaView_setTransparentPickingEnabled(FilaView* self, bool enabled);
 bool FilaView_isTransparentPickingEnabled(const FilaView* self);
 void FilaView_setStencilBufferEnabled(FilaView* self, bool enabled);
 bool FilaView_isStencilBufferEnabled(const FilaView* self);
-// TODO(handwritten) FilaView_setStereoscopicOptions: void filament::View::setStereoscopicOptions(const StereoscopicOptions & options)
-//     const StereoscopicOptions &: value struct
-// TODO(handwritten) FilaView_getStereoscopicOptions: const StereoscopicOptions & filament::View::getStereoscopicOptions() const
-//     const StereoscopicOptions &: value struct
+void FilaView_setStereoscopicOptions(FilaView* self, const FilaStereoscopicOptions* options);
+void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptions* out);
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling);
 bool FilaView_isFrustumCullingEnabled(const FilaView* self);
 void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera);
 // TODO(handwritten) FilaView_getDirectionalShadowCameras: utils::FixedCapacityVector<const Camera *> filament::View::getDirectionalShadowCameras() const
 //     utils::FixedCapacityVector<const Camera *>: utils::FixedCapacityVector
 void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled);
-// TODO(handwritten) FilaView_getFroxelConfigurationInfo: FroxelConfigurationInfoWithAge filament::View::getFroxelConfigurationInfo() const
-//     FroxelConfigurationInfoWithAge: value struct
+void FilaView_getFroxelConfigurationInfo(const FilaView* self, FilaViewFroxelConfigurationInfoWithAge* out);
 // TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
-//     PickingQuery &: value struct
+//     PickingQueryResultCallback _Nonnull: function type
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out);
 FilaEntity FilaView_getFogEntity(const FilaView* self);

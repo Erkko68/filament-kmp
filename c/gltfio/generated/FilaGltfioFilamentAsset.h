@@ -23,8 +23,7 @@ uint32_t FilaGltfioFilamentAsset_popRenderables(FilaGltfioFilamentAsset* self, F
 // TODO(handwritten) FilaGltfioFilamentAsset_getResourceUris: const char *const * filament::gltfio::FilamentAsset::getResourceUris() const
 //     const char *const *: pointer to pointer
 uint32_t FilaGltfioFilamentAsset_getResourceUriCount(const FilaGltfioFilamentAsset* self);
-// TODO(handwritten) FilaGltfioFilamentAsset_getBoundingBox: filament::Aabb filament::gltfio::FilamentAsset::getBoundingBox() const
-//     filament::Aabb: value struct
+void FilaGltfioFilamentAsset_getBoundingBox(const FilaGltfioFilamentAsset* self, FilaAabb* out);
 const char* FilaGltfioFilamentAsset_getName(const FilaGltfioFilamentAsset* self, FilaEntity arg0);
 FilaEntity FilaGltfioFilamentAsset_getFirstEntityByName(FilaGltfioFilamentAsset* self, const char* name);
 uint32_t FilaGltfioFilamentAsset_getEntitiesByName(const FilaGltfioFilamentAsset* self, const char* name, FilaEntity* entities, uint32_t maxCount);

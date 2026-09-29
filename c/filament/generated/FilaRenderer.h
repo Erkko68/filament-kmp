@@ -8,18 +8,82 @@
 extern "C" {
 #endif
 
+// filament::Renderer::DisplayInfo
+FilaRendererDisplayInfo* FilaRendererDisplayInfo_create(void);
+void FilaRendererDisplayInfo_destroy(FilaRendererDisplayInfo* self);
+float FilaRendererDisplayInfo_getRefreshRate(const FilaRendererDisplayInfo* self);
+void FilaRendererDisplayInfo_setRefreshRate(FilaRendererDisplayInfo* self, float value);
+void FilaRendererDisplayInfo_getPresentationDeadlineNanos(const FilaRendererDisplayInfo* self, uint64_t* out);
+void FilaRendererDisplayInfo_setPresentationDeadlineNanos(FilaRendererDisplayInfo* self, uint64_t value);
+void FilaRendererDisplayInfo_getVsyncOffsetNanos(const FilaRendererDisplayInfo* self, uint64_t* out);
+void FilaRendererDisplayInfo_setVsyncOffsetNanos(FilaRendererDisplayInfo* self, uint64_t value);
+
+// filament::Renderer::FrameInfo
+FilaRendererFrameInfo* FilaRendererFrameInfo_create(void);
+void FilaRendererFrameInfo_destroy(FilaRendererFrameInfo* self);
+uint32_t FilaRendererFrameInfo_getFrameId(const FilaRendererFrameInfo* self);
+void FilaRendererFrameInfo_setFrameId(FilaRendererFrameInfo* self, uint32_t value);
+void FilaRendererFrameInfo_getGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getDenoisedGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setDenoisedGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getBeginFrame(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setBeginFrame(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getEndFrame(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setEndFrame(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getBackendBeginFrame(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setBackendBeginFrame(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getBackendEndFrame(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setBackendEndFrame(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getGpuFrameComplete(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setGpuFrameComplete(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getVsync(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setVsync(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getDisplayPresent(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setDisplayPresent(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getPresentDeadline(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setPresentDeadline(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getDisplayPresentInterval(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setDisplayPresentInterval(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getCompositionToPresentLatency(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setCompositionToPresentLatency(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getExpectedPresentLatency(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setExpectedPresentLatency(FilaRendererFrameInfo* self, int64_t value);
+void FilaRendererFrameInfo_getFrameScheduleTime(const FilaRendererFrameInfo* self, int64_t* out);
+void FilaRendererFrameInfo_setFrameScheduleTime(FilaRendererFrameInfo* self, int64_t value);
+
+// filament::Renderer::FrameRateOptions
+FilaRendererFrameRateOptions* FilaRendererFrameRateOptions_create(void);
+void FilaRendererFrameRateOptions_destroy(FilaRendererFrameRateOptions* self);
+float FilaRendererFrameRateOptions_getHeadRoomRatio(const FilaRendererFrameRateOptions* self);
+void FilaRendererFrameRateOptions_setHeadRoomRatio(FilaRendererFrameRateOptions* self, float value);
+float FilaRendererFrameRateOptions_getScaleRate(const FilaRendererFrameRateOptions* self);
+void FilaRendererFrameRateOptions_setScaleRate(FilaRendererFrameRateOptions* self, float value);
+uint32_t FilaRendererFrameRateOptions_getHistory(const FilaRendererFrameRateOptions* self);
+void FilaRendererFrameRateOptions_setHistory(FilaRendererFrameRateOptions* self, uint32_t value);
+uint32_t FilaRendererFrameRateOptions_getInterval(const FilaRendererFrameRateOptions* self);
+void FilaRendererFrameRateOptions_setInterval(FilaRendererFrameRateOptions* self, uint32_t value);
+
+// filament::Renderer::ClearOptions
+FilaRendererClearOptions* FilaRendererClearOptions_create(void);
+void FilaRendererClearOptions_destroy(FilaRendererClearOptions* self);
+void FilaRendererClearOptions_getClearColor(const FilaRendererClearOptions* self, FilaDouble4* out);
+void FilaRendererClearOptions_setClearColor(FilaRendererClearOptions* self, const FilaDouble4* value);
+uint32_t FilaRendererClearOptions_getClearStencil(const FilaRendererClearOptions* self);
+void FilaRendererClearOptions_setClearStencil(FilaRendererClearOptions* self, uint32_t value);
+bool FilaRendererClearOptions_getClear(const FilaRendererClearOptions* self);
+void FilaRendererClearOptions_setClear(FilaRendererClearOptions* self, bool value);
+bool FilaRendererClearOptions_getDiscard(const FilaRendererClearOptions* self);
+void FilaRendererClearOptions_setDiscard(FilaRendererClearOptions* self, bool value);
+
 // filament::Renderer
 // TODO(handwritten) FilaRenderer_getFrameInfoHistory: utils::FixedCapacityVector<FrameInfo> filament::Renderer::getFrameInfoHistory(size_t historySize) const
 //     utils::FixedCapacityVector<FrameInfo>: utils::FixedCapacityVector
 uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self);
-// TODO(handwritten) FilaRenderer_setDisplayInfo: void filament::Renderer::setDisplayInfo(const DisplayInfo & info)
-//     const DisplayInfo &: value struct
-// TODO(handwritten) FilaRenderer_setFrameRateOptions: void filament::Renderer::setFrameRateOptions(const FrameRateOptions & options)
-//     const FrameRateOptions &: value struct
-// TODO(handwritten) FilaRenderer_setClearOptions: void filament::Renderer::setClearOptions(const ClearOptions & options)
-//     const ClearOptions &: value struct
-// TODO(handwritten) FilaRenderer_getClearOptions: const ClearOptions & filament::Renderer::getClearOptions() const
-//     const ClearOptions &: value struct
+void FilaRenderer_setDisplayInfo(FilaRenderer* self, const FilaRendererDisplayInfo* info);
+void FilaRenderer_setFrameRateOptions(FilaRenderer* self, const FilaRendererFrameRateOptions* options);
+void FilaRenderer_setClearOptions(FilaRenderer* self, const FilaRendererClearOptions* options);
+void FilaRenderer_getClearOptions(const FilaRenderer* self, FilaRendererClearOptions* out);
 FilaEngine* FilaRenderer_getEngine(FilaRenderer* self);
 void FilaRenderer_setVsyncTime(FilaRenderer* self, uint64_t steadyClockTimeNano);
 void FilaRenderer_skipFrame(FilaRenderer* self, uint64_t vsyncSteadyClockTimeNano);

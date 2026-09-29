@@ -12,6 +12,7 @@ extern "C" {
 FilaViewport* FilaViewport_create(void);
 FilaViewport* FilaViewport_create_int32_t_int32_t_uint32_t_uint32_t(int32_t left, int32_t bottom, uint32_t width, uint32_t height);
 void FilaViewport_destroy(FilaViewport* self);
+FilaViewport* FilaViewport_asViewport(FilaViewport* self);
 bool FilaViewport_empty(const FilaViewport* self);
 
 

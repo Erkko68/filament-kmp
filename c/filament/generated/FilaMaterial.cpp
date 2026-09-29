@@ -4,6 +4,50 @@
 
 extern "C" {
 
+FilaMaterialParameterInfo* FilaMaterialParameterInfo_create(void) {
+    return reinterpret_cast<FilaMaterialParameterInfo*>(new filament::Material::ParameterInfo());
+}
+
+void FilaMaterialParameterInfo_destroy(FilaMaterialParameterInfo* self) {
+    delete reinterpret_cast<filament::Material::ParameterInfo*>(self);
+}
+
+const char* FilaMaterialParameterInfo_getName(const FilaMaterialParameterInfo* self) {
+    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->name;
+}
+
+bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* self) {
+    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->isSampler;
+}
+
+void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value) {
+    reinterpret_cast<filament::Material::ParameterInfo*>(self)->isSampler = value;
+}
+
+bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self) {
+    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->isSubpass;
+}
+
+void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, bool value) {
+    reinterpret_cast<filament::Material::ParameterInfo*>(self)->isSubpass = value;
+}
+
+uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self) {
+    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->count;
+}
+
+void FilaMaterialParameterInfo_setCount(FilaMaterialParameterInfo* self, uint32_t value) {
+    reinterpret_cast<filament::Material::ParameterInfo*>(self)->count = value;
+}
+
+FilaPrecision FilaMaterialParameterInfo_getPrecision(const FilaMaterialParameterInfo* self) {
+    return static_cast<FilaPrecision>(reinterpret_cast<const filament::Material::ParameterInfo*>(self)->precision);
+}
+
+void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, FilaPrecision value) {
+    reinterpret_cast<filament::Material::ParameterInfo*>(self)->precision = static_cast<filament::backend::Precision>(value);
+}
+
 FilaMaterialBuilder* FilaMaterialBuilder_create(void) {
     return reinterpret_cast<FilaMaterialBuilder*>(new filament::Material::Builder());
 }
@@ -130,6 +174,10 @@ FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self) {
 
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self) {
     return static_cast<uint32_t>(reinterpret_cast<const filament::Material*>(self)->getParameterCount());
+}
+
+uint32_t FilaMaterial_getParameters(const FilaMaterial* self, FilaMaterialParameterInfo* parameters, uint32_t count) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Material*>(self)->getParameters(reinterpret_cast<filament::Material::ParameterInfo*>(parameters), static_cast<size_t>(count)));
 }
 
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name) {
