@@ -52,7 +52,7 @@ class MaterialBuilder() {
                     Attribute(
                         name = filamatString(FilaFilamatMaterialBuilderAttribute_getName(a)).orEmpty(),
                         type = UniformType.entries[FilaFilamatMaterialBuilderAttribute_getType(a)],
-                        location = VertexAttribute.entries[FilaFilamatMaterialBuilderAttribute_getLocation(a)],
+                        location = FilaFilamatMaterialBuilderAttribute_getLocation(a).let { l -> VertexAttribute.entries.first { it.value == l } },
                         attributeName = copiedString { out, capacity -> FilaFilamatMaterialBuilderAttribute_getAttributeName(a, out, capacity) },
                         defineName = copiedString { out, capacity -> FilaFilamatMaterialBuilderAttribute_getDefineName(a, out, capacity) },
                     )
@@ -447,7 +447,7 @@ class MaterialBuilder() {
         string(name) { b, p -> FilaFilamatMaterialBuilder_variable_ParameterPrecision(b, v.ordinal, p, precision.ordinal) }
 
     /** Requires the given vertex [attribute] to be present in rendered geometry (e.g. UV1, COLOR). */
-    fun require(attribute: VertexAttribute): MaterialBuilder = op { FilaFilamatMaterialBuilder_require(it, attribute.ordinal) }
+    fun require(attribute: VertexAttribute): MaterialBuilder = op { FilaFilamatMaterialBuilder_require(it, attribute.value) }
 
     /** Sets the material domain ([MaterialDomain.SURFACE] by default). */
     fun materialDomain(materialDomain: MaterialDomain): MaterialBuilder = op { FilaFilamatMaterialBuilder_materialDomain(it, materialDomain.ordinal) }

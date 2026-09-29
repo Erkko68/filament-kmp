@@ -19,6 +19,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Changed
 - **gltfio follows its C++ API** (`gltfio`): `AssetLoader.create(AssetConfiguration)`, `ResourceLoader(ResourceConfiguration)` with explicit `addTextureProvider`, `createUbershaderProvider`/`createStbProvider`/`createKtx2Provider`/`createWebpProvider`, a concrete `MaterialProvider`, `UvMap` of `UvSet` and C++-named per-index getters.
 - **filament-utils follows its C++ API** (`filament-utils`): top-level `Mode` (`FREE_FLIGHT`), `Fov` and closeable `Bookmark` with `interpolate`/`duration`, `raycast` returns a hit, `getRay`; `IBLPrefilterContext` nests its filters as `operator invoke` with `Config`/`Options` plus `IrradianceFilter`; `Ktx1Bundle`/`Ktx1Reader` replace `KTX1Loader`; new `Ktx2Reader`, `TangentSpaceMesh`, `Transcoder`.
+- **filament follows its C++ API, class by class** (`filament`): `IndexBuffer.IndexType` (was `Builder.IndexType`), `VertexAttribute` drops `UNUSED`, `Fence.FENCE_WAIT_FOR_EVER` and C++ defaults, builder `name()`, `isCreationComplete`, `VertexBuffer.Builder.advancedSkinning`, `offset` on morph/bone setters.
 - **`MaterialBuilder.init()`/`shutdown()`/`initJs` replace the `Filamat` object** (`filamat`), matching filamat's C++.
 - **`MaterialBuilder.parameter(name, …)` replaces `uniformParameter`/`uniformParameterArray`/`samplerParameter`** and `MaterialPackage.data` replaces `buffer` (`filamat`), matching filamat's C++.
 - **Android runs on our own C API over JNI** (`filament-jni` + `filament-jni-android`, `libfilament-c.so` per ABI) instead of the upstream `filament-android`/`gltfio-android`/`filament-utils-android`/`filamat-android` artifacts; Android `nativeObject` is now the C handle as a `Long`.
@@ -34,6 +35,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **The rest of filamat's `MaterialBuilder`** (`filamat`): `constant`, sampler `filterable`/`multisample`/`transformName`/`stages`, `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `linearFog`, `stereoscopic*`, `output`, `groupSize`, `materialSource`, `getAttributeDatabase` and more; `MaterialPackage` gains `size`, its constructors and `invalidPackage()`.
 
 ### Fixed
+- **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED`, and **`MorphTargetBuffer.setPositionsAt` reads 3 floats per vertex** as documented, not 4 (`filament`).
 - **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform; they now reach Filament.
 - **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph target count/weights, gltfio instance/material queries, shadow options, `customLut`, `geometryType` and more now work on web.
 

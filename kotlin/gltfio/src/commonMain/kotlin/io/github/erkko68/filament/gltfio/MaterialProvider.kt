@@ -56,7 +56,7 @@ class MaterialProvider @InternalFilamentApi constructor(internal var nativeHandl
      * Returns true if the given vertex attribute must be present. Some providers (e.g. ubershader)
      * require dummy attribute values when the glTF model does not provide them.
      */
-    fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilaGltfioMaterialProvider_needsDummyData(nativeHandle, attrib.ordinal)
+    fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilaGltfioMaterialProvider_needsDummyData(nativeHandle, attrib.value)
 
     /** Frees the provider itself; cached materials survive unless [destroyMaterials] was called. */
     fun destroy() {

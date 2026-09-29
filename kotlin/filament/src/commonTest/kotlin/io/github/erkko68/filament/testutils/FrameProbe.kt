@@ -123,7 +123,7 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
 
         val ib = IndexBuffer.Builder()
             .indexCount(6)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
         // Two CCW triangles as seen from +Y.
         ib.setBuffer(engine, shortArrayOf(0, 2, 1, 0, 3, 2).toBytes())

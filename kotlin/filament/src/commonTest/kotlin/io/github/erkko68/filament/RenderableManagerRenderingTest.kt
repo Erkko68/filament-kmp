@@ -27,7 +27,7 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
 
         val ib = IndexBuffer.Builder()
             .indexCount(3)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
         ib.setBuffer(engine, byteArrayOf(0, 0, 1, 0, 2, 0))
 

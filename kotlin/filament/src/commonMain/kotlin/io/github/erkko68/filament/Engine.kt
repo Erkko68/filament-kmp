@@ -916,3 +916,6 @@ private external fun FilaEngine_setPaused(engine: NativePointer, paused: Boolean
 @ExternalSymbolName("FilaEngine_unprotected")
 private external fun FilaEngine_unprotected(engine: NativePointer)
 
+
+@ExternalSymbolName("FilaEngine_destroyFence")
+internal external fun FilaEngine_destroyFence(engine: NativePointer, fence: NativePointer): Boolean

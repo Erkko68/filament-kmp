@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -32,12 +33,11 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
      * - UV1: Second set of texture coordinates
      * - BONE_INDICES: Indices for skeletal animation
      * - BONE_WEIGHTS: Weights for skeletal animation
-     * - UNUSED: Unused attribute slot
      * - CUSTOM0-CUSTOM7: Custom attributes for specialized effects
      */
-    enum class VertexAttribute {
-        POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
-        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7
+    enum class VertexAttribute(@InternalFilamentApi val value: Int) {
+        POSITION(0), TANGENTS(1), COLOR(2), UV0(3), UV1(4), BONE_INDICES(5), BONE_WEIGHTS(6),
+        CUSTOM0(8), CUSTOM1(9), CUSTOM2(10), CUSTOM3(11), CUSTOM4(12), CUSTOM5(13), CUSTOM6(14), CUSTOM7(15)
     }
 
     /**
@@ -117,7 +117,7 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return This Builder, for chaining calls
          */
         fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int = 0, byteStride: Int = 0): Builder = apply {
-            FilaVertexBufferBuilder_attribute(nativeBuilder, attribute.ordinal, bufferIndex, attributeType.ordinal, byteOffset, byteStride)
+            FilaVertexBufferBuilder_attribute(nativeBuilder, attribute.value, bufferIndex, attributeType.ordinal, byteOffset, byteStride)
         }
 
         /**
@@ -130,7 +130,23 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
          * @param enabled If true, automatically normalize the attribute (default: true)
          * @return This Builder, for chaining calls
          */
-        fun normalized(attribute: VertexAttribute, enabled: Boolean = true): Builder = apply { FilaVertexBufferBuilder_normalized(nativeBuilder, attribute.ordinal, enabled) }
+        fun normalized(attribute: VertexAttribute, enabled: Boolean = true): Builder = apply { FilaVertexBufferBuilder_normalized(nativeBuilder, attribute.value, enabled) }
+
+        /**
+         * Sets advanced skinning mode: bone data, indices and weights are set with
+         * `RenderableManager.Builder.boneIndicesAndWeights`. Works with or without buffer objects.
+         *
+         * @param enabled If true, enables advanced skinning mode. False by default.
+         * @return This Builder, for chaining calls
+         */
+        fun advancedSkinning(enabled: Boolean): Builder = apply { FilaVertexBufferBuilder_advancedSkinning(nativeBuilder, enabled) }
+
+        /**
+         * Associates an optional name with this VertexBuffer for debugging purposes.
+         *
+         * The name shows up in error messages and should be kept short.
+         */
+        fun name(name: String): Builder = apply { interopScope { FilaVertexBufferBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
          * Creates the VertexBuffer object.
@@ -184,7 +200,7 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
      */
     fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
-        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex, upload.ptr, upload.size, upload.callback, upload.userData, destOffsetInBytes)
     }
 
     /**
@@ -200,37 +216,10 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
     fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
         FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.nativeHandle, bufferIndex, bufferObject.nativeHandle)
     }
+
+    /**
+     * Returns whether the asynchronous creation of this VertexBuffer has completed; always true
+     * when it wasn't built with `Builder.async()`.
+     */
+    val isCreationComplete: Boolean get() = FilaVertexBuffer_isCreationComplete(nativeHandle)
 }
-
-@ExternalSymbolName("FilaVertexBufferBuilder_create")
-private external fun FilaVertexBufferBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaVertexBufferBuilder_destroy")
-private external fun FilaVertexBufferBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaVertexBufferBuilder_build")
-private external fun FilaVertexBufferBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaVertexBufferBuilder_bufferCount")
-private external fun FilaVertexBufferBuilder_bufferCount(builder: NativePointer, bufferCount: Int)
-
-@ExternalSymbolName("FilaVertexBufferBuilder_vertexCount")
-private external fun FilaVertexBufferBuilder_vertexCount(builder: NativePointer, vertexCount: Int)
-
-@ExternalSymbolName("FilaVertexBufferBuilder_enableBufferObjects")
-private external fun FilaVertexBufferBuilder_enableBufferObjects(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaVertexBufferBuilder_attribute")
-private external fun FilaVertexBufferBuilder_attribute(builder: NativePointer, attribute: Int, bufferIndex: Int, attributeType: Int, byteOffset: Int, byteStride: Int)
-
-@ExternalSymbolName("FilaVertexBufferBuilder_normalized")
-private external fun FilaVertexBufferBuilder_normalized(builder: NativePointer, attribute: Int, normalized: Boolean)
-
-@ExternalSymbolName("FilaVertexBuffer_getVertexCount")
-private external fun FilaVertexBuffer_getVertexCount(vertexBuffer: NativePointer): Int
-
-@ExternalSymbolName("FilaVertexBuffer_setBufferAt")
-private external fun FilaVertexBuffer_setBufferAt(vertexBuffer: NativePointer, engine: NativePointer, bufferIndex: Int, buffer: NativePointer, sizeInBytes: Int, destOffsetInBytes: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)
-
-@ExternalSymbolName("FilaVertexBuffer_setBufferObjectAt")
-private external fun FilaVertexBuffer_setBufferObjectAt(vertexBuffer: NativePointer, engine: NativePointer, bufferIndex: Int, bufferObject: NativePointer)

@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -60,6 +61,13 @@ class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: N
         fun bindingType(bindingType: BindingType): Builder = apply { FilaBufferObjectBuilder_bindingType(nativeBuilder, bindingType.ordinal) }
 
         /**
+         * Associates an optional name with this BufferObject for debugging purposes.
+         *
+         * The name shows up in error messages and should be kept short.
+         */
+        fun name(name: String): Builder = apply { interopScope { FilaBufferObjectBuilder_name(nativeBuilder, toInterop(name)) } }
+
+        /**
          * Creates the BufferObject.
          *
          * After creation, the buffer object is uninitialized. Use setBuffer() to initialize it.
@@ -110,27 +118,6 @@ class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: N
      */
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
-        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, upload.callback, upload.userData, destOffsetInBytes)
     }
 }
-
-@ExternalSymbolName("FilaBufferObjectBuilder_create")
-private external fun FilaBufferObjectBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaBufferObjectBuilder_destroy")
-private external fun FilaBufferObjectBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaBufferObjectBuilder_build")
-private external fun FilaBufferObjectBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaBufferObjectBuilder_size")
-private external fun FilaBufferObjectBuilder_size(builder: NativePointer, byteCount: Int)
-
-@ExternalSymbolName("FilaBufferObjectBuilder_bindingType")
-private external fun FilaBufferObjectBuilder_bindingType(builder: NativePointer, bindingType: Int)
-
-@ExternalSymbolName("FilaBufferObject_getByteCount")
-private external fun FilaBufferObject_getByteCount(bufferObject: NativePointer): Int
-
-@ExternalSymbolName("FilaBufferObject_setBuffer")
-private external fun FilaBufferObject_setBuffer(bufferObject: NativePointer, engine: NativePointer, buffer: NativePointer, sizeInBytes: Int, destOffsetInBytes: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)

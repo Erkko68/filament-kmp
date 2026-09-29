@@ -95,7 +95,7 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
 
     val ib = IndexBuffer.Builder()
         .indexCount(indices.size)
-        .bufferType(IndexBuffer.Builder.IndexType.UINT)
+        .bufferType(IndexBuffer.IndexType.UINT)
         .build(engine)
     ib.setBuffer(engine, indices.toBytes())
 

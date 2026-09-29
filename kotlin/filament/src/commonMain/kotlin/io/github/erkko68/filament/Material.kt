@@ -481,7 +481,7 @@ class Material @InternalFilamentApi constructor(internal var nativeHandle: Nativ
         val bitset = FilaMaterial_getRequiredAttributes(nativeHandle)
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
         VertexBuffer.VertexAttribute.entries.forEach { attr ->
-            if ((bitset and (1 shl attr.ordinal)) != 0) {
+            if ((bitset and (1 shl attr.value)) != 0) {
                 result.add(attr)
             }
         }

@@ -43,6 +43,7 @@ public final class io/github/erkko68/filament/BufferObject$Builder {
 	public fun <init> ()V
 	public final fun bindingType (Lio/github/erkko68/filament/BufferObject$BindingType;)Lio/github/erkko68/filament/BufferObject$Builder;
 	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/BufferObject;
+	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/BufferObject$Builder;
 	public final fun size (I)Lio/github/erkko68/filament/BufferObject$Builder;
 }
 
@@ -432,18 +433,20 @@ public final class io/github/erkko68/filament/EntityManager$Companion {
 
 public final class io/github/erkko68/filament/Fence {
 	public static final field Companion Lio/github/erkko68/filament/Fence$Companion;
+	public static final field FENCE_WAIT_FOR_EVER J
 	public fun <init> (JJ)V
 	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getNativeObject ()J
 	public final fun wait (Lio/github/erkko68/filament/Fence$Mode;J)Lio/github/erkko68/filament/Fence$FenceStatus;
+	public static synthetic fun wait$default (Lio/github/erkko68/filament/Fence;Lio/github/erkko68/filament/Fence$Mode;JILjava/lang/Object;)Lio/github/erkko68/filament/Fence$FenceStatus;
 }
 
 public final class io/github/erkko68/filament/Fence$Companion {
 	public final fun waitAndDestroy (Lio/github/erkko68/filament/Fence;Lio/github/erkko68/filament/Fence$Mode;)Lio/github/erkko68/filament/Fence$FenceStatus;
+	public static synthetic fun waitAndDestroy$default (Lio/github/erkko68/filament/Fence$Companion;Lio/github/erkko68/filament/Fence;Lio/github/erkko68/filament/Fence$Mode;ILjava/lang/Object;)Lio/github/erkko68/filament/Fence$FenceStatus;
 }
 
 public final class io/github/erkko68/filament/Fence$FenceStatus : java/lang/Enum {
-	public static final field ALREADY_SIGNALED Lio/github/erkko68/filament/Fence$FenceStatus;
 	public static final field CONDITION_SATISFIED Lio/github/erkko68/filament/Fence$FenceStatus;
 	public static final field ERROR Lio/github/erkko68/filament/Fence$FenceStatus;
 	public static final field TIMEOUT_EXPIRED Lio/github/erkko68/filament/Fence$FenceStatus;
@@ -479,6 +482,7 @@ public final class io/github/erkko68/filament/IndexBuffer {
 	public fun <init> (J)V
 	public final fun getIndexCount ()I
 	public final fun getNativeObject ()J
+	public final fun isCreationComplete ()Z
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[B)V
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[BII)V
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[BIILkotlin/jvm/functions/Function0;)V
@@ -487,17 +491,18 @@ public final class io/github/erkko68/filament/IndexBuffer {
 
 public final class io/github/erkko68/filament/IndexBuffer$Builder {
 	public fun <init> ()V
-	public final fun bufferType (Lio/github/erkko68/filament/IndexBuffer$Builder$IndexType;)Lio/github/erkko68/filament/IndexBuffer$Builder;
+	public final fun bufferType (Lio/github/erkko68/filament/IndexBuffer$IndexType;)Lio/github/erkko68/filament/IndexBuffer$Builder;
 	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/IndexBuffer;
 	public final fun indexCount (I)Lio/github/erkko68/filament/IndexBuffer$Builder;
+	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/IndexBuffer$Builder;
 }
 
-public final class io/github/erkko68/filament/IndexBuffer$Builder$IndexType : java/lang/Enum {
-	public static final field UINT Lio/github/erkko68/filament/IndexBuffer$Builder$IndexType;
-	public static final field USHORT Lio/github/erkko68/filament/IndexBuffer$Builder$IndexType;
+public final class io/github/erkko68/filament/IndexBuffer$IndexType : java/lang/Enum {
+	public static final field UINT Lio/github/erkko68/filament/IndexBuffer$IndexType;
+	public static final field USHORT Lio/github/erkko68/filament/IndexBuffer$IndexType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/IndexBuffer$Builder$IndexType;
-	public static fun values ()[Lio/github/erkko68/filament/IndexBuffer$Builder$IndexType;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/IndexBuffer$IndexType;
+	public static fun values ()[Lio/github/erkko68/filament/IndexBuffer$IndexType;
 }
 
 public final class io/github/erkko68/filament/IndirectLight {
@@ -1018,8 +1023,10 @@ public final class io/github/erkko68/filament/MorphTargetBuffer {
 	public final fun getNativeObject ()J
 	public final fun getVertexCount ()I
 	public final fun isCustomMorphingEnabled ()Z
-	public final fun setPositionsAt (Lio/github/erkko68/filament/Engine;I[FI)V
-	public final fun setTangentsAt (Lio/github/erkko68/filament/Engine;I[SI)V
+	public final fun setPositionsAt (Lio/github/erkko68/filament/Engine;I[FII)V
+	public static synthetic fun setPositionsAt$default (Lio/github/erkko68/filament/MorphTargetBuffer;Lio/github/erkko68/filament/Engine;I[FIIILjava/lang/Object;)V
+	public final fun setTangentsAt (Lio/github/erkko68/filament/Engine;I[SII)V
+	public static synthetic fun setTangentsAt$default (Lio/github/erkko68/filament/MorphTargetBuffer;Lio/github/erkko68/filament/Engine;I[SIIILjava/lang/Object;)V
 }
 
 public final class io/github/erkko68/filament/MorphTargetBuffer$Builder {
@@ -1028,6 +1035,7 @@ public final class io/github/erkko68/filament/MorphTargetBuffer$Builder {
 	public final fun count (I)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 	public final fun enableCustomMorphing (Z)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 	public static synthetic fun enableCustomMorphing$default (Lio/github/erkko68/filament/MorphTargetBuffer$Builder;ZILjava/lang/Object;)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
+	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 	public final fun vertexCount (I)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 	public final fun withPositions (Z)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 	public static synthetic fun withPositions$default (Lio/github/erkko68/filament/MorphTargetBuffer$Builder;ZILjava/lang/Object;)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
@@ -1270,7 +1278,9 @@ public final class io/github/erkko68/filament/SkinningBuffer {
 	public final fun getBoneCount ()I
 	public final fun getNativeObject ()J
 	public final fun setBonesAsMatrices (Lio/github/erkko68/filament/Engine;[FII)V
+	public static synthetic fun setBonesAsMatrices$default (Lio/github/erkko68/filament/SkinningBuffer;Lio/github/erkko68/filament/Engine;[FIIILjava/lang/Object;)V
 	public final fun setBonesAsQuaternions (Lio/github/erkko68/filament/Engine;[FII)V
+	public static synthetic fun setBonesAsQuaternions$default (Lio/github/erkko68/filament/SkinningBuffer;Lio/github/erkko68/filament/Engine;[FIIILjava/lang/Object;)V
 }
 
 public final class io/github/erkko68/filament/SkinningBuffer$Builder {
@@ -1278,6 +1288,7 @@ public final class io/github/erkko68/filament/SkinningBuffer$Builder {
 	public final fun boneCount (I)Lio/github/erkko68/filament/SkinningBuffer$Builder;
 	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/SkinningBuffer;
 	public final fun initialize (Z)Lio/github/erkko68/filament/SkinningBuffer$Builder;
+	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/SkinningBuffer$Builder;
 }
 
 public final class io/github/erkko68/filament/Skybox {
@@ -1818,6 +1829,7 @@ public final class io/github/erkko68/filament/VertexBuffer {
 	public fun <init> (J)V
 	public final fun getNativeObject ()J
 	public final fun getVertexCount ()I
+	public final fun isCreationComplete ()Z
 	public final fun setBufferAt (Lio/github/erkko68/filament/Engine;I[B)V
 	public final fun setBufferAt (Lio/github/erkko68/filament/Engine;I[BII)V
 	public final fun setBufferAt (Lio/github/erkko68/filament/Engine;I[BIILkotlin/jvm/functions/Function0;)V
@@ -1859,11 +1871,13 @@ public final class io/github/erkko68/filament/VertexBuffer$AttributeType : java/
 
 public final class io/github/erkko68/filament/VertexBuffer$Builder {
 	public fun <init> ()V
+	public final fun advancedSkinning (Z)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public final fun attribute (Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;ILio/github/erkko68/filament/VertexBuffer$AttributeType;II)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public static synthetic fun attribute$default (Lio/github/erkko68/filament/VertexBuffer$Builder;Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;ILio/github/erkko68/filament/VertexBuffer$AttributeType;IIILjava/lang/Object;)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public final fun bufferCount (I)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/VertexBuffer;
 	public final fun enableBufferObjects (Z)Lio/github/erkko68/filament/VertexBuffer$Builder;
+	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public final fun normalized (Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;Z)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public static synthetic fun normalized$default (Lio/github/erkko68/filament/VertexBuffer$Builder;Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;ZILjava/lang/Object;)Lio/github/erkko68/filament/VertexBuffer$Builder;
 	public final fun vertexCount (I)Lio/github/erkko68/filament/VertexBuffer$Builder;
@@ -1883,10 +1897,10 @@ public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute : jav
 	public static final field CUSTOM7 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field POSITION Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field TANGENTS Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
-	public static final field UNUSED Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field UV0 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field UV1 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static fun values ()[Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 }

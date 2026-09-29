@@ -881,7 +881,7 @@ private fun RenderableManager.PrimitiveType.toNative(): Int = when (this) {
 
 /** Converts a native attribute bitset into the corresponding set of [VertexBuffer.VertexAttribute]. */
 internal fun attributeBitsetToSet(bits: Int): Set<VertexBuffer.VertexAttribute> =
-    VertexBuffer.VertexAttribute.entries.filterTo(mutableSetOf()) { (bits shr it.ordinal) and 1 == 1 }
+    VertexBuffer.VertexAttribute.entries.filterTo(mutableSetOf()) { (bits shr it.value) and 1 == 1 }
 
 @ExternalSymbolName("FilaRenderableManagerBuilder_blendOrder")
 private external fun FilaRenderableManagerBuilder_blendOrder(builder: NativePointer, index: Int, blendOrder: Int)

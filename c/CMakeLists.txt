@@ -40,6 +40,13 @@ foreach(module IN LISTS FILA_MODULES)
     else()
         file(GLOB sources CONFIGURE_DEPENDS ${module}/cpp/*.cpp)
     endif()
+    # ponytail: filament moves record by record; drop this once it joins FILA_GENERATED_MODULES.
+    if (module STREQUAL "filament")
+        file(STRINGS filament/migrated.txt records)
+        foreach(record IN LISTS records)
+            list(APPEND sources filament/generated/${record}.cpp)
+        endforeach()
+    endif()
     add_library(fila-${module} OBJECT ${sources})
 endforeach()
 
