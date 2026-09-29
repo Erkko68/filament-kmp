@@ -13,6 +13,7 @@ import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.compose.internal.rememberOwned
 
 /**
  * A viewport onto a [FilamentScene]. Each `FilamentView` owns one Filament `View`, `Camera`,
@@ -66,9 +67,10 @@ fun FilamentView(
     val engine        = scene.engine
     val filamentScene = scene.scene
 
-    val renderer = remember(engine) { engine.createRenderer() }
-    val view     = remember(engine) { engine.createView() }
-    val camera   = remember(engine) { engine.createCamera() }
+    // The scene is owned by the FilamentScene handle, not the view.
+    val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroyRenderer(it) }
+    val view     = rememberOwned(engine, dependsOn = listOf(filamentScene), create = { engine.createView() }) { engine.destroyView(it) }
+    val camera   = rememberOwned(engine, create = { engine.createCamera() }) { engine.destroyCamera(it) }
 
     // Wire the scene/camera onto the view and apply the render flags. A keyed effect with a no-op
     // onDispose, not a `remember` block: mutating Filament objects is a side effect, and it belongs
@@ -126,15 +128,6 @@ fun FilamentView(
         { aspect ->
             cameraState.aspect = aspect
             cameraState.snapshot().applyTo(camera, aspect)
-        }
-    }
-
-    // The scene is owned by the FilamentScene handle, not the view.
-    DisposableEffect(engine) {
-        onDispose {
-            engine.destroyRenderer(renderer)
-            engine.destroyView(view)
-            engine.destroyCamera(camera)
         }
     }
 

@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.internal.transformMatrix
 
 /**
@@ -73,16 +73,13 @@ fun FilamentSceneScope.Group(
     val engine = LocalFilamentEngine.current ?: noFilamentEngine()
     val outerParent = LocalParentEntity.current
 
-    val groupEntity = remember(engine) { engine.entityManager.create() }
+    val groupEntity = rememberOwned(engine, create = { engine.entityManager.create() }) { engine.entityManager.destroy(it) }
 
     DisposableEffect(groupEntity) {
         val tm = engine.transformManager
         tm.create(groupEntity)
         EntityScopeImpl(groupEntity, engine).onCreate()
-        onDispose {
-            tm.destroy(groupEntity)
-            engine.entityManager.destroy(groupEntity)
-        }
+        onDispose { tm.destroy(groupEntity) }
     }
 
     DisposableEffect(groupEntity, position, rotation, scale, pivot) {

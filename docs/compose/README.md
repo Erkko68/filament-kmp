@@ -44,7 +44,7 @@ FilamentSceneView(
 
 ## Lifecycle and resource management
 
-The Compose DSL manages Filament resource lifetimes through `DisposableEffect`:
+The Compose DSL destroys the Filament objects it creates when they leave the composition (or when a composition pass is discarded), always after everything created from them:
 
 - `rememberFilamentEngine` — destroys the `Engine` when leaving composition.
 - `rememberFilamentScene` — destroys its `Scene` (and the engine, if it created one).

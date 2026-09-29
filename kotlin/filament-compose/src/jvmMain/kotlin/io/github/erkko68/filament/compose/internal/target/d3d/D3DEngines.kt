@@ -35,10 +35,9 @@ internal object D3DEngines {
     /** [engine]'s platform, if [create] made it. */
     fun platformOf(engine: Engine): Long? = platforms[engine]
 
-    /** Destroys [engine] (if still alive), then the platform Filament doesn't own. */
+    /** Destroys [engine], then its platform if [create] made it (Filament doesn't own it). */
     fun destroy(engine: Engine) {
-        val platform = platforms.remove(engine) ?: return
         engine.destroy()
-        D3DHelper.nDestroyPlatform(platform)
+        platforms.remove(engine)?.let(D3DHelper::nDestroyPlatform)
     }
 }

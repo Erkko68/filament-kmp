@@ -1,18 +1,17 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.gltfio.ResourceLoader
@@ -51,6 +50,17 @@ class GltfAsset internal constructor(
      * make them fight over the same transform.
      */
     internal var primaryInstanceClaimed = false
+
+    /** The loader uploading this asset's resources, until the load completes or is abandoned. */
+    internal var resourceLoader: ResourceLoader? = null
+
+    /** Cancels an unfinished load and destroys its loader; a no-op once released. */
+    internal fun releaseResourceLoader() {
+        val loader = resourceLoader ?: return
+        resourceLoader = null
+        if (!isReady) loader.asyncCancelLoad()
+        loader.destroy()
+    }
 }
 
 /**
@@ -72,8 +82,13 @@ internal fun rememberGltfAsset(
     val gltfioContext = rememberGltfioContext(engine)
     val assetLoader = gltfioContext.assetLoader
 
-    val gltfAsset = remember(bytes, assetLoader) {
+    // The loader is destroyed with the asset, not in the loading coroutine's `finally`, which only
+    // runs after a composition-owned engine may already be gone.
+    val gltfAsset = rememberOwned(engine, bytes, gltfioContext, dependsOn = listOf(gltfioContext), create = {
         assetLoader.createAsset(bytes)?.let { GltfAsset(it, assetLoader) }
+    }) {
+        it.releaseResourceLoader()
+        assetLoader.destroyAsset(it.filamentAsset)
     }
 
     if (gltfAsset == null) {
@@ -86,24 +101,15 @@ internal fun rememberGltfAsset(
         return null
     }
 
-    DisposableEffect(gltfAsset) {
-        onDispose {
-            assetLoader.destroyAsset(gltfAsset.filamentAsset)
-        }
-    }
-
     LaunchedEffect(gltfAsset) {
-        val resourceLoader = ResourceLoader(engine, true)
-        try {
-            resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
-            while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
-                resourceLoader.asyncUpdateLoad()
-                withFrameNanos { }
-            }
-            gltfAsset.isReady = true
-        } finally {
-            resourceLoader.destroy()
+        val resourceLoader = ResourceLoader(engine, true).also { gltfAsset.resourceLoader = it }
+        resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
+        while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
+            resourceLoader.asyncUpdateLoad()
+            withFrameNanos { }
         }
+        gltfAsset.isReady = true
+        gltfAsset.releaseResourceLoader()
     }
 
     return gltfAsset
