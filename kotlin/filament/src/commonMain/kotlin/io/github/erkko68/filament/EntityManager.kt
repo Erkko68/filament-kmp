@@ -17,7 +17,7 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
     val nativeObject: NativePointer get() = nativeHandle
 
     companion object {
-        private val instance = EntityManager(FilaEntityManager_get())
+        private val instance = Filament.init().let { EntityManager(FilaEntityManager_get()) }
         /**
          * Get the global EntityManager instance.
          *

@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Camera
+import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.interop.*
 import io.github.erkko68.filament.InternalFilamentApi
 
@@ -66,6 +67,7 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
      * Builder for [Manipulator] instances.
      */
     class Builder() {
+        init { Filament.init() } // usable before any Engine exists
         private val nativeBuilder = FilaManipulatorBuilder_create()
 
         /** Width and height of the viewing area. */

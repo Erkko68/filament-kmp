@@ -163,6 +163,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
     val irradianceTexture: Texture? get() = FilaIndirectLight_getIrradianceTexture(nativeHandle).takeIf { it != NullPointer }?.let(::Texture)
 
     companion object {
+        init { Filament.init() } // statics are callable before any Engine exists
         /**
          * Helper to estimate the direction of the dominant light in the environment represented by
          * spherical harmonics.

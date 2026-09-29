@@ -450,6 +450,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
     fun generateMipmaps(engine: Engine) = FilaTexture_generateMipmaps(nativeHandle, engine.nativeHandle)
 
     companion object {
+        init { Filament.init() } // statics are callable before any Engine exists
         /**
          * Queries whether a backend supports a particular format.
          * @param engine Engine to query
