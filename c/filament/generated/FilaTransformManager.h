@@ -23,32 +23,32 @@ void FilaTransformManagerChildren_range_destroy(FilaTransformManagerChildren_ran
 // filament::TransformManager
 bool FilaTransformManager_hasComponent(const FilaTransformManager* self, FilaEntity e);
 uint32_t FilaTransformManager_getInstance(const FilaTransformManager* self, FilaEntity e);
-size_t FilaTransformManager_getComponentCount(const FilaTransformManager* self);
+uint32_t FilaTransformManager_getComponentCount(const FilaTransformManager* self);
 bool FilaTransformManager_empty(const FilaTransformManager* self);
 FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* self, uint32_t i);
 const FilaEntity* FilaTransformManager_getEntities(const FilaTransformManager* self);
 void FilaTransformManager_setAccurateTranslationsEnabled(FilaTransformManager* self, bool enable);
 bool FilaTransformManager_isAccurateTranslationsEnabled(const FilaTransformManager* self);
-void FilaTransformManager_create_mat4f(FilaTransformManager* self, FilaEntity entity, uint32_t parent, FilaMat4f localTransform);
-void FilaTransformManager_create_mat4(FilaTransformManager* self, FilaEntity entity, uint32_t parent, FilaMat4 localTransform);
+void FilaTransformManager_create_mat4f(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4f* localTransform);
+void FilaTransformManager_create_mat4(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4* localTransform);
 void FilaTransformManager_create(FilaTransformManager* self, FilaEntity entity, uint32_t parent);
 void FilaTransformManager_destroy(FilaTransformManager* self, FilaEntity e);
 void FilaTransformManager_setParent(FilaTransformManager* self, uint32_t i, uint32_t newParent);
 FilaEntity FilaTransformManager_getParent(const FilaTransformManager* self, uint32_t i);
-size_t FilaTransformManager_getChildCount(const FilaTransformManager* self, uint32_t i);
-size_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint32_t i, FilaEntity* children, size_t count);
+uint32_t FilaTransformManager_getChildCount(const FilaTransformManager* self, uint32_t i);
+uint32_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint32_t i, FilaEntity* children, uint32_t count);
 // TODO(handwritten) FilaTransformManager_getChildrenBegin: children_iterator filament::TransformManager::getChildrenBegin(Instance parent) const
 //     filament::TransformManager::children_iterator by value
 // TODO(handwritten) FilaTransformManager_getChildrenEnd: children_iterator filament::TransformManager::getChildrenEnd(Instance parent) const
 //     filament::TransformManager::children_iterator by value
 // TODO(handwritten) FilaTransformManager_getChildrenRange: children_range filament::TransformManager::getChildrenRange(const Instance parent) const
 //     filament::TransformManager::children_range by value
-void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, FilaMat4f localTransform);
-void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, FilaMat4 localTransform);
-FilaMat4f FilaTransformManager_getTransform(const FilaTransformManager* self, uint32_t ci);
-FilaMat4 FilaTransformManager_getTransformAccurate(const FilaTransformManager* self, uint32_t ci);
-FilaMat4f FilaTransformManager_getWorldTransform(const FilaTransformManager* self, uint32_t ci);
-FilaMat4 FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* self, uint32_t ci);
+void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, const FilaMat4f* localTransform);
+void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, const FilaMat4* localTransform);
+void FilaTransformManager_getTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out);
+void FilaTransformManager_getTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out);
+void FilaTransformManager_getWorldTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out);
+void FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out);
 void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* self);
 void FilaTransformManager_commitLocalTransformTransaction(FilaTransformManager* self);
 

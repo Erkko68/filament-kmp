@@ -8,12 +8,12 @@ FilaFilamatPackage* FilaFilamatPackage_create(void) {
     return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package());
 }
 
-FilaFilamatPackage* FilaFilamatPackage_create_size_t(size_t size) {
-    return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package(size));
+FilaFilamatPackage* FilaFilamatPackage_create_size_t(uint32_t size) {
+    return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package(static_cast<size_t>(size)));
 }
 
-FilaFilamatPackage* FilaFilamatPackage_create_void_size_t(const void* src, size_t size) {
-    return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package(src, size));
+FilaFilamatPackage* FilaFilamatPackage_create_void_size_t(const void* src, uint32_t size) {
+    return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package(src, static_cast<size_t>(size)));
 }
 
 void FilaFilamatPackage_destroy(FilaFilamatPackage* self) {
@@ -24,8 +24,8 @@ uint8_t* FilaFilamatPackage_getData(const FilaFilamatPackage* self) {
     return reinterpret_cast<const filamat::Package*>(self)->getData();
 }
 
-size_t FilaFilamatPackage_getSize(const FilaFilamatPackage* self) {
-    return reinterpret_cast<const filamat::Package*>(self)->getSize();
+uint32_t FilaFilamatPackage_getSize(const FilaFilamatPackage* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filamat::Package*>(self)->getSize());
 }
 
 uint8_t* FilaFilamatPackage_getEnd(const FilaFilamatPackage* self) {

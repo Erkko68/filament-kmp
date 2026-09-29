@@ -24,32 +24,32 @@ void FilaScene_addEntity(FilaScene* self, FilaEntity entity) {
     reinterpret_cast<filament::Scene*>(self)->addEntity(utils::Entity::import(entity));
 }
 
-void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, size_t count) {
-    reinterpret_cast<filament::Scene*>(self)->addEntities(reinterpret_cast<const utils::Entity*>(entities), count);
+void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, uint32_t count) {
+    reinterpret_cast<filament::Scene*>(self)->addEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
 }
 
 void FilaScene_remove(FilaScene* self, FilaEntity entity) {
     reinterpret_cast<filament::Scene*>(self)->remove(utils::Entity::import(entity));
 }
 
-void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, size_t count) {
-    reinterpret_cast<filament::Scene*>(self)->removeEntities(reinterpret_cast<const utils::Entity*>(entities), count);
+void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, uint32_t count) {
+    reinterpret_cast<filament::Scene*>(self)->removeEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
 }
 
 void FilaScene_removeAllEntities(FilaScene* self) {
     reinterpret_cast<filament::Scene*>(self)->removeAllEntities();
 }
 
-size_t FilaScene_getEntityCount(const FilaScene* self) {
-    return reinterpret_cast<const filament::Scene*>(self)->getEntityCount();
+uint32_t FilaScene_getEntityCount(const FilaScene* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Scene*>(self)->getEntityCount());
 }
 
-size_t FilaScene_getRenderableCount(const FilaScene* self) {
-    return reinterpret_cast<const filament::Scene*>(self)->getRenderableCount();
+uint32_t FilaScene_getRenderableCount(const FilaScene* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Scene*>(self)->getRenderableCount());
 }
 
-size_t FilaScene_getLightCount(const FilaScene* self) {
-    return reinterpret_cast<const filament::Scene*>(self)->getLightCount();
+uint32_t FilaScene_getLightCount(const FilaScene* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Scene*>(self)->getLightCount());
 }
 
 bool FilaScene_hasEntity(const FilaScene* self, FilaEntity entity) {

@@ -36,36 +36,36 @@ bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine) {
     return filament::Texture::isTextureSwizzleSupported(*reinterpret_cast<filament::Engine*>(engine));
 }
 
-size_t FilaTexture_computeTextureDataSize(FilaPixelDataFormat format, FilaPixelDataType type, size_t stride, size_t height, size_t alignment) {
-    return filament::Texture::computeTextureDataSize(static_cast<filament::backend::PixelDataFormat>(format), static_cast<filament::backend::PixelDataType>(type), stride, height, alignment);
+uint32_t FilaTexture_computeTextureDataSize(FilaPixelDataFormat format, FilaPixelDataType type, uint32_t stride, uint32_t height, uint32_t alignment) {
+    return static_cast<uint32_t>(filament::Texture::computeTextureDataSize(static_cast<filament::backend::PixelDataFormat>(format), static_cast<filament::backend::PixelDataType>(type), static_cast<size_t>(stride), static_cast<size_t>(height), static_cast<size_t>(alignment)));
 }
 
 bool FilaTexture_validatePixelFormatAndType(FilaTextureFormat internalFormat, FilaPixelDataFormat format, FilaPixelDataType type) {
     return filament::Texture::validatePixelFormatAndType(static_cast<filament::backend::TextureFormat>(internalFormat), static_cast<filament::backend::PixelDataFormat>(format), static_cast<filament::backend::PixelDataType>(type));
 }
 
-size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaSamplerType type) {
-    return filament::Texture::getMaxTextureSize(*reinterpret_cast<filament::Engine*>(engine), static_cast<filament::backend::SamplerType>(type));
+uint32_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaSamplerType type) {
+    return static_cast<uint32_t>(filament::Texture::getMaxTextureSize(*reinterpret_cast<filament::Engine*>(engine), static_cast<filament::backend::SamplerType>(type)));
 }
 
-size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
-    return filament::Texture::getMaxArrayTextureLayers(*reinterpret_cast<filament::Engine*>(engine));
+uint32_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
+    return static_cast<uint32_t>(filament::Texture::getMaxArrayTextureLayers(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-size_t FilaTexture_getWidth(const FilaTexture* self, size_t level) {
-    return reinterpret_cast<const filament::Texture*>(self)->getWidth(level);
+uint32_t FilaTexture_getWidth(const FilaTexture* self, uint32_t level) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getWidth(static_cast<size_t>(level)));
 }
 
-size_t FilaTexture_getHeight(const FilaTexture* self, size_t level) {
-    return reinterpret_cast<const filament::Texture*>(self)->getHeight(level);
+uint32_t FilaTexture_getHeight(const FilaTexture* self, uint32_t level) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getHeight(static_cast<size_t>(level)));
 }
 
-size_t FilaTexture_getDepth(const FilaTexture* self, size_t level) {
-    return reinterpret_cast<const filament::Texture*>(self)->getDepth(level);
+uint32_t FilaTexture_getDepth(const FilaTexture* self, uint32_t level) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getDepth(static_cast<size_t>(level)));
 }
 
-size_t FilaTexture_getLevels(const FilaTexture* self) {
-    return reinterpret_cast<const filament::Texture*>(self)->getLevels();
+uint32_t FilaTexture_getLevels(const FilaTexture* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getLevels());
 }
 
 FilaSamplerType FilaTexture_getTarget(const FilaTexture* self) {
@@ -76,8 +76,8 @@ FilaTextureFormat FilaTexture_getFormat(const FilaTexture* self) {
     return static_cast<FilaTextureFormat>(reinterpret_cast<const filament::Texture*>(self)->getFormat());
 }
 
-void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, size_t plane) {
-    reinterpret_cast<filament::Texture*>(self)->setExternalImage(*reinterpret_cast<filament::Engine*>(engine), image, plane);
+void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, uint32_t plane) {
+    reinterpret_cast<filament::Texture*>(self)->setExternalImage(*reinterpret_cast<filament::Engine*>(engine), image, static_cast<size_t>(plane));
 }
 
 void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaStream* stream) {

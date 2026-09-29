@@ -12,28 +12,28 @@ void FilaGeometrySurfaceOrientationBuilder_destroy(FilaGeometrySurfaceOrientatio
     delete reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self);
 }
 
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_vertexCount(FilaGeometrySurfaceOrientationBuilder* self, size_t vertexCount) {
-    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->vertexCount(vertexCount));
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_vertexCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t vertexCount) {
+    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->vertexCount(static_cast<size_t>(vertexCount)));
 }
 
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_normals(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, size_t stride) {
-    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->normals(reinterpret_cast<const filament::math::float3*>(arg0), stride));
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_normals(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride) {
+    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->normals(reinterpret_cast<const filament::math::float3*>(arg0), static_cast<size_t>(stride)));
 }
 
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_tangents(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat4* arg0, size_t stride) {
-    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->tangents(reinterpret_cast<const filament::math::float4*>(arg0), stride));
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_tangents(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat4* arg0, uint32_t stride) {
+    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->tangents(reinterpret_cast<const filament::math::float4*>(arg0), static_cast<size_t>(stride)));
 }
 
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_uvs(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat2* arg0, size_t stride) {
-    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->uvs(reinterpret_cast<const filament::math::float2*>(arg0), stride));
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_uvs(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat2* arg0, uint32_t stride) {
+    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->uvs(reinterpret_cast<const filament::math::float2*>(arg0), static_cast<size_t>(stride)));
 }
 
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_positions(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, size_t stride) {
-    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->positions(reinterpret_cast<const filament::math::float3*>(arg0), stride));
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_positions(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride) {
+    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->positions(reinterpret_cast<const filament::math::float3*>(arg0), static_cast<size_t>(stride)));
 }
 
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangleCount(FilaGeometrySurfaceOrientationBuilder* self, size_t triangleCount) {
-    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->triangleCount(triangleCount));
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangleCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t triangleCount) {
+    return reinterpret_cast<FilaGeometrySurfaceOrientationBuilder*>(&reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->triangleCount(static_cast<size_t>(triangleCount)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_uint3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUint3* arg0) {
@@ -48,16 +48,16 @@ FilaGeometrySurfaceOrientation* FilaGeometrySurfaceOrientationBuilder_build(Fila
     return reinterpret_cast<FilaGeometrySurfaceOrientation*>(reinterpret_cast<filament::geometry::SurfaceOrientation::Builder*>(self)->build());
 }
 
-size_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self) {
-    return reinterpret_cast<const filament::geometry::SurfaceOrientation*>(self)->getVertexCount();
+uint32_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::geometry::SurfaceOrientation*>(self)->getVertexCount());
 }
 
-void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out, size_t quatCount, size_t stride) {
-    reinterpret_cast<const filament::geometry::SurfaceOrientation*>(self)->getQuats(reinterpret_cast<filament::math::quatf*>(out), quatCount, stride);
+void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out_, uint32_t quatCount, uint32_t stride) {
+    reinterpret_cast<const filament::geometry::SurfaceOrientation*>(self)->getQuats(reinterpret_cast<filament::math::quatf*>(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
 }
 
-void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out, size_t quatCount, size_t stride) {
-    reinterpret_cast<const filament::geometry::SurfaceOrientation*>(self)->getQuats(reinterpret_cast<filament::math::short4*>(out), quatCount, stride);
+void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out_, uint32_t quatCount, uint32_t stride) {
+    reinterpret_cast<const filament::geometry::SurfaceOrientation*>(self)->getQuats(reinterpret_cast<filament::math::short4*>(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
 }
 
 } // extern "C"

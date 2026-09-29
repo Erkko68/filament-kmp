@@ -44,8 +44,8 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_UniformType_Par
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->parameter(name, static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
 }
 
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, size_t size, FilaUniformType type, FilaPrecision precision) {
-    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->parameter(name, size, static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, uint32_t size, FilaUniformType type, FilaPrecision precision) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->parameter(name, static_cast<size_t>(size), static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name) {
@@ -64,12 +64,12 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialDomain(FilaFilama
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->materialDomain(static_cast<filament::MaterialDomain>(materialDomain)));
 }
 
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_material(FilaFilamatMaterialBuilder* self, const char* code, size_t line) {
-    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->material(code, line));
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_material(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->material(code, static_cast<size_t>(line)));
 }
 
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialVertex(FilaFilamatMaterialBuilder* self, const char* code, size_t line) {
-    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->materialVertex(code, line));
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialVertex(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->materialVertex(code, static_cast<size_t>(line)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_quality(FilaFilamatMaterialBuilder* self, FilaShaderQuality quality) {
@@ -196,8 +196,8 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicType(FilaFila
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->stereoscopicType(static_cast<filament::backend::Platform::StereoscopicType>(stereoscopicType)));
 }
 
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicEyeCount(FilaFilamatMaterialBuilder* self, uint8_t eyeCount) {
-    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->stereoscopicEyeCount(eyeCount));
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicEyeCount(FilaFilamatMaterialBuilder* self, uint32_t eyeCount) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->stereoscopicEyeCount(static_cast<uint8_t>(eyeCount)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_customSurfaceShading(FilaFilamatMaterialBuilder* self, bool customSurfaceShading) {
@@ -240,8 +240,8 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shaderDefine(FilaFilamatM
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->shaderDefine(name, value));
 }
 
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_output(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, const char* name, int location) {
-    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->output(static_cast<filamat::MaterialBuilder::VariableQualifier>(qualifier), static_cast<filamat::MaterialBuilder::OutputTarget>(target), static_cast<filament::backend::Precision>(precision), static_cast<filamat::MaterialBuilder::OutputType>(type), name, location));
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_output(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, const char* name, int32_t location) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->output(static_cast<filamat::MaterialBuilder::VariableQualifier>(qualifier), static_cast<filamat::MaterialBuilder::OutputTarget>(target), static_cast<filament::backend::Precision>(precision), static_cast<filamat::MaterialBuilder::OutputType>(type), name, static_cast<int>(location)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_enableFramebufferFetch(FilaFilamatMaterialBuilder* self) {
@@ -256,8 +256,8 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useLegacyMorphing(FilaFil
     return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->useLegacyMorphing());
 }
 
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, FilaUint3 groupSize) {
-    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->groupSize(std::bit_cast<filament::math::uint3>(groupSize)));
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, const FilaUint3* groupSize) {
+    return reinterpret_cast<FilaFilamatMaterialBuilder*>(&reinterpret_cast<filamat::MaterialBuilder*>(self)->groupSize(std::bit_cast<filament::math::uint3>(*groupSize)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self) {
@@ -288,12 +288,12 @@ bool FilaFilamatMaterialBuilder_hasSamplerType(const FilaFilamatMaterialBuilder*
     return reinterpret_cast<const filamat::MaterialBuilder*>(self)->hasSamplerType(static_cast<filament::backend::SamplerType>(samplerType));
 }
 
-size_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialBuilder* self) {
-    return reinterpret_cast<const filamat::MaterialBuilder*>(self)->getParameterCount();
+uint32_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialBuilder* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filamat::MaterialBuilder*>(self)->getParameterCount());
 }
 
-uint8_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBuilder* self) {
-    return reinterpret_cast<const filamat::MaterialBuilder*>(self)->getSubpassCount();
+uint32_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBuilder* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filamat::MaterialBuilder*>(self)->getSubpassCount());
 }
 
 uint32_t FilaFilamatMaterialBuilder_getVariantFilter(const FilaFilamatMaterialBuilder* self) {

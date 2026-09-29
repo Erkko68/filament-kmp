@@ -8,8 +8,8 @@ void FilaColorColorSpace_destroy(FilaColorColorSpace* self) {
     delete reinterpret_cast<filament::color::ColorSpace*>(self);
 }
 
-FilaFloat2 FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self) {
-    return std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::color::ColorSpace*>(self)->getWhitePoint());
+void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out) {
+    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::color::ColorSpace*>(self)->getWhitePoint());
 }
 
 } // extern "C"

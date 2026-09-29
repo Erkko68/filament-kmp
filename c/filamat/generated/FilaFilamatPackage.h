@@ -10,11 +10,11 @@ extern "C" {
 
 // filamat::Package
 FilaFilamatPackage* FilaFilamatPackage_create(void);
-FilaFilamatPackage* FilaFilamatPackage_create_size_t(size_t size);
-FilaFilamatPackage* FilaFilamatPackage_create_void_size_t(const void* src, size_t size);
+FilaFilamatPackage* FilaFilamatPackage_create_size_t(uint32_t size);
+FilaFilamatPackage* FilaFilamatPackage_create_void_size_t(const void* src, uint32_t size);
 void FilaFilamatPackage_destroy(FilaFilamatPackage* self);
 uint8_t* FilaFilamatPackage_getData(const FilaFilamatPackage* self);
-size_t FilaFilamatPackage_getSize(const FilaFilamatPackage* self);
+uint32_t FilaFilamatPackage_getSize(const FilaFilamatPackage* self);
 uint8_t* FilaFilamatPackage_getEnd(const FilaFilamatPackage* self);
 void FilaFilamatPackage_setValid(FilaFilamatPackage* self, bool valid);
 bool FilaFilamatPackage_isValid(const FilaFilamatPackage* self);

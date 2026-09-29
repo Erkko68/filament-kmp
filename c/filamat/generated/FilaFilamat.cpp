@@ -8,8 +8,8 @@ FilaFilamatMaterialBuilderBaseTargetApi FilaFilamat_targetApiFromBackend(FilaBac
     return static_cast<FilaFilamatMaterialBuilderBaseTargetApi>(filamat::targetApiFromBackend(static_cast<filament::backend::Backend>(backend)));
 }
 
-uint64_t FilaFilamat_charTo64bitNum(const char* str) {
-    return filamat::charTo64bitNum(str);
+void FilaFilamat_charTo64bitNum(const char* str, uint64_t* out) {
+    *out = filamat::charTo64bitNum(str);
 }
 
 } // extern "C"

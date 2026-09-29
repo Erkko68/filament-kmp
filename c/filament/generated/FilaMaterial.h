@@ -11,8 +11,8 @@ extern "C" {
 // filament::Material::Builder
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
-FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, size_t size);
-FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, size_t shBandCount);
+FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
+FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount);
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality);
 FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, FilaMaterialUboBatchingMode uboBatchingMode);
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEngine* engine);
@@ -50,7 +50,7 @@ FilaRefractionMode FilaMaterial_getRefractionMode(const FilaMaterial* self);
 FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self);
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self);
 FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self);
-size_t FilaMaterial_getParameterCount(const FilaMaterial* self);
+uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self);
 // TODO(handwritten) FilaMaterial_getParameters: size_t filament::Material::getParameters(ParameterInfo * _Nonnull parameters, size_t count) const
 //     ParameterInfo * _Nonnull: value struct
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name);
@@ -61,8 +61,8 @@ bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name);
 //     std::string_view: std::string_view
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, const char* samplerName);
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
-void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, FilaFloat3 color);
-void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, FilaFloat4 color);
+void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color);
+void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self);
 
 

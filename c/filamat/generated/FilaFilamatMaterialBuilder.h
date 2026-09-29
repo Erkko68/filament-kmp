@@ -33,7 +33,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_compilationParameters(Fil
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shading(FilaFilamatMaterialBuilder* self, FilaShading shading);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_interpolation(FilaFilamatMaterialBuilder* self, FilaInterpolation interpolation);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, FilaUniformType type, FilaPrecision precision);
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, size_t size, FilaUniformType type, FilaPrecision precision);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, uint32_t size, FilaUniformType type, FilaPrecision precision);
 // TODO(handwritten) FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional: MaterialBuilder & filamat::MaterialBuilder::parameter(const char * name, SamplerType samplerType, SamplerFormat format, ParameterPrecision precision, bool filterable, bool multisample, const char * transformName, std::optional<ShaderStageFlags> stages)
 //     std::optional<ShaderStageFlags>: std::optional
 // TODO(handwritten) FilaFilamatMaterialBuilder_buffer: MaterialBuilder & filamat::MaterialBuilder::buffer(filament::BufferInterfaceBlock bib)
@@ -42,8 +42,8 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMater
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable_ParameterPrecision(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name, FilaPrecision precision);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_require(FilaFilamatMaterialBuilder* self, FilaVertexAttribute attribute);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialDomain(FilaFilamatMaterialBuilder* self, FilaMaterialDomain materialDomain);
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_material(FilaFilamatMaterialBuilder* self, const char* code, size_t line);
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialVertex(FilaFilamatMaterialBuilder* self, const char* code, size_t line);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_material(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialVertex(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_quality(FilaFilamatMaterialBuilder* self, FilaShaderQuality quality);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_featureLevel(FilaFilamatMaterialBuilder* self, FilaFeatureLevel featureLevel);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_blending(FilaFilamatMaterialBuilder* self, FilaBlendingMode blending);
@@ -75,7 +75,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_refractionType(FilaFilama
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_reflectionMode(FilaFilamatMaterialBuilder* self, FilaReflectionMode mode);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_transparencyMode(FilaFilamatMaterialBuilder* self, FilaTransparencyMode mode);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicType(FilaFilamatMaterialBuilder* self, FilaPlatformStereoscopicType stereoscopicType);
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicEyeCount(FilaFilamatMaterialBuilder* self, uint8_t eyeCount);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicEyeCount(FilaFilamatMaterialBuilder* self, uint32_t eyeCount);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_customSurfaceShading(FilaFilamatMaterialBuilder* self, bool customSurfaceShading);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_platform(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBasePlatform platform);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_targetApi(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseTargetApi targetApi);
@@ -86,11 +86,11 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_saveRawVariants(FilaFilam
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_generateDebugInfo(FilaFilamatMaterialBuilder* self, bool generateDebugInfo);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variantFilter(FilaFilamatMaterialBuilder* self, uint32_t variantFilter);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shaderDefine(FilaFilamatMaterialBuilder* self, const char* name, const char* value);
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_output(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, const char* name, int location);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_output(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, const char* name, int32_t location);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_enableFramebufferFetch(FilaFilamatMaterialBuilder* self);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_vertexDomainDeviceJittered(FilaFilamatMaterialBuilder* self, bool enabled);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useLegacyMorphing(FilaFilamatMaterialBuilder* self);
-FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, FilaUint3 groupSize);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, const FilaUint3* groupSize);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self);
 // TODO(handwritten) FilaFilamatMaterialBuilder_materialSource: MaterialBuilder & filamat::MaterialBuilder::materialSource(std::string_view source)
 //     std::string_view: std::string_view
@@ -104,10 +104,10 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_char(FilaFilamatM
 // TODO(handwritten) FilaFilamatMaterialBuilder_peek: std::string filamat::MaterialBuilder::peek(filament::backend::ShaderStage stage, const CodeGenParams & params, const PropertyList & properties)
 //     std::string: std::string
 bool FilaFilamatMaterialBuilder_hasSamplerType(const FilaFilamatMaterialBuilder* self, FilaSamplerType samplerType);
-size_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialBuilder* self);
+uint32_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialBuilder* self);
 // TODO(handwritten) FilaFilamatMaterialBuilder_getParameters: const ParameterList & filamat::MaterialBuilder::getParameters() const
 //     const ParameterList &: std::vector
-uint8_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBuilder* self);
+uint32_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBuilder* self);
 // TODO(handwritten) FilaFilamatMaterialBuilder_getSubPasses: const SubpassList & filamat::MaterialBuilder::getSubPasses() const
 //     const SubpassList &: value struct
 uint32_t FilaFilamatMaterialBuilder_getVariantFilter(const FilaFilamatMaterialBuilder* self);

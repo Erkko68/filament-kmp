@@ -12,11 +12,11 @@ extern "C" {
 bool FilaDebugRegistry_hasProperty(const FilaDebugRegistry* self, const char* name);
 void* FilaDebugRegistry_getPropertyAddress(FilaDebugRegistry* self, const char* name);
 bool FilaDebugRegistry_setProperty_bool(FilaDebugRegistry* self, const char* name, bool v);
-bool FilaDebugRegistry_setProperty_int(FilaDebugRegistry* self, const char* name, int v);
+bool FilaDebugRegistry_setProperty_int(FilaDebugRegistry* self, const char* name, int32_t v);
 bool FilaDebugRegistry_setProperty_float(FilaDebugRegistry* self, const char* name, float v);
-bool FilaDebugRegistry_setProperty_float2(FilaDebugRegistry* self, const char* name, FilaFloat2 v);
-bool FilaDebugRegistry_setProperty_float3(FilaDebugRegistry* self, const char* name, FilaFloat3 v);
-bool FilaDebugRegistry_setProperty_float4(FilaDebugRegistry* self, const char* name, FilaFloat4 v);
+bool FilaDebugRegistry_setProperty_float2(FilaDebugRegistry* self, const char* name, const FilaFloat2* v);
+bool FilaDebugRegistry_setProperty_float3(FilaDebugRegistry* self, const char* name, const FilaFloat3* v);
+bool FilaDebugRegistry_setProperty_float4(FilaDebugRegistry* self, const char* name, const FilaFloat4* v);
 bool FilaDebugRegistry_getProperty_bool(const FilaDebugRegistry* self, const char* name, bool* v);
 bool FilaDebugRegistry_getProperty_int(const FilaDebugRegistry* self, const char* name, int* v);
 bool FilaDebugRegistry_getProperty_float(const FilaDebugRegistry* self, const char* name, float* v);

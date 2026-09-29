@@ -48,12 +48,12 @@ FilaCamera* FilaView_getCamera(FilaView* self) {
     return reinterpret_cast<FilaCamera*>(&reinterpret_cast<filament::View*>(self)->getCamera());
 }
 
-void FilaView_setChannelDepthClearEnabled(FilaView* self, uint8_t channel, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setChannelDepthClearEnabled(channel, enabled);
+void FilaView_setChannelDepthClearEnabled(FilaView* self, uint32_t channel, bool enabled) {
+    reinterpret_cast<filament::View*>(self)->setChannelDepthClearEnabled(static_cast<uint8_t>(channel), enabled);
 }
 
-bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint8_t channel) {
-    return reinterpret_cast<const filament::View*>(self)->isChannelDepthClearEnabled(channel);
+bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint32_t channel) {
+    return reinterpret_cast<const filament::View*>(self)->isChannelDepthClearEnabled(static_cast<uint8_t>(channel));
 }
 
 void FilaView_setBlendMode(FilaView* self, FilaBlendMode blendMode) {
@@ -64,16 +64,16 @@ FilaBlendMode FilaView_getBlendMode(const FilaView* self) {
     return static_cast<FilaBlendMode>(reinterpret_cast<const filament::View*>(self)->getBlendMode());
 }
 
-void FilaView_setVisibleLayers(FilaView* self, uint8_t select, uint8_t values) {
-    reinterpret_cast<filament::View*>(self)->setVisibleLayers(select, values);
+void FilaView_setVisibleLayers(FilaView* self, uint32_t select, uint32_t values) {
+    reinterpret_cast<filament::View*>(self)->setVisibleLayers(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
-void FilaView_setLayerEnabled(FilaView* self, size_t layer, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setLayerEnabled(layer, enabled);
+void FilaView_setLayerEnabled(FilaView* self, uint32_t layer, bool enabled) {
+    reinterpret_cast<filament::View*>(self)->setLayerEnabled(static_cast<size_t>(layer), enabled);
 }
 
-uint8_t FilaView_getVisibleLayers(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->getVisibleLayers();
+uint32_t FilaView_getVisibleLayers(const FilaView* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::View*>(self)->getVisibleLayers());
 }
 
 void FilaView_setShadowingEnabled(FilaView* self, bool enabled) {
@@ -116,8 +116,8 @@ FilaDithering FilaView_getDithering(const FilaView* self) {
     return static_cast<FilaDithering>(reinterpret_cast<const filament::View*>(self)->getDithering());
 }
 
-FilaFloat2 FilaView_getLastDynamicResolutionScale(const FilaView* self) {
-    return std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::View*>(self)->getLastDynamicResolutionScale());
+void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out) {
+    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::View*>(self)->getLastDynamicResolutionScale());
 }
 
 void FilaView_setDynamicLightingOptions(FilaView* self, float zLightNear, float zLightFar) {
@@ -192,12 +192,12 @@ void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled) {
     reinterpret_cast<filament::View*>(self)->setFroxelVizEnabled(enabled);
 }
 
-void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, FilaFloat4 value) {
-    reinterpret_cast<filament::View*>(self)->setMaterialGlobal(index, std::bit_cast<filament::math::float4>(value));
+void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value) {
+    reinterpret_cast<filament::View*>(self)->setMaterialGlobal(index, std::bit_cast<filament::math::float4>(*value));
 }
 
-FilaFloat4 FilaView_getMaterialGlobal(const FilaView* self, uint32_t index) {
-    return std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::View*>(self)->getMaterialGlobal(index));
+void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out) {
+    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::View*>(self)->getMaterialGlobal(index));
 }
 
 FilaEntity FilaView_getFogEntity(const FilaView* self) {

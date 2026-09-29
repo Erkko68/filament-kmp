@@ -13,20 +13,20 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_create(void);
 void FilaColorGradingBuilder_destroy(FilaColorGradingBuilder* self);
 FilaColorGradingBuilder* FilaColorGradingBuilder_quality(FilaColorGradingBuilder* self, FilaColorGradingQualityLevel qualityLevel);
 FilaColorGradingBuilder* FilaColorGradingBuilder_format(FilaColorGradingBuilder* self, FilaColorGradingLutFormat format);
-FilaColorGradingBuilder* FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* self, uint8_t dim);
+FilaColorGradingBuilder* FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* self, uint32_t dim);
 FilaColorGradingBuilder* FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* self, const FilaToneMapper* toneMapper);
 FilaColorGradingBuilder* FilaColorGradingBuilder_luminanceScaling(FilaColorGradingBuilder* self, bool luminanceScaling);
 FilaColorGradingBuilder* FilaColorGradingBuilder_gamutMapping(FilaColorGradingBuilder* self, bool gamutMapping);
 FilaColorGradingBuilder* FilaColorGradingBuilder_exposure(FilaColorGradingBuilder* self, float exposure);
 FilaColorGradingBuilder* FilaColorGradingBuilder_nightAdaptation(FilaColorGradingBuilder* self, float adaptation);
 FilaColorGradingBuilder* FilaColorGradingBuilder_whiteBalance(FilaColorGradingBuilder* self, float temperature, float tint);
-FilaColorGradingBuilder* FilaColorGradingBuilder_channelMixer(FilaColorGradingBuilder* self, FilaFloat3 outRed, FilaFloat3 outGreen, FilaFloat3 outBlue);
-FilaColorGradingBuilder* FilaColorGradingBuilder_shadowsMidtonesHighlights(FilaColorGradingBuilder* self, FilaFloat4 shadows, FilaFloat4 midtones, FilaFloat4 highlights, FilaFloat4 ranges);
-FilaColorGradingBuilder* FilaColorGradingBuilder_slopeOffsetPower(FilaColorGradingBuilder* self, FilaFloat3 slope, FilaFloat3 offset, FilaFloat3 power);
+FilaColorGradingBuilder* FilaColorGradingBuilder_channelMixer(FilaColorGradingBuilder* self, const FilaFloat3* outRed, const FilaFloat3* outGreen, const FilaFloat3* outBlue);
+FilaColorGradingBuilder* FilaColorGradingBuilder_shadowsMidtonesHighlights(FilaColorGradingBuilder* self, const FilaFloat4* shadows, const FilaFloat4* midtones, const FilaFloat4* highlights, const FilaFloat4* ranges);
+FilaColorGradingBuilder* FilaColorGradingBuilder_slopeOffsetPower(FilaColorGradingBuilder* self, const FilaFloat3* slope, const FilaFloat3* offset, const FilaFloat3* power);
 FilaColorGradingBuilder* FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* self, float contrast);
 FilaColorGradingBuilder* FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* self, float vibrance);
 FilaColorGradingBuilder* FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* self, float saturation);
-FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, FilaFloat3 shadowGamma, FilaFloat3 midPoint, FilaFloat3 highlightScale);
+FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, const FilaFloat3* shadowGamma, const FilaFloat3* midPoint, const FilaFloat3* highlightScale);
 // TODO(handwritten) FilaColorGradingBuilder_customLut: Builder & filament::ColorGrading::Builder::customLut(utils::FixedCapacityVector<math::float3> data, uint8_t dimension)
 //     utils::FixedCapacityVector<math::float3>: utils::FixedCapacityVector
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace);

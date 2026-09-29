@@ -8,20 +8,20 @@ FilaFrustum* FilaFrustum_create(void) {
     return reinterpret_cast<FilaFrustum*>(new filament::Frustum());
 }
 
-FilaFrustum* FilaFrustum_create_mat4f(FilaMat4f pv) {
-    return reinterpret_cast<FilaFrustum*>(new filament::Frustum(std::bit_cast<filament::math::mat4f>(pv)));
+FilaFrustum* FilaFrustum_create_mat4f(const FilaMat4f* pv) {
+    return reinterpret_cast<FilaFrustum*>(new filament::Frustum(std::bit_cast<filament::math::mat4f>(*pv)));
 }
 
 void FilaFrustum_destroy(FilaFrustum* self) {
     delete reinterpret_cast<filament::Frustum*>(self);
 }
 
-void FilaFrustum_setProjection(FilaFrustum* self, FilaMat4f pv) {
-    reinterpret_cast<filament::Frustum*>(self)->setProjection(std::bit_cast<filament::math::mat4f>(pv));
+void FilaFrustum_setProjection(FilaFrustum* self, const FilaMat4f* pv) {
+    reinterpret_cast<filament::Frustum*>(self)->setProjection(std::bit_cast<filament::math::mat4f>(*pv));
 }
 
-FilaFloat4 FilaFrustum_getNormalizedPlane(const FilaFrustum* self, FilaFrustumPlane plane) {
-    return std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::Frustum*>(self)->getNormalizedPlane(static_cast<filament::Frustum::Plane>(plane)));
+void FilaFrustum_getNormalizedPlane(const FilaFrustum* self, FilaFrustumPlane plane, FilaFloat4* out) {
+    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::Frustum*>(self)->getNormalizedPlane(static_cast<filament::Frustum::Plane>(plane)));
 }
 
 void FilaFrustum_getNormalizedPlanes_float4(const FilaFrustum* self, FilaFloat4* planes) {
@@ -32,12 +32,12 @@ const FilaFloat4* FilaFrustum_getNormalizedPlanes(const FilaFrustum* self) {
     return reinterpret_cast<const FilaFloat4*>(reinterpret_cast<const filament::Frustum*>(self)->getNormalizedPlanes());
 }
 
-bool FilaFrustum_intersects_float4(const FilaFrustum* self, FilaFloat4 sphere) {
-    return reinterpret_cast<const filament::Frustum*>(self)->intersects(std::bit_cast<filament::math::float4>(sphere));
+bool FilaFrustum_intersects_float4(const FilaFrustum* self, const FilaFloat4* sphere) {
+    return reinterpret_cast<const filament::Frustum*>(self)->intersects(std::bit_cast<filament::math::float4>(*sphere));
 }
 
-float FilaFrustum_contains(const FilaFrustum* self, FilaFloat3 p) {
-    return reinterpret_cast<const filament::Frustum*>(self)->contains(std::bit_cast<filament::math::float3>(p));
+float FilaFrustum_contains(const FilaFrustum* self, const FilaFloat3* p) {
+    return reinterpret_cast<const filament::Frustum*>(self)->contains(std::bit_cast<filament::math::float3>(*p));
 }
 
 } // extern "C"

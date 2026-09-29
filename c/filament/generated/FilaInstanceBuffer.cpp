@@ -4,8 +4,8 @@
 
 extern "C" {
 
-FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(size_t instanceCount) {
-    return reinterpret_cast<FilaInstanceBufferBuilder*>(new filament::InstanceBuffer::Builder(instanceCount));
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(uint32_t instanceCount) {
+    return reinterpret_cast<FilaInstanceBufferBuilder*>(new filament::InstanceBuffer::Builder(static_cast<size_t>(instanceCount)));
 }
 
 void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self) {
@@ -16,16 +16,16 @@ FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuil
     return reinterpret_cast<FilaInstanceBuffer*>(reinterpret_cast<const filament::InstanceBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-size_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self) {
-    return reinterpret_cast<const filament::InstanceBuffer*>(self)->getInstanceCount();
+uint32_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::InstanceBuffer*>(self)->getInstanceCount());
 }
 
-void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, size_t count, size_t offset) {
-    reinterpret_cast<filament::InstanceBuffer*>(self)->setLocalTransforms(reinterpret_cast<const filament::math::mat4f*>(localTransforms), count, offset);
+void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, uint32_t count, uint32_t offset) {
+    reinterpret_cast<filament::InstanceBuffer*>(self)->setLocalTransforms(reinterpret_cast<const filament::math::mat4f*>(localTransforms), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
-FilaMat4f FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, size_t index) {
-    return std::bit_cast<FilaMat4f>(reinterpret_cast<filament::InstanceBuffer*>(self)->getLocalTransform(index));
+void FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out) {
+    *out = std::bit_cast<FilaMat4f>(reinterpret_cast<filament::InstanceBuffer*>(self)->getLocalTransform(static_cast<size_t>(index)));
 }
 
 } // extern "C"

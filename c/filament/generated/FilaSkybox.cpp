@@ -24,28 +24,28 @@ FilaSkyboxBuilder* FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* self, float en
     return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->intensity(envIntensity));
 }
 
-FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, FilaFloat4 color) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->color(std::bit_cast<filament::math::float4>(color)));
+FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, const FilaFloat4* color) {
+    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->color(std::bit_cast<filament::math::float4>(*color)));
 }
 
-FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint8_t priority) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->priority(priority));
+FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t priority) {
+    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->priority(static_cast<uint8_t>(priority)));
 }
 
 FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaSkybox*>(reinterpret_cast<filament::Skybox::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-void FilaSkybox_setColor(FilaSkybox* self, FilaFloat4 color) {
-    reinterpret_cast<filament::Skybox*>(self)->setColor(std::bit_cast<filament::math::float4>(color));
+void FilaSkybox_setColor(FilaSkybox* self, const FilaFloat4* color) {
+    reinterpret_cast<filament::Skybox*>(self)->setColor(std::bit_cast<filament::math::float4>(*color));
 }
 
-void FilaSkybox_setLayerMask(FilaSkybox* self, uint8_t select, uint8_t values) {
-    reinterpret_cast<filament::Skybox*>(self)->setLayerMask(select, values);
+void FilaSkybox_setLayerMask(FilaSkybox* self, uint32_t select, uint32_t values) {
+    reinterpret_cast<filament::Skybox*>(self)->setLayerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
-uint8_t FilaSkybox_getLayerMask(const FilaSkybox* self) {
-    return reinterpret_cast<const filament::Skybox*>(self)->getLayerMask();
+uint32_t FilaSkybox_getLayerMask(const FilaSkybox* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Skybox*>(self)->getLayerMask());
 }
 
 float FilaSkybox_getIntensity(const FilaSkybox* self) {

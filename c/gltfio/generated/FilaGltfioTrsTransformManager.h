@@ -12,16 +12,16 @@ extern "C" {
 bool FilaGltfioTrsTransformManager_hasComponent(const FilaGltfioTrsTransformManager* self, FilaEntity e);
 uint32_t FilaGltfioTrsTransformManager_getInstance(const FilaGltfioTrsTransformManager* self, FilaEntity e);
 void FilaGltfioTrsTransformManager_create(FilaGltfioTrsTransformManager* self, FilaEntity entity);
-void FilaGltfioTrsTransformManager_create_float3_quatf_float3(FilaGltfioTrsTransformManager* self, FilaEntity entity, FilaFloat3 translation, FilaQuatf rotation, FilaFloat3 scale);
+void FilaGltfioTrsTransformManager_create_float3_quatf_float3(FilaGltfioTrsTransformManager* self, FilaEntity entity, const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale);
 void FilaGltfioTrsTransformManager_destroy(FilaGltfioTrsTransformManager* self, FilaEntity e);
-void FilaGltfioTrsTransformManager_setTranslation(FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3 translation);
-FilaFloat3 FilaGltfioTrsTransformManager_getTranslation(const FilaGltfioTrsTransformManager* self, uint32_t ci);
-void FilaGltfioTrsTransformManager_setRotation(FilaGltfioTrsTransformManager* self, uint32_t ci, FilaQuatf rotation);
-FilaQuatf FilaGltfioTrsTransformManager_getRotation(const FilaGltfioTrsTransformManager* self, uint32_t ci);
-void FilaGltfioTrsTransformManager_setScale(FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3 scale);
-FilaFloat3 FilaGltfioTrsTransformManager_getScale(const FilaGltfioTrsTransformManager* self, uint32_t ci);
-void FilaGltfioTrsTransformManager_setTrs(FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3 translation, FilaQuatf rotation, FilaFloat3 scale);
-FilaMat4f FilaGltfioTrsTransformManager_getTransform(const FilaGltfioTrsTransformManager* self, uint32_t ci);
+void FilaGltfioTrsTransformManager_setTranslation(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaFloat3* translation);
+void FilaGltfioTrsTransformManager_getTranslation(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3* out);
+void FilaGltfioTrsTransformManager_setRotation(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaQuatf* rotation);
+void FilaGltfioTrsTransformManager_getRotation(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaQuatf* out);
+void FilaGltfioTrsTransformManager_setScale(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaFloat3* scale);
+void FilaGltfioTrsTransformManager_getScale(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3* out);
+void FilaGltfioTrsTransformManager_setTrs(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale);
+void FilaGltfioTrsTransformManager_getTransform(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaMat4f* out);
 
 
 #ifdef __cplusplus

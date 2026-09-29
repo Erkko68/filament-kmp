@@ -12,24 +12,24 @@ extern "C" {
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_create(void);
 void FilaIndirectLightBuilder_destroy(FilaIndirectLightBuilder* self);
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_reflections(FilaIndirectLightBuilder* self, const FilaTexture* cubemap);
-FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_uint8_t_float3(FilaIndirectLightBuilder* self, uint8_t bands, const FilaFloat3* sh);
+FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_uint8_t_float3(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh);
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_Texture(FilaIndirectLightBuilder* self, const FilaTexture* cubemap);
-FilaIndirectLightBuilder* FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* self, uint8_t bands, const FilaFloat3* sh);
+FilaIndirectLightBuilder* FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh);
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_intensity(FilaIndirectLightBuilder* self, float envIntensity);
-FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBuilder* self, FilaMat3f rotation);
+FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBuilder* self, const FilaMat3f* rotation);
 FilaIndirectLight* FilaIndirectLightBuilder_build(FilaIndirectLightBuilder* self, FilaEngine* engine);
 
 // filament::IndirectLight
 void FilaIndirectLight_setIntensity(FilaIndirectLight* self, float intensity);
 float FilaIndirectLight_getIntensity(const FilaIndirectLight* self);
-void FilaIndirectLight_setRotation(FilaIndirectLight* self, FilaMat3f rotation);
-FilaMat3f FilaIndirectLight_getRotation(const FilaIndirectLight* self);
+void FilaIndirectLight_setRotation(FilaIndirectLight* self, const FilaMat3f* rotation);
+void FilaIndirectLight_getRotation(const FilaIndirectLight* self, FilaMat3f* out);
 const FilaTexture* FilaIndirectLight_getReflectionsTexture(const FilaIndirectLight* self);
 const FilaTexture* FilaIndirectLight_getIrradianceTexture(const FilaIndirectLight* self);
-FilaFloat3 FilaIndirectLight_getDirectionEstimate_float3(const FilaFloat3* sh);
-FilaFloat3 FilaIndirectLight_getDirectionEstimate(const FilaIndirectLight* self);
-FilaFloat4 FilaIndirectLight_getColorEstimate_float3(const FilaFloat3* sh, FilaFloat3 direction);
-FilaFloat4 FilaIndirectLight_getColorEstimate(const FilaIndirectLight* self, FilaFloat3 direction);
+void FilaIndirectLight_getDirectionEstimate_float3(const FilaFloat3* sh, FilaFloat3* out);
+void FilaIndirectLight_getDirectionEstimate(const FilaIndirectLight* self, FilaFloat3* out);
+void FilaIndirectLight_getColorEstimate_float3(const FilaFloat3* sh, const FilaFloat3* direction, FilaFloat4* out);
+void FilaIndirectLight_getColorEstimate(const FilaIndirectLight* self, const FilaFloat3* direction, FilaFloat4* out);
 
 
 #ifdef __cplusplus

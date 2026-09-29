@@ -30,7 +30,7 @@ FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, Fila
 //     BufferDescriptor &&: rvalue reference
 // TODO(handwritten) FilaIndexBuffer_setBufferAsync: AsyncCallId filament::IndexBuffer::setBufferAsync(Engine & engine, BufferDescriptor && buffer, uint32_t byteOffset, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
 //     BufferDescriptor &&: rvalue reference
-size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self);
+uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self);
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self);
 
 

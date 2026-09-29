@@ -9,16 +9,16 @@ extern "C" {
 #endif
 
 // filament::gltfio::TextureProvider
-FilaTexture* FilaGltfioTextureProvider_pushTexture(FilaGltfioTextureProvider* self, const uint8_t* data, size_t byteCount, const char* mimeType, FilaGltfioTextureProviderTextureFlags flags);
+FilaTexture* FilaGltfioTextureProvider_pushTexture(FilaGltfioTextureProvider* self, const uint8_t* data, uint32_t byteCount, const char* mimeType, FilaGltfioTextureProviderTextureFlags flags);
 FilaTexture* FilaGltfioTextureProvider_popTexture(FilaGltfioTextureProvider* self);
 void FilaGltfioTextureProvider_updateQueue(FilaGltfioTextureProvider* self);
 const char* FilaGltfioTextureProvider_getPushMessage(const FilaGltfioTextureProvider* self);
 const char* FilaGltfioTextureProvider_getPopMessage(const FilaGltfioTextureProvider* self);
 void FilaGltfioTextureProvider_waitForCompletion(FilaGltfioTextureProvider* self);
 void FilaGltfioTextureProvider_cancelDecoding(FilaGltfioTextureProvider* self);
-size_t FilaGltfioTextureProvider_getPushedCount(const FilaGltfioTextureProvider* self);
-size_t FilaGltfioTextureProvider_getPoppedCount(const FilaGltfioTextureProvider* self);
-size_t FilaGltfioTextureProvider_getDecodedCount(const FilaGltfioTextureProvider* self);
+uint32_t FilaGltfioTextureProvider_getPushedCount(const FilaGltfioTextureProvider* self);
+uint32_t FilaGltfioTextureProvider_getPoppedCount(const FilaGltfioTextureProvider* self);
+uint32_t FilaGltfioTextureProvider_getDecodedCount(const FilaGltfioTextureProvider* self);
 
 
 #ifdef __cplusplus

@@ -16,8 +16,8 @@ FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, Fila
     return reinterpret_cast<FilaIndexBuffer*>(reinterpret_cast<filament::IndexBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self) {
-    return reinterpret_cast<const filament::IndexBuffer*>(self)->getIndexCount();
+uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::IndexBuffer*>(self)->getIndexCount());
 }
 
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self) {

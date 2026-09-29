@@ -64,13 +64,13 @@ void FilaEngine_destroy_Entity(FilaEngine* self, FilaEntity e);
 FilaFeatureLevel FilaEngine_getSupportedFeatureLevel(const FilaEngine* self);
 FilaFeatureLevel FilaEngine_setActiveFeatureLevel(FilaEngine* self, FilaFeatureLevel featureLevel);
 FilaFeatureLevel FilaEngine_getActiveFeatureLevel(const FilaEngine* self);
-size_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self);
+uint32_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self);
 bool FilaEngine_isStereoSupported(const FilaEngine* self, FilaPlatformStereoscopicType stereoscopicType);
 bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* self);
 bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self);
 // TODO(handwritten) FilaEngine_getConfig: const Config & filament::Engine::getConfig() const
 //     const Config &: value struct
-size_t FilaEngine_getMaxStereoscopicEyes(void);
+uint32_t FilaEngine_getMaxStereoscopicEyes(void);
 FilaUtilsEntityManager* FilaEngine_getEntityManager(FilaEngine* self);
 FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* self);
 FilaLightManager* FilaEngine_getLightManager(FilaEngine* self);
@@ -109,22 +109,22 @@ bool FilaEngine_isValid_RenderTarget(const FilaEngine* self, const FilaRenderTar
 bool FilaEngine_isValid_View(const FilaEngine* self, const FilaView* p);
 bool FilaEngine_isValid_InstanceBuffer(const FilaEngine* self, const FilaInstanceBuffer* p);
 bool FilaEngine_isValidExpensive(const FilaEngine* self, const FilaMaterialInstance* p);
-size_t FilaEngine_getBufferObjectCount(const FilaEngine* self);
-size_t FilaEngine_getViewCount(const FilaEngine* self);
-size_t FilaEngine_getSceneCount(const FilaEngine* self);
-size_t FilaEngine_getSwapChainCount(const FilaEngine* self);
-size_t FilaEngine_getStreamCount(const FilaEngine* self);
-size_t FilaEngine_getIndexBufferCount(const FilaEngine* self);
-size_t FilaEngine_getSkinningBufferCount(const FilaEngine* self);
-size_t FilaEngine_getMorphTargetBufferCount(const FilaEngine* self);
-size_t FilaEngine_getInstanceBufferCount(const FilaEngine* self);
-size_t FilaEngine_getVertexBufferCount(const FilaEngine* self);
-size_t FilaEngine_getIndirectLightCount(const FilaEngine* self);
-size_t FilaEngine_getMaterialCount(const FilaEngine* self);
-size_t FilaEngine_getTextureCount(const FilaEngine* self);
-size_t FilaEngine_getSkyboxeCount(const FilaEngine* self);
-size_t FilaEngine_getColorGradingCount(const FilaEngine* self);
-size_t FilaEngine_getRenderTargetCount(const FilaEngine* self);
+uint32_t FilaEngine_getBufferObjectCount(const FilaEngine* self);
+uint32_t FilaEngine_getViewCount(const FilaEngine* self);
+uint32_t FilaEngine_getSceneCount(const FilaEngine* self);
+uint32_t FilaEngine_getSwapChainCount(const FilaEngine* self);
+uint32_t FilaEngine_getStreamCount(const FilaEngine* self);
+uint32_t FilaEngine_getIndexBufferCount(const FilaEngine* self);
+uint32_t FilaEngine_getSkinningBufferCount(const FilaEngine* self);
+uint32_t FilaEngine_getMorphTargetBufferCount(const FilaEngine* self);
+uint32_t FilaEngine_getInstanceBufferCount(const FilaEngine* self);
+uint32_t FilaEngine_getVertexBufferCount(const FilaEngine* self);
+uint32_t FilaEngine_getIndirectLightCount(const FilaEngine* self);
+uint32_t FilaEngine_getMaterialCount(const FilaEngine* self);
+uint32_t FilaEngine_getTextureCount(const FilaEngine* self);
+uint32_t FilaEngine_getSkyboxeCount(const FilaEngine* self);
+uint32_t FilaEngine_getColorGradingCount(const FilaEngine* self);
+uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self);
 // TODO(handwritten) FilaEngine_runCommandAsync: AsyncCallId filament::Engine::runCommandAsync(utils::Invocable<void ()> && command, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback onComplete, void * _Nullable user)
 //     utils::Invocable<void ()> &&: rvalue reference
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id);
@@ -139,11 +139,11 @@ void FilaEngine_unprotected(FilaEngine* self);
 const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* self);
 FilaBackend FilaEngine_getBackend(const FilaEngine* self);
 FilaPlatform* FilaEngine_getPlatform(const FilaEngine* self);
-void* FilaEngine_streamAlloc(FilaEngine* self, size_t size, size_t alignment);
+void* FilaEngine_streamAlloc(FilaEngine* self, uint32_t size, uint32_t alignment);
 void FilaEngine_execute(FilaEngine* self);
 // TODO(handwritten) FilaEngine_getJobSystem: utils::JobSystem & filament::Engine::getJobSystem()
 //     utils::JobSystem &: utils::JobSystem
-uint64_t FilaEngine_getSteadyClockTimeNano(void);
+void FilaEngine_getSteadyClockTimeNano(uint64_t* out);
 FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* self);
 bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name);
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);

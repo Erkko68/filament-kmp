@@ -152,8 +152,8 @@ FilaFeatureLevel FilaEngine_getActiveFeatureLevel(const FilaEngine* self) {
     return static_cast<FilaFeatureLevel>(reinterpret_cast<const filament::Engine*>(self)->getActiveFeatureLevel());
 }
 
-size_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getMaxAutomaticInstances();
+uint32_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getMaxAutomaticInstances());
 }
 
 bool FilaEngine_isStereoSupported(const FilaEngine* self, FilaPlatformStereoscopicType stereoscopicType) {
@@ -168,8 +168,8 @@ bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self) {
     return reinterpret_cast<const filament::Engine*>(self)->hasUnrecoverableFailure();
 }
 
-size_t FilaEngine_getMaxStereoscopicEyes(void) {
-    return filament::Engine::getMaxStereoscopicEyes();
+uint32_t FilaEngine_getMaxStereoscopicEyes(void) {
+    return static_cast<uint32_t>(filament::Engine::getMaxStereoscopicEyes());
 }
 
 FilaUtilsEntityManager* FilaEngine_getEntityManager(FilaEngine* self) {
@@ -324,68 +324,68 @@ bool FilaEngine_isValidExpensive(const FilaEngine* self, const FilaMaterialInsta
     return reinterpret_cast<const filament::Engine*>(self)->isValidExpensive(reinterpret_cast<const filament::MaterialInstance*>(p));
 }
 
-size_t FilaEngine_getBufferObjectCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getBufferObjectCount();
+uint32_t FilaEngine_getBufferObjectCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getBufferObjectCount());
 }
 
-size_t FilaEngine_getViewCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getViewCount();
+uint32_t FilaEngine_getViewCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getViewCount());
 }
 
-size_t FilaEngine_getSceneCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getSceneCount();
+uint32_t FilaEngine_getSceneCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSceneCount());
 }
 
-size_t FilaEngine_getSwapChainCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getSwapChainCount();
+uint32_t FilaEngine_getSwapChainCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSwapChainCount());
 }
 
-size_t FilaEngine_getStreamCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getStreamCount();
+uint32_t FilaEngine_getStreamCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getStreamCount());
 }
 
-size_t FilaEngine_getIndexBufferCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getIndexBufferCount();
+uint32_t FilaEngine_getIndexBufferCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getIndexBufferCount());
 }
 
-size_t FilaEngine_getSkinningBufferCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getSkinningBufferCount();
+uint32_t FilaEngine_getSkinningBufferCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSkinningBufferCount());
 }
 
-size_t FilaEngine_getMorphTargetBufferCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getMorphTargetBufferCount();
+uint32_t FilaEngine_getMorphTargetBufferCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getMorphTargetBufferCount());
 }
 
-size_t FilaEngine_getInstanceBufferCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getInstanceBufferCount();
+uint32_t FilaEngine_getInstanceBufferCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getInstanceBufferCount());
 }
 
-size_t FilaEngine_getVertexBufferCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getVertexBufferCount();
+uint32_t FilaEngine_getVertexBufferCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getVertexBufferCount());
 }
 
-size_t FilaEngine_getIndirectLightCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getIndirectLightCount();
+uint32_t FilaEngine_getIndirectLightCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getIndirectLightCount());
 }
 
-size_t FilaEngine_getMaterialCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getMaterialCount();
+uint32_t FilaEngine_getMaterialCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getMaterialCount());
 }
 
-size_t FilaEngine_getTextureCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getTextureCount();
+uint32_t FilaEngine_getTextureCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getTextureCount());
 }
 
-size_t FilaEngine_getSkyboxeCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getSkyboxeCount();
+uint32_t FilaEngine_getSkyboxeCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSkyboxeCount());
 }
 
-size_t FilaEngine_getColorGradingCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getColorGradingCount();
+uint32_t FilaEngine_getColorGradingCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getColorGradingCount());
 }
 
-size_t FilaEngine_getRenderTargetCount(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->getRenderTargetCount();
+uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getRenderTargetCount());
 }
 
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id) {
@@ -428,16 +428,16 @@ FilaPlatform* FilaEngine_getPlatform(const FilaEngine* self) {
     return reinterpret_cast<FilaPlatform*>(reinterpret_cast<const filament::Engine*>(self)->getPlatform());
 }
 
-void* FilaEngine_streamAlloc(FilaEngine* self, size_t size, size_t alignment) {
-    return reinterpret_cast<filament::Engine*>(self)->streamAlloc(size, alignment);
+void* FilaEngine_streamAlloc(FilaEngine* self, uint32_t size, uint32_t alignment) {
+    return reinterpret_cast<filament::Engine*>(self)->streamAlloc(static_cast<size_t>(size), static_cast<size_t>(alignment));
 }
 
 void FilaEngine_execute(FilaEngine* self) {
     reinterpret_cast<filament::Engine*>(self)->execute();
 }
 
-uint64_t FilaEngine_getSteadyClockTimeNano(void) {
-    return filament::Engine::getSteadyClockTimeNano();
+void FilaEngine_getSteadyClockTimeNano(uint64_t* out) {
+    *out = filament::Engine::getSteadyClockTimeNano();
 }
 
 FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* self) {

@@ -24,10 +24,6 @@ uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self
     return reinterpret_cast<const image::Ktx1Bundle*>(self)->getSerializedLength();
 }
 
-const char* FilaImageKtx1Bundle_getMetadata(const FilaImageKtx1Bundle* self, const char* key, size_t* valueSize) {
-    return reinterpret_cast<const image::Ktx1Bundle*>(self)->getMetadata(key, valueSize);
-}
-
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value) {
     reinterpret_cast<image::Ktx1Bundle*>(self)->setMetadata(key, value);
 }

@@ -22,7 +22,7 @@ void FilaGltfioAssetLoader_destroyAsset(FilaGltfioAssetLoader* self, const FilaG
 void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self);
 // TODO(handwritten) FilaGltfioAssetLoader_getMaterials: const filament::Material *const * filament::gltfio::AssetLoader::getMaterials() const
 //     const filament::Material *const *: pointer to pointer
-size_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self);
+uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self);
 // TODO(handwritten) FilaGltfioAssetLoader_getNames: utils::NameComponentManager * filament::gltfio::AssetLoader::getNames() const
 //     utils::NameComponentManager *: utils::NameComponentManager
 FilaGltfioNodeManager* FilaGltfioAssetLoader_getNodeManager(FilaGltfioAssetLoader* self);

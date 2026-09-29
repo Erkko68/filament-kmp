@@ -20,13 +20,13 @@ const FilaViewport* FilaView_getViewport(const FilaView* self);
 void FilaView_setCamera(FilaView* self, FilaCamera* camera);
 bool FilaView_hasCamera(const FilaView* self);
 FilaCamera* FilaView_getCamera(FilaView* self);
-void FilaView_setChannelDepthClearEnabled(FilaView* self, uint8_t channel, bool enabled);
-bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint8_t channel);
+void FilaView_setChannelDepthClearEnabled(FilaView* self, uint32_t channel, bool enabled);
+bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint32_t channel);
 void FilaView_setBlendMode(FilaView* self, FilaBlendMode blendMode);
 FilaBlendMode FilaView_getBlendMode(const FilaView* self);
-void FilaView_setVisibleLayers(FilaView* self, uint8_t select, uint8_t values);
-void FilaView_setLayerEnabled(FilaView* self, size_t layer, bool enabled);
-uint8_t FilaView_getVisibleLayers(const FilaView* self);
+void FilaView_setVisibleLayers(FilaView* self, uint32_t select, uint32_t values);
+void FilaView_setLayerEnabled(FilaView* self, uint32_t layer, bool enabled);
+uint32_t FilaView_getVisibleLayers(const FilaView* self);
 void FilaView_setShadowingEnabled(FilaView* self, bool enabled);
 bool FilaView_isShadowingEnabled(const FilaView* self);
 void FilaView_setScreenSpaceRefractionEnabled(FilaView* self, bool enabled);
@@ -77,7 +77,7 @@ FilaDithering FilaView_getDithering(const FilaView* self);
 //     const DynamicResolutionOptions &: value struct
 // TODO(handwritten) FilaView_getDynamicResolutionOptions: DynamicResolutionOptions filament::View::getDynamicResolutionOptions() const
 //     DynamicResolutionOptions: value struct
-FilaFloat2 FilaView_getLastDynamicResolutionScale(const FilaView* self);
+void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out);
 // TODO(handwritten) FilaView_setRenderQuality: void filament::View::setRenderQuality(const RenderQuality & renderQuality)
 //     const RenderQuality &: value struct
 // TODO(handwritten) FilaView_getRenderQuality: RenderQuality filament::View::getRenderQuality() const
@@ -118,8 +118,8 @@ void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled);
 //     FroxelConfigurationInfoWithAge: value struct
 // TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
 //     PickingQuery &: value struct
-void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, FilaFloat4 value);
-FilaFloat4 FilaView_getMaterialGlobal(const FilaView* self, uint32_t index);
+void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);
+void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out);
 FilaEntity FilaView_getFogEntity(const FilaView* self);
 int32_t FilaView_getVisibleRenderableCount(const FilaView* self);
 void FilaView_clearFrameHistory(FilaView* self, FilaEngine* engine);

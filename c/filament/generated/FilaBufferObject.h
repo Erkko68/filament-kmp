@@ -26,7 +26,7 @@ FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, F
 // filament::BufferObject
 // TODO(handwritten) FilaBufferObject_setBuffer: void filament::BufferObject::setBuffer(Engine & engine, BufferDescriptor && buffer, uint32_t byteOffset)
 //     BufferDescriptor &&: rvalue reference
-size_t FilaBufferObject_getByteCount(const FilaBufferObject* self);
+uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self);
 
 
 #ifdef __cplusplus

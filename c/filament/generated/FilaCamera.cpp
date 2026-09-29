@@ -4,12 +4,12 @@
 
 extern "C" {
 
-FilaMat4 FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far) {
-    return std::bit_cast<FilaMat4>(filament::Camera::projection(static_cast<filament::Camera::Fov>(direction), fovInDegrees, aspect, near, far));
+void FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(filament::Camera::projection(static_cast<filament::Camera::Fov>(direction), fovInDegrees, aspect, near, far));
 }
 
-FilaMat4 FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far) {
-    return std::bit_cast<FilaMat4>(filament::Camera::projection(focalLengthInMillimeters, aspect, near, far));
+void FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(filament::Camera::projection(focalLengthInMillimeters, aspect, near, far));
 }
 
 void FilaCamera_setProjection_Projection_double_double_double_double_double_double(FilaCamera* self, FilaCameraProjection projection, double left, double right, double bottom, double top, double near, double far) {
@@ -24,40 +24,40 @@ void FilaCamera_setLensProjection(FilaCamera* self, double focalLengthInMillimet
     reinterpret_cast<filament::Camera*>(self)->setLensProjection(focalLengthInMillimeters, aspect, near, far);
 }
 
-void FilaCamera_setCustomProjection_double_double(FilaCamera* self, FilaMat4 projection, double near, double far) {
-    reinterpret_cast<filament::Camera*>(self)->setCustomProjection(std::bit_cast<filament::math::mat4>(projection), near, far);
+void FilaCamera_setCustomProjection_double_double(FilaCamera* self, const FilaMat4* projection, double near, double far) {
+    reinterpret_cast<filament::Camera*>(self)->setCustomProjection(std::bit_cast<filament::math::mat4>(*projection), near, far);
 }
 
-void FilaCamera_setCustomProjection_mat4_double_double(FilaCamera* self, FilaMat4 projection, FilaMat4 projectionForCulling, double near, double far) {
-    reinterpret_cast<filament::Camera*>(self)->setCustomProjection(std::bit_cast<filament::math::mat4>(projection), std::bit_cast<filament::math::mat4>(projectionForCulling), near, far);
+void FilaCamera_setCustomProjection_mat4_double_double(FilaCamera* self, const FilaMat4* projection, const FilaMat4* projectionForCulling, double near, double far) {
+    reinterpret_cast<filament::Camera*>(self)->setCustomProjection(std::bit_cast<filament::math::mat4>(*projection), std::bit_cast<filament::math::mat4>(*projectionForCulling), near, far);
 }
 
-void FilaCamera_setCustomEyeProjection(FilaCamera* self, const FilaMat4* projection, size_t count, FilaMat4 projectionForCulling, double near, double far) {
-    reinterpret_cast<filament::Camera*>(self)->setCustomEyeProjection(reinterpret_cast<const filament::math::mat4*>(projection), count, std::bit_cast<filament::math::mat4>(projectionForCulling), near, far);
+void FilaCamera_setCustomEyeProjection(FilaCamera* self, const FilaMat4* projection, uint32_t count, const FilaMat4* projectionForCulling, double near, double far) {
+    reinterpret_cast<filament::Camera*>(self)->setCustomEyeProjection(reinterpret_cast<const filament::math::mat4*>(projection), static_cast<size_t>(count), std::bit_cast<filament::math::mat4>(*projectionForCulling), near, far);
 }
 
-void FilaCamera_setScaling(FilaCamera* self, FilaDouble2 scaling) {
-    reinterpret_cast<filament::Camera*>(self)->setScaling(std::bit_cast<filament::math::double2>(scaling));
+void FilaCamera_setScaling(FilaCamera* self, const FilaDouble2* scaling) {
+    reinterpret_cast<filament::Camera*>(self)->setScaling(std::bit_cast<filament::math::double2>(*scaling));
 }
 
-void FilaCamera_setShift(FilaCamera* self, FilaDouble2 shift) {
-    reinterpret_cast<filament::Camera*>(self)->setShift(std::bit_cast<filament::math::double2>(shift));
+void FilaCamera_setShift(FilaCamera* self, const FilaDouble2* shift) {
+    reinterpret_cast<filament::Camera*>(self)->setShift(std::bit_cast<filament::math::double2>(*shift));
 }
 
-FilaDouble4 FilaCamera_getScaling(const FilaCamera* self) {
-    return std::bit_cast<FilaDouble4>(reinterpret_cast<const filament::Camera*>(self)->getScaling());
+void FilaCamera_getScaling(const FilaCamera* self, FilaDouble4* out) {
+    *out = std::bit_cast<FilaDouble4>(reinterpret_cast<const filament::Camera*>(self)->getScaling());
 }
 
-FilaDouble2 FilaCamera_getShift(const FilaCamera* self) {
-    return std::bit_cast<FilaDouble2>(reinterpret_cast<const filament::Camera*>(self)->getShift());
+void FilaCamera_getShift(const FilaCamera* self, FilaDouble2* out) {
+    *out = std::bit_cast<FilaDouble2>(reinterpret_cast<const filament::Camera*>(self)->getShift());
 }
 
-FilaMat4 FilaCamera_getProjectionMatrix(const FilaCamera* self, uint8_t eyeId) {
-    return std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getProjectionMatrix(eyeId));
+void FilaCamera_getProjectionMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getProjectionMatrix(static_cast<uint8_t>(eyeId)));
 }
 
-FilaMat4 FilaCamera_getCullingProjectionMatrix(const FilaCamera* self) {
-    return std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getCullingProjectionMatrix());
+void FilaCamera_getCullingProjectionMatrix(const FilaCamera* self, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getCullingProjectionMatrix());
 }
 
 double FilaCamera_getNear(const FilaCamera* self) {
@@ -68,48 +68,48 @@ double FilaCamera_getCullingFar(const FilaCamera* self) {
     return reinterpret_cast<const filament::Camera*>(self)->getCullingFar();
 }
 
-void FilaCamera_setModelMatrix_mat4(FilaCamera* self, FilaMat4 modelMatrix) {
-    reinterpret_cast<filament::Camera*>(self)->setModelMatrix(std::bit_cast<filament::math::mat4>(modelMatrix));
+void FilaCamera_setModelMatrix_mat4(FilaCamera* self, const FilaMat4* modelMatrix) {
+    reinterpret_cast<filament::Camera*>(self)->setModelMatrix(std::bit_cast<filament::math::mat4>(*modelMatrix));
 }
 
-void FilaCamera_setModelMatrix_mat4f(FilaCamera* self, FilaMat4f modelMatrix) {
-    reinterpret_cast<filament::Camera*>(self)->setModelMatrix(std::bit_cast<filament::math::mat4f>(modelMatrix));
+void FilaCamera_setModelMatrix_mat4f(FilaCamera* self, const FilaMat4f* modelMatrix) {
+    reinterpret_cast<filament::Camera*>(self)->setModelMatrix(std::bit_cast<filament::math::mat4f>(*modelMatrix));
 }
 
-void FilaCamera_setEyeModelMatrix(FilaCamera* self, uint8_t eyeId, FilaMat4 model) {
-    reinterpret_cast<filament::Camera*>(self)->setEyeModelMatrix(eyeId, std::bit_cast<filament::math::mat4>(model));
+void FilaCamera_setEyeModelMatrix(FilaCamera* self, uint32_t eyeId, const FilaMat4* model) {
+    reinterpret_cast<filament::Camera*>(self)->setEyeModelMatrix(static_cast<uint8_t>(eyeId), std::bit_cast<filament::math::mat4>(*model));
 }
 
-void FilaCamera_lookAt(FilaCamera* self, FilaDouble3 eye, FilaDouble3 center, FilaDouble3 up) {
-    reinterpret_cast<filament::Camera*>(self)->lookAt(std::bit_cast<filament::math::double3>(eye), std::bit_cast<filament::math::double3>(center), std::bit_cast<filament::math::double3>(up));
+void FilaCamera_lookAt(FilaCamera* self, const FilaDouble3* eye, const FilaDouble3* center, const FilaDouble3* up) {
+    reinterpret_cast<filament::Camera*>(self)->lookAt(std::bit_cast<filament::math::double3>(*eye), std::bit_cast<filament::math::double3>(*center), std::bit_cast<filament::math::double3>(*up));
 }
 
-FilaMat4 FilaCamera_getModelMatrix(const FilaCamera* self) {
-    return std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getModelMatrix());
+void FilaCamera_getModelMatrix(const FilaCamera* self, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getModelMatrix());
 }
 
-FilaMat4 FilaCamera_getViewMatrix(const FilaCamera* self) {
-    return std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getViewMatrix());
+void FilaCamera_getViewMatrix(const FilaCamera* self, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getViewMatrix());
 }
 
-FilaMat4 FilaCamera_getEyeFromViewMatrix(const FilaCamera* self, uint8_t eyeId) {
-    return std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getEyeFromViewMatrix(eyeId));
+void FilaCamera_getEyeFromViewMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(reinterpret_cast<const filament::Camera*>(self)->getEyeFromViewMatrix(static_cast<uint8_t>(eyeId)));
 }
 
-FilaDouble3 FilaCamera_getPosition(const FilaCamera* self) {
-    return std::bit_cast<FilaDouble3>(reinterpret_cast<const filament::Camera*>(self)->getPosition());
+void FilaCamera_getPosition(const FilaCamera* self, FilaDouble3* out) {
+    *out = std::bit_cast<FilaDouble3>(reinterpret_cast<const filament::Camera*>(self)->getPosition());
 }
 
-FilaFloat3 FilaCamera_getLeftVector(const FilaCamera* self) {
-    return std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Camera*>(self)->getLeftVector());
+void FilaCamera_getLeftVector(const FilaCamera* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Camera*>(self)->getLeftVector());
 }
 
-FilaFloat3 FilaCamera_getUpVector(const FilaCamera* self) {
-    return std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Camera*>(self)->getUpVector());
+void FilaCamera_getUpVector(const FilaCamera* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Camera*>(self)->getUpVector());
 }
 
-FilaFloat3 FilaCamera_getForwardVector(const FilaCamera* self) {
-    return std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Camera*>(self)->getForwardVector());
+void FilaCamera_getForwardVector(const FilaCamera* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Camera*>(self)->getForwardVector());
 }
 
 float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* self, FilaCameraFov direction) {
@@ -152,12 +152,12 @@ float FilaCamera_getFocusDistance(const FilaCamera* self) {
     return reinterpret_cast<const filament::Camera*>(self)->getFocusDistance();
 }
 
-FilaMat4 FilaCamera_inverseProjection_mat4(FilaMat4 p) {
-    return std::bit_cast<FilaMat4>(filament::Camera::inverseProjection(std::bit_cast<filament::math::mat4>(p)));
+void FilaCamera_inverseProjection_mat4(const FilaMat4* p, FilaMat4* out) {
+    *out = std::bit_cast<FilaMat4>(filament::Camera::inverseProjection(std::bit_cast<filament::math::mat4>(*p)));
 }
 
-FilaMat4f FilaCamera_inverseProjection_mat4f(FilaMat4f p) {
-    return std::bit_cast<FilaMat4f>(filament::Camera::inverseProjection(std::bit_cast<filament::math::mat4f>(p)));
+void FilaCamera_inverseProjection_mat4f(const FilaMat4f* p, FilaMat4f* out) {
+    *out = std::bit_cast<FilaMat4f>(filament::Camera::inverseProjection(std::bit_cast<filament::math::mat4f>(*p)));
 }
 
 double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance) {

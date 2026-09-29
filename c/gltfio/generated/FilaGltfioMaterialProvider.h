@@ -15,7 +15,7 @@ extern "C" {
 //     MaterialKey *: value struct
 // TODO(handwritten) FilaGltfioMaterialProvider_getMaterials: const Material *const * filament::gltfio::MaterialProvider::getMaterials() const
 //     const Material *const *: pointer to pointer
-size_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self);
+uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self);
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self);
 bool FilaGltfioMaterialProvider_needsDummyData(const FilaGltfioMaterialProvider* self, FilaVertexAttribute attrib);
 

@@ -9,21 +9,21 @@ extern "C" {
 #endif
 
 // filament::LightManager::ShadowCascades
-void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint8_t cascades);
-void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint8_t cascades, float near, float far);
-void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint8_t cascades, float near, float far, float lambda);
+void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint32_t cascades);
+void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint32_t cascades, float near, float far);
+void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint32_t cascades, float near, float far, float lambda);
 
 // filament::LightManager::Builder
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType type);
 void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self);
-FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, unsigned int channel, bool enable);
+FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, uint32_t channel, bool enable);
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable);
 // TODO(handwritten) FilaLightManagerBuilder_shadowOptions: Builder & filament::LightManager::Builder::shadowOptions(const ShadowOptions & options)
 //     const ShadowOptions &: value struct
 FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* self, bool enable);
-FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, FilaFloat3 position);
-FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, FilaFloat3 direction);
-FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, FilaFloat3 color);
+FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, const FilaFloat3* position);
+FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, const FilaFloat3* direction);
+FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, const FilaFloat3* color);
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* self, float intensity);
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity_float(FilaLightManagerBuilder* self, float watts, float efficiency);
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensityCandela(FilaLightManagerBuilder* self, float intensity);
@@ -35,7 +35,7 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloFalloff(FilaLightManager
 FilaLightManagerBuilderResult FilaLightManagerBuilder_build(FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity);
 
 // filament::LightManager
-size_t FilaLightManager_getComponentCount(const FilaLightManager* self);
+uint32_t FilaLightManager_getComponentCount(const FilaLightManager* self);
 bool FilaLightManager_hasComponent(const FilaLightManager* self, FilaEntity e);
 bool FilaLightManager_empty(const FilaLightManager* self);
 FilaEntity FilaLightManager_getEntity(const FilaLightManager* self, uint32_t i);
@@ -46,14 +46,14 @@ FilaLightManagerType FilaLightManager_getType(const FilaLightManager* self, uint
 bool FilaLightManager_isDirectional(const FilaLightManager* self, uint32_t i);
 bool FilaLightManager_isPointLight(const FilaLightManager* self, uint32_t i);
 bool FilaLightManager_isSpotLight(const FilaLightManager* self, uint32_t i);
-void FilaLightManager_setLightChannel(FilaLightManager* self, uint32_t i, unsigned int channel, bool enable);
-bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, unsigned int channel);
-void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, FilaFloat3 position);
-FilaFloat3 FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i);
-void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, FilaFloat3 direction);
-FilaFloat3 FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i);
-void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, FilaFloat3 color);
-FilaFloat3 FilaLightManager_getColor(const FilaLightManager* self, uint32_t i);
+void FilaLightManager_setLightChannel(FilaLightManager* self, uint32_t i, uint32_t channel, bool enable);
+bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, uint32_t channel);
+void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, const FilaFloat3* position);
+void FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i, FilaFloat3* out);
+void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, const FilaFloat3* direction);
+void FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i, FilaFloat3* out);
+void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, const FilaFloat3* color);
+void FilaLightManager_getColor(const FilaLightManager* self, uint32_t i, FilaFloat3* out);
 void FilaLightManager_setIntensity(FilaLightManager* self, uint32_t i, float intensity);
 void FilaLightManager_setIntensity_float(FilaLightManager* self, uint32_t i, float watts, float efficiency);
 void FilaLightManager_setIntensityCandela(FilaLightManager* self, uint32_t i, float intensity);

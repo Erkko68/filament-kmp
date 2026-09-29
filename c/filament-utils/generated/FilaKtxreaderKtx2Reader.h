@@ -18,8 +18,8 @@ FilaKtxreaderKtx2Reader* FilaKtxreaderKtx2Reader_create(FilaEngine* engine, bool
 void FilaKtxreaderKtx2Reader_destroy(FilaKtxreaderKtx2Reader* self);
 FilaKtxreaderKtx2ReaderResult FilaKtxreaderKtx2Reader_requestFormat(FilaKtxreaderKtx2Reader* self, FilaTextureFormat format);
 void FilaKtxreaderKtx2Reader_unrequestFormat(FilaKtxreaderKtx2Reader* self, FilaTextureFormat format);
-FilaTexture* FilaKtxreaderKtx2Reader_load(FilaKtxreaderKtx2Reader* self, const void* data, size_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
-FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderKtx2Reader* self, const void* data, size_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
+FilaTexture* FilaKtxreaderKtx2Reader_load(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
+FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
 // TODO(handwritten) FilaKtxreaderKtx2Reader_asyncDestroy: void ktxreader::Ktx2Reader::asyncDestroy(Async ** async)
 //     Async **: pointer to pointer
 

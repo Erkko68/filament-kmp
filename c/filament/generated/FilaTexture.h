@@ -49,14 +49,14 @@ bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureForma
 bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format);
 bool FilaTexture_isProtectedTexturesSupported(FilaEngine* engine);
 bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine);
-size_t FilaTexture_computeTextureDataSize(FilaPixelDataFormat format, FilaPixelDataType type, size_t stride, size_t height, size_t alignment);
+uint32_t FilaTexture_computeTextureDataSize(FilaPixelDataFormat format, FilaPixelDataType type, uint32_t stride, uint32_t height, uint32_t alignment);
 bool FilaTexture_validatePixelFormatAndType(FilaTextureFormat internalFormat, FilaPixelDataFormat format, FilaPixelDataType type);
-size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaSamplerType type);
-size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine);
-size_t FilaTexture_getWidth(const FilaTexture* self, size_t level);
-size_t FilaTexture_getHeight(const FilaTexture* self, size_t level);
-size_t FilaTexture_getDepth(const FilaTexture* self, size_t level);
-size_t FilaTexture_getLevels(const FilaTexture* self);
+uint32_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaSamplerType type);
+uint32_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine);
+uint32_t FilaTexture_getWidth(const FilaTexture* self, uint32_t level);
+uint32_t FilaTexture_getHeight(const FilaTexture* self, uint32_t level);
+uint32_t FilaTexture_getDepth(const FilaTexture* self, uint32_t level);
+uint32_t FilaTexture_getLevels(const FilaTexture* self);
 FilaSamplerType FilaTexture_getTarget(const FilaTexture* self);
 FilaTextureFormat FilaTexture_getFormat(const FilaTexture* self);
 // TODO(handwritten) FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor: void filament::Texture::setImage(Engine & engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, PixelBufferDescriptor && buffer) const
@@ -73,7 +73,7 @@ FilaTextureFormat FilaTexture_getFormat(const FilaTexture* self);
 //     PixelBufferDescriptor &&: rvalue reference
 // TODO(handwritten) FilaTexture_setExternalImage_ExternalImageHandleRef: void filament::Texture::setExternalImage(Engine & engine, ExternalImageHandleRef image)
 //     ExternalImageHandleRef: alias of a pointer
-void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, size_t plane);
+void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, uint32_t plane);
 void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaStream* stream);
 void FilaTexture_generateMipmaps(const FilaTexture* self, FilaEngine* engine);
 bool FilaTexture_isCreationComplete(const FilaTexture* self);

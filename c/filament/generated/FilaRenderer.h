@@ -11,7 +11,7 @@ extern "C" {
 // filament::Renderer
 // TODO(handwritten) FilaRenderer_getFrameInfoHistory: utils::FixedCapacityVector<FrameInfo> filament::Renderer::getFrameInfoHistory(size_t historySize) const
 //     utils::FixedCapacityVector<FrameInfo>: utils::FixedCapacityVector
-size_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self);
+uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self);
 // TODO(handwritten) FilaRenderer_setDisplayInfo: void filament::Renderer::setDisplayInfo(const DisplayInfo & info)
 //     const DisplayInfo &: value struct
 // TODO(handwritten) FilaRenderer_setFrameRateOptions: void filament::Renderer::setFrameRateOptions(const FrameRateOptions & options)
@@ -48,8 +48,8 @@ void FilaRenderer_setMaterialTimeEpoch_int64_t(FilaRenderer* self, int64_t monot
 // TODO(handwritten) FilaRenderer_setMaterialTimeEpoch_time_point: void filament::Renderer::setMaterialTimeEpoch(std::chrono::steady_clock::time_point monotonic_clock)
 //     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point
 void FilaRenderer_resetUserTime(FilaRenderer* self);
-void FilaRenderer_skipNextFrames(FilaRenderer* self, size_t frameCount);
-size_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self);
+void FilaRenderer_skipNextFrames(FilaRenderer* self, uint32_t frameCount);
+uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self);
 bool FilaRenderer_hasGpuFallenBehind(const FilaRenderer* self);
 // TODO(handwritten) FilaRenderer_setFrameScheduleTime_time_point: void filament::Renderer::setFrameScheduleTime(std::chrono::steady_clock::time_point time)
 //     std::chrono::steady_clock::time_point: std::chrono::steady_clock::time_point

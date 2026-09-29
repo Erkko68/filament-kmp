@@ -31,10 +31,10 @@ FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* self, F
 
 // filament::RenderTarget
 FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
-uint8_t FilaRenderTarget_getMipLevel(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
+uint32_t FilaRenderTarget_getMipLevel(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
 FilaTextureCubemapFace FilaRenderTarget_getFace(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
 uint32_t FilaRenderTarget_getLayer(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
-uint8_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* self);
+uint32_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* self);
 
 
 #ifdef __cplusplus

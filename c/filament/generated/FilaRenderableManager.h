@@ -9,48 +9,48 @@ extern "C" {
 #endif
 
 // filament::RenderableManager::Builder
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t count);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count);
 void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* self);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, size_t offset, size_t minIndex, size_t maxIndex, size_t count);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, size_t offset, size_t count);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_size_t_size_t(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, size_t offset, size_t count);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t minIndex, uint32_t maxIndex, uint32_t count);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t count);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, uint32_t offset, uint32_t count);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* self, FilaRenderableManagerBuilderGeometryType type);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* self, size_t index, const FilaMaterialInstance* materialInstance);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* self, uint32_t index, const FilaMaterialInstance* materialInstance);
 // TODO(handwritten) FilaRenderableManagerBuilder_boundingBox: Builder & filament::RenderableManager::Builder::boundingBox(const Box & axisAlignedBoundingBox)
 //     const Box &: value struct
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* self, uint8_t select, uint8_t values);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* self, uint8_t priority);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* self, uint8_t channel);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* self, uint32_t select, uint32_t values);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* self, uint32_t priority);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* self, uint32_t channel);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_culling(FilaRenderableManagerBuilder* self, bool enable);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_lightChannel(FilaRenderableManagerBuilder* self, unsigned int channel, bool enable);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_lightChannel(FilaRenderableManagerBuilder* self, uint32_t channel, bool enable);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* self, bool enable);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* self, bool enable);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_screenSpaceContactShadows(FilaRenderableManagerBuilder* self, bool enable);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* self, bool enabled);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_fog(FilaRenderableManagerBuilder* self, bool enabled);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_SkinningBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, FilaSkinningBuffer* skinningBuffer, size_t count, size_t offset);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_mat4f(FilaRenderableManagerBuilder* self, size_t boneCount, const FilaMat4f* transforms);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_SkinningBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, FilaSkinningBuffer* skinningBuffer, uint32_t count, uint32_t offset);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_mat4f(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaMat4f* transforms);
 // TODO(handwritten) FilaRenderableManagerBuilder_skinning_size_t_Bone: Builder & filament::RenderableManager::Builder::skinning(size_t boneCount, const Bone * _Nonnull bones)
 //     const Bone * _Nonnull: value struct
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, size_t boneCount);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(FilaRenderableManagerBuilder* self, size_t primitiveIndex, const FilaFloat2* indicesAndWeights, size_t count, size_t bonesPerVertex);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, uint32_t boneCount);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, const FilaFloat2* indicesAndWeights, uint32_t count, uint32_t bonesPerVertex);
 // TODO(handwritten) FilaRenderableManagerBuilder_boneIndicesAndWeights_FixedCapacityVector: Builder & filament::RenderableManager::Builder::boneIndicesAndWeights(size_t primitiveIndex, utils::FixedCapacityVector<utils::FixedCapacityVector<math::float2>> indicesAndWeightsVector)
 //     utils::FixedCapacityVector<utils::FixedCapacityVector<math::float2>>: utils::FixedCapacityVector
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_size_t(FilaRenderableManagerBuilder* self, size_t targetCount);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_size_t(FilaRenderableManagerBuilder* self, uint32_t targetCount);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_MorphTargetBuffer(FilaRenderableManagerBuilder* self, FilaMorphTargetBuffer* morphTargetBuffer);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_uint8_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint8_t level, size_t primitiveIndex, size_t offset);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* self, size_t primitiveIndex, uint16_t blendOrder);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* self, size_t primitiveIndex, bool enabled);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* self, size_t instanceCount);
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances_InstanceBuffer(FilaRenderableManagerBuilder* self, size_t instanceCount, FilaInstanceBuffer* instanceBuffer);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_uint8_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t level, uint32_t primitiveIndex, uint32_t offset);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, uint32_t blendOrder);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, bool enabled);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* self, uint32_t instanceCount);
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances_InstanceBuffer(FilaRenderableManagerBuilder* self, uint32_t instanceCount, FilaInstanceBuffer* instanceBuffer);
 FilaRenderableManagerBuilderResult FilaRenderableManagerBuilder_build(const FilaRenderableManagerBuilder* self, FilaEngine* engine, FilaEntity entity);
 
 // filament::RenderableManager
 bool FilaRenderableManager_hasComponent(const FilaRenderableManager* self, FilaEntity e);
 uint32_t FilaRenderableManager_getInstance(const FilaRenderableManager* self, FilaEntity e);
-size_t FilaRenderableManager_getComponentCount(const FilaRenderableManager* self);
+uint32_t FilaRenderableManager_getComponentCount(const FilaRenderableManager* self);
 bool FilaRenderableManager_empty(const FilaRenderableManager* self);
 FilaEntity FilaRenderableManager_getEntity(const FilaRenderableManager* self, uint32_t i);
 const FilaEntity* FilaRenderableManager_getEntities(const FilaRenderableManager* self);
@@ -59,18 +59,18 @@ void FilaRenderableManager_destroy(FilaRenderableManager* self, FilaEntity e);
 //     const Box &: value struct
 // TODO(handwritten) FilaRenderableManager_getAxisAlignedBoundingBox: const Box & filament::RenderableManager::getAxisAlignedBoundingBox(Instance instance) const
 //     const Box &: value struct
-void FilaRenderableManager_setLayerMask(FilaRenderableManager* self, uint32_t instance, uint8_t select, uint8_t values);
-uint8_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* self, uint32_t instance);
-void FilaRenderableManager_setPriority(FilaRenderableManager* self, uint32_t instance, uint8_t priority);
-uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* self, uint32_t instance);
-void FilaRenderableManager_setChannel(FilaRenderableManager* self, uint32_t instance, uint8_t channel);
-uint8_t FilaRenderableManager_getChannel(const FilaRenderableManager* self, uint32_t instance);
+void FilaRenderableManager_setLayerMask(FilaRenderableManager* self, uint32_t instance, uint32_t select, uint32_t values);
+uint32_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* self, uint32_t instance);
+void FilaRenderableManager_setPriority(FilaRenderableManager* self, uint32_t instance, uint32_t priority);
+uint32_t FilaRenderableManager_getPriority(const FilaRenderableManager* self, uint32_t instance);
+void FilaRenderableManager_setChannel(FilaRenderableManager* self, uint32_t instance, uint32_t channel);
+uint32_t FilaRenderableManager_getChannel(const FilaRenderableManager* self, uint32_t instance);
 void FilaRenderableManager_setCulling(FilaRenderableManager* self, uint32_t instance, bool enable);
 bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* self, uint32_t instance);
 void FilaRenderableManager_setFogEnabled(FilaRenderableManager* self, uint32_t instance, bool enable);
 bool FilaRenderableManager_getFogEnabled(const FilaRenderableManager* self, uint32_t instance);
-void FilaRenderableManager_setLightChannel(FilaRenderableManager* self, uint32_t instance, unsigned int channel, bool enable);
-bool FilaRenderableManager_getLightChannel(const FilaRenderableManager* self, uint32_t instance, unsigned int channel);
+void FilaRenderableManager_setLightChannel(FilaRenderableManager* self, uint32_t instance, uint32_t channel, bool enable);
+bool FilaRenderableManager_getLightChannel(const FilaRenderableManager* self, uint32_t instance, uint32_t channel);
 void FilaRenderableManager_setCastShadows(FilaRenderableManager* self, uint32_t instance, bool enable);
 void FilaRenderableManager_setReceiveShadows(FilaRenderableManager* self, uint32_t instance, bool enable);
 void FilaRenderableManager_setScreenSpaceContactShadows(FilaRenderableManager* self, uint32_t instance, bool enable);
@@ -79,23 +79,23 @@ bool FilaRenderableManager_isShadowReceiver(const FilaRenderableManager* self, u
 bool FilaRenderableManager_isScreenSpaceContactShadowsEnabled(const FilaRenderableManager* self, uint32_t instance);
 // TODO(handwritten) FilaRenderableManager_setBones_Bone_size_t_size_t: void filament::RenderableManager::setBones(Instance instance, const Bone * _Nonnull transforms, size_t boneCount, size_t offset)
 //     const Bone * _Nonnull: value struct
-void FilaRenderableManager_setBones_mat4f_size_t_size_t(FilaRenderableManager* self, uint32_t instance, const FilaMat4f* transforms, size_t boneCount, size_t offset);
-void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* self, uint32_t instance, FilaSkinningBuffer* skinningBuffer, size_t count, size_t offset);
-void FilaRenderableManager_setMorphWeights(FilaRenderableManager* self, uint32_t instance, const float* weights, size_t count, size_t offset);
-void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* self, uint32_t instance, uint8_t level, size_t primitiveIndex, size_t offset);
+void FilaRenderableManager_setBones_mat4f_size_t_size_t(FilaRenderableManager* self, uint32_t instance, const FilaMat4f* transforms, uint32_t boneCount, uint32_t offset);
+void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* self, uint32_t instance, FilaSkinningBuffer* skinningBuffer, uint32_t count, uint32_t offset);
+void FilaRenderableManager_setMorphWeights(FilaRenderableManager* self, uint32_t instance, const float* weights, uint32_t count, uint32_t offset);
+void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* self, uint32_t instance, uint32_t level, uint32_t primitiveIndex, uint32_t offset);
 FilaMorphTargetBuffer* FilaRenderableManager_getMorphTargetBuffer(const FilaRenderableManager* self, uint32_t instance);
-size_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* self, uint32_t instance);
-size_t FilaRenderableManager_getPrimitiveCount(const FilaRenderableManager* self, uint32_t instance);
-size_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* self, uint32_t instance);
-void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex, const FilaMaterialInstance* materialInstance);
-void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex);
-FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex);
-void FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, size_t offset, size_t count);
-void FilaRenderableManager_setGeometryAt_size_t_size_t(FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, size_t offset, size_t count);
-void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex, uint16_t order);
-uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex);
-void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex, bool enabled);
-bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* self, uint32_t instance, size_t primitiveIndex);
+uint32_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* self, uint32_t instance);
+uint32_t FilaRenderableManager_getPrimitiveCount(const FilaRenderableManager* self, uint32_t instance);
+uint32_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* self, uint32_t instance);
+void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, const FilaMaterialInstance* materialInstance);
+void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
+FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
+void FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t count);
+void FilaRenderableManager_setGeometryAt_size_t_size_t(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, uint32_t offset, uint32_t count);
+void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, uint32_t order);
+uint32_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
+void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, bool enabled);
+bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
 // TODO(handwritten) FilaRenderableManager_getEnabledAttributesAt: AttributeBitset filament::RenderableManager::getEnabledAttributesAt(Instance instance, size_t primitiveIndex) const
 //     AttributeBitset: utils::bitset32
 

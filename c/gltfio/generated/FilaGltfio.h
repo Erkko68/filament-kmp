@@ -17,14 +17,14 @@ extern "C" {
 //     std::string *: std::string
 // TODO(handwritten) FilaGltfio_createJitShaderProvider: static MaterialProvider * filament::gltfio::createJitShaderProvider(Engine * engine, bool optimizeShaders, const utils::FixedCapacityVector<const char *> & variantFilters)
 //     const utils::FixedCapacityVector<const char *> &: utils::FixedCapacityVector
-FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, size_t archiveByteCount);
+FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount);
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine);
 FilaGltfioTextureProvider* FilaGltfio_createKtx2Provider(FilaEngine* engine);
 FilaGltfioTextureProvider* FilaGltfio_createWebpProvider(FilaEngine* engine);
 bool FilaGltfio_isWebpSupported(void);
-void FilaGltfio_decomposeMatrix(FilaMat4f mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale);
-FilaMat4f FilaGltfio_composeMatrix(FilaFloat3 translation, FilaQuatf rotation, FilaFloat3 scale);
-FilaMat3f FilaGltfio_matrixFromUvTransform(const float* offset, float rotation, const float* scale);
+void FilaGltfio_decomposeMatrix(const FilaMat4f* mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale);
+void FilaGltfio_composeMatrix(const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale, FilaMat4f* out);
+void FilaGltfio_matrixFromUvTransform(const float* offset, float rotation, const float* scale, FilaMat3f* out);
 
 
 #ifdef __cplusplus

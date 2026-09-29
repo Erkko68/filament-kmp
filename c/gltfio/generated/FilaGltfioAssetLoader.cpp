@@ -24,8 +24,8 @@ void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self) {
     reinterpret_cast<filament::gltfio::AssetLoader*>(self)->gc();
 }
 
-size_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self) {
-    return reinterpret_cast<const filament::gltfio::AssetLoader*>(self)->getMaterialsCount();
+uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::AssetLoader*>(self)->getMaterialsCount());
 }
 
 FilaGltfioNodeManager* FilaGltfioAssetLoader_getNodeManager(FilaGltfioAssetLoader* self) {

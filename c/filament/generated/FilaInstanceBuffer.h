@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 // filament::InstanceBuffer::Builder
-FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(size_t instanceCount);
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(uint32_t instanceCount);
 // TODO(handwritten) FilaInstanceBufferBuilder_create_Builder: filament::InstanceBuffer::Builder(const Builder & rhs)
 //     const Builder &: filament::BuilderNameMixin::Builder
 // TODO(handwritten) FilaInstanceBufferBuilder_create_Builder: filament::InstanceBuffer::Builder(Builder && rhs)
@@ -22,9 +22,9 @@ void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self);
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine);
 
 // filament::InstanceBuffer
-size_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self);
-void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, size_t count, size_t offset);
-FilaMat4f FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, size_t index);
+uint32_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self);
+void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, uint32_t count, uint32_t offset);
+void FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out);
 
 
 #ifdef __cplusplus

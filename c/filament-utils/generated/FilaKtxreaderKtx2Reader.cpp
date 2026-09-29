@@ -32,12 +32,12 @@ void FilaKtxreaderKtx2Reader_unrequestFormat(FilaKtxreaderKtx2Reader* self, Fila
     reinterpret_cast<ktxreader::Ktx2Reader*>(self)->unrequestFormat(static_cast<filament::backend::TextureFormat>(format));
 }
 
-FilaTexture* FilaKtxreaderKtx2Reader_load(FilaKtxreaderKtx2Reader* self, const void* data, size_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer) {
-    return reinterpret_cast<FilaTexture*>(reinterpret_cast<ktxreader::Ktx2Reader*>(self)->load(data, size, static_cast<ktxreader::Ktx2Reader::TransferFunction>(transfer)));
+FilaTexture* FilaKtxreaderKtx2Reader_load(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer) {
+    return reinterpret_cast<FilaTexture*>(reinterpret_cast<ktxreader::Ktx2Reader*>(self)->load(data, static_cast<size_t>(size), static_cast<ktxreader::Ktx2Reader::TransferFunction>(transfer)));
 }
 
-FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderKtx2Reader* self, const void* data, size_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer) {
-    return reinterpret_cast<FilaKtxreaderKtx2ReaderAsync*>(reinterpret_cast<ktxreader::Ktx2Reader*>(self)->asyncCreate(data, size, static_cast<ktxreader::Ktx2Reader::TransferFunction>(transfer)));
+FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer) {
+    return reinterpret_cast<FilaKtxreaderKtx2ReaderAsync*>(reinterpret_cast<ktxreader::Ktx2Reader*>(self)->asyncCreate(data, static_cast<size_t>(size), static_cast<ktxreader::Ktx2Reader::TransferFunction>(transfer)));
 }
 
 } // extern "C"

@@ -18,7 +18,8 @@ uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self
 //     const KtxInfo &: value struct
 // TODO(handwritten) FilaImageKtx1Bundle_info: KtxInfo & image::Ktx1Bundle::info()
 //     KtxInfo &: value struct
-const char* FilaImageKtx1Bundle_getMetadata(const FilaImageKtx1Bundle* self, const char* key, size_t* valueSize);
+// TODO(handwritten) FilaImageKtx1Bundle_getMetadata: const char * image::Ktx1Bundle::getMetadata(const char * key, size_t * valueSize) const
+//     size_t*: its width differs across targets
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value);
 // TODO(handwritten) FilaImageKtx1Bundle_getSphericalHarmonics: bool image::Ktx1Bundle::getSphericalHarmonics(filament::math::float3 * result)
 //     filament::math::float3 *: image::filament::math::float3

@@ -4,16 +4,16 @@
 
 extern "C" {
 
-void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint8_t cascades) {
-    filament::LightManager::ShadowCascades::computeUniformSplits(splitPositions, cascades);
+void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint32_t cascades) {
+    filament::LightManager::ShadowCascades::computeUniformSplits(splitPositions, static_cast<uint8_t>(cascades));
 }
 
-void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint8_t cascades, float near, float far) {
-    filament::LightManager::ShadowCascades::computeLogSplits(splitPositions, cascades, near, far);
+void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint32_t cascades, float near, float far) {
+    filament::LightManager::ShadowCascades::computeLogSplits(splitPositions, static_cast<uint8_t>(cascades), near, far);
 }
 
-void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint8_t cascades, float near, float far, float lambda) {
-    filament::LightManager::ShadowCascades::computePracticalSplits(splitPositions, cascades, near, far, lambda);
+void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint32_t cascades, float near, float far, float lambda) {
+    filament::LightManager::ShadowCascades::computePracticalSplits(splitPositions, static_cast<uint8_t>(cascades), near, far, lambda);
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType type) {
@@ -24,8 +24,8 @@ void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self) {
     delete reinterpret_cast<filament::LightManager::Builder*>(self);
 }
 
-FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, unsigned int channel, bool enable) {
-    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->lightChannel(channel, enable));
+FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, uint32_t channel, bool enable) {
+    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->lightChannel(static_cast<unsigned int>(channel), enable));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable) {
@@ -36,16 +36,16 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuild
     return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->castLight(enable));
 }
 
-FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, FilaFloat3 position) {
-    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->position(std::bit_cast<filament::math::float3>(position)));
+FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, const FilaFloat3* position) {
+    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->position(std::bit_cast<filament::math::float3>(*position)));
 }
 
-FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, FilaFloat3 direction) {
-    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->direction(std::bit_cast<filament::math::float3>(direction)));
+FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, const FilaFloat3* direction) {
+    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->direction(std::bit_cast<filament::math::float3>(*direction)));
 }
 
-FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, FilaFloat3 color) {
-    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->color(std::bit_cast<filament::math::float3>(color)));
+FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, const FilaFloat3* color) {
+    return reinterpret_cast<FilaLightManagerBuilder*>(&reinterpret_cast<filament::LightManager::Builder*>(self)->color(std::bit_cast<filament::math::float3>(*color)));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* self, float intensity) {
@@ -84,8 +84,8 @@ FilaLightManagerBuilderResult FilaLightManagerBuilder_build(FilaLightManagerBuil
     return static_cast<FilaLightManagerBuilderResult>(reinterpret_cast<filament::LightManager::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine), utils::Entity::import(entity)));
 }
 
-size_t FilaLightManager_getComponentCount(const FilaLightManager* self) {
-    return reinterpret_cast<const filament::LightManager*>(self)->getComponentCount();
+uint32_t FilaLightManager_getComponentCount(const FilaLightManager* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::LightManager*>(self)->getComponentCount());
 }
 
 bool FilaLightManager_hasComponent(const FilaLightManager* self, FilaEntity e) {
@@ -128,36 +128,36 @@ bool FilaLightManager_isSpotLight(const FilaLightManager* self, uint32_t i) {
     return reinterpret_cast<const filament::LightManager*>(self)->isSpotLight(filament::LightManager::Instance(i));
 }
 
-void FilaLightManager_setLightChannel(FilaLightManager* self, uint32_t i, unsigned int channel, bool enable) {
-    reinterpret_cast<filament::LightManager*>(self)->setLightChannel(filament::LightManager::Instance(i), channel, enable);
+void FilaLightManager_setLightChannel(FilaLightManager* self, uint32_t i, uint32_t channel, bool enable) {
+    reinterpret_cast<filament::LightManager*>(self)->setLightChannel(filament::LightManager::Instance(i), static_cast<unsigned int>(channel), enable);
 }
 
-bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, unsigned int channel) {
-    return reinterpret_cast<const filament::LightManager*>(self)->getLightChannel(filament::LightManager::Instance(i), channel);
+bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, uint32_t channel) {
+    return reinterpret_cast<const filament::LightManager*>(self)->getLightChannel(filament::LightManager::Instance(i), static_cast<unsigned int>(channel));
 }
 
-void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, FilaFloat3 position) {
-    reinterpret_cast<filament::LightManager*>(self)->setPosition(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(position));
+void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, const FilaFloat3* position) {
+    reinterpret_cast<filament::LightManager*>(self)->setPosition(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(*position));
 }
 
-FilaFloat3 FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i) {
-    return std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::LightManager*>(self)->getPosition(filament::LightManager::Instance(i)));
+void FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::LightManager*>(self)->getPosition(filament::LightManager::Instance(i)));
 }
 
-void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, FilaFloat3 direction) {
-    reinterpret_cast<filament::LightManager*>(self)->setDirection(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(direction));
+void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, const FilaFloat3* direction) {
+    reinterpret_cast<filament::LightManager*>(self)->setDirection(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(*direction));
 }
 
-FilaFloat3 FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i) {
-    return std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::LightManager*>(self)->getDirection(filament::LightManager::Instance(i)));
+void FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::LightManager*>(self)->getDirection(filament::LightManager::Instance(i)));
 }
 
-void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, FilaFloat3 color) {
-    reinterpret_cast<filament::LightManager*>(self)->setColor(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(color));
+void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, const FilaFloat3* color) {
+    reinterpret_cast<filament::LightManager*>(self)->setColor(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(*color));
 }
 
-FilaFloat3 FilaLightManager_getColor(const FilaLightManager* self, uint32_t i) {
-    return std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::LightManager*>(self)->getColor(filament::LightManager::Instance(i)));
+void FilaLightManager_getColor(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::LightManager*>(self)->getColor(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setIntensity(FilaLightManager* self, uint32_t i, float intensity) {

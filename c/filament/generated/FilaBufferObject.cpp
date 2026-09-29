@@ -16,8 +16,8 @@ FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, F
     return reinterpret_cast<FilaBufferObject*>(reinterpret_cast<filament::BufferObject::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-size_t FilaBufferObject_getByteCount(const FilaBufferObject* self) {
-    return reinterpret_cast<const filament::BufferObject*>(self)->getByteCount();
+uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::BufferObject*>(self)->getByteCount());
 }
 
 } // extern "C"

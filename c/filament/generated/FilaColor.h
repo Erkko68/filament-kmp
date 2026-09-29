@@ -9,11 +9,11 @@ extern "C" {
 #endif
 
 // filament::Color
-FilaFloat3 FilaColor_toLinear_RgbType_float3(FilaRgbType type, FilaFloat3 color);
-FilaFloat4 FilaColor_toLinear_RgbaType_float4(FilaRgbaType type, FilaFloat4 color);
-FilaFloat3 FilaColor_cct(float K);
-FilaFloat3 FilaColor_illuminantD(float K);
-FilaFloat3 FilaColor_absorptionAtDistance(FilaFloat3 color, float distance);
+void FilaColor_toLinear_RgbType_float3(FilaRgbType type, const FilaFloat3* color, FilaFloat3* out);
+void FilaColor_toLinear_RgbaType_float4(FilaRgbaType type, const FilaFloat4* color, FilaFloat4* out);
+void FilaColor_cct(float K, FilaFloat3* out);
+void FilaColor_illuminantD(float K, FilaFloat3* out);
+void FilaColor_absorptionAtDistance(const FilaFloat3* color, float distance, FilaFloat3* out);
 
 
 #ifdef __cplusplus

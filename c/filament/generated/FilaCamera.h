@@ -9,33 +9,33 @@ extern "C" {
 #endif
 
 // filament::Camera
-FilaMat4 FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far);
-FilaMat4 FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far);
+void FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far, FilaMat4* out);
+void FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far, FilaMat4* out);
 void FilaCamera_setProjection_Projection_double_double_double_double_double_double(FilaCamera* self, FilaCameraProjection projection, double left, double right, double bottom, double top, double near, double far);
 void FilaCamera_setProjection_double_double_double_double_Fov(FilaCamera* self, double fovInDegrees, double aspect, double near, double far, FilaCameraFov direction);
 void FilaCamera_setLensProjection(FilaCamera* self, double focalLengthInMillimeters, double aspect, double near, double far);
-void FilaCamera_setCustomProjection_double_double(FilaCamera* self, FilaMat4 projection, double near, double far);
-void FilaCamera_setCustomProjection_mat4_double_double(FilaCamera* self, FilaMat4 projection, FilaMat4 projectionForCulling, double near, double far);
-void FilaCamera_setCustomEyeProjection(FilaCamera* self, const FilaMat4* projection, size_t count, FilaMat4 projectionForCulling, double near, double far);
-void FilaCamera_setScaling(FilaCamera* self, FilaDouble2 scaling);
-void FilaCamera_setShift(FilaCamera* self, FilaDouble2 shift);
-FilaDouble4 FilaCamera_getScaling(const FilaCamera* self);
-FilaDouble2 FilaCamera_getShift(const FilaCamera* self);
-FilaMat4 FilaCamera_getProjectionMatrix(const FilaCamera* self, uint8_t eyeId);
-FilaMat4 FilaCamera_getCullingProjectionMatrix(const FilaCamera* self);
+void FilaCamera_setCustomProjection_double_double(FilaCamera* self, const FilaMat4* projection, double near, double far);
+void FilaCamera_setCustomProjection_mat4_double_double(FilaCamera* self, const FilaMat4* projection, const FilaMat4* projectionForCulling, double near, double far);
+void FilaCamera_setCustomEyeProjection(FilaCamera* self, const FilaMat4* projection, uint32_t count, const FilaMat4* projectionForCulling, double near, double far);
+void FilaCamera_setScaling(FilaCamera* self, const FilaDouble2* scaling);
+void FilaCamera_setShift(FilaCamera* self, const FilaDouble2* shift);
+void FilaCamera_getScaling(const FilaCamera* self, FilaDouble4* out);
+void FilaCamera_getShift(const FilaCamera* self, FilaDouble2* out);
+void FilaCamera_getProjectionMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out);
+void FilaCamera_getCullingProjectionMatrix(const FilaCamera* self, FilaMat4* out);
 double FilaCamera_getNear(const FilaCamera* self);
 double FilaCamera_getCullingFar(const FilaCamera* self);
-void FilaCamera_setModelMatrix_mat4(FilaCamera* self, FilaMat4 modelMatrix);
-void FilaCamera_setModelMatrix_mat4f(FilaCamera* self, FilaMat4f modelMatrix);
-void FilaCamera_setEyeModelMatrix(FilaCamera* self, uint8_t eyeId, FilaMat4 model);
-void FilaCamera_lookAt(FilaCamera* self, FilaDouble3 eye, FilaDouble3 center, FilaDouble3 up);
-FilaMat4 FilaCamera_getModelMatrix(const FilaCamera* self);
-FilaMat4 FilaCamera_getViewMatrix(const FilaCamera* self);
-FilaMat4 FilaCamera_getEyeFromViewMatrix(const FilaCamera* self, uint8_t eyeId);
-FilaDouble3 FilaCamera_getPosition(const FilaCamera* self);
-FilaFloat3 FilaCamera_getLeftVector(const FilaCamera* self);
-FilaFloat3 FilaCamera_getUpVector(const FilaCamera* self);
-FilaFloat3 FilaCamera_getForwardVector(const FilaCamera* self);
+void FilaCamera_setModelMatrix_mat4(FilaCamera* self, const FilaMat4* modelMatrix);
+void FilaCamera_setModelMatrix_mat4f(FilaCamera* self, const FilaMat4f* modelMatrix);
+void FilaCamera_setEyeModelMatrix(FilaCamera* self, uint32_t eyeId, const FilaMat4* model);
+void FilaCamera_lookAt(FilaCamera* self, const FilaDouble3* eye, const FilaDouble3* center, const FilaDouble3* up);
+void FilaCamera_getModelMatrix(const FilaCamera* self, FilaMat4* out);
+void FilaCamera_getViewMatrix(const FilaCamera* self, FilaMat4* out);
+void FilaCamera_getEyeFromViewMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out);
+void FilaCamera_getPosition(const FilaCamera* self, FilaDouble3* out);
+void FilaCamera_getLeftVector(const FilaCamera* self, FilaFloat3* out);
+void FilaCamera_getUpVector(const FilaCamera* self, FilaFloat3* out);
+void FilaCamera_getForwardVector(const FilaCamera* self, FilaFloat3* out);
 float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* self, FilaCameraFov direction);
 // TODO(handwritten) FilaCamera_getFrustum: class Frustum filament::Camera::getFrustum() const
 //     class Frustum: filament::Camera::Frustum
@@ -48,8 +48,8 @@ float FilaCamera_getSensitivity(const FilaCamera* self);
 double FilaCamera_getFocalLength(const FilaCamera* self);
 void FilaCamera_setFocusDistance(FilaCamera* self, float distance);
 float FilaCamera_getFocusDistance(const FilaCamera* self);
-FilaMat4 FilaCamera_inverseProjection_mat4(FilaMat4 p);
-FilaMat4f FilaCamera_inverseProjection_mat4f(FilaMat4f p);
+void FilaCamera_inverseProjection_mat4(const FilaMat4* p, FilaMat4* out);
+void FilaCamera_inverseProjection_mat4f(const FilaMat4f* p, FilaMat4f* out);
 double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance);
 double FilaCamera_computeEffectiveFov(double fovInDegrees, double focusDistance);
 

@@ -4,8 +4,8 @@
 
 extern "C" {
 
-size_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialProvider*>(self)->getMaterialsCount();
+uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialProvider*>(self)->getMaterialsCount());
 }
 
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self) {

@@ -1,0 +1,121 @@
+package buildlogic.apigen.c
+
+import buildlogic.apigen.cpp.CppApi
+import buildlogic.apigen.cpp.CppEnum
+import buildlogic.apigen.cpp.CppType
+import buildlogic.apigen.cpp.CppType.Kind
+
+/**
+ * How a C++ value crosses into C: its C spelling, and the expression converting it to the other side. [out]: a
+ * result C returns through a trailing `out` pointer ([CAbi]).
+ */
+internal class CBridge(val c: String, val convert: (String) -> String, val out: Boolean = false)
+
+/** Why a declaration stays hand-written; the generator leaves a comment saying so instead of code. */
+internal class Unsupported(reason: String) : Exception(reason)
+
+/** Maps the model's types onto C, recording the math types the module's mirror structs must cover. */
+internal class CBridges(private val api: CppApi) {
+    val mathTypes = sortedSetOf<String>()
+
+    /** [type] as a parameter: [CBridge.convert] turns the C argument into C++'s. */
+    fun param(type: CppType) = of(type, result = false)
+
+    /** [type] as a return value: [CBridge.convert] turns C++'s result into C's. */
+    fun result(type: CppType) = of(type, result = true)
+
+    /** A record C only ever holds a pointer to: no public fields to mirror. */
+    fun isHandle(record: String) = api.records.getValue(record).fields.none { it.isPublic }
+
+    /** The integer typedef of an enum too wide for a C enum (whose enumerators are ints), or null. */
+    fun wideEnumType(enum: CppEnum) = if (enum.constants.all { it.second.bitLength() < 32 }) null else CAbi.byValue(enum.underlying ?: "uint64_t")
+
+    private fun of(type: CppType, result: Boolean): CBridge {
+        val shape = shape(type.spelling)
+        if (shape.indirection.size > 1) throw Unsupported("${type.spelling}: pointer to pointer")
+        val indirection = shape.indirection.firstOrNull()
+        if (indirection == "&&") throw Unsupported("${type.spelling}: rvalue reference")
+        var target = type
+        var alias: String? = null
+        while (target.decl in api.aliases) {
+            alias = alias ?: target.decl
+            target = api.aliases.getValue(target.decl!!)
+            if (shape(target.spelling).indirection.isNotEmpty()) throw Unsupported("${type.spelling}: alias of a pointer")
+        }
+        val decl = target.decl
+        val bridge = Bridge(shape.const, indirection, result)
+        return when {
+            target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
+            target.kind == Kind.FUNCTION -> throw Unsupported("${type.spelling}: function type")
+            decl == null -> throw Unsupported("${type.spelling}: ${target.kind.name.lowercase()}")
+            decl in api.enums -> bridge.enum(decl, wideEnumType(api.enums.getValue(decl)))
+            decl == "utils::Entity" -> bridge.entity()
+            decl == "utils::EntityInstance" && alias != null -> bridge.instance(alias)
+            decl.startsWith("filament::math::") && mathMirror(decl) != null -> bridge.math(decl).also { mathTypes += decl }
+            decl in api.records && isHandle(decl) -> bridge.handle(decl)
+            decl in api.records -> throw Unsupported("${type.spelling}: value struct")
+            else -> throw Unsupported("${type.spelling}: $decl")
+        }
+    }
+
+    private class Bridge(val const: Boolean, val indirection: String?, val result: Boolean) {
+        val byValue = indirection == null || (indirection == "&" && const)
+        val c = if (const) "const " else ""
+
+        fun builtin(base: String): CBridge {
+            if (byValue) {
+                val cType = CAbi.byValue(base)
+                return CBridge(cType, if (cType == base) { v -> v } else cast(cType, base), out = result && CAbi.returnsThroughPointer(cType))
+            }
+            CAbi.checkPointee(base)
+            return when {
+                indirection == "*" -> CBridge("$c$base*", { it })
+                result -> CBridge("$base*", { "&$it" })
+                else -> CBridge("$base*", { "*$it" })
+            }
+        }
+
+        fun enum(decl: String, wideType: String?): CBridge {
+            if (!byValue) throw Unsupported("$decl by pointer")
+            val name = CNames.type(decl)
+            return CBridge(name, cast(name, decl), out = result && wideType != null && CAbi.returnsThroughPointer(wideType))
+        }
+
+        fun entity() = when {
+            !byValue -> pointer("FilaEntity", "utils::Entity")
+            result -> CBridge("FilaEntity", { "utils::Entity::smuggle($it)" })
+            else -> CBridge("FilaEntity", { "utils::Entity::import($it)" })
+        }
+
+        fun instance(alias: String): CBridge {
+            if (!byValue) throw Unsupported("$alias by pointer")
+            return CBridge("uint32_t", if (result) { v -> "$v.asValue()" } else { v -> "$alias($v)" })
+        }
+
+        /** Structs never cross by value: parameters come by `const` pointer, results go out through one. */
+        fun math(decl: String): CBridge {
+            val name = CNames.type(decl)
+            return when {
+                !byValue -> pointer(name, decl)
+                result -> CBridge(name, { "std::bit_cast<$name>($it)" }, out = true)
+                else -> CBridge("const $name*", { "std::bit_cast<$decl>(*$it)" })
+            }
+        }
+
+        fun handle(decl: String): CBridge {
+            if (indirection == null) throw Unsupported("$decl by value")
+            return pointer(CNames.type(decl), decl)
+        }
+
+        /** Casts to C's [cType] for a result, to C++'s [cpp] for a parameter. */
+        private fun cast(cType: String, cpp: String) = if (result) { v: String -> "static_cast<$cType>($v)" } else { v -> "static_cast<$cpp>($v)" }
+
+        /** C passes a pointer whichever of `*` or `&` C++ takes. */
+        private fun pointer(cName: String, cppName: String): CBridge {
+            val cType = "$c$cName*"
+            val address = if (indirection == "*") "" else "&"
+            return if (result) CBridge(cType, { "reinterpret_cast<$cType>($address$it)" })
+            else CBridge(cType, { (if (indirection == "*") "" else "*") + "reinterpret_cast<$c$cppName*>($it)" })
+        }
+    }
+}

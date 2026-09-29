@@ -12,12 +12,12 @@ void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self) {
     delete reinterpret_cast<filament::Material::Builder*>(self);
 }
 
-FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, size_t size) {
-    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->package(payload, size));
+FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size) {
+    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->package(payload, static_cast<size_t>(size)));
 }
 
-FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, size_t shBandCount) {
-    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->sphericalHarmonicsBandCount(shBandCount));
+FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount) {
+    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->sphericalHarmonicsBandCount(static_cast<size_t>(shBandCount)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality) {
@@ -128,8 +128,8 @@ FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self) {
     return static_cast<FilaFeatureLevel>(reinterpret_cast<const filament::Material*>(self)->getFeatureLevel());
 }
 
-size_t FilaMaterial_getParameterCount(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->getParameterCount();
+uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Material*>(self)->getParameterCount());
 }
 
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name) {
@@ -148,12 +148,12 @@ void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self,
     reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, reinterpret_cast<const filament::Texture*>(texture), *reinterpret_cast<const filament::TextureSampler*>(sampler));
 }
 
-void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, FilaFloat3 color) {
-    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(color));
+void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
+    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
 }
 
-void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, FilaFloat4 color) {
-    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(color));
+void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
+    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
 }
 
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self) {

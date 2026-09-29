@@ -16,12 +16,12 @@ FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* s
     return reinterpret_cast<FilaVertexBuffer*>(reinterpret_cast<const filament::VertexBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* self) {
-    return reinterpret_cast<const filament::VertexBuffer*>(self)->getVertexCount();
+uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::VertexBuffer*>(self)->getVertexCount());
 }
 
-void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* self, FilaEngine* engine, uint8_t bufferIndex, const FilaBufferObject* bufferObject) {
-    reinterpret_cast<filament::VertexBuffer*>(self)->setBufferObjectAt(*reinterpret_cast<filament::Engine*>(engine), bufferIndex, reinterpret_cast<const filament::BufferObject*>(bufferObject));
+void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject) {
+    reinterpret_cast<filament::VertexBuffer*>(self)->setBufferObjectAt(*reinterpret_cast<filament::Engine*>(engine), static_cast<uint8_t>(bufferIndex), reinterpret_cast<const filament::BufferObject*>(bufferObject));
 }
 
 bool FilaVertexBuffer_isCreationComplete(const FilaVertexBuffer* self) {

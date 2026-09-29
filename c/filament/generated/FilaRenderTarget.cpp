@@ -20,8 +20,8 @@ FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* self, FilaRende
     return reinterpret_cast<FilaTexture*>(reinterpret_cast<const filament::RenderTarget*>(self)->getTexture(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
 }
 
-uint8_t FilaRenderTarget_getMipLevel(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
-    return reinterpret_cast<const filament::RenderTarget*>(self)->getMipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment));
+uint32_t FilaRenderTarget_getMipLevel(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderTarget*>(self)->getMipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
 }
 
 FilaTextureCubemapFace FilaRenderTarget_getFace(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
@@ -32,8 +32,8 @@ uint32_t FilaRenderTarget_getLayer(const FilaRenderTarget* self, FilaRenderTarge
     return reinterpret_cast<const filament::RenderTarget*>(self)->getLayer(static_cast<filament::RenderTarget::AttachmentPoint>(attachment));
 }
 
-uint8_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* self) {
-    return reinterpret_cast<const filament::RenderTarget*>(self)->getSupportedColorAttachmentsCount();
+uint32_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderTarget*>(self)->getSupportedColorAttachmentsCount());
 }
 
 } // extern "C"

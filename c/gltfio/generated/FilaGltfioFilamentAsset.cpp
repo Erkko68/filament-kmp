@@ -8,32 +8,32 @@ const FilaEntity* FilaGltfioFilamentAsset_getEntities(const FilaGltfioFilamentAs
     return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntities());
 }
 
-size_t FilaGltfioFilamentAsset_getEntityCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntityCount();
+uint32_t FilaGltfioFilamentAsset_getEntityCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntityCount());
 }
 
 const FilaEntity* FilaGltfioFilamentAsset_getLightEntities(const FilaGltfioFilamentAsset* self) {
     return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getLightEntities());
 }
 
-size_t FilaGltfioFilamentAsset_getLightEntityCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getLightEntityCount();
+uint32_t FilaGltfioFilamentAsset_getLightEntityCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getLightEntityCount());
 }
 
 const FilaEntity* FilaGltfioFilamentAsset_getRenderableEntities(const FilaGltfioFilamentAsset* self) {
     return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getRenderableEntities());
 }
 
-size_t FilaGltfioFilamentAsset_getRenderableEntityCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getRenderableEntityCount();
+uint32_t FilaGltfioFilamentAsset_getRenderableEntityCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getRenderableEntityCount());
 }
 
 const FilaEntity* FilaGltfioFilamentAsset_getCameraEntities(const FilaGltfioFilamentAsset* self) {
     return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getCameraEntities());
 }
 
-size_t FilaGltfioFilamentAsset_getCameraEntityCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getCameraEntityCount();
+uint32_t FilaGltfioFilamentAsset_getCameraEntityCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getCameraEntityCount());
 }
 
 FilaEntity FilaGltfioFilamentAsset_getRoot(const FilaGltfioFilamentAsset* self) {
@@ -44,12 +44,12 @@ FilaEntity FilaGltfioFilamentAsset_popRenderable(FilaGltfioFilamentAsset* self) 
     return utils::Entity::smuggle(reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->popRenderable());
 }
 
-size_t FilaGltfioFilamentAsset_popRenderables(FilaGltfioFilamentAsset* self, FilaEntity* entities, size_t count) {
-    return reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->popRenderables(reinterpret_cast<utils::Entity*>(entities), count);
+uint32_t FilaGltfioFilamentAsset_popRenderables(FilaGltfioFilamentAsset* self, FilaEntity* entities, uint32_t count) {
+    return static_cast<uint32_t>(reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->popRenderables(reinterpret_cast<utils::Entity*>(entities), static_cast<size_t>(count)));
 }
 
-size_t FilaGltfioFilamentAsset_getResourceUriCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getResourceUriCount();
+uint32_t FilaGltfioFilamentAsset_getResourceUriCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getResourceUriCount());
 }
 
 const char* FilaGltfioFilamentAsset_getName(const FilaGltfioFilamentAsset* self, FilaEntity arg0) {
@@ -60,24 +60,24 @@ FilaEntity FilaGltfioFilamentAsset_getFirstEntityByName(FilaGltfioFilamentAsset*
     return utils::Entity::smuggle(reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->getFirstEntityByName(name));
 }
 
-size_t FilaGltfioFilamentAsset_getEntitiesByName(const FilaGltfioFilamentAsset* self, const char* name, FilaEntity* entities, size_t maxCount) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntitiesByName(name, reinterpret_cast<utils::Entity*>(entities), maxCount);
+uint32_t FilaGltfioFilamentAsset_getEntitiesByName(const FilaGltfioFilamentAsset* self, const char* name, FilaEntity* entities, uint32_t maxCount) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntitiesByName(name, reinterpret_cast<utils::Entity*>(entities), static_cast<size_t>(maxCount)));
 }
 
-size_t FilaGltfioFilamentAsset_getEntitiesByPrefix(const FilaGltfioFilamentAsset* self, const char* prefix, FilaEntity* entities, size_t maxCount) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntitiesByPrefix(prefix, reinterpret_cast<utils::Entity*>(entities), maxCount);
+uint32_t FilaGltfioFilamentAsset_getEntitiesByPrefix(const FilaGltfioFilamentAsset* self, const char* prefix, FilaEntity* entities, uint32_t maxCount) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getEntitiesByPrefix(prefix, reinterpret_cast<utils::Entity*>(entities), static_cast<size_t>(maxCount)));
 }
 
 const char* FilaGltfioFilamentAsset_getExtras(const FilaGltfioFilamentAsset* self, FilaEntity entity) {
     return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getExtras(utils::Entity::import(entity));
 }
 
-const char* FilaGltfioFilamentAsset_getMorphTargetNameAt(const FilaGltfioFilamentAsset* self, FilaEntity entity, size_t targetIndex) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getMorphTargetNameAt(utils::Entity::import(entity), targetIndex);
+const char* FilaGltfioFilamentAsset_getMorphTargetNameAt(const FilaGltfioFilamentAsset* self, FilaEntity entity, uint32_t targetIndex) {
+    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getMorphTargetNameAt(utils::Entity::import(entity), static_cast<size_t>(targetIndex));
 }
 
-size_t FilaGltfioFilamentAsset_getMorphTargetCountAt(const FilaGltfioFilamentAsset* self, FilaEntity entity) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getMorphTargetCountAt(utils::Entity::import(entity));
+uint32_t FilaGltfioFilamentAsset_getMorphTargetCountAt(const FilaGltfioFilamentAsset* self, FilaEntity entity) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getMorphTargetCountAt(utils::Entity::import(entity)));
 }
 
 FilaEntity FilaGltfioFilamentAsset_getWireframe(FilaGltfioFilamentAsset* self) {
@@ -96,12 +96,12 @@ const void* FilaGltfioFilamentAsset_getSourceAsset(FilaGltfioFilamentAsset* self
     return reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->getSourceAsset();
 }
 
-size_t FilaGltfioFilamentAsset_getSceneCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getSceneCount();
+uint32_t FilaGltfioFilamentAsset_getSceneCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getSceneCount());
 }
 
-const char* FilaGltfioFilamentAsset_getSceneName(const FilaGltfioFilamentAsset* self, size_t sceneIndex) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getSceneName(sceneIndex);
+const char* FilaGltfioFilamentAsset_getSceneName(const FilaGltfioFilamentAsset* self, uint32_t sceneIndex) {
+    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getSceneName(static_cast<size_t>(sceneIndex));
 }
 
 void FilaGltfioFilamentAsset_detachFilamentComponents(FilaGltfioFilamentAsset* self) {
@@ -116,8 +116,8 @@ FilaGltfioFilamentInstance* FilaGltfioFilamentAsset_getInstance(FilaGltfioFilame
     return reinterpret_cast<FilaGltfioFilamentInstance*>(reinterpret_cast<filament::gltfio::FilamentAsset*>(self)->getInstance());
 }
 
-size_t FilaGltfioFilamentAsset_getAssetInstanceCount(const FilaGltfioFilamentAsset* self) {
-    return reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getAssetInstanceCount();
+uint32_t FilaGltfioFilamentAsset_getAssetInstanceCount(const FilaGltfioFilamentAsset* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentAsset*>(self)->getAssetInstanceCount());
 }
 
 } // extern "C"

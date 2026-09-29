@@ -12,28 +12,28 @@ void FilaGeometryTangentSpaceMeshBuilder_destroy(FilaGeometryTangentSpaceMeshBui
     delete reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self);
 }
 
-FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_vertexCount(FilaGeometryTangentSpaceMeshBuilder* self, size_t vertexCount) {
-    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->vertexCount(vertexCount));
+FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_vertexCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t vertexCount) {
+    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->vertexCount(static_cast<size_t>(vertexCount)));
 }
 
-FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_normals(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* normals, size_t stride) {
-    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->normals(reinterpret_cast<const filament::math::float3*>(normals), stride));
+FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_normals(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* normals, uint32_t stride) {
+    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->normals(reinterpret_cast<const filament::math::float3*>(normals), static_cast<size_t>(stride)));
 }
 
-FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_tangents(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat4* tangents, size_t stride) {
-    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->tangents(reinterpret_cast<const filament::math::float4*>(tangents), stride));
+FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_tangents(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat4* tangents, uint32_t stride) {
+    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->tangents(reinterpret_cast<const filament::math::float4*>(tangents), static_cast<size_t>(stride)));
 }
 
-FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_uvs(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat2* uvs, size_t stride) {
-    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->uvs(reinterpret_cast<const filament::math::float2*>(uvs), stride));
+FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_uvs(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat2* uvs, uint32_t stride) {
+    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->uvs(reinterpret_cast<const filament::math::float2*>(uvs), static_cast<size_t>(stride)));
 }
 
-FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_positions(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* positions, size_t stride) {
-    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->positions(reinterpret_cast<const filament::math::float3*>(positions), stride));
+FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_positions(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* positions, uint32_t stride) {
+    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->positions(reinterpret_cast<const filament::math::float3*>(positions), static_cast<size_t>(stride)));
 }
 
-FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangleCount(FilaGeometryTangentSpaceMeshBuilder* self, size_t triangleCount) {
-    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->triangleCount(triangleCount));
+FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangleCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t triangleCount) {
+    return reinterpret_cast<FilaGeometryTangentSpaceMeshBuilder*>(&reinterpret_cast<filament::geometry::TangentSpaceMesh::Builder*>(self)->triangleCount(static_cast<size_t>(triangleCount)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangles_uint3(FilaGeometryTangentSpaceMeshBuilder* self, const FilaUint3* triangles) {
@@ -56,36 +56,36 @@ void FilaGeometryTangentSpaceMesh_destroy(FilaGeometryTangentSpaceMesh* mesh) {
     filament::geometry::TangentSpaceMesh::destroy(reinterpret_cast<filament::geometry::TangentSpaceMesh*>(mesh));
 }
 
-size_t FilaGeometryTangentSpaceMesh_getVertexCount(const FilaGeometryTangentSpaceMesh* self) {
-    return reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getVertexCount();
+uint32_t FilaGeometryTangentSpaceMesh_getVertexCount(const FilaGeometryTangentSpaceMesh* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getVertexCount());
 }
 
-void FilaGeometryTangentSpaceMesh_getPositions(const FilaGeometryTangentSpaceMesh* self, FilaFloat3* out, size_t stride) {
-    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getPositions(reinterpret_cast<filament::math::float3*>(out), stride);
+void FilaGeometryTangentSpaceMesh_getPositions(const FilaGeometryTangentSpaceMesh* self, FilaFloat3* out_, uint32_t stride) {
+    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getPositions(reinterpret_cast<filament::math::float3*>(out_), static_cast<size_t>(stride));
 }
 
-void FilaGeometryTangentSpaceMesh_getUVs(const FilaGeometryTangentSpaceMesh* self, FilaFloat2* out, size_t stride) {
-    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getUVs(reinterpret_cast<filament::math::float2*>(out), stride);
+void FilaGeometryTangentSpaceMesh_getUVs(const FilaGeometryTangentSpaceMesh* self, FilaFloat2* out_, uint32_t stride) {
+    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getUVs(reinterpret_cast<filament::math::float2*>(out_), static_cast<size_t>(stride));
 }
 
-void FilaGeometryTangentSpaceMesh_getQuats_quatf_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuatf* out, size_t stride) {
-    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getQuats(reinterpret_cast<filament::math::quatf*>(out), stride);
+void FilaGeometryTangentSpaceMesh_getQuats_quatf_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuatf* out_, uint32_t stride) {
+    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getQuats(reinterpret_cast<filament::math::quatf*>(out_), static_cast<size_t>(stride));
 }
 
-void FilaGeometryTangentSpaceMesh_getQuats_short4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaShort4* out, size_t stride) {
-    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getQuats(reinterpret_cast<filament::math::short4*>(out), stride);
+void FilaGeometryTangentSpaceMesh_getQuats_short4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaShort4* out_, uint32_t stride) {
+    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getQuats(reinterpret_cast<filament::math::short4*>(out_), static_cast<size_t>(stride));
 }
 
-size_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self) {
-    return reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getTriangleCount();
+uint32_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getTriangleCount());
 }
 
-void FilaGeometryTangentSpaceMesh_getTriangles_uint3(const FilaGeometryTangentSpaceMesh* self, FilaUint3* out) {
-    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getTriangles(reinterpret_cast<filament::math::uint3*>(out));
+void FilaGeometryTangentSpaceMesh_getTriangles_uint3(const FilaGeometryTangentSpaceMesh* self, FilaUint3* out_) {
+    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getTriangles(reinterpret_cast<filament::math::uint3*>(out_));
 }
 
-void FilaGeometryTangentSpaceMesh_getTriangles_ushort3(const FilaGeometryTangentSpaceMesh* self, FilaUshort3* out) {
-    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getTriangles(reinterpret_cast<filament::math::ushort3*>(out));
+void FilaGeometryTangentSpaceMesh_getTriangles_ushort3(const FilaGeometryTangentSpaceMesh* self, FilaUshort3* out_) {
+    reinterpret_cast<const filament::geometry::TangentSpaceMesh*>(self)->getTriangles(reinterpret_cast<filament::math::ushort3*>(out_));
 }
 
 bool FilaGeometryTangentSpaceMesh_remeshed(const FilaGeometryTangentSpaceMesh* self) {

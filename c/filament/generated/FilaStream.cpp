@@ -24,8 +24,8 @@ void FilaStream_setDimensions(FilaStream* self, uint32_t width, uint32_t height)
     reinterpret_cast<filament::Stream*>(self)->setDimensions(width, height);
 }
 
-int64_t FilaStream_getTimestamp(const FilaStream* self) {
-    return reinterpret_cast<const filament::Stream*>(self)->getTimestamp();
+void FilaStream_getTimestamp(const FilaStream* self, int64_t* out) {
+    *out = reinterpret_cast<const filament::Stream*>(self)->getTimestamp();
 }
 
 } // extern "C"

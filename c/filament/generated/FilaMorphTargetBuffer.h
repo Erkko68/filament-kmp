@@ -30,11 +30,11 @@ void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self);
 FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferBuilder* self, FilaEngine* engine);
 
 // filament::MorphTargetBuffer
-void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, size_t targetIndex, const FilaFloat3* positions, size_t count, size_t offset);
-void FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, size_t targetIndex, const FilaFloat4* positions, size_t count, size_t offset);
-void FilaMorphTargetBuffer_setTangentsAt(FilaMorphTargetBuffer* self, FilaEngine* engine, size_t targetIndex, const FilaShort4* tangents, size_t count, size_t offset);
-size_t FilaMorphTargetBuffer_getVertexCount(const FilaMorphTargetBuffer* self);
-size_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* self);
+void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat3* positions, uint32_t count, uint32_t offset);
+void FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat4* positions, uint32_t count, uint32_t offset);
+void FilaMorphTargetBuffer_setTangentsAt(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaShort4* tangents, uint32_t count, uint32_t offset);
+uint32_t FilaMorphTargetBuffer_getVertexCount(const FilaMorphTargetBuffer* self);
+uint32_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* self);
 bool FilaMorphTargetBuffer_hasPositions(const FilaMorphTargetBuffer* self);
 bool FilaMorphTargetBuffer_hasTangents(const FilaMorphTargetBuffer* self);
 bool FilaMorphTargetBuffer_isCustomMorphingEnabled(const FilaMorphTargetBuffer* self);

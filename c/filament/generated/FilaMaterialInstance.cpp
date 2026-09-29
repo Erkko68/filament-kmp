@@ -16,28 +16,28 @@ const char* FilaMaterialInstance_getName(const FilaMaterialInstance* self) {
     return reinterpret_cast<const filament::MaterialInstance*>(self)->getName();
 }
 
-void FilaMaterialInstance_setParameter_char_size_t_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, size_t nameLength, const FilaTexture* texture, const FilaTextureSampler* sampler) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, nameLength, reinterpret_cast<const filament::Texture*>(texture), *reinterpret_cast<const filament::TextureSampler*>(sampler));
+void FilaMaterialInstance_setParameter_char_size_t_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaTexture* texture, const FilaTextureSampler* sampler) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<size_t>(nameLength), reinterpret_cast<const filament::Texture*>(texture), *reinterpret_cast<const filament::TextureSampler*>(sampler));
 }
 
 void FilaMaterialInstance_setParameter_char_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler) {
     reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, reinterpret_cast<const filament::Texture*>(texture), *reinterpret_cast<const filament::TextureSampler*>(sampler));
 }
 
-void FilaMaterialInstance_setParameter_char_size_t_RgbType_float3(FilaMaterialInstance* self, const char* name, size_t nameLength, FilaRgbType type, FilaFloat3 color) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, nameLength, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(color));
+void FilaMaterialInstance_setParameter_char_size_t_RgbType_float3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbType type, const FilaFloat3* color) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<size_t>(nameLength), static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
 }
 
-void FilaMaterialInstance_setParameter_char_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, FilaFloat3 color) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(color));
+void FilaMaterialInstance_setParameter_char_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
 }
 
-void FilaMaterialInstance_setParameter_char_size_t_RgbaType_float4(FilaMaterialInstance* self, const char* name, size_t nameLength, FilaRgbaType type, FilaFloat4 color) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, nameLength, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(color));
+void FilaMaterialInstance_setParameter_char_size_t_RgbaType_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbaType type, const FilaFloat4* color) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<size_t>(nameLength), static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
 }
 
-void FilaMaterialInstance_setParameter_char_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, FilaFloat4 color) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(color));
+void FilaMaterialInstance_setParameter_char_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
 }
 
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* self, uint32_t left, uint32_t bottom, uint32_t width, uint32_t height) {
@@ -164,16 +164,16 @@ void FilaMaterialInstance_setStencilOpDepthStencilPass(FilaMaterialInstance* sel
     reinterpret_cast<filament::MaterialInstance*>(self)->setStencilOpDepthStencilPass(static_cast<filament::backend::StencilOperation>(op), static_cast<filament::backend::StencilFace>(face));
 }
 
-void FilaMaterialInstance_setStencilReferenceValue(FilaMaterialInstance* self, uint8_t value, FilaStencilFace face) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setStencilReferenceValue(value, static_cast<filament::backend::StencilFace>(face));
+void FilaMaterialInstance_setStencilReferenceValue(FilaMaterialInstance* self, uint32_t value, FilaStencilFace face) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setStencilReferenceValue(static_cast<uint8_t>(value), static_cast<filament::backend::StencilFace>(face));
 }
 
-void FilaMaterialInstance_setStencilReadMask(FilaMaterialInstance* self, uint8_t readMask, FilaStencilFace face) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setStencilReadMask(readMask, static_cast<filament::backend::StencilFace>(face));
+void FilaMaterialInstance_setStencilReadMask(FilaMaterialInstance* self, uint32_t readMask, FilaStencilFace face) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setStencilReadMask(static_cast<uint8_t>(readMask), static_cast<filament::backend::StencilFace>(face));
 }
 
-void FilaMaterialInstance_setStencilWriteMask(FilaMaterialInstance* self, uint8_t writeMask, FilaStencilFace face) {
-    reinterpret_cast<filament::MaterialInstance*>(self)->setStencilWriteMask(writeMask, static_cast<filament::backend::StencilFace>(face));
+void FilaMaterialInstance_setStencilWriteMask(FilaMaterialInstance* self, uint32_t writeMask, FilaStencilFace face) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->setStencilWriteMask(static_cast<uint8_t>(writeMask), static_cast<filament::backend::StencilFace>(face));
 }
 
 void FilaMaterialInstance_commit(const FilaMaterialInstance* self, FilaEngine* engine) {

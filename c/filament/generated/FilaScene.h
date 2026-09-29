@@ -14,13 +14,13 @@ FilaSkybox* FilaScene_getSkybox(const FilaScene* self);
 void FilaScene_setIndirectLight(FilaScene* self, FilaIndirectLight* ibl);
 FilaIndirectLight* FilaScene_getIndirectLight(const FilaScene* self);
 void FilaScene_addEntity(FilaScene* self, FilaEntity entity);
-void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, size_t count);
+void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, uint32_t count);
 void FilaScene_remove(FilaScene* self, FilaEntity entity);
-void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, size_t count);
+void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, uint32_t count);
 void FilaScene_removeAllEntities(FilaScene* self);
-size_t FilaScene_getEntityCount(const FilaScene* self);
-size_t FilaScene_getRenderableCount(const FilaScene* self);
-size_t FilaScene_getLightCount(const FilaScene* self);
+uint32_t FilaScene_getEntityCount(const FilaScene* self);
+uint32_t FilaScene_getRenderableCount(const FilaScene* self);
+uint32_t FilaScene_getLightCount(const FilaScene* self);
 bool FilaScene_hasEntity(const FilaScene* self, FilaEntity entity);
 // TODO(handwritten) FilaScene_forEach: void filament::Scene::forEach(utils::Invocable<void (utils::Entity)> && functor) const
 //     utils::Invocable<void (utils::Entity)> &&: rvalue reference

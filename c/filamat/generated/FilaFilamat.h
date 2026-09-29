@@ -10,7 +10,7 @@ extern "C" {
 
 // filamat
 FilaFilamatMaterialBuilderBaseTargetApi FilaFilamat_targetApiFromBackend(FilaBackend backend);
-uint64_t FilaFilamat_charTo64bitNum(const char* str);
+void FilaFilamat_charTo64bitNum(const char* str, uint64_t* out);
 
 
 #ifdef __cplusplus

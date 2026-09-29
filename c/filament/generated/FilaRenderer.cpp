@@ -4,8 +4,8 @@
 
 extern "C" {
 
-size_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self) {
-    return reinterpret_cast<const filament::Renderer*>(self)->getMaxFrameHistorySize();
+uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Renderer*>(self)->getMaxFrameHistorySize());
 }
 
 FilaEngine* FilaRenderer_getEngine(FilaRenderer* self) {
@@ -72,12 +72,12 @@ void FilaRenderer_resetUserTime(FilaRenderer* self) {
     reinterpret_cast<filament::Renderer*>(self)->resetUserTime();
 }
 
-void FilaRenderer_skipNextFrames(FilaRenderer* self, size_t frameCount) {
-    reinterpret_cast<filament::Renderer*>(self)->skipNextFrames(frameCount);
+void FilaRenderer_skipNextFrames(FilaRenderer* self, uint32_t frameCount) {
+    reinterpret_cast<filament::Renderer*>(self)->skipNextFrames(static_cast<size_t>(frameCount));
 }
 
-size_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self) {
-    return reinterpret_cast<const filament::Renderer*>(self)->getFrameToSkipCount();
+uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::Renderer*>(self)->getFrameToSkipCount());
 }
 
 bool FilaRenderer_hasGpuFallenBehind(const FilaRenderer* self) {

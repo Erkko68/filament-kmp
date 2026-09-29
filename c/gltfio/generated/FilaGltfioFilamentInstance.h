@@ -13,25 +13,25 @@ FilaGltfioFilamentInstance* FilaGltfioFilamentInstance_create(void);
 void FilaGltfioFilamentInstance_destroy(FilaGltfioFilamentInstance* self);
 const FilaGltfioFilamentAsset* FilaGltfioFilamentInstance_getAsset(const FilaGltfioFilamentInstance* self);
 const FilaEntity* FilaGltfioFilamentInstance_getEntities(const FilaGltfioFilamentInstance* self);
-size_t FilaGltfioFilamentInstance_getEntityCount(const FilaGltfioFilamentInstance* self);
+uint32_t FilaGltfioFilamentInstance_getEntityCount(const FilaGltfioFilamentInstance* self);
 FilaEntity FilaGltfioFilamentInstance_getRoot(const FilaGltfioFilamentInstance* self);
-void FilaGltfioFilamentInstance_applyMaterialVariant(FilaGltfioFilamentInstance* self, size_t variantIndex);
-size_t FilaGltfioFilamentInstance_getMaterialVariantCount(const FilaGltfioFilamentInstance* self);
-const char* FilaGltfioFilamentInstance_getMaterialVariantName(const FilaGltfioFilamentInstance* self, size_t variantIndex);
+void FilaGltfioFilamentInstance_applyMaterialVariant(FilaGltfioFilamentInstance* self, uint32_t variantIndex);
+uint32_t FilaGltfioFilamentInstance_getMaterialVariantCount(const FilaGltfioFilamentInstance* self);
+const char* FilaGltfioFilamentInstance_getMaterialVariantName(const FilaGltfioFilamentInstance* self, uint32_t variantIndex);
 FilaGltfioAnimator* FilaGltfioFilamentInstance_getAnimator(FilaGltfioFilamentInstance* self);
-size_t FilaGltfioFilamentInstance_getSkinCount(const FilaGltfioFilamentInstance* self);
-const char* FilaGltfioFilamentInstance_getSkinNameAt(const FilaGltfioFilamentInstance* self, size_t skinIndex);
-size_t FilaGltfioFilamentInstance_getJointCountAt(const FilaGltfioFilamentInstance* self, size_t skinIndex);
-const FilaEntity* FilaGltfioFilamentInstance_getJointsAt(const FilaGltfioFilamentInstance* self, size_t skinIndex);
-void FilaGltfioFilamentInstance_attachSkin(FilaGltfioFilamentInstance* self, size_t skinIndex, FilaEntity target);
-void FilaGltfioFilamentInstance_detachSkin(FilaGltfioFilamentInstance* self, size_t skinIndex, FilaEntity target);
-const FilaMat4f* FilaGltfioFilamentInstance_getInverseBindMatricesAt(const FilaGltfioFilamentInstance* self, size_t skinIndex);
+uint32_t FilaGltfioFilamentInstance_getSkinCount(const FilaGltfioFilamentInstance* self);
+const char* FilaGltfioFilamentInstance_getSkinNameAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+uint32_t FilaGltfioFilamentInstance_getJointCountAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+const FilaEntity* FilaGltfioFilamentInstance_getJointsAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+void FilaGltfioFilamentInstance_attachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target);
+void FilaGltfioFilamentInstance_detachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target);
+const FilaMat4f* FilaGltfioFilamentInstance_getInverseBindMatricesAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
 void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstance* self);
 // TODO(handwritten) FilaGltfioFilamentInstance_getBoundingBox: Aabb filament::gltfio::FilamentInstance::getBoundingBox() const
 //     Aabb: value struct
 // TODO(handwritten) FilaGltfioFilamentInstance_getMaterialInstances: MaterialInstance *const * filament::gltfio::FilamentInstance::getMaterialInstances()
 //     MaterialInstance *const *: pointer to pointer
-size_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self);
+uint32_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self);
 void FilaGltfioFilamentInstance_detachMaterialInstances(FilaGltfioFilamentInstance* self);
 
 

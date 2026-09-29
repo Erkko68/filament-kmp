@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 // utils::EntityManager::Listener
-void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, size_t n, const FilaEntity* entities);
+void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, uint32_t n, const FilaEntity* entities);
 
 // utils::EntityManager
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void);
@@ -17,11 +17,11 @@ FilaUtilsEntityManager* FilaUtilsEntityManager_get(void);
 //     ChangeCallback: std::function
 void FilaUtilsEntityManager_unregisterChangeCallback(FilaUtilsEntityManager* self, const void* token);
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self);
-size_t FilaUtilsEntityManager_getMaxEntityCount(void);
-size_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self);
-void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, size_t n, FilaEntity* entities);
+uint32_t FilaUtilsEntityManager_getMaxEntityCount(void);
+uint32_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self);
+void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities);
 FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self);
-void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, size_t n, FilaEntity* entities);
+void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities);
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e);
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e);
 void FilaUtilsEntityManager_registerListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l);
@@ -38,7 +38,7 @@ void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self);
 // TODO(handwritten) FilaUtilsEntityManager_getMissedGarbage: uint64_t utils::EntityManager::getMissedGarbage(std::vector<const PagedArenaBitset *> & out, uint64_t readerWatermark)
 //     std::vector<const PagedArenaBitset *> &: std::vector
 void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self);
-uint64_t FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self);
+void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out);
 // TODO(handwritten) FilaUtilsEntityManager_getIndex: static Entity::Type utils::EntityManager::getIndex(const Entity e)
 //     Entity::Type: utils::Entity::Type
 

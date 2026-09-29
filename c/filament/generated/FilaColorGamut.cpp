@@ -4,8 +4,8 @@
 
 extern "C" {
 
-FilaColorGamut* FilaColorGamut_create_float2_float2_float2(FilaFloat2 r, FilaFloat2 g, FilaFloat2 b) {
-    return reinterpret_cast<FilaColorGamut*>(new filament::color::Gamut(std::bit_cast<filament::math::float2>(r), std::bit_cast<filament::math::float2>(g), std::bit_cast<filament::math::float2>(b)));
+FilaColorGamut* FilaColorGamut_create_float2_float2_float2(const FilaFloat2* r, const FilaFloat2* g, const FilaFloat2* b) {
+    return reinterpret_cast<FilaColorGamut*>(new filament::color::Gamut(std::bit_cast<filament::math::float2>(*r), std::bit_cast<filament::math::float2>(*g), std::bit_cast<filament::math::float2>(*b)));
 }
 
 } // extern "C"

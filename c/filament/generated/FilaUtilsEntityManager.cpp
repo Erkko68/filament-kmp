@@ -4,8 +4,8 @@
 
 extern "C" {
 
-void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, size_t n, const FilaEntity* entities) {
-    reinterpret_cast<utils::EntityManager::Listener*>(self)->onEntitiesDestroyed(n, reinterpret_cast<const utils::Entity*>(entities));
+void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, uint32_t n, const FilaEntity* entities) {
+    reinterpret_cast<utils::EntityManager::Listener*>(self)->onEntitiesDestroyed(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(entities));
 }
 
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void) {
@@ -20,24 +20,24 @@ void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self) {
     reinterpret_cast<utils::EntityManager*>(self)->flushNotifications();
 }
 
-size_t FilaUtilsEntityManager_getMaxEntityCount(void) {
-    return utils::EntityManager::getMaxEntityCount();
+uint32_t FilaUtilsEntityManager_getMaxEntityCount(void) {
+    return static_cast<uint32_t>(utils::EntityManager::getMaxEntityCount());
 }
 
-size_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self) {
-    return reinterpret_cast<const utils::EntityManager*>(self)->getEntityCount();
+uint32_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const utils::EntityManager*>(self)->getEntityCount());
 }
 
-void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, size_t n, FilaEntity* entities) {
-    reinterpret_cast<utils::EntityManager*>(self)->create(n, reinterpret_cast<utils::Entity*>(entities));
+void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities) {
+    reinterpret_cast<utils::EntityManager*>(self)->create(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
 }
 
 FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self) {
     return utils::Entity::smuggle(reinterpret_cast<utils::EntityManager*>(self)->create());
 }
 
-void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, size_t n, FilaEntity* entities) {
-    reinterpret_cast<utils::EntityManager*>(self)->destroy(n, reinterpret_cast<utils::Entity*>(entities));
+void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities) {
+    reinterpret_cast<utils::EntityManager*>(self)->destroy(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
 }
 
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e) {
@@ -64,8 +64,8 @@ void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self) {
     reinterpret_cast<utils::EntityManager*>(self)->reclaimSafeEpochs();
 }
 
-uint64_t FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self) {
-    return reinterpret_cast<const utils::EntityManager*>(self)->getLatestEpochID();
+void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out) {
+    *out = reinterpret_cast<const utils::EntityManager*>(self)->getLatestEpochID();
 }
 
 } // extern "C"

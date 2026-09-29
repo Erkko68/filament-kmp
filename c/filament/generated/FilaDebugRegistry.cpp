@@ -16,24 +16,24 @@ bool FilaDebugRegistry_setProperty_bool(FilaDebugRegistry* self, const char* nam
     return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, v);
 }
 
-bool FilaDebugRegistry_setProperty_int(FilaDebugRegistry* self, const char* name, int v) {
-    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, v);
+bool FilaDebugRegistry_setProperty_int(FilaDebugRegistry* self, const char* name, int32_t v) {
+    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, static_cast<int>(v));
 }
 
 bool FilaDebugRegistry_setProperty_float(FilaDebugRegistry* self, const char* name, float v) {
     return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, v);
 }
 
-bool FilaDebugRegistry_setProperty_float2(FilaDebugRegistry* self, const char* name, FilaFloat2 v) {
-    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, std::bit_cast<filament::math::float2>(v));
+bool FilaDebugRegistry_setProperty_float2(FilaDebugRegistry* self, const char* name, const FilaFloat2* v) {
+    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, std::bit_cast<filament::math::float2>(*v));
 }
 
-bool FilaDebugRegistry_setProperty_float3(FilaDebugRegistry* self, const char* name, FilaFloat3 v) {
-    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, std::bit_cast<filament::math::float3>(v));
+bool FilaDebugRegistry_setProperty_float3(FilaDebugRegistry* self, const char* name, const FilaFloat3* v) {
+    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, std::bit_cast<filament::math::float3>(*v));
 }
 
-bool FilaDebugRegistry_setProperty_float4(FilaDebugRegistry* self, const char* name, FilaFloat4 v) {
-    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, std::bit_cast<filament::math::float4>(v));
+bool FilaDebugRegistry_setProperty_float4(FilaDebugRegistry* self, const char* name, const FilaFloat4* v) {
+    return reinterpret_cast<filament::DebugRegistry*>(self)->setProperty(name, std::bit_cast<filament::math::float4>(*v));
 }
 
 bool FilaDebugRegistry_getProperty_bool(const FilaDebugRegistry* self, const char* name, bool* v) {

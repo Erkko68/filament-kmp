@@ -16,24 +16,24 @@ FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferB
     return reinterpret_cast<FilaMorphTargetBuffer*>(reinterpret_cast<filament::MorphTargetBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
-void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, size_t targetIndex, const FilaFloat3* positions, size_t count, size_t offset) {
-    reinterpret_cast<filament::MorphTargetBuffer*>(self)->setPositionsAt(*reinterpret_cast<filament::Engine*>(engine), targetIndex, reinterpret_cast<const filament::math::float3*>(positions), count, offset);
+void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat3* positions, uint32_t count, uint32_t offset) {
+    reinterpret_cast<filament::MorphTargetBuffer*>(self)->setPositionsAt(*reinterpret_cast<filament::Engine*>(engine), static_cast<size_t>(targetIndex), reinterpret_cast<const filament::math::float3*>(positions), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
-void FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, size_t targetIndex, const FilaFloat4* positions, size_t count, size_t offset) {
-    reinterpret_cast<filament::MorphTargetBuffer*>(self)->setPositionsAt(*reinterpret_cast<filament::Engine*>(engine), targetIndex, reinterpret_cast<const filament::math::float4*>(positions), count, offset);
+void FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat4* positions, uint32_t count, uint32_t offset) {
+    reinterpret_cast<filament::MorphTargetBuffer*>(self)->setPositionsAt(*reinterpret_cast<filament::Engine*>(engine), static_cast<size_t>(targetIndex), reinterpret_cast<const filament::math::float4*>(positions), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
-void FilaMorphTargetBuffer_setTangentsAt(FilaMorphTargetBuffer* self, FilaEngine* engine, size_t targetIndex, const FilaShort4* tangents, size_t count, size_t offset) {
-    reinterpret_cast<filament::MorphTargetBuffer*>(self)->setTangentsAt(*reinterpret_cast<filament::Engine*>(engine), targetIndex, reinterpret_cast<const filament::math::short4*>(tangents), count, offset);
+void FilaMorphTargetBuffer_setTangentsAt(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaShort4* tangents, uint32_t count, uint32_t offset) {
+    reinterpret_cast<filament::MorphTargetBuffer*>(self)->setTangentsAt(*reinterpret_cast<filament::Engine*>(engine), static_cast<size_t>(targetIndex), reinterpret_cast<const filament::math::short4*>(tangents), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
-size_t FilaMorphTargetBuffer_getVertexCount(const FilaMorphTargetBuffer* self) {
-    return reinterpret_cast<const filament::MorphTargetBuffer*>(self)->getVertexCount();
+uint32_t FilaMorphTargetBuffer_getVertexCount(const FilaMorphTargetBuffer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::MorphTargetBuffer*>(self)->getVertexCount());
 }
 
-size_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* self) {
-    return reinterpret_cast<const filament::MorphTargetBuffer*>(self)->getCount();
+uint32_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* self) {
+    return static_cast<uint32_t>(reinterpret_cast<const filament::MorphTargetBuffer*>(self)->getCount());
 }
 
 bool FilaMorphTargetBuffer_hasPositions(const FilaMorphTargetBuffer* self) {

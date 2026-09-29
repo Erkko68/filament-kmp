@@ -14,14 +14,14 @@ void FilaSkyboxBuilder_destroy(FilaSkyboxBuilder* self);
 FilaSkyboxBuilder* FilaSkyboxBuilder_environment(FilaSkyboxBuilder* self, FilaTexture* cubemap);
 FilaSkyboxBuilder* FilaSkyboxBuilder_showSun(FilaSkyboxBuilder* self, bool show);
 FilaSkyboxBuilder* FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* self, float envIntensity);
-FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, FilaFloat4 color);
-FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint8_t priority);
+FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, const FilaFloat4* color);
+FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t priority);
 FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* self, FilaEngine* engine);
 
 // filament::Skybox
-void FilaSkybox_setColor(FilaSkybox* self, FilaFloat4 color);
-void FilaSkybox_setLayerMask(FilaSkybox* self, uint8_t select, uint8_t values);
-uint8_t FilaSkybox_getLayerMask(const FilaSkybox* self);
+void FilaSkybox_setColor(FilaSkybox* self, const FilaFloat4* color);
+void FilaSkybox_setLayerMask(FilaSkybox* self, uint32_t select, uint32_t values);
+uint32_t FilaSkybox_getLayerMask(const FilaSkybox* self);
 float FilaSkybox_getIntensity(const FilaSkybox* self);
 const FilaTexture* FilaSkybox_getTexture(const FilaSkybox* self);
 

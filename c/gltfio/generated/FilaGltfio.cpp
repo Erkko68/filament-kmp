@@ -4,8 +4,8 @@
 
 extern "C" {
 
-FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, size_t archiveByteCount) {
-    return reinterpret_cast<FilaGltfioMaterialProvider*>(filament::gltfio::createUbershaderProvider(reinterpret_cast<filament::Engine*>(engine), archive, archiveByteCount));
+FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount) {
+    return reinterpret_cast<FilaGltfioMaterialProvider*>(filament::gltfio::createUbershaderProvider(reinterpret_cast<filament::Engine*>(engine), archive, static_cast<size_t>(archiveByteCount)));
 }
 
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine) {
@@ -24,16 +24,16 @@ bool FilaGltfio_isWebpSupported(void) {
     return filament::gltfio::isWebpSupported();
 }
 
-void FilaGltfio_decomposeMatrix(FilaMat4f mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale) {
-    filament::gltfio::decomposeMatrix(std::bit_cast<filament::math::mat4f>(mat), reinterpret_cast<filament::math::float3*>(translation), reinterpret_cast<filament::math::quatf*>(rotation), reinterpret_cast<filament::math::float3*>(scale));
+void FilaGltfio_decomposeMatrix(const FilaMat4f* mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale) {
+    filament::gltfio::decomposeMatrix(std::bit_cast<filament::math::mat4f>(*mat), reinterpret_cast<filament::math::float3*>(translation), reinterpret_cast<filament::math::quatf*>(rotation), reinterpret_cast<filament::math::float3*>(scale));
 }
 
-FilaMat4f FilaGltfio_composeMatrix(FilaFloat3 translation, FilaQuatf rotation, FilaFloat3 scale) {
-    return std::bit_cast<FilaMat4f>(filament::gltfio::composeMatrix(std::bit_cast<filament::math::float3>(translation), std::bit_cast<filament::math::quatf>(rotation), std::bit_cast<filament::math::float3>(scale)));
+void FilaGltfio_composeMatrix(const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale, FilaMat4f* out) {
+    *out = std::bit_cast<FilaMat4f>(filament::gltfio::composeMatrix(std::bit_cast<filament::math::float3>(*translation), std::bit_cast<filament::math::quatf>(*rotation), std::bit_cast<filament::math::float3>(*scale)));
 }
 
-FilaMat3f FilaGltfio_matrixFromUvTransform(const float* offset, float rotation, const float* scale) {
-    return std::bit_cast<FilaMat3f>(filament::gltfio::matrixFromUvTransform(offset, rotation, scale));
+void FilaGltfio_matrixFromUvTransform(const float* offset, float rotation, const float* scale, FilaMat3f* out) {
+    *out = std::bit_cast<FilaMat3f>(filament::gltfio::matrixFromUvTransform(offset, rotation, scale));
 }
 
 } // extern "C"

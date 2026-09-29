@@ -11,20 +11,20 @@ extern "C" {
 // filament::geometry::SurfaceOrientation::Builder
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_create(void);
 void FilaGeometrySurfaceOrientationBuilder_destroy(FilaGeometrySurfaceOrientationBuilder* self);
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_vertexCount(FilaGeometrySurfaceOrientationBuilder* self, size_t vertexCount);
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_normals(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, size_t stride);
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_tangents(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat4* arg0, size_t stride);
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_uvs(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat2* arg0, size_t stride);
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_positions(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, size_t stride);
-FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangleCount(FilaGeometrySurfaceOrientationBuilder* self, size_t triangleCount);
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_vertexCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t vertexCount);
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_normals(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride);
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_tangents(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat4* arg0, uint32_t stride);
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_uvs(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat2* arg0, uint32_t stride);
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_positions(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride);
+FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangleCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t triangleCount);
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_uint3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUint3* arg0);
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_ushort3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUshort3* arg0);
 FilaGeometrySurfaceOrientation* FilaGeometrySurfaceOrientationBuilder_build(FilaGeometrySurfaceOrientationBuilder* self);
 
 // filament::geometry::SurfaceOrientation
-size_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self);
-void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out, size_t quatCount, size_t stride);
-void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out, size_t quatCount, size_t stride);
+uint32_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self);
+void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out_, uint32_t quatCount, uint32_t stride);
+void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out_, uint32_t quatCount, uint32_t stride);
 // TODO(handwritten) FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t: void filament::geometry::SurfaceOrientation::getQuats(filament::math::quath * out, size_t quatCount, size_t stride) const
 //     filament::math::quath *: filament::math::quath
 

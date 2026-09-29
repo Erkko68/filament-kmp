@@ -16,7 +16,7 @@ void FilaColorColorSpace_destroy(FilaColorColorSpace* self);
 //     const Primaries &: value struct
 // TODO(handwritten) FilaColorColorSpace_getTransferFunction: const TransferFunction & filament::color::ColorSpace::getTransferFunction() const
 //     const TransferFunction &: value struct
-FilaFloat2 FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self);
+void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out);
 
 
 #ifdef __cplusplus
