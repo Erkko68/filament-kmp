@@ -50,6 +50,7 @@ foreach(target filament-c-jni fila-jni-forwarders)
 endforeach()
 
 if (APPLE)
+    target_sources(filament-c-jni PRIVATE src/main/cpp/MetalHelper.mm)
     target_link_libraries(filament-c-jni PRIVATE
         "-framework Cocoa" "-framework Metal" "-framework QuartzCore" "-framework CoreVideo" "-framework OpenGL")
     target_link_options(filament-c-jni PRIVATE
