@@ -111,6 +111,6 @@ private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {
         normals     = normals,
         uvs         = uvs,
         indices     = indices,
-        boundingBox = Box(0f, 0f, 0f, radius, radius, radius),
+        boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(radius, radius, radius)),
     )
 }

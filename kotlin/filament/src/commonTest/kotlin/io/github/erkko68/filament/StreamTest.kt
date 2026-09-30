@@ -24,6 +24,6 @@ class StreamTest : FilamentTestFixture() {
         val ts = stream.timestamp
         assertTrue(ts >= 0L)
         
-        engine.destroyStream(stream)
+        engine.destroy(stream)
     }
 }

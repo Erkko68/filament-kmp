@@ -15,7 +15,7 @@ import io.github.erkko68.filament.interop.*
  * ```
  * val entity = entityManager.create()
  * RenderableManager.Builder(1)          // 1 primitive
- *     .boundingBox(Box(-1f, -1f, -1f, 1f, 1f, 1f))
+ *     .boundingBox(Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f)))
  *     .material(0, materialInstance)
  *     .geometry(0, PrimitiveType.TRIANGLES, vertexBuffer, indexBuffer, 0, 6)
  *     .receiveShadows(true)
@@ -185,7 +185,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun boundingBox(axisAlignedBoundingBox: Box): Builder = apply {
-            axisAlignedBoundingBox.toFloats().usePinned { FilaRenderableManagerBuilder_boundingBox(nativeBuilder, it) }
+            axisAlignedBoundingBox.useNative { FilaRenderableManagerBuilder_boundingBox(nativeBuilder, it) }
         }
         /**
          * Sets bits in a visibility mask. By default, this is 0x1.
@@ -469,23 +469,15 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param aabb the new axis-aligned bounding box
      */
     fun setAxisAlignedBoundingBox(instance: EntityInstance, aabb: Box) {
-        aabb.toFloats().usePinned { FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance, it) }
+        aabb.useNative { FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance, it) }
     }
     /**
      * Gets the bounding box used for frustum culling.
      *
      * @param instance Instance of the component obtained from getInstance()
-     * @param out optional output Box; if null, a new Box is created
      * @return the axis-aligned bounding box
      */
-    fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box? = null): Box {
-        val f = FloatArray(6)
-        f.usePinned { FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance, it) }
-        val result = out ?: Box()
-        f.copyInto(result.center, 0, 0, 3)
-        f.copyInto(result.halfExtent, 0, 3, 6)
-        return result
-    }
+    fun getAxisAlignedBoundingBox(instance: EntityInstance): Box = box { FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance, it) }
 
     /**
      * Changes the visibility bits.
@@ -686,7 +678,6 @@ private fun RenderableManager.PrimitiveType.toNative(): Int = when (this) {
 }
 
 // filament::Box's layout: center then halfExtent.
-private fun Box.toFloats() = center + halfExtent
 
 // RenderableManager::Bone's layout: quatf, float3, reserved float.
 internal fun Array<RenderableManager.Bone>.toFloats() = FloatArray(size * 8).also { out ->

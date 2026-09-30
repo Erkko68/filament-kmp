@@ -30,9 +30,9 @@ class ColorGradingTest : FilamentTestFixture() {
             .build(engine)
         
         assertNotNull(grading)
-        assertTrue(engine.isValidColorGrading(grading))
+        assertTrue(engine.isValid(grading))
 
-        engine.destroyColorGrading(grading)
+        engine.destroy(grading)
     }
 
     @Test
@@ -44,7 +44,7 @@ class ColorGradingTest : FilamentTestFixture() {
             .customLut(lut, dim)
             .build(engine)
         assertNotNull(grading)
-        assertTrue(engine.isValidColorGrading(grading))
-        engine.destroyColorGrading(grading)
+        assertTrue(engine.isValid(grading))
+        engine.destroy(grading)
     }
 }

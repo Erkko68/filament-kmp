@@ -76,7 +76,7 @@ internal class StandardMaterialCache(val engine: Engine) {
         cache.getOrPut(type) { type.build(engine) }
 
     fun dispose() {
-        for (material in cache.values) engine.destroyMaterial(material)
+        for (material in cache.values) engine.destroy(material)
         cache.clear()
     }
 }
@@ -109,7 +109,7 @@ fun rememberStandardMaterial(
         // Hoisted engine outside a scene: this call site owns the material.
         val material = remember(engine, type) { type.build(engine) }
         DisposableEffect(material) {
-            onDispose { engine.destroyMaterial(material) }
+            onDispose { engine.destroy(material) }
         }
         material
     }

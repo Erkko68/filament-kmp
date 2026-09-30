@@ -103,7 +103,7 @@ void FilaView_setStereoscopicOptions(FilaView* self, const FilaStereoscopicOptio
 void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptions* out);
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling);
 bool FilaView_isFrustumCullingEnabled(const FilaView* self);
-// TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
+// handwritten in manual/ FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
 //     void (*)(const PickingQueryResult &, PickingQuery * _Nonnull): takes C++ types
 // TODO(handwritten) FilaView_pick: template void filament::View::pick(uint32_t x, uint32_t y, T * _Nonnull instance, backend::CallbackHandler * _Nullable handler)
 //     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations

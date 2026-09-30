@@ -30,9 +30,9 @@ Filament's object model is the same everywhere: one `Engine` owns everything, a 
 draws a `View` (scene + camera + viewport) into a `SwapChain`.
 
 ```kotlin
-val engine    = Engine.create()
+val engine    = Engine.create()!!  // null if the backend can't be initialized
 val scene     = engine.createScene()
-val camera    = engine.createCamera()
+val camera    = engine.createCamera(engine.entityManager.create())
 val view      = engine.createView().apply {
     this.scene = scene
     this.camera = camera
@@ -96,7 +96,7 @@ the browser runs more frames (see [Platform Notes](platform-notes.md#web--wasm))
 // Filament's SwapChain::CONFIG_READABLE — not yet exposed as a Kotlin constant.
 private const val CONFIG_READABLE = 0x2L
 
-val engine = Engine.create()
+val engine = Engine.create()!!
 val swapChain = engine.createSwapChain(width, height, CONFIG_READABLE)
 val renderer = engine.createRenderer().apply {
     clearOptions = Renderer.ClearOptions().apply {
@@ -165,16 +165,16 @@ provider.destroy()
 ## Lifecycle
 
 You own every object you create. Destroy in reverse dependency order and only then the
-engine, or `engine.destroy()` will panic on live resources:
+engine, or `Engine.destroy(engine)` will panic on live resources:
 
 ```kotlin
-engine.destroySwapChain(swapChain)
-engine.destroyRenderer(renderer)
-engine.destroyView(view)
-engine.destroyScene(scene)
-engine.destroyCamera(camera)
-scene.remove(entity); engine.destroyEntity(entity)  // plus buffers, materials, instances
-engine.destroy()
+engine.destroy(swapChain)
+engine.destroy(renderer)
+engine.destroy(view)
+engine.destroy(scene)
+engine.destroyCameraComponent(camera.entity); engine.entityManager.destroy(camera.entity)
+scene.remove(entity); engine.destroy(entity); engine.entityManager.destroy(entity)  // plus buffers, materials, instances
+Engine.destroy(engine)
 ```
 
 ## Mixing with Compose later

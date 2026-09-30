@@ -18,7 +18,7 @@ class VertexBufferTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidVertexBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(100, buffer.vertexCount)
 
@@ -47,7 +47,7 @@ class VertexBufferTest : FilamentTestFixture() {
         
         bufferWithObj.setBufferObjectAt(engine, 0, bufferObj)
 
-        engine.destroyVertexBuffer(buffer)
-        engine.destroyVertexBuffer(bufferWithObj)
+        engine.destroy(buffer)
+        engine.destroy(bufferWithObj)
     }
 }

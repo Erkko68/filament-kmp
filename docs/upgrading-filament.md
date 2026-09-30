@@ -12,15 +12,17 @@ It is written for contributors. If you only *consume* the library, you never nee
 
 `filament-kmp` is a thin wrapper. Every platform binds the same C API (`c/`, the `Fila*`
 functions), and the Kotlin API is written once in `commonMain` on top of it (see
-[Native Bindings](bindings.md)). A new Filament method touches two hand-written layers:
+[Native Bindings](bindings.md)). A new Filament method is generated up to the Kotlin wrapper:
 
-| Layer | What you edit | Reaches |
+| Layer | Where | Written by |
 | :--- | :--- | :--- |
-| **C API** (`c/<module>/c/*.h` + `cpp/*.cpp`) | the `Fila*` shim over the C++ method | every platform |
-| **Kotlin** (`kotlin/<module>/src/commonMain`) | the public method + its `external fun` declaration | every platform |
+| **C API** | `c/<module>/generated` | `./gradlew generateCApi`, from the headers in `c/api-headers.txt` |
+| **C API leftovers** | `c/<module>/manual` | hand, for each `TODO(handwritten)` the generator leaves |
+| **Kotlin externals** | `kotlin/<module>/src/commonMain/.../capi` | `./gradlew generateKotlinExternals` |
+| **Kotlin API** | `kotlin/<module>/src/commonMain` | hand: the public method over the externals |
 
-Everything between them is derived: the JNI forwarders are generated from the Kotlin declarations
-at build time, Native calls the C symbol directly, and web finds it in the wasm exports.
+Everything after that is derived: the JNI forwarders are generated from the externals at build
+time, Native calls the C symbol directly, and web finds it in the wasm exports.
 
 ### Two sources of truth
 
@@ -129,43 +131,23 @@ stay calls). Struct fields and enum values aren't covered. The task runs on macO
 
 #### Adding a method
 
-Use `build/reports/api-gaps.txt` as the worklist. Modules on the generated API (filamat so far) need no
-shim: run `./gradlew generateCApi generateKotlinExternals`, hand-write any new `TODO(handwritten)` in
-`c/<module>/manual`, and call the new external from the Kotlin wrapper. For the others, per new public
-method — e.g. `ColorGrading::Builder::fastMath(bool)`:
+Use `build/reports/api-gaps.txt` as the worklist. Run `./gradlew generateCApi generateKotlinExternals`:
+the new method gets its `Fila*` function and Kotlin external, or a `TODO(handwritten)` naming why it
+can't be bridged — write that one in `c/<module>/manual/<Record>Manual.{h,cpp}`. Then call the external
+from the Kotlin wrapper, e.g. for `ColorGrading::Builder::fastMath(bool)`:
 
-1. **C header** — declare the shim in `c/<module>/c/<Class>.h`. Fixed-width types only (no
-   `size_t`), no structs by value — see [Declaring a binding](bindings.md#declaring-a-binding):
-   ```c
-   void FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* builder, bool fastMath);
-   ```
-2. **C impl** — implement in `c/<module>/cpp/<Class>.cpp`:
-   ```cpp
-   void FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* builder, bool fastMath) {
-       FILA_CAST(ColorGrading::Builder, builder)->fastMath(fastMath);
-   }
-   ```
-3. **Kotlin** — the public method and its binding, in the class's `commonMain` file:
-   ```kotlin
-   fun fastMath(fastMath: Boolean): Builder = apply { FilaColorGradingBuilder_fastMath(nativeBuilder, fastMath) }
+```kotlin
+fun fastMath(fastMath: Boolean): Builder = apply { FilaColorGradingBuilder_fastMath(nativeBuilder, fastMath) }
+```
 
-   @ExternalSymbolName("FilaColorGradingBuilder_fastMath")
-   private external fun FilaColorGradingBuilder_fastMath(builder: NativePointer, fastMath: Boolean)
-   ```
-
-That's the whole job: no generator to run, nothing per platform. The next build regenerates the
-JNI glue and relinks each native library.
-
-> [!TIP]
-> When a method needs the *internal handle of another wrapped object* (e.g.
-> `Engine.Builder.colorGrading` takes a `ColorGrading.Builder`), expose that object's native
-> handle as `internal` rather than `private`, and pass it through the C shim.
+API the header only declares under an `#if` (e.g. `UTILS_HAS_THREADING`) is still generated on every
+target; where the condition is false it panics, so give the Kotlin side a `@PlatformGap`.
 
 #### Removing / deprecating a method
 
 If upstream removes or `@Deprecated`s a method, check whether it is exposed in our surface
 (`grep` the `kotlin/` tree). If it isn't exposed, there's nothing to do. If it is, mirror the
-upstream change (delete the method, its `external fun` and the C shim, or add `@Deprecated`).
+upstream change (regenerate, then delete the Kotlin method or add `@Deprecated`).
 
 ### 6. Update tests
 
@@ -252,8 +234,10 @@ re-running the download fixed it. This is the footgun in step 3.
 
 | Surface | Path |
 | :--- | :--- |
-| C shim headers / impl | `c/<module>/c/*.h`, `c/<module>/cpp/*.cpp` |
-| API classes + `external fun` bindings | `kotlin/<module>/src/commonMain/kotlin/.../*.kt` |
+| Generated C API / hand-written leftovers | `c/<module>/generated`, `c/<module>/manual` |
+| Which headers are API, skipped declarations | `c/api-headers.txt` |
+| Generated Kotlin externals | `kotlin/<module>/src/commonMain/kotlin/.../capi/` |
+| API classes | `kotlin/<module>/src/commonMain/kotlin/.../*.kt` |
 | Interop runtime (per platform) | `kotlin/filament/src/{common,jni,native,web}Main/.../interop/` |
 | JNI forwarders, wasm export tables (generated at build time) | `build/generated/bindings/` (from the `external fun`s) |
 | Platform actuals (surfaces, loading) | `kotlin/<module>/src/{android,jvm,native,web}Main/.../*.kt` |

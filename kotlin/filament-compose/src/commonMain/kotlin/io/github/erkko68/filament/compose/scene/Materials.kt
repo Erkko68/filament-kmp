@@ -95,7 +95,7 @@ internal fun rememberMaterial(
 
     DisposableEffect(material) {
         onDispose {
-            engine.destroyMaterial(material)
+            engine.destroy(material)
         }
     }
 
@@ -159,7 +159,7 @@ internal fun rememberTexture(
 
     DisposableEffect(texture) {
         onDispose {
-            engine.destroyTexture(texture)
+            engine.destroy(texture)
         }
     }
 
@@ -193,7 +193,7 @@ fun rememberMaterialInstance(
     val instance = remember(material) { material.createInstance() }
 
     DisposableEffect(instance) {
-        onDispose { engine.destroyMaterialInstance(instance) }
+        onDispose { engine.destroy(instance) }
     }
 
     return instance
@@ -262,7 +262,7 @@ internal fun rememberConfiguredMaterialInstance(
 
     DisposableEffect(instance) {
         onDispose {
-            engine.destroyMaterialInstance(instance)
+            engine.destroy(instance)
         }
     }
 

@@ -15,7 +15,7 @@ import org.gradle.kotlin.dsl.register
 private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "camutils", "geometry", "filament-iblprefilter", "utils")
 private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
 
-/** C modules on the generated API, by the Kotlin package of their externals; the rest still use c/<module>/{c,cpp}. */
+/** C modules, by the Kotlin package of their generated externals. */
 private val GENERATED_MODULES = mapOf(
     "filament" to "io.github.erkko68.filament.capi",
     "filamat" to "io.github.erkko68.filament.filamat.capi",
@@ -32,7 +32,7 @@ private val GENERATED_MODULES = mapOf(
  * c/           CppApi → c/<module>/generated                       generateCApi    (committed)
  * kotlin/      c/<module>/{generated,manual} → Kotlin externals     generateKotlinExternals (committed)
  * externals/   common Kotlin externals → JNI forwarders, wasm tables  generateBindings (build/)
- * gaps/        C++ API the C API doesn't call, C the Kotlin doesn't bind  apiGaps  (report)
+ * gaps/        C++ API the C API doesn't call                         apiGaps  (report)
  * ```
  */
 fun Project.registerApiGenTasks() {
@@ -69,7 +69,7 @@ fun Project.registerApiGenTasks() {
         group = "filament"
         description = "Generates the JNI forwarders and wasm export tables from the common externals."
         sources.from(root.dir("kotlin").asFileTree.matching { include("*/src/commonMain/**/*.kt") })
-        headers.from(root.dir("c").asFileTree.matching { include("*/c/*.h", "*/generated/*.h", "*/manual/*.h") })
+        headers.from(root.dir("c").asFileTree.matching { include("*/generated/*.h", "*/manual/*.h") })
         cDir.set(root.dir("c"))
         wasmRuntimes.put("filamat", "filamat-kmp")
         outputDir.set(layout.buildDirectory.dir("generated/bindings"))
@@ -89,13 +89,11 @@ fun Project.registerApiGenTasks() {
 
     tasks.register<ApiGapsTask>("apiGaps") {
         group = "verification"
-        description = "Reports the Filament C++ API the Fila* C API doesn't call, and Fila* functions Kotlin doesn't bind."
+        description = "Reports the Filament C++ API the Fila* C API doesn't call."
         filamentLibraries.from(filamentLibDir(target).map { dir -> FILAMENT_LIBRARIES.map { dir.file("lib$it.a") } })
         includeDir.set(root.dir("include"))
         publicHeaders.from(apiHeaderFiles())
         cApiObjects.from(cBuild.flatMap { it.buildDir }.map { it.asFileTree.matching { include("CMakeFiles/fila-*.dir/**/*.o") } })
-        cApiHeaders.from(root.dir("c").asFileTree.matching { include("*/c/*.h") })
-        externals.from(root.dir("kotlin").asFileTree.matching { include("*/src/commonMain/**/*.kt") })
         report.set(layout.buildDirectory.file("reports/api-gaps.txt"))
         dependsOn(cBuild)
     }

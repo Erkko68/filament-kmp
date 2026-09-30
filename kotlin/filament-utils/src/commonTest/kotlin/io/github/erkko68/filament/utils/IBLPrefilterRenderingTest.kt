@@ -44,10 +44,10 @@ class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
         val specular = IBLPrefilterContext.SpecularFilter(context)
         val irradiance = IBLPrefilterContext.IrradianceFilter(context)
         val cubemap = toCubemap(equirect)
-        assertTrue(engine.isValidTexture(cubemap))
+        assertTrue(engine.isValid(cubemap))
 
         val filtered = specular(IBLPrefilterContext.SpecularFilter.Options(lodOffset = 2f), cubemap)
-        assertTrue(engine.isValidTexture(filtered))
+        assertTrue(engine.isValid(filtered))
         // Given an output texture, the filters write into it and hand it back.
         val irradianceOut = irradiance(cubemap)
         assertSame(irradianceOut, irradiance(cubemap, irradianceOut))
@@ -57,9 +57,9 @@ class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
         specular.destroy()
         toCubemap.destroy()
         context.destroy()
-        engine.destroyTexture(irradianceOut)
-        engine.destroyTexture(filtered)
-        engine.destroyTexture(cubemap)
-        engine.destroyTexture(equirect)
+        engine.destroy(irradianceOut)
+        engine.destroy(filtered)
+        engine.destroy(cubemap)
+        engine.destroy(equirect)
     }
 }

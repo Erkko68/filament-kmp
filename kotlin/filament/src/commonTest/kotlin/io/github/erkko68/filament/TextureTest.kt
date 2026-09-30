@@ -55,7 +55,7 @@ class TextureTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(tex)
-        assertTrue(engine.isValidTexture(tex))
+        assertTrue(engine.isValid(tex))
 
         assertEquals(64, tex.getWidth(0))
         assertEquals(64, tex.getHeight(0))
@@ -74,7 +74,7 @@ class TextureTest : FilamentTestFixture() {
 
         // tex.generateMipmaps(engine)
 
-        engine.destroyTexture(tex)
+        engine.destroy(tex)
     }
 
     @Test

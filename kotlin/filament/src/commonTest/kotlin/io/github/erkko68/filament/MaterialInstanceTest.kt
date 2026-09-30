@@ -102,8 +102,8 @@ class MaterialInstanceTest : FilamentTestFixture() {
         // assertEquals("duplicated_instance", dup.name)
 
         // // Clean up
-        // engine.destroyMaterialInstance(inst)
-        // engine.destroyMaterialInstance(dup)
-        // engine.destroyMaterial(mat)
+        // engine.destroy(inst)
+        // engine.destroy(dup)
+        // engine.destroy(mat)
     }
 }

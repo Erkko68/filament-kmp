@@ -22,7 +22,7 @@ class SwapChainTest : FilamentTestFixture() {
     fun testSwapChainLifecycle() {
         val swap = engine.createSwapChain(100, 100, 0L)
         assertNotNull(swap)
-        assertTrue(engine.isValidSwapChain(swap))
+        assertTrue(engine.isValid(swap))
 
         val win = swap.nativeWindow
         val obj = swap.nativeObject
@@ -44,7 +44,7 @@ class SwapChainTest : FilamentTestFixture() {
         swap.setFrameRate(60.0f)
         swap.setFrameRate(0.0f, SwapChain.FrameRateCompatibility.FIXED_SOURCE, SwapChain.ChangeFrameRateStrategy.ALWAYS)
 
-        engine.destroySwapChain(swap)
+        engine.destroy(swap)
     }
 
     /**
@@ -74,6 +74,6 @@ class SwapChainTest : FilamentTestFixture() {
 
         // Teardown must release whatever the last callback held, and must not double-free
         // the stub the earlier re-sets deliberately left alive.
-        engine.destroySwapChain(swap)
+        engine.destroy(swap)
     }
 }

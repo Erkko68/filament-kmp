@@ -22,7 +22,7 @@ class MaterialRenderingTest : RenderingTestFixture() {
             .payload(bytes)
             .build(engine)
         assertNotNull(mat)
-        assertTrue(engine.isValidMaterial(mat))
+        assertTrue(engine.isValid(mat))
 
         // Getters: just exercise the binding path and round-trip what we can.
         assertTrue(mat.name.isNotEmpty())
@@ -59,8 +59,8 @@ class MaterialRenderingTest : RenderingTestFixture() {
         val defInst = mat.defaultInstance
         assertNotNull(defInst)
 
-        engine.destroyMaterialInstance(inst1)
-        engine.destroyMaterialInstance(inst2)
-        engine.destroyMaterial(mat)
+        engine.destroy(inst1)
+        engine.destroy(inst2)
+        engine.destroy(mat)
     }
 }

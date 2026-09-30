@@ -110,6 +110,6 @@ private fun cubeMesh(size: Float): MeshData {
         normals     = normals,
         uvs         = uvs,
         indices     = indices,
-        boundingBox = Box(0f, 0f, 0f, h, h, h),
+        boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(h, h, h)),
     )
 }

@@ -53,7 +53,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         assertSame(dirt, view.bloomOptions.dirt)
         view.bloomOptions = BloomOptions()
         assertNull(view.bloomOptions.dirt)
-        engine.destroyTexture(dirt)
+        engine.destroy(dirt)
     }
 
     @Test

@@ -29,7 +29,7 @@ class RenderTargetTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(target)
-        assertTrue(engine.isValidRenderTarget(target))
+        assertTrue(engine.isValid(target))
 
         val retrieved = target.getTexture(RenderTarget.AttachmentPoint.COLOR)
         if (retrieved != null) {
@@ -41,7 +41,7 @@ class RenderTargetTest : FilamentTestFixture() {
         assertEquals(0, target.getLayer(RenderTarget.AttachmentPoint.COLOR))
         assertTrue(target.supportedColorAttachmentsCount >= 4)
 
-        engine.destroyRenderTarget(target)
-        engine.destroyTexture(tex)
+        engine.destroy(target)
+        engine.destroy(tex)
     }
 }

@@ -61,7 +61,7 @@ fun rememberFilamentScene(
     // Registered before the content's effects so it disposes *after* them — entities are
     // removed from the scene before the scene itself is destroyed.
     DisposableEffect(engine, scene) {
-        onDispose { engine.destroyScene(scene) }
+        onDispose { engine.destroy(scene) }
     }
 
     val handle = remember(engine, scene) { FilamentScene(engine, scene) }

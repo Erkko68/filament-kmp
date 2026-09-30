@@ -36,7 +36,7 @@ The world is declared in the content lambda; the viewport's look is configured b
 **Not using Compose?** `filament`, `gltfio`, `filament-utils` and `filamat` are plain Kotlin bindings with no Compose dependency — drive `Engine` / `Renderer` / `SwapChain` yourself against your own `SurfaceView`, `CAMetalLayer`, GLFW window or `<canvas>`, or render headless and read the pixels back:
 
 ```kotlin
-val engine    = Engine.create()
+val engine    = Engine.create()!!
 val swapChain = engine.createSwapChain(NativeSurface(myNativeWindow))
 val renderer  = engine.createRenderer()
 

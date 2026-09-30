@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
  */
 class CameraSnapshotApplyTest : ComposeTestFixture() {
 
-    private fun newCamera(): Camera = engine.createCamera()
+    private fun newCamera(): Camera = engine.createCamera(engine.entityManager.create())
 
     private fun snapshot(
         eye: Position = Position(0f, 1f, 10f),

@@ -138,8 +138,8 @@ internal fun Mesh(
     val handles = remember(mesh) { mesh.upload(engine) }
     DisposableEffect(handles) {
         onDispose {
-            engine.destroyVertexBuffer(handles.vertexBuffer)
-            engine.destroyIndexBuffer(handles.indexBuffer)
+            engine.destroy(handles.vertexBuffer)
+            engine.destroy(handles.indexBuffer)
         }
     }
 

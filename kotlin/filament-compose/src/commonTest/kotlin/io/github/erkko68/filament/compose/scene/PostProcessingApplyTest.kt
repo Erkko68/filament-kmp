@@ -99,7 +99,7 @@ class PostProcessingApplyTest : ComposeTestFixture() {
         val view = newView()
         val grading = PostProcessing(colorGrade = ColorGrade(contrast = 1.2f)).applyTo(view, engine)
         assertNotNull(grading, "a ColorGrading should be allocated when colorGrade is set")
-        engine.destroyColorGrading(grading)
+        engine.destroy(grading)
 
         val none = PostProcessing(colorGrade = null).applyTo(view, engine)
         assertNull(none, "no ColorGrading should be allocated when colorGrade is null")

@@ -68,7 +68,7 @@ class Fence @InternalFilamentApi constructor(
         fun waitAndDestroy(fence: Fence, mode: Mode = Mode.FLUSH): FenceStatus {
             if (singleThreaded) {
                 val status = fence.wait(mode, 0L)
-                FilaEngine_destroyFence(fence.engine, fence.nativeHandle)
+                FilaEngine_destroy_Fence(fence.engine, fence.nativeHandle)
                 fence.nativeHandle = NullPointer
                 return status
             }

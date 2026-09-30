@@ -110,7 +110,7 @@ internal actual fun FilamentSurface(
 
         DisposableEffect(Unit) {
             onDispose {
-                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                swapChainRef.value?.let { engine.destroy(it) }
                 swapChainRef.value = null
             }
         }

@@ -76,10 +76,10 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
         assertNotNull(dup)
         assertEquals("duplicated_instance", dup.name)
-        engine.destroyMaterialInstance(dup)
+        engine.destroy(dup)
 
-        engine.destroyMaterialInstance(inst)
-        engine.destroyMaterial(mat)
+        engine.destroy(inst)
+        engine.destroy(mat)
     }
 
     @Test
@@ -103,7 +103,7 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         assertEquals(3, inst.getConstantInt("testInt"))
         assertEquals(0.25f, inst.getConstantFloat("testFloat"))
 
-        engine.destroyMaterialInstance(inst)
-        engine.destroyMaterial(mat)
+        engine.destroy(inst)
+        engine.destroy(mat)
     }
 }

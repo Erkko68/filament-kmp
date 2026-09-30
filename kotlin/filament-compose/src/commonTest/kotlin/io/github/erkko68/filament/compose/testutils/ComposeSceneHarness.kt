@@ -112,7 +112,7 @@ fun withUiThreadFilamentScene(
         // on its driver thread, which try/catch cannot recover.
         if (TestEnv.gpuBackendAvailable) {
             val e = try {
-                Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid }
+                Engine.create(Engine.Backend.DEFAULT)?.takeIf { it.isValid }
             } catch (t: Throwable) {
                 null
             }
@@ -145,9 +145,9 @@ fun withUiThreadFilamentScene(
     // Tear down on the UI thread too: the engine was created there and is thread-affine.
     runOnUiThread {
         created?.let { (engine, scene) ->
-            engine.destroyScene(scene)
+            engine.destroy(scene)
             engine.flushAndWait()
-            engine.destroy()
+            Engine.destroy(engine)
         }
     }
 }

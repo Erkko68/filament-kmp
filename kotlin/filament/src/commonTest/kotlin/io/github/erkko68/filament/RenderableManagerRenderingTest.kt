@@ -37,7 +37,7 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         val builder = RenderableManager.Builder(1)
             .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
             .material(0, matInst)
-            .boundingBox(Box(0f, 0f, 0f, 1f, 1f, 1f))
+            .boundingBox(Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f)))
             .culling(true)
             .castShadows(true)
             .receiveShadows(true)
@@ -51,8 +51,8 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         val inst = rm.getInstance(entity)
         assertTrue(inst != 0)
 
-        rm.setAxisAlignedBoundingBox(inst, Box(0f, 0f, 0f, 2f, 2f, 2f))
-        val b = rm.getAxisAlignedBoundingBox(inst, Box())
+        rm.setAxisAlignedBoundingBox(inst, Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(2f, 2f, 2f)))
+        val b = rm.getAxisAlignedBoundingBox(inst)
         assertEquals(2f, b.halfExtent[0])
         assertEquals(entity, rm.getEntity(inst))
         assertTrue(entity in rm.entities)
@@ -86,9 +86,9 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
 
         rm.destroy(entity)
         em.destroy(entity)
-        engine.destroyVertexBuffer(vb)
-        engine.destroyIndexBuffer(ib)
-        engine.destroyMaterialInstance(matInst)
-        engine.destroyMaterial(mat)
+        engine.destroy(vb)
+        engine.destroy(ib)
+        engine.destroy(matInst)
+        engine.destroy(mat)
     }
 }

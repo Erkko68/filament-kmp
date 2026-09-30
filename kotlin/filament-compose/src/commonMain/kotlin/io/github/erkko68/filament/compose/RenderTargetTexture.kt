@@ -93,7 +93,7 @@ fun rememberRenderTargetTexture(
     } ?: return null
 
     val view     = remember(engine) { engine.createView() }
-    val camera   = remember(engine) { engine.createCamera() }
+    val camera   = remember(engine) { engine.createCamera(engine.entityManager.create()) }
     val renderer = remember(engine) { engine.createRenderer() }
 
     // Wire the off-screen view. Keyed effect rather than a `remember` block — see FilamentView.
@@ -109,7 +109,7 @@ fun rememberRenderTargetTexture(
     // dispose / before re-apply. `enabled = false` skips the post-processing pass entirely.
     DisposableEffect(view, postProcessing, engine) {
         val colorGrading = postProcessing.applyTo(view, engine)
-        onDispose { colorGrading?.let { engine.destroyColorGrading(it) } }
+        onDispose { colorGrading?.let { engine.destroy(it) } }
     }
 
     // Push the camera state every time it changes; reads register recomposition subscriptions.
@@ -127,12 +127,13 @@ fun rememberRenderTargetTexture(
 
     DisposableEffect(engine, color, depth, target, view, camera, renderer) {
         onDispose {
-            engine.destroyRenderer(renderer)
-            engine.destroyView(view)
-            engine.destroyCamera(camera)
-            engine.destroyRenderTarget(target)
-            engine.destroyTexture(color)
-            depth?.let { engine.destroyTexture(it) }
+            engine.destroy(renderer)
+            engine.destroy(view)
+            engine.destroyCameraComponent(camera.entity)
+            engine.entityManager.destroy(camera.entity)
+            engine.destroy(target)
+            engine.destroy(color)
+            depth?.let { engine.destroy(it) }
         }
     }
 

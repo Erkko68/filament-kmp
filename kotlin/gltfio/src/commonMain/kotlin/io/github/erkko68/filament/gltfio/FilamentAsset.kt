@@ -1,10 +1,11 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Aabb
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.Scene
+import io.github.erkko68.filament.aabb
 import io.github.erkko68.filament.gltfio.capi.*
 import io.github.erkko68.filament.interop.*
 
@@ -120,7 +121,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * This is a straightforward load-time AABB over the asset data — it does not account for
      * per-instance transforms (see [FilamentInstance.boundingBox] for that).
      */
-    val boundingBox: Box get() = aabbToBox { FilaGltfioFilamentAsset_getBoundingBox(nativeHandle, it) }
+    val boundingBox: Aabb get() = aabb { FilaGltfioFilamentAsset_getBoundingBox(nativeHandle, it) }
 
     /** Gets the name label for the given entity, or null if it has none. */
     fun getName(entity: Entity): String? = stringFromInterop(FilaGltfioFilamentAsset_getName(nativeHandle, entity))
@@ -182,13 +183,4 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
     /** Convenience accessor for the first instance ([assetInstances]`[0]`). */
     val instance: FilamentInstance get() =
         FilamentInstance(FilaGltfioFilamentAsset_getInstance(nativeHandle))
-}
-
-/**
- * The Aabb [fill] writes, as a Box.
- * ponytail: passes 6 floats (min, max) as the `FilaAabb*`; becomes the Aabb handle once filament is on the generated API.
- */
-internal inline fun aabbToBox(fill: (NativePointer) -> Unit): Box {
-    val a = FloatArray(6).also { it.usePinned(fill) }
-    return Box(FloatArray(3) { (a[it] + a[it + 3]) / 2 }, FloatArray(3) { (a[it + 3] - a[it]) / 2 })
 }

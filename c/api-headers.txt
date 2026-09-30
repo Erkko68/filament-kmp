@@ -50,6 +50,8 @@ geometry/SurfaceOrientation.h
 -filament::TransformManager::children_sentinel
 # Culling math; kotlin-math covers it.
 -filament::Frustum
+# VertexAttribute's debug name; Kotlin enums have name.
+-filament::to_string
 # ParameterInfo* is an array C++ fills; FilaMaterialManual copies it into C's handles.
 -filament::Material::getParameters
 

@@ -22,7 +22,7 @@ uint32_t FilaScene_getEntityCount(const FilaScene* self);
 uint32_t FilaScene_getRenderableCount(const FilaScene* self);
 uint32_t FilaScene_getLightCount(const FilaScene* self);
 bool FilaScene_hasEntity(const FilaScene* self, FilaEntity entity);
-// TODO(handwritten) FilaScene_forEach: void filament::Scene::forEach(utils::Invocable<void (utils::Entity)> && functor) const
+// handwritten in manual/ FilaScene_forEach: void filament::Scene::forEach(utils::Invocable<void (utils::Entity)> && functor) const
 //     utils::Invocable<void (utils::Entity)> &&: C callbacks take at most one pointer
 
 

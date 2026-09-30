@@ -76,6 +76,6 @@ class MaterialTest : FilamentTestFixture() {
         // assertNotNull(defInst)
 
         // // Clean up
-        // engine.destroyMaterial(mat)
+        // engine.destroy(mat)
     }
 }

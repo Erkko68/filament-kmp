@@ -13,7 +13,7 @@ class SceneTest : FilamentTestFixture() {
     fun testSceneLifecycle() {
         val scene = engine.createScene()
         assertNotNull(scene)
-        assertTrue(engine.isValidScene(scene))
+        assertTrue(engine.isValid(scene))
 
         assertNull(scene.skybox)
         assertNull(scene.indirectLight)
@@ -62,6 +62,6 @@ class SceneTest : FilamentTestFixture() {
         EntityManager.get().destroy(entity)
         EntityManager.get().destroy(e1)
         EntityManager.get().destroy(e2)
-        engine.destroyScene(scene)
+        engine.destroy(scene)
     }
 }

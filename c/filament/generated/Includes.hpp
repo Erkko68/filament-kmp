@@ -3,6 +3,8 @@
 
 #include <array>
 #include <bit>
+#include <cstdio>
+#include <cstdlib>
 #include <iterator>
 #include <memory>
 #include <optional>
@@ -75,6 +77,12 @@
 #include "Types.h"
 
 namespace fila {
+
+// Called by a function whose C++ the target's headers leave out (#if guards around the declaration).
+[[noreturn]] inline void unavailable(const char* name) {
+    std::fprintf(stderr, "%s is unavailable on this platform\n", name);
+    std::abort();
+}
 
 // C and C++ types naming one object (a handle, a math mirror): cpp() and c() convert pointers between them.
 #define FILA_TYPE(C, ...) \

@@ -26,7 +26,7 @@ class SkyboxSetTest : FilamentTestFixture() {
         assertNotNull(scene.skybox, "skybox should be attached")
         scene.skybox = null
         assertNull(scene.skybox, "skybox should be cleared")
-        engine.destroySkybox(skybox)
-        engine.destroyScene(scene)
+        engine.destroy(skybox)
+        engine.destroy(scene)
     }
 }

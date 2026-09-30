@@ -27,7 +27,7 @@ class IndirectLightTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(light)
-        assertTrue(engine.isValidIndirectLight(light))
+        assertTrue(engine.isValid(light))
 
         assertEquals(20000f, light.intensity)
         light.intensity = 15000f
@@ -51,7 +51,7 @@ class IndirectLightTest : FilamentTestFixture() {
         assertNull(light.reflectionsTexture)
         assertNull(light.irradianceTexture)
 
-        engine.destroyIndirectLight(light)
+        engine.destroy(light)
     }
 
     @Test
@@ -89,7 +89,7 @@ class IndirectLightTest : FilamentTestFixture() {
         assertNotNull(light)
         assertNotNull(light.reflectionsTexture)
 
-        engine.destroyIndirectLight(light)
-        engine.destroyTexture(cubemap)
+        engine.destroy(light)
+        engine.destroy(cubemap)
     }
 }

@@ -96,9 +96,9 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
      */
     private fun destroy() {
         stop()
-        swapChain?.let { engine.destroySwapChain(it) }
+        swapChain?.let { engine.destroy(it) }
         swapChain = null
-        engine.destroyRenderer(renderer)
+        engine.destroy(renderer)
         instances.remove(engine)
     }
 

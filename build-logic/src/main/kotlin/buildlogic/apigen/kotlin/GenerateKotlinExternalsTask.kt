@@ -29,9 +29,7 @@ abstract class GenerateKotlinExternalsTask : DefaultTask() {
         val writer = KotlinExternalsWriter(c.listFiles().orEmpty().filter { it.isDirectory }.flatMap { headers(it.name) }.map { it.readText() })
         packages.get().forEach { (module, pkg) ->
             val out = kotlinDir.get().asFile.resolve("$module/src/commonMain/kotlin/${pkg.replace('.', '/')}").apply { deleteRecursively(); mkdirs() }
-            // ponytail: a module moving record by record lists its migrated headers; drop once filament is done.
-            val migrated = c.resolve("$module/migrated.txt").takeIf { it.exists() }?.readLines()?.filter { it.isNotBlank() }?.toSet()
-            headers(module).filter { migrated == null || it.parentFile.name != "generated" || it.nameWithoutExtension in migrated }.forEach { header ->
+            headers(module).forEach { header ->
                 writer.write(header.relativeTo(c).invariantSeparatorsPath, header.readText(), pkg)?.let { out.resolve("${header.nameWithoutExtension}.kt").writeText(it) }
             }
         }

@@ -206,7 +206,7 @@ internal actual fun FilamentSurface(
             surface = null
             // Drains in-flight readbacks so no callback touches slot memory afterwards.
             engine.flushAndWait()
-            engine.destroySwapChain(s.swapChain)
+            engine.destroy(s.swapChain)
             val shown = display.slot
             if (shown != null) {
                 display.slot = null

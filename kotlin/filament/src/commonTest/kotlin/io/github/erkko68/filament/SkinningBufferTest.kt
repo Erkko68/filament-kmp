@@ -16,7 +16,7 @@ class SkinningBufferTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidSkinningBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(10, buffer.boneCount)
 
@@ -26,6 +26,6 @@ class SkinningBufferTest : FilamentTestFixture() {
 
         buffer.setBones(engine, Array(10) { RenderableManager.Bone() })
 
-        engine.destroySkinningBuffer(buffer)
+        engine.destroy(buffer)
     }
 }

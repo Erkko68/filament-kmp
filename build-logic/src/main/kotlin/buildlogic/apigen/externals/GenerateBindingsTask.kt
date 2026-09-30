@@ -50,14 +50,7 @@ abstract class GenerateBindingsTask : DefaultTask() {
         val out = outputDir.get().asFile.apply { deleteRecursively() }
         val sources = sources.files.sortedBy { it.path }.mapNotNull(ExternalFunctionParser::parse)
         val headerPaths = headers.files.map { it.relativeTo(cDir.get().asFile).invariantSeparatorsPath }.sorted()
-        // Generated externals (the capi packages) bind the generated and manual headers, the rest the hand-written
-        // c/<module>/c ones: the two declare the same types differently.
-        val (handHeaders, generatedHeaders) = headerPaths.partition { it.split('/')[1] == "c" }
-
-        sources.forEach { source ->
-            val own = if (".capi." in source.jvmClass) generatedHeaders else handHeaders
-            out.write("jni/${source.file.nameWithoutExtension}.c", JniForwarderWriter.write(source, own))
-        }
+        sources.forEach { source -> out.write("jni/${source.file.nameWithoutExtension}.c", JniForwarderWriter.write(source, headerPaths)) }
 
         val byRuntime = sources.groupBy { wasmRuntimes.get()[it.kotlinModule] ?: DEFAULT_WASM_RUNTIME }
             .mapValues { (_, files) -> files.flatMap { it.functions }.distinctBy { it.symbol }.sortedBy { it.symbol } }

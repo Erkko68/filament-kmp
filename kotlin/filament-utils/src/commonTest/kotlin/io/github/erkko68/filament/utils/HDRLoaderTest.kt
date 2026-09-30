@@ -24,6 +24,6 @@ class HDRLoaderTest : UtilsTestFixture() {
         val texture = HDRLoader.createTexture(engine, hdr, Texture.InternalFormat.RGB16F)
         assertNotNull(texture)
         assertEquals(1, texture.getWidth(0))
-        engine.destroyTexture(texture)
+        engine.destroy(texture)
     }
 }

@@ -101,7 +101,7 @@ fun rememberKTXEnvironment(
             onDispose {
                 indirectLightState.reflections = null
                 indirectLightState.irradianceSh = null
-                reflections?.let { engine.destroyTexture(it) }
+                reflections?.let { engine.destroy(it) }
             }
         }
     }
@@ -123,7 +123,7 @@ fun rememberKTXEnvironment(
                 }
                 onDispose {
                     skyboxState.source = null
-                    texture?.let { engine.destroyTexture(it) }
+                    texture?.let { engine.destroy(it) }
                 }
             }
         }
@@ -197,8 +197,8 @@ fun rememberHDREnvironment(
                 indirectLightState.reflections = null
                 skyboxState?.source = null
                 prefiltered?.let {
-                    engine.destroyTexture(it.reflections)
-                    engine.destroyTexture(it.skybox)
+                    engine.destroy(it.reflections)
+                    engine.destroy(it.skybox)
                 }
             }
         }
@@ -231,7 +231,7 @@ private fun prefilterHdr(engine: Engine, bytes: ByteArray, format: Texture.Inter
         specular.destroy()
         toCubemap.destroy()
         context.destroy()
-        engine.destroyTexture(equirect)
+        engine.destroy(equirect)
     }
 }
 

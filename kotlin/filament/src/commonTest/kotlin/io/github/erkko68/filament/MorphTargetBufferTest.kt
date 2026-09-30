@@ -19,7 +19,7 @@ class MorphTargetBufferTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidMorphTargetBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(100, buffer.vertexCount)
         assertEquals(2, buffer.count)
@@ -35,6 +35,6 @@ class MorphTargetBufferTest : FilamentTestFixture() {
         val tangents = ShortArray(400)
         buffer.setTangentsAt(engine, 0, tangents, 100)
 
-        engine.destroyMorphTargetBuffer(buffer)
+        engine.destroy(buffer)
     }
 }

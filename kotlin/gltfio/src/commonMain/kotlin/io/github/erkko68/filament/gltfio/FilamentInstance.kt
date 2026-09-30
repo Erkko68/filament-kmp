@@ -1,9 +1,10 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Aabb
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.aabb
 import io.github.erkko68.filament.gltfio.capi.*
 import io.github.erkko68.filament.interop.*
 
@@ -82,7 +83,7 @@ class FilamentInstance {
      * Gets the axis-aligned bounding box from the min/max values in the glTF accessors,
      * transformed for this instance.
      */
-    val boundingBox: Box get() = aabbToBox { FilaGltfioFilamentInstance_getBoundingBox(nativeHandle, it) }
+    val boundingBox: Aabb get() = aabb { FilaGltfioFilamentInstance_getBoundingBox(nativeHandle, it) }
 
     /** Recomputes [boundingBox] from the current joint and morph state, for skinned or morphed meshes. */
     fun recomputeBoundingBoxes() = FilaGltfioFilamentInstance_recomputeBoundingBoxes(nativeHandle)

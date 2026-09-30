@@ -60,9 +60,9 @@ class RenderableManagerBuilderTest : FilamentTestFixture() {
 
         assertNotNull(builder)
 
-        engine.destroyVertexBuffer(vb)
-        engine.destroyIndexBuffer(ib)
-        engine.destroySkinningBuffer(sb)
-        engine.destroyMorphTargetBuffer(mtb)
+        engine.destroy(vb)
+        engine.destroy(ib)
+        engine.destroy(sb)
+        engine.destroy(mtb)
     }
 }

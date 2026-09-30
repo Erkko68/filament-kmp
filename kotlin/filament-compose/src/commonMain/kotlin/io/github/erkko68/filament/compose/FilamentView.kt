@@ -68,7 +68,7 @@ fun FilamentView(
 
     val renderer = remember(engine) { engine.createRenderer() }
     val view     = remember(engine) { engine.createView() }
-    val camera   = remember(engine) { engine.createCamera() }
+    val camera   = remember(engine) { engine.createCamera(engine.entityManager.create()) }
 
     // Wire the scene/camera onto the view and apply the render flags. A keyed effect with a no-op
     // onDispose, not a `remember` block: mutating Filament objects is a side effect, and it belongs
@@ -99,7 +99,7 @@ fun FilamentView(
     // ColorGrading (if any) is destroyed on dispose / before re-apply.
     DisposableEffect(view, postProcessing, engine) {
         val colorGrading = postProcessing.applyTo(view, engine)
-        onDispose { colorGrading?.let { engine.destroyColorGrading(it) } }
+        onDispose { colorGrading?.let { engine.destroy(it) } }
     }
 
     // Expose the live View/Renderer through the hoisted handle.
@@ -132,9 +132,10 @@ fun FilamentView(
     // The scene is owned by the FilamentScene handle, not the view.
     DisposableEffect(engine) {
         onDispose {
-            engine.destroyRenderer(renderer)
-            engine.destroyView(view)
-            engine.destroyCamera(camera)
+            engine.destroy(renderer)
+            engine.destroy(view)
+            engine.destroyCameraComponent(camera.entity)
+            engine.entityManager.destroy(camera.entity)
         }
     }
 

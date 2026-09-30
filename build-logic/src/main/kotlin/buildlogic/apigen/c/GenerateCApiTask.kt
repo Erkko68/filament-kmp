@@ -53,8 +53,11 @@ abstract class GenerateCApiTask @Inject constructor(private val exec: ExecOperat
         val apiHeaders = ApiHeaders.parse(apiHeadersFile.get().asFile.readText())
         val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers).skipping(apiHeaders.skipped)
         api.unknownSkips().takeIf { it.isNotEmpty() }?.let { throw GradleException("api-headers.txt skips unknown declarations: $it") }
-        val files = CApiWriter(api, apiHeaders, headers).write()
         val c = cDir.get().asFile
+        // Functions c/<module>/manual already writes by hand, so their TODOs say so instead.
+        val manual = modules.get().flatMap { c.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
+            .flatMap { MANUAL_FUNCTION.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
+        val files = CApiWriter(api, apiHeaders, headers, manual).write()
         modules.get().forEach { c.resolve("$it/generated").deleteRecursively() }
         files.forEach { (path, text) -> c.resolve(path).apply { parentFile.mkdirs() }.writeText(text) }
 
@@ -79,5 +82,8 @@ abstract class GenerateCApiTask @Inject constructor(private val exec: ExecOperat
     private companion object {
         // A definition's opening line in the forwarders.
         val FUNCTION = Regex("""^\S.*\) \{$""", RegexOption.MULTILINE)
+
+        // A function a manual header declares.
+        val MANUAL_FUNCTION = Regex("""\b(Fila\w+)\s*\(""")
     }
 }

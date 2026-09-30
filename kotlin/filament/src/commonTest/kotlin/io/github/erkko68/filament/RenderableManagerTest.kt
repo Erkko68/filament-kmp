@@ -35,7 +35,7 @@ class RenderableManagerTest : FilamentTestFixture() {
         val em = EntityManager.get()
         val entity = em.create()
 
-        val boundingBox = Box(0f, 0f, 0f, 1f, 1f, 1f)
+        val boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f))
 
         // TODO: Building a renderable with a material instance is commented out because material creation panics under NOOP.
         // RenderableManager.Builder(1)
@@ -56,8 +56,8 @@ class RenderableManagerTest : FilamentTestFixture() {
         // assertTrue(inst != 0)
 
         // // Set / Get parameters on renderable instance
-        // rm.setAxisAlignedBoundingBox(inst, Box(0f, 0f, 0f, 2f, 2f, 2f))
-        // val b = rm.getAxisAlignedBoundingBox(inst, Box())
+        // rm.setAxisAlignedBoundingBox(inst, Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(2f, 2f, 2f)))
+        // val b = rm.getAxisAlignedBoundingBox(inst)
         // assertEquals(2f, b.halfExtent[0])
 
         // rm.setLayerMask(inst, 0xFF, 0x01)
@@ -110,10 +110,10 @@ class RenderableManagerTest : FilamentTestFixture() {
         // rm.clearMaterialInstanceAt(inst, 0)
         // rm.destroy(entity)
         em.destroy(entity)
-        engine.destroyVertexBuffer(vb)
-        engine.destroyIndexBuffer(ib)
-        // engine.destroySkinningBuffer(sb)
-        // engine.destroyMaterialInstance(matInst)
-        // engine.destroyMaterial(mat)
+        engine.destroy(vb)
+        engine.destroy(ib)
+        // engine.destroy(sb)
+        // engine.destroy(matInst)
+        // engine.destroy(mat)
     }
 }

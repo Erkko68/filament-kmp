@@ -43,7 +43,7 @@ class RendererTest : FilamentTestFixture() {
     fun testRendererLifecycleAndMethods() {
         val renderer = engine.createRenderer()
         assertNotNull(renderer)
-        assertTrue(engine.isValidRenderer(renderer))
+        assertTrue(engine.isValid(renderer))
         assertEquals(engine, renderer.engine)
 
         // Set options
@@ -90,7 +90,7 @@ class RendererTest : FilamentTestFixture() {
         assertTrue(renderer.userTime >= 0.0)
 
         // Cleanup
-        engine.destroySwapChain(swap)
-        engine.destroyRenderer(renderer)
+        engine.destroy(swap)
+        engine.destroy(renderer)
     }
 }

@@ -18,7 +18,7 @@ import org.gradle.process.ExecOperations
 import javax.inject.Inject
 
 /**
- * Reports the Filament API nothing binds yet, along the C++ → Fila* C → Kotlin chain, into [report]. The C++ side
+ * Reports the Filament C++ API the Fila* C API doesn't call, into [report]. The C++ side
  * is symbols: what clang sees in the headers plus what the Filament libraries define, minus every symbol the
  * C API's -O0 objects mention.
  */
@@ -37,13 +37,6 @@ abstract class ApiGapsTask @Inject constructor(private val exec: ExecOperations)
     @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val cApiObjects: ConfigurableFileCollection
 
-    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val cApiHeaders: ConfigurableFileCollection
-
-    /** commonMain sources declaring the `@ExternalSymbolName` externals. */
-    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val externals: ConfigurableFileCollection
-
     @get:OutputFile abstract val report: RegularFileProperty
 
     @TaskAction
@@ -60,7 +53,6 @@ abstract class ApiGapsTask @Inject constructor(private val exec: ExecOperations)
         val sections = mapOf(
             "C++ methods the Fila* C API never calls" to
                 CppApiGaps.find(headerMethods, undeclared, nm.read(cApiObjects.files), headers.publicClasses),
-            "Fila* functions without a common external" to CApiGaps.find(cApiHeaders.files, externals.files),
         )
         val file = report.get().asFile
         file.writeText(sections.entries.joinToString("\n") { (title, gaps) -> "## $title\n" + gaps.joinToString("") { "$it\n" } })

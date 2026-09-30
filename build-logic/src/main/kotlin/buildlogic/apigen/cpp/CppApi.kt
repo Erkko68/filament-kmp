@@ -14,7 +14,10 @@ class CppApi(
     val constants: Map<String, CppValue>,
     /** Namespace-level functions. */
     val functions: List<CppMethod>,
-    /** Qualified names left out of the API; `Record::*` keeps the record but none of its members. */
+    /**
+     * Qualified names left out of the API; `Record::*` keeps the record but none of its members, and
+     * `Record::method(Type, …)` one overload (by its parameters' declared types).
+     */
     val skipped: Set<String> = emptySet(),
 ) {
     fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, functions, names)
@@ -25,7 +28,11 @@ class CppApi(
 
     /** Why [method] of [owner] is left out: it's skipped, or its signature uses a skipped record. */
     fun skipReason(method: CppMethod, owner: String = method.owner): String? =
-        skipReason("$owner::${method.name}") ?: usesSkipped(method.params.map { it.type } + method.returns)
+        skipReason("$owner::${method.name}") ?: overload(method, owner).takeIf { it in skipped }
+            ?: usesSkipped(method.params.map { it.type } + method.returns)
+
+    private fun overload(method: CppMethod, owner: String = method.owner) =
+        "$owner::${method.name}(${method.params.joinToString(", ") { it.type.decl ?: it.type.spelling }})"
 
     fun skipReason(field: CppField, owner: String): String? = skipReason("$owner::${field.name}") ?: usesSkipped(listOf(field.type))
 
@@ -39,6 +46,7 @@ class CppApi(
 
     /** [skipped] entries that name nothing, stale after an upstream rename or removal. */
     fun unknownSkips() = skipped.filterNot { entry ->
+        if (entry.endsWith(")")) return@filterNot (records.values.flatMap { it.methods } + functions).any { overload(it) == entry }
         val name = entry.removeSuffix("::*")
         val owner = name.substringBeforeLast("::")
         val member = name.substringAfterLast("::")
@@ -134,6 +142,8 @@ class CppMethod(
     val isApi: Boolean,
     /** A function template's named parameters, in order; null for a plain function. */
     val templateParameters: List<String>? = null,
+    /** The header's `#if` condition around the declaration (e.g. `UTILS_HAS_THREADING`), or null. */
+    val guard: String? = null,
 ) {
     val isTemplate get() = templateParameters != null
 
@@ -144,7 +154,7 @@ class CppMethod(
                 ?.let { a -> CppType(t.spelling.replace(Regex("\\b${t.decl!!.substringAfterLast("::")}\\b"), a.spelling), a.decl, a.kind, a.args) } ?: t
         }
         return CppMethod(owner, name, header, mangled, substitute(returns), params.map { CppParam(it.name, substitute(it.type), it.default) },
-            isStatic, isConst, isPublic, isDeprecated, isApi)
+            isStatic, isConst, isPublic, isDeprecated, isApi, guard = guard)
     }
 
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +

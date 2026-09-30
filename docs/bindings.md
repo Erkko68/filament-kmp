@@ -5,7 +5,8 @@ How the Kotlin API reaches Filament. Read this before adding or changing a bindi
 ## The idea
 
 Each API class (`Scene`, `View`, `Engine`…) is written **once, in `commonMain`**, and calls our
-C API (`c/`, the `Fila*` functions) through `external fun` declarations placed next to it. There
+C API (`c/`, the `Fila*` functions) through `external fun` declarations generated from the C headers
+into the module's `capi` package (`./gradlew generateKotlinExternals`). There
 are no per-platform `actual`s for API logic. Only the way an `external fun` reaches its C symbol
 differs by platform, and nobody writes that part by hand. This is the model
 [skiko](https://github.com/JetBrains/skiko) uses for Skia.
@@ -14,7 +15,7 @@ differs by platform, and nobody writes that part by hand. This is the model
 flowchart TB
     subgraph common["kotlin/&lt;module&gt;/src/commonMain"]
         CLS["class Scene … { fun addEntity(e) = FilaScene_addEntity(nativeHandle, e) }"]
-        EXT["@ExternalSymbolName(&quot;FilaScene_addEntity&quot;)<br/>private external fun FilaScene_addEntity(scene: NativePointer, entity: Int)"]
+        EXT["capi/FilaScene.kt (generated)<br/>@ExternalSymbolName(&quot;FilaScene_addEntity&quot;)<br/>internal external fun FilaScene_addEntity(self: NativePointer, entity: Int)"]
         CLS --> EXT
     end
 
@@ -36,6 +37,8 @@ flowchart TB
 
 ```kotlin
 // kotlin/filament/src/commonMain/kotlin/io/github/erkko68/filament/Scene.kt
+import io.github.erkko68.filament.capi.*
+
 class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
 
     fun addEntity(entity: Entity) = FilaScene_addEntity(nativeHandle, entity)
@@ -46,27 +49,19 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
 
     fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity)
 }
-
-@ExternalSymbolName("FilaScene_addEntity")
-private external fun FilaScene_addEntity(scene: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaScene_addEntities")
-private external fun FilaScene_addEntities(scene: NativePointer, entities: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaScene_hasEntity")
-private external fun FilaScene_hasEntity(scene: NativePointer, entity: Int): Boolean
 ```
 
 Each class also exposes its handle as `@InternalFilamentApi val nativeObject: NativePointer`, for
 code that calls the C API directly.
 
-## Declaring a binding
+## The boundary's rules
 
-1. **Put the declarations at the bottom of the class's file**, top-level and `private`.
-2. **Name the Kotlin function exactly like the C function**, and repeat the name in
-   `@ExternalSymbolName`. Web resolves it by the Kotlin name and Native by the annotation, so the
-   two must match.
-3. **Only use these Kotlin types** at the boundary:
+The generators follow these; a hand-written `c/<module>/manual` function must too, since its Kotlin
+external is generated from its header the same way.
+
+1. **The Kotlin function is named exactly like the C function**, repeated in `@ExternalSymbolName`.
+   Web resolves it by the Kotlin name and Native by the annotation, so the two must match.
+2. **Only these Kotlin types** cross the boundary:
 
    | C type | Kotlin type |
    | :--- | :--- |
@@ -76,14 +71,14 @@ code that calls the C API directly.
    | `float` / `double` | `Float` / `Double` |
    | `bool` | `Boolean` |
 
-4. **The C side must use fixed-width types.** No `size_t`, `long` or `ptrdiff_t` in a `Fila*`
+3. **The C side uses fixed-width types.** No `size_t`, `long` or `ptrdiff_t` in a `Fila*`
    signature. There is no per-platform glue on Native and web to adapt widths, so a Kotlin type
    has to match the C ABI on every target: `size_t` is 64-bit on JVM/Android-arm64/iOS but 32-bit
    on wasm32. Use `uint32_t` for counts and sizes.
    No 8- or 16-bit integer *parameters* either (`bool` is fine): Apple arm64 packs stack arguments
    by their natural size, so a Kotlin `Int` passed where C takes `uint8_t` shifts every later stack
    argument on iOS. Widen them to `int32_t`/`uint32_t`.
-5. **No structs by value** across the boundary. Pass or return them through a pointer.
+4. **No structs by value** across the boundary. Pass or return them through a pointer.
 
 Nothing else needs updating: the JNI glue is regenerated on the next build, Native links the
 symbol directly, and web looks it up in the wasm exports (every `Fila*` in the C headers is

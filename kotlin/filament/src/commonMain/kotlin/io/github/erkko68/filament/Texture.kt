@@ -19,7 +19,7 @@ import io.github.erkko68.filament.interop.*
  * Engine.destroy(texture).
  *
  * ```
- * val engine = Engine.create()
+ * val engine = Engine.create()!!
  *
  * val texture = Texture.Builder()
  *     .width(64)

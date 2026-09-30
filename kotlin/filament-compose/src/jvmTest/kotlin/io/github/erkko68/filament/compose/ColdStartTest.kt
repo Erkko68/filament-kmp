@@ -13,8 +13,8 @@ import kotlin.test.fail
 
 // Entry points a user can hit before anything calls Filament.init(); each must load libfilament-c itself.
 private val coldStarts: Map<String, () -> Unit> = mapOf(
-    "Engine.create" to { Engine.create(Engine.Backend.NOOP).destroy() },
-    "Engine.Builder" to { Engine.Builder().backend(Engine.Backend.NOOP).build().destroy() },
+    "Engine.create" to { Engine.destroy(Engine.create(Engine.Backend.NOOP)) },
+    "Engine.Builder" to { Engine.destroy(Engine.Builder().backend(Engine.Backend.NOOP).build()) },
     "Engine.steadyClockTimeNano" to { Engine.steadyClockTimeNano },
     "EntityManager.get" to { EntityManager.get().create() },
     "Manipulator.Builder" to { Manipulator.Builder().viewport(1, 1).build(Mode.ORBIT).destroy() },

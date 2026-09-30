@@ -104,7 +104,7 @@ private fun FloatArray.toBoundingBox(): Box {
         i += 3
     }
     return Box(
-        (minX + maxX) * 0.5f, (minY + maxY) * 0.5f, (minZ + maxZ) * 0.5f,
-        (maxX - minX) * 0.5f, (maxY - minY) * 0.5f, (maxZ - minZ) * 0.5f,
+        floatArrayOf((minX + maxX) * 0.5f, (minY + maxY) * 0.5f, (minZ + maxZ) * 0.5f),
+        floatArrayOf((maxX - minX) * 0.5f, (maxY - minY) * 0.5f, (maxZ - minZ) * 0.5f),
     )
 }

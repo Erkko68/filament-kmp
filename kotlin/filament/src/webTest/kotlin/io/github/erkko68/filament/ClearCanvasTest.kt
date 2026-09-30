@@ -11,7 +11,7 @@ class ClearCanvasTest {
     fun clearColorReachesTheCanvas() {
         Filament.init()
         val canvas = (document.createElement("canvas") as HTMLCanvasElement).apply { width = 4; height = 4 }
-        val engine = Engine.create(canvas)
+        val engine = Engine.create(sharedContext = canvas)!!
         val swapChain = engine.createSwapChain(NativeSurface(canvas))
         val renderer = engine.createRenderer()
         val scene = engine.createScene()
@@ -35,11 +35,11 @@ class ClearCanvasTest {
 
         engine.destroyCameraComponent(cameraEntity)
         EntityManager.get().destroy(cameraEntity)
-        engine.destroyView(view)
-        engine.destroyScene(scene)
-        engine.destroyRenderer(renderer)
-        engine.destroySwapChain(swapChain)
-        engine.destroy()
+        engine.destroy(view)
+        engine.destroy(scene)
+        engine.destroy(renderer)
+        engine.destroy(swapChain)
+        Engine.destroy(engine)
     }
 }
 

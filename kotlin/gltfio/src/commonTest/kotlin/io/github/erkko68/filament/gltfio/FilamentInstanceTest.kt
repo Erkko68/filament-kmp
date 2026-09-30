@@ -7,6 +7,7 @@ import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import io.github.erkko68.filament.Entity
@@ -46,9 +47,7 @@ class FilamentInstanceTest : GltfioTestFixture() {
         assertNotNull(asset)
 
         val bbox = asset.instance.boundingBox
-        assertNotNull(bbox)
-        assertNotNull(bbox.center)
-        assertNotNull(bbox.halfExtent)
+        assertFalse(bbox.isEmpty())
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)

@@ -13,10 +13,12 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
     private val functions = ArrayList<CppMethod>()
     private val values = CppValues(scopes, constants)
     private val seenHeaders = HashSet<String>()
-    private var headerOf: Map<Map<*, *>, String?> = emptyMap()
+    private var locationOf: Map<Map<*, *>, Location> = emptyMap()
+    private lateinit var guards: PreprocessorGuards
 
     /** Reads [headers] (paths relative to [includeDir]); each must declare something the filters dump. */
     fun read(includeDir: File, headers: Collection<String>): CppApi {
+        guards = PreprocessorGuards(includeDir)
         val unit = workDir.resolve("headers.cpp")
         unit.writeText(headers.sorted().joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
@@ -30,7 +32,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         FILTERS.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             ast.forEachDeclaration(unit, includeDir, filter, SKIPPED) { document ->
-                headerOf = DeclarationFiles.of(document, includeDir)
+                locationOf = DeclarationFiles.of(document, includeDir)
                 visit(document, namespace, exported = false, accessible = true)
             }
         }
@@ -44,7 +46,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
      * [accessible]: nameable from outside, at namespace scope or publicly nested.
      */
     private fun visit(node: Map<*, *>, scope: String, exported: Boolean, accessible: Boolean, template: Boolean = false) {
-        headerOf[node]?.let(seenHeaders::add)
+        locationOf[node]?.header?.let(seenHeaders::add)
         val kind = node["kind"]
         if (kind == "UsingDirectiveDecl") return scopes.usingNamespace(scope, (node["nominatedNamespace"] as Map<*, *>)["name"] as String)
         val name = node["name"] as? String ?: return
@@ -138,7 +140,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             }
         }
         records[qualified] = CppRecord(
-            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, declaredDestructor,
+            qualified, locationOf[node]?.header, public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, declaredDestructor,
         )
     }
 
@@ -171,13 +173,14 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             )
         }
         return CppMethod(
-            owner, name, headerOf[node], node["mangledName"] as? String, scopes.resolve(returns, scope), params,
+            owner, name, locationOf[node]?.header, node["mangledName"] as? String, scopes.resolve(returns, scope), params,
             isStatic = free || node["storageClass"] == "static",
             isConst = qualifiers.split(' ').contains("const"),
             isPublic = isPublic,
             isDeprecated = node.children().any { it["kind"] == "DeprecatedAttr" },
             isApi = node["isImplicit"] != true && node["explicitlyDeleted"] != true && (!name.startsWith("operator") || name == "operator()"),
             templateParameters = templateParameters,
+            guard = locationOf[node]?.let { l -> l.header?.let { guards.at(it, l.line) } },
         )
     }
 
@@ -191,7 +194,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             constant["name"] as String to value
         }
         val underlying = (node["fixedUnderlyingType"] as? Map<*, *>)?.get("qualType") as? String
-        enums[qualified] = CppEnum(qualified, headerOf[node], underlying, constants)
+        enums[qualified] = CppEnum(qualified, locationOf[node]?.header, underlying, constants)
     }
 
     /** A declaration's initializer: its one child that isn't a comment or an attribute. */

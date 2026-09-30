@@ -16,9 +16,9 @@ import io.github.erkko68.filament.Filament
  */
 @Composable
 fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine {
-    val engine = remember(backend) { Filament.init(); Engine.create(backend) }
+    val engine = remember(backend) { Filament.init(); checkNotNull(Engine.create(backend)) { "Failed to create a $backend Engine" } }
     DisposableEffect(engine) {
-        onDispose { engine.destroy() }
+        onDispose { Engine.destroy(engine) }
     }
     return engine
 }

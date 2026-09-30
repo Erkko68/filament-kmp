@@ -1,10 +1,15 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.FilaEngineConfig_create
+import io.github.erkko68.filament.capi.FilaEngineConfig_destroy
+import io.github.erkko68.filament.interop.withHandle
 import io.github.erkko68.filament.testsupport.IgnoreJs
+import kotlin.concurrent.Volatile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class EngineTest {
@@ -53,17 +58,38 @@ class EngineTest {
     @Test
     fun testConfigIsReportedBackByTheEngine() {
         val config = Engine.Config().apply { resourceAllocatorCacheMaxAge = 7 }
-        Engine.Builder().backend(Engine.Backend.NOOP).config(config).build().use { engine ->
+        Engine.Builder().backend(Engine.Backend.NOOP).config(config).build()!!.use { engine ->
             assertEquals(7, engine.config.resourceAllocatorCacheMaxAge)
         }
     }
 
     @Test
+    fun testConfigDefaultsMatchCpp() {
+        Filament.init()
+        val cpp = withHandle({ FilaEngineConfig_create() }, { FilaEngineConfig_destroy(it) }) { Engine.Config.of(it) }
+        val kotlin = Engine.Config()
+        assertEquals(cpp.commandBufferSizeMB, kotlin.commandBufferSizeMB)
+        assertEquals(cpp.perRenderPassArenaSizeMB, kotlin.perRenderPassArenaSizeMB)
+        assertEquals(cpp.driverHandleArenaSizeMB, kotlin.driverHandleArenaSizeMB)
+        assertEquals(cpp.minCommandBufferSizeMB, kotlin.minCommandBufferSizeMB)
+        assertEquals(cpp.perFrameCommandsSizeMB, kotlin.perFrameCommandsSizeMB)
+        assertEquals(cpp.jobSystemThreadCount, kotlin.jobSystemThreadCount)
+        assertEquals(cpp.metalUploadBufferSizeBytes, kotlin.metalUploadBufferSizeBytes)
+        assertEquals(cpp.stereoscopicEyeCount, kotlin.stereoscopicEyeCount)
+        assertEquals(cpp.resourceAllocatorCacheSizeMB, kotlin.resourceAllocatorCacheSizeMB)
+        assertEquals(cpp.resourceAllocatorCacheMaxAge, kotlin.resourceAllocatorCacheMaxAge)
+        assertEquals(cpp.sharedUboInitialSizeInBytes, kotlin.sharedUboInitialSizeInBytes)
+        assertEquals(cpp.asynchronousMode, kotlin.asynchronousMode)
+        assertEquals(cpp.materialCacheCapacity, kotlin.materialCacheCapacity)
+        assertEquals(cpp.programCacheCapacity, kotlin.programCacheCapacity)
+    }
+
+    @Test
     fun testEngineLifecycleAndProperties() {
         Filament.init()
-        val engine = Engine.create(Engine.Backend.NOOP)
+        val engine = Engine.create(Engine.Backend.NOOP)!!
         assertTrue(engine.isValid)
-        
+
         // Assert backend is NOOP (or fallback, but since we requested NOOP and JVM supports it, it should be NOOP)
         assertNotNull(engine.backend)
 
@@ -72,7 +98,7 @@ class EngineTest {
         assertNotNull(activeFl)
         assertNotNull(supportedFl)
         
-        engine.activeFeatureLevel = supportedFl
+        assertEquals(activeFl, engine.setActiveFeatureLevel(activeFl))
         
         engine.isAutomaticInstancingEnabled = true
         assertTrue(engine.isAutomaticInstancingEnabled)
@@ -82,7 +108,13 @@ class EngineTest {
         val cfg = engine.config
         assertNotNull(cfg)
         
-        assertTrue(engine.maxStereoscopicEyes >= 1)
+        assertTrue(Engine.maxStereoscopicEyes >= 1)
+        engine.isStereoSupported(Engine.StereoscopicType.INSTANCED)
+        assertTrue(engine.isValid(engine.defaultMaterial))
+        assertEquals(0, engine.viewCount)
+        val view = engine.createView()
+        assertEquals(1, engine.viewCount)
+        assertTrue(engine.destroy(view))
         
         // Managers
         assertNotNull(engine.transformManager)
@@ -108,24 +140,25 @@ class EngineTest {
         engine.unprotected()
         engine.enableAccurateTranslations()
         
-        // `setFeatureFlag` / `getFeatureFlag` throw on Android/JVM when the
-        // name isn't a real Filament flag, so use one upstream actually
-        // ships (`backend_debug_marker` exists in 1.71.x).
-        val flag = "backend_debug_marker"
-        if (engine.hasFeatureFlag(flag)) {
-            val previous = engine.getFeatureFlag(flag)
-            engine.setFeatureFlag(flag, !previous)
-            engine.setFeatureFlag(flag, previous)
+        val flags = engine.getFeatureFlags()
+        assertTrue(flags.isNotEmpty())
+        flags.forEach { assertEquals(it.value, engine.getFeatureFlag(it.name)) }
+        flags.firstOrNull { !it.constant }?.let { flag ->
+            assertTrue(engine.setFeatureFlag(flag.name, !flag.value))
+            assertEquals(!flag.value, engine.getFeatureFlag(flag.name))
+            engine.setFeatureFlag(flag.name, flag.value)
         }
-        
-        // Cleanup
-        engine.destroy()
+        assertFalse(engine.hasFeatureFlag("no.such.flag"))
+        assertNull(engine.getFeatureFlag("no.such.flag"))
+        assertFalse(engine.setFeatureFlag("no.such.flag", true))
+
+        Engine.destroy(engine)
     }
 
     @Test
     fun testEntityAndCameraComponent() {
         Filament.init()
-        val engine = Engine.create(Engine.Backend.NOOP)
+        val engine = Engine.create(Engine.Backend.NOOP)!!
 
         // Camera component lookup
         val entity = EntityManager.get().create()
@@ -134,23 +167,37 @@ class EngineTest {
         assertNotNull(engine.getCameraComponent(entity))
         engine.destroyCameraComponent(entity)
 
-        // Entity destruction
-        engine.destroyEntity(entity)
+        // Entity destruction: the components, then the entity
+        engine.destroy(entity)
         EntityManager.get().destroy(entity)
 
-        engine.destroy()
+        Engine.destroy(engine)
+    }
+
+    // Written by createAsync's callback, possibly on Filament's thread.
+    @Volatile private var token: Engine.Token? = null
+
+    @Test
+    fun testCreateAsync() {
+        Filament.init()
+        Engine.createAsync(Engine.Backend.NOOP) { token = it }
+        val deadline = Engine.steadyClockTimeNano + 10_000_000_000L
+        while (token == null && Engine.steadyClockTimeNano < deadline) Unit
+        val engine = assertNotNull(Engine.getEngine(assertNotNull(token)))
+        assertEquals(Engine.Backend.NOOP, engine.backend)
+        Engine.destroy(engine)
     }
 
     @Test
     fun testFenceLifecycle() {
         Filament.init()
-        val engine = Engine.create(Engine.Backend.NOOP)
+        val engine = Engine.create(Engine.Backend.NOOP)!!
 
         val fence = engine.createFence()
         assertNotNull(fence)
-        engine.destroyFence(fence)
+        engine.destroy(fence)
 
-        engine.destroy()
+        Engine.destroy(engine)
     }
 
     @Test
@@ -166,8 +213,8 @@ class EngineTest {
                     .quality(ColorGrading.QualityLevel.HIGH)
                     .toneMapper(ToneMapper.Linear())
             )
-            .build()
+            .build()!!
         assertTrue(engine.isValid)
-        engine.destroy()
+        Engine.destroy(engine)
     }
 }

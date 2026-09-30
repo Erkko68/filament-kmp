@@ -30,7 +30,7 @@ class EnumRoundTripTest : FilamentTestFixture() {
         roundTrip<Dithering>("View.dithering", { view.dithering = it }, { view.dithering })
         roundTrip<AntiAliasing>("View.antiAliasing", { view.antiAliasing = it }, { view.antiAliasing })
         roundTrip<ShadowType>("View.shadowType", { view.shadowType = it }, { view.shadowType })
-        engine.destroyView(view)
+        engine.destroy(view)
     }
 
     @Test
@@ -91,7 +91,7 @@ class EnumRoundTripTest : FilamentTestFixture() {
             { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { jitterPattern = it } },
             { view.temporalAntiAliasingOptions.jitterPattern },
         )
-        engine.destroyView(view)
+        engine.destroy(view)
     }
 
     @Test
@@ -121,7 +121,7 @@ class MaterialInstanceEnumRoundTripTest : RenderingTestFixture() {
             "MaterialInstance.depthFunc", { inst.depthFunc = it }, { inst.depthFunc },
         )
 
-        engine.destroyMaterialInstance(inst)
-        engine.destroyMaterial(mat)
+        engine.destroy(inst)
+        engine.destroy(mat)
     }
 }

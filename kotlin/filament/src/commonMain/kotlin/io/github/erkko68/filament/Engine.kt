@@ -19,7 +19,7 @@ import io.github.erkko68.filament.interop.*
  * A typical Filament render loop looks like this:
  *
  * ```
- * val engine = Engine.create()
+ * val engine = Engine.create()!!
  * val swapChain = engine.createSwapChain(nativeWindow)
  * val renderer = engine.createRenderer()
  * val scene = engine.createScene()
@@ -58,12 +58,8 @@ class Engine internal constructor(
     private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)) }
     private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)) }
     private val mEntityManager by lazy { EntityManager(FilaEngine_getEntityManager(nativeHandle)) }
-    // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
-    internal var mConfig: Config? = null
 
-    /**
-     * Rendering backend selection.
-     */
+    /** Rendering backend selection. */
     enum class Backend {
         /** Platform's optimal choice (usually Vulkan or Metal) */
         DEFAULT,
@@ -85,10 +81,7 @@ class Engine internal constructor(
      * Higher feature levels provide more capabilities but require more powerful hardware.
      */
     enum class FeatureLevel {
-        /**
-         * Minimum feature set; OpenGL ES 2 compatible.
-         * No post-processing, limited lighting models, minimal texture formats.
-         */
+        /** Minimum feature set; OpenGL ES 2 compatible. No post-processing, limited lighting models, minimal texture formats. */
         FEATURE_LEVEL_0,
         /** Metal-level feature set; good for mid-range devices. */
         FEATURE_LEVEL_1,
@@ -98,9 +91,7 @@ class Engine internal constructor(
         FEATURE_LEVEL_3,
     }
 
-    /**
-     * Stereoscopic rendering technique for VR and 3D displays.
-     */
+    /** Stereoscopic rendering technique for VR and 3D displays. */
     enum class StereoscopicType {
         /** No stereoscopic rendering (monoscopic). */
         NONE,
@@ -110,11 +101,7 @@ class Engine internal constructor(
         MULTIVIEW,
     }
 
-    /**
-     * GPU context priority for work scheduling and preemption.
-     *
-     * Used to hint the GPU driver about the priority of this context's work.
-     */
+    /** GPU context priority, a hint to the driver for work scheduling and preemption. */
     enum class GpuContextPriority {
         /** Default priority. */
         DEFAULT,
@@ -128,792 +115,557 @@ class Engine internal constructor(
         REALTIME,
     }
 
+    /** How the engine handles asynchronous operations. */
+    enum class AsynchronousMode {
+        /** Asynchronous operations are disabled. */
+        NONE,
+        /** Asynchronous operations run on a dedicated thread where the platform supports one. */
+        THREAD_PREFERRED,
+        /** Asynchronous operations are spread across frames on the render thread. */
+        AMORTIZATION,
+    }
+
     /**
      * Advanced parameters for customizing Engine initialization.
      *
      * These settings control memory allocation, threading, and rendering behavior.
      */
-    class Config() {
-        /** Size of the command buffer in MB (default depends on backend). */
-        var commandBufferSizeMB: Long = 3 * 1
-        /** Per-render-pass arena size in MB. */
-        var perRenderPassArenaSizeMB: Long = 3
-        /** Driver handle arena size in MB. */
-        var driverHandleArenaSizeMB: Long = 0
-        /** Minimum command buffer size in MB. */
-        var minCommandBufferSizeMB: Long = 1
-        /** Size of per-frame commands in MB. */
-        var perFrameCommandsSizeMB: Long = 2
-        /** Number of threads for the job system (0 = CPU count). */
-        var jobSystemThreadCount: Long = 0
+    class Config {
+        /** Size in MiB of the low-level command buffer arena; typically `minCommandBufferSizeMB * 3`. */
+        var commandBufferSizeMB: Int = 3 * 1
+        /** Size in MiB of the per-frame data arena, the main area used by the engine to allocate per-frame data. */
+        var perRenderPassArenaSizeMB: Int = 3
+        /** Size in MiB of the backend's handle arena; 0 uses the build's default. */
+        var driverHandleArenaSizeMB: Int = 0
+        /** Minimum size in MiB of a low-level command buffer. */
+        var minCommandBufferSizeMB: Int = 1
+        /** Size in MiB of the per-frame high-level command buffer. */
+        var perFrameCommandsSizeMB: Int = 2
+        /** Number of threads for the job system: 0 picks by heuristic, [SINGLE_THREADED] runs jobs on the calling thread. */
+        var jobSystemThreadCount: Int = 0
+        /** Total size of the Metal backend's shared upload staging buffer; 0 disables it. */
+        var metalUploadBufferSizeBytes: Int = 512 * 1024
+        /** Don't panic when the Metal backend can't acquire a drawable. */
+        var metalDisablePanicOnDrawableFailure: Boolean = false
         /** Disable backend parallel shader compilation, forcing serial compilation. */
         var disableParallelShaderCompile: Boolean = false
         /** Stereoscopic rendering technique to use. */
         var stereoscopicType: StereoscopicType = StereoscopicType.NONE
         /** Number of stereoscopic eyes (usually 2 for VR). */
-        var stereoscopicEyeCount: Long = 2
-        /** Size of the resource allocator cache in MB. */
-        var resourceAllocatorCacheSizeMB: Long = 64
-        /** Maximum age of cached resources (in frames). */
-        var resourceAllocatorCacheMaxAge: Long = 1
+        var stereoscopicEyeCount: Int = 2
+        /** Size of the resource allocator cache in MiB. */
+        var resourceAllocatorCacheSizeMB: Int = 64
+        /** Maximum age of cached resources, in frames. */
+        var resourceAllocatorCacheMaxAge: Int = 1
         /** Disable the debug check that catches use of a destroyed backend handle. */
         var disableHandleUseAfterFreeCheck: Boolean = false
 
-        /**
-         * Preferred shader language for platform.
-         */
+        /** The shader language the Metal backend prefers; no effect on other backends. */
         enum class ShaderLanguage {
-            /** Use platform default. */
+            /** Use the platform default. */
             DEFAULT,
-            /** Metal Shading Language (Apple). */
+            /** Metal Shading Language source. */
             MSL,
-            /** Pre-compiled Metal library. */
+            /** Precompiled Metal library. */
             METAL_LIBRARY,
         }
         /** Preferred shader language to use. */
         var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
-        /** Force OpenGL ES 2.0 context (if applicable). */
+        /** Force an OpenGL ES 2.0 context (if applicable). */
         var forceGLES2Context: Boolean = false
         /** Assert that the native window handed to `createSwapChain` is valid. */
         var assertNativeWindowIsValid: Boolean = false
         /** GPU context priority hint for the driver. */
         var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
-        /** Initial size of shared uniform buffer objects in bytes. */
-        var sharedUboInitialSizeInBytes: Long = 256 * 64
+        /** Initial size in bytes of the shared uniform buffer used for batching. */
+        var sharedUboInitialSizeInBytes: Int = 256 * 64
+        /** How asynchronous operations are handled; check [Engine.isAsynchronousModeEnabled] before using them. */
+        var asynchronousMode: AsynchronousMode = AsynchronousMode.NONE
+        /** Unreferenced material definitions kept alive to avoid recompiling; 0 destroys them immediately. */
+        var materialCacheCapacity: Int = 0
+        /** Unreferenced program specializations kept alive; 0 destroys them immediately. */
+        var programCacheCapacity: Int = 0
         /**
          * Evaluate up to four directional lights beyond the dominant one. The extra lights
-         * cast no shadows and draw no sun disc. Default: false.
+         * cast no shadows and draw no sun disc.
          */
         var enableMultipleDirectionalLights: Boolean = false
 
-        internal fun applyTo(builder: NativePointer) = FilaEngineBuilder_config(
-            builder,
-            commandBufferSizeMB.toInt(), perRenderPassArenaSizeMB.toInt(), driverHandleArenaSizeMB.toInt(),
-            minCommandBufferSizeMB.toInt(), perFrameCommandsSizeMB.toInt(), jobSystemThreadCount.toInt(),
-            disableParallelShaderCompile, stereoscopicType.ordinal, stereoscopicEyeCount.toInt(),
-            resourceAllocatorCacheSizeMB.toInt(), resourceAllocatorCacheMaxAge.toInt(), disableHandleUseAfterFreeCheck,
-            preferredShaderLanguage.ordinal, forceGLES2Context, assertNativeWindowIsValid, gpuContextPriority.ordinal,
-            sharedUboInitialSizeInBytes.toInt(), enableMultipleDirectionalLights,
-        )
+        internal fun <T> useNative(block: (NativePointer) -> T): T = withHandle({ FilaEngineConfig_create() }, { FilaEngineConfig_destroy(it) }) { c ->
+            FilaEngineConfig_setCommandBufferSizeMB(c, commandBufferSizeMB)
+            FilaEngineConfig_setPerRenderPassArenaSizeMB(c, perRenderPassArenaSizeMB)
+            FilaEngineConfig_setDriverHandleArenaSizeMB(c, driverHandleArenaSizeMB)
+            FilaEngineConfig_setMinCommandBufferSizeMB(c, minCommandBufferSizeMB)
+            FilaEngineConfig_setPerFrameCommandsSizeMB(c, perFrameCommandsSizeMB)
+            FilaEngineConfig_setJobSystemThreadCount(c, jobSystemThreadCount)
+            FilaEngineConfig_setMetalUploadBufferSizeBytes(c, metalUploadBufferSizeBytes)
+            FilaEngineConfig_setMetalDisablePanicOnDrawableFailure(c, metalDisablePanicOnDrawableFailure)
+            FilaEngineConfig_setDisableParallelShaderCompile(c, disableParallelShaderCompile)
+            FilaEngineConfig_setStereoscopicType(c, stereoscopicType.ordinal)
+            FilaEngineConfig_setStereoscopicEyeCount(c, stereoscopicEyeCount)
+            FilaEngineConfig_setResourceAllocatorCacheSizeMB(c, resourceAllocatorCacheSizeMB)
+            FilaEngineConfig_setResourceAllocatorCacheMaxAge(c, resourceAllocatorCacheMaxAge)
+            FilaEngineConfig_setDisableHandleUseAfterFreeCheck(c, disableHandleUseAfterFreeCheck)
+            FilaEngineConfig_setPreferredShaderLanguage(c, preferredShaderLanguage.ordinal)
+            FilaEngineConfig_setForceGLES2Context(c, forceGLES2Context)
+            FilaEngineConfig_setAssertNativeWindowIsValid(c, assertNativeWindowIsValid)
+            FilaEngineConfig_setGpuContextPriority(c, gpuContextPriority.ordinal)
+            FilaEngineConfig_setSharedUboInitialSizeInBytes(c, sharedUboInitialSizeInBytes)
+            FilaEngineConfig_setAsynchronousMode(c, asynchronousMode.ordinal)
+            FilaEngineConfig_setMaterialCacheCapacity(c, materialCacheCapacity)
+            FilaEngineConfig_setProgramCacheCapacity(c, programCacheCapacity)
+            FilaEngineConfig_setEnableMultipleDirectionalLights(c, enableMultipleDirectionalLights)
+            block(c)
+        }
+
+        companion object {
+            /** [jobSystemThreadCount] value that runs the JobSystem's jobs on the calling thread. */
+            const val SINGLE_THREADED: Int = -1 // uint32_t max
+
+            internal fun of(c: NativePointer) = Config().apply {
+                commandBufferSizeMB = FilaEngineConfig_getCommandBufferSizeMB(c)
+                perRenderPassArenaSizeMB = FilaEngineConfig_getPerRenderPassArenaSizeMB(c)
+                driverHandleArenaSizeMB = FilaEngineConfig_getDriverHandleArenaSizeMB(c)
+                minCommandBufferSizeMB = FilaEngineConfig_getMinCommandBufferSizeMB(c)
+                perFrameCommandsSizeMB = FilaEngineConfig_getPerFrameCommandsSizeMB(c)
+                jobSystemThreadCount = FilaEngineConfig_getJobSystemThreadCount(c)
+                metalUploadBufferSizeBytes = FilaEngineConfig_getMetalUploadBufferSizeBytes(c)
+                metalDisablePanicOnDrawableFailure = FilaEngineConfig_getMetalDisablePanicOnDrawableFailure(c)
+                disableParallelShaderCompile = FilaEngineConfig_getDisableParallelShaderCompile(c)
+                stereoscopicType = StereoscopicType.entries[FilaEngineConfig_getStereoscopicType(c)]
+                stereoscopicEyeCount = FilaEngineConfig_getStereoscopicEyeCount(c)
+                resourceAllocatorCacheSizeMB = FilaEngineConfig_getResourceAllocatorCacheSizeMB(c)
+                resourceAllocatorCacheMaxAge = FilaEngineConfig_getResourceAllocatorCacheMaxAge(c)
+                disableHandleUseAfterFreeCheck = FilaEngineConfig_getDisableHandleUseAfterFreeCheck(c)
+                preferredShaderLanguage = ShaderLanguage.entries[FilaEngineConfig_getPreferredShaderLanguage(c)]
+                forceGLES2Context = FilaEngineConfig_getForceGLES2Context(c)
+                assertNativeWindowIsValid = FilaEngineConfig_getAssertNativeWindowIsValid(c)
+                gpuContextPriority = GpuContextPriority.entries[FilaEngineConfig_getGpuContextPriority(c)]
+                sharedUboInitialSizeInBytes = FilaEngineConfig_getSharedUboInitialSizeInBytes(c)
+                asynchronousMode = AsynchronousMode.entries[FilaEngineConfig_getAsynchronousMode(c)]
+                materialCacheCapacity = FilaEngineConfig_getMaterialCacheCapacity(c)
+                programCacheCapacity = FilaEngineConfig_getProgramCacheCapacity(c)
+                enableMultipleDirectionalLights = FilaEngineConfig_getEnableMultipleDirectionalLights(c)
+            }
+        }
     }
 
     /**
-     * Builder for creating and configuring an Engine instance.
+     * A feature flag: a last-resort switch for a faulty feature, set when the Engine is built and,
+     * unless [constant], at any time with [setFeatureFlag].
      */
+    class FeatureFlag(
+        val name: String,
+        val description: String,
+        /** The flag's value when it was read. */
+        val value: Boolean,
+        /** Whether the flag can only be set when the Engine is built. */
+        val constant: Boolean,
+    )
+
+    /** Builder for creating and configuring an Engine instance. */
     class Builder() {
         init { Filament.init() }
         private val nativeBuilder = FilaEngineBuilder_create()
-        private var mConfig: Config? = null
         private var backend = Backend.DEFAULT
         private var sharedContext: Any? = null
 
-        /**
-         * Set the rendering backend to use.
-         *
-         * @param backend The backend to use (DEFAULT lets the system choose).
-         * @return This Builder, for chaining calls.
-         */
-        fun backend(backend: Backend): Builder {
+        /** Sets the rendering backend; DEFAULT lets the platform choose. */
+        fun backend(backend: Backend): Builder = apply {
             this.backend = backend
             FilaEngineBuilder_backend(nativeBuilder, backend.ordinal)
-            return this
         }
 
         /**
-         * Share a platform-specific rendering context with the Engine.
-         *
-         * This is useful for rendering to multiple windows or integrating with
-         * existing rendering systems.
-         *
-         * @param sharedContext Platform-specific context object (e.g., EGLContext on Android).
-         * @return This Builder, for chaining calls.
+         * Shares a platform-specific rendering context with the Engine (e.g. an EGLContext on Android),
+         * to render to several windows or alongside an existing renderer.
          */
-        fun sharedContext(sharedContext: Any): Builder {
+        fun sharedContext(sharedContext: Any?): Builder = apply {
             this.sharedContext = sharedContext
-            val pointer = sharedContextPointer(sharedContext)
-            if (pointer != NullPointer) FilaEngineBuilder_sharedContext(nativeBuilder, pointer)
-            return this
+            FilaEngineBuilder_sharedContext(nativeBuilder, sharedContext?.let(::sharedContextPointer) ?: NullPointer)
         }
 
-        /**
-         * Set advanced Engine configuration options.
-         *
-         * @param config Configuration object with memory and threading settings.
-         * @return This Builder, for chaining calls.
-         */
-        fun config(config: Config): Builder {
-            config.applyTo(nativeBuilder)
-            mConfig = config
-            return this
+        /** Sets the Engine's advanced configuration; null restores the defaults. */
+        fun config(config: Config?): Builder = apply {
+            config?.useNative { FilaEngineBuilder_config(nativeBuilder, it) } ?: FilaEngineBuilder_config(nativeBuilder, NullPointer)
         }
 
-        /**
-         * Set the feature level to use.
-         *
-         * The effective feature level is the minimum of this value and the backend's maximum.
-         *
-         * @param featureLevel Desired feature level.
-         * @return This Builder, for chaining calls.
-         */
-        fun featureLevel(featureLevel: FeatureLevel): Builder {
-            FilaEngineBuilder_featureLevel(nativeBuilder, featureLevel.ordinal)
-            return this
-        }
+        /** Sets the feature level; the effective level is the minimum of this and the backend's maximum. */
+        fun featureLevel(featureLevel: FeatureLevel): Builder = apply { FilaEngineBuilder_featureLevel(nativeBuilder, featureLevel.ordinal) }
 
-        /**
-         * Pause rendering immediately after Engine creation.
-         *
-         * Set `engine.isPaused = false` to resume.
-         *
-         * @param paused true to start paused, false to start active.
-         * @return This Builder, for chaining calls.
-         */
-        fun paused(paused: Boolean): Builder {
-            FilaEngineBuilder_paused(nativeBuilder, paused)
-            return this
-        }
+        /** Starts the Engine paused; set [Engine.isPaused] to false to resume. */
+        fun paused(paused: Boolean): Builder = apply { FilaEngineBuilder_paused(nativeBuilder, paused) }
 
-        /**
-         * Enable or disable a feature flag.
-         *
-         * @param name Feature flag name.
-         * @param value true to enable, false to disable.
-         * @return This Builder, for chaining calls.
-         */
-        fun feature(name: String, value: Boolean): Builder {
-            name.useCString { FilaEngineBuilder_feature(nativeBuilder, it, value) }
-            return this
-        }
+        /** Sets a feature flag's value. */
+        fun feature(name: String, value: Boolean): Builder = apply { name.useCString { FilaEngineBuilder_feature(nativeBuilder, it, value) } }
 
-        /**
-         * Set the default color grading configuration.
-         *
-         * @param colorGrading ColorGrading.Builder with default configuration.
-         * @return This Builder, for chaining calls.
-         */
-        fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
-            FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle)
-            return this
-        }
+        /** Sets the default color grading configuration. */
+        fun colorGrading(colorGrading: ColorGrading.Builder): Builder = apply { FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle) }
 
-        /**
-         * Creates the Engine instance.
-         *
-         * @return The newly created Engine.
-         */
-        fun build(): Engine {
+        /** Creates the Engine, or returns null if the backend couldn't be initialized. */
+        fun build(): Engine? {
             val platform = enginePlatform(backend, sharedContext)
             val handle = FilaEngineBuilder_build(nativeBuilder)
             FilaEngineBuilder_destroy(nativeBuilder)
-            if (handle == NullPointer) platform.release()
-            check(handle != NullPointer) { "Failed to build Engine" }
-            return Engine(handle, platform).apply { mConfig = this@Builder.mConfig }
+            return engineOf(handle, platform)
+        }
+
+        /**
+         * Creates the Engine asynchronously. [callback] runs, possibly on another thread, once it's safe to call
+         * [getEngine] with its token, which must happen on the thread that called this.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "builds synchronously and calls back before returning: the wasm build has no threads.")
+        fun build(callback: (Token) -> Unit) {
+            val platform = enginePlatform(backend, sharedContext)
+            if (singleThreaded) {
+                val engine = build()
+                return callback(Token(NullPointer, platform, engine))
+            }
+            val user = Callbacks.register(once = true) { token -> callback(Token(token, platform)) }
+            FilaEngineBuilder_build_Invocable(nativeBuilder, Callbacks.argUser, user)
+            FilaEngineBuilder_destroy(nativeBuilder)
         }
     }
 
+    /** The opaque token [Builder.build]'s callback gets, for [getEngine]. */
+    class Token internal constructor(
+        internal val token: NativePointer,
+        internal val platform: EnginePlatform,
+        // Web builds synchronously: the engine, already built.
+        internal val engine: Engine? = null,
+    )
+
     companion object {
         init { Filament.init() } // statics are callable before any Engine exists
+
         /**
-         * Create an Engine with the platform's optimal backend (usually Vulkan or Metal).
+         * Creates an Engine, or returns null if the backend couldn't be initialized.
          *
-         * @return A new Engine instance using the default backend.
+         * @param backend The backend to use; DEFAULT lets the platform choose.
+         * @param sharedContext A platform-specific context to share (e.g. an EGLContext on Android).
+         * @param config Advanced configuration, or null for the defaults.
          */
-        fun create(): Engine = Builder().build()
+        fun create(backend: Backend = Backend.DEFAULT, sharedContext: Any? = null, config: Config? = null): Engine? =
+            Builder().backend(backend).sharedContext(sharedContext).config(config).build()
+
+        /** Creates an Engine asynchronously; see [Builder.build]. */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "creates the engine synchronously and calls back before returning: the wasm build has no threads.")
+        fun createAsync(backend: Backend = Backend.DEFAULT, sharedContext: Any? = null, config: Config? = null, callback: (Token) -> Unit) =
+            Builder().backend(backend).sharedContext(sharedContext).config(config).build(callback)
+
         /**
-         * Create an Engine with a specific rendering backend.
-         *
-         * @param backend The backend to use (OPENGL, VULKAN, METAL, WEBGPU, or NOOP).
-         * @return A new Engine instance using the specified backend.
+         * The Engine [createAsync] or [Builder.build] created, or null if it couldn't be. Call it on the thread that
+         * started the creation.
          */
-        fun create(backend: Backend): Engine = Builder().backend(backend).build()
+        fun getEngine(token: Token): Engine? =
+            if (singleThreaded) token.engine else engineOf(FilaEngine_getEngine(token.token), token.platform)
+
+        private fun engineOf(handle: NativePointer, platform: EnginePlatform): Engine? {
+            if (handle == NullPointer) {
+                platform.release()
+                return null
+            }
+            return Engine(handle, platform)
+        }
+
         /**
-         * Create an Engine sharing a platform-specific rendering context.
-         *
-         * This allows multiple Engine instances or integration with existing rendering contexts.
-         *
-         * @param sharedContext Platform-specific context (e.g., EGLContext on Android).
-         * @return A new Engine instance sharing the given context.
+         * Destroys [engine] and every resource it still tracks. Blocking; destroy the Renderer, View, Scene and other
+         * resources first.
          */
-        fun create(sharedContext: Any): Engine = Builder().sharedContext(sharedContext).build()
-        /**
-         * Get the current steady clock time in nanoseconds.
-         *
-         * This is useful for frame timing and synchronization with Engine's frame pacing.
-         *
-         * @return Current time in nanoseconds since an unspecified epoch.
-         */
+        fun destroy(engine: Engine?) {
+            if (engine == null || engine.nativeHandle == NullPointer) return
+            engine.platform.makeCurrent()
+            FilaEngine_destroy_Engine(engine.nativeHandle)
+            engine.nativeHandle = NullPointer
+            engine.platform.release()
+        }
+
+        /** The maximum number of stereoscopic eyes supported by Filament. */
+        val maxStereoscopicEyes: Int get() = FilaEngine_getMaxStereoscopicEyes()
+
+        /** The current time in nanoseconds since the epoch of the steady clock, the one [Renderer.beginFrame] uses. */
         val steadyClockTimeNano: Long
             get() = LongArray(1).also { out -> out.usePinned { FilaEngine_getSteadyClockTimeNano(it) } }[0]
     }
 
-    /**
-     * Check if this Engine is still valid (not destroyed).
-     *
-     * @return true if the Engine is valid and can be used, false if destroyed.
-     */
+    /** Whether this Engine hasn't been destroyed. */
     val isValid: Boolean get() = nativeHandle != NullPointer
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
-    override fun close() = destroy()
+    override fun close() = destroy(this)
 
-    /**
-     * Destroy the Engine and all its resources.
-     *
-     * This is a blocking operation. All Renderer, View, Scene, and other resources
-     * should ideally be destroyed first, though the Engine will clean up remaining resources.
-     */
-    fun destroy() {
-        if (nativeHandle == NullPointer) return
-        platform.makeCurrent()
-        FilaEngine_destroy(nativeHandle)
-        nativeHandle = NullPointer
-        platform.release()
-    }
-
-    /**
-     * The rendering backend being used by this Engine.
-     */
+    /** The rendering backend being used by this Engine. */
     val backend: Backend get() = Backend.entries[FilaEngine_getBackend(nativeHandle)]
-    /**
-     * The highest feature level supported by this backend.
-     */
+    /** The highest feature level supported by this backend. */
     val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.entries[FilaEngine_getSupportedFeatureLevel(nativeHandle)]
     /**
-     * The active feature level.
+     * Activates [featureLevel], at most [supportedFeatureLevel]; a level can't be lowered once activated.
      *
-     * Assigning a level that exceeds [supportedFeatureLevel] clamps it; read the property back
-     * to see what was actually set.
+     * @return The active feature level.
      */
-    var activeFeatureLevel: FeatureLevel
-        get() = FeatureLevel.entries[FilaEngine_getActiveFeatureLevel(nativeHandle)]
-        set(value) { FilaEngine_setActiveFeatureLevel(nativeHandle, value.ordinal) }
+    fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel =
+        FeatureLevel.entries[FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.ordinal)]
+    /** The currently active feature level. */
+    val activeFeatureLevel: FeatureLevel get() = FeatureLevel.entries[FilaEngine_getActiveFeatureLevel(nativeHandle)]
 
+    /** The maximum number of instances automatic instancing batches together. */
+    val maxAutomaticInstances: Int get() = FilaEngine_getMaxAutomaticInstances(nativeHandle)
+    /** Whether this Engine supports [stereoscopicType] rendering. */
+    fun isStereoSupported(stereoscopicType: StereoscopicType): Boolean = FilaEngine_isStereoSupported(nativeHandle, stereoscopicType.ordinal)
+    /** Whether asynchronous operations can be used (see [Config.asynchronousMode]). */
+    val isAsynchronousModeEnabled: Boolean get() = FilaEngine_isAsynchronousModeEnabled(nativeHandle)
     /**
-     * Whether the engine automatically batches identical renderables to reduce draw calls.
+     * Whether the Engine is in an unrecoverable failure state (e.g. the GPU device was lost).
+     * Once true, the Engine must be destroyed and recreated.
      */
+    val hasUnrecoverableFailure: Boolean get() = FilaEngine_hasUnrecoverableFailure(nativeHandle)
+    /** The configuration this Engine was built with. */
+    val config: Config
+        get() = withHandle({ FilaEngineConfig_create() }, { FilaEngineConfig_destroy(it) }) { c -> FilaEngine_getConfig(nativeHandle, c); Config.of(c) }
+
+    /** The EntityManager for creating and managing entities. */
+    val entityManager: EntityManager get() = mEntityManager
+    /** The RenderableManager for managing renderable components. */
+    val renderableManager: RenderableManager get() = mRenderableManager
+    /** The LightManager for managing light components. */
+    val lightManager: LightManager get() = mLightManager
+    /** The TransformManager for managing entity transforms. */
+    val transformManager: TransformManager get() = mTransformManager
+
+    /** Enables high-precision world-space translations, for better numerical stability with large translations. */
+    fun enableAccurateTranslations() = FilaEngine_enableAccurateTranslations(nativeHandle)
+
+    /** Whether the engine batches identical renderables into instanced draw calls. */
     var isAutomaticInstancingEnabled: Boolean
         get() = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
         set(value) { FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
-    /**
-     * The Engine's advanced configuration — the Config object used when creating this Engine.
-     * On JVM and iOS the C wrapper has no getConfig, so this is the Config the [Builder] was
-     * handed; mutating that object after [Builder.build] changes what is reported here, not the
-     * Engine.
-     */
-    val config: Config get() = mConfig ?: Config()
-    /**
-     * Get the maximum number of stereoscopic eyes configured for this Engine.
-     *
-     * @return Number of eyes (typically 2 for VR, 1 for monoscopic).
-     */
-    val maxStereoscopicEyes: Long get() = FilaEngine_getMaxStereoscopicEyes(nativeHandle).toLong()
 
-    /**
-     * Validate a Renderer object created by this Engine.
-     *
-     * @param renderer Renderer to check.
-     * @return true if the Renderer is valid and owned by this Engine.
-     */
-    fun isValidRenderer(renderer: Renderer): Boolean = FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
-    /** Validate a View. @return true if valid. */
-    fun isValidView(view: View): Boolean = FilaEngine_isValidView(nativeHandle, view.nativeHandle)
-    /** Validate a Scene. @return true if valid. */
-    fun isValidScene(scene: Scene): Boolean = FilaEngine_isValidScene(nativeHandle, scene.nativeHandle)
-    /** Validate a Fence. @return true if valid. @throws UnsupportedOperationException on JS — Fence is unbound on web. */
-    fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
-    /** Validate an IndexBuffer. @return true if valid. */
-    fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
-    /** Validate a VertexBuffer. @return true if valid. */
-    fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
-    /** Validate a SkinningBuffer. @return true if valid. @throws UnsupportedOperationException on JS — SkinningBuffer is unbound on web. */
-    fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
-    /** Validate a MorphTargetBuffer. @return true if valid. @throws UnsupportedOperationException on JS — MorphTargetBuffer is unbound on web. */
-    fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
-    /** Validate an IndirectLight. @return true if valid. */
-    fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
-    /** Validate a Material. @return true if valid. */
-    fun isValidMaterial(material: Material): Boolean = FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
-    /** Validate a MaterialInstance for a given Material. @return true if valid. */
-    fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
-    /** Validate a MaterialInstance (more expensive check). @return true if valid. */
-    fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
-    /** Validate a Skybox. @return true if valid. */
-    fun isValidSkybox(skybox: Skybox): Boolean = FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle)
-    /** Validate ColorGrading. @return true if valid. */
-    fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
-    /** Validate a Texture. @return true if valid. */
-    fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
-    /** Validate a RenderTarget. @return true if valid. */
-    fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle)
-    /** Validate a Stream. @return true if valid. @throws UnsupportedOperationException on JS — Stream is unbound on web. */
-    fun isValidStream(stream: Stream): Boolean = FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
-    /** Validate a SwapChain. @return true if valid. */
-    fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
-
-    /** Create a SwapChain from a native display surface. */
-    fun createSwapChain(surface: NativeSurface): SwapChain = createSwapChain(surface, 0L)
-    /** Create a SwapChain from a native display surface with flags. */
-    fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain {
+    /** Creates a SwapChain rendering into a native display surface. */
+    fun createSwapChain(surface: NativeSurface, flags: Long = 0L): SwapChain {
         val window = acquireWindow(surface)
-        return SwapChain(FilaEngine_createSwapChain(nativeHandle, window, flags), window)
+        return SwapChain(FilaEngine_createSwapChain_void_uint64_t(nativeHandle, window, flags), window)
     }
-    /** Create an offscreen SwapChain of specified dimensions. */
-    fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilaEngine_createSwapChainHeadless(nativeHandle, width, height, flags))
-    /** Destroy a SwapChain. */
-    fun destroySwapChain(swapChain: SwapChain) {
-        FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
+    /** Creates an offscreen SwapChain of the given size. */
+    fun createSwapChain(width: Int, height: Int, flags: Long = 0L): SwapChain =
+        SwapChain(FilaEngine_createSwapChain_uint32_t_uint32_t_uint64_t(nativeHandle, width, height, flags))
+    /** Creates a Renderer. */
+    fun createRenderer(): Renderer = Renderer(FilaEngine_createRenderer(nativeHandle)).setEngine(this)
+    /** Creates a View. */
+    fun createView(): View = View(FilaEngine_createView(nativeHandle))
+    /** Creates a Scene. */
+    fun createScene(): Scene = Scene(FilaEngine_createScene(nativeHandle))
+    /** Creates a Camera component on [entity]. */
+    fun createCamera(entity: Entity): Camera = Camera(FilaEngine_createCamera(nativeHandle, entity), entity)
+    /** The Camera component of [entity], or null if it has none. */
+    fun getCameraComponent(entity: Entity): Camera? =
+        FilaEngine_getCameraComponent(nativeHandle, entity).takeIf { it != NullPointer }?.let { Camera(it, entity) }
+    /** Destroys the Camera component of [entity]. */
+    fun destroyCameraComponent(entity: Entity) = FilaEngine_destroyCameraComponent(nativeHandle, entity)
+    /** Creates a Fence. */
+    fun createFence(): Fence = Fence(FilaEngine_createFence(nativeHandle), nativeHandle)
+
+    /** Destroys a BufferObject. */
+    fun destroy(bufferObject: BufferObject): Boolean =
+        FilaEngine_destroy_BufferObject(nativeHandle, bufferObject.nativeHandle).also { bufferObject.nativeHandle = NullPointer }
+    /** Destroys a VertexBuffer. */
+    fun destroy(vertexBuffer: VertexBuffer): Boolean =
+        FilaEngine_destroy_VertexBuffer(nativeHandle, vertexBuffer.nativeHandle).also { vertexBuffer.nativeHandle = NullPointer }
+    /** Destroys a Fence. */
+    fun destroy(fence: Fence): Boolean =
+        FilaEngine_destroy_Fence(nativeHandle, fence.nativeHandle).also { fence.nativeHandle = NullPointer }
+    /** Destroys an IndexBuffer. */
+    fun destroy(indexBuffer: IndexBuffer): Boolean =
+        FilaEngine_destroy_IndexBuffer(nativeHandle, indexBuffer.nativeHandle).also { indexBuffer.nativeHandle = NullPointer }
+    /** Destroys a SkinningBuffer. */
+    fun destroy(skinningBuffer: SkinningBuffer): Boolean =
+        FilaEngine_destroy_SkinningBuffer(nativeHandle, skinningBuffer.nativeHandle).also { skinningBuffer.nativeHandle = NullPointer }
+    /** Destroys a MorphTargetBuffer. */
+    fun destroy(morphTargetBuffer: MorphTargetBuffer): Boolean =
+        FilaEngine_destroy_MorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle).also { morphTargetBuffer.nativeHandle = NullPointer }
+    /** Destroys an IndirectLight. */
+    fun destroy(indirectLight: IndirectLight): Boolean =
+        FilaEngine_destroy_IndirectLight(nativeHandle, indirectLight.nativeHandle).also { indirectLight.nativeHandle = NullPointer }
+    /** Destroys a Material; its instances must be destroyed first. */
+    fun destroy(material: Material): Boolean = FilaEngine_destroy_Material(nativeHandle, material.nativeHandle)
+    /** Destroys a MaterialInstance. */
+    fun destroy(materialInstance: MaterialInstance): Boolean = FilaEngine_destroy_MaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    /** Destroys a Renderer. */
+    fun destroy(renderer: Renderer): Boolean =
+        FilaEngine_destroy_Renderer(nativeHandle, renderer.nativeHandle).also { renderer.nativeHandle = NullPointer }
+    /** Destroys a Scene. */
+    fun destroy(scene: Scene): Boolean = FilaEngine_destroy_Scene(nativeHandle, scene.nativeHandle).also { scene.nativeHandle = NullPointer }
+    /** Destroys a Skybox. */
+    fun destroy(skybox: Skybox): Boolean = FilaEngine_destroy_Skybox(nativeHandle, skybox.nativeHandle).also { skybox.nativeHandle = NullPointer }
+    /** Destroys a ColorGrading. */
+    fun destroy(colorGrading: ColorGrading): Boolean =
+        FilaEngine_destroy_ColorGrading(nativeHandle, colorGrading.nativeHandle).also { colorGrading.nativeHandle = NullPointer }
+    /** Destroys a SwapChain, and releases the native window it rendered into. */
+    fun destroy(swapChain: SwapChain): Boolean {
+        val destroyed = FilaEngine_destroy_SwapChain(nativeHandle, swapChain.nativeHandle)
         swapChain.nativeHandle = NullPointer
         swapChain.releaseCallbackStubs()
         releaseWindow(swapChain.window)
         swapChain.window = NullPointer
+        return destroyed
     }
+    /** Destroys a Stream. */
+    fun destroy(stream: Stream): Boolean = FilaEngine_destroy_Stream(nativeHandle, stream.nativeHandle).also { stream.nativeHandle = NullPointer }
+    /** Destroys a Texture. */
+    fun destroy(texture: Texture): Boolean = FilaEngine_destroy_Texture(nativeHandle, texture.nativeHandle)
+    /** Destroys a RenderTarget. */
+    fun destroy(renderTarget: RenderTarget): Boolean = FilaEngine_destroy_RenderTarget(nativeHandle, renderTarget.nativeHandle)
+    /** Destroys a View. */
+    fun destroy(view: View): Boolean = FilaEngine_destroy_View(nativeHandle, view.nativeHandle).also { view.nativeHandle = NullPointer }
+    /** Destroys every Filament component of [entity]; the entity itself is the EntityManager's. */
+    fun destroy(entity: Entity) = FilaEngine_destroy_Entity(nativeHandle, entity)
 
-    /** Create a View for rendering. */
-    fun createView(): View = View(FilaEngine_createView(nativeHandle))
-    /** Destroy a View. */
-    fun destroyView(view: View) {
-        FilaEngine_destroyView(nativeHandle, view.nativeHandle)
-        view.nativeHandle = NullPointer
-    }
+    /** Whether [bufferObject] is a live object of this Engine. */
+    fun isValid(bufferObject: BufferObject): Boolean = FilaEngine_isValid_BufferObject(nativeHandle, bufferObject.nativeHandle)
+    /** Whether [vertexBuffer] is a live object of this Engine. */
+    fun isValid(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValid_VertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    /** Whether [fence] is a live object of this Engine. */
+    fun isValid(fence: Fence): Boolean = FilaEngine_isValid_Fence(nativeHandle, fence.nativeHandle)
+    /** Whether [indexBuffer] is a live object of this Engine. */
+    fun isValid(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValid_IndexBuffer(nativeHandle, indexBuffer.nativeHandle)
+    /** Whether [skinningBuffer] is a live object of this Engine. */
+    fun isValid(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValid_SkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+    /** Whether [morphTargetBuffer] is a live object of this Engine. */
+    fun isValid(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValid_MorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
+    /** Whether [indirectLight] is a live object of this Engine. */
+    fun isValid(indirectLight: IndirectLight): Boolean = FilaEngine_isValid_IndirectLight(nativeHandle, indirectLight.nativeHandle)
+    /** Whether [material] is a live object of this Engine. */
+    fun isValid(material: Material): Boolean = FilaEngine_isValid_Material(nativeHandle, material.nativeHandle)
+    /** Whether [materialInstance] is a live instance of [material]. */
+    fun isValid(material: Material, materialInstance: MaterialInstance): Boolean =
+        FilaEngine_isValid_Material_MaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
+    /** Whether [materialInstance] is a live instance of any of this Engine's materials; slower than [isValid]. */
+    fun isValidExpensive(materialInstance: MaterialInstance): Boolean = FilaEngine_isValidExpensive(nativeHandle, materialInstance.nativeHandle)
+    /** Whether [renderer] is a live object of this Engine. */
+    fun isValid(renderer: Renderer): Boolean = FilaEngine_isValid_Renderer(nativeHandle, renderer.nativeHandle)
+    /** Whether [scene] is a live object of this Engine. */
+    fun isValid(scene: Scene): Boolean = FilaEngine_isValid_Scene(nativeHandle, scene.nativeHandle)
+    /** Whether [skybox] is a live object of this Engine. */
+    fun isValid(skybox: Skybox): Boolean = FilaEngine_isValid_Skybox(nativeHandle, skybox.nativeHandle)
+    /** Whether [colorGrading] is a live object of this Engine. */
+    fun isValid(colorGrading: ColorGrading): Boolean = FilaEngine_isValid_ColorGrading(nativeHandle, colorGrading.nativeHandle)
+    /** Whether [swapChain] is a live object of this Engine. */
+    fun isValid(swapChain: SwapChain): Boolean = FilaEngine_isValid_SwapChain(nativeHandle, swapChain.nativeHandle)
+    /** Whether [stream] is a live object of this Engine. */
+    fun isValid(stream: Stream): Boolean = FilaEngine_isValid_Stream(nativeHandle, stream.nativeHandle)
+    /** Whether [texture] is a live object of this Engine. */
+    fun isValid(texture: Texture): Boolean = FilaEngine_isValid_Texture(nativeHandle, texture.nativeHandle)
+    /** Whether [renderTarget] is a live object of this Engine. */
+    fun isValid(renderTarget: RenderTarget): Boolean = FilaEngine_isValid_RenderTarget(nativeHandle, renderTarget.nativeHandle)
+    /** Whether [view] is a live object of this Engine. */
+    fun isValid(view: View): Boolean = FilaEngine_isValid_View(nativeHandle, view.nativeHandle)
 
-    /** Create a Renderer associated with this Engine. */
-    fun createRenderer(): Renderer = Renderer(FilaEngine_createRenderer(nativeHandle)).setEngine(this)
-    /** Destroy a Renderer. */
-    fun destroyRenderer(renderer: Renderer) {
-        FilaEngine_destroyRenderer(nativeHandle, renderer.nativeHandle)
-        renderer.nativeHandle = NullPointer
-    }
+    // Live object counts, for debugging.
+    val bufferObjectCount: Int get() = FilaEngine_getBufferObjectCount(nativeHandle)
+    val viewCount: Int get() = FilaEngine_getViewCount(nativeHandle)
+    val sceneCount: Int get() = FilaEngine_getSceneCount(nativeHandle)
+    val swapChainCount: Int get() = FilaEngine_getSwapChainCount(nativeHandle)
+    val streamCount: Int get() = FilaEngine_getStreamCount(nativeHandle)
+    val indexBufferCount: Int get() = FilaEngine_getIndexBufferCount(nativeHandle)
+    val skinningBufferCount: Int get() = FilaEngine_getSkinningBufferCount(nativeHandle)
+    val morphTargetBufferCount: Int get() = FilaEngine_getMorphTargetBufferCount(nativeHandle)
+    val instanceBufferCount: Int get() = FilaEngine_getInstanceBufferCount(nativeHandle)
+    val vertexBufferCount: Int get() = FilaEngine_getVertexBufferCount(nativeHandle)
+    val indirectLightCount: Int get() = FilaEngine_getIndirectLightCount(nativeHandle)
+    val materialCount: Int get() = FilaEngine_getMaterialCount(nativeHandle)
+    val textureCount: Int get() = FilaEngine_getTextureCount(nativeHandle)
+    val skyboxeCount: Int get() = FilaEngine_getSkyboxeCount(nativeHandle)
+    val colorGradingCount: Int get() = FilaEngine_getColorGradingCount(nativeHandle)
+    val renderTargetCount: Int get() = FilaEngine_getRenderTargetCount(nativeHandle)
 
-    /** Create a Camera as a standalone component. */
-    fun createCamera(): Camera {
-        val handle = FilaEngine_createCameraAuto(nativeHandle)
-        val entity = FilaCamera_getEntity(handle)
-        return Camera(handle, entity)
-    }
-    /** Create a Camera attached to an entity. */
-    fun createCamera(entity: Entity): Camera = Camera(FilaEngine_createCamera(nativeHandle, entity), entity)
-    /** Get the Camera component attached to an entity, or null if not present. */
-    fun getCameraComponent(entity: Entity): Camera? {
-        val handle = FilaEngine_getCameraComponent(nativeHandle, entity)
-        return if (handle != NullPointer) Camera(handle, entity) else null
-    }
-    /** Destroy a Camera. */
-    fun destroyCamera(camera: Camera) {
-        FilaEngine_destroyCamera(nativeHandle, camera.nativeHandle)
-        camera.nativeHandle = NullPointer
-    }
-    /** Destroy the Camera component on an entity. */
-    fun destroyCameraComponent(entity: Entity) = FilaEngine_destroyCameraComponent(nativeHandle, entity)
-
-    /** Create a Scene for collecting renderable objects. */
-    fun createScene(): Scene = Scene(FilaEngine_createScene(nativeHandle))
-    /** Destroy a Scene. */
-    fun destroyScene(scene: Scene) {
-        FilaEngine_destroyScene(nativeHandle, scene.nativeHandle)
-        scene.nativeHandle = NullPointer
-    }
-
-    /** Create a Fence for GPU synchronization. @throws UnsupportedOperationException on JS — fences are unbound on web. */
-    fun createFence(): Fence = Fence(FilaEngine_createFence(nativeHandle), nativeHandle)
-    /** Destroy a Fence. */
-    fun destroyFence(fence: Fence) {
-        FilaEngine_destroyFence(nativeHandle, fence.nativeHandle)
-        fence.nativeHandle = NullPointer
-    }
-
-    /** Destroy an IndexBuffer. */
-    fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
-        FilaEngine_destroyIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
-        indexBuffer.nativeHandle = NullPointer
-    }
-    /** Destroy a VertexBuffer. */
-    fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
-        FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
-        vertexBuffer.nativeHandle = NullPointer
-    }
-    /** Destroy a SkinningBuffer. */
-    fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
-        FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
-        skinningBuffer.nativeHandle = NullPointer
-    }
-    /** Destroy a MorphTargetBuffer. */
-    fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
-        FilaEngine_destroyMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
-        morphTargetBuffer.nativeHandle = NullPointer
-    }
-    /** Destroy an IndirectLight. */
-    fun destroyIndirectLight(ibl: IndirectLight) {
-        FilaEngine_destroyIndirectLight(nativeHandle, ibl.nativeHandle)
-        ibl.nativeHandle = NullPointer
-    }
-    /** Destroy a Material. */
-    fun destroyMaterial(material: Material) {
-        FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
-    }
-    /** Destroy a MaterialInstance. */
-    fun destroyMaterialInstance(materialInstance: MaterialInstance) {
-        FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
-    }
-    /** Destroy a Skybox. */
-    fun destroySkybox(skybox: Skybox) {
-        FilaEngine_destroySkybox(nativeHandle, skybox.nativeHandle)
-        skybox.nativeHandle = NullPointer
-    }
-    /** Destroy ColorGrading. */
-    fun destroyColorGrading(colorGrading: ColorGrading) {
-        FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle)
-        colorGrading.nativeHandle = NullPointer
-    }
-    /** Destroy a Texture. */
-    fun destroyTexture(texture: Texture) {
-        FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
-    }
-    /** Destroy a RenderTarget. */
-    fun destroyRenderTarget(target: RenderTarget) {
-        FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle)
-    }
-    /** Destroy a Stream. */
-    fun destroyStream(stream: Stream) {
-        FilaEngine_destroyStream(nativeHandle, stream.nativeHandle)
-        stream.nativeHandle = NullPointer
-    }
-    /** Destroy an Entity. */
-    fun destroyEntity(entity: Entity) = FilaUtilsEntityManager_destroy_Entity(FilaEngine_getEntityManager(nativeHandle), entity)
-
-    /** Get the TransformManager for managing entity transforms. */
-    val transformManager: TransformManager get() = mTransformManager
-    /** Get the LightManager for managing light components. */
-    val lightManager: LightManager get() = mLightManager
-    /** Get the RenderableManager for managing renderable components. */
-    val renderableManager: RenderableManager get() = mRenderableManager
-    /** Get the EntityManager for creating and managing entities. */
-    val entityManager: EntityManager get() = mEntityManager
-
-    /** Block until all pending GPU work completes (potentially long wait). */
-    fun flushAndWait() { flushAndWait(1_000_000_000L) }
-    /** Block until all pending GPU work completes or timeout expires. @return true if successful. */
-    fun flushAndWait(timeout: Long): Boolean {
+    /** Blocks until all pending commands have been executed by the GPU. */
+    fun flushAndWait() {
         platform.makeCurrent()
         // Single-threaded wasm flushes synchronously and rejects a non-zero timeout.
-        return FilaEngine_flushAndWait(nativeHandle, if (singleThreaded) 0L else timeout)
+        if (singleThreaded) FilaEngine_flushAndWait_uint64_t(nativeHandle, 0L) else FilaEngine_flushAndWait(nativeHandle)
     }
-    /** Flush pending GPU commands to the driver (non-blocking). */
-    fun flush() { platform.makeCurrent(); FilaEngine_flush(nativeHandle) }
     /**
-     * Whether the Engine is in an unrecoverable failure state (e.g. the GPU device was lost).
-     * Once true, the Engine must be destroyed and recreated. @return true if such a failure occurred.
+     * Blocks until all pending commands have been executed by the GPU, or [timeout] nanoseconds pass.
+     *
+     * @return false on timeout.
      */
-    val hasUnrecoverableFailure: Boolean get() = FilaEngine_hasUnrecoverableFailure(nativeHandle)
+    fun flushAndWait(timeout: Long): Boolean {
+        platform.makeCurrent()
+        return FilaEngine_flushAndWait_uint64_t(nativeHandle, if (singleThreaded) 0L else timeout)
+    }
+    /** Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) without blocking. */
+    fun flush() { platform.makeCurrent(); FilaEngine_flush(nativeHandle) }
     // Filament's pause needs threads (setPaused panics on single-threaded wasm): tracked locally there.
     private var paused = false
-    /** Whether rendering is currently paused. Set to pause or resume rendering. */
+    /** Whether the render thread is paused. Set to pause or resume it. */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — Filament's pause needs threads, which the wasm build doesn't have, so it has no effect on rendering.")
     var isPaused: Boolean
         get() = if (singleThreaded) paused else FilaEngine_isPaused(nativeHandle)
         set(value) { if (singleThreaded) paused = value else FilaEngine_setPaused(nativeHandle, value) }
-    /** Deprecated no-op method. */
+    /** Runs the pending user callbacks now instead of later, e.g. once per frame after the vsync tick. */
+    fun pumpMessageQueues() = FilaEngine_pumpMessageQueues(nativeHandle)
+    /** Switches the command queue to unprotected mode, after a frame on a protected SwapChain. */
     fun unprotected() = FilaEngine_unprotected(nativeHandle)
-    /** Check if a feature flag exists. */
+    /** The default Material: 80% white, lit. Owned by the Engine. */
+    val defaultMaterial: Material get() = Material(FilaEngine_getDefaultMaterial(nativeHandle))
+    /** Runs the engine's pending work on this thread, for platforms without a render thread. */
+    fun execute() = FilaEngine_execute(nativeHandle)
+
+    /** The feature flags this Engine knows. */
+    fun getFeatureFlags(): List<FeatureFlag> {
+        val count = FilaEngine_getFeatureFlags(nativeHandle, NullPointer, 0)
+        val handles = List(count) { FilaEngineFeatureFlag_create() }
+        try {
+            interopScope { FilaEngine_getFeatureFlags(nativeHandle, toInterop(handles), count) }
+            return handles.map { f ->
+                val name = stringFromInterop(FilaEngineFeatureFlag_getName(f)) ?: ""
+                FeatureFlag(name, stringFromInterop(FilaEngineFeatureFlag_getDescription(f)) ?: "",
+                    getFeatureFlag(name) ?: false, FilaEngineFeatureFlag_getConstant(f))
+            }
+        } finally {
+            handles.forEach { FilaEngineFeatureFlag_destroy(it) }
+        }
+    }
+    /** Whether a feature flag named [name] exists. */
     fun hasFeatureFlag(name: String): Boolean = name.useCString { FilaEngine_hasFeatureFlag(nativeHandle, it) }
-    /** Set a feature flag value. @return true if successful. */
-    fun setFeatureFlag(name: String, value: Boolean): Boolean {
-        name.useCString { FilaEngine_setFeatureFlag(nativeHandle, it, value) }
-        return true
+    /** Sets a feature flag; constant flags can only be set on the [Builder]. @return false if it doesn't exist or is constant. */
+    fun setFeatureFlag(name: String, value: Boolean): Boolean = name.useCString { FilaEngine_setFeatureFlag(nativeHandle, it, value) }
+    /** A feature flag's value, or null if it doesn't exist. */
+    fun getFeatureFlag(name: String): Boolean? = interopScope {
+        val out = ByteArray(1)
+        val ptr = toInterop(out)
+        val present = FilaEngine_getFeatureFlag(nativeHandle, toInterop(name), ptr)
+        ptr.fromInterop(out)
+        if (present) out[0] != 0.toByte() else null
     }
-    /** Get a feature flag value. @return true if enabled. */
-    fun getFeatureFlag(name: String): Boolean = name.useCString { FilaEngine_getFeatureFlag(nativeHandle, it) }
 
-    /** Enable high-precision world-space translations for better numerical stability with large translations. */
-    fun enableAccurateTranslations() = FilaEngine_enableAccurateTranslations(nativeHandle)
-
-    /**
-     * Material compilation priority queue.
-     */
-    enum class CompilerPriorityQueue {
-        /** Compile immediately. */
-        CRITICAL,
-        /** Compile before LOW priority. */
-        HIGH,
-        /** Compile last. */
-        LOW
-    }
-    /**
-     * Feature state for conditional material compilation.
-     */
+    /** A tri-state for [compile]'s shadow-receiver and skinning variants. */
     enum class FeatureState {
         /** Feature is disabled. */
         FALSE,
         /** Feature is enabled. */
         TRUE,
-        /** Feature state is uncertain; material may compile both variants. */
+        /** Feature state is uncertain; both variants are compiled. */
         INDETERMINATE
     }
 
     /**
-     * Asynchronously compile a material variant for specific rendering features.
+     * Asynchronously compiles the variants of [material] needed to render it in [view], taking into account the
+     * view's features (lighting, fog, stereo, shadowing) and [shadowReceiver] and [skinning].
      *
-     * After issuing multiple compile() calls, call flush() to let the backend begin work.
-     * The callback is invoked on the main thread when compilation is complete.
-     *
-     * @param priority Compilation priority (CRITICAL, HIGH, or LOW).
-     * @param material Material to compile variants for.
-     * @param view View providing rendering context.
-     * @param shadowReceiver Whether the material receives shadows.
-     * @param skinning Whether the material uses skeletal animation.
-     * @param callback Optional callback invoked when compilation completes.
+     * Call [flush] after several calls so the backend starts right away. [callback] is always called, on the main
+     * thread, once the variants are compiled (or discarded, if the Engine is destroyed first).
      */
-    fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)? = null) {
-        val userData = if (callback != null) Callbacks.register(once = true) { _ -> callback() } else NullPointer
+    fun compile(
+        priority: Material.CompilerPriorityQueue,
+        material: Material,
+        view: View,
+        shadowReceiver: FeatureState,
+        skinning: FeatureState,
+        callback: ((Material) -> Unit)? = null,
+    ) {
+        val userData = if (callback != null) Callbacks.register(once = true) { _ -> callback(material) } else NullPointer
         FilaEngine_compile(
-            nativeHandle,
-            priority.ordinal,
-            material.nativeHandle,
-            view.nativeHandle,
-            shadowReceiver.ordinal,
-            skinning.ordinal,
-            if (callback != null) Callbacks.userOnly else NullPointer,
-            userData,
+            nativeHandle, priority.ordinal, material.nativeHandle, view.nativeHandle, shadowReceiver.ordinal, skinning.ordinal,
+            NullPointer, if (callback != null) Callbacks.argUser else NullPointer, userData,
         )
     }
 }
-
-@ExternalSymbolName("FilaEngineBuilder_backend")
-private external fun FilaEngineBuilder_backend(builder: NativePointer, backend: Int)
-
-@ExternalSymbolName("FilaEngineBuilder_build")
-private external fun FilaEngineBuilder_build(builder: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngineBuilder_colorGrading")
-private external fun FilaEngineBuilder_colorGrading(builder: NativePointer, colorGrading: NativePointer)
-
-@ExternalSymbolName("FilaEngineBuilder_config")
-private external fun FilaEngineBuilder_config(builder: NativePointer, commandBufferSizeMB: Int, perRenderPassArenaSizeMB: Int, driverHandleArenaSizeMB: Int, minCommandBufferSizeMB: Int, perFrameCommandsSizeMB: Int, jobSystemThreadCount: Int, disableParallelShaderCompile: Boolean, stereoscopicType: Int, stereoscopicEyeCount: Int, resourceAllocatorCacheSizeMB: Int, resourceAllocatorCacheMaxAge: Int, disableHandleUseAfterFreeCheck: Boolean, preferredShaderLanguage: Int, forceGLES2Context: Boolean, assertNativeWindowIsValid: Boolean, gpuContextPriority: Int, sharedUboInitialSizeInBytes: Int, enableMultipleDirectionalLights: Boolean)
-
-@ExternalSymbolName("FilaEngineBuilder_create")
-private external fun FilaEngineBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaEngineBuilder_destroy")
-private external fun FilaEngineBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaEngineBuilder_feature")
-private external fun FilaEngineBuilder_feature(builder: NativePointer, name: NativePointer, value: Boolean)
-
-@ExternalSymbolName("FilaEngineBuilder_featureLevel")
-private external fun FilaEngineBuilder_featureLevel(builder: NativePointer, featureLevel: Int)
-
-@ExternalSymbolName("FilaEngineBuilder_paused")
-private external fun FilaEngineBuilder_paused(builder: NativePointer, paused: Boolean)
-
-@ExternalSymbolName("FilaEngineBuilder_sharedContext")
-private external fun FilaEngineBuilder_sharedContext(builder: NativePointer, sharedContext: NativePointer)
-
-@ExternalSymbolName("FilaEngine_compile")
-private external fun FilaEngine_compile(engine: NativePointer, priority: Int, material: NativePointer, view: NativePointer, shadowReceiver: Int, skinning: Int, callback: NativePointer, userData: NativePointer)
-
-@ExternalSymbolName("FilaEngine_createCamera")
-private external fun FilaEngine_createCamera(engine: NativePointer, entity: Int): NativePointer
-
-@ExternalSymbolName("FilaEngine_createCameraAuto")
-private external fun FilaEngine_createCameraAuto(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_createFence")
-private external fun FilaEngine_createFence(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_createRenderer")
-private external fun FilaEngine_createRenderer(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_createScene")
-private external fun FilaEngine_createScene(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_createSwapChain")
-private external fun FilaEngine_createSwapChain(engine: NativePointer, nativeWindow: NativePointer, flags: Long): NativePointer
-
-@ExternalSymbolName("FilaEngine_createSwapChainHeadless")
-private external fun FilaEngine_createSwapChainHeadless(engine: NativePointer, width: Int, height: Int, flags: Long): NativePointer
-
-@ExternalSymbolName("FilaEngine_createView")
-private external fun FilaEngine_createView(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_destroy")
-private external fun FilaEngine_destroy(engine: NativePointer)
-
-@ExternalSymbolName("FilaEngine_destroyCamera")
-private external fun FilaEngine_destroyCamera(engine: NativePointer, camera: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyCameraComponent")
-private external fun FilaEngine_destroyCameraComponent(engine: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaEngine_destroyColorGrading")
-private external fun FilaEngine_destroyColorGrading(engine: NativePointer, colorGrading: NativePointer): Boolean
-
-
-@ExternalSymbolName("FilaEngine_destroyIndexBuffer")
-private external fun FilaEngine_destroyIndexBuffer(engine: NativePointer, indexBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyIndirectLight")
-private external fun FilaEngine_destroyIndirectLight(engine: NativePointer, indirectLight: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyMaterial")
-private external fun FilaEngine_destroyMaterial(engine: NativePointer, material: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyMaterialInstance")
-private external fun FilaEngine_destroyMaterialInstance(engine: NativePointer, materialInstance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyMorphTargetBuffer")
-private external fun FilaEngine_destroyMorphTargetBuffer(engine: NativePointer, morphTargetBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyRenderTarget")
-private external fun FilaEngine_destroyRenderTarget(engine: NativePointer, target: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyRenderer")
-private external fun FilaEngine_destroyRenderer(engine: NativePointer, renderer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyScene")
-private external fun FilaEngine_destroyScene(engine: NativePointer, scene: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroySkinningBuffer")
-private external fun FilaEngine_destroySkinningBuffer(engine: NativePointer, skinningBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroySkybox")
-private external fun FilaEngine_destroySkybox(engine: NativePointer, skybox: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyStream")
-private external fun FilaEngine_destroyStream(engine: NativePointer, stream: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroySwapChain")
-private external fun FilaEngine_destroySwapChain(engine: NativePointer, swapChain: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyTexture")
-private external fun FilaEngine_destroyTexture(engine: NativePointer, texture: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyVertexBuffer")
-private external fun FilaEngine_destroyVertexBuffer(engine: NativePointer, vertexBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_destroyView")
-private external fun FilaEngine_destroyView(engine: NativePointer, view: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_enableAccurateTranslations")
-private external fun FilaEngine_enableAccurateTranslations(engine: NativePointer)
-
-@ExternalSymbolName("FilaEngine_flush")
-private external fun FilaEngine_flush(engine: NativePointer)
-
-@ExternalSymbolName("FilaEngine_flushAndWait")
-private external fun FilaEngine_flushAndWait(engine: NativePointer, timeout: Long): Boolean
-
-@ExternalSymbolName("FilaEngine_getActiveFeatureLevel")
-private external fun FilaEngine_getActiveFeatureLevel(engine: NativePointer): Int
-
-@ExternalSymbolName("FilaEngine_getBackend")
-private external fun FilaEngine_getBackend(engine: NativePointer): Int
-
-@ExternalSymbolName("FilaEngine_getCameraComponent")
-private external fun FilaEngine_getCameraComponent(engine: NativePointer, entity: Int): NativePointer
-
-@ExternalSymbolName("FilaEngine_getEntityManager")
-private external fun FilaEngine_getEntityManager(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_getFeatureFlag")
-private external fun FilaEngine_getFeatureFlag(engine: NativePointer, name: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_getLightManager")
-private external fun FilaEngine_getLightManager(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_getMaxStereoscopicEyes")
-private external fun FilaEngine_getMaxStereoscopicEyes(engine: NativePointer): Int
-
-@ExternalSymbolName("FilaEngine_getRenderableManager")
-private external fun FilaEngine_getRenderableManager(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_getSteadyClockTimeNano")
-private external fun FilaEngine_getSteadyClockTimeNano(out: NativePointer)
-
-@ExternalSymbolName("FilaEngine_getSupportedFeatureLevel")
-private external fun FilaEngine_getSupportedFeatureLevel(engine: NativePointer): Int
-
-@ExternalSymbolName("FilaEngine_getTransformManager")
-private external fun FilaEngine_getTransformManager(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaEngine_hasFeatureFlag")
-private external fun FilaEngine_hasFeatureFlag(engine: NativePointer, name: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_hasUnrecoverableFailure")
-private external fun FilaEngine_hasUnrecoverableFailure(engine: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isAutomaticInstancingEnabled")
-private external fun FilaEngine_isAutomaticInstancingEnabled(engine: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isPaused")
-private external fun FilaEngine_isPaused(engine: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidColorGrading")
-private external fun FilaEngine_isValidColorGrading(engine: NativePointer, colorGrading: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidExpensiveMaterialInstance")
-private external fun FilaEngine_isValidExpensiveMaterialInstance(engine: NativePointer, materialInstance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidFence")
-private external fun FilaEngine_isValidFence(engine: NativePointer, fence: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidIndexBuffer")
-private external fun FilaEngine_isValidIndexBuffer(engine: NativePointer, indexBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidIndirectLight")
-private external fun FilaEngine_isValidIndirectLight(engine: NativePointer, indirectLight: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidMaterial")
-private external fun FilaEngine_isValidMaterial(engine: NativePointer, material: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidMaterialInstance")
-private external fun FilaEngine_isValidMaterialInstance(engine: NativePointer, material: NativePointer, materialInstance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidMorphTargetBuffer")
-private external fun FilaEngine_isValidMorphTargetBuffer(engine: NativePointer, morphTargetBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidRenderTarget")
-private external fun FilaEngine_isValidRenderTarget(engine: NativePointer, target: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidRenderer")
-private external fun FilaEngine_isValidRenderer(engine: NativePointer, renderer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidScene")
-private external fun FilaEngine_isValidScene(engine: NativePointer, scene: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidSkinningBuffer")
-private external fun FilaEngine_isValidSkinningBuffer(engine: NativePointer, skinningBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidSkybox")
-private external fun FilaEngine_isValidSkybox(engine: NativePointer, skybox: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidStream")
-private external fun FilaEngine_isValidStream(engine: NativePointer, stream: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidSwapChain")
-private external fun FilaEngine_isValidSwapChain(engine: NativePointer, swapChain: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidTexture")
-private external fun FilaEngine_isValidTexture(engine: NativePointer, texture: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidVertexBuffer")
-private external fun FilaEngine_isValidVertexBuffer(engine: NativePointer, vertexBuffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValidView")
-private external fun FilaEngine_isValidView(engine: NativePointer, view: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_setActiveFeatureLevel")
-private external fun FilaEngine_setActiveFeatureLevel(engine: NativePointer, featureLevel: Int): Int
-
-@ExternalSymbolName("FilaEngine_setAutomaticInstancingEnabled")
-private external fun FilaEngine_setAutomaticInstancingEnabled(engine: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaEngine_setFeatureFlag")
-private external fun FilaEngine_setFeatureFlag(engine: NativePointer, name: NativePointer, value: Boolean)
-
-@ExternalSymbolName("FilaEngine_setPaused")
-private external fun FilaEngine_setPaused(engine: NativePointer, paused: Boolean)
-
-@ExternalSymbolName("FilaEngine_unprotected")
-private external fun FilaEngine_unprotected(engine: NativePointer)
-
-
-@ExternalSymbolName("FilaEngine_destroyFence")
-internal external fun FilaEngine_destroyFence(engine: NativePointer, fence: NativePointer): Boolean

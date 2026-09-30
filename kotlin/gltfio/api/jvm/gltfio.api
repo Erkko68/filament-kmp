@@ -57,7 +57,7 @@ public final class io/github/erkko68/filament/gltfio/FilamentAsset {
 	public final fun getAreFilamentComponentsDetached ()Z
 	public final fun getAssetInstanceCount ()I
 	public final fun getAssetInstances ()Ljava/util/List;
-	public final fun getBoundingBox ()Lio/github/erkko68/filament/Box;
+	public final fun getBoundingBox ()Lio/github/erkko68/filament/Aabb;
 	public final fun getCameraEntities ()[I
 	public final fun getCameraEntityCount ()I
 	public final fun getEngine ()Lio/github/erkko68/filament/Engine;
@@ -96,7 +96,7 @@ public final class io/github/erkko68/filament/gltfio/FilamentInstance {
 	public final fun detachSkin (II)V
 	public final fun getAnimator ()Lio/github/erkko68/filament/gltfio/Animator;
 	public final fun getAsset ()Lio/github/erkko68/filament/gltfio/FilamentAsset;
-	public final fun getBoundingBox ()Lio/github/erkko68/filament/Box;
+	public final fun getBoundingBox ()Lio/github/erkko68/filament/Aabb;
 	public final fun getEntities ()[I
 	public final fun getEntityCount ()I
 	public final fun getInverseBindMatricesAt (I)[F

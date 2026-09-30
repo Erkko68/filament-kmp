@@ -49,7 +49,7 @@ open class TierBSceneFixture {
         // aborts on its driver thread there, which a try/catch can't recover.
         if (!TestEnv.gpuBackendAvailable) return
         val e = try {
-            Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid }
+            Engine.create(Engine.Backend.DEFAULT)?.takeIf { it.isValid }
         } catch (t: Throwable) {
             null
         } ?: return
@@ -64,11 +64,11 @@ open class TierBSceneFixture {
             gltfAssets.forEachIndexed { i, a -> gltfLoaders.getOrNull(i)?.destroyAsset(a) }
             gltfLoaders.forEach { AssetLoader.destroy(it) }
             gltfProviders.forEach { it.destroy() }
-            materialInstances.forEach { e.destroyMaterialInstance(it) }
-            materials.forEach { e.destroyMaterial(it) }
-            scene?.let { e.destroyScene(it) }
+            materialInstances.forEach { e.destroy(it) }
+            materials.forEach { e.destroy(it) }
+            scene?.let { e.destroy(it) }
             e.flushAndWait()
-            e.destroy()
+            Engine.destroy(e)
         }
         gltfAssets.clear()
         gltfLoaders.clear()

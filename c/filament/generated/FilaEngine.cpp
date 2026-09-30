@@ -265,7 +265,11 @@ FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const
 }
 
 void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCallback callback, void* callbackUser) {
+#if UTILS_HAS_THREADING
     fila::cpp(self)->build(fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
+#else
+    fila::unavailable("FilaEngineBuilder_build_Invocable");
+#endif
 }
 
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self) {
@@ -281,11 +285,19 @@ FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void*
 }
 
 void FilaEngine_createAsync(FilaEngineCreateCallback callback, void* user, FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config) {
+#if UTILS_HAS_THREADING
     filament::Engine::createAsync(callback, user, static_cast<filament::backend::Backend>(backend), fila::cpp(platform), sharedContext, fila::cpp(config));
+#else
+    fila::unavailable("FilaEngine_createAsync");
+#endif
 }
 
 FilaEngine* FilaEngine_getEngine(void* token) {
+#if UTILS_HAS_THREADING
     return fila::c(filament::Engine::getEngine(token));
+#else
+    fila::unavailable("FilaEngine_getEngine");
+#endif
 }
 
 void FilaEngine_destroy_EnginePtr(FilaEngine** engine) {

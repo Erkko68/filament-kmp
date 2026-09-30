@@ -16,7 +16,7 @@ class IndexBufferTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidIndexBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(100, buffer.indexCount)
 
@@ -29,7 +29,7 @@ class IndexBufferTest : FilamentTestFixture() {
             callbackFired = true
         }
 
-        engine.destroyIndexBuffer(buffer)
+        engine.destroy(buffer)
     }
 
     @Test
@@ -46,6 +46,6 @@ class IndexBufferTest : FilamentTestFixture() {
         engine.flushAndWait()
         assertEquals(8, fired)
 
-        engine.destroyIndexBuffer(buffer)
+        engine.destroy(buffer)
     }
 }

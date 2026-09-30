@@ -26,7 +26,7 @@ class ViewTest : FilamentTestFixture() {
         assertEquals(2.5, view.gridSize)
         // effectiveGridSize is only computed during rendering — just exercise the getter.
         assertTrue(view.effectiveGridSize >= 0.0)
-        engine.destroyView(view)
+        engine.destroy(view)
     }
 
     @Test
@@ -236,7 +236,7 @@ class ViewTest : FilamentTestFixture() {
     fun testViewLifecycleAndProperties() {
         val view = engine.createView()
         assertNotNull(view)
-        assertTrue(engine.isValidView(view))
+        assertTrue(engine.isValid(view))
 
         view.name = "TestView"
         assertEquals("TestView", view.name)
@@ -367,7 +367,7 @@ class ViewTest : FilamentTestFixture() {
         // Cleanup
         engine.destroyCameraComponent(entity)
         EntityManager.get().destroy(entity)
-        engine.destroyScene(scene)
-        engine.destroyView(view)
+        engine.destroy(scene)
+        engine.destroy(view)
     }
 }

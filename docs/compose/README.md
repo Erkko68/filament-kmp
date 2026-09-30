@@ -58,7 +58,7 @@ If you create raw Filament objects through `FilamentEffect` (inside `rememberFil
 rememberFilamentScene {
     FilamentEffect {
         val mat = Material.Builder().payload(bytes, bytes.size).build(engine)
-        onDispose { engine.destroyMaterial(mat) }
+        onDispose { engine.destroy(mat) }
     }
 }
 ```

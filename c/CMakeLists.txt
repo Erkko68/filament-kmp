@@ -23,32 +23,12 @@ include(cmake/Platform.cmake)
 include(cmake/FilamentLibraries.cmake)
 
 set(FILA_MODULES filament filamat filament-utils gltfio)
-# Modules on the generated API (<module>/generated + <module>/manual); the rest still build <module>/cpp.
-set(FILA_GENERATED_MODULES filamat filament-utils gltfio)
-foreach(module IN LISTS FILA_MODULES)
-    if (NOT module IN_LIST FILA_GENERATED_MODULES)
-        include_directories(${module}/c)
-    endif()
-endforeach()
-# filament's hand-written C includes its conversion helpers from filament/cpp. The JNI forwarders include
-# headers by their path under c/.
-include_directories(filament/cpp ${CMAKE_CURRENT_SOURCE_DIR} ${FILAMENT_INCLUDE_DIR})
+# The JNI forwarders include headers by their path under c/.
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${FILAMENT_INCLUDE_DIR})
 
+# Each module is its generated API (<module>/generated) plus the hand-written rest (<module>/manual).
 foreach(module IN LISTS FILA_MODULES)
-    if (module IN_LIST FILA_GENERATED_MODULES)
-        file(GLOB sources CONFIGURE_DEPENDS ${module}/generated/*.cpp ${module}/manual/*.cpp)
-    else()
-        file(GLOB sources CONFIGURE_DEPENDS ${module}/cpp/*.cpp)
-    endif()
-    # ponytail: filament moves record by record; drop this once it joins FILA_GENERATED_MODULES.
-    if (module STREQUAL "filament")
-        file(STRINGS filament/migrated.txt records)
-        foreach(record IN LISTS records)
-            list(APPEND sources filament/generated/${record}.cpp)
-        endforeach()
-        file(GLOB manual CONFIGURE_DEPENDS filament/manual/*.cpp)
-        list(APPEND sources ${manual})
-    endif()
+    file(GLOB sources CONFIGURE_DEPENDS ${module}/generated/*.cpp ${module}/manual/*.cpp)
     add_library(fila-${module} OBJECT ${sources})
 endforeach()
 
