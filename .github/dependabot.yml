@@ -1,11 +1,17 @@
 version: 2
 updates:
-  # Root Gradle build (shares gradle/libs.versions.toml; covers build-logic).
+  # Root + samples in one entry: samples includeBuild("../"), so AGP/Kotlin/Compose must move
+  # together — a group spanning both directories lands as one PR instead of a split that breaks.
   - package-ecosystem: "gradle"
-    directory: "/"
+    directories:
+      - "/"
+      - "/samples"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    ignore:
+      # Our own artifacts (samples' standalone fallback); substituted by includeBuild, bumped at release.
+      - dependency-name: "io.github.erkko68.filament*"
     groups:
       kotlin:
         patterns:
@@ -14,6 +20,8 @@ updates:
       compose:
         patterns:
           - "org.jetbrains.compose*"
+          # Tracks composeMultiplatform (see androidx-composeUi in libs.versions.toml).
+          - "androidx.compose*"
       android:
         patterns:
           - "com.android*"
@@ -22,17 +30,6 @@ updates:
       # group, so the named groups above claim theirs and this sweeps the rest into
       # one PR instead of one-per-dependency.
       gradle:
-        patterns:
-          - "*"
-
-  # Samples is a separate Gradle build with its own settings.gradle.kts.
-  - package-ecosystem: "gradle"
-    directory: "/samples"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    groups:
-      samples:
         patterns:
           - "*"
 
