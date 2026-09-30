@@ -8,7 +8,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "io.github.erkko68.filament.testsupport"
         compileSdk = 37
         minSdk = 24

@@ -21,6 +21,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 > **Desktop needs only JDK 17** — the runtime moved from `io.github.erkko68.filament-ffm` to `io.github.erkko68.filament:filament-jni-*`; update any runtime you depend on directly.
 
 ### Changed
+- **Compose Multiplatform 1.12.1, Kotlin 2.4.20** (`filament-compose`): consumers resolve Compose 1.12.1 transitively; skiko stays 0.150.1.
 - **One C API on every platform, generated from Filament's C++ headers**: Android, iOS, desktop and web call the same `Fila*` functions, so the API and its behavior match everywhere — see [The Generated C API](docs/internals/c-api.md).
 - **The Kotlin API follows Filament's C++ API** (`filament`, `gltfio`, `filament-utils`, `filamat`, **source-breaking**): C++'s names, owners, overloads and defaults — see the [migration guide](docs/migration/from-0.6.0.md#3-api-renames).
 - **`destroy(x)` / `isValid(x)` overloads replace `destroyX` / `isValidX`** on `Engine` (`filament`, **source-breaking**); `destroy(entity)` destroys only its components, as in C++.

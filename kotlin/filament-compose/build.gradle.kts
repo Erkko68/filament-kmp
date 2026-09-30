@@ -61,8 +61,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
         }
         commonTest.dependencies {
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-            implementation(compose.uiTest)
+            implementation(libs.compose.uiTest)
         }
         // Android instrumented tests: runComposeUiTest needs a host Activity, supplied by the
         // ui-test-manifest artifact (it merges a debug AndroidManifest with a test ComponentActivity).

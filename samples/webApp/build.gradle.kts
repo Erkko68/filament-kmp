@@ -30,7 +30,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        val webMain by getting {
+        getByName("webMain") {
             dependencies {
                 implementation(project(":shared"))
             }
