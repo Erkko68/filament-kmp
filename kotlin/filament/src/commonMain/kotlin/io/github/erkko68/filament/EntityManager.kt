@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -17,7 +18,8 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
     val nativeObject: NativePointer get() = nativeHandle
 
     companion object {
-        private val instance = Filament.init().let { EntityManager(FilaEntityManager_get()) }
+        private val instance = Filament.init().let { EntityManager(FilaUtilsEntityManager_get()) }
+
         /**
          * Get the global EntityManager instance.
          *
@@ -26,119 +28,62 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
          * @return The global EntityManager instance (thread-safe).
          */
         fun get(): EntityManager = instance
+
+        /** The maximum number of entities that can exist at the same time. */
+        val maxEntityCount: Int get() = FilaUtilsEntityManager_getMaxEntityCount()
+
+        /** Returns the index of [e], for use as an array index. */
+        fun getIndex(e: Entity): Int = FilaUtilsEntityManager_getIndex(e)
     }
+
+    /** The number of entities currently alive. */
+    val entityCount: Int get() = FilaUtilsEntityManager_getEntityCount(nativeHandle)
 
     /**
      * Create a new Entity.
      *
-     * Returns a new unique entity ID. If the entity cannot be allocated (max entity
-     * count reached), the result will be a null entity.
-     *
      * @return A new Entity ID, or NULL_ENTITY if allocation fails.
      */
-    fun create(): Entity = FilaEntityManager_create(nativeHandle)
-    
-    /**
-     * Create multiple entities.
-     *
-     * Creates n new entities in a batch. This is more efficient than calling
-     * create() multiple times.
-     *
-     * @param n The number of entities to create.
-     * @return An array of n newly created Entity IDs.
-     */
-    fun create(n: Int): IntArray {
-        val result = IntArray(n)
-        result.usePinned { 
-            FilaEntityManager_createArray(nativeHandle, n, it)
-        }
-        return result
-    }
-    
-    /**
-     * Create entities into an existing array.
-     *
-     * Creates entities and stores them in the provided array. The array size
-     * determines how many entities are created.
-     *
-     * @param entities The array to populate with newly created Entity IDs.
-     * @return The same array that was passed in, now populated with new entities.
-     */
-    fun create(entities: IntArray): IntArray {
-        entities.usePinned { 
-            FilaEntityManager_createArray(nativeHandle, entities.size, it)
-        }
-        return entities
-    }
+    fun create(): Entity = FilaUtilsEntityManager_create(nativeHandle)
 
     /**
-     * Destroy an entity.
+     * Creates `entities.size` entities into [entities]. Thread safe.
      *
-     * Releases the entity ID and marks it as destroyed. The entity ID becomes
-     * invalid and should not be used after destruction.
-     *
-     * @param entity The entity to destroy.
+     * @param entities The array to populate with newly created Entity IDs.
      */
-    fun destroy(entity: Entity) = FilaEntityManager_destroy(nativeHandle, entity)
-    
+    fun create(entities: IntArray) = entities.usePinned { FilaUtilsEntityManager_create_size_t_Entity(nativeHandle, entities.size, it) }
+
     /**
-     * Destroy multiple entities.
+     * Destroy an entity. The entity ID becomes invalid and should not be used after destruction.
      *
-     * Destroys a batch of entities. This is more efficient than calling
-     * destroy() multiple times.
+     * @param e The entity to destroy.
+     */
+    fun destroy(e: Entity) = FilaUtilsEntityManager_destroy_Entity(nativeHandle, e)
+
+    /**
+     * Destroys every entity in [entities].
      *
      * @param entities Array of entities to destroy.
      */
-    fun destroy(entities: IntArray) {
-        entities.usePinned { 
-            FilaEntityManager_destroyArray(nativeHandle, entities.size, it)
-        }
-    }
+    fun destroy(entities: IntArray) = entities.usePinned { FilaUtilsEntityManager_destroy_size_t_Entity(nativeHandle, entities.size, it) }
 
     /**
      * Check whether an entity is alive (not destroyed).
      *
-     * Returns whether the given entity has been destroyed (false) or is still
-     * valid (true).
-     *
-     * @param entity The entity to check.
+     * @param e The entity to check.
      * @return true if the entity is alive, false if it has been destroyed.
      */
-    fun isAlive(entity: Entity): Boolean = FilaEntityManager_isAlive(nativeHandle, entity)
+    fun isAlive(e: Entity): Boolean = FilaUtilsEntityManager_isAlive(nativeHandle, e)
 
-    /**
-     * Advance the entity manager epoch, invalidating all currently active entity IDs.
-     */
-    fun advanceEpoch() {
-        FilaEntityManager_advanceEpoch(nativeHandle)
-    }
+    /** Flushes pending entity lifecycle notifications to registered listeners. */
+    fun flushNotifications() = FilaUtilsEntityManager_flushNotifications(nativeHandle)
 
-    /**
-     * Get the maximum number of entities that can be created.
-     */
-    val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle)
+    /** Seals the current epoch and starts a new one, recording later destructions there; recycles safe epochs. */
+    fun advanceEpoch() = FilaUtilsEntityManager_advanceEpoch(nativeHandle)
+
+    /** Recycles the indices of epochs that are safe to reclaim; [advanceEpoch] already does this, so it is for tests. */
+    fun reclaimSafeEpochs() = FilaUtilsEntityManager_reclaimSafeEpochs(nativeHandle)
+
+    /** The current epoch's ID. */
+    val latestEpochID: Long get() = LongArray(1).also { out -> out.usePinned { FilaUtilsEntityManager_getLatestEpochID(nativeHandle, it) } }[0]
 }
-
-@ExternalSymbolName("FilaEntityManager_advanceEpoch")
-private external fun FilaEntityManager_advanceEpoch(em: NativePointer)
-
-@ExternalSymbolName("FilaEntityManager_create")
-private external fun FilaEntityManager_create(em: NativePointer): Int
-
-@ExternalSymbolName("FilaEntityManager_createArray")
-private external fun FilaEntityManager_createArray(em: NativePointer, n: Int, outEntities: NativePointer)
-
-@ExternalSymbolName("FilaEntityManager_destroy")
-internal external fun FilaEntityManager_destroy(em: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaEntityManager_destroyArray")
-private external fun FilaEntityManager_destroyArray(em: NativePointer, n: Int, entities: NativePointer)
-
-@ExternalSymbolName("FilaEntityManager_get")
-private external fun FilaEntityManager_get(): NativePointer
-
-@ExternalSymbolName("FilaEntityManager_getMaxEntityCount")
-private external fun FilaEntityManager_getMaxEntityCount(em: NativePointer): Int
-
-@ExternalSymbolName("FilaEntityManager_isAlive")
-private external fun FilaEntityManager_isAlive(em: NativePointer, entity: Int): Boolean

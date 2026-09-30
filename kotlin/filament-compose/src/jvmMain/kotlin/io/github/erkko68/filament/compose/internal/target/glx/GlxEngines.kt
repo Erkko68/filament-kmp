@@ -23,11 +23,9 @@ internal object GlxEngines {
         val bridge = skiko.withCurrent { GlxHelper.nCreateBridgeContext() }?.takeIf { it != 0L }
             ?: error("couldn't create a GLX context in skiko's share group")
         try {
-            return Engine.Builder()
-                .backend(Engine.Backend.OPENGL)
-                .sharedContext(bridge)
-                .build()
-                .also { shared[it] = skiko.glxContext }
+            return checkNotNull(Engine.Builder().backend(Engine.Backend.OPENGL).sharedContext(bridge).build()) {
+                "Filament couldn't create an OpenGL engine sharing skiko's context"
+            }.also { shared[it] = skiko.glxContext }
         } finally {
             // Filament only reads the shared context while its driver starts, which build() waits for.
             skiko.withCurrent { GlxHelper.nDestroyBridgeContext(bridge) }

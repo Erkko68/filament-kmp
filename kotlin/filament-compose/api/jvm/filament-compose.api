@@ -1,7 +1,7 @@
 public abstract interface class io/github/erkko68/filament/compose/CameraController {
-	public abstract fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public abstract fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public abstract fun resetToHome ()V
-	public abstract fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public abstract fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public abstract fun setViewport (II)V
 }
 
@@ -78,9 +78,9 @@ public final class io/github/erkko68/filament/compose/FilamentViewStateKt {
 public final class io/github/erkko68/filament/compose/FlightCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
 	public final fun adjustSpeed (F)V
-	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public fun resetToHome ()V
-	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public fun setViewport (II)V
 	public final fun update (F)V
 }
@@ -117,17 +117,17 @@ public final class io/github/erkko68/filament/compose/InteractionKt {
 
 public final class io/github/erkko68/filament/compose/MapCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public fun resetToHome ()V
-	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public fun setViewport (II)V
 }
 
 public final class io/github/erkko68/filament/compose/OrbitCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public fun resetToHome ()V
-	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public fun setViewport (II)V
 }
 
@@ -142,18 +142,18 @@ public final class io/github/erkko68/filament/compose/SceneClockKt {
 public final class io/github/erkko68/filament/compose/scene/AmbientOcclusion {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FFFLio/github/erkko68/filament/View$Quality;)V
-	public synthetic fun <init> (FFFLio/github/erkko68/filament/View$Quality;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFFLio/github/erkko68/filament/QualityLevel;)V
+	public synthetic fun <init> (FFFLio/github/erkko68/filament/QualityLevel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
 	public final fun component3 ()F
-	public final fun component4 ()Lio/github/erkko68/filament/View$Quality;
-	public final fun copy (FFFLio/github/erkko68/filament/View$Quality;)Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;FFFLio/github/erkko68/filament/View$Quality;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;
+	public final fun component4 ()Lio/github/erkko68/filament/QualityLevel;
+	public final fun copy (FFFLio/github/erkko68/filament/QualityLevel;)Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;FFFLio/github/erkko68/filament/QualityLevel;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBias ()F
 	public final fun getIntensity ()F
-	public final fun getQuality ()Lio/github/erkko68/filament/View$Quality;
+	public final fun getQuality ()Lio/github/erkko68/filament/QualityLevel;
 	public final fun getRadius ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -237,18 +237,18 @@ public final class io/github/erkko68/filament/compose/scene/AntiAliasing {
 public final class io/github/erkko68/filament/compose/scene/Bloom {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FZLio/github/erkko68/filament/View$Quality;II)V
-	public synthetic fun <init> (FZLio/github/erkko68/filament/View$Quality;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FZLio/github/erkko68/filament/QualityLevel;II)V
+	public synthetic fun <init> (FZLio/github/erkko68/filament/QualityLevel;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()Z
-	public final fun component3 ()Lio/github/erkko68/filament/View$Quality;
+	public final fun component3 ()Lio/github/erkko68/filament/QualityLevel;
 	public final fun component4 ()I
 	public final fun component5 ()I
-	public final fun copy (FZLio/github/erkko68/filament/View$Quality;II)Lio/github/erkko68/filament/compose/scene/Bloom;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Bloom;FZLio/github/erkko68/filament/View$Quality;IIILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Bloom;
+	public final fun copy (FZLio/github/erkko68/filament/QualityLevel;II)Lio/github/erkko68/filament/compose/scene/Bloom;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Bloom;FZLio/github/erkko68/filament/QualityLevel;IIILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Bloom;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getLevels ()I
-	public final fun getQuality ()Lio/github/erkko68/filament/View$Quality;
+	public final fun getQuality ()Lio/github/erkko68/filament/QualityLevel;
 	public final fun getResolution ()I
 	public final fun getStrength ()F
 	public final fun getThresholdEnabled ()Z
@@ -315,17 +315,17 @@ public final class io/github/erkko68/filament/compose/scene/ColorGrade {
 public final class io/github/erkko68/filament/compose/scene/DepthOfField {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;Z)V
-	public synthetic fun <init> (FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;Z)V
+	public synthetic fun <init> (FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
-	public final fun component3 ()Lio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;
+	public final fun component3 ()Lio/github/erkko68/filament/DepthOfFieldOptions$Filter;
 	public final fun component4 ()Z
-	public final fun copy (FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;Z)Lio/github/erkko68/filament/compose/scene/DepthOfField;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/DepthOfField;FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;ZILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/DepthOfField;
+	public final fun copy (FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;Z)Lio/github/erkko68/filament/compose/scene/DepthOfField;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/DepthOfField;FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;ZILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/DepthOfField;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCocScale ()F
-	public final fun getFilter ()Lio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;
+	public final fun getFilter ()Lio/github/erkko68/filament/DepthOfFieldOptions$Filter;
 	public final fun getMaxApertureDiameter ()F
 	public final fun getNativeResolution ()Z
 	public fun hashCode ()I
@@ -372,13 +372,13 @@ public final class io/github/erkko68/filament/compose/scene/Direction$Companion 
 public final class io/github/erkko68/filament/compose/scene/Dithering {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/github/erkko68/filament/View$Dithering;)V
-	public synthetic fun <init> (Lio/github/erkko68/filament/View$Dithering;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/github/erkko68/filament/View$Dithering;
-	public final fun copy (Lio/github/erkko68/filament/View$Dithering;)Lio/github/erkko68/filament/compose/scene/Dithering;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/View$Dithering;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Dithering;
+	public fun <init> (Lio/github/erkko68/filament/Dithering;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/Dithering;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/erkko68/filament/Dithering;
+	public final fun copy (Lio/github/erkko68/filament/Dithering;)Lio/github/erkko68/filament/compose/scene/Dithering;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/Dithering;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Dithering;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMode ()Lio/github/erkko68/filament/View$Dithering;
+	public final fun getMode ()Lio/github/erkko68/filament/Dithering;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -386,20 +386,20 @@ public final class io/github/erkko68/filament/compose/scene/Dithering {
 public final class io/github/erkko68/filament/compose/scene/DynamicResolution {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FFFLio/github/erkko68/filament/View$Quality;Z)V
-	public synthetic fun <init> (FFFLio/github/erkko68/filament/View$Quality;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFFLio/github/erkko68/filament/QualityLevel;Z)V
+	public synthetic fun <init> (FFFLio/github/erkko68/filament/QualityLevel;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
 	public final fun component3 ()F
-	public final fun component4 ()Lio/github/erkko68/filament/View$Quality;
+	public final fun component4 ()Lio/github/erkko68/filament/QualityLevel;
 	public final fun component5 ()Z
-	public final fun copy (FFFLio/github/erkko68/filament/View$Quality;Z)Lio/github/erkko68/filament/compose/scene/DynamicResolution;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/DynamicResolution;FFFLio/github/erkko68/filament/View$Quality;ZILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/DynamicResolution;
+	public final fun copy (FFFLio/github/erkko68/filament/QualityLevel;Z)Lio/github/erkko68/filament/compose/scene/DynamicResolution;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/DynamicResolution;FFFLio/github/erkko68/filament/QualityLevel;ZILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/DynamicResolution;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getHomogeneousScaling ()Z
 	public final fun getMaxScale ()F
 	public final fun getMinScale ()F
-	public final fun getQuality ()Lio/github/erkko68/filament/View$Quality;
+	public final fun getQuality ()Lio/github/erkko68/filament/QualityLevel;
 	public final fun getSharpness ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -752,13 +752,13 @@ public final class io/github/erkko68/filament/compose/scene/Projection$Perspecti
 public final class io/github/erkko68/filament/compose/scene/RenderQuality {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/github/erkko68/filament/View$Quality;)V
-	public synthetic fun <init> (Lio/github/erkko68/filament/View$Quality;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/github/erkko68/filament/View$Quality;
-	public final fun copy (Lio/github/erkko68/filament/View$Quality;)Lio/github/erkko68/filament/compose/scene/RenderQuality;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/RenderQuality;Lio/github/erkko68/filament/View$Quality;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/RenderQuality;
+	public fun <init> (Lio/github/erkko68/filament/QualityLevel;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/QualityLevel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/erkko68/filament/QualityLevel;
+	public final fun copy (Lio/github/erkko68/filament/QualityLevel;)Lio/github/erkko68/filament/compose/scene/RenderQuality;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/RenderQuality;Lio/github/erkko68/filament/QualityLevel;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/RenderQuality;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getHdrColorBuffer ()Lio/github/erkko68/filament/View$Quality;
+	public final fun getHdrColorBuffer ()Lio/github/erkko68/filament/QualityLevel;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

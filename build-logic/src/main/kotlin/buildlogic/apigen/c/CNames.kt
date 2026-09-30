@@ -1,0 +1,20 @@
+package buildlogic.apigen.c
+
+/** C names for C++ declarations: `Fila` + the PascalCase path, minus the namespaces every name would repeat. */
+internal object CNames {
+    private val DROPPED = setOf("filament", "backend", "math")
+    private val WORD_BREAK = Regex("([a-z0-9])([A-Z])")
+
+    /** Template arguments aren't part of the name: C binds one instantiation of a template. */
+    fun type(qualified: String) = "Fila" + qualified.split("::").filter { it !in DROPPED }
+        .joinToString("") { it.substringBefore('<').replaceFirstChar(Char::uppercaseChar) }
+
+    /** `operator()` is `invoke`, as Kotlin calls it. */
+    fun function(owner: String, method: String, suffix: String = "") =
+        "${type(owner)}_${if (method == "operator()") "invoke" else method}" + if (suffix.isEmpty()) "" else "_$suffix"
+
+    fun enumConstant(enum: String, constant: String) = "${upperSnake(type(enum))}_${upperSnake(constant)}"
+
+    private fun upperSnake(name: String) = WORD_BREAK.replace(name, "$1_$2").uppercase()
+}
+

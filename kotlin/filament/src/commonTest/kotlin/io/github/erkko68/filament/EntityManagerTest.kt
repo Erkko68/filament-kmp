@@ -17,14 +17,12 @@ class EntityManagerTest : FilamentTestFixture() {
         assertTrue(entity != 0)
         assertTrue(em.isAlive(entity))
 
-        val entities = em.create(5)
-        assertEquals(5, entities.size)
+        val entities = IntArray(5).also { em.create(it) }
         for (e in entities) {
             assertTrue(em.isAlive(e))
         }
-
-        val customEntities = em.create(intArrayOf(10, 20))
-        assertEquals(2, customEntities.size)
+        assertTrue(em.entityCount >= 6)
+        assertTrue(EntityManager.getIndex(entities[0]) > 0) // index 0 is the null entity
 
         em.destroy(entity)
         assertFalse(em.isAlive(entity))
@@ -34,7 +32,10 @@ class EntityManagerTest : FilamentTestFixture() {
             assertFalse(em.isAlive(e))
         }
 
-        assertTrue(em.maxEntityCount > 0)
+        assertTrue(EntityManager.maxEntityCount > 0)
+        val epoch = em.latestEpochID
         em.advanceEpoch()
+        assertEquals(epoch + 1, em.latestEpochID)
+        em.flushNotifications()
     }
 }

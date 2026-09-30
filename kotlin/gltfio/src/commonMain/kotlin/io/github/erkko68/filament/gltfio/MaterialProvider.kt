@@ -2,123 +2,103 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.Material
+import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.VertexBuffer
+import io.github.erkko68.filament.gltfio.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
- * MaterialProvider supplies materials to glTF assets during loading.
+ * MaterialProvider supplies materials to glTF assets during loading: the ubershader provider picks
+ * from a pre-compiled set of materials, see [createUbershaderProvider].
  *
- * Implementations determine how glTF materials are rendered:
- * - UbershaderProvider: Uses pre-compiled ubershader materials (recommended)
- * - Custom providers: Can implement custom material mapping strategies
- *
- * @see UbershaderProvider
  * @see AssetLoader
  */
-interface MaterialProvider : AutoCloseable {
+class MaterialProvider @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) : AutoCloseable {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Creates or fetches a compiled Filament material, then creates an instance from it.
      *
      * @param config Properties of the glTF material; may be mutated to trim unsupported features.
-     * @param uvmap Output: mapping from glTF texcoord sets to Filament UV sets, written by the provider.
-     * @param label Optional debug name for the material instance.
-     * @param extras Optional glTF extras as stringified JSON (not part of the cache key).
+     * @param uvmap Mapping from glTF texcoord sets to Filament UV sets, written by the provider.
+     * @param label Debug name for the material instance.
+     * @param extras glTF extras as stringified JSON (not part of the cache key).
      */
-    fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String? = null, extras: String? = null): io.github.erkko68.filament.MaterialInstance?
+    fun createMaterialInstance(config: MaterialKey, uvmap: UvMap, label: String? = "material", extras: String? = null): MaterialInstance? =
+        config.useNative { k ->
+            uvmap.useNative { u, n ->
+                label.useCString { l -> extras.useCString { e -> FilaGltfioMaterialProvider_createMaterialInstance(nativeHandle, k, u, n, l, e) } }
+            }
+        }.takeIf { it != NullPointer }?.let { MaterialInstance(it) }
 
     /** Creates or fetches the compiled Filament material corresponding to [config], without instancing it. */
-    fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String? = null): io.github.erkko68.filament.Material?
+    fun getMaterial(config: MaterialKey, uvmap: UvMap, label: String? = "material"): Material? =
+        config.useNative { k ->
+            uvmap.useNative { u, n -> label.useCString { l -> FilaGltfioMaterialProvider_getMaterial(nativeHandle, k, u, n, l) } }
+        }.takeIf { it != NullPointer }?.let { Material(it) }
 
-    /** Gets the provider's cache of compiled materials (weak references). */
-    val materials: List<io.github.erkko68.filament.Material>
+    /** The provider's cache of compiled materials (weak references). */
+    val materials: List<Material>
+        get() = readPointers(FilaGltfioMaterialProvider_getMaterials(nativeHandle), materialsCount).map { Material(it) }
+
+    val materialsCount: Int get() = FilaGltfioMaterialProvider_getMaterialsCount(nativeHandle)
 
     /**
-     * Returns true if the given vertex attribute must be present. Some providers (e.g.
-     * ubershader) require dummy attribute values when the glTF model does not provide them.
+     * Destroys all cached materials. NOT called by [destroy], which lets clients take ownership of
+     * the cache if desired.
      */
-    fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
+    fun destroyMaterials() = FilaGltfioMaterialProvider_destroyMaterials(nativeHandle)
 
     /**
-     * Destroys all cached materials. NOT called automatically on [destroy], which lets clients
-     * take ownership of the cache if desired.
+     * Returns true if the given vertex attribute must be present. Some providers (e.g. ubershader)
+     * require dummy attribute values when the glTF model does not provide them.
      */
-    fun destroyMaterials()
+    fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilaGltfioMaterialProvider_needsDummyData(nativeHandle, attrib.value)
 
-    /** Frees the provider itself (cached materials survive unless [destroyMaterials] was called). */
-    fun destroy()
-
-    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
-    override fun close()
-
-    /** The native provider, for interop with code calling the Fila* C API directly. */
-    @InternalFilamentApi
-    val nativeObject: NativePointer
-}
-
-/**
- * UbershaderProvider uses pre-compiled ubershader materials.
- *
- * This is the recommended MaterialProvider for most use cases. It uses a small set of
- * pre-compiled, flexible materials that cover most glTF 2.0 features, avoiding the overhead
- * of JIT compilation while maintaining broad compatibility.
- *
- * @see MaterialProvider
- */
-class UbershaderProvider(engine: Engine) : MaterialProvider {
-    private var nativeHandle: NativePointer = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, NullPointer, 0)
-
-    @InternalFilamentApi
-    override val nativeObject: NativePointer get() = nativeHandle
-
-    override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? =
-        withKey(config, uvmap) { key, uv ->
-            label.useCString { l -> extras.useCString { e -> FilaMaterialProvider_createMaterialInstance(nativeHandle, key, uv, l, e) } }
-        }.takeIf { it != NullPointer }?.let { io.github.erkko68.filament.MaterialInstance(it) }
-
-    override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material? =
-        withKey(config, uvmap) { key, uv -> label.useCString { l -> FilaMaterialProvider_getMaterial(nativeHandle, key, uv, l) } }
-            .takeIf { it != NullPointer }?.let { io.github.erkko68.filament.Material(it) }
-
-    override val materials: List<io.github.erkko68.filament.Material>
-        get() = List(FilaMaterialProvider_getMaterialsCount(nativeHandle)) { io.github.erkko68.filament.Material(FilaMaterialProvider_getMaterialAt(nativeHandle, it)) }
-
-    override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilaMaterialProvider_needsDummyData(nativeHandle, attrib.ordinal)
-
-    override fun destroyMaterials() = FilaMaterialProvider_destroyMaterials(nativeHandle)
-
-    override fun destroy() {
-        FilaMaterialProvider_destroy(nativeHandle)
+    /** Frees the provider itself; cached materials survive unless [destroyMaterials] was called. */
+    fun destroy() {
+        FilaGltfioMaterialProvider_destroy(nativeHandle)
         nativeHandle = NullPointer
     }
 
+    /** Same as [destroy]; lets this be used with `use { }`. */
     override fun close() = destroy()
 }
 
-private inline fun <R> withKey(config: MaterialKey, uvmap: IntArray, block: (key: NativePointer, uvmap: NativePointer) -> R): R {
-    val uv = ByteArray(8) { uvmap.getOrElse(it) { 0 }.toByte() }
-    return config.toInts().usePinned { k -> uv.usePinned { u -> block(k, u) } }
+/**
+ * Decodes the textures [ResourceLoader] hands it for the MIME types it's registered under with
+ * [ResourceLoader.addTextureProvider]. Destroy it after the loaders using it.
+ */
+class TextureProvider @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) : AutoCloseable {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
+    fun destroy() {
+        FilaGltfioTextureProvider_destroy(nativeHandle)
+        nativeHandle = NullPointer
+    }
+
+    /** Same as [destroy]; lets this be used with `use { }`. */
+    override fun close() = destroy()
 }
 
-@ExternalSymbolName("FilaMaterialProvider_createUbershaderProvider")
-private external fun FilaMaterialProvider_createUbershaderProvider(engine: NativePointer, archive: NativePointer, archiveByteCount: Int): NativePointer
+/** A provider over gltfio's default pre-compiled ubershader materials. */
+fun createUbershaderProvider(engine: Engine): MaterialProvider =
+    MaterialProvider(FilaGltfio_createUbershaderProvider(engine.nativeObject, FilaGltfio_getUberarchiveData(), FilaGltfio_getUberarchiveSize()))
 
-@ExternalSymbolName("FilaMaterialProvider_createMaterialInstance")
-private external fun FilaMaterialProvider_createMaterialInstance(provider: NativePointer, key: NativePointer, uvmap: NativePointer, label: NativePointer, extras: NativePointer): NativePointer
+/** A provider decoding PNG and JPEG with stb_image; register it for `image/png` and `image/jpeg`. */
+fun createStbProvider(engine: Engine): TextureProvider = TextureProvider(FilaGltfio_createStbProvider(engine.nativeObject))
 
-@ExternalSymbolName("FilaMaterialProvider_getMaterial")
-private external fun FilaMaterialProvider_getMaterial(provider: NativePointer, key: NativePointer, uvmap: NativePointer, label: NativePointer): NativePointer
+/** A provider transcoding KTX2 (Basis Universal); register it for `image/ktx2`. */
+fun createKtx2Provider(engine: Engine): TextureProvider = TextureProvider(FilaGltfio_createKtx2Provider(engine.nativeObject))
 
-@ExternalSymbolName("FilaMaterialProvider_getMaterialsCount")
-private external fun FilaMaterialProvider_getMaterialsCount(provider: NativePointer): Int
+/** A provider decoding WebP, or null where this build has no WebP support ([isWebpSupported]); register it for `image/webp`. */
+fun createWebpProvider(engine: Engine): TextureProvider? =
+    FilaGltfio_createWebpProvider(engine.nativeObject).takeIf { it != NullPointer }?.let { TextureProvider(it) }
 
-@ExternalSymbolName("FilaMaterialProvider_getMaterialAt")
-private external fun FilaMaterialProvider_getMaterialAt(provider: NativePointer, index: Int): NativePointer
-
-@ExternalSymbolName("FilaMaterialProvider_needsDummyData")
-private external fun FilaMaterialProvider_needsDummyData(provider: NativePointer, attrib: Int): Boolean
-
-@ExternalSymbolName("FilaMaterialProvider_destroyMaterials")
-private external fun FilaMaterialProvider_destroyMaterials(provider: NativePointer)
-
-@ExternalSymbolName("FilaMaterialProvider_destroy")
-private external fun FilaMaterialProvider_destroy(provider: NativePointer)
+/** Whether this build of gltfio can decode WebP textures. */
+fun isWebpSupported(): Boolean = FilaGltfio_isWebpSupported()

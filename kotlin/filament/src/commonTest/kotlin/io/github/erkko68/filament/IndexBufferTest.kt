@@ -12,11 +12,11 @@ class IndexBufferTest : FilamentTestFixture() {
     fun testIndexBufferLifecycle() {
         val buffer = IndexBuffer.Builder()
             .indexCount(100)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidIndexBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(100, buffer.indexCount)
 
@@ -29,7 +29,7 @@ class IndexBufferTest : FilamentTestFixture() {
             callbackFired = true
         }
 
-        engine.destroyIndexBuffer(buffer)
+        engine.destroy(buffer)
     }
 
     @Test
@@ -37,7 +37,7 @@ class IndexBufferTest : FilamentTestFixture() {
     fun uploadCallbacksFireOnceConsumed() {
         val buffer = IndexBuffer.Builder()
             .indexCount(64)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
         val data = ByteArray(128)
 
@@ -46,6 +46,6 @@ class IndexBufferTest : FilamentTestFixture() {
         engine.flushAndWait()
         assertEquals(8, fired)
 
-        engine.destroyIndexBuffer(buffer)
+        engine.destroy(buffer)
     }
 }

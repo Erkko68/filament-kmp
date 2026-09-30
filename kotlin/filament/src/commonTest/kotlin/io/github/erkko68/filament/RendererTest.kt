@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.testutils.createTestSurface
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -17,12 +18,12 @@ class RendererTest : FilamentTestFixture() {
         assertEquals(60f, di.refreshRate)
 
         val fro = Renderer.FrameRateOptions().apply {
-            interval = 1f
+            interval = 1
             headRoomRatio = 0.05f
             scaleRate = 0.5f
             history = 8
         }
-        assertEquals(1f, fro.interval)
+        assertEquals(1, fro.interval)
         assertEquals(0.05f, fro.headRoomRatio)
         assertEquals(0.5f, fro.scaleRate)
         assertEquals(8, fro.history)
@@ -42,21 +43,26 @@ class RendererTest : FilamentTestFixture() {
     fun testRendererLifecycleAndMethods() {
         val renderer = engine.createRenderer()
         assertNotNull(renderer)
-        assertTrue(engine.isValidRenderer(renderer))
+        assertTrue(engine.isValid(renderer))
         assertEquals(engine, renderer.engine)
 
         // Set options
         val di = Renderer.DisplayInfo().apply { refreshRate = 120f }
-        renderer.displayInfo = di
-        assertEquals(120f, renderer.displayInfo.refreshRate)
+        renderer.setDisplayInfo(di)
+        renderer.setFrameRateOptions(Renderer.FrameRateOptions().apply { interval = 2 })
 
-        val fro = Renderer.FrameRateOptions().apply { interval = 2f }
-        renderer.frameRateOptions = fro
-        assertEquals(2f, renderer.frameRateOptions.interval)
+        renderer.clearOptions = Renderer.ClearOptions().apply {
+            clearColor = doubleArrayOf(0.1, 0.2, 0.3, 0.4); clearStencil = 7; clear = false; discard = false
+        }
+        renderer.clearOptions.run {
+            assertContentEquals(doubleArrayOf(0.1, 0.2, 0.3, 0.4), clearColor)
+            assertEquals(7, clearStencil)
+            assertFalse(clear)
+            assertFalse(discard)
+        }
 
-        val co = Renderer.ClearOptions().apply { clear = false }
-        renderer.clearOptions = co
-        assertFalse(renderer.clearOptions.clear)
+        assertTrue(renderer.maxFrameHistorySize > 0)
+        assertTrue(renderer.getFrameInfoHistory(renderer.maxFrameHistorySize).size <= renderer.maxFrameHistorySize)
 
         // Timing
         renderer.setPresentationTime(1000000L)
@@ -84,7 +90,7 @@ class RendererTest : FilamentTestFixture() {
         assertTrue(renderer.userTime >= 0.0)
 
         // Cleanup
-        engine.destroySwapChain(swap)
-        engine.destroyRenderer(renderer)
+        engine.destroy(swap)
+        engine.destroy(renderer)
     }
 }

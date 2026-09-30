@@ -40,7 +40,7 @@ internal class MetalOffscreenTarget private constructor(
             .sampler(Texture.Sampler.SAMPLER_2D)
             .format(Texture.InternalFormat.RGBA8)
             .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
-            .importTexture(texturePtr)
+            .import(texturePtr)
             .build(engine)
         val depth = Texture.Builder()
             .width(width).height(height)
@@ -101,11 +101,11 @@ internal class MetalOffscreenTarget private constructor(
     override fun close() {
         engine.flushAndWait()
         swapChain.setFrameCompletedCallback(null)
-        engine.destroySwapChain(swapChain)
+        engine.destroy(swapChain)
         slots.forEach {
-            engine.destroyRenderTarget(it.target)
-            engine.destroyTexture(it.color)
-            engine.destroyTexture(it.depth)
+            engine.destroy(it.target)
+            engine.destroy(it.color)
+            engine.destroy(it.depth)
         }
     }
 

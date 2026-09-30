@@ -14,7 +14,11 @@ import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
+import io.github.erkko68.filament.gltfio.ResourceConfiguration
 import io.github.erkko68.filament.gltfio.ResourceLoader
+import io.github.erkko68.filament.gltfio.TextureProvider
+import io.github.erkko68.filament.gltfio.createKtx2Provider
+import io.github.erkko68.filament.gltfio.createStbProvider
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -54,12 +58,17 @@ class GltfAsset internal constructor(
     /** The loader uploading this asset's resources, until the load completes or is abandoned. */
     internal var resourceLoader: ResourceLoader? = null
 
+    /** Texture providers [resourceLoader] decodes with; destroyed after it. */
+    internal var textureProviders: List<TextureProvider> = emptyList()
+
     /** Cancels an unfinished load and destroys its loader; a no-op once released. */
     internal fun releaseResourceLoader() {
         val loader = resourceLoader ?: return
         resourceLoader = null
         if (!isReady) loader.asyncCancelLoad()
         loader.destroy()
+        textureProviders.forEach { it.destroy() }
+        textureProviders = emptyList()
     }
 }
 
@@ -102,7 +111,13 @@ internal fun rememberGltfAsset(
     }
 
     LaunchedEffect(gltfAsset) {
-        val resourceLoader = ResourceLoader(engine, true).also { gltfAsset.resourceLoader = it }
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true))
+        gltfAsset.resourceLoader = resourceLoader
+        gltfAsset.textureProviders = listOf(createStbProvider(engine), createKtx2Provider(engine)).also { (stb, ktx2) ->
+            resourceLoader.addTextureProvider("image/png", stb)
+            resourceLoader.addTextureProvider("image/jpeg", stb)
+            resourceLoader.addTextureProvider("image/ktx2", ktx2)
+        }
         resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
         while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
             resourceLoader.asyncUpdateLoad()

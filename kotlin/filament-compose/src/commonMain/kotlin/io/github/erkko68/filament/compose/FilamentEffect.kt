@@ -26,7 +26,7 @@ import io.github.erkko68.filament.Scene
  *         scene.addEntity(entity)
  *         onFrame { frame -> /* drive a material parameter, transform, etc. */ }
  *         onDispose {
- *             scene.removeEntity(entity)
+ *             scene.remove(entity)
  *             engine.entityManager.destroy(entity)
  *         }
  *     }

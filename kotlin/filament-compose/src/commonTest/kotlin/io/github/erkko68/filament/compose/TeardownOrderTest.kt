@@ -182,9 +182,9 @@ class TeardownOrderTest {
         waitForIdle()
 
         val m = assertNotNull(material, "the pass should have composed")
-        assertDestroyed("abandoned instance leaked") { engine.isValidExpensiveMaterialInstance(assertNotNull(instance)) }
-        assertDestroyed("abandoned material leaked") { engine.isValidMaterial(m) }
-        assertDestroyed("abandoned scene leaked") { engine.isValidScene(assertNotNull(scene).scene) }
+        assertDestroyed("abandoned instance leaked") { engine.isValidExpensive(assertNotNull(instance)) }
+        assertDestroyed("abandoned material leaked") { engine.isValid(m) }
+        assertDestroyed("abandoned scene leaked") { engine.isValid(assertNotNull(scene).scene) }
     }
 
     // ── Parents the caller owns ─────────────────────────────────────────────────────────────────
@@ -194,21 +194,21 @@ class TeardownOrderTest {
         var material: Material? = null
         setContent {
             // The documented FilamentEffect pattern: the caller builds and destroys the material.
-            val m = remember { Material.Builder().payload(StandardMaterial.Lit.payload()).build(engine) }
+            val m = remember { StandardMaterial.Lit.build(engine) }
             material = m
-            DisposableEffect(m) { onDispose { engine.destroyMaterial(m) } }
+            DisposableEffect(m) { onDispose { engine.destroy(m) } }
             rememberFilamentScene(engine) { Cube(material = rememberMaterialInstance(m)) }
         }
         setContent {}
-        assertDestroyed("the caller's material") { engine.isValidMaterial(assertNotNull(material)) }
+        assertDestroyed("the caller's material") { engine.isValid(assertNotNull(material)) }
     }
 
     @Test
     fun aCallerOwnedEngineIsDestroyedByItsOwnerAfterOurObjects() = teardownTest { setContent ->
         var engine: Engine? = null
         setContent {
-            val e = remember { Filament.init(); Engine.create(Engine.Backend.DEFAULT) }.also { engine = it }
-            DisposableEffect(e) { onDispose { e.destroy() } }
+            val e = remember { Filament.init(); checkNotNull(Engine.create(Engine.Backend.DEFAULT)) }.also { engine = it }
+            DisposableEffect(e) { onDispose { Engine.destroy(e) } }
             rememberFilamentScene(e) {
                 DirectionalLight()
                 Cube(material = rememberColorMaterialInstance(red))
@@ -232,8 +232,8 @@ class TeardownOrderTest {
         }
         useRed = false
         frames(2)
-        assertDestroyed("the dropped instance") { engine.isValidExpensiveMaterialInstance(assertNotNull(redInstance)) }
-        assertTrue(engine.isValidExpensiveMaterialInstance(assertNotNull(blueInstance)), "the new one stays")
+        assertDestroyed("the dropped instance") { engine.isValidExpensive(assertNotNull(redInstance)) }
+        assertTrue(engine.isValidExpensive(assertNotNull(blueInstance)), "the new one stays")
         setContent {}
     }
 
@@ -250,9 +250,9 @@ class TeardownOrderTest {
         }
         type = StandardMaterial.Unlit
         frames(2)
-        assertDestroyed("the old instance") { engine.isValidExpensiveMaterialInstance(instances.first()) }
-        assertDestroyed("the old material") { engine.isValidMaterial(materials.first()) }
-        assertTrue(engine.isValidMaterial(materials.last()), "the new material is live")
+        assertDestroyed("the old instance") { engine.isValidExpensive(instances.first()) }
+        assertDestroyed("the old material") { engine.isValid(materials.first()) }
+        assertTrue(engine.isValid(materials.last()), "the new material is live")
         setContent {}
     }
 
@@ -270,8 +270,8 @@ class TeardownOrderTest {
         frames(2)
         val e = assertNotNull(engine)
         assertEquals(2, textures.size)
-        assertDestroyed("the old colour texture") { e.isValidTexture(textures.first()) }
-        assertTrue(e.isValidTexture(textures.last()))
+        assertDestroyed("the old colour texture") { e.isValid(textures.first()) }
+        assertTrue(e.isValid(textures.last()))
         setContent {}
         assertFalse(e.isValid)
     }

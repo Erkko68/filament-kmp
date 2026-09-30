@@ -7,48 +7,36 @@ internal repository restructuring (prebuilt pipeline, vendored web externals, CI
 API-surface enforcement) are done, and the focus shifts to tracking upstream and hardening.
 
 - **Upstream tracking** — each Filament feature release (1.73 → 1.74 → …) is picked up as a
-  minor release following [docs/upgrading-filament.md](docs/upgrading-filament.md);
+  minor release following [docs/internals/upgrading-filament.md](docs/internals/upgrading-filament.md);
   upstream point releases and wrapper fixes ship as patches. Minor releases are the ongoing
   channel — see [README → Versioning & stability](README.md#versioning--stability).
 - **Path to `1.0.0`** — a major bump is reserved for maturity and very large changes: a
   stabilized public API and the known issue backlog worked down. It is not tied to any
   upstream Filament version. Until then, minor releases may still adjust public API (always
   listed in the [changelog](CHANGELOG.md)).
-- **Known gaps** — per-platform binding gaps are tracked via `@PlatformGap` and the coverage
-  table in [Platform Notes](docs/platform-notes.md); web-specific limits now come only from
-  WebGL and single-threaded wasm, since every platform calls our own C API.
+- **Known gaps** — per-platform differences are marked with `@PlatformGap` and listed in
+  [Platform Notes](docs/guide/platform-notes.md#api-coverage); since every platform calls the same C
+  API, the only ones left come from WebGL and single-threaded wasm.
 
-## A C API generated from Filament's headers
+## The generated C API
 
-> **In progress** on `feat/c-api-generator`, not merged yet: `c/` on `main` is still hand-written.
+**Done** (next release): every platform calls one `Fila*` C API generated from Filament's public C++
+headers, and the Kotlin API follows C++ (names, owners, defaults). Android no longer uses upstream's
+Java bindings, web no longer uses embind, and a Filament upgrade is a regenerate plus a reviewed diff.
+How it works: [The Generated C API](docs/internals/c-api.md).
 
-Every platform calls the same C wrapper (`c/`): JVM and Android over JNI, iOS through Kotlin/Native,
-web as wasm. That wrapper will be **generated from Filament's public C++ headers**, so the Kotlin API
-tracks C++ (names, owners, defaults) instead of drifting the way hand-written bindings do.
+What's next for it:
 
-```
-c/api-headers.txt ─► clang JSON AST ─► C++ API model ─► generateCApi ─► c/<module>/generated (Fila* C + C++ forwarders)
-                                                                   └─► generateKotlinExternals ─► <pkg>.capi externals
-                                                                                                  └─► generateBindings ─► JNI forwarders, wasm tables
-```
-
-- **Scope is declared, not inferred.** `c/api-headers.txt` lists each module's headers plus a skip
-  list (debug hooks, engine internals), and every skipped member is noted in the generated header.
-  An entry that names nothing fails the build, so the list can't go stale.
-- **One mapping per C++ shape.** Classes become opaque handles; value structs are handles with
-  field getters/setters seeded from the C++ defaults; strings, sequences (`Slice`,
-  `FixedCapacityVector`, `std::array`), `std::optional`, buffer uploads and callbacks each have one C
-  shape; templates are instantiated from a table. Overloads get type-based suffixes.
-- **Hand-written code is the exception.** What has no mechanical mapping (callbacks that take C++
-  types, pointers the C side can't own) goes in `c/<module>/manual`, and the generated header names
-  the C++ signature it stands in for.
-- **Upgrading Filament is a regenerate.** A new release means regenerating, reviewing the diff and
-  adapting the Kotlin layer; `./gradlew apiGaps` reports any C++ API the C layer doesn't reach.
-
-Upstream is moving the same way for its own bindings:
-[google/filament#10410](https://github.com/google/filament/pull/10410) annotates the headers and
-[#10426](https://github.com/google/filament/pull/10426) generates the Android Java from them. We
-don't depend on it, since Android runs on our C API too, but both read the same headers.
+- **Surface native panics as Kotlin exceptions.** A Filament precondition failure aborts the
+  process today. Catching `utils::Panic` in the generated C wrappers and rethrowing on the Kotlin side
+  would make misuse debuggable, starting with the desktop and Android JNI paths.
+- **Shrink the hand-written remainder.** The few `c/<module>/manual` functions are callbacks that
+  take C++ types and arrays C++ fills; each one the generator learns is one less to maintain.
+- **Track upstream's header annotations.**
+  [google/filament#10410](https://github.com/google/filament/pull/10410) annotates the headers and
+  [#10426](https://github.com/google/filament/pull/10426) generates the Android Java from them
+  (1.77.2). Where upstream's annotations say what is API, the skip list in `c/api-headers.txt` can
+  follow them instead of being maintained by hand.
 
 ## Compose Desktop: GPU-to-GPU frame sharing
 

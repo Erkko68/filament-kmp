@@ -68,7 +68,7 @@ internal class GlxOffscreenTarget private constructor(
                 .sampler(Texture.Sampler.SAMPLER_2D)
                 .format(Texture.InternalFormat.RGBA8)
                 .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE or Texture.Usage.BLIT_SRC)
-                .importTexture(texture.toLong())
+                .import(texture.toLong())
                 .build(engine)
             val depth = Texture.Builder()
                 .width(width).height(height)
@@ -137,11 +137,11 @@ internal class GlxOffscreenTarget private constructor(
 
     override fun close() {
         engine.flushAndWait()
-        engine.destroySwapChain(swapChain)
+        engine.destroy(swapChain)
         slots.forEach {
-            engine.destroyRenderTarget(it.target)
-            engine.destroyTexture(it.color)
-            engine.destroyTexture(it.depth)
+            engine.destroy(it.target)
+            engine.destroy(it.color)
+            engine.destroy(it.depth)
         }
         // Filament's framebuffers must let go of the imported textures before they're deleted.
         engine.flushAndWait()

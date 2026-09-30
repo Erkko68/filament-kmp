@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -16,6 +17,14 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
+    /** Type of the index buffer. */
+    enum class IndexType(internal val value: Int) {
+        /** 16-bit indices */
+        USHORT(12),
+        /** 32-bit indices */
+        UINT(17),
+    }
+
     /**
      * Builder for creating IndexBuffer instances.
      *
@@ -24,17 +33,6 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
      */
     class Builder() {
         private val nativeBuilder = FilaIndexBufferBuilder_create()
-
-        /**
-         * Index data type options.
-         *
-         * - USHORT: 16-bit unsigned integers (indices 0-65535)
-         * - UINT: 32-bit unsigned integers (indices 0-4294967295)
-         */
-        enum class IndexType {
-            USHORT,
-            UINT,
-        }
 
         /**
          * Sets the number of indices in this buffer.
@@ -50,7 +48,14 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
          * @param indexType The index data type (default: USHORT)
          * @return This Builder, for chaining calls
          */
-        fun bufferType(indexType: IndexType): Builder = apply { FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.ordinal) }
+        fun bufferType(indexType: IndexType): Builder = apply { FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.value) }
+
+        /**
+         * Associates an optional name with this IndexBuffer for debugging purposes.
+         *
+         * The name shows up in error messages and should be kept short.
+         */
+        fun name(name: String): Builder = apply { interopScope { FilaIndexBufferBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
          * Creates the IndexBuffer object.
@@ -101,27 +106,12 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
      */
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
-        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, upload.callback, upload.userData, destOffsetInBytes)
     }
+
+    /**
+     * Returns whether the asynchronous creation of this IndexBuffer has completed; always true
+     * when it wasn't built with `Builder.async()`.
+     */
+    val isCreationComplete: Boolean get() = FilaIndexBuffer_isCreationComplete(nativeHandle)
 }
-
-@ExternalSymbolName("FilaIndexBufferBuilder_create")
-private external fun FilaIndexBufferBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaIndexBufferBuilder_destroy")
-private external fun FilaIndexBufferBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaIndexBufferBuilder_build")
-private external fun FilaIndexBufferBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaIndexBufferBuilder_indexCount")
-private external fun FilaIndexBufferBuilder_indexCount(builder: NativePointer, indexCount: Int)
-
-@ExternalSymbolName("FilaIndexBufferBuilder_bufferType")
-private external fun FilaIndexBufferBuilder_bufferType(builder: NativePointer, indexType: Int)
-
-@ExternalSymbolName("FilaIndexBuffer_getIndexCount")
-private external fun FilaIndexBuffer_getIndexCount(indexBuffer: NativePointer): Int
-
-@ExternalSymbolName("FilaIndexBuffer_setBuffer")
-private external fun FilaIndexBuffer_setBuffer(indexBuffer: NativePointer, engine: NativePointer, buffer: NativePointer, sizeInBytes: Int, destOffsetInBytes: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)

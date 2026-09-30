@@ -18,6 +18,10 @@ object FilaJni {
     /** [view] in native byte order, as C arrays need. */
     fun buffer(ptr: Long, size: Int): ByteBuffer = view(ptr, size.toLong()).order(ByteOrder.nativeOrder())
 
+    /** `sizeof(void*)`: 4 on Android's 32-bit ABIs. */
+    val pointerSize: Int by lazy { nativePointerSize() }
+    @JvmStatic private external fun nativePointerSize(): Int
+
     /** Reads a NUL-terminated UTF-8 string, or null for a null pointer. */
     @JvmStatic external fun readString(ptr: Long): String?
 

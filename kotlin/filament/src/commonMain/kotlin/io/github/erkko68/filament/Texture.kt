@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -18,7 +19,7 @@ import io.github.erkko68.filament.interop.*
  * Engine.destroy(texture).
  *
  * ```
- * val engine = Engine.create()
+ * val engine = Engine.create()!!
  *
  * val texture = Texture.Builder()
  *     .width(64)
@@ -157,7 +158,15 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return This Builder, for chaining calls.
          * @warning This method should be used as a last resort. This API is subject to change or removal.
          */
-        fun importTexture(id: Long): Builder = apply { FilaTextureBuilder_importTexture(nativeBuilder, id) }
+        fun import(id: Long): Builder = apply { FilaTextureBuilder_import(nativeBuilder, id) }
+
+        /**
+         * Associates an optional name with this Texture for debugging purposes.
+         *
+         * @param name A string to identify this Texture.
+         * @return This Builder, for chaining calls.
+         */
+        fun name(name: String): Builder = apply { interopScope { FilaTextureBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
          * Creates an external texture. The content must be set using setExternalImage() or setExternalStream().
@@ -246,7 +255,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
     /**
      * Pixel data type (size and signedness of color components in the client buffer for setImage()).
      */
-    enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565 }
+    enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565, UINT_2_10_10_10_REV }
 
     /**
      * Texture channel swizzle (maps channels to output RGBA).
@@ -257,28 +266,32 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      * Texture usage flags affecting memory layout and capabilities.
      */
     object Usage {
+        /** No usage. */
+        const val NONE: Int = 0x0000
         /** Texture is usable as a color attachment. */
-        val COLOR_ATTACHMENT: Int = 0x0001
+        const val COLOR_ATTACHMENT: Int = 0x0001
         /** Texture is usable as a depth attachment. */
-        val DEPTH_ATTACHMENT: Int = 0x0002
+        const val DEPTH_ATTACHMENT: Int = 0x0002
         /** Texture is usable as a stencil attachment. */
-        val STENCIL_ATTACHMENT: Int = 0x0004
+        const val STENCIL_ATTACHMENT: Int = 0x0004
         /** Texture can have data uploaded via setImage(). */
-        val UPLOADABLE: Int = 0x0008
+        const val UPLOADABLE: Int = 0x0008
         /** Texture can be sampled in shaders. */
-        val SAMPLEABLE: Int = 0x0010
+        const val SAMPLEABLE: Int = 0x0010
         /** Texture is usable as a subpass input. */
-        val SUBPASS_INPUT: Int = 0x0020
+        const val SUBPASS_INPUT: Int = 0x0020
         /** Texture is usable as a blit source. */
-        val BLIT_SRC: Int = 0x0040
+        const val BLIT_SRC: Int = 0x0040
         /** Texture is usable as a blit destination. */
-        val BLIT_DST: Int = 0x0080
+        const val BLIT_DST: Int = 0x0080
         /** Texture is protected (secure content). */
-        val PROTECTED: Int = 0x0100
+        const val PROTECTED: Int = 0x0100
         /** Texture can have mipmaps generated via generateMipmaps(). */
-        val GEN_MIPMAPPABLE: Int = 0x0200
+        const val GEN_MIPMAPPABLE: Int = 0x0200
         /** Default usage. */
-        val DEFAULT: Int = UPLOADABLE or SAMPLEABLE
+        const val DEFAULT: Int = UPLOADABLE or SAMPLEABLE
+        /** Usable as any attachment and a subpass input. */
+        const val ALL_ATTACHMENTS: Int = COLOR_ATTACHMENT or DEPTH_ATTACHMENT or STENCIL_ATTACHMENT or SUBPASS_INPUT
     }
 
     /**
@@ -371,8 +384,13 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      * @param level Mipmap level to update (must be < [getLevels])
      * @param descriptor Pixel buffer containing the image data
      */
-    fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) =
-        setImage(engine, level, 0, 0, 0, getWidth(level), getHeight(level), getDepth(level), descriptor)
+    fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) = with(descriptor) {
+        val upload = upload(storage, sizeInBytes, callback)
+        FilaTexture_setImage_PixelBufferDescriptor(
+            nativeHandle, engine.nativeHandle, level,
+            upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+        )
+    }
 
     /**
      * Updates a rectangular sub-region of a 2D texture level.
@@ -387,8 +405,13 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      * @param height Height of sub-region in pixels
      * @param descriptor Pixel buffer containing the image data
      */
-    fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor) =
-        setImage(engine, level, xoffset, yoffset, 0, width, height, 1, descriptor)
+    fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor) = with(descriptor) {
+        val upload = upload(storage, sizeInBytes, callback)
+        FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
+            nativeHandle, engine.nativeHandle, level, xoffset, yoffset, width, height,
+            upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+        )
+    }
 
     /**
      * Updates a sub-region of a 3D texture or 2D texture array. Cubemaps are treated
@@ -406,15 +429,11 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      * @param depth Depth of sub-region in layers/faces
      * @param descriptor Pixel buffer containing the image data
      */
-    fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
-        val upload = upload(descriptor.storage, descriptor.sizeInBytes, descriptor.callback)
-        FilaTexture_setImage(
-            nativeHandle, engine.nativeHandle, level,
-            xoffset, yoffset, zoffset, width, height, depth,
-            upload.ptr, upload.size,
-            descriptor.format.ordinal, descriptor.type.ordinal,
-            descriptor.alignment, descriptor.left, descriptor.top, descriptor.stride,
-            NullPointer, upload.callback, upload.userData,
+    fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) = with(descriptor) {
+        val upload = upload(storage, sizeInBytes, callback)
+        FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
+            nativeHandle, engine.nativeHandle, level, xoffset, yoffset, zoffset, width, height, depth,
+            upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
         )
     }
 
@@ -449,6 +468,11 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      */
     fun generateMipmaps(engine: Engine) = FilaTexture_generateMipmaps(nativeHandle, engine.nativeHandle)
 
+    /**
+     * Returns whether this texture's creation is complete: always true unless the Builder was asynchronous.
+     */
+    fun isCreationComplete(): Boolean = FilaTexture_isCreationComplete(nativeHandle)
+
     companion object {
         init { Filament.init() } // statics are callable before any Engine exists
         /**
@@ -468,6 +492,20 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          */
         fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
             FilaTexture_isTextureFormatMipmappable(engine.nativeHandle, format.ordinal)
+
+        /**
+         * Returns whether a particular format is compressed.
+         * @param format Format to check
+         * @return true if the format is compressed
+         */
+        fun isTextureFormatCompressed(format: InternalFormat): Boolean = FilaTexture_isTextureFormatCompressed(format.ordinal)
+
+        /**
+         * Returns whether this backend supports protected textures.
+         * @param engine Engine to query
+         * @return true if protected textures are supported
+         */
+        fun isProtectedTexturesSupported(engine: Engine): Boolean = FilaTexture_isProtectedTexturesSupported(engine.nativeHandle)
 
         /**
          * Queries whether the backend supports texture swizzling.
@@ -517,103 +555,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @param alignment Alignment in bytes
          * @return Required buffer size in bytes
          */
-        fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
-            FilaTexture_computeDataSize(format.ordinal, type.ordinal, stride, height, alignment)
+        fun computeTextureDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
+            FilaTexture_computeTextureDataSize(format.ordinal, type.ordinal, stride, height, alignment)
     }
 }
-
-@ExternalSymbolName("FilaTextureBuilder_create")
-private external fun FilaTextureBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaTextureBuilder_destroy")
-private external fun FilaTextureBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaTextureBuilder_build")
-private external fun FilaTextureBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaTextureBuilder_width")
-private external fun FilaTextureBuilder_width(builder: NativePointer, width: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_height")
-private external fun FilaTextureBuilder_height(builder: NativePointer, height: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_depth")
-private external fun FilaTextureBuilder_depth(builder: NativePointer, depth: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_levels")
-private external fun FilaTextureBuilder_levels(builder: NativePointer, levels: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_samples")
-private external fun FilaTextureBuilder_samples(builder: NativePointer, samples: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_sampler")
-private external fun FilaTextureBuilder_sampler(builder: NativePointer, target: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_format")
-private external fun FilaTextureBuilder_format(builder: NativePointer, format: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_usage")
-private external fun FilaTextureBuilder_usage(builder: NativePointer, usage: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_swizzle")
-private external fun FilaTextureBuilder_swizzle(builder: NativePointer, r: Int, g: Int, b: Int, a: Int)
-
-@ExternalSymbolName("FilaTextureBuilder_importTexture")
-private external fun FilaTextureBuilder_importTexture(builder: NativePointer, id: Long)
-
-@ExternalSymbolName("FilaTextureBuilder_external")
-private external fun FilaTextureBuilder_external(builder: NativePointer)
-
-@ExternalSymbolName("FilaTexture_isTextureFormatSupported")
-private external fun FilaTexture_isTextureFormatSupported(engine: NativePointer, format: Int): Boolean
-
-@ExternalSymbolName("FilaTexture_isTextureFormatMipmappable")
-private external fun FilaTexture_isTextureFormatMipmappable(engine: NativePointer, format: Int): Boolean
-
-@ExternalSymbolName("FilaTexture_isTextureSwizzleSupported")
-private external fun FilaTexture_isTextureSwizzleSupported(engine: NativePointer): Boolean
-
-@ExternalSymbolName("FilaTexture_getMaxTextureSize")
-private external fun FilaTexture_getMaxTextureSize(engine: NativePointer, sampler: Int): Int
-
-@ExternalSymbolName("FilaTexture_getMaxArrayTextureLayers")
-private external fun FilaTexture_getMaxArrayTextureLayers(engine: NativePointer): Int
-
-@ExternalSymbolName("FilaTexture_validatePixelFormatAndType")
-private external fun FilaTexture_validatePixelFormatAndType(internalFormat: Int, format: Int, type: Int): Boolean
-
-@ExternalSymbolName("FilaTexture_getWidth")
-private external fun FilaTexture_getWidth(texture: NativePointer, level: Int): Int
-
-@ExternalSymbolName("FilaTexture_getHeight")
-private external fun FilaTexture_getHeight(texture: NativePointer, level: Int): Int
-
-@ExternalSymbolName("FilaTexture_getDepth")
-private external fun FilaTexture_getDepth(texture: NativePointer, level: Int): Int
-
-@ExternalSymbolName("FilaTexture_getLevels")
-private external fun FilaTexture_getLevels(texture: NativePointer): Int
-
-@ExternalSymbolName("FilaTexture_getTarget")
-private external fun FilaTexture_getTarget(texture: NativePointer): Int
-
-@ExternalSymbolName("FilaTexture_getFormat")
-private external fun FilaTexture_getFormat(texture: NativePointer): Int
-
-@ExternalSymbolName("FilaTexture_setImage")
-private external fun FilaTexture_setImage(
-    texture: NativePointer, engine: NativePointer, level: Int,
-    xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int,
-    buffer: NativePointer, sizeInBytes: Int, format: Int, type: Int,
-    alignment: Int, left: Int, top: Int, stride: Int,
-    handler: NativePointer, callback: NativePointer, userData: NativePointer,
-)
-
-@ExternalSymbolName("FilaTexture_setExternalStream")
-private external fun FilaTexture_setExternalStream(texture: NativePointer, engine: NativePointer, stream: NativePointer)
-
-@ExternalSymbolName("FilaTexture_generateMipmaps")
-private external fun FilaTexture_generateMipmaps(texture: NativePointer, engine: NativePointer)
-
-@ExternalSymbolName("FilaTexture_computeDataSize")
-private external fun FilaTexture_computeDataSize(format: Int, type: Int, stride: Int, height: Int, alignment: Int): Int

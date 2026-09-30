@@ -2,6 +2,9 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
+import kotlin.test.assertSame
+import kotlin.test.assertNull
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -21,31 +24,42 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun bloomOptionsRoundTrip() {
         setUpView()
-        view.bloomOptions = View.BloomOptions().apply {
+        view.bloomOptions = BloomOptions().apply {
             enabled = true; levels = 5; resolution = 384; strength = 0.7f
-            threshold = false; dirtStrength = 0.3f; quality = View.Quality.HIGH
+            threshold = false; dirtStrength = 0.3f; quality = QualityLevel.HIGH
             lensFlare = true; starburst = false; chromaticAberration = 0.1f
             ghostCount = 3; ghostSpacing = 0.6f; ghostThreshold = 2f
             haloRadius = 0.4f; haloThickness = 0.2f; haloThreshold = 3f
-            highlight = 1000f; blendMode = View.BloomOptions.BlendMode.INTERPOLATE
+            highlight = 1000f; blendMode = BloomOptions.BlendMode.INTERPOLATE
         }
         view.bloomOptions.run {
             assertTrue(enabled); assertEquals(5, levels); assertEquals(384, resolution)
             assertEquals(0.7f, strength); assertEquals(false, threshold)
-            assertEquals(0.3f, dirtStrength); assertEquals(View.Quality.HIGH, quality)
+            assertEquals(0.3f, dirtStrength); assertEquals(QualityLevel.HIGH, quality)
             assertTrue(lensFlare); assertEquals(false, starburst)
             assertEquals(0.1f, chromaticAberration); assertEquals(3, ghostCount)
             assertEquals(0.6f, ghostSpacing); assertEquals(2f, ghostThreshold)
             assertEquals(0.4f, haloRadius); assertEquals(0.2f, haloThickness)
             assertEquals(3f, haloThreshold); assertEquals(1000f, highlight)
-            assertEquals(View.BloomOptions.BlendMode.INTERPOLATE, blendMode)
+            assertEquals(BloomOptions.BlendMode.INTERPOLATE, blendMode)
         }
+    }
+
+    @Test
+    fun bloomDirtRoundTrip() {
+        setUpView()
+        val dirt = Texture.Builder().width(4).height(4).build(engine)
+        view.bloomOptions = BloomOptions().apply { this.dirt = dirt }
+        assertSame(dirt, view.bloomOptions.dirt)
+        view.bloomOptions = BloomOptions()
+        assertNull(view.bloomOptions.dirt)
+        engine.destroy(dirt)
     }
 
     @Test
     fun fogOptionsRoundTrip() {
         setUpView()
-        view.fogOptions = View.FogOptions().apply {
+        view.fogOptions = FogOptions().apply {
             enabled = true; distance = 10f; density = 0.5f; height = 2f
             heightFalloff = 1.5f; color = floatArrayOf(0.1f, 0.2f, 0.3f)
             cutOffDistance = 100f; maximumOpacity = 0.8f; inScatteringStart = 5f
@@ -64,16 +78,16 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun depthOfFieldOptionsRoundTrip() {
         setUpView()
-        view.depthOfFieldOptions = View.DepthOfFieldOptions().apply {
+        view.depthOfFieldOptions = DepthOfFieldOptions().apply {
             enabled = true; cocScale = 2f; cocAspectRatio = 1.5f; maxApertureDiameter = 0.01f
-            filter = View.DepthOfFieldOptions.Filter.MEDIAN; nativeResolution = true
+            filter = DepthOfFieldOptions.Filter.MEDIAN; nativeResolution = true
             foregroundRingCount = 3; backgroundRingCount = 4; fastGatherRingCount = 2
             maxForegroundCOC = 5; maxBackgroundCOC = 6
         }
         view.depthOfFieldOptions.run {
             assertTrue(enabled); assertEquals(2f, cocScale); assertEquals(1.5f, cocAspectRatio)
             assertEquals(0.01f, maxApertureDiameter)
-            assertEquals(View.DepthOfFieldOptions.Filter.MEDIAN, filter); assertTrue(nativeResolution)
+            assertEquals(DepthOfFieldOptions.Filter.MEDIAN, filter); assertTrue(nativeResolution)
             assertEquals(3, foregroundRingCount); assertEquals(4, backgroundRingCount)
             assertEquals(2, fastGatherRingCount); assertEquals(5, maxForegroundCOC)
             assertEquals(6, maxBackgroundCOC)
@@ -83,7 +97,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun vignetteOptionsRoundTrip() {
         setUpView()
-        view.vignetteOptions = View.VignetteOptions().apply {
+        view.vignetteOptions = VignetteOptions().apply {
             enabled = true; midPoint = 0.5f; roundness = 0.6f; feather = 0.4f
             color = floatArrayOf(0.1f, 0.2f, 0.3f, 1f)
         }
@@ -96,22 +110,22 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun temporalAntiAliasingOptionsRoundTrip() {
         setUpView()
-        view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply {
+        view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply {
             feedback = 0.12f; lodBias = -1f; sharpness = 0.3f; enabled = true
             upscaling = 1f; filterHistory = true; filterInput = false; useYCoCg = true
             hdr = false
-            boxType = View.TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE
-            boxClipping = View.TemporalAntiAliasingOptions.BoxClipping.NONE
-            jitterPattern = View.TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
+            boxType = TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE
+            boxClipping = TemporalAntiAliasingOptions.BoxClipping.NONE
+            jitterPattern = TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
             varianceGamma = 1.1f; preventFlickering = true; historyReprojection = false
         }
         view.temporalAntiAliasingOptions.run {
             assertEquals(0.12f, feedback); assertEquals(-1f, lodBias); assertEquals(0.3f, sharpness)
             assertTrue(enabled); assertEquals(1f, upscaling); assertTrue(filterHistory)
             assertEquals(false, filterInput); assertTrue(useYCoCg); assertEquals(false, hdr)
-            assertEquals(View.TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE, boxType)
-            assertEquals(View.TemporalAntiAliasingOptions.BoxClipping.NONE, boxClipping)
-            assertEquals(View.TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4, jitterPattern)
+            assertEquals(TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE, boxType)
+            assertEquals(TemporalAntiAliasingOptions.BoxClipping.NONE, boxClipping)
+            assertEquals(TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4, jitterPattern)
             assertEquals(1.1f, varianceGamma); assertTrue(preventFlickering)
             assertEquals(false, historyReprojection)
         }
@@ -120,7 +134,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun screenSpaceReflectionsOptionsRoundTrip() {
         setUpView()
-        view.screenSpaceReflectionsOptions = View.ScreenSpaceReflectionsOptions().apply {
+        view.screenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions().apply {
             enabled = true; thickness = 0.1f; bias = 0.2f; maxDistance = 3f; stride = 2f
         }
         view.screenSpaceReflectionsOptions.run {
@@ -132,19 +146,19 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun ambientOcclusionOptionsRoundTrip() {
         setUpView()
-        view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply {
+        view.ambientOcclusionOptions = AmbientOcclusionOptions().apply {
             radius = 0.5f; bias = 0.001f; intensity = 1.5f; power = 1.2f
-            minHorizonAngleRad = 0.3f; quality = View.Quality.HIGH; lowPassFilter = View.Quality.MEDIUM
-            upsampling = View.Quality.LOW; enabled = true; bentNormals = true
+            minHorizonAngleRad = 0.3f; quality = QualityLevel.HIGH; lowPassFilter = QualityLevel.MEDIUM
+            upsampling = QualityLevel.LOW; enabled = true; bentNormals = true
             bilateralThreshold = 0.05f; resolution = 0.5f
-            aoType = View.AmbientOcclusionOptions.AmbientOcclusionType.GTAO
-            ssct = View.AmbientOcclusionOptions.Ssct().apply {
+            aoType = AmbientOcclusionOptions.AmbientOcclusionType.GTAO
+            ssct = AmbientOcclusionOptions.Ssct().apply {
                 enabled = true; lightConeRad = 1.0f; shadowDistance = 0.4f
                 contactDistanceMax = 1.2f; intensity = 0.9f
                 lightDirection = floatArrayOf(0f, -1f, 0f); depthBias = 0.02f
                 depthSlopeBias = 0.03f; sampleCount = 6; rayCount = 2
             }
-            gtao = View.AmbientOcclusionOptions.Gtao().apply {
+            gtao = AmbientOcclusionOptions.Gtao().apply {
                 sampleSliceCount = 6; sampleStepsPerSlice = 5; thicknessHeuristic = 0.02f
                 useVisibilityBitmasks = true; constThickness = 0.75f; linearThickness = true
             }
@@ -152,10 +166,10 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         view.ambientOcclusionOptions.run {
             assertEquals(0.5f, radius); assertEquals(0.001f, bias); assertEquals(1.5f, intensity)
             assertEquals(1.2f, power); assertEquals(0.3f, minHorizonAngleRad)
-            assertEquals(View.Quality.HIGH, quality); assertEquals(View.Quality.MEDIUM, lowPassFilter)
-            assertEquals(View.Quality.LOW, upsampling); assertTrue(enabled); assertTrue(bentNormals)
+            assertEquals(QualityLevel.HIGH, quality); assertEquals(QualityLevel.MEDIUM, lowPassFilter)
+            assertEquals(QualityLevel.LOW, upsampling); assertTrue(enabled); assertTrue(bentNormals)
             assertEquals(0.05f, bilateralThreshold); assertEquals(0.5f, resolution)
-            assertEquals(View.AmbientOcclusionOptions.AmbientOcclusionType.GTAO, aoType)
+            assertEquals(AmbientOcclusionOptions.AmbientOcclusionType.GTAO, aoType)
             ssct.run {
                 assertTrue(enabled); assertEquals(1.0f, lightConeRad); assertEquals(0.4f, shadowDistance)
                 assertEquals(1.2f, contactDistanceMax); assertEquals(0.9f, intensity)
@@ -175,20 +189,20 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         setUpView()
         // minScale == maxScale so the engine keeps `enabled` set even on backends without
         // frame-time support (Noop/sim report isFrameTimeSupported()=false since 1.72.0).
-        view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply {
-            enabled = true; homogeneousScaling = true; minScale = 0.5f; maxScale = 0.5f
-            sharpness = 0.6f; quality = View.Quality.HIGH
+        view.dynamicResolutionOptions = DynamicResolutionOptions().apply {
+            enabled = true; homogeneousScaling = true; minScale = floatArrayOf(0.5f, 0.5f); maxScale = floatArrayOf(0.5f, 0.5f)
+            sharpness = 0.6f; quality = QualityLevel.HIGH
         }
         view.dynamicResolutionOptions.run {
-            assertTrue(enabled); assertTrue(homogeneousScaling); assertEquals(0.5f, minScale)
-            assertEquals(0.5f, maxScale); assertEq(0.6f, sharpness, "sharpness"); assertEquals(View.Quality.HIGH, quality)
+            assertTrue(enabled); assertTrue(homogeneousScaling); assertContentEquals(floatArrayOf(0.5f, 0.5f), minScale)
+            assertContentEquals(floatArrayOf(0.5f, 0.5f), maxScale); assertEq(0.6f, sharpness, "sharpness"); assertEquals(QualityLevel.HIGH, quality)
         }
     }
 
     @Test
     fun shadowAndMsaaOptionsRoundTrip() {
         setUpView()
-        view.vsmShadowOptions = View.VsmShadowOptions().apply {
+        view.vsmShadowOptions = VsmShadowOptions().apply {
             anisotropy = 2; mipmapping = true; msaaSamples = 4; highPrecision = true
             lightBleedReduction = 0.2f
         }
@@ -196,7 +210,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             assertEquals(2, anisotropy); assertTrue(mipmapping); assertEquals(4, msaaSamples)
             assertTrue(highPrecision); assertEq(0.2f, lightBleedReduction, "lightBleedReduction")
         }
-        view.softShadowOptions = View.SoftShadowOptions().apply {
+        view.softShadowOptions = SoftShadowOptions().apply {
             penumbraScale = 2f; penumbraRatioScale = 1.5f
             maxPenumbraRatio = 8f; maxSearchRadius = 0.75f
         }
@@ -204,7 +218,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             assertEquals(2f, penumbraScale); assertEquals(1.5f, penumbraRatioScale)
             assertEquals(8f, maxPenumbraRatio); assertEquals(0.75f, maxSearchRadius)
         }
-        view.multiSampleAntiAliasingOptions = View.MultiSampleAntiAliasingOptions().apply {
+        view.multiSampleAntiAliasingOptions = MultiSampleAntiAliasingOptions().apply {
             enabled = true; sampleCount = 4; customResolve = true
         }
         view.multiSampleAntiAliasingOptions.run {

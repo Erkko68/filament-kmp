@@ -1,8 +1,10 @@
 package io.github.erkko68.filament.compose.scene
 
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.AntiAliasing as FilamentAntiAliasing
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -59,7 +61,7 @@ class PostProcessingApplyTest : ComposeTestFixture() {
         assertTrue(view.depthOfFieldOptions.enabled)
         assertEquals(2f, view.depthOfFieldOptions.cocScale)
         assertTrue(view.dynamicResolutionOptions.enabled)
-        assertEquals(0.5f, view.dynamicResolutionOptions.minScale)
+        assertContentEquals(floatArrayOf(0.5f, 0.5f), view.dynamicResolutionOptions.minScale)
     }
 
     @Test
@@ -69,13 +71,13 @@ class PostProcessingApplyTest : ComposeTestFixture() {
             .applyTo(view, engine)
         assertTrue(view.multiSampleAntiAliasingOptions.enabled)
         assertEquals(8, view.multiSampleAntiAliasingOptions.sampleCount)
-        assertEquals(View.AntiAliasing.FXAA, view.antiAliasing)
+        assertEquals(FilamentAntiAliasing.FXAA, view.antiAliasing)
         assertTrue(view.temporalAntiAliasingOptions.enabled)
 
         PostProcessing(antiAliasing = AntiAliasing(msaaEnabled = false, fxaaEnabled = false, taaEnabled = false))
             .applyTo(view, engine)
         assertFalse(view.multiSampleAntiAliasingOptions.enabled)
-        assertEquals(View.AntiAliasing.NONE, view.antiAliasing)
+        assertEquals(FilamentAntiAliasing.NONE, view.antiAliasing)
         assertFalse(view.temporalAntiAliasingOptions.enabled)
     }
 
@@ -97,7 +99,7 @@ class PostProcessingApplyTest : ComposeTestFixture() {
         val view = newView()
         val grading = PostProcessing(colorGrade = ColorGrade(contrast = 1.2f)).applyTo(view, engine)
         assertNotNull(grading, "a ColorGrading should be allocated when colorGrade is set")
-        engine.destroyColorGrading(grading)
+        engine.destroy(grading)
 
         val none = PostProcessing(colorGrade = null).applyTo(view, engine)
         assertNull(none, "no ColorGrading should be allocated when colorGrade is null")

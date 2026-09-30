@@ -1,42 +1,31 @@
 package io.github.erkko68.filament.filamat
 
 /**
- * MaterialPackage holds the compiled binary data of a Filament material.
+ * A compiled material (filamat's `Package`): the bytes `Material.Builder.payload` loads.
+ * Named MaterialPackage, as on Android, so it doesn't shadow `java.lang.Package` on the JVM.
  *
- * A MaterialPackage is produced by MaterialBuilder after material source code compilation.
- * It contains optimized shader code for multiple backends (OpenGL, Vulkan, Metal, WebGPU),
- * material metadata, and parameter definitions.
- *
- * **Usage:**
- * After building a MaterialPackage with MaterialBuilder, pass the package data to
- * Filament's Material system via Engine.Material creation. The package is self-contained
- * and can be serialized, cached, or transmitted.
- *
- * **Validity:**
- * Always check isValid() before using a package. An invalid package indicates compilation
- * failure and should be discarded.
+ * Check [isValid] before use: [MaterialBuilder.build] returns an invalid package when compilation fails.
  *
  * @see MaterialBuilder
- * @see Filamat
  */
-class MaterialPackage internal constructor(
-    /**
-     * Get the binary package data as a byte array.
-     *
-     * This is the raw compiled material data that can be loaded by Filament's Material system.
-     * The data is in a proprietary format specific to Filament.
-     *
-     * @return ByteArray containing the compiled material binary.
-     */
-    val buffer: ByteArray,
+class MaterialPackage private constructor(
+    /** The package's bytes. */
+    val data: ByteArray,
+) {
+    /** [size] zeroed bytes. */
+    constructor(size: Int) : this(ByteArray(size))
 
-    /**
-     * Check if this package is valid.
-     *
-     * A package is valid if compilation succeeded. Invalid packages should be discarded
-     * and not used to create Materials.
-     *
-     * @return true if the package is valid and ready to use, false if compilation failed.
-     */
-    val isValid: Boolean,
-)
+    /** A copy of the first [size] bytes of [src]. */
+    constructor(src: ByteArray, size: Int = src.size) : this(src.copyOf(size))
+
+    /** Byte count of [data]. */
+    val size: Int get() = data.size
+
+    /** False when compilation failed. */
+    var isValid: Boolean = true
+
+    companion object {
+        /** An empty package marked invalid. */
+        fun invalidPackage(): MaterialPackage = MaterialPackage(0).apply { isValid = false }
+    }
+}

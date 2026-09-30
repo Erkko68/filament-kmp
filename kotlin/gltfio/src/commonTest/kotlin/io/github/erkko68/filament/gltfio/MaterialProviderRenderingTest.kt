@@ -13,13 +13,13 @@ class MaterialProviderRenderingTest : GltfioRenderingTestFixture() {
     @Test
     fun testGetMaterialAndCreateInstance() {
         val engine = engine ?: return
-        val provider = UbershaderProvider(engine)
+        val provider = createUbershaderProvider(engine)
         val key = MaterialKey().apply {
             unlit = true
             doubleSided = false
         }
-        val uvmap = IntArray(8)
-        key.constrainMaterial(uvmap)
+        val uvmap: UvMap = Array(UV_MAP_SIZE) { UvSet.UNUSED }
+        constrainMaterial(key, uvmap)
 
         // getMaterial compiles and returns a real ubershader for this key.
         // getMaterial compiles and returns a real ubershader (base_unlit_opaque,

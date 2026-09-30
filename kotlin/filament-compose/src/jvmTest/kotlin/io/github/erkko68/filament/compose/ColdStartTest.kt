@@ -5,31 +5,31 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.SurfaceOrientation
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.filamat.Filamat
 import io.github.erkko68.filament.filamat.MaterialBuilder
 import io.github.erkko68.filament.utils.Manipulator
+import io.github.erkko68.filament.utils.Mode
 import kotlin.test.Test
 import kotlin.test.fail
 
 // Entry points a user can hit before anything calls Filament.init(); each must load libfilament-c itself.
 private val coldStarts: Map<String, () -> Unit> = mapOf(
-    "Engine.create" to { Engine.create(Engine.Backend.NOOP).destroy() },
-    "Engine.Builder" to { Engine.Builder().backend(Engine.Backend.NOOP).build().destroy() },
+    "Engine.create" to { Engine.destroy(Engine.create(Engine.Backend.NOOP)) },
+    "Engine.Builder" to { Engine.destroy(Engine.Builder().backend(Engine.Backend.NOOP).build()) },
     "Engine.steadyClockTimeNano" to { Engine.steadyClockTimeNano },
     "EntityManager.get" to { EntityManager.get().create() },
-    "Manipulator.Builder" to { Manipulator.Builder().viewport(1, 1).build(Manipulator.Mode.ORBIT).destroy() },
+    "Manipulator.Builder" to { Manipulator.Builder().viewport(1, 1).build(Mode.ORBIT).destroy() },
     "SurfaceOrientation.Builder" to {
-        SurfaceOrientation.Builder().vertexCount(1).normals(floatArrayOf(0f, 0f, 1f)).build().destroy()
+        SurfaceOrientation.Builder().vertexCount(1).normals(floatArrayOf(0f, 0f, 1f)).build()!!.destroy()
     },
     "IndirectLight statics" to { IndirectLight.getDirectionEstimate(FloatArray(27)) },
     "Texture statics" to {
-        Texture.computeDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 4, 4, 1)
+        Texture.computeTextureDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 4, 4, 1)
         Texture.validatePixelFormatAndType(Texture.InternalFormat.RGBA8, Texture.Format.RGBA, Texture.Type.UBYTE)
     },
-    "Filamat.init" to {
-        Filamat.init()
+    "MaterialBuilder.init" to {
+        MaterialBuilder.init()
         MaterialBuilder().name("ColdStart").shading(MaterialBuilder.Shading.UNLIT).build()
-        Filamat.shutdown()
+        MaterialBuilder.shutdown()
     },
 )
 

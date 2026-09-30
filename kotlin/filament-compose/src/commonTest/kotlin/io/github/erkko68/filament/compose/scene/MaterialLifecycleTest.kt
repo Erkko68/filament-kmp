@@ -42,11 +42,11 @@ class MaterialLifecycleTest : TierBSceneFixture() {
             scene = scene,
             whileComposed = {
                 val mat = assertNotNull(captured, "material should build from valid bytes")
-                assertTrue(engine.isValidMaterial(mat), "material should be live while composed")
+                assertTrue(engine.isValid(mat), "material should be live while composed")
             },
             afterDispose = {
                 val mat = assertNotNull(captured, "material handle should have been captured")
-                assertTrue(!engine.isValidMaterial(mat), "material should be destroyed after disposal")
+                assertTrue(!engine.isValid(mat), "material should be destroyed after disposal")
             },
         ) {
             captured = rememberMaterial(engine, bytes)

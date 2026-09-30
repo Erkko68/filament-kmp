@@ -4,11 +4,11 @@
 //   downloadIncludes   Filament's public headers (include/)
 //   setupEmsdk         the Emscripten SDK (.emsdk/) for the wasm builds
 //   generateBindings   JNI forwarders + wasm export tables from the common externals
+//   generateCApi       the Fila* C API's forwarders from Filament's public headers, into c/<module>/generated
 //   cmakeBuild_<id>    the C API's static libraries for an iOS target (packed into the klibs)
 //   apiGaps           the Filament API nothing binds yet (build/reports/api-gaps.txt)
 
-import buildlogic.apicheck.registerApiGapTasks
-import buildlogic.bindings.GenerateBindingsTask
+import buildlogic.apigen.registerApiGenTasks
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.hostPlatform
@@ -69,15 +69,6 @@ tasks.register("prebuilts") {
     dependsOn(FilamentTarget.entries.filterNot { it.fromSource }.map { "prebuilts_${it.id}" }, "downloadIncludes")
 }
 
-tasks.register<GenerateBindingsTask>("generateBindings") {
-    group = "filament"
-    description = "Generates the JNI forwarders and wasm export tables from the common externals."
-    sources.from(fileTree("kotlin") { include("*/src/commonMain/**/*.kt") })
-    headers.from(fileTree("c") { include("*/c/*.h") })
-    wasmRuntimes.put("filamat", "filamat-kmp")
-    outputDir.set(layout.buildDirectory.dir("generated/bindings"))
-}
-
 if (hostPlatform() == "macos") {
     FilamentTarget.ios.forEach { target ->
         registerCApiBuild("cmakeBuild_${target.id}", target) {
@@ -86,4 +77,4 @@ if (hostPlatform() == "macos") {
     }
 }
 
-registerApiGapTasks()
+registerApiGenTasks()

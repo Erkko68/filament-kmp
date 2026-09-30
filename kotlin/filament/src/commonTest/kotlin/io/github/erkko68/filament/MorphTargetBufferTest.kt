@@ -19,7 +19,7 @@ class MorphTargetBufferTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidMorphTargetBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(100, buffer.vertexCount)
         assertEquals(2, buffer.count)
@@ -27,14 +27,14 @@ class MorphTargetBufferTest : FilamentTestFixture() {
         assertTrue(buffer.hasTangents)
         assertTrue(buffer.isCustomMorphingEnabled)
 
-        // 100 vertices * 4 floats (float4: x,y,z,w) = 400 floats
-        val positions = FloatArray(400)
+        // 100 vertices * 3 floats (float3: x,y,z)
+        val positions = FloatArray(300)
         buffer.setPositionsAt(engine, 0, positions, 100)
 
         // 100 vertices * 4 shorts = 400 shorts
         val tangents = ShortArray(400)
         buffer.setTangentsAt(engine, 0, tangents, 100)
 
-        engine.destroyMorphTargetBuffer(buffer)
+        engine.destroy(buffer)
     }
 }

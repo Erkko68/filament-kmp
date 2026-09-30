@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -103,11 +104,17 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
         }
 
         /**
+         * Associates an optional name with this MorphTargetBuffer for debugging purposes.
+         *
+         * The name shows up in error messages and should be kept short.
+         */
+        fun name(name: String): Builder = apply { interopScope { FilaMorphTargetBufferBuilder_name(nativeBuilder, toInterop(name)) } }
+
+        /**
          * Creates the MorphTargetBuffer and associates it with the given Engine.
          *
          * @param engine Engine to associate this MorphTargetBuffer with.
          * @return The newly created MorphTargetBuffer.
-         * @throws UnsupportedOperationException on JS — MorphTargetBuffer is unbound in the web wrapper.
          */
         fun build(engine: Engine): MorphTargetBuffer {
             val handle = FilaMorphTargetBufferBuilder_build(nativeBuilder, engine.nativeHandle)
@@ -148,91 +155,30 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
     val isCustomMorphingEnabled: Boolean get() = FilaMorphTargetBuffer_isCustomMorphingEnabled(nativeHandle)
 
     /**
-     * Upload position data for a specific morph target.
-     *
-     * The positions array must contain `count` vertices, with 3 floats per vertex (x, y, z).
+     * Updates positions for the given morph target. Requires a buffer built with
+     * `withPositions(true)`; the 4th component is 1.0.
      *
      * @param engine The Engine instance.
      * @param targetIndex Zero-based index of the morph target to update (< count).
-     * @param positions Array of position offsets (3 floats per vertex).
+     * @param positions At least [count] positions, 3 floats per vertex (x, y, z).
      * @param count Number of vertices being updated.
+     * @param offset Offset into the target buffer, in vertices.
      */
-    fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int) {
-        positions.usePinned { pinned ->
-            FilaMorphTargetBuffer_setPositionsAt(
-                nativeHandle,
-                engine.nativeHandle,
-                targetIndex,
-                pinned,
-                count
-            )
-        }
+    fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int, offset: Int = 0) {
+        positions.usePinned { FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(nativeHandle, engine.nativeHandle, targetIndex, it, count, offset) }
     }
 
     /**
-     * Upload tangent data for a specific morph target.
-     *
-     * The tangents array must contain `count` vertices, with 2 shorts per vertex (quaternion encoded).
+     * Updates tangents for the given morph target. Requires a buffer built with
+     * `withTangents(true)`.
      *
      * @param engine The Engine instance.
      * @param targetIndex Zero-based index of the morph target to update (< count).
-     * @param tangents Array of tangent offsets (encoded as quaternions).
+     * @param tangents At least [count] quaternions, 4 shorts each: components in [-1, 1] times 32767.
      * @param count Number of vertices being updated.
+     * @param offset Offset into the target buffer, in vertices.
      */
-    fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int) {
-        tangents.usePinned { pinned ->
-            FilaMorphTargetBuffer_setTangentsAt(
-                nativeHandle,
-                engine.nativeHandle,
-                targetIndex,
-                pinned,
-                count
-            )
-        }
+    fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int, offset: Int = 0) {
+        tangents.usePinned { FilaMorphTargetBuffer_setTangentsAt(nativeHandle, engine.nativeHandle, targetIndex, it, count, offset) }
     }
 }
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_build")
-private external fun FilaMorphTargetBufferBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_count")
-private external fun FilaMorphTargetBufferBuilder_count(builder: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_create")
-private external fun FilaMorphTargetBufferBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_destroy")
-private external fun FilaMorphTargetBufferBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_enableCustomMorphing")
-private external fun FilaMorphTargetBufferBuilder_enableCustomMorphing(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_vertexCount")
-private external fun FilaMorphTargetBufferBuilder_vertexCount(builder: NativePointer, vertexCount: Int)
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_withPositions")
-private external fun FilaMorphTargetBufferBuilder_withPositions(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaMorphTargetBufferBuilder_withTangents")
-private external fun FilaMorphTargetBufferBuilder_withTangents(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaMorphTargetBuffer_getCount")
-private external fun FilaMorphTargetBuffer_getCount(buffer: NativePointer): Int
-
-@ExternalSymbolName("FilaMorphTargetBuffer_getVertexCount")
-private external fun FilaMorphTargetBuffer_getVertexCount(buffer: NativePointer): Int
-
-@ExternalSymbolName("FilaMorphTargetBuffer_hasPositions")
-private external fun FilaMorphTargetBuffer_hasPositions(buffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMorphTargetBuffer_hasTangents")
-private external fun FilaMorphTargetBuffer_hasTangents(buffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMorphTargetBuffer_isCustomMorphingEnabled")
-private external fun FilaMorphTargetBuffer_isCustomMorphingEnabled(buffer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMorphTargetBuffer_setPositionsAt")
-private external fun FilaMorphTargetBuffer_setPositionsAt(buffer: NativePointer, engine: NativePointer, targetIndex: Int, positions: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMorphTargetBuffer_setTangentsAt")
-private external fun FilaMorphTargetBuffer_setTangentsAt(buffer: NativePointer, engine: NativePointer, targetIndex: Int, tangents: NativePointer, count: Int)

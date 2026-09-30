@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -15,7 +16,7 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         if (bytes.isEmpty()) return
 
-        val mat = Material.Builder().payload(bytes).build(engine)
+        val mat = Material.Builder().payload(bytes).build(engine)!!
         val inst = mat.createInstance()
         assertNotNull(inst)
         assertEquals(mat.name, inst.material.name)
@@ -23,8 +24,13 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
 
         if (mat.hasParameter("emissiveFactor")) {
             inst.setParameter("emissiveFactor", 1f, 1f, 1f)
-            inst.setParameter("emissiveFactor", Colors.RgbType.SRGB, 1f, 1f, 1f)
+            inst.setParameter("emissiveFactor", RgbType.sRGB, 1f, 1f, 1f)
         }
+
+        inst.setParameter("color", 0.25f, 0.5f, 0.75f)
+        assertContentEquals(floatArrayOf(0.25f, 0.5f, 0.75f), inst.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
+        inst.setParameter("intensity", 2f)
+        assertContentEquals(floatArrayOf(2f), inst.getParameter("intensity", MaterialInstance.FloatElement.FLOAT))
 
         inst.setScissor(0, 0, 100, 100)
         inst.unsetScissor()
@@ -49,15 +55,15 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         assertTrue(!inst.isStencilWriteEnabled)
         inst.isDepthCullingEnabled = false
         assertTrue(!inst.isDepthCullingEnabled)
-        inst.depthFunc = TextureSampler.CompareFunction.GREATER
-        assertEquals(TextureSampler.CompareFunction.GREATER, inst.depthFunc)
+        inst.depthFunc = TextureSampler.CompareFunc.G
+        assertEquals(TextureSampler.CompareFunc.G, inst.depthFunc)
 
-        inst.setStencilCompareFunction(TextureSampler.CompareFunction.ALWAYS, MaterialInstance.StencilFace.FRONT)
-        inst.setStencilCompareFunction(TextureSampler.CompareFunction.ALWAYS)
-        inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR_CLAMP, MaterialInstance.StencilFace.FRONT)
-        inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR_CLAMP)
-        inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR_CLAMP, MaterialInstance.StencilFace.FRONT)
-        inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR_CLAMP)
+        inst.setStencilCompareFunction(TextureSampler.CompareFunc.A, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilCompareFunction(TextureSampler.CompareFunc.A)
+        inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR)
+        inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR)
         inst.setStencilOpDepthStencilPass(MaterialInstance.StencilOperation.ZERO, MaterialInstance.StencilFace.FRONT)
         inst.setStencilOpDepthStencilPass(MaterialInstance.StencilOperation.ZERO)
         inst.setStencilReferenceValue(2, MaterialInstance.StencilFace.FRONT)
@@ -70,10 +76,10 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
         assertNotNull(dup)
         assertEquals("duplicated_instance", dup.name)
-        engine.destroyMaterialInstance(dup)
+        engine.destroy(dup)
 
-        engine.destroyMaterialInstance(inst)
-        engine.destroyMaterial(mat)
+        engine.destroy(inst)
+        engine.destroy(mat)
     }
 
     @Test
@@ -82,14 +88,22 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         val bytes = TestMaterials.getConstantsMaterialBytes()
         if (bytes.isEmpty()) return
 
-        val mat = Material.Builder().payload(bytes).build(engine)
+        val mat = Material.Builder().payload(bytes).build(engine)!!
         val inst = mat.createInstance()
 
         assertEquals(true, inst.getConstantBoolean("testBool"))
         assertEquals(7, inst.getConstantInt("testInt"))
         assertEquals(0.5f, inst.getConstantFloat("testFloat"))
 
-        engine.destroyMaterialInstance(inst)
-        engine.destroyMaterial(mat)
+        // No compile or draw after setConstant: destroying such an instance aborts upstream.
+        inst.setConstant("testBool", false)
+        inst.setConstant("testInt", 3)
+        inst.setConstant("testFloat", 0.25f)
+        assertEquals(false, inst.getConstantBoolean("testBool"))
+        assertEquals(3, inst.getConstantInt("testInt"))
+        assertEquals(0.25f, inst.getConstantFloat("testFloat"))
+
+        engine.destroy(inst)
+        engine.destroy(mat)
     }
 }

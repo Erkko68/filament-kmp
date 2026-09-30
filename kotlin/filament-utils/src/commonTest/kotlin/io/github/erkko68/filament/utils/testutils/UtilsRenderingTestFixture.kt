@@ -19,7 +19,7 @@ open class UtilsRenderingTestFixture {
         Filament.init()
         if (!TestEnv.gpuBackendAvailable) return
         engine = try {
-            Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid }
+            Engine.create(Engine.Backend.DEFAULT)?.takeIf { it.isValid }
         } catch (t: Throwable) {
             null
         }
@@ -29,7 +29,7 @@ open class UtilsRenderingTestFixture {
     fun tearDown() {
         engine?.let {
             it.flushAndWait()
-            it.destroy()
+            Engine.destroy(it)
         }
         engine = null
     }

@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -16,7 +17,7 @@ import io.github.erkko68.filament.interop.*
  * **Setting parameters:**
  * Use setParameter() overloads to set uniforms (booleans, floats, vectors, matrices, textures).
  * Parameter names and types must match those defined in the material. Array parameters are
- * also supported via setParameter(name, type, array, offset, count) variants.
+ * also supported via setParameter(name, element, array, offset, count) variants.
  *
  * **Rendering state customization:**
  * Each MaterialInstance can override per-instance rendering behavior:
@@ -66,13 +67,13 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * - KEEP: Keep the existing stencil value
      * - ZERO: Clear stencil to 0
      * - REPLACE: Replace with reference value
-     * - INCR_CLAMP: Increment and clamp to max
+     * - INCR: Increment and clamp to max
      * - INCR_WRAP: Increment and wrap to 0
-     * - DECR_CLAMP: Decrement and clamp to 0
+     * - DECR: Decrement and clamp to 0
      * - DECR_WRAP: Decrement and wrap to max
      * - INVERT: Bitwise invert stencil value
      */
-    enum class StencilOperation { KEEP, ZERO, REPLACE, INCR_CLAMP, INCR_WRAP, DECR_CLAMP, DECR_WRAP, INVERT }
+    enum class StencilOperation { KEEP, ZERO, REPLACE, INCR, INCR_WRAP, DECR, DECR_WRAP, INVERT }
     /**
      * Which face(s) the stencil operation applies to.
      *
@@ -80,35 +81,25 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * - BACK: Back-facing primitives only
      * - FRONT_AND_BACK: Both front and back faces
      */
-    enum class StencilFace { FRONT, BACK, FRONT_AND_BACK }
- 
+    enum class StencilFace(@InternalFilamentApi val value: Int) { FRONT(0x1), BACK(0x2), FRONT_AND_BACK(0x3) }
+
     companion object {
         /**
-         * Create a new MaterialInstance by duplicating an existing one.
+         * Creates a new MaterialInstance using another MaterialInstance as a template for initialization.
+         * The new MaterialInstance is an instance of the same Material of the template instance and
+         * must be destroyed just like any other MaterialInstance.
          *
-         * This is useful for creating instances with the same initial parameters as an
-         * existing instance without having to re-set all parameters individually.
-         *
-         * @param other A MaterialInstance to copy parameter values from.
-         * @param name Optional debug name for the new instance (null to use other's name).
-         * @return A new MaterialInstance with all parameters copied from other.
+         * @param other A MaterialInstance to use as a template for initializing a new instance.
+         * @param name A name for the new MaterialInstance or null to use the template's name.
+         * @return A new MaterialInstance.
          */
-        fun duplicate(other: MaterialInstance, name: String? = null): MaterialInstance {
-            return MaterialInstance(name.useCString { FilaMaterialInstance_duplicate(other.nativeHandle, it) })
-        }
+        fun duplicate(other: MaterialInstance, name: String? = null): MaterialInstance =
+            MaterialInstance(name.useCString { FilaMaterialInstance_duplicate(other.nativeHandle, it) })
     }
 
-    /**
-     * Get the Material this instance is created from.
-     *
-     * @return The parent Material. The Material owns all instances created from it.
-     */
+    /** The Material associated with this instance. */
     val material: Material get() = Material(FilaMaterialInstance_getMaterial(nativeHandle))
-    /**
-     * Get the name of this MaterialInstance.
-     *
-     * @return Instance name string (useful for debugging and profiling).
-     */
+    /** The name associated with this instance. */
     val name: String get() = stringFromInterop(FilaMaterialInstance_getName(nativeHandle)) ?: ""
 
     /**
@@ -116,107 +107,38 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param name Parameter name as defined in the material
      * @param x Boolean value
      */
-    fun setParameter(name: String, x: Boolean) { name.useCString { FilaMaterialInstance_setParameterBool(nativeHandle, it, x) } }
+    fun setParameter(name: String, x: Boolean) { name.useCString { FilaMaterialInstance_setParameter_bool(nativeHandle, it, x) } }
     /**
      * Sets a float parameter.
      * @param name Parameter name as defined in the material
      * @param x Float value
      */
-    fun setParameter(name: String, x: Float) { name.useCString { FilaMaterialInstance_setParameterFloat(nativeHandle, it, x) } }
+    fun setParameter(name: String, x: Float) { name.useCString { FilaMaterialInstance_setParameter_float(nativeHandle, it, x) } }
     /**
      * Sets an integer parameter.
      * @param name Parameter name as defined in the material
      * @param x Integer value
      */
-    fun setParameter(name: String, x: Int) { name.useCString { FilaMaterialInstance_setParameterInt(nativeHandle, it, x) } }
-    /**
-     * Returns the boolean value of a material specialization constant.
-     * @param name Constant name as defined in the material
-     */
-    fun getConstantBoolean(name: String): Boolean = name.useCString { FilaMaterialInstance_getConstantBool(nativeHandle, it) }
-    /**
-     * Returns the float value of a material specialization constant.
-     * @param name Constant name as defined in the material
-     */
-    fun getConstantFloat(name: String): Float = name.useCString { FilaMaterialInstance_getConstantFloat(nativeHandle, it) }
-    /**
-     * Returns the integer value of a material specialization constant.
-     * @param name Constant name as defined in the material
-     */
-    fun getConstantInt(name: String): Int = name.useCString { FilaMaterialInstance_getConstantInt(nativeHandle, it) }
-    /**
-     * Sets a 2-component boolean vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     */
-    fun setParameter(name: String, x: Boolean, y: Boolean) { name.useCString { FilaMaterialInstance_setParameterBool2(nativeHandle, it, x, y) } }
-    /**
-     * Sets a 2-component float vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     */
-    fun setParameter(name: String, x: Float, y: Float) { name.useCString { FilaMaterialInstance_setParameterFloat2(nativeHandle, it, x, y) } }
-    /**
-     * Sets a 2-component integer vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     */
-    fun setParameter(name: String, x: Int, y: Int) { name.useCString { FilaMaterialInstance_setParameterInt2(nativeHandle, it, x, y) } }
-    /**
-     * Sets a 3-component boolean vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     * @param z Third component
-     */
-    fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) { name.useCString { FilaMaterialInstance_setParameterBool3(nativeHandle, it, x, y, z) } }
-    /**
-     * Sets a 3-component float vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     * @param z Third component
-     */
-    fun setParameter(name: String, x: Float, y: Float, z: Float) { name.useCString { FilaMaterialInstance_setParameterFloat3(nativeHandle, it, x, y, z) } }
-    /**
-     * Sets a 3-component integer vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     * @param z Third component
-     */
-    fun setParameter(name: String, x: Int, y: Int, z: Int) { name.useCString { FilaMaterialInstance_setParameterInt3(nativeHandle, it, x, y, z) } }
-    /**
-     * Sets a 4-component boolean vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     * @param z Third component
-     * @param w Fourth component
-     */
-    fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean, w: Boolean) { name.useCString { FilaMaterialInstance_setParameterBool4(nativeHandle, it, x, y, z, w) } }
-    /**
-     * Sets a 4-component float vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     * @param z Third component
-     * @param w Fourth component
-     */
-    fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) { name.useCString { FilaMaterialInstance_setParameterFloat4(nativeHandle, it, x, y, z, w) } }
-    /**
-     * Sets a 4-component integer vector parameter.
-     * @param name Parameter name as defined in the material
-     * @param x First component
-     * @param y Second component
-     * @param z Third component
-     * @param w Fourth component
-     */
-    fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) { name.useCString { FilaMaterialInstance_setParameterInt4(nativeHandle, it, x, y, z, w) } }
-    
+    fun setParameter(name: String, x: Int) { name.useCString { FilaMaterialInstance_setParameter_int32_t(nativeHandle, it, x) } }
+    /** Sets a 2-component boolean vector parameter. */
+    fun setParameter(name: String, x: Boolean, y: Boolean) = setParameter(name, BooleanElement.BOOL2, booleanArrayOf(x, y), 0, 1)
+    /** Sets a 2-component float vector parameter. */
+    fun setParameter(name: String, x: Float, y: Float) = setParameter(name, FloatElement.FLOAT2, floatArrayOf(x, y), 0, 1)
+    /** Sets a 2-component integer vector parameter. */
+    fun setParameter(name: String, x: Int, y: Int) = setParameter(name, IntElement.INT2, intArrayOf(x, y), 0, 1)
+    /** Sets a 3-component boolean vector parameter. */
+    fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) = setParameter(name, BooleanElement.BOOL3, booleanArrayOf(x, y, z), 0, 1)
+    /** Sets a 3-component float vector parameter. */
+    fun setParameter(name: String, x: Float, y: Float, z: Float) = setParameter(name, FloatElement.FLOAT3, floatArrayOf(x, y, z), 0, 1)
+    /** Sets a 3-component integer vector parameter. */
+    fun setParameter(name: String, x: Int, y: Int, z: Int) = setParameter(name, IntElement.INT3, intArrayOf(x, y, z), 0, 1)
+    /** Sets a 4-component boolean vector parameter. */
+    fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean, w: Boolean) = setParameter(name, BooleanElement.BOOL4, booleanArrayOf(x, y, z, w), 0, 1)
+    /** Sets a 4-component float vector parameter. */
+    fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) = setParameter(name, FloatElement.FLOAT4, floatArrayOf(x, y, z, w), 0, 1)
+    /** Sets a 4-component integer vector parameter. */
+    fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) = setParameter(name, IntElement.INT4, intArrayOf(x, y, z, w), 0, 1)
+
     /**
      * Sets a texture parameter with sampler configuration.
      *
@@ -224,101 +146,184 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * mode is set to COMPARE_TO_TEXTURE.
      *
      * @param name Parameter name as defined in the material
-     * @param texture Texture to bind (can be null to unbind)
+     * @param texture Texture to bind, or null
      * @param sampler Sampler configuration (filtering, wrapping, comparison function)
      */
-    fun setParameter(name: String, texture: Texture, sampler: TextureSampler) {
-        name.useCString {
-            FilaMaterialInstance_setParameterTexture(
-                nativeHandle, it, texture.nativeHandle,
-                sampler.minFilter.ordinal, sampler.magFilter.ordinal,
-                sampler.wrapModeS.ordinal, sampler.wrapModeT.ordinal, sampler.wrapModeR.ordinal,
-                sampler.anisotropy, sampler.compareMode.ordinal, sampler.compareFunction.ordinal,
-            )
-        }
+    fun setParameter(name: String, texture: Texture?, sampler: TextureSampler) {
+        sampler.useNative { s -> name.useCString { FilaMaterialInstance_setParameter_Texture_TextureSampler(nativeHandle, it, texture?.nativeHandle ?: NullPointer, s) } }
     }
-    
+
     /**
      * Sets a parameter from a boolean array.
      *
      * @param name Parameter name as defined in the material
-     * @param type Array element type (BOOL, BOOL2, BOOL3, or BOOL4)
-     * @param v Source array
+     * @param element Array element type (BOOL, BOOL2, BOOL3, or BOOL4)
+     * @param v Source array, flattened
      * @param offset Index into v to start copying from
      * @param count Number of elements to copy
      */
-    fun setParameter(name: String, type: BooleanElement, v: BooleanArray, offset: Int, count: Int) {
+    fun setParameter(name: String, element: BooleanElement, v: BooleanArray, offset: Int, count: Int) {
         // C bool is one byte.
         val bools = ByteArray(v.size - offset) { if (v[offset + it]) 1 else 0 }
-        bools.usePinned { p -> name.useCString { FilaMaterialInstance_setBooleanParameterArray(nativeHandle, it, type.ordinal + 1, p, count) } }
+        bools.usePinned { p ->
+            name.useCString {
+                when (element) {
+                    BooleanElement.BOOL -> FilaMaterialInstance_setParameter_bool_size_t(nativeHandle, it, p, count)
+                    BooleanElement.BOOL2 -> FilaMaterialInstance_setParameter_bool2_size_t(nativeHandle, it, p, count)
+                    BooleanElement.BOOL3 -> FilaMaterialInstance_setParameter_bool3_size_t(nativeHandle, it, p, count)
+                    BooleanElement.BOOL4 -> FilaMaterialInstance_setParameter_bool4_size_t(nativeHandle, it, p, count)
+                }
+            }
+        }
     }
     /**
      * Sets a parameter from an integer array.
      *
      * @param name Parameter name as defined in the material
-     * @param type Array element type (INT, INT2, INT3, or INT4)
-     * @param v Source array
+     * @param element Array element type (INT, INT2, INT3, or INT4)
+     * @param v Source array, flattened
      * @param offset Index into v to start copying from
      * @param count Number of elements to copy
      */
-    fun setParameter(name: String, type: IntElement, v: IntArray, offset: Int, count: Int) {
+    fun setParameter(name: String, element: IntElement, v: IntArray, offset: Int, count: Int) {
         v.copyOfRange(offset, v.size).usePinned { p ->
-            name.useCString { FilaMaterialInstance_setIntParameterArray(nativeHandle, it, type.ordinal + 1, p, count) }
+            name.useCString {
+                when (element) {
+                    IntElement.INT -> FilaMaterialInstance_setParameter_int32_t_size_t(nativeHandle, it, p, count)
+                    IntElement.INT2 -> FilaMaterialInstance_setParameter_int2_size_t(nativeHandle, it, p, count)
+                    IntElement.INT3 -> FilaMaterialInstance_setParameter_int3_size_t(nativeHandle, it, p, count)
+                    IntElement.INT4 -> FilaMaterialInstance_setParameter_int4_size_t(nativeHandle, it, p, count)
+                }
+            }
         }
     }
     /**
      * Sets a parameter from a float array.
      *
      * @param name Parameter name as defined in the material
-     * @param type Array element type (FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, or MAT4)
-     * @param v Source array
+     * @param element Array element type (FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, or MAT4)
+     * @param v Source array, flattened (matrices column-major)
      * @param offset Index into v to start copying from
      * @param count Number of elements to copy
      */
-    fun setParameter(name: String, type: FloatElement, v: FloatArray, offset: Int, count: Int) {
-        val elementSize = when (type) {
-            FloatElement.FLOAT -> 1
-            FloatElement.FLOAT2 -> 2
-            FloatElement.FLOAT3 -> 3
-            FloatElement.FLOAT4 -> 4
-            FloatElement.MAT3 -> 9
-            FloatElement.MAT4 -> 16
-        }
+    fun setParameter(name: String, element: FloatElement, v: FloatArray, offset: Int, count: Int) {
         v.copyOfRange(offset, v.size).usePinned { p ->
-            name.useCString { FilaMaterialInstance_setFloatParameterArray(nativeHandle, it, elementSize, p, count) }
+            name.useCString {
+                when (element) {
+                    FloatElement.FLOAT -> FilaMaterialInstance_setParameter_float_size_t(nativeHandle, it, p, count)
+                    FloatElement.FLOAT2 -> FilaMaterialInstance_setParameter_float2_size_t(nativeHandle, it, p, count)
+                    FloatElement.FLOAT3 -> FilaMaterialInstance_setParameter_float3_size_t(nativeHandle, it, p, count)
+                    FloatElement.FLOAT4 -> FilaMaterialInstance_setParameter_float4_size_t(nativeHandle, it, p, count)
+                    FloatElement.MAT3 -> FilaMaterialInstance_setParameter_mat3f_size_t(nativeHandle, it, p, count)
+                    FloatElement.MAT4 -> FilaMaterialInstance_setParameter_mat4f_size_t(nativeHandle, it, p, count)
+                }
+            }
         }
     }
-    
+
     /**
-     * Sets an RGB color parameter.
-     *
-     * The color is converted based on the specified type (Linear or sRGB).
+     * Sets an RGB color parameter, converted to linear from [type]'s space.
      *
      * @param name Parameter name as defined in the material
-     * @param type Whether color is in Linear or sRGB space
+     * @param type Whether color is in linear or sRGB space
      * @param r Red channel [0, 1]
      * @param g Green channel [0, 1]
      * @param b Blue channel [0, 1]
      */
-    fun setParameter(name: String, type: Colors.RgbType, r: Float, g: Float, b: Float) {
-        val linear = Colors.toLinear(type, r, g, b)
-        name.useCString { FilaMaterialInstance_setParameterFloat3(nativeHandle, it, linear[0], linear[1], linear[2]) }
+    fun setParameter(name: String, type: RgbType, r: Float, g: Float, b: Float) {
+        floatArrayOf(r, g, b).usePinned { c -> name.useCString { FilaMaterialInstance_setParameter_RgbType_float3(nativeHandle, it, type.ordinal, c) } }
     }
     /**
-     * Sets an RGBA color parameter.
-     *
-     * The color is converted based on the specified type (Linear or sRGB).
+     * Sets an RGBA color parameter, converted to linear from [type]'s space.
      *
      * @param name Parameter name as defined in the material
-     * @param type Whether color is in Linear or sRGB space
+     * @param type Whether color is in linear or sRGB space, and whether alpha is premultiplied
      * @param r Red channel [0, 1]
      * @param g Green channel [0, 1]
      * @param b Blue channel [0, 1]
      * @param a Alpha channel [0, 1]
      */
-    fun setParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float) {
-        val linear = Colors.toLinear(type, r, g, b, a)
-        name.useCString { FilaMaterialInstance_setParameterFloat4(nativeHandle, it, linear[0], linear[1], linear[2], linear[3]) }
+    fun setParameter(name: String, type: RgbaType, r: Float, g: Float, b: Float, a: Float) {
+        floatArrayOf(r, g, b, a).usePinned { c -> name.useCString { FilaMaterialInstance_setParameter_RgbaType_float4(nativeHandle, it, type.ordinal, c) } }
+    }
+
+    /**
+     * Gets the value of a float parameter.
+     *
+     * @param name Parameter name as defined in the material
+     * @param element Parameter type (FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, or MAT4)
+     * @return The value, flattened (matrices column-major)
+     */
+    fun getParameter(name: String, element: FloatElement): FloatArray = name.useCString {
+        when (element) {
+            FloatElement.FLOAT -> floatArrayOf(FilaMaterialInstance_getParameter_float(nativeHandle, it))
+            FloatElement.FLOAT2 -> FloatArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_float2(nativeHandle, it, o) } }
+            FloatElement.FLOAT3 -> FloatArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_float3(nativeHandle, it, o) } }
+            FloatElement.FLOAT4 -> FloatArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_float4(nativeHandle, it, o) } }
+            FloatElement.MAT3 -> FloatArray(9).apply { usePinned { o -> FilaMaterialInstance_getParameter_mat3f(nativeHandle, it, o) } }
+            FloatElement.MAT4 -> FloatArray(16).apply { usePinned { o -> FilaMaterialInstance_getParameter_mat4f(nativeHandle, it, o) } }
+        }
+    }
+    /**
+     * Gets the value of an integer parameter.
+     *
+     * @param name Parameter name as defined in the material
+     * @param element Parameter type (INT, INT2, INT3, or INT4)
+     * @return The value's components
+     */
+    fun getParameter(name: String, element: IntElement): IntArray = name.useCString {
+        when (element) {
+            IntElement.INT -> intArrayOf(FilaMaterialInstance_getParameter_int32_t(nativeHandle, it))
+            IntElement.INT2 -> IntArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_int2(nativeHandle, it, o) } }
+            IntElement.INT3 -> IntArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_int3(nativeHandle, it, o) } }
+            IntElement.INT4 -> IntArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_int4(nativeHandle, it, o) } }
+        }
+    }
+
+    /**
+     * Sets the value of a specialization constant, overriding the Material's. Panics if the constant doesn't
+     * exist or has another type. Compiles new programs when the value changes, so prefer
+     * [Material.Builder.constant] where the value is known up front.
+     *
+     * @param name Constant name as defined in the material
+     * @param value Value of the constant
+     */
+    fun setConstant(name: String, value: Int) { name.useCString { FilaMaterialInstance_setConstant_int32_t(nativeHandle, it, value) } }
+    /** @see setConstant */
+    fun setConstant(name: String, value: Float) { name.useCString { FilaMaterialInstance_setConstant_float(nativeHandle, it, value) } }
+    /** @see setConstant */
+    fun setConstant(name: String, value: Boolean) { name.useCString { FilaMaterialInstance_setConstant_bool(nativeHandle, it, value) } }
+    /**
+     * Returns the boolean value of a specialization constant.
+     * @param name Constant name as defined in the material
+     */
+    fun getConstantBoolean(name: String): Boolean = name.useCString { FilaMaterialInstance_getConstant_bool(nativeHandle, it) }
+    /**
+     * Returns the float value of a specialization constant.
+     * @param name Constant name as defined in the material
+     */
+    fun getConstantFloat(name: String): Float = name.useCString { FilaMaterialInstance_getConstant_float(nativeHandle, it) }
+    /**
+     * Returns the integer value of a specialization constant.
+     * @param name Constant name as defined in the material
+     */
+    fun getConstantInt(name: String): Int = name.useCString { FilaMaterialInstance_getConstant_int32_t(nativeHandle, it) }
+
+    /**
+     * Asynchronously ensures that a subset of this MaterialInstance's variants are compiled, taking its
+     * specialization constants into account.
+     *
+     * @param priority Which priority queue to use (CRITICAL, HIGH, or LOW).
+     * @param variants Variants to compile (a mask of [UserVariantFilterBit] values).
+     * @param callback Optional callback invoked on the main thread with this instance when compilation completes.
+     *
+     * @see Material.compile
+     */
+    fun compile(priority: Material.CompilerPriorityQueue, variants: Int = UserVariantFilterBit.ALL, callback: ((MaterialInstance) -> Unit)? = null) {
+        val userData = if (callback != null) Callbacks.register(once = true) { _ -> callback(this) } else NullPointer
+        FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(
+            nativeHandle, priority.ordinal, variants, NullPointer, if (callback != null) Callbacks.argUser else NullPointer, userData,
+        )
     }
 
     /**
@@ -346,7 +351,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * Disables the scissor box test; rendering is not restricted to any region.
      */
     fun unsetScissor() { FilaMaterialInstance_unsetScissor(nativeHandle) }
-    
+
     /**
      * Sets a polygon offset that will be applied to all renderables drawn with this material instance.
      *
@@ -405,7 +410,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     var isDoubleSided: Boolean
         get() = FilaMaterialInstance_isDoubleSided(nativeHandle)
         set(value) { FilaMaterialInstance_setDoubleSided(nativeHandle, value) }
-    
+
     /**
      * Gets/sets the transparency rendering mode.
      *
@@ -416,9 +421,9 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     var transparencyMode: Material.TransparencyMode
         get() = Material.TransparencyMode.entries[FilaMaterialInstance_getTransparencyMode(nativeHandle)]
         set(value) { FilaMaterialInstance_setTransparencyMode(nativeHandle, value.ordinal) }
-    
+
     /**
-     * Gets/sets the face culling mode.
+     * Gets/sets the face culling mode, for both the color and shadow passes.
      *
      * Overrides the default triangle culling state that was set on the material.
      *
@@ -438,16 +443,12 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param shadowPassCullingMode Culling mode for shadow pass rendering
      */
     fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode) {
-        FilaMaterialInstance_setCullingModeSeparate(nativeHandle, colorPassCullingMode.ordinal, shadowPassCullingMode.ordinal)
+        FilaMaterialInstance_setCullingMode_CullingMode(nativeHandle, colorPassCullingMode.ordinal, shadowPassCullingMode.ordinal)
     }
 
-    /**
-     * Returns the face culling mode for the shadow passes.
-     *
-     * @return Culling mode used when rendering shadow maps
-     */
+    /** The face culling mode for the shadow passes. */
     val shadowCullingMode: Material.CullingMode get() = Material.CullingMode.entries[FilaMaterialInstance_getShadowCullingMode(nativeHandle)]
-    
+
     /**
      * Gets/sets whether color write is enabled.
      *
@@ -472,7 +473,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     var isStencilWriteEnabled: Boolean
         get() = FilaMaterialInstance_isStencilWriteEnabled(nativeHandle)
         set(value) { FilaMaterialInstance_setStencilWrite(nativeHandle, value) }
-    
+
     /**
      * Gets/sets whether depth culling (depth testing) is enabled.
      *
@@ -487,30 +488,22 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      *
      * Overrides the default depth function state that was set on the material.
      */
-    var depthFunc: TextureSampler.CompareFunction
-        get() = TextureSampler.CompareFunction.entries[FilaMaterialInstance_getDepthFunc(nativeHandle)]
+    var depthFunc: TextureSampler.CompareFunc
+        get() = TextureSampler.CompareFunc.entries[FilaMaterialInstance_getDepthFunc(nativeHandle)]
         set(value) { FilaMaterialInstance_setDepthFunc(nativeHandle, value.ordinal) }
-    
+
     /**
-     * Sets the stencil comparison function (default is ALWAYS).
+     * Sets the stencil comparison function (default is A, always).
      *
      * It's possible to set separate stencil comparison functions; one for front-facing polygons,
      * and one for back-facing polygons. The face parameter determines the comparison function(s)
      * updated by this call.
      *
      * @param func Comparison function
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace) {
-        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal, face.native)
-    }
-    /**
-     * Sets the stencil comparison function for both front and back faces (default is ALWAYS).
-     *
-     * @param func Comparison function
-     */
-    fun setStencilCompareFunction(func: TextureSampler.CompareFunction) {
-        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal, StencilFace.FRONT_AND_BACK.native)
+    fun setStencilCompareFunction(func: TextureSampler.CompareFunc, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal, face.value)
     }
     /**
      * Sets the stencil fail operation (default is KEEP).
@@ -518,23 +511,11 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * The stencil fail operation is performed to update values in the stencil buffer when the
      * stencil test fails.
      *
-     * It's possible to set separate stencil fail operations; one for front-facing polygons, and one
-     * for back-facing polygons. The face parameter determines the stencil fail operation(s) updated
-     * by this call.
-     *
      * @param op Operation to apply
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilOpStencilFail(op: StencilOperation, face: StencilFace) {
-        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal, face.native)
-    }
-    /**
-     * Sets the stencil fail operation for both front and back faces (default is KEEP).
-     *
-     * @param op Operation to apply
-     */
-    fun setStencilOpStencilFail(op: StencilOperation) {
-        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal, StencilFace.FRONT_AND_BACK.native)
+    fun setStencilOpStencilFail(op: StencilOperation, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal, face.value)
     }
     /**
      * Sets the depth fail operation (default is KEEP).
@@ -542,23 +523,11 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * The depth fail operation is performed to update values in the stencil buffer when the depth
      * test fails.
      *
-     * It's possible to set separate depth fail operations; one for front-facing polygons, and one
-     * for back-facing polygons. The face parameter determines the depth fail operation(s) updated
-     * by this call.
-     *
      * @param op Operation to apply
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilOpDepthFail(op: StencilOperation, face: StencilFace) {
-        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal, face.native)
-    }
-    /**
-     * Sets the depth fail operation for both front and back faces (default is KEEP).
-     *
-     * @param op Operation to apply
-     */
-    fun setStencilOpDepthFail(op: StencilOperation) {
-        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal, StencilFace.FRONT_AND_BACK.native)
+    fun setStencilOpDepthFail(op: StencilOperation, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal, face.value)
     }
     /**
      * Sets the depth-stencil pass operation (default is KEEP).
@@ -566,259 +535,45 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * The depth-stencil pass operation is performed to update values in the stencil buffer when
      * both the stencil test and depth test pass.
      *
-     * It's possible to set separate depth-stencil pass operations; one for front-facing polygons,
-     * and one for back-facing polygons. The face parameter determines the depth-stencil pass
-     * operation(s) updated by this call.
-     *
      * @param op Operation to apply
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace) {
-        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal, face.native)
+    fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal, face.value)
     }
-    /**
-     * Sets the depth-stencil pass operation for both front and back faces (default is KEEP).
-     *
-     * @param op Operation to apply
-     */
-    fun setStencilOpDepthStencilPass(op: StencilOperation) {
-        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal, StencilFace.FRONT_AND_BACK.native)
-    }
-    
     /**
      * Sets the stencil reference value (default is 0).
      *
-     * It's possible to set separate stencil reference values; one for front-facing polygons, and one
-     * for back-facing polygons. The face parameter determines the reference value(s) updated
-     * by this call.
-     *
      * @param value Reference value [0, 255]
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilReferenceValue(value: Int, face: StencilFace) {
-        FilaMaterialInstance_setStencilReferenceValue(nativeHandle, value, face.native)
+    fun setStencilReferenceValue(value: Int, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilReferenceValue(nativeHandle, value, face.value)
     }
     /**
-     * Sets the stencil reference value for both front and back faces (default is 0).
-     *
-     * @param value Reference value [0, 255]
-     */
-    fun setStencilReferenceValue(value: Int) {
-        FilaMaterialInstance_setStencilReferenceValue(nativeHandle, value, StencilFace.FRONT_AND_BACK.native)
-    }
-    /**
-     * Sets the stencil read mask (default is 0xFF / 255 / all bits).
-     *
-     * It's possible to set separate stencil read masks; one for front-facing polygons, and one
-     * for back-facing polygons. The face parameter determines the read mask(s) updated by this call.
+     * Sets the stencil read mask (default is 0xFF).
      *
      * @param readMask Bitmask [0, 255]; only masked bits participate in comparison
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilReadMask(readMask: Int, face: StencilFace) {
-        FilaMaterialInstance_setStencilReadMask(nativeHandle, readMask, face.native)
+    fun setStencilReadMask(readMask: Int, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilReadMask(nativeHandle, readMask, face.value)
     }
     /**
-     * Sets the stencil read mask for both front and back faces (default is 0xFF / 255 / all bits).
-     *
-     * @param readMask Bitmask [0, 255]; only masked bits participate in comparison
-     */
-    fun setStencilReadMask(readMask: Int) {
-        FilaMaterialInstance_setStencilReadMask(nativeHandle, readMask, StencilFace.FRONT_AND_BACK.native)
-    }
-    /**
-     * Sets the stencil write mask (default is 0xFF / 255 / all bits).
-     *
-     * It's possible to set separate stencil write masks; one for front-facing polygons, and one
-     * for back-facing polygons. The face parameter determines the write mask(s) updated by this call.
+     * Sets the stencil write mask (default is 0xFF).
      *
      * @param writeMask Bitmask [0, 255]; only masked bits can be modified
-     * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
+     * @param face Which face(s) this applies to
      */
-    fun setStencilWriteMask(writeMask: Int, face: StencilFace) {
-        FilaMaterialInstance_setStencilWriteMask(nativeHandle, writeMask, face.native)
+    fun setStencilWriteMask(writeMask: Int, face: StencilFace = StencilFace.FRONT_AND_BACK) {
+        FilaMaterialInstance_setStencilWriteMask(nativeHandle, writeMask, face.value)
     }
+
     /**
-     * Sets the stencil write mask for both front and back faces (default is 0xFF / 255 / all bits).
+     * Uploads this instance's pending parameter changes. The engine does this for every instance it renders;
+     * call it for instances only used outside of rendering, e.g. by compute.
      *
-     * @param writeMask Bitmask [0, 255]; only masked bits can be modified
+     * @param engine Engine this instance belongs to
      */
-    fun setStencilWriteMask(writeMask: Int) {
-        FilaMaterialInstance_setStencilWriteMask(nativeHandle, writeMask, StencilFace.FRONT_AND_BACK.native)
-    }
+    fun commit(engine: Engine) { FilaMaterialInstance_commit(nativeHandle, engine.nativeHandle) }
 }
-
-private val MaterialInstance.StencilFace.native: Int
-    get() = when (this) {
-        MaterialInstance.StencilFace.FRONT -> 1
-        MaterialInstance.StencilFace.BACK -> 2
-        MaterialInstance.StencilFace.FRONT_AND_BACK -> 3
-    }
-
-@ExternalSymbolName("FilaMaterialInstance_duplicate")
-private external fun FilaMaterialInstance_duplicate(other: NativePointer, name: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaMaterialInstance_getConstantBool")
-private external fun FilaMaterialInstance_getConstantBool(instance: NativePointer, name: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMaterialInstance_getConstantFloat")
-private external fun FilaMaterialInstance_getConstantFloat(instance: NativePointer, name: NativePointer): Float
-
-@ExternalSymbolName("FilaMaterialInstance_getConstantInt")
-private external fun FilaMaterialInstance_getConstantInt(instance: NativePointer, name: NativePointer): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getCullingMode")
-private external fun FilaMaterialInstance_getCullingMode(instance: NativePointer): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getDepthFunc")
-private external fun FilaMaterialInstance_getDepthFunc(instance: NativePointer): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getMaskThreshold")
-private external fun FilaMaterialInstance_getMaskThreshold(instance: NativePointer): Float
-
-@ExternalSymbolName("FilaMaterialInstance_getMaterial")
-private external fun FilaMaterialInstance_getMaterial(instance: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaMaterialInstance_getName")
-private external fun FilaMaterialInstance_getName(instance: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaMaterialInstance_getShadowCullingMode")
-private external fun FilaMaterialInstance_getShadowCullingMode(instance: NativePointer): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getSpecularAntiAliasingThreshold")
-private external fun FilaMaterialInstance_getSpecularAntiAliasingThreshold(instance: NativePointer): Float
-
-@ExternalSymbolName("FilaMaterialInstance_getSpecularAntiAliasingVariance")
-private external fun FilaMaterialInstance_getSpecularAntiAliasingVariance(instance: NativePointer): Float
-
-@ExternalSymbolName("FilaMaterialInstance_getTransparencyMode")
-private external fun FilaMaterialInstance_getTransparencyMode(instance: NativePointer): Int
-
-@ExternalSymbolName("FilaMaterialInstance_isColorWriteEnabled")
-private external fun FilaMaterialInstance_isColorWriteEnabled(instance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMaterialInstance_isDepthCullingEnabled")
-private external fun FilaMaterialInstance_isDepthCullingEnabled(instance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMaterialInstance_isDepthWriteEnabled")
-private external fun FilaMaterialInstance_isDepthWriteEnabled(instance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMaterialInstance_isDoubleSided")
-private external fun FilaMaterialInstance_isDoubleSided(instance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMaterialInstance_isStencilWriteEnabled")
-private external fun FilaMaterialInstance_isStencilWriteEnabled(instance: NativePointer): Boolean
-
-@ExternalSymbolName("FilaMaterialInstance_setBooleanParameterArray")
-private external fun FilaMaterialInstance_setBooleanParameterArray(instance: NativePointer, name: NativePointer, elementSize: Int, v: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setColorWrite")
-private external fun FilaMaterialInstance_setColorWrite(instance: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setCullingMode")
-private external fun FilaMaterialInstance_setCullingMode(instance: NativePointer, cullingMode: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setCullingModeSeparate")
-private external fun FilaMaterialInstance_setCullingModeSeparate(instance: NativePointer, colorPassCullingMode: Int, shadowPassCullingMode: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setDepthCulling")
-private external fun FilaMaterialInstance_setDepthCulling(instance: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setDepthFunc")
-private external fun FilaMaterialInstance_setDepthFunc(instance: NativePointer, func: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setDepthWrite")
-private external fun FilaMaterialInstance_setDepthWrite(instance: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setDoubleSided")
-private external fun FilaMaterialInstance_setDoubleSided(instance: NativePointer, doubleSided: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setFloatParameterArray")
-private external fun FilaMaterialInstance_setFloatParameterArray(instance: NativePointer, name: NativePointer, elementSize: Int, v: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setIntParameterArray")
-private external fun FilaMaterialInstance_setIntParameterArray(instance: NativePointer, name: NativePointer, elementSize: Int, v: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setMaskThreshold")
-private external fun FilaMaterialInstance_setMaskThreshold(instance: NativePointer, threshold: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterBool")
-private external fun FilaMaterialInstance_setParameterBool(instance: NativePointer, name: NativePointer, x: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterBool2")
-private external fun FilaMaterialInstance_setParameterBool2(instance: NativePointer, name: NativePointer, x: Boolean, y: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterBool3")
-private external fun FilaMaterialInstance_setParameterBool3(instance: NativePointer, name: NativePointer, x: Boolean, y: Boolean, z: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterBool4")
-private external fun FilaMaterialInstance_setParameterBool4(instance: NativePointer, name: NativePointer, x: Boolean, y: Boolean, z: Boolean, w: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterFloat")
-private external fun FilaMaterialInstance_setParameterFloat(instance: NativePointer, name: NativePointer, x: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterFloat2")
-private external fun FilaMaterialInstance_setParameterFloat2(instance: NativePointer, name: NativePointer, x: Float, y: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterFloat3")
-private external fun FilaMaterialInstance_setParameterFloat3(instance: NativePointer, name: NativePointer, x: Float, y: Float, z: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterFloat4")
-private external fun FilaMaterialInstance_setParameterFloat4(instance: NativePointer, name: NativePointer, x: Float, y: Float, z: Float, w: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterInt")
-private external fun FilaMaterialInstance_setParameterInt(instance: NativePointer, name: NativePointer, x: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterInt2")
-private external fun FilaMaterialInstance_setParameterInt2(instance: NativePointer, name: NativePointer, x: Int, y: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterInt3")
-private external fun FilaMaterialInstance_setParameterInt3(instance: NativePointer, name: NativePointer, x: Int, y: Int, z: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterInt4")
-private external fun FilaMaterialInstance_setParameterInt4(instance: NativePointer, name: NativePointer, x: Int, y: Int, z: Int, w: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameterTexture")
-private external fun FilaMaterialInstance_setParameterTexture(instance: NativePointer, name: NativePointer, texture: NativePointer, minFilter: Int, magFilter: Int, wrapS: Int, wrapT: Int, wrapR: Int, anisotropy: Float, compareMode: Int, compareFunc: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setPolygonOffset")
-private external fun FilaMaterialInstance_setPolygonOffset(instance: NativePointer, scale: Float, constant: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setScissor")
-private external fun FilaMaterialInstance_setScissor(instance: NativePointer, left: Int, bottom: Int, width: Int, height: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setSpecularAntiAliasingThreshold")
-private external fun FilaMaterialInstance_setSpecularAntiAliasingThreshold(instance: NativePointer, threshold: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setSpecularAntiAliasingVariance")
-private external fun FilaMaterialInstance_setSpecularAntiAliasingVariance(instance: NativePointer, variance: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilCompareFunction")
-private external fun FilaMaterialInstance_setStencilCompareFunction(instance: NativePointer, func: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilOpDepthFail")
-private external fun FilaMaterialInstance_setStencilOpDepthFail(instance: NativePointer, op: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilOpDepthStencilPass")
-private external fun FilaMaterialInstance_setStencilOpDepthStencilPass(instance: NativePointer, op: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilOpStencilFail")
-private external fun FilaMaterialInstance_setStencilOpStencilFail(instance: NativePointer, op: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilReadMask")
-private external fun FilaMaterialInstance_setStencilReadMask(instance: NativePointer, readMask: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilReferenceValue")
-private external fun FilaMaterialInstance_setStencilReferenceValue(instance: NativePointer, value: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilWrite")
-private external fun FilaMaterialInstance_setStencilWrite(instance: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setStencilWriteMask")
-private external fun FilaMaterialInstance_setStencilWriteMask(instance: NativePointer, writeMask: Int, face: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setTransparencyMode")
-private external fun FilaMaterialInstance_setTransparencyMode(instance: NativePointer, mode: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_unsetScissor")
-private external fun FilaMaterialInstance_unsetScissor(instance: NativePointer)

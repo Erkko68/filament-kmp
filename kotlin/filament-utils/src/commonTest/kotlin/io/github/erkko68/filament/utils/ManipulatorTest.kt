@@ -3,7 +3,7 @@ package io.github.erkko68.filament.utils
 import io.github.erkko68.filament.utils.testutils.UtilsTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class ManipulatorTest : UtilsTestFixture() {
     private fun buildOrbitManipulator(): Manipulator =
@@ -18,12 +18,13 @@ class ManipulatorTest : UtilsTestFixture() {
             .fovDegrees(45f)
             .farPlane(100f)
             .panning(true)
-            .build(Manipulator.Mode.ORBIT)
+            .groundPlane(0f, 0f, 1f, 0f)
+            .build(Mode.ORBIT)
 
     @Test
     fun testOrbitModeIsReported() {
         val m = buildOrbitManipulator()
-        assertEquals(Manipulator.Mode.ORBIT, m.mode)
+        assertEquals(Mode.ORBIT, m.mode)
         m.destroy()
     }
 
@@ -33,13 +34,13 @@ class ManipulatorTest : UtilsTestFixture() {
             .viewport(800, 600)
             .mapExtent(100f, 100f)
             .mapMinDistance(1f)
-            .build(Manipulator.Mode.MAP)
-        assertEquals(Manipulator.Mode.MAP, m.mode)
+            .build(Mode.MAP)
+        assertEquals(Mode.MAP, m.mode)
         m.destroy()
     }
 
     @Test
-    fun testFlightMode() {
+    fun testFreeFlightMode() {
         val m = Manipulator.Builder()
             .viewport(800, 600)
             .flightStartPosition(0f, 0f, 0f)
@@ -48,8 +49,8 @@ class ManipulatorTest : UtilsTestFixture() {
             .flightSpeedSteps(10)
             .flightPanSpeed(0.01f, 0.01f)
             .flightMoveDamping(0.5f)
-            .build(Manipulator.Mode.FLIGHT)
-        assertEquals(Manipulator.Mode.FLIGHT, m.mode)
+            .build(Mode.FREE_FLIGHT)
+        assertEquals(Mode.FREE_FLIGHT, m.mode)
         m.destroy()
     }
 
@@ -77,8 +78,20 @@ class ManipulatorTest : UtilsTestFixture() {
     fun testRaycast() {
         val m = buildOrbitManipulator()
         val result = FloatArray(3)
-        m.raycast(400, 300, result)
-        assertEquals(3, result.size)
+        // The orbit camera looks down -z from (0, 0, 10): the viewport centre hits the z=0 ground plane.
+        assertTrue(m.raycast(400, 300, result))
+        assertEquals(0f, result[2], 1e-3f)
+        m.destroy()
+    }
+
+    @Test
+    fun testGetRay() {
+        val m = buildOrbitManipulator()
+        val origin = FloatArray(3)
+        val dir = FloatArray(3)
+        m.getRay(400, 300, origin, dir)
+        assertEquals(10f, origin[2], 1e-3f)
+        assertTrue(dir[2] < 0f)
         m.destroy()
     }
 
@@ -104,7 +117,7 @@ class ManipulatorTest : UtilsTestFixture() {
     fun testKeyEvents() {
         val m = Manipulator.Builder()
             .viewport(800, 600)
-            .build(Manipulator.Mode.FLIGHT)
+            .build(Mode.FREE_FLIGHT)
         m.keyDown(Manipulator.Key.FORWARD)
         m.keyDown(Manipulator.Key.LEFT)
         m.keyUp(Manipulator.Key.FORWARD)
@@ -140,11 +153,21 @@ class ManipulatorTest : UtilsTestFixture() {
     fun testBookmarks() {
         val m = buildOrbitManipulator()
         val home = m.homeBookmark
-        assertNotNull(home)
-        val current = m.currentBookmark
-        assertNotNull(current)
+        m.grabBegin(100, 100, false)
+        m.grabUpdate(300, 100)
+        m.grabEnd()
+        val moved = m.currentBookmark
         m.jumpToBookmark(home)
-        m.jumpToBookmark(current)
+        val eye = FloatArray(3)
+        m.getLookAt(eye, FloatArray(3), FloatArray(3))
+        assertEquals(10f, eye[2], 1e-3f)
+
+        val halfway = Bookmark.interpolate(home, moved, 0.5)
+        m.jumpToBookmark(halfway)
+        m.getLookAt(eye, FloatArray(3), FloatArray(3))
+        assertTrue(eye[2] < 10f - 1e-3f)
+        assertTrue(Bookmark.duration(home, moved) >= 0.0)
+        listOf(home, moved, halfway).forEach { it.destroy() }
         m.destroy()
     }
 
@@ -153,7 +176,7 @@ class ManipulatorTest : UtilsTestFixture() {
         val m = Manipulator.Builder()
             .viewport(800, 600)
             .groundPlane(0f, 1f, 0f, 0f)
-            .build(Manipulator.Mode.ORBIT)
+            .build(Mode.ORBIT)
         m.destroy()
     }
 
@@ -179,8 +202,8 @@ class ManipulatorTest : UtilsTestFixture() {
             .flightMoveDamping(0.8f)
             .groundPlane(0f, 1f, 0f, 0f)
             .panning(false)
-            .build(Manipulator.Mode.ORBIT)
-        assertEquals(Manipulator.Mode.ORBIT, m.mode)
+            .build(Mode.ORBIT)
+        assertEquals(Mode.ORBIT, m.mode)
         m.destroy()
     }
 }

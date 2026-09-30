@@ -21,7 +21,7 @@ class RendererRenderingTest : RenderingTestFixture() {
         val swapChain = engine.createSwapChain(w, h, SWAP_CHAIN_CONFIG_READABLE)
         val renderer = engine.createRenderer()
         val scene = engine.createScene()
-        val camera = engine.createCamera()
+        val camera = engine.createCamera(engine.entityManager.create())
         camera.setProjection(45.0, w.toDouble() / h, 0.1, 100.0, Camera.Fov.VERTICAL)
         camera.lookAt(0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
@@ -58,11 +58,12 @@ class RendererRenderingTest : RenderingTestFixture() {
             assertTrue(pixels.any { it.toInt() != 0 }, "readPixels delivered an all-zero buffer")
         }
 
-        engine.destroyView(view)
-        engine.destroyCamera(camera)
-        engine.destroyScene(scene)
-        engine.destroyRenderer(renderer)
-        engine.destroySwapChain(swapChain)
+        engine.destroy(view)
+        engine.destroyCameraComponent(camera.entity)
+        engine.entityManager.destroy(camera.entity)
+        engine.destroy(scene)
+        engine.destroy(renderer)
+        engine.destroy(swapChain)
     }
 
     companion object {

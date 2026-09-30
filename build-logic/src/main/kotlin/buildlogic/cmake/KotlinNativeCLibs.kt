@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 private val MODULE_ARCHIVES = mapOf(
     "filament" to listOf("filament", "backend", "utils", "geometry", "ibl-lite", "filaflat", "filabridge", "smol-v", "zstd", "meshoptimizer"),
     "filamat" to listOf("filamat", "shaders", "filabridge", "filaflat"),
-    "filament-utils" to listOf("filament-iblprefilter", "camutils", "image", "imageio-lite", "ktxreader", "stb"),
+    "filament-utils" to listOf("filament-iblprefilter", "camutils", "image", "imageio-lite", "ktxreader", "basis_transcoder", "stb"),
     "gltfio" to listOf("gltfio_core", "dracodec", "basis_transcoder", "mikktspace", "stb", "image", "imageio-lite", "ktxreader", "uberarchive", "uberzlib"),
 )
 
@@ -50,7 +50,11 @@ fun KotlinNativeTarget.linkFilamentCApi(project: Project, module: String) {
     }
     compilations.getByName("main").cinterops.create("filament") {
         definitionFile.set(defFile)
-        project.tasks.named(interopProcessingTaskName) { dependsOn(writeDef, ":cmakeBuild_${target.id}") }
+        project.tasks.named(interopProcessingTaskName) {
+            dependsOn(writeDef, ":cmakeBuild_${target.id}")
+            // The klib embeds the archive, so a rebuilt C API must re-run cinterop.
+            inputs.file(cLibDir.map { it.file("lib$module-c.a") }).withPropertyName("cApiArchive")
+        }
     }
 }
 

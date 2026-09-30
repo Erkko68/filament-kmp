@@ -59,7 +59,7 @@ internal actual fun FilamentSurface(
                             },
                             onResized = ::updateViewport,
                             onDestroyed = {
-                                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                                swapChainRef.value?.let { engine.destroy(it) }
                                 swapChainRef.value = null
                             },
                         )
@@ -75,7 +75,7 @@ internal actual fun FilamentSurface(
                                 updateViewport(width, height)
                             }
                             override fun surfaceDestroyed(holder: SurfaceHolder) {
-                                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                                swapChainRef.value?.let { engine.destroy(it) }
                                 swapChainRef.value = null
                             }
                         })
@@ -87,7 +87,7 @@ internal actual fun FilamentSurface(
 
         DisposableEffect(Unit) {
             onDispose {
-                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                swapChainRef.value?.let { engine.destroy(it) }
                 swapChainRef.value = null
             }
         }

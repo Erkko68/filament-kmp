@@ -28,7 +28,7 @@ import io.github.erkko68.filament.compose.internal.rememberOwned
  * val mapTex = rememberRenderTargetTexture(scene, mapCam, width = 256, height = 256)
  *
  * val screen = rememberMaterialInstance(screenMaterial, mapTex) {
- *     mapTex?.let { setParameter("screen", it, TextureSampler()) }
+ *     mapTex?.let { setParameter("screen", it, TextureSampler(TextureSampler.MagFilter.LINEAR)) }
  * }
  * Plane(material = screen)          // a screen showing the mini-map
  * ```
@@ -66,7 +66,7 @@ fun rememberRenderTargetTexture(
                 .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
                 .build(engine)
         }.getOrNull()
-    }) { engine.destroyTexture(it) } ?: return null
+    }) { engine.destroy(it) } ?: return null
 
     val depth = rememberOwned(engine, width, height, create = {
         runCatching {
@@ -77,7 +77,7 @@ fun rememberRenderTargetTexture(
                 .usage(Texture.Usage.DEPTH_ATTACHMENT)
                 .build(engine)
         }.getOrNull()
-    }) { engine.destroyTexture(it) }
+    }) { engine.destroy(it) }
 
     val target = rememberOwned(engine, color, depth, dependsOn = listOf(color, depth), create = {
         runCatching {
@@ -90,11 +90,14 @@ fun rememberRenderTargetTexture(
                 }
                 .build(engine)
         }.getOrNull()
-    }) { engine.destroyRenderTarget(it) } ?: return null
+    }) { engine.destroy(it) } ?: return null
 
-    val view     = rememberOwned(engine, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroyView(it) }
-    val camera   = rememberOwned(engine, create = { engine.createCamera() }) { engine.destroyCamera(it) }
-    val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroyRenderer(it) }
+    val view     = rememberOwned(engine, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroy(it) }
+    val camera   = rememberOwned(engine, create = { engine.createCamera(engine.entityManager.create()) }) {
+        engine.destroyCameraComponent(it.entity)
+        engine.entityManager.destroy(it.entity)
+    }
+    val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroy(it) }
 
     // Wire the off-screen view. Keyed effect rather than a `remember` block — see FilamentView.
     DisposableEffect(view, scene.scene, camera, target, width, height) {
@@ -109,7 +112,7 @@ fun rememberRenderTargetTexture(
     // dispose / before re-apply. `enabled = false` skips the post-processing pass entirely.
     DisposableEffect(view, postProcessing, engine) {
         val colorGrading = postProcessing.applyTo(view, engine)
-        onDispose { colorGrading?.let { engine.destroyColorGrading(it) } }
+        onDispose { colorGrading?.let { engine.destroy(it) } }
     }
 
     // Push the camera state every time it changes; reads register recomposition subscriptions.

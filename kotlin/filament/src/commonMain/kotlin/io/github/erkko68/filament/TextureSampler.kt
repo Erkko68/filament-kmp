@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
+import io.github.erkko68.filament.interop.*
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.log2
@@ -7,9 +9,8 @@ import kotlin.math.log2
 /**
  * TextureSampler defines how a texture is accessed during rendering.
  *
- * It specifies filtering modes, wrapping modes, and optional comparison modes for
- * texture sampling. TextureSampler objects are immutable after construction and are
- * used by MaterialInstance to configure how textures are sampled.
+ * It specifies filtering modes, wrapping modes, and optional comparison modes for texture sampling.
+ * MaterialInstance copies it when binding a texture, so later changes don't affect bound textures.
  */
 class TextureSampler private constructor(
     minFilter: MinFilter,
@@ -18,7 +19,7 @@ class TextureSampler private constructor(
     wrapModeT: WrapMode,
     wrapModeR: WrapMode,
     compareMode: CompareMode,
-    compareFunction: CompareFunction,
+    compareFunc: CompareFunc,
 ) {
     /**
      * Texture wrapping mode for texture coordinates outside the [0..1] range.
@@ -73,55 +74,41 @@ class TextureSampler private constructor(
     }
 
     /**
-     * Comparison function for depth comparison operations in COMPARE_TO_TEXTURE mode.
+     * Comparison function for depth and stencil tests, and for COMPARE_TO_TEXTURE sampling.
      */
-    enum class CompareFunction {
-        /** Pass if reference is less than or equal to texture value. */
-        LESS_EQUAL,
-        /** Pass if reference is greater than or equal to texture value. */
-        GREATER_EQUAL,
-        /** Pass if reference is less than texture value. */
-        LESS,
-        /** Pass if reference is greater than texture value. */
-        GREATER,
-        /** Pass if reference is equal to texture value. */
-        EQUAL,
-        /** Pass if reference is not equal to texture value. */
-        NOT_EQUAL,
-        /** Always pass (no comparison). */
-        ALWAYS,
-        /** Never pass. */
-        NEVER
+    enum class CompareFunc {
+        /** Less or equal. */
+        LE,
+        /** Greater or equal. */
+        GE,
+        /** Strictly less than. */
+        L,
+        /** Strictly greater than. */
+        G,
+        /** Equal. */
+        E,
+        /** Not equal. */
+        NE,
+        /** Always. Depth / stencil testing is deactivated. */
+        A,
+        /** Never. The depth / stencil test always fails. */
+        N
     }
 
     /**
-     * Creates a TextureSampler with default parameters:
-     * - minFilter: NEAREST
-     * - magFilter: NEAREST
-     * - wrapS: CLAMP_TO_EDGE
-     * - wrapT: CLAMP_TO_EDGE
-     * - wrapR: CLAMP_TO_EDGE
-     * - compareMode: NONE
-     * - compareFunction: LESS_EQUAL
-     * - anisotropy: 1.0 (disabled)
+     * Creates a TextureSampler with the default parameters: NEAREST filtering, CLAMP_TO_EDGE on all axes,
+     * anisotropy 1, no comparison.
      */
-    constructor() : this(MinFilter.LINEAR_MIPMAP_LINEAR, MagFilter.LINEAR, WrapMode.REPEAT)
+    constructor() : this(MinFilter.NEAREST, MagFilter.NEAREST, WrapMode.CLAMP_TO_EDGE)
 
     /**
-     * Creates a TextureSampler with default parameters but setting both minification and
-     * magnification filters, and using CLAMP_TO_EDGE wrap mode for all axes.
+     * Creates a TextureSampler with the same minification and magnification filter and one wrap mode for all axes.
      *
      * @param minMag Filtering for both minification and magnification.
+     * @param str Wrapping mode applied to all three axes (S, T, R).
      */
-    constructor(minMag: MagFilter) : this(minMag, WrapMode.CLAMP_TO_EDGE)
-
-    /**
-     * Creates a TextureSampler with filtering and wrap mode applied to all axes.
-     *
-     * @param minMag Filtering for both minification and magnification.
-     * @param wrap Wrapping mode applied to all three axes (S, T, R).
-     */
-    constructor(minMag: MagFilter, wrap: WrapMode) : this(if (minMag == MagFilter.NEAREST) MinFilter.NEAREST else MinFilter.LINEAR, minMag, wrap)
+    constructor(minMag: MagFilter, str: WrapMode = WrapMode.CLAMP_TO_EDGE) :
+        this(if (minMag == MagFilter.NEAREST) MinFilter.NEAREST else MinFilter.LINEAR, minMag, str)
 
     /**
      * Creates a TextureSampler with separate minification and magnification filters,
@@ -129,9 +116,9 @@ class TextureSampler private constructor(
      *
      * @param min Minification filter.
      * @param mag Magnification filter.
-     * @param wrap Wrapping mode applied to all three axes (S, T, R).
+     * @param str Wrapping mode applied to all three axes (S, T, R).
      */
-    constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) : this(min, mag, wrap, wrap, wrap)
+    constructor(min: MinFilter, mag: MagFilter, str: WrapMode = WrapMode.CLAMP_TO_EDGE) : this(min, mag, str, str, str)
 
     /**
      * Creates a TextureSampler with separate filters and wrap modes for each axis.
@@ -142,23 +129,16 @@ class TextureSampler private constructor(
      * @param t Wrap mode for the T (vertical) texture coordinate.
      * @param r Wrap mode for the R (depth) texture coordinate.
      */
-    constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) : this(min, mag, s, t, r, CompareMode.NONE, CompareFunction.LESS_EQUAL)
+    constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) : this(min, mag, s, t, r, CompareMode.NONE, CompareFunc.LE)
 
     /**
-     * Creates a TextureSampler configured for comparison mode (shadow mapping).
+     * Creates a TextureSampler with default filtering and wrapping, and the given comparison mode.
      *
      * @param mode Compare mode to use.
+     * @param func Comparison function.
      */
-    constructor(mode: CompareMode) : this(mode, CompareFunction.LESS_EQUAL)
-
-    /**
-     * Creates a TextureSampler configured for comparison mode with a specific comparison function.
-     *
-     * @param mode Compare mode to use.
-     * @param function Comparison function.
-     */
-    constructor(mode: CompareMode, function: CompareFunction) : this(MinFilter.NEAREST, MagFilter.NEAREST, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, mode, function)
-
+    constructor(mode: CompareMode, func: CompareFunc = CompareFunc.LE) :
+        this(MinFilter.NEAREST, MagFilter.NEAREST, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, mode, func)
 
     /** Minification filter. */
     var minFilter: MinFilter = minFilter
@@ -191,9 +171,34 @@ class TextureSampler private constructor(
 
     /** Comparison mode. */
     var compareMode: CompareMode = compareMode
+        private set
 
     /** Comparison function for depth comparisons. */
-    var compareFunction: CompareFunction = compareFunction
+    var compareFunc: CompareFunc = compareFunc
+        private set
 
+    /**
+     * Sets the comparison mode and function.
+     *
+     * @param mode Compare mode to use.
+     * @param func Comparison function.
+     */
+    fun setCompareMode(mode: CompareMode, func: CompareFunc = CompareFunc.LE) {
+        compareMode = mode
+        compareFunc = func
+    }
 }
 
+/** A native TextureSampler with this one's settings, for the duration of [block]. */
+internal inline fun <T> TextureSampler.useNative(block: (NativePointer) -> T): T {
+    val s = FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapMode_WrapMode(
+        minFilter.ordinal, magFilter.ordinal, wrapModeS.ordinal, wrapModeT.ordinal, wrapModeR.ordinal,
+    )
+    try {
+        FilaTextureSampler_setAnisotropy(s, anisotropy)
+        FilaTextureSampler_setCompareMode(s, compareMode.ordinal, compareFunc.ordinal)
+        return block(s)
+    } finally {
+        FilaTextureSampler_destroy(s)
+    }
+}

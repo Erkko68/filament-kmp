@@ -13,7 +13,7 @@ class FenceTest : FilamentTestFixture() {
     fun testFenceLifecycle() {
         val fence = engine.createFence()
         assertNotNull(fence)
-        assertTrue(engine.isValidFence(fence))
+        assertTrue(engine.isValid(fence))
 
         assertTrue(fence.nativeObject != NullPointer)
 

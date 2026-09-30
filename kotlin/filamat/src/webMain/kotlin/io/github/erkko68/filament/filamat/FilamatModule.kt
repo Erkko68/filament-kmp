@@ -8,9 +8,9 @@ import kotlin.js.Promise
 
 private var instance: FilamentModule? = null
 
-/** The loaded filamat-kmp.wasm instance; valid once [Filamat.initJs] has called back. */
+/** The loaded filamat-kmp.wasm instance; valid once [MaterialBuilder.initJs] has called back. */
 internal val filamatWasm: FilamentModule
-    get() = instance ?: (published() ?: error("filamat-kmp.wasm is not loaded: wait for Filamat.initJs")).also { instance = it }
+    get() = instance ?: (published() ?: error("filamat-kmp.wasm is not loaded: wait for MaterialBuilder.initJs")).also { instance = it }
 
 internal val loadingFilamat: Promise<FilamentModule> by lazy {
     published()?.let { m -> Promise { resolve, _ -> resolve(m) } }

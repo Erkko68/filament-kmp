@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -54,7 +55,7 @@ class TextureTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(tex)
-        assertTrue(engine.isValidTexture(tex))
+        assertTrue(engine.isValid(tex))
 
         assertEquals(64, tex.getWidth(0))
         assertEquals(64, tex.getHeight(0))
@@ -73,7 +74,7 @@ class TextureTest : FilamentTestFixture() {
 
         // tex.generateMipmaps(engine)
 
-        engine.destroyTexture(tex)
+        engine.destroy(tex)
     }
 
     @Test
@@ -84,7 +85,10 @@ class TextureTest : FilamentTestFixture() {
         assertTrue(Texture.validatePixelFormatAndType(Texture.InternalFormat.RGBA8, Texture.Format.RGBA, Texture.Type.UBYTE))
         assertTrue(Texture.getMaxTextureSize(engine, Texture.Sampler.SAMPLER_2D) > 0)
         assertTrue(Texture.getMaxArrayTextureLayers(engine) >= 0)
-        assertTrue(Texture.computeDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 100, 100, 1) > 0)
+        assertTrue(Texture.isTextureFormatCompressed(Texture.InternalFormat.ETC2_RGB8))
+        assertFalse(Texture.isTextureFormatCompressed(Texture.InternalFormat.RGBA8))
+        Texture.isProtectedTexturesSupported(engine)
+        assertTrue(Texture.computeTextureDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 100, 100, 1) > 0)
     }
 
     private fun compileOnlyVerifications(tex: Texture, engine: Engine, stream: Stream, pbd: Texture.PixelBufferDescriptor) {
@@ -93,7 +97,8 @@ class TextureTest : FilamentTestFixture() {
         tex.setExternalStream(engine, stream)
         
         Texture.Builder()
-            .importTexture(12345L)
+            .import(12345L)
+            .name("imported")
             .external()
             .swizzle(Texture.Swizzle.CHANNEL_0, Texture.Swizzle.CHANNEL_1, Texture.Swizzle.CHANNEL_2, Texture.Swizzle.CHANNEL_3)
     }

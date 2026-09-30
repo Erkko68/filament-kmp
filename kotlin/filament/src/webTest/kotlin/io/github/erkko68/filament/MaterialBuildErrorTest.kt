@@ -2,18 +2,15 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 /**
- * A bad `.filamat` payload C++-throws out of the wasm; on js that surfaces as a raw thrown number
- * that `catch (Throwable)` can't see. Guards the `catchingJsThrows` mapping in
- * `Material.Builder.build` that turns it into a catchable Kotlin exception.
+ * A bad `.filamat` payload would C++-throw out of the wasm, which `catch (Throwable)` can't see on js.
+ * `Material.Builder.build` sniffs the payload first and returns null instead.
  */
 class MaterialBuildErrorTest : FilamentTestFixture() {
     @Test
-    fun badPayloadThrowsCatchableKotlinException() {
-        assertFailsWith<IllegalArgumentException> {
-            Material.Builder().payload(ByteArray(64) { 0xFF.toByte() }).build(engine)
-        }
+    fun badPayloadBuildsNull() {
+        assertNull(Material.Builder().payload(ByteArray(64) { 0xFF.toByte() }).build(engine))
     }
 }

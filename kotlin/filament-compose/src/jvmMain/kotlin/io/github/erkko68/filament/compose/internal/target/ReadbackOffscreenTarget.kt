@@ -75,7 +75,7 @@ internal class ReadbackOffscreenTarget(
     override fun close() {
         // Runs the pending readback callbacks before the swap chain goes.
         engine.flushAndWait()
-        engine.destroySwapChain(swapChain)
+        engine.destroy(swapChain)
         newest.getAndSet(null)?.close()
     }
 }

@@ -23,7 +23,7 @@ class TextureRenderingTest : RenderingTestFixture() {
             .usage(Texture.Usage.DEFAULT or Texture.Usage.GEN_MIPMAPPABLE)
             .build(engine)
         assertNotNull(tex)
-        assertTrue(engine.isValidTexture(tex))
+        assertTrue(engine.isValid(tex))
 
         val full = Texture.PixelBufferDescriptor(ByteArray(64 * 64 * 4), 64 * 64 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
         tex.setImage(engine, 0, full)
@@ -39,6 +39,6 @@ class TextureRenderingTest : RenderingTestFixture() {
         tex.generateMipmaps(engine)
 
         engine.flushAndWait()
-        engine.destroyTexture(tex)
+        engine.destroy(tex)
     }
 }

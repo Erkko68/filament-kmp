@@ -13,14 +13,14 @@ open class GltfioTestFixture {
     fun setUp() {
         Filament.init()
         Gltfio.init()
-        engine = Engine.create(Engine.Backend.NOOP)
+        engine = Engine.create(Engine.Backend.NOOP)!!
     }
 
     @AfterTest
     fun tearDown() {
         if (::engine.isInitialized) {
             engine.flushAndWait()
-            engine.destroy()
+            Engine.destroy(engine)
         }
     }
 }

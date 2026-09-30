@@ -26,72 +26,72 @@ class EnumRoundTripTest : FilamentTestFixture() {
     @Test
     fun viewEnumsRoundTripEveryEntry() {
         val view = engine.createView()
-        roundTrip<View.BlendMode>("View.blendMode", { view.blendMode = it }, { view.blendMode })
-        roundTrip<View.Dithering>("View.dithering", { view.dithering = it }, { view.dithering })
-        roundTrip<View.AntiAliasing>("View.antiAliasing", { view.antiAliasing = it }, { view.antiAliasing })
-        roundTrip<View.ShadowType>("View.shadowType", { view.shadowType = it }, { view.shadowType })
-        engine.destroyView(view)
+        roundTrip<BlendMode>("View.blendMode", { view.blendMode = it }, { view.blendMode })
+        roundTrip<Dithering>("View.dithering", { view.dithering = it }, { view.dithering })
+        roundTrip<AntiAliasing>("View.antiAliasing", { view.antiAliasing = it }, { view.antiAliasing })
+        roundTrip<ShadowType>("View.shadowType", { view.shadowType = it }, { view.shadowType })
+        engine.destroy(view)
     }
 
     @Test
     fun viewOptionEnumsRoundTripEveryEntry() {
         val view = engine.createView()
-        roundTrip<View.BloomOptions.BlendMode>(
-            "View.BloomOptions.blendMode",
-            { view.bloomOptions = View.BloomOptions().apply { blendMode = it } },
+        roundTrip<BloomOptions.BlendMode>(
+            "BloomOptions.blendMode",
+            { view.bloomOptions = BloomOptions().apply { blendMode = it } },
             { view.bloomOptions.blendMode },
         )
-        roundTrip<View.Quality>(
-            "View.DynamicResolutionOptions.quality",
-            { view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply { quality = it } },
+        roundTrip<QualityLevel>(
+            "DynamicResolutionOptions.quality",
+            { view.dynamicResolutionOptions = DynamicResolutionOptions().apply { quality = it } },
             { view.dynamicResolutionOptions.quality },
         )
-        roundTrip<View.Quality>(
+        roundTrip<QualityLevel>(
             "RenderQuality.hdrColorBuffer",
-            { view.renderQuality = View.RenderQuality().apply { hdrColorBuffer = it } },
+            { view.renderQuality = RenderQuality().apply { hdrColorBuffer = it } },
             { view.renderQuality.hdrColorBuffer },
         )
-        roundTrip<View.DepthOfFieldOptions.Filter>(
-            "View.DepthOfFieldOptions.filter",
-            { view.depthOfFieldOptions = View.DepthOfFieldOptions().apply { filter = it } },
+        roundTrip<DepthOfFieldOptions.Filter>(
+            "DepthOfFieldOptions.filter",
+            { view.depthOfFieldOptions = DepthOfFieldOptions().apply { filter = it } },
             { view.depthOfFieldOptions.filter },
         )
-        roundTrip<View.Quality>(
-            "View.AmbientOcclusionOptions.quality",
-            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { quality = it } },
+        roundTrip<QualityLevel>(
+            "AmbientOcclusionOptions.quality",
+            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { quality = it } },
             { view.ambientOcclusionOptions.quality },
         )
-        roundTrip<View.Quality>(
-            "View.AmbientOcclusionOptions.lowPassFilter",
-            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { lowPassFilter = it } },
+        roundTrip<QualityLevel>(
+            "AmbientOcclusionOptions.lowPassFilter",
+            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { lowPassFilter = it } },
             { view.ambientOcclusionOptions.lowPassFilter },
         )
-        roundTrip<View.Quality>(
-            "View.AmbientOcclusionOptions.upsampling",
-            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { upsampling = it } },
+        roundTrip<QualityLevel>(
+            "AmbientOcclusionOptions.upsampling",
+            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { upsampling = it } },
             { view.ambientOcclusionOptions.upsampling },
         )
-        roundTrip<View.AmbientOcclusionOptions.AmbientOcclusionType>(
-            "View.AmbientOcclusionOptions.aoType",
-            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { aoType = it } },
+        roundTrip<AmbientOcclusionOptions.AmbientOcclusionType>(
+            "AmbientOcclusionOptions.aoType",
+            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { aoType = it } },
             { view.ambientOcclusionOptions.aoType },
         )
-        roundTrip<View.TemporalAntiAliasingOptions.BoxType>(
-            "View.TemporalAntiAliasingOptions.boxType",
-            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { boxType = it } },
+        roundTrip<TemporalAntiAliasingOptions.BoxType>(
+            "TemporalAntiAliasingOptions.boxType",
+            { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { boxType = it } },
             { view.temporalAntiAliasingOptions.boxType },
         )
-        roundTrip<View.TemporalAntiAliasingOptions.BoxClipping>(
-            "View.TemporalAntiAliasingOptions.boxClipping",
-            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { boxClipping = it } },
+        roundTrip<TemporalAntiAliasingOptions.BoxClipping>(
+            "TemporalAntiAliasingOptions.boxClipping",
+            { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { boxClipping = it } },
             { view.temporalAntiAliasingOptions.boxClipping },
         )
-        roundTrip<View.TemporalAntiAliasingOptions.JitterPattern>(
-            "View.TemporalAntiAliasingOptions.jitterPattern",
-            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { jitterPattern = it } },
+        roundTrip<TemporalAntiAliasingOptions.JitterPattern>(
+            "TemporalAntiAliasingOptions.jitterPattern",
+            { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { jitterPattern = it } },
             { view.temporalAntiAliasingOptions.jitterPattern },
         )
-        engine.destroyView(view)
+        engine.destroy(view)
     }
 
     @Test
@@ -102,10 +102,8 @@ class EnumRoundTripTest : FilamentTestFixture() {
         roundTrip<TextureSampler.WrapMode>("TextureSampler.wrapModeS", { s.wrapModeS = it }, { s.wrapModeS })
         roundTrip<TextureSampler.WrapMode>("TextureSampler.wrapModeT", { s.wrapModeT = it }, { s.wrapModeT })
         roundTrip<TextureSampler.WrapMode>("TextureSampler.wrapModeR", { s.wrapModeR = it }, { s.wrapModeR })
-        roundTrip<TextureSampler.CompareMode>("TextureSampler.compareMode", { s.compareMode = it }, { s.compareMode })
-        roundTrip<TextureSampler.CompareFunction>(
-            "TextureSampler.compareFunction", { s.compareFunction = it }, { s.compareFunction },
-        )
+        roundTrip<TextureSampler.CompareMode>("TextureSampler.compareMode", { s.setCompareMode(it, s.compareFunc) }, { s.compareMode })
+        roundTrip<TextureSampler.CompareFunc>("TextureSampler.compareFunc", { s.setCompareMode(s.compareMode, it) }, { s.compareFunc })
     }
 }
 
@@ -115,15 +113,15 @@ class MaterialInstanceEnumRoundTripTest : RenderingTestFixture() {
     @Test
     fun materialInstanceEnumsRoundTripEveryEntry() {
         val engine = engine ?: return
-        val mat = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)
+        val mat = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)!!
         val inst = mat.createInstance()
 
         roundTrip<Material.CullingMode>("MaterialInstance.cullingMode", { inst.cullingMode = it }, { inst.cullingMode })
-        roundTrip<TextureSampler.CompareFunction>(
+        roundTrip<TextureSampler.CompareFunc>(
             "MaterialInstance.depthFunc", { inst.depthFunc = it }, { inst.depthFunc },
         )
 
-        engine.destroyMaterialInstance(inst)
-        engine.destroyMaterial(mat)
+        engine.destroy(inst)
+        engine.destroy(mat)
     }
 }

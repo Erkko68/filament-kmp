@@ -104,7 +104,8 @@ class MaterialKeyTest : GltfioTestFixture() {
         val key = MaterialKey()
         key.hasBaseColorTexture = true
         key.baseColorUV = 0
-        val uvmap = IntArray(8)
-        key.constrainMaterial(uvmap)
+        val uvmap: UvMap = Array(UV_MAP_SIZE) { UvSet.UNUSED }
+        constrainMaterial(key, uvmap)
+        assertEquals(UvSet.UV0, uvmap[0])
     }
 }

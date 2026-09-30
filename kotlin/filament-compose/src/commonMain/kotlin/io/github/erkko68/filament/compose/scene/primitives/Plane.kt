@@ -73,7 +73,7 @@ private fun planeMesh(width: Float, depth: Float, doubleSided: Boolean): MeshDat
     if (!doubleSided) {
         return MeshData(
             positions = topPositions, normals = topNormals, uvs = topUvs, indices = topIndices,
-            boundingBox = Box(0f, 0f, 0f, w, 0.001f, d),
+            boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(w, 0.001f, d)),
         )
     }
 
@@ -91,6 +91,6 @@ private fun planeMesh(width: Float, depth: Float, doubleSided: Boolean): MeshDat
         normals     = normals,
         uvs         = uvs,
         indices     = indices,
-        boundingBox = Box(0f, 0f, 0f, w, 0.001f, d),
+        boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(w, 0.001f, d)),
     )
 }

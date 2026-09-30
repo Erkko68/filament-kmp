@@ -18,7 +18,7 @@ class SkyboxTest : FilamentTestFixture() {
             .build(engine)
         
         assertNotNull(sky)
-        assertTrue(engine.isValidSkybox(sky))
+        assertTrue(engine.isValid(sky))
 
         // Getters / Setters
         assertEquals(1000f, sky.intensity)
@@ -29,7 +29,7 @@ class SkyboxTest : FilamentTestFixture() {
         sky.setLayerMask(0xFF, 0x01)
         assertEquals(0x01, sky.layerMask)
 
-        engine.destroySkybox(sky)
+        engine.destroy(sky)
     }
 
     @Test
@@ -50,7 +50,7 @@ class SkyboxTest : FilamentTestFixture() {
         assertNotNull(sky)
         assertNotNull(sky.texture)
 
-        engine.destroySkybox(sky)
-        engine.destroyTexture(cubemap)
+        engine.destroy(sky)
+        engine.destroy(cubemap)
     }
 }

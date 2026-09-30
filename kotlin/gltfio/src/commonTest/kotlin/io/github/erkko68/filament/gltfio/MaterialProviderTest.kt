@@ -7,7 +7,7 @@ import io.github.erkko68.filament.VertexBuffer
 class MaterialProviderTest : GltfioTestFixture() {
     @Test
     fun testUbershaderProviderLifecycle() {
-        val provider = UbershaderProvider(engine)
+        val provider = createUbershaderProvider(engine)
 
         // Don't call getMaterials() here: upstream's binding pre-allocates one
         // slot per ubershader spec and lazily fills them on getMaterial(), but
@@ -20,7 +20,7 @@ class MaterialProviderTest : GltfioTestFixture() {
 
     @Test
     fun testUbershaderAsMaterialProviderInterface() {
-        val provider: MaterialProvider = UbershaderProvider(engine)
+        val provider: MaterialProvider = createUbershaderProvider(engine)
         provider.needsDummyData(VertexBuffer.VertexAttribute.POSITION)
         provider.destroy()
     }

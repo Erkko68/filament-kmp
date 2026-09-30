@@ -57,7 +57,7 @@ fun rememberFilamentScene(
     content: @Composable FilamentSceneScope.() -> Unit,
 ): FilamentScene {
     // Remembered before the content so it's destroyed *after* it — entities leave the scene first.
-    val scene = rememberOwned(engine, create = { engine.createScene() }) { engine.destroyScene(it) }
+    val scene = rememberOwned(engine, create = { engine.createScene() }) { engine.destroy(it) }
 
     val handle = remember(engine, scene) { FilamentScene(engine, scene) }
 

@@ -107,7 +107,7 @@ internal fun ApplySkybox(state: SkyboxState, engine: Engine, scene: Scene) {
         onDispose {
             if (skybox != null) {
                 scene.skybox = null
-                engine.destroySkybox(skybox)
+                engine.destroy(skybox)
             }
         }
     }

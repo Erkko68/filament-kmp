@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
  */
 class CameraSnapshotApplyTest : ComposeTestFixture() {
 
-    private fun newCamera(): Camera = engine.createCamera()
+    private fun newCamera(): Camera = engine.createCamera(engine.entityManager.create())
 
     private fun snapshot(
         eye: Position = Position(0f, 1f, 10f),
@@ -32,9 +32,9 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         val camera = newCamera()
         snapshot(eye = Position(3f, 4f, 5f)).applyTo(camera, aspect = 1.0)
         val pos = camera.getPosition()
-        assertEquals(3f, pos[0], 1e-4f)
-        assertEquals(4f, pos[1], 1e-4f)
-        assertEquals(5f, pos[2], 1e-4f)
+        assertEquals(3.0, pos[0], 1e-4)
+        assertEquals(4.0, pos[1], 1e-4)
+        assertEquals(5.0, pos[2], 1e-4)
     }
 
     @Test
@@ -42,11 +42,11 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         val camera = newCamera()
         snapshot(projection = Projection.Perspective(fovDegrees = 60.0, near = 0.5, far = 200.0))
             .applyTo(camera, aspect = 2.0)
-        assertEquals(0.5f, camera.near, 1e-4f)
+        assertEquals(0.5, camera.near, 1e-4)
         // getFieldOfViewInDegrees is unbound in the web wrapper (stubbed to 0), so only check it
         // where Filament actually recovers the FOV from the projection matrix.
         if (TestEnv.target != TestTarget.JS) {
-            assertEquals(60.0, camera.getFieldOfViewInDegrees(Camera.Fov.VERTICAL), 1e-3)
+            assertEquals(60f, camera.getFieldOfViewInDegrees(Camera.Fov.VERTICAL), 1e-3f)
         }
     }
 
@@ -55,7 +55,7 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         val camera = newCamera()
         snapshot(projection = Projection.Orthographic(near = 0.0, far = 10.0))
             .applyTo(camera, aspect = 1.0)
-        assertEquals(0f, camera.near, 1e-4f)
+        assertEquals(0.0, camera.near, 1e-4)
     }
 
     @Test
@@ -63,7 +63,7 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         val camera = newCamera()
         snapshot(projection = Projection.Lens(focalLength = 50.0, near = 0.2, far = 80.0))
             .applyTo(camera, aspect = 1.5)
-        assertEquals(0.2f, camera.near, 1e-4f)
+        assertEquals(0.2, camera.near, 1e-4)
     }
 
     @Test

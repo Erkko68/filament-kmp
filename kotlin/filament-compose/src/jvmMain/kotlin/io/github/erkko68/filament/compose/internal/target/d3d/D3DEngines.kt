@@ -37,7 +37,7 @@ internal object D3DEngines {
 
     /** Destroys [engine], then its platform if [create] made it (Filament doesn't own it). */
     fun destroy(engine: Engine) {
-        engine.destroy()
+        Engine.destroy(engine)
         platforms.remove(engine)?.let(D3DHelper::nDestroyPlatform)
     }
 }

@@ -1,11 +1,13 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Aabb
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
-import io.github.erkko68.filament.*
-import io.github.erkko68.filament.interop.*
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.Scene
+import io.github.erkko68.filament.aabb
+import io.github.erkko68.filament.gltfio.capi.*
+import io.github.erkko68.filament.interop.*
 
 /**
  * FilamentAsset owns a loaded glTF 2.0 asset and all its Filament objects.
@@ -35,7 +37,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * "super root" whose children are the per-instance roots, allowing all instances to be
      * moved en masse.
      */
-    val root: Entity get() = FilaFilamentAsset_getRoot(nativeHandle)
+    val root: Entity get() = FilaGltfioFilamentAsset_getRoot(nativeHandle)
 
     /**
      * Pops a ready renderable off the async-load queue, or returns 0 if none is ready.
@@ -45,7 +47,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * Use [ResourceLoader.asyncGetLoadProgress] for the overall progress. Progressive reveal is
      * not supported for dynamically added instances.
      */
-    fun popRenderable(): Entity = FilaFilamentAsset_popRenderable(nativeHandle)
+    fun popRenderable(): Entity = FilaGltfioFilamentAsset_popRenderable(nativeHandle)
 
     /**
      * Pops up to `entities.size` ready renderables off the async-load queue into [entities].
@@ -54,19 +56,26 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * @see popRenderable
      */
     fun popRenderables(entities: IntArray): Int =
-        entities.usePinned { FilaFilamentAsset_popRenderables(nativeHandle, it, entities.size) }
+        entities.usePinned { FilaGltfioFilamentAsset_popRenderables(nativeHandle, it, entities.size) }
 
     /**
      * Gets the list of entities, one per glTF node. All have a Transform component; some also
      * have a Renderable and/or Light component.
      */
-    val entities: IntArray get() = entityArray(FilaFilamentAsset_getEntityCount(nativeHandle)) { FilaFilamentAsset_getEntities(nativeHandle, it) }
+    val entities: IntArray get() = readInts(FilaGltfioFilamentAsset_getEntities(nativeHandle), entityCount)
+
+    /** Gets the number of entities returned by [entities]. */
+    val entityCount: Int get() = FilaGltfioFilamentAsset_getEntityCount(nativeHandle)
 
     /** Gets the entities representing lights. All of these have a Light component. */
-    val lightEntities: IntArray get() = entityArray(FilaFilamentAsset_getLightEntityCount(nativeHandle)) { FilaFilamentAsset_getLightEntities(nativeHandle, it) }
+    val lightEntities: IntArray get() = readInts(FilaGltfioFilamentAsset_getLightEntities(nativeHandle), lightEntityCount)
+
+    val lightEntityCount: Int get() = FilaGltfioFilamentAsset_getLightEntityCount(nativeHandle)
 
     /** Gets the entities that have Renderable components. */
-    val renderableEntities: IntArray get() = entityArray(FilaFilamentAsset_getRenderableEntityCount(nativeHandle)) { FilaFilamentAsset_getRenderableEntities(nativeHandle, it) }
+    val renderableEntities: IntArray get() = readInts(FilaGltfioFilamentAsset_getRenderableEntities(nativeHandle), renderableEntityCount)
+
+    val renderableEntityCount: Int get() = FilaGltfioFilamentAsset_getRenderableEntityCount(nativeHandle)
 
     /**
      * Gets the entities representing cameras. All of these have a Camera component.
@@ -76,62 +85,65 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * the aspect ratio independently of the projection:
      * `camera.setScaling(1.0 / newAspectRatio, 1.0)`.
      */
-    val cameraEntities: IntArray get() = entityArray(FilaFilamentAsset_getCameraEntityCount(nativeHandle)) { FilaFilamentAsset_getCameraEntities(nativeHandle, it) }
+    val cameraEntities: IntArray get() = readInts(FilaGltfioFilamentAsset_getCameraEntities(nativeHandle), cameraEntityCount)
 
-    /** Gets all entities whose name label matches [name] exactly. */
-    fun getEntitiesByName(name: String): IntArray {
-        val found = IntArray(entityCount)
-        val count = name.useCString { s -> found.usePinned { FilaFilamentAsset_getEntitiesByName(nativeHandle, s, it, found.size) } }
-        return found.copyOf(count)
-    }
+    val cameraEntityCount: Int get() = FilaGltfioFilamentAsset_getCameraEntityCount(nativeHandle)
 
-    /** Gets all entities whose name label starts with [prefix]. */
-    fun getEntitiesByPrefix(prefix: String): IntArray {
-        val found = IntArray(entityCount)
-        val count = prefix.useCString { s -> found.usePinned { FilaFilamentAsset_getEntitiesByPrefix(nativeHandle, s, it, found.size) } }
-        return found.copyOf(count)
-    }
+    /**
+     * Gets up to `entities.size` entities whose name label matches [name] exactly into [entities].
+     *
+     * @return the number of entities written.
+     */
+    fun getEntitiesByName(name: String, entities: IntArray): Int =
+        name.useCString { s -> entities.usePinned { FilaGltfioFilamentAsset_getEntitiesByName(nativeHandle, s, it, entities.size) } }
+
+    /**
+     * Gets up to `entities.size` entities whose name label starts with [prefix] into [entities].
+     *
+     * @return the number of entities written.
+     */
+    fun getEntitiesByPrefix(prefix: String, entities: IntArray): Int =
+        prefix.useCString { s -> entities.usePinned { FilaGltfioFilamentAsset_getEntitiesByPrefix(nativeHandle, s, it, entities.size) } }
 
     /** Returns the first entity with the given name, or 0 if none exists. */
-    fun getFirstEntityByName(name: String): Entity = name.useCString { FilaFilamentAsset_getFirstEntityByName(nativeHandle, it) }
-
-    /** Gets the number of entities returned by [getEntities]. */
-    val entityCount: Int get() = FilaFilamentAsset_getEntityCount(nativeHandle)
-
-    /** Returns the number of instances created from this asset (>= 1 unless detached). */
-    val assetInstanceCount: Int get() = FilaFilamentAsset_getAssetInstanceCount(nativeHandle)
+    fun getFirstEntityByName(name: String): Entity = name.useCString { FilaGltfioFilamentAsset_getFirstEntityByName(nativeHandle, it) }
 
     /** Returns every [FilamentInstance] created from this asset. */
     val assetInstances: List<FilamentInstance> get() =
-        List(assetInstanceCount) { FilamentInstance(FilaFilamentAsset_getAssetInstanceAt(nativeHandle, it)) }
+        readPointers(FilaGltfioFilamentAsset_getAssetInstances(nativeHandle), assetInstanceCount).map { FilamentInstance(it) }
+
+    /** Returns the number of instances created from this asset (>= 1 unless detached). */
+    val assetInstanceCount: Int get() = FilaGltfioFilamentAsset_getAssetInstanceCount(nativeHandle)
 
     /**
      * Gets the bounding box computed from the min/max values in the glTF accessors.
      *
      * This is a straightforward load-time AABB over the asset data — it does not account for
-     * per-instance transforms (see [FilamentInstance.getBoundingBox] for that).
+     * per-instance transforms (see [FilamentInstance.boundingBox] for that).
      */
-    val boundingBox: Box get() {
-        val box = Box()
-        box.center.usePinned { c -> box.halfExtent.usePinned { h -> FilaFilamentAsset_getBoundingBox(nativeHandle, c, h) } }
-        return box
-    }
+    val boundingBox: Aabb get() = aabb { FilaGltfioFilamentAsset_getBoundingBox(nativeHandle, it) }
 
     /** Gets the name label for the given entity, or null if it has none. */
-    fun getName(entity: Entity): String? = stringFromInterop(FilaFilamentAsset_getName(nativeHandle, entity))
+    fun getName(entity: Entity): String? = stringFromInterop(FilaGltfioFilamentAsset_getName(nativeHandle, entity))
 
     /** Gets the glTF `extras` string for the given node entity (or for the asset itself), if any. */
-    fun getExtras(entity: Entity): String? = stringFromInterop(FilaFilamentAsset_getExtras(nativeHandle, entity))
+    fun getExtras(entity: Entity): String? = stringFromInterop(FilaGltfioFilamentAsset_getExtras(nativeHandle, entity))
 
-    /** Gets the morph target names declared on the given entity, in target order. */
-    fun getMorphTargetNames(entity: Entity): List<String> =
-        List(FilaFilamentAsset_getMorphTargetCountAt(nativeHandle, entity)) {
-            stringFromInterop(FilaFilamentAsset_getMorphTargetNameAt(nativeHandle, entity, it)) ?: ""
-        }
+    /** Gets the name of morph target [targetIndex] declared on the given entity. */
+    fun getMorphTargetNameAt(entity: Entity, targetIndex: Int): String? =
+        stringFromInterop(FilaGltfioFilamentAsset_getMorphTargetNameAt(nativeHandle, entity, targetIndex))
+
+    /** Gets the number of morph targets declared on the given entity. */
+    fun getMorphTargetCountAt(entity: Entity): Int = FilaGltfioFilamentAsset_getMorphTargetCountAt(nativeHandle, entity)
 
     /** Gets the URIs of all externally-referenced buffers/textures (to feed [ResourceLoader]). */
     val resourceUris: List<String> get() =
-        List(FilaFilamentAsset_getResourceUriCount(nativeHandle)) { stringFromInterop(FilaFilamentAsset_getResourceUriAt(nativeHandle, it)) ?: "" }
+        readPointers(FilaGltfioFilamentAsset_getResourceUris(nativeHandle), resourceUriCount).map { stringFromInterop(it) ?: "" }
+
+    val resourceUriCount: Int get() = FilaGltfioFilamentAsset_getResourceUriCount(nativeHandle)
+
+    /** Lazily creates a single LINES renderable that draws the transformed bounding-box hierarchy. */
+    val wireframe: Entity get() = FilaGltfioFilamentAsset_getWireframe(nativeHandle)
 
     /**
      * Reclaims CPU-side memory for URI strings, binding lists, and raw animation data.
@@ -140,96 +152,35 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * creation of new instances.
      */
     fun releaseSourceData() {
-        FilaFilamentAsset_releaseSourceData(nativeHandle)
+        FilaGltfioFilamentAsset_releaseSourceData(nativeHandle)
     }
 
     /** Returns the [Engine] associated with the [AssetLoader] that created this asset. */
     val engine: Engine get() =
-        io.github.erkko68.filament.Engine(FilaFilamentAsset_getEngine(nativeHandle))
+        io.github.erkko68.filament.Engine(FilaGltfioFilamentAsset_getEngine(nativeHandle))
 
-    /** Convenience accessor for the first instance ([getAssetInstances]`[0]`). */
+    /** Gets the number of glTF scenes in the asset. */
+    val sceneCount: Int get() = FilaGltfioFilamentAsset_getSceneCount(nativeHandle)
+
+    /** Gets the name of glTF scene [sceneIndex], or null if it has none. */
+    fun getSceneName(sceneIndex: Int): String? = stringFromInterop(FilaGltfioFilamentAsset_getSceneName(nativeHandle, sceneIndex))
+
+    /**
+     * Adds the [entities] that belong to one of the glTF scenes in [sceneFilter] (a bit mask of
+     * scene indices) to [targetScene].
+     */
+    fun addEntitiesToScene(targetScene: Scene, entities: IntArray, sceneFilter: Int) =
+        entities.usePinned { FilaGltfioFilamentAsset_addEntitiesToScene(nativeHandle, targetScene.nativeObject, it, entities.size, sceneFilter) }
+
+    /**
+     * Releases ownership of the Filament components (renderables, lights, …) so they outlive
+     * [AssetLoader.destroyAsset]; the client destroys them.
+     */
+    fun detachFilamentComponents() = FilaGltfioFilamentAsset_detachFilamentComponents(nativeHandle)
+
+    val areFilamentComponentsDetached: Boolean get() = FilaGltfioFilamentAsset_areFilamentComponentsDetached(nativeHandle)
+
+    /** Convenience accessor for the first instance ([assetInstances]`[0]`). */
     val instance: FilamentInstance get() =
-        FilamentInstance(FilaFilamentAsset_getInstance(nativeHandle))
+        FilamentInstance(FilaGltfioFilamentAsset_getInstance(nativeHandle))
 }
-
-/** [count] entities that [fill] writes through the pointer it's given. */
-internal inline fun entityArray(count: Int, fill: (NativePointer) -> Unit): IntArray =
-    if (count == 0) IntArray(0) else IntArray(count).also { a -> a.usePinned(fill) }
-
-@ExternalSymbolName("FilaFilamentAsset_getRoot")
-private external fun FilaFilamentAsset_getRoot(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_popRenderable")
-private external fun FilaFilamentAsset_popRenderable(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_popRenderables")
-private external fun FilaFilamentAsset_popRenderables(asset: NativePointer, entities: NativePointer, count: Int): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getEntityCount")
-private external fun FilaFilamentAsset_getEntityCount(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getEntities")
-private external fun FilaFilamentAsset_getEntities(asset: NativePointer, entities: NativePointer)
-
-@ExternalSymbolName("FilaFilamentAsset_getLightEntityCount")
-private external fun FilaFilamentAsset_getLightEntityCount(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getLightEntities")
-private external fun FilaFilamentAsset_getLightEntities(asset: NativePointer, entities: NativePointer)
-
-@ExternalSymbolName("FilaFilamentAsset_getRenderableEntityCount")
-private external fun FilaFilamentAsset_getRenderableEntityCount(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getRenderableEntities")
-private external fun FilaFilamentAsset_getRenderableEntities(asset: NativePointer, entities: NativePointer)
-
-@ExternalSymbolName("FilaFilamentAsset_getCameraEntityCount")
-private external fun FilaFilamentAsset_getCameraEntityCount(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getCameraEntities")
-private external fun FilaFilamentAsset_getCameraEntities(asset: NativePointer, entities: NativePointer)
-
-@ExternalSymbolName("FilaFilamentAsset_getEntitiesByName")
-private external fun FilaFilamentAsset_getEntitiesByName(asset: NativePointer, name: NativePointer, entities: NativePointer, maxCount: Int): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getEntitiesByPrefix")
-private external fun FilaFilamentAsset_getEntitiesByPrefix(asset: NativePointer, prefix: NativePointer, entities: NativePointer, maxCount: Int): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getFirstEntityByName")
-private external fun FilaFilamentAsset_getFirstEntityByName(asset: NativePointer, name: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getAssetInstanceCount")
-private external fun FilaFilamentAsset_getAssetInstanceCount(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getBoundingBox")
-private external fun FilaFilamentAsset_getBoundingBox(asset: NativePointer, center: NativePointer, halfExtent: NativePointer)
-
-@ExternalSymbolName("FilaFilamentAsset_getName")
-private external fun FilaFilamentAsset_getName(asset: NativePointer, entity: Int): NativePointer
-
-@ExternalSymbolName("FilaFilamentAsset_getExtras")
-private external fun FilaFilamentAsset_getExtras(asset: NativePointer, entity: Int): NativePointer
-
-@ExternalSymbolName("FilaFilamentAsset_getMorphTargetCountAt")
-private external fun FilaFilamentAsset_getMorphTargetCountAt(asset: NativePointer, entity: Int): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getMorphTargetNameAt")
-private external fun FilaFilamentAsset_getMorphTargetNameAt(asset: NativePointer, entity: Int, targetIndex: Int): NativePointer
-
-@ExternalSymbolName("FilaFilamentAsset_getResourceUriCount")
-private external fun FilaFilamentAsset_getResourceUriCount(asset: NativePointer): Int
-
-@ExternalSymbolName("FilaFilamentAsset_getResourceUriAt")
-private external fun FilaFilamentAsset_getResourceUriAt(asset: NativePointer, index: Int): NativePointer
-
-@ExternalSymbolName("FilaFilamentAsset_releaseSourceData")
-private external fun FilaFilamentAsset_releaseSourceData(asset: NativePointer)
-
-@ExternalSymbolName("FilaFilamentAsset_getEngine")
-private external fun FilaFilamentAsset_getEngine(asset: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaFilamentAsset_getInstance")
-private external fun FilaFilamentAsset_getInstance(asset: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaFilamentAsset_getAssetInstanceAt")
-internal external fun FilaFilamentAsset_getAssetInstanceAt(asset: NativePointer, index: Int): NativePointer

@@ -1,0 +1,114 @@
+# The Filament headers the Fila* C API is generated from (generateCApi), and that apiModel/apiGaps report on.
+# Globs relative to include/, grouped by the C module (c/<module>) their declarations are generated into.
+#
+# Every public class and free function these headers declare gets C functions. Types they use from other
+# headers (backend/, math/, utils/) are bridged as C types only, into the first module. `!glob` excludes headers
+# (the generator fails on listed headers it finds no declarations in).
+#
+# `-name` leaves a C++ declaration out: a record (with everything nested), a member, or a function. `-Record::*` keeps
+# the record's handle but none of its members. Methods and fields whose types use a skipped record go too. The
+# generated headers note each skipped member; an entry naming nothing fails the generator.
+
+[filament]
+filament/*.h
+utils/EntityManager.h
+# Filament's Kotlin module binds it, as Android's does (the first section matching a header takes it).
+geometry/SurfaceOrientation.h
+# Debugging aids (upstream marks them so) and raw pointers into the engine's internals.
+-filament::DebugRegistry
+-filament::Engine::getFeatureFlagPtr
+-filament::Engine::getPlatform
+-filament::Engine::streamAlloc
+-filament::View::setDebugCamera
+-filament::View::getDirectionalShadowCameras
+-filament::View::setFroxelVizEnabled
+-filament::View::FroxelConfigurationInfo
+-filament::View::FroxelConfigurationInfoWithAge
+-filament::RenderableManager::Bone::reserved
+-filament::View::PickingQueryResult::reserved1
+-filament::View::PickingQueryResult::reserved2
+-filament::View::PickingQuery::storage
+-filament::Engine::getDriver
+-filament::Engine::getJobSystem
+# The driver's packed sampler bits; TextureSampler's setters and getters cover them.
+-filament::backend::SamplerParams
+-filament::builderMakeName
+# Builders redeclare name(); the engine reads the rest.
+-filament::BuilderNameMixin
+# Entity recycling across threads, for Filament's own component managers.
+-utils::EntityManager::getAliveEntities
+-utils::EntityManager::getMissedGarbage
+-utils::EntityManager::registerWatermark
+-utils::EntityManager::rebindWatermark
+-utils::EntityManager::unregisterWatermark
+-utils::EntityManager::registerChangeCallback
+-utils::EntityManager::unregisterChangeCallback
+# Covered by feature(name, value) and getChildren().
+-filament::Engine::Builder::features
+-filament::TransformManager::children_iterator
+-filament::TransformManager::children_range
+-filament::TransformManager::children_sentinel
+# Culling math; kotlin-math covers it.
+-filament::Frustum
+# VertexAttribute's debug name; Kotlin enums have name.
+-filament::to_string
+# ParameterInfo* is an array C++ fills; FilaMaterialManual copies it into C's handles.
+-filament::Material::getParameters
+# C++ sugar binding a member function or functor; the callback overload (FilaViewManual) covers them.
+-filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
+
+[gltfio]
+gltfio/*.h
+!gltfio/math.h
+# Driven by ResourceLoader and AssetLoader, or only for writing a C++ MaterialProvider.
+-filament::gltfio::TextureProvider::*
+-filament::gltfio::processShaderString
+-filament::gltfio::MaterialKey::padding
+-filament::gltfio::MaterialKey::padding2
+-filament::gltfio::NodeManager
+-filament::gltfio::TrsTransformManager
+# Lives in libgltfio (JIT via filamat), which only desktop prebuilds; every platform links gltfio_core.
+-filament::gltfio::createJitShaderProvider
+# Internal instance type, and utils' name component manager (not part of the C API).
+-filament::gltfio::Animator::addInstance
+-filament::gltfio::AssetConfiguration::names
+-filament::gltfio::AssetLoader::getNames
+
+[filamat]
+filamat/*.h
+# Takes filament's private BufferInterfaceBlock.
+-filamat::MaterialBuilder::buffer
+# matc's .mat-file string <-> enum tables; Kotlin enums have valueOf/name.
+-filamat::Enums
+# Upstream's "for internal use" block (@cond never): matc's subpasses, introspection and shader dump.
+-filamat::MaterialBuilder::subpass
+-filamat::MaterialBuilder::Parameter
+-filamat::MaterialBuilder::Output
+-filamat::MaterialBuilder::Constant
+-filamat::MaterialBuilder::PushConstant
+-filamat::MaterialBuilder::CustomVariable
+-filamat::MaterialBuilder::peek
+-filamat::MaterialBuilder::hasSamplerType
+-filamat::MaterialBuilder::getParameterCount
+-filamat::MaterialBuilder::getParameters
+-filamat::MaterialBuilder::getSubpassCount
+-filamat::MaterialBuilder::getSubPasses
+-filamat::MaterialBuilder::getVariantFilter
+-filamat::MaterialBuilder::getFeatureLevel
+-filamat::MaterialBuilder::getApiLevel
+# Header-inline; Kotlin's MaterialPackage.invalidPackage does the same.
+-filamat::Package::invalidPackage
+
+[filament-utils]
+camutils/*.h
+!camutils/compiler.h
+geometry/*.h
+filament-iblprefilter/*.h
+ktxreader/*.h
+# Ktx1Reader builds textures from bundles.
+image/Ktx1Bundle.h
+# The Builder's state; its setters cover it.
+-filament::camutils::Manipulator::Config
+# KTX container internals; Ktx1Reader turns a bundle into a texture.
+-image::KtxInfo
+-image::KtxBlobIndex

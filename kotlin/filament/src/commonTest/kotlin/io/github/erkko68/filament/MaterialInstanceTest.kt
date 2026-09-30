@@ -28,7 +28,7 @@ class MaterialInstanceTest : FilamentTestFixture() {
 
         // // Set / Get parameters
         // inst.setParameter("emissiveFactor", 1f, 1f, 1f)
-        // inst.setParameter("emissiveFactor", Colors.RgbType.SRGB, 1f, 1f, 1f)
+        // inst.setParameter("emissiveFactor", RgbType.sRGB, 1f, 1f, 1f)
 
         // // Scissor
         // inst.setScissor(0, 0, 100, 100)
@@ -102,8 +102,8 @@ class MaterialInstanceTest : FilamentTestFixture() {
         // assertEquals("duplicated_instance", dup.name)
 
         // // Clean up
-        // engine.destroyMaterialInstance(inst)
-        // engine.destroyMaterialInstance(dup)
-        // engine.destroyMaterial(mat)
+        // engine.destroy(inst)
+        // engine.destroy(dup)
+        // engine.destroy(mat)
     }
 }

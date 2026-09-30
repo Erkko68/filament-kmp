@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Immutable
 import io.github.erkko68.filament.LightManager
+import io.github.erkko68.filament.ShadowType
 import io.github.erkko68.filament.View
 
 /**
@@ -26,7 +27,7 @@ import io.github.erkko68.filament.View
  * `null` disables them. (Point lights cannot cast shadows.)
  *
  * Many fields apply only under a specific view [Shadows] technique (noted per property). Defaults
- * mirror Filament's, except [lispsm] (defaults `false` here for cleaner soft shadows). Filament's
+ * mirror Filament's. Filament's
  * `polygonOffset*` depth-bias fields are not exposed here; use [constantBias]/[normalBias] for acne
  * instead, or the core [LightManager.ShadowOptions] for the raw pair.
  *
@@ -38,7 +39,7 @@ import io.github.erkko68.filament.View
  * @property shadowFarHint Concentrate shadow resolution up to this camera distance (world units).
  * @property stable Trade resolution for temporal stability (also forces [lispsm] off). Good for slow pans.
  * @property lispsm Light-space perspective shadow maps — boosts effective resolution near the camera, but
- *   can worsen DPCF/PCSS/VSM penumbra artifacts. Default `false`; ignored when [stable] is true.
+ *   can worsen DPCF/PCSS/VSM penumbra artifacts. Default `true`; ignored when [stable] is true.
  * @property cascades Directional-only: number of CSM cascades (1–4). >1 sharpens large scenes.
  * @property cascadeSplits Optional explicit cascade split positions (size `cascades - 1`, camera-Z
  *   0..1). Null auto-computes uniform splits.
@@ -62,7 +63,7 @@ data class ShadowConfig(
     val shadowNearHint: Float = 1f,
     val shadowFarHint: Float = 100f,
     val stable: Boolean = false,
-    val lispsm: Boolean = false,
+    val lispsm: Boolean = true,
     val cascades: Int = 1,
     val cascadeSplits: List<Float>? = null,
     val contactShadows: Boolean = false,
@@ -95,8 +96,8 @@ internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
     o.maxShadowDistance = contactShadowDistance
     o.stepCount = contactShadowSteps
     o.shadowBulbRadius = bulbRadius
-    o.blurWidth = blurWidth
-    o.elvsm = elvsm
+    o.vsm.blurWidth = blurWidth
+    o.vsm.elvsm = elvsm
     transform?.let { o.transform = floatArrayOf(it.x, it.y, it.z, it.w) }
     return o
 }
@@ -167,10 +168,10 @@ internal fun Shadows?.applyTo(view: View) {
     view.isShadowingEnabled = this != null
     when (this) {
         null -> Unit
-        Shadows.Pcf  -> view.shadowType = View.ShadowType.PCF
-        Shadows.Pcfd -> view.shadowType = View.ShadowType.PCFd
+        Shadows.Pcf  -> view.shadowType = ShadowType.PCF
+        Shadows.Pcfd -> view.shadowType = ShadowType.PCFd
         is Shadows.Vsm -> {
-            view.shadowType = View.ShadowType.VSM
+            view.shadowType = ShadowType.VSM
             view.vsmShadowOptions = view.vsmShadowOptions.apply {
                 anisotropy = this@applyTo.anisotropy
                 mipmapping = this@applyTo.mipmapping
@@ -180,11 +181,11 @@ internal fun Shadows?.applyTo(view: View) {
             }
         }
         is Shadows.Dpcf -> {
-            view.shadowType = View.ShadowType.DPCF
+            view.shadowType = ShadowType.DPCF
             view.applySoftShadows(penumbraScale, penumbraRatioScale)
         }
         is Shadows.Pcss -> {
-            view.shadowType = View.ShadowType.PCSS
+            view.shadowType = ShadowType.PCSS
             view.applySoftShadows(penumbraScale, penumbraRatioScale)
         }
     }

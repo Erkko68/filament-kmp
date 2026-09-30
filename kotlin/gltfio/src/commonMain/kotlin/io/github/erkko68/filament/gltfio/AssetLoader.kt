@@ -2,9 +2,23 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.*
-import io.github.erkko68.filament.interop.*
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.Material
+import io.github.erkko68.filament.gltfio.capi.*
+import io.github.erkko68.filament.interop.*
+
+/**
+ * Construction parameters for an [AssetLoader].
+ *
+ * @property engine Filament Engine to use for creating buffers and textures.
+ * @property materials Supplies the assets' materials.
+ * @property entities Optional EntityManager override (the engine's singleton when null).
+ */
+class AssetConfiguration(
+    var engine: Engine,
+    var materials: MaterialProvider,
+    var entities: EntityManager? = null,
+)
 
 /**
  * AssetLoader consumes glTF 2.0 content and produces FilamentAsset objects.
@@ -18,10 +32,8 @@ import io.github.erkko68.filament.InternalFilamentApi
  * - Create and destroy FilamentAsset objects (similar to how Engine creates core objects)
  * - Not fetch external buffer data or create textures (use ResourceLoader for this)
  *
- * **Material providers:**
- * AssetLoader uses MaterialProvider to determine how materials are created:
- * - UbershaderProvider: Uses a pre-compiled set of materials (recommended for performance)
- * - JIT-compiled materials: Generated on-the-fly using Filamat (more flexible)
+ * AssetLoader uses a MaterialProvider to create materials, e.g. [createUbershaderProvider]'s
+ * pre-compiled set.
  *
  * @see FilamentAsset
  * @see FilamentInstance
@@ -34,21 +46,17 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
     val nativeObject: NativePointer get() = nativeHandle
 
     companion object {
-        /**
-         * Create an AssetLoader instance.
-         *
-         * @param engine Filament Engine to use for creating buffers and textures.
-         * @param materials MaterialProvider for supplying materials to the asset.
-         * @param entities Optional EntityManager override (uses singleton if not provided).
-         * @return A new AssetLoader instance.
-         */
-        fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager? = null): AssetLoader {
-            val handle = FilaAssetLoader_create(
-                engine.nativeObject,
-                materials.nativeObject,
-                entities?.nativeObject ?: NullPointer
-            )
-            return AssetLoader(handle)
+        /** Creates an AssetLoader; destroy it with [destroy]. */
+        fun create(config: AssetConfiguration): AssetLoader {
+            val c = FilaGltfioAssetConfiguration_create()
+            try {
+                FilaGltfioAssetConfiguration_setEngine(c, config.engine.nativeObject)
+                FilaGltfioAssetConfiguration_setMaterials(c, config.materials.nativeObject)
+                FilaGltfioAssetConfiguration_setEntities(c, config.entities?.nativeObject ?: NullPointer)
+                return AssetLoader(FilaGltfioAssetLoader_create(c))
+            } finally {
+                FilaGltfioAssetConfiguration_destroy(c)
+            }
         }
 
         /**
@@ -57,7 +65,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
          * @param loader The AssetLoader to destroy.
          */
         fun destroy(loader: AssetLoader) {
-            FilaAssetLoader_destroy(loader.nativeHandle)
+            interopScope { FilaGltfioAssetLoader_destroy(toInterop(listOf(loader.nativeHandle))) }
             loader.nativeHandle = NullPointer
         }
     }
@@ -72,9 +80,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * @return A new FilamentAsset, or null if parsing failed.
      */
     fun createAsset(buffer: ByteArray): FilamentAsset? {
-        val handle = buffer.usePinned { pinned ->
-            FilaAssetLoader_createAsset(nativeHandle, pinned, buffer.size)
-        }
+        val handle = buffer.usePinned { FilaGltfioAssetLoader_createAsset(nativeHandle, it, buffer.size) }
         return handle.takeIf { it != NullPointer }?.let { FilamentAsset(it) }
     }
 
@@ -89,13 +95,12 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * @return A new FilamentAsset with the provided instances, or null if parsing failed.
      */
     fun createInstancedAsset(buffer: ByteArray, instances: Array<FilamentInstance>): FilamentAsset? {
-        val handle = buffer.usePinned { FilaAssetLoader_createInstancedAsset(nativeHandle, it, buffer.size, instances.size) }
-        if (handle == NullPointer) return null
-        val asset = FilamentAsset(handle)
-        for (i in instances.indices) {
-            instances[i].nativeHandle = FilaFilamentAsset_getAssetInstanceAt(handle, i)
+        val handle = interopScope {
+            val slots = toInterop(List(instances.size) { NullPointer })
+            buffer.usePinned { FilaGltfioAssetLoader_createInstancedAsset(nativeHandle, it, buffer.size, slots, instances.size) }
+                .also { if (it != NullPointer) readPointers(slots, instances.size).forEachIndexed { i, p -> instances[i].nativeHandle = p } }
         }
-        return asset
+        return handle.takeIf { it != NullPointer }?.let { FilamentAsset(it) }
     }
 
     /**
@@ -108,7 +113,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * @return A new FilamentInstance, or null if creation failed.
      */
     fun createInstance(asset: FilamentAsset): FilamentInstance? {
-        val handle = FilaAssetLoader_createInstance(nativeHandle, asset.nativeHandle).takeIf { it != NullPointer } ?: return null
+        val handle = FilaGltfioAssetLoader_createInstance(nativeHandle, asset.nativeHandle).takeIf { it != NullPointer } ?: return null
         return FilamentInstance(handle)
     }
 
@@ -120,7 +125,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * @param enable true to enable diagnostics, false to disable.
      */
     fun enableDiagnostics(enable: Boolean) {
-        FilaAssetLoader_enableDiagnostics(nativeHandle, enable)
+        FilaGltfioAssetLoader_enableDiagnostics(nativeHandle, enable)
     }
 
     /**
@@ -129,7 +134,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * @param asset The FilamentAsset to destroy.
      */
     fun destroyAsset(asset: FilamentAsset) {
-        FilaAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
+        FilaGltfioAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
         asset.nativeHandle = NullPointer
     }
 
@@ -137,30 +142,15 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * Reclaims unused entities and components across all assets owned by this loader.
      */
     fun gc() {
-        FilaAssetLoader_gc(nativeHandle)
+        FilaGltfioAssetLoader_gc(nativeHandle)
     }
+
+    /** The materials this loader's assets use, across all its assets. */
+    val materials: List<Material>
+        get() = readPointers(FilaGltfioAssetLoader_getMaterials(nativeHandle), materialsCount).map { Material(it) }
+
+    val materialsCount: Int get() = FilaGltfioAssetLoader_getMaterialsCount(nativeHandle)
+
+    /** The provider this loader was configured with. */
+    val materialProvider: MaterialProvider get() = MaterialProvider(FilaGltfioAssetLoader_getMaterialProvider(nativeHandle))
 }
-
-@ExternalSymbolName("FilaAssetLoader_create")
-private external fun FilaAssetLoader_create(engine: NativePointer, materialProvider: NativePointer, entityManager: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaAssetLoader_destroy")
-private external fun FilaAssetLoader_destroy(loader: NativePointer)
-
-@ExternalSymbolName("FilaAssetLoader_createAsset")
-private external fun FilaAssetLoader_createAsset(loader: NativePointer, buffer: NativePointer, bufferByteCount: Int): NativePointer
-
-@ExternalSymbolName("FilaAssetLoader_createInstancedAsset")
-private external fun FilaAssetLoader_createInstancedAsset(loader: NativePointer, buffer: NativePointer, bufferByteCount: Int, instanceCount: Int): NativePointer
-
-@ExternalSymbolName("FilaAssetLoader_createInstance")
-private external fun FilaAssetLoader_createInstance(loader: NativePointer, asset: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaAssetLoader_enableDiagnostics")
-private external fun FilaAssetLoader_enableDiagnostics(loader: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaAssetLoader_destroyAsset")
-private external fun FilaAssetLoader_destroyAsset(loader: NativePointer, asset: NativePointer)
-
-@ExternalSymbolName("FilaAssetLoader_gc")
-private external fun FilaAssetLoader_gc(loader: NativePointer)

@@ -30,16 +30,16 @@ open class ComposeTestFixture {
     @BeforeTest
     fun setUp() {
         Filament.init()
-        engine = Engine.create(Engine.Backend.NOOP)
+        engine = Engine.create(Engine.Backend.NOOP)!!
         scene = engine.createScene()
     }
 
     @AfterTest
     fun tearDown() {
         if (::engine.isInitialized) {
-            if (::scene.isInitialized) engine.destroyScene(scene)
+            if (::scene.isInitialized) engine.destroy(scene)
             engine.flushAndWait()
-            engine.destroy()
+            Engine.destroy(engine)
         }
     }
 }

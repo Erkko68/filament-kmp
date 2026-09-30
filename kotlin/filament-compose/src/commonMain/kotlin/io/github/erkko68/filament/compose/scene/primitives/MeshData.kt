@@ -76,10 +76,9 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
         .normals(normals)
         .uvs(uvs)
         .triangleCount(triangleCount)
-        .triangles32(indices)
-        .build()
-    orientation.getQuatsAsFloat(tangents, vertexCount)
-    orientation.destroy()
+        .triangles(indices)
+        .build()!!
+    orientation.use { it.getQuats(tangents, vertexCount) }
 
     val vb = VertexBuffer.Builder()
         .vertexCount(vertexCount)
@@ -94,7 +93,7 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
 
     val ib = IndexBuffer.Builder()
         .indexCount(indices.size)
-        .bufferType(IndexBuffer.Builder.IndexType.UINT)
+        .bufferType(IndexBuffer.IndexType.UINT)
         .build(engine)
     ib.setBuffer(engine, indices.toBytes())
 
@@ -136,8 +135,8 @@ internal fun Mesh(
     val effectiveVisible = visible && LocalGroupVisible.current
 
     val handles = rememberOwned(engine, mesh, create = { mesh.upload(engine) }) {
-        engine.destroyVertexBuffer(it.vertexBuffer)
-        engine.destroyIndexBuffer(it.indexBuffer)
+        engine.destroy(it.vertexBuffer)
+        engine.destroy(it.indexBuffer)
     }
 
     val entity = rememberOwned(engine, handles, material, castShadows, receiveShadows,
@@ -165,7 +164,7 @@ internal fun Mesh(
     // destroying it, so toggling visibility is cheap and keeps entity identity stable.
     DisposableEffect(entity, effectiveVisible) {
         if (effectiveVisible) scene.addEntity(entity)
-        onDispose { if (effectiveVisible) scene.removeEntity(entity) }
+        onDispose { if (effectiveVisible) scene.remove(entity) }
     }
 
     DisposableEffect(entity, position, rotation, scale, pivot) {

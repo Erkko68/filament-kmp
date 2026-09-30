@@ -1,9 +1,10 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.interop.ExternalSymbolName
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.NativePointer
 import io.github.erkko68.filament.interop.NullPointer
 import io.github.erkko68.filament.interop.interopScope
+import io.github.erkko68.filament.interop.usePinned
 
 /**
  * A Scene is a collection of Renderables and Lights to be rendered together.
@@ -68,15 +69,6 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
      *
      * @param entity The entity to remove
      */
-    fun removeEntity(entity: Entity) = FilaScene_remove(nativeHandle, entity)
-
-    /**
-     * Removes a single entity from this scene.
-     *
-     * This is a synonym for removeEntity(). Both have the same effect.
-     *
-     * @param entity The entity to remove
-     */
     fun remove(entity: Entity) = FilaScene_remove(nativeHandle, entity)
 
     /**
@@ -87,6 +79,9 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
     fun removeEntities(entities: IntArray) = interopScope {
         FilaScene_removeEntities(nativeHandle, toInterop(entities), entities.size)
     }
+
+    /** Removes all Renderables and Lights from this scene. */
+    fun removeAllEntities() = FilaScene_removeAllEntities(nativeHandle)
 
     /**
      * Gets the number of entities in this scene.
@@ -118,59 +113,12 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
     fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity)
 
     /**
-     * Gets all entities in this scene.
+     * Invokes [functor] on every entity in this scene.
      *
-     * @param out Optional array to fill with entity IDs; a new array is allocated if null.
-     * @return Array of all entity IDs in the scene
+     * @param functor Function called with each entity
      */
-    fun getEntities(out: IntArray? = null): IntArray {
-        val count = entityCount
-        val result = if (out != null && out.size >= count) out else IntArray(count)
-        if (count > 0) interopScope {
-            val ptr = toInterop(result)
-            FilaScene_getEntities(nativeHandle, ptr, count)
-            ptr.fromInterop(result)
-        }
-        return result
+    fun forEach(functor: (Entity) -> Unit) {
+        val count = FilaScene_forEach(nativeHandle, NullPointer, 0)
+        IntArray(count).also { out -> out.usePinned { FilaScene_forEach(nativeHandle, it, count) } }.forEach(functor)
     }
-
-    /**
-     * Iterates over all entities in this scene.
-     *
-     * @param block Lambda function to call for each entity
-     */
-    fun forEach(block: (Entity) -> Unit) = getEntities().forEach(block)
 }
-
-@ExternalSymbolName("FilaScene_setSkybox")
-private external fun FilaScene_setSkybox(scene: NativePointer, skybox: NativePointer)
-
-@ExternalSymbolName("FilaScene_setIndirectLight")
-private external fun FilaScene_setIndirectLight(scene: NativePointer, indirectLight: NativePointer)
-
-@ExternalSymbolName("FilaScene_addEntity")
-private external fun FilaScene_addEntity(scene: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaScene_addEntities")
-private external fun FilaScene_addEntities(scene: NativePointer, entities: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaScene_remove")
-private external fun FilaScene_remove(scene: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaScene_removeEntities")
-private external fun FilaScene_removeEntities(scene: NativePointer, entities: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaScene_getEntityCount")
-private external fun FilaScene_getEntityCount(scene: NativePointer): Int
-
-@ExternalSymbolName("FilaScene_getRenderableCount")
-private external fun FilaScene_getRenderableCount(scene: NativePointer): Int
-
-@ExternalSymbolName("FilaScene_getLightCount")
-private external fun FilaScene_getLightCount(scene: NativePointer): Int
-
-@ExternalSymbolName("FilaScene_hasEntity")
-private external fun FilaScene_hasEntity(scene: NativePointer, entity: Int): Boolean
-
-@ExternalSymbolName("FilaScene_getEntities")
-private external fun FilaScene_getEntities(scene: NativePointer, out: NativePointer, length: Int)

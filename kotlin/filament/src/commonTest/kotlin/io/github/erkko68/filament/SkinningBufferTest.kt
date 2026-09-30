@@ -16,18 +16,16 @@ class SkinningBufferTest : FilamentTestFixture() {
             .build(engine)
 
         assertNotNull(buffer)
-        assertTrue(engine.isValidSkinningBuffer(buffer))
+        assertTrue(engine.isValid(buffer))
 
         assertEquals(10, buffer.boneCount)
 
         // 10 matrices * 16 floats per matrix = 160 floats
         val matrices = FloatArray(160)
-        buffer.setBonesAsMatrices(engine, matrices, 10, 0)
+        buffer.setBones(engine, matrices, 10, 0)
 
-        // 10 quaternions * 8 floats per bone = 80 floats
-        val quaternions = FloatArray(80)
-        buffer.setBonesAsQuaternions(engine, quaternions, 10, 0)
+        buffer.setBones(engine, Array(10) { RenderableManager.Bone() })
 
-        engine.destroySkinningBuffer(buffer)
+        engine.destroy(buffer)
     }
 }

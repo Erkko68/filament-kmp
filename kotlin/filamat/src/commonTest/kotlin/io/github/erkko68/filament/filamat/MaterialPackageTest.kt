@@ -2,7 +2,9 @@ package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.filamat.testutils.FilamatTestFixture
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MaterialPackageTest : FilamatTestFixture() {
@@ -25,19 +27,30 @@ class MaterialPackageTest : FilamatTestFixture() {
     }
 
     @Test
-    fun testMaterialPackageBufferIsNonEmpty() {
+    fun testMaterialPackageDataIsNonEmpty() {
         val pkg = buildMinimalPackage() ?: return
-        val buffer = pkg.buffer
-        assertNotNull(buffer)
-        assertTrue(buffer.isNotEmpty(), "Compiled material package buffer must not be empty")
+        assertTrue(pkg.data.isNotEmpty(), "Compiled material package data must not be empty")
+        assertEquals(pkg.data.size, pkg.size)
     }
 
     @Test
-    fun testMaterialPackageBufferHasReasonableSize() {
+    fun testMaterialPackageDataHasReasonableSize() {
         val pkg = buildMinimalPackage() ?: return
-        val buffer = pkg.buffer
         // A compiled Filament material package is a chunked binary blob; even a minimal
         // unlit material is well over a few hundred bytes once shader stages are encoded.
-        assertTrue(buffer.size > 64, "Compiled material package should be larger than 64 bytes, was ${buffer.size}")
+        assertTrue(pkg.size > 64, "Compiled material package should be larger than 64 bytes, was ${pkg.size}")
+    }
+
+    @Test
+    fun testConstructorsAndInvalidPackage() {
+        assertEquals(16, MaterialPackage(16).size)
+        val src = byteArrayOf(1, 2, 3, 4)
+        val copy = MaterialPackage(src, 2)
+        src[0] = 9
+        assertContentEquals(byteArrayOf(1, 2), copy.data)
+        assertTrue(copy.isValid)
+        val invalid = MaterialPackage.invalidPackage()
+        assertFalse(invalid.isValid)
+        assertEquals(0, invalid.size)
     }
 }

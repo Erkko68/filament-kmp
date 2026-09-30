@@ -96,7 +96,7 @@ jobs:
             --no-configuration-cache
 
       # Web apps serve these next to their bundle (klib resources don't reach webpack), so
-      # each release carries them as assets; see docs/getting-started.md.
+      # each release carries them as assets; see docs/guide/getting-started.md.
       - name: Build web runtime assets
         run: ./gradlew :web:stageFilamentWasm :web:stageFilamatWasm --no-configuration-cache
 

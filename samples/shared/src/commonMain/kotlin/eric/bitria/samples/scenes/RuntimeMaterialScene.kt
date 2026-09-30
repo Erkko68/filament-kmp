@@ -36,7 +36,6 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberMaterial
 import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
-import io.github.erkko68.filament.filamat.Filamat
 import io.github.erkko68.filament.filamat.MaterialBuilder
 import kotlin.time.TimeSource
 
@@ -49,7 +48,7 @@ private val PATTERNS = listOf(
 
 private fun compile(engine: Engine, pattern: String): Pair<ByteArray, Long> {
     val start = TimeSource.Monotonic.markNow()
-    Filamat.init() // idempotent; on web filamat-kmp.wasm must already be loaded (see webApp Main.kt)
+    MaterialBuilder.init() // idempotent; on web filamat-kmp.wasm must already be loaded (see webApp Main.kt)
     val pkg = MaterialBuilder()
         .name("RuntimePattern")
         .shading(MaterialBuilder.Shading.LIT)
@@ -75,7 +74,7 @@ private fun compile(engine: Engine, pattern: String): Pair<ByteArray, Long> {
         )
         .build()
     check(pkg.isValid) { "filamat failed to compile the material" }
-    return pkg.buffer to start.elapsedNow().inWholeMilliseconds
+    return pkg.data to start.elapsedNow().inWholeMilliseconds
 }
 
 @Composable

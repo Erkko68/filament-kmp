@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -287,7 +288,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          */
         fun customLut(data: FloatArray, dimension: Int): Builder {
             data.usePinned { pinned ->
-                FilaColorGradingBuilder_customLut(nativeHandle, pinned, dimension)
+                FilaColorGradingBuilder_customLut(nativeHandle, pinned, data.size / 3, dimension)
             }
             return this
         }
@@ -337,63 +338,3 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
      */
     enum class LutFormat { INTEGER, FLOAT }
 }
-
-@ExternalSymbolName("FilaColorGradingBuilder_build")
-private external fun FilaColorGradingBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaColorGradingBuilder_channelMixer")
-private external fun FilaColorGradingBuilder_channelMixer(builder: NativePointer, outRed: NativePointer, outGreen: NativePointer, outBlue: NativePointer)
-
-@ExternalSymbolName("FilaColorGradingBuilder_contrast")
-private external fun FilaColorGradingBuilder_contrast(builder: NativePointer, contrast: Float)
-
-@ExternalSymbolName("FilaColorGradingBuilder_create")
-private external fun FilaColorGradingBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaColorGradingBuilder_curves")
-private external fun FilaColorGradingBuilder_curves(builder: NativePointer, shadowGamma: NativePointer, midPoint: NativePointer, highlightScale: NativePointer)
-
-@ExternalSymbolName("FilaColorGradingBuilder_customLut")
-private external fun FilaColorGradingBuilder_customLut(builder: NativePointer, data: NativePointer, dimension: Int)
-
-@ExternalSymbolName("FilaColorGradingBuilder_dimensions")
-private external fun FilaColorGradingBuilder_dimensions(builder: NativePointer, dim: Int)
-
-@ExternalSymbolName("FilaColorGradingBuilder_exposure")
-private external fun FilaColorGradingBuilder_exposure(builder: NativePointer, exposure: Float)
-
-@ExternalSymbolName("FilaColorGradingBuilder_fastMath")
-private external fun FilaColorGradingBuilder_fastMath(builder: NativePointer, fastMath: Boolean)
-
-@ExternalSymbolName("FilaColorGradingBuilder_format")
-private external fun FilaColorGradingBuilder_format(builder: NativePointer, format: Int)
-
-@ExternalSymbolName("FilaColorGradingBuilder_gamutMapping")
-private external fun FilaColorGradingBuilder_gamutMapping(builder: NativePointer, gamutMapping: Boolean)
-
-@ExternalSymbolName("FilaColorGradingBuilder_luminanceScaling")
-private external fun FilaColorGradingBuilder_luminanceScaling(builder: NativePointer, luminanceScaling: Boolean)
-
-@ExternalSymbolName("FilaColorGradingBuilder_nightAdaptation")
-private external fun FilaColorGradingBuilder_nightAdaptation(builder: NativePointer, adaptation: Float)
-
-@ExternalSymbolName("FilaColorGradingBuilder_quality")
-private external fun FilaColorGradingBuilder_quality(builder: NativePointer, quality: Int)
-
-@ExternalSymbolName("FilaColorGradingBuilder_saturation")
-private external fun FilaColorGradingBuilder_saturation(builder: NativePointer, saturation: Float)
-
-@ExternalSymbolName("FilaColorGradingBuilder_shadowsMidtonesHighlights")
-private external fun FilaColorGradingBuilder_shadowsMidtonesHighlights(builder: NativePointer, shadows: NativePointer, midtones: NativePointer, highlights: NativePointer, ranges: NativePointer)
-
-@ExternalSymbolName("FilaColorGradingBuilder_slopeOffsetPower")
-private external fun FilaColorGradingBuilder_slopeOffsetPower(builder: NativePointer, slope: NativePointer, offset: NativePointer, power: NativePointer)
-
-@ExternalSymbolName("FilaColorGradingBuilder_toneMapper")
-private external fun FilaColorGradingBuilder_toneMapper(builder: NativePointer, toneMapper: NativePointer)
-
-@ExternalSymbolName("FilaColorGradingBuilder_vibrance")
-private external fun FilaColorGradingBuilder_vibrance(builder: NativePointer, vibrance: Float)
-
-@ExternalSymbolName("FilaColorGradingBuilder_whiteBalance")
-private external fun FilaColorGradingBuilder_whiteBalance(builder: NativePointer, temperature: Float, tint: Float)

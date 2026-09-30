@@ -28,19 +28,19 @@ class RenderableManagerTest : FilamentTestFixture() {
 
         val ib = IndexBuffer.Builder()
             .indexCount(3)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
         ib.setBuffer(engine, byteArrayOf(0, 0, 1, 0, 2, 0))
 
         val em = EntityManager.get()
         val entity = em.create()
 
-        val boundingBox = Box(0f, 0f, 0f, 1f, 1f, 1f)
+        val boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f))
 
         // TODO: Building a renderable with a material instance is commented out because material creation panics under NOOP.
         // RenderableManager.Builder(1)
         //     .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
-        //     .geometryType(RenderableManager.GeometryType.STATIC)
+        //     .geometryType(RenderableManager.Builder.GeometryType.STATIC)
         //     .material(0, matInst)
         //     .boundingBox(boundingBox)
         //     .culling(true)
@@ -56,8 +56,8 @@ class RenderableManagerTest : FilamentTestFixture() {
         // assertTrue(inst != 0)
 
         // // Set / Get parameters on renderable instance
-        // rm.setAxisAlignedBoundingBox(inst, Box(0f, 0f, 0f, 2f, 2f, 2f))
-        // val b = rm.getAxisAlignedBoundingBox(inst, Box())
+        // rm.setAxisAlignedBoundingBox(inst, Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(2f, 2f, 2f)))
+        // val b = rm.getAxisAlignedBoundingBox(inst)
         // assertEquals(2f, b.halfExtent[0])
 
         // rm.setLayerMask(inst, 0xFF, 0x01)
@@ -68,16 +68,16 @@ class RenderableManagerTest : FilamentTestFixture() {
         // rm.setChannel(inst, 2)
         // assertEquals(2, rm.getChannel(inst))
 
-        // rm.setCullingEnabled(inst, false)
+        // rm.setCulling(inst, false)
         // assertTrue(!rm.isCullingEnabled(inst))
 
         // rm.setFogEnabled(inst, false)
-        // assertTrue(!rm.isFogEnabled(inst))
+        // assertTrue(!rm.getFogEnabled(inst))
 
-        // rm.setShadowCaster(inst, false)
+        // rm.setCastShadows(inst, false)
         // assertTrue(!rm.isShadowCaster(inst))
 
-        // rm.setShadowReceiver(inst, false)
+        // rm.setReceiveShadows(inst, false)
         // assertTrue(!rm.isShadowReceiver(inst))
 
         // rm.setScreenSpaceContactShadows(inst, false)
@@ -103,17 +103,17 @@ class RenderableManagerTest : FilamentTestFixture() {
         //     .boneCount(10)
         //     .build(engine)
         // rm.setSkinningBuffer(inst, sb, 10, 0)
-        // rm.setBonesAsMatrices(inst, FloatArray(160), 10, 0)
-        // rm.setBonesAsQuaternions(inst, FloatArray(80), 10, 0)
+        // rm.setBones(inst, FloatArray(160), 10, 0)
+        // rm.setBones(inst, Array(10) { RenderableManager.Bone() })
 
         // // Clean up
         // rm.clearMaterialInstanceAt(inst, 0)
         // rm.destroy(entity)
         em.destroy(entity)
-        engine.destroyVertexBuffer(vb)
-        engine.destroyIndexBuffer(ib)
-        // engine.destroySkinningBuffer(sb)
-        // engine.destroyMaterialInstance(matInst)
-        // engine.destroyMaterial(mat)
+        engine.destroy(vb)
+        engine.destroy(ib)
+        // engine.destroy(sb)
+        // engine.destroy(matInst)
+        // engine.destroy(mat)
     }
 }

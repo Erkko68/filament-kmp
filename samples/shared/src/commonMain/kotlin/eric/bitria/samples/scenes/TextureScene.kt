@@ -53,7 +53,7 @@ fun TextureScene(onBack: () -> Unit) {
         pngBytes?.let { TextureLoader.loadTexture(engine, it, TextureLoader.TextureType.COLOR) }
     }
     DisposableEffect(texture) {
-        onDispose { texture?.let { engine.destroyTexture(it) } }
+        onDispose { texture?.let { engine.destroy(it) } }
     }
 
     Box(Modifier.fillMaxSize()) {

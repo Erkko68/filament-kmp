@@ -23,11 +23,11 @@ import io.github.erkko68.filament.toBytes
  *
  * Owns the render plumbing (swapchain/renderer/view/camera/scene) and every
  * resource created through it; [destroy] tears it all down in dependency order
- * so the fixture's `engine.destroy()` doesn't panic on live resources.
+ * so the fixture's `Engine.destroy(engine)` doesn't panic on live resources.
  */
 class FrameProbe(private val engine: Engine, val width: Int = 64, val height: Int = 64) {
     val scene = engine.createScene()
-    val camera = engine.createCamera().apply {
+    val camera = engine.createCamera(engine.entityManager.create()).apply {
         setProjection(45.0, width.toDouble() / height, 0.1, 100.0, Camera.Fov.VERTICAL)
     }
     val view = engine.createView().apply {
@@ -51,7 +51,7 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
 
     /** Builds a material from [payload] and tracks it for [destroy]. */
     fun material(payload: ByteArray): Material =
-        Material.Builder().payload(payload).build(engine).also { materials += it }
+        Material.Builder().payload(payload).build(engine)!!.also { materials += it }
 
     /** Creates a tracked instance of a tracked material. */
     fun instance(material: Material): MaterialInstance =
@@ -123,7 +123,7 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
 
         val ib = IndexBuffer.Builder()
             .indexCount(6)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
         // Two CCW triangles as seen from +Y.
         ib.setBuffer(engine, shortArrayOf(0, 2, 1, 0, 3, 2).toBytes())
@@ -133,7 +133,7 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
         RenderableManager.Builder(1)
             .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
             .material(0, material)
-            .boundingBox(Box(cx, cy, cz, halfExtent, 0.01f, halfExtent))
+            .boundingBox(Box(floatArrayOf(cx, cy, cz), floatArrayOf(halfExtent, 0.01f, halfExtent)))
             .castShadows(true)
             .receiveShadows(true)
             .build(engine, entity)
@@ -145,19 +145,20 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
     fun destroy() {
         val em = EntityManager.get()
         entities.forEach {
-            scene.removeEntity(it)
-            engine.destroyEntity(it)
+            scene.remove(it)
+            engine.destroy(it)
             em.destroy(it)
         }
-        vertexBuffers.forEach { engine.destroyVertexBuffer(it) }
-        indexBuffers.forEach { engine.destroyIndexBuffer(it) }
-        instances.forEach { engine.destroyMaterialInstance(it) }
-        materials.forEach { engine.destroyMaterial(it) }
-        engine.destroyView(view)
-        engine.destroyCamera(camera)
-        engine.destroyScene(scene)
-        engine.destroyRenderer(renderer)
-        engine.destroySwapChain(swapChain)
+        vertexBuffers.forEach { engine.destroy(it) }
+        indexBuffers.forEach { engine.destroy(it) }
+        instances.forEach { engine.destroy(it) }
+        materials.forEach { engine.destroy(it) }
+        engine.destroy(view)
+        engine.destroyCameraComponent(camera.entity)
+        engine.entityManager.destroy(camera.entity)
+        engine.destroy(scene)
+        engine.destroy(renderer)
+        engine.destroy(swapChain)
     }
 
     companion object {

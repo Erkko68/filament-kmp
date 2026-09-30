@@ -145,6 +145,6 @@ private fun cylinderMesh(radius: Float, height: Float, segments: Int): MeshData 
         normals     = normals,
         uvs         = uvs,
         indices     = indices,
-        boundingBox = Box(0f, 0f, 0f, radius, h, radius),
+        boundingBox = Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(radius, h, radius)),
     )
 }

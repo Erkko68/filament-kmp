@@ -27,7 +27,7 @@ internal actual fun rememberPlatformEngine(backend: Engine.Backend): Engine {
             GpuFrameSharing.guard("creating the Filament engine", window, null, {
                 when (DesktopOs.current) {
                     // skiko's MTLTextures are sampleable by any engine on the same (default) GPU.
-                    DesktopOs.MACOS -> Engine.create(backend)
+                    DesktopOs.MACOS -> checkNotNull(Engine.create(backend)) { "Failed to create a $backend Engine" }
                     DesktopOs.WINDOWS -> D3DEngines.create(backend, window)
                     DesktopOs.LINUX -> GlxEngines.create(backend, window)
                     DesktopOs.OTHER -> unavailable("no GPU-to-GPU path on ${System.getProperty("os.name")}")
@@ -35,6 +35,6 @@ internal actual fun rememberPlatformEngine(backend: Engine.Backend): Engine {
             }, { null })
         }
         // D3DEngines.destroy also frees the Windows engine's platform, which Filament doesn't own.
-        Owned(shared?.also(GpuFrameSharing::optIn) ?: Engine.create(backend), emptyList(), D3DEngines::destroy)
+        Owned(shared?.also(GpuFrameSharing::optIn) ?: checkNotNull(Engine.create(backend)) { "Failed to create a $backend Engine" }, emptyList(), D3DEngines::destroy)
     }.value
 }

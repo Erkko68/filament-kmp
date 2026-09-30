@@ -3,6 +3,7 @@ package io.github.erkko68.filament.utils
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.interop.*
+import io.github.erkko68.filament.utils.capi.*
 
 /**
  * Decodes an HDR image from raw bytes into a Filament [Texture].
@@ -28,6 +29,3 @@ object HDRLoader {
         return handle.takeIf { it != NullPointer }?.let { Texture(it) }
     }
 }
-
-@ExternalSymbolName("FilaHDRLoader_createTexture")
-private external fun FilaHDRLoader_createTexture(engine: NativePointer, buffer: NativePointer, size: Int, internalFormat: Int): NativePointer

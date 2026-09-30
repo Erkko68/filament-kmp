@@ -6,11 +6,14 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.compose.scene.GltfAsset
+import io.github.erkko68.filament.gltfio.AssetConfiguration
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.gltfio.Gltfio
+import io.github.erkko68.filament.gltfio.MaterialProvider
+import io.github.erkko68.filament.gltfio.ResourceConfiguration
 import io.github.erkko68.filament.gltfio.ResourceLoader
-import io.github.erkko68.filament.gltfio.UbershaderProvider
+import io.github.erkko68.filament.gltfio.createUbershaderProvider
 import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -34,7 +37,7 @@ open class TierBSceneFixture {
     private val materialInstances = mutableListOf<MaterialInstance>()
     private val gltfAssets = mutableListOf<FilamentAsset>()
     private val gltfLoaders = mutableListOf<AssetLoader>()
-    private val gltfProviders = mutableListOf<UbershaderProvider>()
+    private val gltfProviders = mutableListOf<MaterialProvider>()
 
     @BeforeTest
     fun awaitGraphics(): GraphicsReady = awaitGraphicsReady()
@@ -46,7 +49,7 @@ open class TierBSceneFixture {
         // aborts on its driver thread there, which a try/catch can't recover.
         if (!TestEnv.gpuBackendAvailable) return
         val e = try {
-            Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid }
+            Engine.create(Engine.Backend.DEFAULT)?.takeIf { it.isValid }
         } catch (t: Throwable) {
             null
         } ?: return
@@ -61,11 +64,11 @@ open class TierBSceneFixture {
             gltfAssets.forEachIndexed { i, a -> gltfLoaders.getOrNull(i)?.destroyAsset(a) }
             gltfLoaders.forEach { AssetLoader.destroy(it) }
             gltfProviders.forEach { it.destroy() }
-            materialInstances.forEach { e.destroyMaterialInstance(it) }
-            materials.forEach { e.destroyMaterial(it) }
-            scene?.let { e.destroyScene(it) }
+            materialInstances.forEach { e.destroy(it) }
+            materials.forEach { e.destroy(it) }
+            scene?.let { e.destroy(it) }
             e.flushAndWait()
-            e.destroy()
+            Engine.destroy(e)
         }
         gltfAssets.clear()
         gltfLoaders.clear()
@@ -94,11 +97,11 @@ open class TierBSceneFixture {
         val e = engine ?: return null
         if (bytes.isEmpty()) return null
         Gltfio.init()
-        val provider = UbershaderProvider(e).also { gltfProviders += it }
-        val loader = AssetLoader.create(e, provider, e.entityManager).also { gltfLoaders += it }
+        val provider = createUbershaderProvider(e).also { gltfProviders += it }
+        val loader = AssetLoader.create(AssetConfiguration(e, provider, e.entityManager)).also { gltfLoaders += it }
         val filamentAsset = loader.createAsset(bytes)?.also { gltfAssets += it } ?: return null
 
-        val resourceLoader = ResourceLoader(e, true)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(e, true))
         try {
             resourceLoader.asyncBeginLoad(filamentAsset)
             // Bounded: the embedded glb has no external URIs, so this settles in a few iterations —
@@ -122,7 +125,7 @@ open class TierBSceneFixture {
         val e = engine ?: return null
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         if (bytes.isEmpty()) return null
-        val material = Material.Builder().payload(bytes).build(e).also { materials += it }
+        val material = Material.Builder().payload(bytes).build(e)!!.also { materials += it }
         return material.createInstance().also { materialInstances += it }
     }
 }

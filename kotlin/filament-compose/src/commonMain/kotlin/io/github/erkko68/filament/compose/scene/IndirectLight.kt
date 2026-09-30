@@ -114,7 +114,7 @@ internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene
         scene.indirectLight = ibl
         onDispose {
             scene.indirectLight = null
-            engine.destroyIndirectLight(ibl)
+            engine.destroy(ibl)
         }
     }
 }

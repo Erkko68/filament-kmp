@@ -83,7 +83,7 @@ internal class D3DOffscreenTarget private constructor(
 
     override fun close() {
         // Destroying the swap chain frees the shared textures, once the GPU is done with them.
-        engine.destroySwapChain(swapChain)
+        engine.destroy(swapChain)
         engine.flushAndWait()
     }
 

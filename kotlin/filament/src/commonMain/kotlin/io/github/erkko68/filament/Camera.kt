@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -62,7 +63,7 @@ class Camera @InternalFilamentApi constructor(
      * @param far Distance from camera to far plane (> near for PERSPECTIVE, != near for ORTHO)
      */
     fun setProjection(projection: Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double) {
-        FilaCamera_setProjection(nativeHandle, projection.ordinal, left, right, bottom, top, near, far)
+        FilaCamera_setProjection_Projection_double_double_double_double_double_double(nativeHandle, projection.ordinal, left, right, bottom, top, near, far)
     }
     /**
      * Set the projection matrix from field-of-view and aspect ratio.
@@ -75,8 +76,8 @@ class Camera @InternalFilamentApi constructor(
      * @param far Distance to far plane (> near)
      * @param direction Axis on which fovInDegrees is measured (VERTICAL or HORIZONTAL)
      */
-    fun setProjection(fovInDegrees: Double, aspect: Double, near: Double, far: Double, direction: Fov) {
-        FilaCamera_setProjectionFov(nativeHandle, fovInDegrees, aspect, near, far, direction.ordinal)
+    fun setProjection(fovInDegrees: Double, aspect: Double, near: Double, far: Double, direction: Fov = Fov.VERTICAL) {
+        FilaCamera_setProjection_double_double_double_double_Fov(nativeHandle, fovInDegrees, aspect, near, far, direction.ordinal)
     }
     /**
      * Set the projection matrix from focal length (lens-based approach).
@@ -104,7 +105,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
         matrix.usePinned { pinned ->
-            FilaCamera_setCustomProjection(nativeHandle, pinned, pinned, near, far)
+            FilaCamera_setCustomProjection_double_double(nativeHandle, pinned, near, far)
         }
     }
     /**
@@ -121,7 +122,7 @@ class Camera @InternalFilamentApi constructor(
     fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double) {
         matrix.usePinned { pinned ->
             matrixForCulling.usePinned { pinnedCulling ->
-                FilaCamera_setCustomProjection(nativeHandle, pinned, pinnedCulling, near, far)
+                FilaCamera_setCustomProjection_mat4_double_double(nativeHandle, pinned, pinnedCulling, near, far)
             }
         }
     }
@@ -185,12 +186,12 @@ class Camera @InternalFilamentApi constructor(
      * @param y Vertical scale factor
      */
     fun setScaling(x: Double, y: Double) {
-        FilaCamera_setScaling(nativeHandle, x, y)
+        doubleArrayOf(x, y).usePinned { FilaCamera_setScaling(nativeHandle, it) }
     }
     /**
      * Get the 2D scaling factors applied to the projection matrix.
-     * @param out Optional DoubleArray of at least 2 elements [x, y]; created if null
-     * @return The out array with scaling factors
+     * @param out Optional DoubleArray of at least 4 elements; created if null
+     * @return The out array with scaling factors (x, y in the first two)
      */
     fun getScaling(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(4)
@@ -211,7 +212,7 @@ class Camera @InternalFilamentApi constructor(
      * @param y Vertical shift in NDC
      */
     fun setShift(x: Double, y: Double) {
-        FilaCamera_setShift(nativeHandle, x, y)
+        doubleArrayOf(x, y).usePinned { FilaCamera_setShift(nativeHandle, it) }
     }
     /**
      * Get the 2D translation shift applied to the projection matrix.
@@ -241,8 +242,12 @@ class Camera @InternalFilamentApi constructor(
      * @param upY Camera up vector Y (should be normalized)
      * @param upZ Camera up vector Z (should be normalized)
      */
-    fun lookAt(eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double, upY: Double, upZ: Double) {
-        FilaCamera_lookAt(nativeHandle, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ)
+    fun lookAt(eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double = 0.0, upY: Double = 1.0, upZ: Double = 0.0) {
+        doubleArrayOf(eyeX, eyeY, eyeZ).usePinned { eye ->
+            doubleArrayOf(centerX, centerY, centerZ).usePinned { center ->
+                doubleArrayOf(upX, upY, upZ).usePinned { up -> FilaCamera_lookAt(nativeHandle, eye, center, up) }
+            }
+        }
     }
     
     /**
@@ -255,7 +260,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun setModelMatrix(modelMatrix: FloatArray) {
         modelMatrix.usePinned { pinned ->
-            FilaCamera_setModelMatrix(nativeHandle, pinned)
+            FilaCamera_setModelMatrix_mat4f(nativeHandle, pinned)
         }
     }
     /**
@@ -264,7 +269,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun setModelMatrix(modelMatrix: DoubleArray) {
         modelMatrix.usePinned { pinned ->
-            FilaCamera_setModelMatrixFp64(nativeHandle, pinned)
+            FilaCamera_setModelMatrix_mat4(nativeHandle, pinned)
         }
     }
     
@@ -274,13 +279,14 @@ class Camera @InternalFilamentApi constructor(
      * This may differ from the matrix set via setProjection/setLensProjection
      * because the rendering far plane is always infinity for depth precision.
      *
+     * @param eyeId Eye index (must be < stereoscopicEyeCount)
      * @param out Optional DoubleArray for result; created if null
      * @return The projection matrix (4×4)
      */
-    fun getProjectionMatrix(out: DoubleArray? = null): DoubleArray {
+    fun getProjectionMatrix(eyeId: Int = 0, out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
         result.usePinned { pinned ->
-            FilaCamera_getProjectionMatrix(nativeHandle, pinned)
+            FilaCamera_getProjectionMatrix(nativeHandle, eyeId, pinned)
         }
         return result
     }
@@ -305,25 +311,13 @@ class Camera @InternalFilamentApi constructor(
      *
      * Includes parent transforms if the camera entity is nested.
      *
-     * @param out Optional FloatArray for result; created if null
-     * @return The model matrix (4×4)
-     */
-    fun getModelMatrix(out: FloatArray? = null): FloatArray {
-        val result = out ?: FloatArray(16)
-        result.usePinned { pinned ->
-            FilaCamera_getModelMatrix(nativeHandle, pinned)
-        }
-        return result
-    }
-    /**
-     * Get the camera's model matrix (position and orientation in world space).
      * @param out Optional DoubleArray for result; created if null
      * @return The model matrix (4×4)
      */
     fun getModelMatrix(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
         result.usePinned { pinned ->
-            FilaCamera_getModelMatrixFp64(nativeHandle, pinned)
+            FilaCamera_getModelMatrix(nativeHandle, pinned)
         }
         return result
     }
@@ -333,36 +327,35 @@ class Camera @InternalFilamentApi constructor(
      *
      * Transforms from world space to camera/view space.
      *
-     * @param out Optional FloatArray for result; created if null
-     * @return The view matrix (4×4)
-     */
-    fun getViewMatrix(out: FloatArray? = null): FloatArray {
-        val result = out ?: FloatArray(16)
-        result.usePinned { pinned ->
-            FilaCamera_getViewMatrix(nativeHandle, pinned)
-        }
-        return result
-    }
-    /**
-     * Get the camera's view matrix (inverse of the model matrix).
      * @param out Optional DoubleArray for result; created if null
      * @return The view matrix (4×4)
      */
     fun getViewMatrix(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
         result.usePinned { pinned ->
-            FilaCamera_getViewMatrixFp64(nativeHandle, pinned)
+            FilaCamera_getViewMatrix(nativeHandle, pinned)
         }
+        return result
+    }
+    /**
+     * Get the eye-from-view matrix of an eye (the inverse of its [setEyeModelMatrix]).
+     * @param eyeId Eye index (must be < stereoscopicEyeCount)
+     * @param out Optional DoubleArray for result; created if null
+     * @return The eye-from-view matrix (4×4)
+     */
+    fun getEyeFromViewMatrix(eyeId: Int = 0, out: DoubleArray? = null): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { FilaCamera_getEyeFromViewMatrix(nativeHandle, eyeId, it) }
         return result
     }
     
     /**
      * Get the camera's position in world space.
-     * @param out Optional FloatArray of at least 3 elements [x, y, z]; created if null
+     * @param out Optional DoubleArray of at least 3 elements [x, y, z]; created if null
      * @return The position array
      */
-    fun getPosition(out: FloatArray? = null): FloatArray {
-        val result = out ?: FloatArray(3)
+    fun getPosition(out: DoubleArray? = null): DoubleArray {
+        val result = out ?: DoubleArray(3)
         result.usePinned { pinned ->
             FilaCamera_getPosition(nativeHandle, pinned)
         }
@@ -410,12 +403,12 @@ class Camera @InternalFilamentApi constructor(
      * Get the camera's near plane distance.
      * Affects depth-buffer precision significantly; use the largest value possible.
      */
-    val near: Float get() = FilaCamera_getNear(nativeHandle).toFloat()
+    val near: Double get() = FilaCamera_getNear(nativeHandle)
     /**
      * Get the camera's far plane distance used for culling.
      * Note: for rendering, the far plane is set to infinity internally for depth precision.
      */
-    val cullingFar: Float get() = FilaCamera_getCullingFar(nativeHandle).toFloat()
+    val cullingFar: Double get() = FilaCamera_getCullingFar(nativeHandle)
     
     /**
      * Set the camera's exposure using physical camera parameters.
@@ -431,7 +424,7 @@ class Camera @InternalFilamentApi constructor(
      * @param sensitivity ISO (clamped 10-204,800); higher increases exposure
      */
     fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
-        FilaCamera_setExposure(nativeHandle, aperture, shutterSpeed, sensitivity)
+        FilaCamera_setExposure_float_float(nativeHandle, aperture, shutterSpeed, sensitivity)
     }
     /**
      * Set the camera's exposure directly (unit-less approach).
@@ -443,7 +436,7 @@ class Camera @InternalFilamentApi constructor(
      * @param exposure Unit-less exposure value
      */
     fun setExposure(exposure: Float) {
-        setExposure(1.0f, 1.2f, 100.0f * (1.0f / exposure))
+        FilaCamera_setExposure(nativeHandle, exposure)
     }
     /**
      * Get the camera's aperture in f-stops.
@@ -476,106 +469,82 @@ class Camera @InternalFilamentApi constructor(
      * @param direction Axis (VERTICAL or HORIZONTAL) for which to return FOV
      * @return Full field-of-view in degrees
      */
-    fun getFieldOfViewInDegrees(direction: Fov): Double = FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal)
+    fun getFieldOfViewInDegrees(direction: Fov): Float = FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal)
 
+    companion object {
+        init { Filament.init() } // statics are callable before any Engine exists
 
+        /**
+         * Returns the projection matrix from the field-of-view.
+         *
+         * @param direction Axis on which fovInDegrees is measured
+         * @param fovInDegrees Full field-of-view in degrees (0 < fov < 180)
+         * @param aspect Aspect ratio (width / height)
+         * @param near Distance to near plane (> 0)
+         * @param far Distance to far plane (> near)
+         * @param out Optional DoubleArray for result; created if null
+         */
+        fun projection(direction: Fov, fovInDegrees: Double, aspect: Double, near: Double, far: Double = Double.POSITIVE_INFINITY, out: DoubleArray? = null): DoubleArray {
+            val result = out ?: DoubleArray(16)
+            result.usePinned { FilaCamera_projection_Fov_double_double_double_double(direction.ordinal, fovInDegrees, aspect, near, far, it) }
+            return result
+        }
+
+        /**
+         * Returns the projection matrix from the focal length.
+         *
+         * @param focalLengthInMillimeters Lens's focal length in millimeters (> 0)
+         * @param aspect Aspect ratio (width / height)
+         * @param near Distance to near plane (> 0)
+         * @param far Distance to far plane (> near)
+         * @param out Optional DoubleArray for result; created if null
+         */
+        fun projection(focalLengthInMillimeters: Double, aspect: Double, near: Double, far: Double = Double.POSITIVE_INFINITY, out: DoubleArray? = null): DoubleArray {
+            val result = out ?: DoubleArray(16)
+            result.usePinned { FilaCamera_projection_double_double_double_double(focalLengthInMillimeters, aspect, near, far, it) }
+            return result
+        }
+
+        /**
+         * Returns the inverse of a projection matrix.
+         * @param p The projection matrix to inverse
+         * @param out Optional DoubleArray for result; created if null
+         */
+        fun inverseProjection(p: DoubleArray, out: DoubleArray? = null): DoubleArray {
+            val result = out ?: DoubleArray(16)
+            p.usePinned { pp -> result.usePinned { FilaCamera_inverseProjection_mat4(pp, it) } }
+            return result
+        }
+
+        /**
+         * Returns the inverse of a projection matrix.
+         * @param p The projection matrix to inverse
+         * @param out Optional FloatArray for result; created if null
+         */
+        fun inverseProjection(p: FloatArray, out: FloatArray? = null): FloatArray {
+            val result = out ?: FloatArray(16)
+            p.usePinned { pp -> result.usePinned { FilaCamera_inverseProjection_mat4f(pp, it) } }
+            return result
+        }
+
+        /**
+         * Helper to compute the effective focal length taking into account the focus distance.
+         *
+         * @param focalLength Focal length in any unit (e.g. m or mm)
+         * @param focusDistance Focus distance in the same unit as focalLength
+         * @return The effective focal length in the same unit as focalLength
+         */
+        fun computeEffectiveFocalLength(focalLength: Double, focusDistance: Double): Double =
+            FilaCamera_computeEffectiveFocalLength(focalLength, focusDistance)
+
+        /**
+         * Helper to compute the effective field-of-view taking into account the focus distance.
+         *
+         * @param fovInDegrees Full field of view in degrees
+         * @param focusDistance Focus distance in meters
+         * @return Effective full field of view in degrees
+         */
+        fun computeEffectiveFov(fovInDegrees: Double, focusDistance: Double): Double =
+            FilaCamera_computeEffectiveFov(fovInDegrees, focusDistance)
+    }
 }
-
-@ExternalSymbolName("FilaCamera_getAperture")
-private external fun FilaCamera_getAperture(camera: NativePointer): Float
-
-@ExternalSymbolName("FilaCamera_getCullingFar")
-private external fun FilaCamera_getCullingFar(camera: NativePointer): Double
-
-@ExternalSymbolName("FilaCamera_getCullingProjectionMatrix")
-private external fun FilaCamera_getCullingProjectionMatrix(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getFieldOfViewInDegrees")
-private external fun FilaCamera_getFieldOfViewInDegrees(camera: NativePointer, direction: Int): Double
-
-@ExternalSymbolName("FilaCamera_getFocalLength")
-private external fun FilaCamera_getFocalLength(camera: NativePointer): Double
-
-@ExternalSymbolName("FilaCamera_getFocusDistance")
-private external fun FilaCamera_getFocusDistance(camera: NativePointer): Float
-
-@ExternalSymbolName("FilaCamera_getForwardVector")
-private external fun FilaCamera_getForwardVector(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getLeftVector")
-private external fun FilaCamera_getLeftVector(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getModelMatrix")
-private external fun FilaCamera_getModelMatrix(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getModelMatrixFp64")
-private external fun FilaCamera_getModelMatrixFp64(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getNear")
-private external fun FilaCamera_getNear(camera: NativePointer): Double
-
-@ExternalSymbolName("FilaCamera_getPosition")
-private external fun FilaCamera_getPosition(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getProjectionMatrix")
-private external fun FilaCamera_getProjectionMatrix(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getScaling")
-private external fun FilaCamera_getScaling(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getSensitivity")
-private external fun FilaCamera_getSensitivity(camera: NativePointer): Float
-
-@ExternalSymbolName("FilaCamera_getShift")
-private external fun FilaCamera_getShift(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getShutterSpeed")
-private external fun FilaCamera_getShutterSpeed(camera: NativePointer): Float
-
-@ExternalSymbolName("FilaCamera_getUpVector")
-private external fun FilaCamera_getUpVector(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getViewMatrix")
-private external fun FilaCamera_getViewMatrix(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_getViewMatrixFp64")
-private external fun FilaCamera_getViewMatrixFp64(camera: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaCamera_lookAt")
-private external fun FilaCamera_lookAt(camera: NativePointer, eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double, upY: Double, upZ: Double)
-
-@ExternalSymbolName("FilaCamera_setCustomEyeProjection")
-private external fun FilaCamera_setCustomEyeProjection(camera: NativePointer, projectionMatrices: NativePointer, count: Int, matrixForCulling: NativePointer, nearPlane: Double, farPlane: Double)
-
-@ExternalSymbolName("FilaCamera_setCustomProjection")
-private external fun FilaCamera_setCustomProjection(camera: NativePointer, matrix: NativePointer, matrixForCulling: NativePointer, nearPlane: Double, farPlane: Double)
-
-@ExternalSymbolName("FilaCamera_setExposure")
-private external fun FilaCamera_setExposure(camera: NativePointer, aperture: Float, shutterSpeed: Float, sensitivity: Float)
-
-@ExternalSymbolName("FilaCamera_setEyeModelMatrix")
-private external fun FilaCamera_setEyeModelMatrix(camera: NativePointer, eyeId: Int, matrix: NativePointer)
-
-@ExternalSymbolName("FilaCamera_setFocusDistance")
-private external fun FilaCamera_setFocusDistance(camera: NativePointer, focusDistance: Float)
-
-@ExternalSymbolName("FilaCamera_setLensProjection")
-private external fun FilaCamera_setLensProjection(camera: NativePointer, focalLength: Double, aspect: Double, nearPlane: Double, farPlane: Double)
-
-@ExternalSymbolName("FilaCamera_setModelMatrix")
-private external fun FilaCamera_setModelMatrix(camera: NativePointer, matrix: NativePointer)
-
-@ExternalSymbolName("FilaCamera_setModelMatrixFp64")
-private external fun FilaCamera_setModelMatrixFp64(camera: NativePointer, matrix: NativePointer)
-
-@ExternalSymbolName("FilaCamera_setProjection")
-private external fun FilaCamera_setProjection(camera: NativePointer, projection: Int, left: Double, right: Double, bottom: Double, top: Double, nearPlane: Double, farPlane: Double)
-
-@ExternalSymbolName("FilaCamera_setProjectionFov")
-private external fun FilaCamera_setProjectionFov(camera: NativePointer, fovInDegrees: Double, aspect: Double, nearPlane: Double, farPlane: Double, direction: Int)
-
-@ExternalSymbolName("FilaCamera_setScaling")
-private external fun FilaCamera_setScaling(camera: NativePointer, x: Double, y: Double)
-
-@ExternalSymbolName("FilaCamera_setShift")
-private external fun FilaCamera_setShift(camera: NativePointer, x: Double, y: Double)

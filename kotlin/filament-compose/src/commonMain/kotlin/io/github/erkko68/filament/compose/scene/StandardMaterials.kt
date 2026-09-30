@@ -55,6 +55,9 @@ enum class StandardMaterial {
         Emissive -> EmbeddedMaterials.standardEmissive
         Transparent -> EmbeddedMaterials.standardTransparent
     }
+
+    internal fun build(engine: Engine): Material =
+        checkNotNull(Material.Builder().payload(payload()).build(engine)) { "Bundled $name material failed to build" }
 }
 
 /**
@@ -70,7 +73,7 @@ internal class StandardMaterialCache(val engine: Engine) {
     private val cache = HashMap<StandardMaterial, Owned<Material>>()
 
     fun get(type: StandardMaterial): Material = cache.getOrPut(type) {
-        Owned(Material.Builder().payload(type.payload()).build(engine), listOf(engine)) { engine.destroyMaterial(it) }
+        Owned(type.build(engine), listOf(engine)) { engine.destroy(it) }
     }.value
 
     fun dispose() {
@@ -105,8 +108,8 @@ fun rememberStandardMaterial(
         cache.get(type)
     } else {
         // Hoisted engine outside a scene: this call site owns the material.
-        rememberOwned(engine, type, create = { Material.Builder().payload(type.payload()).build(engine) }) {
-            engine.destroyMaterial(it)
+        rememberOwned(engine, type, create = { type.build(engine) }) {
+            engine.destroy(it)
         }
     }
 }

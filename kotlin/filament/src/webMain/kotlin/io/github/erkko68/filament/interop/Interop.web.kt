@@ -45,6 +45,8 @@ actual class InteropScope actual constructor() {
     actual fun toInterop(array: LongArray?): NativePointer = copyIn(array?.size ?: 0, 8) { p -> array!!.forEachIndexed { i, v -> fila.setI64(p + 8 * i, v) } }
     actual fun toInterop(array: FloatArray?): NativePointer = copyIn(array?.size ?: 0, 4) { fila.writeFloats(it, array!!) }
     actual fun toInterop(array: DoubleArray?): NativePointer = copyIn(array?.size ?: 0, 8) { fila.writeDoubles(it, array!!) }
+    // wasm32 pointers are Ints.
+    actual fun toInterop(pointers: List<NativePointer>): NativePointer = toInterop(pointers.toIntArray())
 
     actual fun NativePointer.fromInterop(result: ByteArray) { if (this != NullPointer) fila.readBytes(this, result.size).copyInto(result) }
     actual fun NativePointer.fromInterop(result: ShortArray) { if (this != NullPointer) for (i in result.indices) result[i] = fila.getU16(this + 2 * i).toShort() }
@@ -63,6 +65,12 @@ actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload 
     fila.wasmUpload(data, size, onRelease).let { Upload(it.ptr, it.size, it.callback, it.userData) }
 
 actual fun stringFromInterop(ptr: NativePointer): String? = fila.readString(ptr)
+
+actual fun readInts(ptr: NativePointer, count: Int): IntArray = if (count == 0) IntArray(0) else fila.readInts(ptr, count)
+
+actual fun readFloats(ptr: NativePointer, count: Int): FloatArray = if (count == 0) FloatArray(0) else fila.readFloats(ptr, count)
+
+actual fun readPointers(ptr: NativePointer, count: Int): List<NativePointer> = readInts(ptr, count).toList()
 
 actual object Callbacks {
     actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer = WasmCallbacks.register(once) { a, _ -> fn(a) }

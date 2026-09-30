@@ -22,7 +22,7 @@ class RenderableManagerBuilderTest : FilamentTestFixture() {
 
         val ib = IndexBuffer.Builder()
             .indexCount(3)
-            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .bufferType(IndexBuffer.IndexType.USHORT)
             .build(engine)
         ib.setBuffer(engine, byteArrayOf(0, 0, 1, 0, 2, 0))
 
@@ -53,15 +53,16 @@ class RenderableManagerBuilderTest : FilamentTestFixture() {
             .enableSkinningBuffers(true)
             .skinning(10)
             .skinning(10, FloatArray(160))
+            .skinning(2, arrayOf(RenderableManager.Bone(), RenderableManager.Bone()))
             .skinning(sb, 10, 0)
             .morphing(2)
             .morphing(mtb)
 
         assertNotNull(builder)
 
-        engine.destroyVertexBuffer(vb)
-        engine.destroyIndexBuffer(ib)
-        engine.destroySkinningBuffer(sb)
-        engine.destroyMorphTargetBuffer(mtb)
+        engine.destroy(vb)
+        engine.destroy(ib)
+        engine.destroy(sb)
+        engine.destroy(mtb)
     }
 }

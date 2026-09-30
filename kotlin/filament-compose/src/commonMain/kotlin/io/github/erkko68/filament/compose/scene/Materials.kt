@@ -82,7 +82,7 @@ internal fun rememberMaterial(
             // broadly so a failed build never crashes the app.
             null
         }
-    }) { engine.destroyMaterial(it) }
+    }) { engine.destroy(it) }
 
     if (material == null) {
         LaunchedEffect(bytes) {
@@ -140,7 +140,7 @@ internal fun rememberTexture(
 ): Texture? {
     val texture = rememberOwned(engine, bytes, type, create = {
         TextureLoader.loadTexture(engine, bytes, type)
-    }) { engine.destroyTexture(it) }
+    }) { engine.destroy(it) }
 
     if (texture == null) {
         LaunchedEffect(bytes, type) {
@@ -246,7 +246,7 @@ internal fun rememberConfiguredMaterialInstance(
 @Composable
 private fun rememberInstance(engine: Engine, material: Material): MaterialInstance =
     rememberOwned(engine, material, dependsOn = listOf(material), create = { material.createInstance() }) {
-        engine.destroyMaterialInstance(it)
+        engine.destroy(it)
     }
 
 /** Sets a `float3` parameter from a [LinearColor], keeping call sites typed against the colour value class. */

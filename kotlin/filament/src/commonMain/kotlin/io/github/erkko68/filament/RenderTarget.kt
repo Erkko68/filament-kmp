@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -104,6 +105,31 @@ class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: N
         }
 
         /**
+         * Sets the attachment point to use multiview rendering: layerCount layers of a 2D array
+         * texture, starting at baseLayer, are rendered in a single pass.
+         *
+         * @param attachment The attachment point of the texture
+         * @param layerCount The number of layers used for multiview, starting from baseLayer
+         * @param baseLayer The starting index of the 2D array texture
+         * @return This Builder, for chaining calls
+         */
+        fun multiview(attachment: AttachmentPoint, layerCount: Int, baseLayer: Int = 0): Builder {
+            FilaRenderTargetBuilder_multiview(nativeBuilder, attachment.ordinal, layerCount, baseLayer)
+            return this
+        }
+
+        /**
+         * Sets the number of samples used for MSAA (Multisample Anti-Aliasing).
+         *
+         * @param samples The number of samples used for multisampling (default: 1)
+         * @return This Builder, for chaining calls
+         */
+        fun samples(samples: Int): Builder {
+            FilaRenderTargetBuilder_samples(nativeBuilder, samples)
+            return this
+        }
+
+        /**
          * Creates the RenderTarget object.
          *
          * @param engine Engine to associate this RenderTarget with
@@ -150,34 +176,7 @@ class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: N
      */
     fun getLayer(attachment: AttachmentPoint): Int =
         FilaRenderTarget_getLayer(nativeHandle, attachment.ordinal)
+
+    /** The number of color attachments usable by this instance of RenderTarget (at least 4). */
+    val supportedColorAttachmentsCount: Int get() = FilaRenderTarget_getSupportedColorAttachmentsCount(nativeHandle)
 }
-
-@ExternalSymbolName("FilaRenderTargetBuilder_build")
-private external fun FilaRenderTargetBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaRenderTargetBuilder_create")
-private external fun FilaRenderTargetBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaRenderTargetBuilder_destroy")
-private external fun FilaRenderTargetBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaRenderTargetBuilder_face")
-private external fun FilaRenderTargetBuilder_face(builder: NativePointer, attachment: Int, face: Int)
-
-@ExternalSymbolName("FilaRenderTargetBuilder_layer")
-private external fun FilaRenderTargetBuilder_layer(builder: NativePointer, attachment: Int, layer: Int)
-
-@ExternalSymbolName("FilaRenderTargetBuilder_mipLevel")
-private external fun FilaRenderTargetBuilder_mipLevel(builder: NativePointer, attachment: Int, level: Int)
-
-@ExternalSymbolName("FilaRenderTargetBuilder_texture")
-private external fun FilaRenderTargetBuilder_texture(builder: NativePointer, attachment: Int, texture: NativePointer)
-
-@ExternalSymbolName("FilaRenderTarget_getFace")
-private external fun FilaRenderTarget_getFace(renderTarget: NativePointer, attachment: Int): Int
-
-@ExternalSymbolName("FilaRenderTarget_getLayer")
-private external fun FilaRenderTarget_getLayer(renderTarget: NativePointer, attachment: Int): Int
-
-@ExternalSymbolName("FilaRenderTarget_getMipLevel")
-private external fun FilaRenderTarget_getMipLevel(renderTarget: NativePointer, attachment: Int): Int

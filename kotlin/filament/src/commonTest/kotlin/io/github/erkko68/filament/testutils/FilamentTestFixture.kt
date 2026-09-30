@@ -17,14 +17,14 @@ open class FilamentTestFixture {
     @BeforeTest
     fun setUp() {
         Filament.init()
-        engine = Engine.create(Engine.Backend.NOOP)
+        engine = Engine.create(Engine.Backend.NOOP)!!
     }
 
     @AfterTest
     fun tearDown() {
         if (::engine.isInitialized) {
             engine.flushAndWait()
-            engine.destroy()
+            Engine.destroy(engine)
         }
     }
 }

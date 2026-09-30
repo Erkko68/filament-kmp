@@ -4,6 +4,7 @@ import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -13,8 +14,8 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -41,15 +42,13 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val bbox = asset.boundingBox
-        assertNotNull(bbox)
-        assertNotNull(bbox.center)
-        assertNotNull(bbox.halfExtent)
+        assertFalse(bbox.isEmpty())
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
@@ -61,17 +60,17 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         asset.getName(asset.root)
         asset.getExtras(asset.root)
-        asset.getEntitiesByName("Duck")
-        asset.getEntitiesByPrefix("")
+        asset.getEntitiesByName("Duck", IntArray(asset.entityCount))
+        asset.getEntitiesByPrefix("", IntArray(asset.entityCount))
         asset.getFirstEntityByName("Duck")
-        asset.getMorphTargetNames(asset.root)
+        asset.getMorphTargetCountAt(asset.root)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
@@ -83,18 +82,20 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getAnimatedMorphCubeGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         resourceLoader.loadResources(asset)
 
         // The morph target entity carries the named targets; scan all entities for them.
         var foundNames = false
         for (entity in asset.entities) {
-            if (asset.getMorphTargetNames(entity).isNotEmpty()) {
+            if (asset.getMorphTargetCountAt(entity) > 0) {
+                // AnimatedMorphCube's targets are unnamed: null.
+                asset.getMorphTargetNameAt(entity, 0)
                 foundNames = true
             }
         }
@@ -111,8 +112,8 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -128,8 +129,8 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -147,8 +148,8 @@ class FilamentAssetTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 

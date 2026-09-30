@@ -16,20 +16,19 @@ class SurfaceOrientationTest : FilamentTestFixture() {
             .uvs(floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 1f, 1f), 0)
             .positions(floatArrayOf(-1f, -1f, 0f, 1f, -1f, 0f, -1f, 1f, 0f, 1f, 1f, 0f), 0)
             .triangleCount(2)
-            .triangles16(shortArrayOf(0, 1, 2, 2, 1, 3))
+            .triangles(shortArrayOf(0, 1, 2, 2, 1, 3))
         
-        val orientation = builder.build()
-        assertNotNull(orientation)
+        val orientation = assertNotNull(builder.build())
         assertEquals(4, orientation.vertexCount)
 
         val quats = FloatArray(16)
-        orientation.getQuatsAsFloat(quats, 4)
+        orientation.getQuats(quats, 4)
         
         val halfQuats = ShortArray(16)
-        orientation.getQuatsAsHalf(halfQuats, 4)
+        orientation.getHalfQuats(halfQuats, 4)
 
         val shortQuats = ShortArray(16)
-        orientation.getQuatsAsShort(shortQuats, 4)
+        orientation.getQuats(shortQuats, 4)
 
         orientation.destroy()
     }
@@ -43,10 +42,10 @@ class SurfaceOrientationTest : FilamentTestFixture() {
             .normals(floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f), 0)
             .uvs(floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 1f, 1f), 0)
             .triangleCount(2)
-            .triangles32(intArrayOf(0, 1, 2, 2, 1, 3))
-            .build()
+            .triangles(intArrayOf(0, 1, 2, 2, 1, 3))
+            .build()!!
         val quats = FloatArray(16)
-        orientation.getQuatsAsFloat(quats, 4)
+        orientation.getQuats(quats, 4)
         orientation.destroy()
         for (v in 0 until 4) assertEquals(1f, kotlin.math.abs(quats[v * 4 + 3]), 1e-4f, "vertex $v: ${quats.toList()}")
     }
@@ -60,10 +59,8 @@ class SurfaceOrientationTest : FilamentTestFixture() {
             .uvs(floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 1f, 1f), 0)
             .positions(floatArrayOf(-1f, -1f, 0f, 1f, -1f, 0f, -1f, 1f, 0f, 1f, 1f, 0f), 0)
             .triangleCount(2)
-            .triangles32(intArrayOf(0, 1, 2, 2, 1, 3))
+            .triangles(intArrayOf(0, 1, 2, 2, 1, 3))
         
-        val orientation = builder.build()
-        assertNotNull(orientation)
-        orientation.destroy()
+        assertNotNull(builder.build()).destroy()
     }
 }

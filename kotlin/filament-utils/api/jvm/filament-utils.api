@@ -1,3 +1,16 @@
+public final class io/github/erkko68/filament/utils/Bookmark : java/lang/AutoCloseable {
+	public static final field Companion Lio/github/erkko68/filament/utils/Bookmark$Companion;
+	public fun <init> (J)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun getNativeObject ()J
+}
+
+public final class io/github/erkko68/filament/utils/Bookmark$Companion {
+	public final fun duration (Lio/github/erkko68/filament/utils/Bookmark;Lio/github/erkko68/filament/utils/Bookmark;)D
+	public final fun interpolate (Lio/github/erkko68/filament/utils/Bookmark;Lio/github/erkko68/filament/utils/Bookmark;D)Lio/github/erkko68/filament/utils/Bookmark;
+}
+
 public final class io/github/erkko68/filament/utils/Bool2 {
 	public fun <init> ()V
 	public fun <init> (Lio/github/erkko68/filament/utils/Bool2;)V
@@ -178,11 +191,16 @@ public final class io/github/erkko68/filament/utils/Bool4 {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/github/erkko68/filament/utils/EquirectangularToCubemap : java/lang/AutoCloseable {
-	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
-	public fun close ()V
-	public final fun destroy ()V
-	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+public final class io/github/erkko68/filament/utils/ComponentType : java/lang/Enum {
+	public static final field BYTE Lio/github/erkko68/filament/utils/ComponentType;
+	public static final field FLOAT Lio/github/erkko68/filament/utils/ComponentType;
+	public static final field HALF Lio/github/erkko68/filament/utils/ComponentType;
+	public static final field SHORT Lio/github/erkko68/filament/utils/ComponentType;
+	public static final field UBYTE Lio/github/erkko68/filament/utils/ComponentType;
+	public static final field USHORT Lio/github/erkko68/filament/utils/ComponentType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/ComponentType;
+	public static fun values ()[Lio/github/erkko68/filament/utils/ComponentType;
 }
 
 public final class io/github/erkko68/filament/utils/Float2 {
@@ -440,6 +458,14 @@ public final class io/github/erkko68/filament/utils/Float4 {
 	public fun toString ()Ljava/lang/String;
 	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float4;
 	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Float4;
+}
+
+public final class io/github/erkko68/filament/utils/Fov : java/lang/Enum {
+	public static final field HORIZONTAL Lio/github/erkko68/filament/utils/Fov;
+	public static final field VERTICAL Lio/github/erkko68/filament/utils/Fov;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Fov;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Fov;
 }
 
 public final class io/github/erkko68/filament/utils/HDRLoader {
@@ -768,6 +794,103 @@ public final class io/github/erkko68/filament/utils/IBLPrefilterContext : java/l
 	public fun <init> (Lio/github/erkko68/filament/Engine;)V
 	public fun close ()V
 	public final fun destroy ()V
+	public final fun getNativeObject ()J
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$EquirectangularToCubemap : java/lang/AutoCloseable {
+	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;Lio/github/erkko68/filament/utils/IBLPrefilterContext$EquirectangularToCubemap$Config;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;Lio/github/erkko68/filament/utils/IBLPrefilterContext$EquirectangularToCubemap$Config;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun invoke (Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun invoke$default (Lio/github/erkko68/filament/utils/IBLPrefilterContext$EquirectangularToCubemap;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$EquirectangularToCubemap$Config {
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMirror ()Z
+	public final fun setMirror (Z)V
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter : java/lang/AutoCloseable {
+	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;Lio/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter$Config;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;Lio/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter$Config;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun invoke (Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+	public final fun invoke (Lio/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter$Options;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun invoke$default (Lio/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun invoke$default (Lio/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter;Lio/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter$Options;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter$Config {
+	public fun <init> ()V
+	public fun <init> (ILio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;)V
+	public synthetic fun <init> (ILio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getKernel ()Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;
+	public final fun getSampleCount ()I
+	public final fun setKernel (Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;)V
+	public final fun setSampleCount (I)V
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$IrradianceFilter$Options {
+	public fun <init> ()V
+	public fun <init> (FFFZ)V
+	public synthetic fun <init> (FFFZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getGenerateMipmap ()Z
+	public final fun getHdrLinear ()F
+	public final fun getHdrMax ()F
+	public final fun getLodOffset ()F
+	public final fun setGenerateMipmap (Z)V
+	public final fun setHdrLinear (F)V
+	public final fun setHdrMax (F)V
+	public final fun setLodOffset (F)V
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$Kernel : java/lang/Enum {
+	public static final field D_GGX Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;
+	public static fun values ()[Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter : java/lang/AutoCloseable {
+	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;Lio/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter$Config;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;Lio/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter$Config;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun invoke (Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+	public final fun invoke (Lio/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter$Options;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun invoke$default (Lio/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun invoke$default (Lio/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter;Lio/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter$Options;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter$Config {
+	public fun <init> ()V
+	public fun <init> (IILio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;)V
+	public synthetic fun <init> (IILio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getKernel ()Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;
+	public final fun getLevelCount ()I
+	public final fun getSampleCount ()I
+	public final fun setKernel (Lio/github/erkko68/filament/utils/IBLPrefilterContext$Kernel;)V
+	public final fun setLevelCount (I)V
+	public final fun setSampleCount (I)V
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext$SpecularFilter$Options {
+	public fun <init> ()V
+	public fun <init> (FFFZ)V
+	public synthetic fun <init> (FFFZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getGenerateMipmap ()Z
+	public final fun getHdrLinear ()F
+	public final fun getHdrMax ()F
+	public final fun getLodOffset ()F
+	public final fun setGenerateMipmap (Z)V
+	public final fun setHdrLinear (F)V
+	public final fun setHdrMax (F)V
+	public final fun setLodOffset (F)V
 }
 
 public final class io/github/erkko68/filament/utils/Int2 {
@@ -1004,64 +1127,93 @@ public final class io/github/erkko68/filament/utils/Int4 {
 	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Int4;
 }
 
-public final class io/github/erkko68/filament/utils/KTX1Loader {
-	public static final field INSTANCE Lio/github/erkko68/filament/utils/KTX1Loader;
-	public final fun createIndirectLight (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
-	public static synthetic fun createIndirectLight$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
-	public final fun createSkybox (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
-	public static synthetic fun createSkybox$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
-	public final fun createTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/Texture;
-	public static synthetic fun createTexture$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
-	public final fun getSphericalHarmonics ([B)[F
+public final class io/github/erkko68/filament/utils/Ktx1Bundle : java/lang/AutoCloseable {
+	public fun <init> (IIZ)V
+	public fun <init> (J)V
+	public fun <init> ([B)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun getArrayLength ()I
+	public final fun getMetadata (Ljava/lang/String;)Ljava/lang/String;
+	public final fun getNativeObject ()J
+	public final fun getNumMipLevels ()I
+	public final fun getSerializedLength ()I
+	public final fun getSphericalHarmonics ([F)Z
+	public final fun isCubemap ()Z
+	public final fun serialize ([B)Z
+	public final fun setMetadata (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public final class io/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle {
-	public fun <init> (Lio/github/erkko68/filament/IndirectLight;Lio/github/erkko68/filament/Texture;)V
-	public final fun getCubemap ()Lio/github/erkko68/filament/Texture;
-	public final fun getIndirectLight ()Lio/github/erkko68/filament/IndirectLight;
+public final class io/github/erkko68/filament/utils/Ktx1Reader {
+	public static final field INSTANCE Lio/github/erkko68/filament/utils/Ktx1Reader;
+	public final fun createTexture (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/utils/Ktx1Bundle;Z)Lio/github/erkko68/filament/Texture;
+	public final fun createTexture (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/utils/Ktx1Bundle;ZLkotlin/jvm/functions/Function0;)Lio/github/erkko68/filament/Texture;
+	public final fun isSrgbTextureFormat (Lio/github/erkko68/filament/Texture$InternalFormat;)Z
 }
 
-public final class io/github/erkko68/filament/utils/KTX1Loader$Options {
-	public fun <init> ()V
-	public final fun getSrgb ()Z
-	public final fun setSrgb (Z)V
+public final class io/github/erkko68/filament/utils/Ktx2Reader : java/lang/AutoCloseable {
+	public fun <init> (Lio/github/erkko68/filament/Engine;Z)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/Engine;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun asyncCreate ([BLio/github/erkko68/filament/utils/Ktx2Reader$TransferFunction;)Lio/github/erkko68/filament/utils/Ktx2Reader$Async;
+	public final fun asyncDestroy (Lio/github/erkko68/filament/utils/Ktx2Reader$Async;)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun getNativeObject ()J
+	public final fun load ([BLio/github/erkko68/filament/utils/Ktx2Reader$TransferFunction;)Lio/github/erkko68/filament/Texture;
+	public final fun requestFormat (Lio/github/erkko68/filament/Texture$InternalFormat;)Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public final fun unrequestFormat (Lio/github/erkko68/filament/Texture$InternalFormat;)V
 }
 
-public final class io/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle {
-	public fun <init> (Lio/github/erkko68/filament/Skybox;Lio/github/erkko68/filament/Texture;)V
-	public final fun getCubemap ()Lio/github/erkko68/filament/Texture;
-	public final fun getSkybox ()Lio/github/erkko68/filament/Skybox;
+public final class io/github/erkko68/filament/utils/Ktx2Reader$Async {
+	public final fun doTranscoding ()Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public final fun getTexture ()Lio/github/erkko68/filament/Texture;
+	public final fun uploadImages ()V
+}
+
+public final class io/github/erkko68/filament/utils/Ktx2Reader$Result : java/lang/Enum {
+	public static final field COMPRESSED_TRANSCODE_FAILURE Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public static final field FORMAT_ALREADY_REQUESTED Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public static final field FORMAT_UNSUPPORTED Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public static final field SUCCESS Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public static final field UNCOMPRESSED_TRANSCODE_FAILURE Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Ktx2Reader$Result;
+}
+
+public final class io/github/erkko68/filament/utils/Ktx2Reader$TransferFunction : java/lang/Enum {
+	public static final field LINEAR Lio/github/erkko68/filament/utils/Ktx2Reader$TransferFunction;
+	public static final field sRGB Lio/github/erkko68/filament/utils/Ktx2Reader$TransferFunction;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Ktx2Reader$TransferFunction;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Ktx2Reader$TransferFunction;
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator : java/lang/AutoCloseable {
 	public fun <init> (J)V
 	public fun close ()V
 	public final fun destroy ()V
-	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
-	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
+	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Bookmark;
 	public final fun getLookAt ([F[F[F)V
-	public final fun getMode ()Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public final fun getMode ()Lio/github/erkko68/filament/utils/Mode;
 	public final fun getNativeObject ()J
+	public final fun getRay (II[F[F)V
 	public final fun grabBegin (IIZ)V
 	public final fun grabEnd ()V
 	public final fun grabUpdate (II)V
-	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Bookmark;)V
 	public final fun keyDown (Lio/github/erkko68/filament/utils/Manipulator$Key;)V
 	public final fun keyUp (Lio/github/erkko68/filament/utils/Manipulator$Key;)V
-	public final fun raycast (II[F)V
+	public final fun raycast (II[F)Z
 	public final fun scroll (IIF)V
 	public final fun setViewport (II)V
 	public final fun update (F)V
 }
 
-public final class io/github/erkko68/filament/utils/Manipulator$Bookmark {
-	public fun <init> (J)V
-	public final fun getNativeObject ()J
-}
-
 public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public fun <init> ()V
-	public final fun build (Lio/github/erkko68/filament/utils/Manipulator$Mode;)Lio/github/erkko68/filament/utils/Manipulator;
+	public final fun build (Lio/github/erkko68/filament/utils/Mode;)Lio/github/erkko68/filament/utils/Manipulator;
 	public final fun farPlane (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun flightMaxMoveSpeed (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun flightMoveDamping (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
@@ -1070,7 +1222,7 @@ public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public final fun flightStartOrientation (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun flightStartPosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun fovDegrees (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
-	public final fun fovDirection (Lio/github/erkko68/filament/Camera$Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun fovDirection (Lio/github/erkko68/filament/utils/Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun groundPlane (FFFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun mapExtent (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun mapMinDistance (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
@@ -1093,15 +1245,6 @@ public final class io/github/erkko68/filament/utils/Manipulator$Key : java/lang/
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Key;
 	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Key;
-}
-
-public final class io/github/erkko68/filament/utils/Manipulator$Mode : java/lang/Enum {
-	public static final field FLIGHT Lio/github/erkko68/filament/utils/Manipulator$Mode;
-	public static final field MAP Lio/github/erkko68/filament/utils/Manipulator$Mode;
-	public static final field ORBIT Lio/github/erkko68/filament/utils/Manipulator$Mode;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Mode;
-	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Mode;
 }
 
 public final class io/github/erkko68/filament/utils/Mat2 {
@@ -1346,6 +1489,15 @@ public final class io/github/erkko68/filament/utils/MatrixKt {
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
 }
 
+public final class io/github/erkko68/filament/utils/Mode : java/lang/Enum {
+	public static final field FREE_FLIGHT Lio/github/erkko68/filament/utils/Mode;
+	public static final field MAP Lio/github/erkko68/filament/utils/Mode;
+	public static final field ORBIT Lio/github/erkko68/filament/utils/Mode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Mode;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Mode;
+}
+
 public final class io/github/erkko68/filament/utils/Quaternion {
 	public static final field Companion Lio/github/erkko68/filament/utils/Quaternion$Companion;
 	public fun <init> ()V
@@ -1547,11 +1699,65 @@ public final class io/github/erkko68/filament/utils/ScalarKt {
 	public static final fun sqr-lGUE2Mw (S)S
 }
 
-public final class io/github/erkko68/filament/utils/SpecularFilter : java/lang/AutoCloseable {
-	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+public final class io/github/erkko68/filament/utils/TangentSpaceMesh : java/lang/AutoCloseable {
+	public fun <init> (J)V
 	public fun close ()V
 	public final fun destroy ()V
-	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+	public final fun getHalfQuats ([SI)V
+	public static synthetic fun getHalfQuats$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;[SIILjava/lang/Object;)V
+	public final fun getNativeObject ()J
+	public final fun getPositions ([FI)V
+	public static synthetic fun getPositions$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;[FIILjava/lang/Object;)V
+	public final fun getQuats ([FI)V
+	public final fun getQuats ([SI)V
+	public static synthetic fun getQuats$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;[FIILjava/lang/Object;)V
+	public static synthetic fun getQuats$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;[SIILjava/lang/Object;)V
+	public final fun getRemeshed ()Z
+	public final fun getTriangleCount ()I
+	public final fun getTriangles ([I)V
+	public final fun getTriangles ([S)V
+	public final fun getUVs ([FI)V
+	public static synthetic fun getUVs$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;[FIILjava/lang/Object;)V
+	public final fun getVertexCount ()I
+}
+
+public final class io/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm : java/lang/Enum {
+	public static final field DEFAULT Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+	public static final field FRISVAD Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+	public static final field HUGHES_MOLLER Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+	public static final field LENGYEL Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+	public static final field MIKKTSPACE Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+	public static fun values ()[Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;
+}
+
+public final class io/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute : java/lang/Enum {
+	public static final field COLORS Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;
+	public static final field JOINTS Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;
+	public static final field UV1 Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;
+	public static final field WEIGHTS Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;
+	public static fun values ()[Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;
+}
+
+public final class io/github/erkko68/filament/utils/TangentSpaceMesh$Builder {
+	public fun <init> ()V
+	public final fun algorithm (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun build ()Lio/github/erkko68/filament/utils/TangentSpaceMesh;
+	public final fun normals ([FI)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public static synthetic fun normals$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;[FIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun positions ([FI)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public static synthetic fun positions$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;[FIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun tangents ([FI)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public static synthetic fun tangents$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;[FIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun triangleCount (I)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun triangles ([I)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun triangles ([S)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun uvs ([FI)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public static synthetic fun uvs$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;[FIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun vertexCount (I)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
 }
 
 public final class io/github/erkko68/filament/utils/TextureLoader {
@@ -1566,6 +1772,27 @@ public final class io/github/erkko68/filament/utils/TextureLoader$TextureType : 
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
 	public static fun values ()[Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
+}
+
+public final class io/github/erkko68/filament/utils/Transcoder : java/lang/AutoCloseable {
+	public fun <init> (Lio/github/erkko68/filament/utils/Transcoder$Config;)V
+	public fun close ()V
+	public final fun destroy ()V
+	public final fun getNativeObject ()J
+	public final fun invoke ([F[BI)I
+}
+
+public final class io/github/erkko68/filament/utils/Transcoder$Config {
+	public fun <init> (Lio/github/erkko68/filament/utils/ComponentType;ZII)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/ComponentType;ZIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getComponentCount ()I
+	public final fun getComponentType ()Lio/github/erkko68/filament/utils/ComponentType;
+	public final fun getInputStrideBytes ()I
+	public final fun getNormalized ()Z
+	public final fun setComponentCount (I)V
+	public final fun setComponentType (Lio/github/erkko68/filament/utils/ComponentType;)V
+	public final fun setInputStrideBytes (I)V
+	public final fun setNormalized (Z)V
 }
 
 public final class io/github/erkko68/filament/utils/VectorComponent : java/lang/Enum {

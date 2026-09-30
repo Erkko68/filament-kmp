@@ -12,12 +12,12 @@ class AnimatorTest : GltfioTestFixture() {
         val bytes = TestGlb.getFoxGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         resourceLoader.loadResources(asset)
 
         val animator = asset.instance.animator
@@ -39,12 +39,12 @@ class AnimatorTest : GltfioTestFixture() {
         val bytes = TestGlb.getBoxAnimatedGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         resourceLoader.loadResources(asset)
 
         val animator = asset.instance.animator
@@ -78,13 +78,13 @@ class AnimatorTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         // Resources must be loaded before accessing the Animator's native methods.
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         resourceLoader.loadResources(asset)
 
         val animator = asset.instance.animator
@@ -109,13 +109,13 @@ class AnimatorTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         // Resources must be loaded before accessing the Animator's native methods.
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         resourceLoader.loadResources(asset)
 
         val animator = asset.instance.animator

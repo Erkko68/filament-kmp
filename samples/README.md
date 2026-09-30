@@ -6,7 +6,7 @@ This directory contains multiplatform example applications demonstrating `filame
 
 | App | Target | Entry point |
 | :--- | :--- | :--- |
-| `androidApp/` | Android | Standard Android Compose app using the official Filament Android library |
+| `androidApp/` | Android | Standard Android Compose app on the JNI Filament bindings (`libfilament-c.so`) |
 | `iosApp/` | iOS | Xcode project with a SwiftUI entry point embedding the Kotlin Multiplatform framework |
 | `desktopApp/` | JVM / Desktop | Compose Desktop app on the JNI Filament bindings |
 | `webApp/` | Browser / WASM | Compose for Web app on `filament-kmp.wasm` (+ `filamat-kmp.wasm` for the runtime material scene) |
