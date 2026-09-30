@@ -15,7 +15,7 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         if (bytes.isEmpty()) return
 
-        val mat = Material.Builder().payload(bytes).build(engine)
+        val mat = Material.Builder().payload(bytes).build(engine)!!
         val matInst = mat.createInstance()
 
         val vb = VertexBuffer.Builder()

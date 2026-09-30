@@ -45,6 +45,7 @@ FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, 
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEngine* engine);
 
 // filament::Material
+// skipped size_t filament::Material::getParameters(ParameterInfo * _Nonnull parameters, size_t count) const
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
@@ -74,7 +75,6 @@ FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self);
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self);
 FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self);
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self);
-uint32_t FilaMaterial_getParameters(const FilaMaterial* self, FilaMaterialParameterInfo* parameters, uint32_t count);
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name);
 bool FilaMaterial_hasParameter_string_view(const FilaMaterial* self, const char* name);
 bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name);

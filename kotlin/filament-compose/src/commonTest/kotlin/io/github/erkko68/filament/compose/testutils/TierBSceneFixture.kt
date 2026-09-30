@@ -125,7 +125,7 @@ open class TierBSceneFixture {
         val e = engine ?: return null
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         if (bytes.isEmpty()) return null
-        val material = Material.Builder().payload(bytes).build(e).also { materials += it }
+        val material = Material.Builder().payload(bytes).build(e)!!.also { materials += it }
         return material.createInstance().also { materialInstances += it }
     }
 }

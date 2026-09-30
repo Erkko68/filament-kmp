@@ -29,3 +29,6 @@ FilaColor
 FilaGeometrySurfaceOrientation
 FilaLightManager
 FilaRenderableManager
+FilaMaterial
+FilaMaterialInstance
+FilaTextureSampler

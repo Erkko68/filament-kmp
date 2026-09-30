@@ -240,10 +240,6 @@ uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getParameterCount());
 }
 
-uint32_t FilaMaterial_getParameters(const FilaMaterial* self, FilaMaterialParameterInfo* parameters, uint32_t count) {
-    return static_cast<uint32_t>(fila::cpp(self)->getParameters(fila::cpp(parameters), static_cast<size_t>(count)));
-}
-
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name) {
     return fila::cpp(self)->hasParameter(name);
 }

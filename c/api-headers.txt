@@ -50,6 +50,8 @@ geometry/SurfaceOrientation.h
 -filament::TransformManager::children_sentinel
 # Culling math; kotlin-math covers it.
 -filament::Frustum
+# ParameterInfo* is an array C++ fills; FilaMaterialManual copies it into C's handles.
+-filament::Material::getParameters
 
 [gltfio]
 gltfio/*.h

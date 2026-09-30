@@ -102,10 +102,8 @@ class EnumRoundTripTest : FilamentTestFixture() {
         roundTrip<TextureSampler.WrapMode>("TextureSampler.wrapModeS", { s.wrapModeS = it }, { s.wrapModeS })
         roundTrip<TextureSampler.WrapMode>("TextureSampler.wrapModeT", { s.wrapModeT = it }, { s.wrapModeT })
         roundTrip<TextureSampler.WrapMode>("TextureSampler.wrapModeR", { s.wrapModeR = it }, { s.wrapModeR })
-        roundTrip<TextureSampler.CompareMode>("TextureSampler.compareMode", { s.compareMode = it }, { s.compareMode })
-        roundTrip<TextureSampler.CompareFunction>(
-            "TextureSampler.compareFunction", { s.compareFunction = it }, { s.compareFunction },
-        )
+        roundTrip<TextureSampler.CompareMode>("TextureSampler.compareMode", { s.setCompareMode(it, s.compareFunc) }, { s.compareMode })
+        roundTrip<TextureSampler.CompareFunc>("TextureSampler.compareFunc", { s.setCompareMode(s.compareMode, it) }, { s.compareFunc })
     }
 }
 
@@ -115,11 +113,11 @@ class MaterialInstanceEnumRoundTripTest : RenderingTestFixture() {
     @Test
     fun materialInstanceEnumsRoundTripEveryEntry() {
         val engine = engine ?: return
-        val mat = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)
+        val mat = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)!!
         val inst = mat.createInstance()
 
         roundTrip<Material.CullingMode>("MaterialInstance.cullingMode", { inst.cullingMode = it }, { inst.cullingMode })
-        roundTrip<TextureSampler.CompareFunction>(
+        roundTrip<TextureSampler.CompareFunc>(
             "MaterialInstance.depthFunc", { inst.depthFunc = it }, { inst.depthFunc },
         )
 

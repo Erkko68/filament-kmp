@@ -51,7 +51,7 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
 
     /** Builds a material from [payload] and tracks it for [destroy]. */
     fun material(payload: ByteArray): Material =
-        Material.Builder().payload(payload).build(engine).also { materials += it }
+        Material.Builder().payload(payload).build(engine)!!.also { materials += it }
 
     /** Creates a tracked instance of a tracked material. */
     fun instance(material: Material): MaterialInstance =

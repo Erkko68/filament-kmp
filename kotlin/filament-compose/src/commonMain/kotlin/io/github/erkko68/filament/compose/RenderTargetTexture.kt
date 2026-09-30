@@ -28,7 +28,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * val mapTex = rememberRenderTargetTexture(scene, mapCam, width = 256, height = 256)
  *
  * val screen = rememberMaterialInstance(screenMaterial, mapTex) {
- *     mapTex?.let { setParameter("screen", it, TextureSampler()) }
+ *     mapTex?.let { setParameter("screen", it, TextureSampler(TextureSampler.MagFilter.LINEAR)) }
  * }
  * Plane(material = screen)          // a screen showing the mini-map
  * ```

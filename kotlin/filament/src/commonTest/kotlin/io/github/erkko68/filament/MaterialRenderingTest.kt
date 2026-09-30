@@ -42,7 +42,13 @@ class MaterialRenderingTest : RenderingTestFixture() {
         assertTrue(mat.parameterCount >= 0)
         val params = mat.parameters
         assertEquals(mat.parameterCount, params.size)
-        params.forEach { assertTrue(it.name.isNotEmpty()) }
+        assertEquals(Material.ParameterType.FLOAT3, params.single { it.name == "color" }.type)
+        params.forEach {
+            assertTrue(it.name.isNotEmpty())
+            // Exactly one of the union's members is set.
+            assertEquals(1, listOfNotNull(it.type, it.samplerType, it.subpassType).size)
+            assertEquals(it.isSampler, mat.isSampler(it.name))
+        }
         assertNotNull(mat.requiredAttributes)
 
         // Instances

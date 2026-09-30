@@ -58,7 +58,7 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
     fun reactiveInstanceReappliesOnKeyChangeAndIsFreed() = run {
         val engine = engine ?: return@run skippedComposeTest()
         val scene = scene ?: return@run skippedComposeTest()
-        val material = Material.Builder().payload(StandardMaterial.Lit.payload()).build(engine)
+        val material = Material.Builder().payload(StandardMaterial.Lit.payload()).build(engine)!!
 
         withFilamentScene(engine, scene) { setContent ->
             var applyCount = 0

@@ -9,8 +9,13 @@ class TextureSamplerTest : FilamentTestFixture() {
     @Test
     fun defaultConstructor() {
         val s = TextureSampler()
-        // Should not crash — proves constructor binding works
-        assertTrue(true)
+        // C++'s SamplerParams{} defaults.
+        assertEquals(TextureSampler.MinFilter.NEAREST, s.minFilter)
+        assertEquals(TextureSampler.MagFilter.NEAREST, s.magFilter)
+        assertEquals(TextureSampler.WrapMode.CLAMP_TO_EDGE, s.wrapModeS)
+        assertEquals(1f, s.anisotropy)
+        assertEquals(TextureSampler.CompareMode.NONE, s.compareMode)
+        assertEquals(TextureSampler.CompareFunc.LE, s.compareFunc)
     }
 
     @Test
@@ -61,9 +66,9 @@ class TextureSamplerTest : FilamentTestFixture() {
         val s1 = TextureSampler(TextureSampler.CompareMode.NONE)
         assertEquals(TextureSampler.CompareMode.NONE, s1.compareMode)
 
-        val s2 = TextureSampler(TextureSampler.CompareMode.COMPARE_TO_TEXTURE, TextureSampler.CompareFunction.LESS)
+        val s2 = TextureSampler(TextureSampler.CompareMode.COMPARE_TO_TEXTURE, TextureSampler.CompareFunc.L)
         assertEquals(TextureSampler.CompareMode.COMPARE_TO_TEXTURE, s2.compareMode)
-        assertEquals(TextureSampler.CompareFunction.LESS, s2.compareFunction)
+        assertEquals(TextureSampler.CompareFunc.L, s2.compareFunc)
     }
 
     @Test
@@ -99,11 +104,10 @@ class TextureSamplerTest : FilamentTestFixture() {
     }
 
     @Test
-    fun compareFunctionRoundTrip() {
+    fun compareModeRoundTrip() {
         val s = TextureSampler()
-        s.compareMode = TextureSampler.CompareMode.COMPARE_TO_TEXTURE
-        s.compareFunction = TextureSampler.CompareFunction.GREATER_EQUAL
+        s.setCompareMode(TextureSampler.CompareMode.COMPARE_TO_TEXTURE, TextureSampler.CompareFunc.GE)
         assertEquals(TextureSampler.CompareMode.COMPARE_TO_TEXTURE, s.compareMode)
-        assertEquals(TextureSampler.CompareFunction.GREATER_EQUAL, s.compareFunction)
+        assertEquals(TextureSampler.CompareFunc.GE, s.compareFunc)
     }
 }
