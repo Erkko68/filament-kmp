@@ -213,6 +213,21 @@ composition → `rememberSceneClock`; any other per-frame side effect → `OnFra
 `FilamentEffect`'s `onFrame` inside a scene); reacting to *state* changes rather than the clock →
 `onUpdate`.
 
+### Pausing a view: `renderingEnabled`
+
+A `FilamentView` (or `FilamentSceneView`) renders on every display refresh by default. Pass
+`renderingEnabled = false` to stop its render loop: no GPU or CPU work per frame, and the last frame
+stays on screen (it isn't re-rendered on resize either). Set it back to `true` to resume. Use it for a
+static scene that only changes on input, or a view that is off screen or behind a dialog:
+
+```kotlin
+FilamentSceneView(
+    modifier = Modifier.fillMaxSize(),
+    cameraState = cam,
+    renderingEnabled = !settingsDialogOpen,   // freeze the 3D view while a dialog covers it
+) { /* … */ }
+```
+
 ## Animating glTF models
 
 `GltfInstance` offers four layers of animation control, from declarative to fully manual.

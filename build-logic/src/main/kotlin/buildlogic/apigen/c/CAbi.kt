@@ -1,7 +1,7 @@
 package buildlogic.apigen.c
 
 /**
- * The C types a Fila* signature takes and returns by value (docs/bindings.md, "Declaring a binding"). Kotlin binds
+ * The C types a Fila* signature takes and returns by value (docs/internals/bindings.md, "Declaring a binding"). Kotlin binds
  * each export with one type on every target and nothing adapts widths in between, so:
  * - widths are fixed: `size_t` is 64-bit on the JVM and iOS but 32-bit on wasm32; sizes and counts cross as `uint32_t`;
  * - 8- and 16-bit integers widen to 32: Apple arm64 packs stack arguments by natural size, Kotlin passes an `Int`;

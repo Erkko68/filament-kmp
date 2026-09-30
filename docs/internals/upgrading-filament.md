@@ -46,10 +46,11 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 # 3. Refresh prebuilts (version-stamped: redone automatically on a version bump)
 ./gradlew prebuilts prebuilts_wasm                       # libs + headers at <new>; wasm is a source build (slow)
 
-# 4. Audit the surface
+# 4. Regenerate the C API and the Kotlin externals, then review their diff
+./gradlew generateCApi generateKotlinExternals
 ./gradlew apiGaps                                        # C++ API missing from c/, Fila* missing from Kotlin
 
-# 5. Apply changes (per-layer recipe below), update tests
+# 5. Adapt the Kotlin API (per-layer recipe below), update tests
 scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
 
 # 6. Verify
@@ -80,8 +81,9 @@ feature-flag defaults, and `RELEASE_NOTES.md`. First run clones upstream into
 Start with `--summary` to see *which files* changed, then re-run **without** `--summary` on the
 interesting areas for full unified diffs. Pay particular attention to:
 
-- **Android Java sources** — drives the `expect`/`actual` additions. New `public` methods here
-  are the ones you add.
+- **Public C++ headers** — the source of truth. Anything added here is generated in step 4;
+  what matters now is renames, removals and changed defaults, which break or silently change
+  the Kotlin wrappers. (The Android Java diff is context only: the Kotlin API follows C++.)
 - **`MATERIAL_VERSION`** (in `MaterialEnums.h`) — any change means every shipped `.filamat` must
   be recompiled with the new `matc`.
 - **`CONFIG_MAX_INSTANCES`** and other WebGL workaround constants — relevant to the
@@ -92,7 +94,7 @@ interesting areas for full unified diffs. Pay particular attention to:
 
 ### 2. Bump `filaVersion`
 
-Edit [`gradle.properties`](../gradle.properties):
+Edit [`gradle.properties`](../../gradle.properties):
 
 ```properties
 filaVersion=1.71.6
@@ -115,11 +117,22 @@ static libraries, so those `prebuilts_<id>` tasks build them from the release's 
 per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and bump `emsdkVersion` in
 `gradle.properties` to match.
 
-### 4. Audit the public surface
+### 4. Regenerate and audit
 
 ```sh
+./gradlew generateCApi generateKotlinExternals
 ./gradlew apiGaps    # writes build/reports/api-gaps.txt
 ```
+
+Review the diff in `c/*/generated/` and the `capi/` packages: it is the whole C-level change of the
+release. What to look for:
+
+- **A skip entry in `c/api-headers.txt` that names nothing** fails `generateCApi`: upstream removed or
+  renamed the declaration. Delete or update the entry.
+- **New `TODO(handwritten)` comments**: new API the generator can't bridge. Write it in
+  `c/<module>/manual`, skip it with a reason, or teach the generator the shape.
+- **Changed or removed externals** break the Kotlin wrappers that call them at compile time. Fix them to
+  match the new C++.
 
 The C++ side is compared by symbol, never by parsing names: the public methods of every `*_PUBLIC`
 class as clang's AST reports them (inline ones included), plus template instances only the
@@ -131,10 +144,10 @@ stay calls). Struct fields and enum values aren't covered. The task runs on macO
 
 #### Adding a method
 
-Use `build/reports/api-gaps.txt` as the worklist. Run `./gradlew generateCApi generateKotlinExternals`:
-the new method gets its `Fila*` function and Kotlin external, or a `TODO(handwritten)` naming why it
-can't be bridged — write that one in `c/<module>/manual/<Record>Manual.{h,cpp}`. Then call the external
-from the Kotlin wrapper, e.g. for `ColorGrading::Builder::fastMath(bool)`:
+Step 4 already generated the new method's `Fila*` function and Kotlin external (or a
+`TODO(handwritten)`). Use `build/reports/api-gaps.txt` and the externals diff as the worklist, and call
+the external from the Kotlin class that owns the method in C++, with C++'s name and defaults, e.g. for
+`ColorGrading::Builder::fastMath(bool)`:
 
 ```kotlin
 fun fastMath(fastMath: Boolean): Builder = apply { FilaColorGradingBuilder_fastMath(nativeBuilder, fastMath) }
@@ -145,9 +158,10 @@ target; where the condition is false it panics, so give the Kotlin side a `@Plat
 
 #### Removing / deprecating a method
 
-If upstream removes or `@Deprecated`s a method, check whether it is exposed in our surface
-(`grep` the `kotlin/` tree). If it isn't exposed, there's nothing to do. If it is, mirror the
-upstream change (regenerate, then delete the Kotlin method or add `@Deprecated`).
+A removed C++ method disappears from the regenerated C API, so the Kotlin wrapper calling it stops
+compiling: delete it (the project removes deprecated API outright rather than keeping shims). A method
+upstream only marks deprecated stays generated; drop it from the Kotlin API in the same release. Either
+way, list it in the changelog.
 
 ### 6. Update tests
 
@@ -160,7 +174,7 @@ assertion.
 
 `filament-compose` ships five precompiled built-in materials (`StandardMaterial.Lit`/`Unlit`/
 `Textured`/`Emissive`/`Transparent`) as embedded `.filamat` blobs — their `.mat` sources and compiled outputs live
-in [`kotlin/filament-compose/src/commonMain/materials/`](../kotlin/filament-compose/src/commonMain/materials/),
+in [`kotlin/filament-compose/src/commonMain/materials/`](../../kotlin/filament-compose/src/commonMain/materials/),
 and the `generateEmbeddedMaterials` Gradle task base64-encodes them into a generated Kotlin object.
 
 A compiled `.filamat` is tied to the Filament ABI, so **whenever `MATERIAL_VERSION` changes** (watch
@@ -202,39 +216,12 @@ Finally, walk the samples on each platform — silent renderer behavior changes 
 
 ---
 
-## Worked example: 1.71.5 → 1.71.6
-
-A patch release with three new public methods, all present in the Android Java API:
-
-| Method | Layers touched |
-| :--- | :--- |
-| `ColorGrading.Builder.fastMath(Boolean)` | C shim + 4 actuals |
-| `MaterialBuilder.coloredPenumbra(Boolean)` | C shim + 4 actuals |
-| `Engine.Builder.colorGrading(ColorGrading.Builder)` | C shim + exposed `ColorGrading.Builder` handle as `internal` + 4 actuals |
-
-(At the time each platform had its own `actual`, hence "4 actuals"; web also needed extra
-overlay work over upstream's embind `filament.js`. Today each row is the C shim plus the common
-Kotlin method and its `external fun`.)
-
-What was **not** added, per the source-of-truth rule:
-
-- `Camera.getEyeFromViewMatrix`, `TransformManager.getChildrenRange`, `ColorGrading.exportLut` —
-  C++‑only, not in the Android Java API.
-- `View.filterWidth` / `View.minVarianceScale` got `@Deprecated` upstream but aren't exposed in
-  our surface, so nothing to remove.
-
-The first build failed at link time (`VertexBuffer::Builder::build` became `const` in 1.71.6 plus
-the three new symbols were all undefined) — because the prebuilt **libs were still 1.71.5** while
-the **headers had refreshed to 1.71.6**. Clearing `prebuilts/*/lib` and
-re-running the download fixed it. This is the footgun in step 3.
-
----
-
 ## Reference: where each surface lives
 
 | Surface | Path |
 | :--- | :--- |
 | Generated C API / hand-written leftovers | `c/<module>/generated`, `c/<module>/manual` |
+| API generator | `build-logic/src/main/kotlin/buildlogic/apigen/` ([The Generated C API](c-api.md)) |
 | Which headers are API, skipped declarations | `c/api-headers.txt` |
 | Generated Kotlin externals | `kotlin/<module>/src/commonMain/kotlin/.../capi/` |
 | API classes | `kotlin/<module>/src/commonMain/kotlin/.../*.kt` |
@@ -244,10 +231,10 @@ re-running the download fixed it. This is the footgun in step 3.
 | Filament libs / headers | `prebuilts/<id>/lib/` (downloaded, or source-built for `wasm`/`windows-arm64`), `include/` (gitignored) |
 | Version | `gradle.properties` → `filaVersion` |
 
-See also: [`scripts/README.md`](../scripts/README.md) (script reference),
-[`web/README.md`](../web/README.md) (web bindings),
+See also: [`scripts/README.md`](../../scripts/README.md) (script reference),
+[`web/README.md`](../../web/README.md) (web bindings),
 [`repo-structure.md`](repo-structure.md) (binding architecture).
 
 ---
 
-[← Back to docs](README.md)
+[← Back to docs](../README.md)

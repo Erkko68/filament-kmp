@@ -5,7 +5,7 @@ Builds the C API ([`c/`](../c)) with Emscripten, loads it, and gives the `js` an
 
 Published as **`io.github.erkko68.filament:web`** and pulled in by every `:kotlin:*` web target. The
 `.js`/`.wasm` files are **not** in the klib (webpack never sees klib resources); apps take them from the
-GitHub release (see [getting started](../docs/getting-started.md)).
+GitHub release (see [getting started](../docs/guide/getting-started.md)).
 
 | File | Contents |
 | :--- | :--- |
@@ -26,7 +26,7 @@ GitHub release (see [getting started](../docs/getting-started.md)).
 ## How common code reaches the wasm
 
 The API classes in `commonMain` declare `external fun FilaX(...)` next to them (see
-[Native Bindings](../docs/bindings.md)). On js and wasmJs such a top-level external resolves to the global
+[Native Bindings](../docs/internals/bindings.md)). On js and wasmJs such a top-level external resolves to the global
 `FilaX`: [`src/wasm/fila-globals.js`](src/wasm/fila-globals.js), linked in with `--post-js`, installs every
 `_FilaX` export there once the runtime is up, fixing up what js can't pass as-is (C `bool` → boolean, `float`
 → shortest f32 decimal, 64-bit args → BigInt) from the generated type tables.

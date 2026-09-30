@@ -30,7 +30,7 @@ expect object TestEnv {
 `gpuBackendAvailable` answers "can `Engine.create(DEFAULT)` succeed here?" and
 **must be checked before** creating a real backend. On a host with no GPU/display
 Filament aborts on its driver thread, which a `try/catch` cannot recover from —
-so the check is a gate, not a fallback. [`RenderingTestFixture`](../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/RenderingTestFixture.kt)
+so the check is a gate, not a fallback. [`RenderingTestFixture`](../../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/RenderingTestFixture.kt)
 uses it to leave `engine == null`, and tests early-return:
 
 ```kotlin

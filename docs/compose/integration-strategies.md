@@ -52,7 +52,7 @@ Compose Desktop has no public API to embed a native surface inside its Skia canv
 
 ### Experimental: GPU-to-GPU frame sharing
 
-With `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` (see [Platform Notes](../platform-notes.md#gpu-to-gpu-frame-sharing-experimental)), Filament renders into textures on Compose's own GPU context, found through skiko internals, and Skia wraps each finished texture on its `DirectContext` and snapshots it:
+With `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` (see [Platform Notes](../guide/platform-notes.md#gpu-to-gpu-frame-sharing-experimental)), Filament renders into textures on Compose's own GPU context, found through skiko internals, and Skia wraps each finished texture on its `DirectContext` and snapshots it:
 
 | OS | Compose draws with | Filament side |
 | :--- | :--- | :--- |

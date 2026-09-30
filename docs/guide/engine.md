@@ -4,14 +4,16 @@
 modules are plain Kotlin Multiplatform bindings over the Filament C++ API — no Compose
 runtime, no Compose Gradle plugin, no `@Composable` anywhere. Depend on `filament` alone and
 you get `Engine`, `Scene`, `View`, `Renderer`, `Camera`, `Material`, `Texture` and the
-managers, with the same names and shapes as [Android Filament](https://google.github.io/filament/Filament.md.html).
+managers, with the same names, owners and defaults as Filament's C++ API, so
+[Filament's documentation](https://google.github.io/filament/Filament.md.html) and C++ samples
+translate line by line.
 
 Use this path when you are:
 
 - rendering into a surface you already own (`SurfaceView`, `CAMetalLayer`, an LWJGL/GLFW window, a `<canvas>`),
 - rendering **headless** — thumbnails, product shots, server-side image generation, tests,
 - writing an engine/game loop that isn't driven by a UI framework,
-- porting existing Android Filament code to other targets.
+- porting existing Filament code (C++ or Android) to other targets.
 
 ```kotlin
 // build.gradle.kts — no Compose plugin required
@@ -128,7 +130,7 @@ Two things that bite:
   Flip according to `engine.backend` if you're writing a PNG.
 
 The same pattern drives this repo's own rendering tests — see
-[`FrameProbe`](../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/FrameProbe.kt)
+[`FrameProbe`](../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/FrameProbe.kt)
 for a complete, working implementation you can copy.
 
 ## Loading a glTF model
@@ -165,7 +167,9 @@ provider.destroy()
 ## Lifecycle
 
 You own every object you create. Destroy in reverse dependency order and only then the
-engine, or `Engine.destroy(engine)` will panic on live resources:
+engine, or `Engine.destroy(engine)` will panic on live resources (see
+[Error handling](platform-notes.md#error-handling)). As in C++, `engine.destroy(entity)` destroys
+only the entity's components; the entity itself goes back through the `EntityManager`:
 
 ```kotlin
 engine.destroy(swapChain)
@@ -182,8 +186,8 @@ Engine.destroy(engine)
 Adopting the Compose DSL afterwards doesn't mean rewriting: `filament-compose` exposes the
 raw `Engine` through `FilamentEffect`, so engine-level code keeps working inside a
 `FilamentSceneView`. Going the other way, `rememberFilamentEngine` just wraps
-`Engine.create()`. See [Compose Integration](compose/README.md).
+`Engine.create()`. See [Compose Integration](../compose/README.md).
 
 ---
 
-[← Back to docs index](README.md)
+[← Back to docs index](../README.md)

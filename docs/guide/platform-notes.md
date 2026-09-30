@@ -1,6 +1,6 @@
 # Platform Notes
 
-Per-platform behavior, backend selection, and known issues. See [Integration Strategies](compose/integration-strategies.md) for how Filament's GPU output reaches the Compose canvas on each target.
+Per-platform behavior, backend selection, and known issues. See [Integration Strategies](../compose/integration-strategies.md) for how Filament's GPU output reaches the Compose canvas on each target.
 
 ## Backend selection
 
@@ -23,7 +23,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 ## Android
 
 - Binds Filament through JNI over the same `c/` wrapper as JVM, iOS and web (`:jni` bindings + `:android` runtime, published as `filament-jni` + `filament-jni-android`), not the upstream `filament-android` AAR.
-- `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
+- `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](../compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
 - Minimum `compileSdk`: **37**. Minimum `minSdk`: **24**.
 
 ### Screen rotation and configuration changes
@@ -100,7 +100,7 @@ or pass `-Dskiko.gpu.priority=discrete` (e.g. `jvmArgs += "-Dskiko.gpu.priority=
 
 ### Native library loading
 
-Each platform's `libfilament-c` (`.dll`, `.dylib`, `.so`) ships in its `filament-jni-runtime-<os>-<arch>` jar. `Filament.init()` extracts it once into a content-hash-keyed cache dir (`~/.filament-kmp/`) and loads it; no system installation of Filament is needed. Runs on any **JDK 17+**. See [`desktop/README.md`](../desktop/README.md) for the loader's knobs.
+Each platform's `libfilament-c` (`.dll`, `.dylib`, `.so`) ships in its `filament-jni-runtime-<os>-<arch>` jar. `Filament.init()` extracts it once into a content-hash-keyed cache dir (`~/.filament-kmp/`) and loads it; no system installation of Filament is needed. Runs on any **JDK 17+**. See [`desktop/README.md`](../../desktop/README.md) for the loader's knobs.
 
 ## Web / WASM
 
@@ -165,6 +165,21 @@ For big materials, or anything that must load fast, compile offline with `matc` 
 `filament-kmp.wasm` is ~2.8 MB (~1.1 MB gzipped), plus ~230 KB of JS glue. `filamat-kmp.wasm` adds
 ~6.4 MB (~1.9 MB gzipped) only if you serve it. Lazy-load the `FilamentView` screen, or call
 `MaterialBuilder.initJs` only when you need it, if startup time matters.
+
+## Error handling
+
+Filament reports errors two ways, and the bindings keep both:
+
+- **Recoverable failures return null.** `Engine.create()` / `Engine.Builder.build()` when no backend
+  can start, `Material.Builder.build()` for a payload that isn't a `.filamat` (checked before it
+  reaches Filament), `Engine.getFeatureFlag(name)` for an unknown flag, gltfio's `createAsset` for
+  bytes it can't parse. Check them.
+- **Precondition failures abort the process.** Filament panics on misuse (a buffer smaller than
+  declared, a parameter name the material doesn't have, destroying an `Engine` that still owns
+  objects, a `.filamat` compiled for another `MATERIAL_VERSION`). That terminates the app on Android,
+  iOS and desktop and traps the wasm on web; it can't be caught from Kotlin. The console/logcat shows
+  Filament's message. Most come from destroy order: destroy what you created, in reverse order,
+  before the engine.
 
 ## Threading model
 

@@ -5,7 +5,7 @@ import io.github.erkko68.filament.InternalFilamentApi
 // Common half of the skiko-style interop: API classes live in commonMain and call the Fila* C API
 // through `external fun`s declared next to them, named like the C symbol. JVM/Android bind them
 // through generated JNI glue, Kotlin/Native through [ExternalSymbolName], web by global name.
-// See docs/bindings.md.
+// See docs/internals/bindings.md.
 
 /** Address of a native object: `Long` on JVM, Android and Native; a wasm32 address (`Int`) on web. */
 @InternalFilamentApi

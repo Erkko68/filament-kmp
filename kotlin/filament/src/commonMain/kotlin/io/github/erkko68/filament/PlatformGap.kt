@@ -15,7 +15,7 @@ enum class FilamentPlatform { ANDROID, IOS, JVM, WEB }
  * there: throws `UnsupportedOperationException`, is a silent no-op, or returns a placeholder.
  *
  * The full per-platform coverage table lives in
- * [Platform Notes](https://github.com/Erkko68/filament-kmp/blob/main/docs/platform-notes.md).
+ * [Platform Notes](https://github.com/Erkko68/filament-kmp/blob/main/docs/guide/platform-notes.md).
  *
  * @property platforms Platforms on which the binding is missing or degraded.
  * @property behavior What calling the API does on those platforms.

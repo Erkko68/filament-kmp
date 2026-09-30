@@ -57,7 +57,7 @@ See **[Modules](modules.md)** for the full coordinates list, the per-target depe
 
 ### Android
 
-No extra configuration. The native runtime (`io.github.erkko68.filament:filament-jni-android`, `libfilament-c.so` for arm64-v8a, armeabi-v7a, x86_64 and x86) is pulled in transitively. The minimum supported `compileSdk` is **37** (required by Filament 1.76.0).
+No extra configuration. The native runtime (`io.github.erkko68.filament:filament-jni-android`, `libfilament-c.so` for arm64-v8a, armeabi-v7a, x86_64 and x86) is pulled in transitively. The minimum supported `compileSdk` is **37**.
 
 ```kotlin
 // androidApp/build.gradle.kts
@@ -246,7 +246,7 @@ That's the complete shared code for all four targets. The platform-specific entr
 
 ## Next steps
 
-- **[Compose Integration](compose/README.md)** — Full component reference: cameras, lights, materials, post-processing.
+- **[Compose Integration](../compose/README.md)** — Full component reference: cameras, lights, materials, post-processing.
 - **[Modules](modules.md)** — Pick the right artifact for your use case.
 - **[Platform Notes](platform-notes.md)** — Backends, performance, known issues.
 - **[Filament Engine docs](https://google.github.io/filament/Filament.md.html)** — PBR theory, lighting model, render pipeline.

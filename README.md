@@ -46,16 +46,20 @@ if (renderer.beginFrame(swapChain, frameTimeNanos)) {
 }
 ```
 
-See **[Using the Engine Without Compose](docs/engine.md)**.
+See **[Using the Engine Without Compose](docs/guide/engine.md)**.
 
 ## Platform support
 
-- **Android** — OpenGL ES / Vulkan via JNI bindings over the same C wrapper (`libfilament-c.so` per ABI)
-- **iOS** — Metal via C wrapper + Kotlin/Native cinterop
-- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via JNI bindings over the same C wrapper
-- **Web (JS & Wasm)** — WebGL 2.0 via the same C wrapper compiled to wasm with Emscripten, bound by name from the `js` and `wasmJs` targets
+Every platform runs on **one C API generated from Filament's C++ headers**, and the Kotlin API is written once in `commonMain` on top of it, so the API and its behavior are the same everywhere:
+
+- **Android** — OpenGL ES / Vulkan, over JNI (`libfilament-c.so` per ABI)
+- **iOS** — Metal, direct Kotlin/Native calls into the C API
+- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL, over JNI (`libfilament-c` per platform)
+- **Web (JS & Wasm)** — WebGL 2.0, the C API compiled to wasm with Emscripten (`filament-kmp.wasm`)
 
 **JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts need **JDK 17+**, like Compose Desktop.
+
+**Upgrading from 0.6.0?** The API now follows Filament's C++ headers and the native runtimes changed on every platform; follow the **[migration guide](docs/migration/from-0.6.0.md)**.
 
 ## Quick start
 
@@ -83,9 +87,9 @@ kotlin {
 }
 ```
 
-The same coordinates work on every target — Gradle resolves one variant per target you declare, so you don't download the platforms you don't build for. (The one exception: the Desktop/JVM natives default to all five desktop platforms; one snippet narrows them — see [what Gradle actually downloads](docs/modules.md#what-gradle-actually-downloads).)
+The same coordinates work on every target — Gradle resolves one variant per target you declare, so you don't download the platforms you don't build for. (The one exception: the Desktop/JVM natives default to all five desktop platforms; one snippet narrows them — see [what Gradle actually downloads](docs/guide/modules.md#what-gradle-actually-downloads).)
 
-For the full setup (Compose Multiplatform plugin, native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**, and **[Modules](docs/modules.md#dependencies-by-target)** for the per-target dependency table.
+For the full setup (Compose Multiplatform plugin, native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/guide/getting-started.md)**, and **[Modules](docs/guide/modules.md#dependencies-by-target)** for the per-target dependency table.
 
 ## Modules
 
@@ -97,7 +101,7 @@ For the full setup (Compose Multiplatform plugin, native runtime for Desktop, iO
 | `filamat` | Runtime material compilation — `MaterialBuilder`. |
 | `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
 
-All published under `io.github.erkko68.filament`. The Desktop/JVM native runtime (`filament-jni-desktop`) is pulled in automatically, with the natives in per-platform `filament-jni-runtime-<os>-<arch>` jars — all of them by default, or only your platform's if your build declares os/arch attributes (see [desktop/README.md](desktop/README.md)). See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
+All published under `io.github.erkko68.filament`. The Desktop/JVM native runtime (`filament-jni-desktop`) is pulled in automatically, with the natives in per-platform `filament-jni-runtime-<os>-<arch>` jars — all of them by default, or only your platform's if your build declares os/arch attributes (see [desktop/README.md](desktop/README.md)). See **[Modules](docs/guide/modules.md)** for full coordinates and dependency graph.
 
 ## Versioning & stability
 
@@ -107,26 +111,28 @@ Releases are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`):
 - **`X.Y.Z` (patch)** — no API surface change: bug fixes in the wrapper, and upstream point releases picked up without binding anything new. Safe to pick up without reading anything.
 - **`X.0.0` (major)** — reserved for maturity milestones and very large changes (a stabilized public API, a full architectural rework). Routine upstream tracking never triggers a major bump — expect minor releases to keep flowing for as long as Filament keeps releasing.
 
-All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term and tracks upstream Filament releases as they are published (see [docs/upgrading-filament.md](docs/upgrading-filament.md) for the process). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
+All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term and tracks upstream Filament releases as they are published (see [docs/internals/upgrading-filament.md](docs/internals/upgrading-filament.md) for the process). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
 
 ## API strategy
 
-The public API stays as close as possible to the **Android Filament API**, so existing Filament knowledge transfers directly. Differences:
+The public API follows **Filament's C++ API**, the one [Filament's documentation](https://google.github.io/filament/Filament.md.html) and headers describe: the same classes, method names, owners and default values, on every platform. Adapted to Kotlin only where Kotlin has its own shape:
 
-- **Kotlin properties** instead of `get*()` / `set*()` for single-value state accessors (e.g. `view.scene`, `camera.focusDistance`, `engine.backend`, `engine.isPaused`, `engine.config`). The boundary is deliberate: manager *lookups* that read as factory-ish accessors stay methods to match the Android Filament API — `engine.getTransformManager()`, `getLightManager()`, `getRenderableManager()`, `getEntityManager()` — as do calls that perform work or take arguments (`engine.getFeatureFlag(name)`, `engine.setActiveFeatureLevel(level)`).
-- **Removed** APIs that are deprecated upstream or strictly Android-only (require `Context` or Android UI classes).
-- **Compose DSL** layered on top — fully optional; the raw `Engine` and friends remain accessible via `FilamentEffect`.
+- **Kotlin properties** for getter/setter pairs and zero-argument getters (`view.scene`, `camera.focusDistance`, `engine.backend`, `engine.transformManager`, `engine.isPaused`); calls that take arguments or do work stay methods (`engine.getFeatureFlag(name)`, `engine.setActiveFeatureLevel(level)`).
+- **Nullable results** where C++ can fail (`Engine.create()`, `Material.Builder.build()`), `AutoCloseable` on self-destroying types, overloads instead of per-type names (`engine.destroy(view)`, `engine.isValid(material)`).
+- **Nothing invented**: no wrappers C++ doesn't have. Conveniences live in the optional **Compose DSL**, which keeps the raw `Engine` reachable through `FilamentEffect`.
+
+How that API is produced, from C++ headers to a generated C API to Kotlin, is in [The Generated C API](docs/internals/c-api.md).
 
 ## Documentation
 
 ### This project
 - **[API Reference](https://erkko68.github.io/filament-kmp/api/)** — generated KDoc for all published modules.
-- **[Getting Started](docs/getting-started.md)** — per-platform Gradle setup, first scene.
-- **[Modules](docs/modules.md)** — published artifacts, per-target dependencies, what Gradle downloads.
-- **[Using the Engine Without Compose](docs/engine.md)** — own render loop, own surface, headless rendering.
-- **[Platform Notes](docs/platform-notes.md)** — backends, gotchas (Windows JVM shutdown, web limits, iOS embedding).
+- **[Getting Started](docs/guide/getting-started.md)** — per-platform Gradle setup, first scene.
+- **[Modules](docs/guide/modules.md)** — published artifacts, per-target dependencies, what Gradle downloads.
+- **[Using the Engine Without Compose](docs/guide/engine.md)** — own render loop, own surface, headless rendering.
+- **[Platform Notes](docs/guide/platform-notes.md)** — backends, per-platform gotchas, web limits, desktop GPU frame sharing.
 - **[Compose Integration](docs/compose/README.md)** — scene-vs-view model, `FilamentSceneView` / `rememberFilamentScene` / `FilamentView`, scene DSL, post-processing.
-- **[Repository Structure](docs/repo-structure.md)** — for contributors.
+- **[Internals](docs/README.md#internals-for-contributors)** — for contributors: repository structure, the generated C API, native bindings, upgrading Filament, testing.
 
 ### Upstream Filament (authoritative for engine concepts)
 - **[Filament Engine](https://google.github.io/filament/Filament.md.html)** — PBR theory, scene graph, lighting model, render pipeline.

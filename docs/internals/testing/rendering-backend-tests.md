@@ -9,7 +9,7 @@ Scope: tests for the `filament` / `gltfio` / `filament-utils` wrappers.
 
 ## What we built
 
-[`RenderingTestFixture`](../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/RenderingTestFixture.kt)
+[`RenderingTestFixture`](../../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/RenderingTestFixture.kt)
 (+ `UtilsRenderingTestFixture`, `GltfioRenderingTestFixture`) create
 `Engine.Backend.DEFAULT` and leave `engine == null` when no backend is available,
 so tests early-return (`val engine = engine ?: return`) instead of failing. This

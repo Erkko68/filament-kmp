@@ -4,10 +4,15 @@ The `filament-kmp` project is organized into several modules to handle the cross
 
 ## Architecture at a glance
 
-The API is written once in `commonMain`: each class holds a native pointer and calls our C API
-(`c/`) through `external fun`s declared next to it, the model skiko uses for Skia. Only the way an
-`external fun` reaches its C symbol differs per platform, and none of that is hand-written. See
-[Native Bindings](bindings.md) for the details and the rules for adding one.
+Three layers, each derived from the one below:
+
+1. **Filament's C++ headers** (`include/`, per `filaVersion`) are the source of truth.
+2. **The `Fila*` C API** (`c/`) is generated from them ([The Generated C API](c-api.md)), plus a few
+   hand-written functions.
+3. **The Kotlin API** is written once in `commonMain`: each class holds a native pointer and calls
+   the C API through `external fun`s generated from the C headers, the model skiko uses for Skia. Only
+   the way an `external fun` reaches its C symbol differs per platform, and none of that is
+   hand-written ([Native Bindings](bindings.md)).
 
 ```mermaid
 flowchart TB
@@ -36,20 +41,20 @@ flowchart TB
 
 - **`c/`**: C++ wrapper that exposes a C-compatible ABI (the `Fila*` functions) around the official Filament C++ API; every platform builds it. `c/CMakeLists.txt` is the one CMake entry point: each C module (`filament`, `filamat`, `filament-utils`, `gltfio`) compiles once into an OBJECT library, and the platform's consumer links them — static libraries for **Kotlin/Native** (`lib<module>-c.a`), the JNI image `libfilament-c` for the **desktop** and **Android** (`jni/CMakeLists.txt`), and `filament-kmp.wasm` + `filamat-kmp.wasm` for **web** (`web/CMakeLists.txt`). `c/cmake/` imports Filament's archives and sets per-platform compiler flags. The C API is generated from the headers `c/api-headers.txt` lists (`./gradlew generateCApi` → `c/<module>/generated`, types in each module's `Types.h`), plus hand-written leftovers in `c/<module>/manual`; `./gradlew generateKotlinExternals` turns both into each Kotlin module's `capi` package.
 
-- **`jni/`**: The JNI runtime shared by desktop and Android: native memory and callbacks (`FilaJni`) and the JNI image's CMake. See [`jni/README.md`](../jni/README.md).
+- **`jni/`**: The JNI runtime shared by desktop and Android: native memory and callbacks (`FilaJni`) and the JNI image's CMake. See [`jni/README.md`](../../jni/README.md).
 
-- **`desktop/`**: The desktop runtime: builds `libfilament-c` for the host and ships `FilamentLoader`, plus one `runtime-<os>-<arch>` jar per platform. See [`desktop/README.md`](../desktop/README.md).
+- **`desktop/`**: The desktop runtime: builds `libfilament-c` for the host and ships `FilamentLoader`, plus one `runtime-<os>-<arch>` jar per platform. See [`desktop/README.md`](../../desktop/README.md).
 
-- **`android/`**: The Android runtime: `libfilament-c.so` per ABI with the NDK, over upstream's `android-native` prebuilts. See [`android/README.md`](../android/README.md).
+- **`android/`**: The Android runtime: `libfilament-c.so` per ABI with the NDK, over upstream's `android-native` prebuilts. See [`android/README.md`](../../android/README.md).
 
-- **`web/`**: The web runtime (`js` + `wasmJs`): builds `filament-kmp.{js,wasm}` (+ `filamat-kmp.{js,wasm}`) with Emscripten, loads it and installs its exports as the globals the common `external fun`s bind to, and holds the heap/callback/WebGL helpers. See [`web/README.md`](../web/README.md).
+- **`web/`**: The web runtime (`js` + `wasmJs`): builds `filament-kmp.{js,wasm}` (+ `filamat-kmp.{js,wasm}`) with Emscripten, loads it and installs its exports as the globals the common `external fun`s bind to, and holds the heap/callback/WebGL helpers. See [`web/README.md`](../../web/README.md).
 
 - **`kotlin/`**: The core Kotlin Multiplatform wrapper. API classes and their `external fun` declarations live in each module's `commonMain`; the small per-platform interop runtime (`NativePointer`, `InteropScope`) is in `kotlin/filament`'s `interop/` package. Contains five modules:
     - `filament` — Core engine components (Engine, Scene, View, Renderer, …).
     - `filamat` — Material compilation (MaterialBuilder).
     - `gltfio` — glTF asset loading (AssetLoader, FilamentAsset, Animator, …).
     - `filament-utils` — Math utilities, camera manipulators, HDR/KTX loaders.
-    - `filament-compose` — Compose Multiplatform UI integration layer (see [Compose docs](compose/README.md)).
+    - `filament-compose` — Compose Multiplatform UI integration layer (see [Compose docs](../compose/README.md)).
 
 - **`prebuilts/`**: Filament's static libraries per target (`prebuilts/<id>/lib`, ids from `FilamentTarget`: `ios-arm64`, `macos-arm64`, `android-arm64-v8a`, `wasm`, …), fetched by the `prebuilts_<id>` tasks: a download from the upstream GitHub release, or a build from the release's source for targets upstream ships none for (`wasm`, `windows-arm64`). The matching public headers land in `include/` via `downloadIncludes`. Git-ignored.
 
@@ -72,5 +77,5 @@ Everything native goes through `build-logic`'s `buildlogic.*` tooling:
 
 - **`FilamentTarget`** (`platform/`) is the one list of native targets and where their Filament libraries come from.
 - **Prebuilts** (`prebuilts/`): the root `prebuilts_<id>`, `downloadIncludes` and `setupEmsdk` tasks.
-- **Bindings** (`bindings/`): `:generateBindings` reads the common `@ExternalSymbolName` externals and writes the JNI forwarders and the wasm export lists and type tables (`build/generated/bindings/`, not committed).
+- **API generator** (`apigen/`): `generateCApi` (C++ headers → `c/<module>/generated`), `generateKotlinExternals` (C headers → `capi` externals), `generateBindings` (externals → JNI forwarders and wasm export lists/type tables in `build/generated/bindings/`, not committed), plus the `apiModel` and `apiGaps` reports. See [The Generated C API](c-api.md).
 - **CMake** (`cmake/`): one `CMakeBuildTask` type drives every `c/` build — `:cmakeBuild_<ios id>` (packed into the iOS klibs through a header-less cinterop), `:desktop:cmakeBuild`, `:android:cmakeBuild_<abi>` and `:web:cmakeBuild`.

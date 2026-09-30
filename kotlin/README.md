@@ -10,7 +10,7 @@ This directory contains the Kotlin Multiplatform modules published to Maven Cent
 | [`filamat/`](filamat) | `io.github.erkko68.filament:filamat` | Runtime material compilation. |
 | [`filament-utils/`](filament-utils) | `io.github.erkko68.filament:filament-utils` | Math, manipulators, HDR/KTX loaders. |
 
-See [`docs/modules.md`](../docs/modules.md) for the full coordinates list, dependency graph, and per-module usage notes.
+See [`docs/guide/modules.md`](../docs/guide/modules.md) for the full coordinates list, dependency graph, and per-module usage notes.
 
 ## Targets
 
@@ -36,4 +36,4 @@ The first build downloads Filament prebuilts via the `prebuilts_<id>` Gradle tas
 
 ## Contributing
 
-See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`) and the native runtimes (`jni/`, `desktop/`, `android/`, `web/`).
+See [`docs/internals/repo-structure.md`](../docs/internals/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`) and the native runtimes (`jni/`, `desktop/`, `android/`, `web/`).

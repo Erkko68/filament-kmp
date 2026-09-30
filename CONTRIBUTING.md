@@ -24,10 +24,10 @@ label so we can track it (and patch our prebuilts if needed).
 
 | Path | What it is |
 |---|---|
-| `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`). API classes and their `external fun` bindings live in `commonMain` ([Native Bindings](docs/bindings.md)). |
-| `c/` | The `Fila*` C API every platform builds, and the CMake entry point. |
+| `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`). API classes and their `external fun` bindings live in `commonMain` ([Native Bindings](docs/internals/bindings.md)). |
+| `c/` | The `Fila*` C API every platform builds: `c/<module>/generated` from Filament's headers (scoped by `c/api-headers.txt`), `c/<module>/manual` for the few hand-written functions, and the CMake entry point. |
 | `jni/`, `desktop/`, `android/`, `web/` | The native runtimes: the JNI runtime shared by desktop and Android, the desktop loader + per-platform runtime jars, `libfilament-c.so` per ABI, and the wasm runtimes (each has a README). |
-| `build-logic/` | Convention plugins and the `buildlogic.*` tooling: Filament targets, prebuilts, CMake, binding generation. |
+| `build-logic/` | Convention plugins and the `buildlogic.*` tooling: Filament targets, prebuilts, CMake, and the API generator (`apigen`). |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |
 | `scripts/` | Dev cross-check + maintenance scripts (`scripts/README.md`). |
@@ -49,41 +49,37 @@ and commit the updated `<module>/api/` files with your change — `apiCheck` fai
 - **Web** needs the Emscripten SDK and Filament's wasm libraries, which upstream doesn't publish: the
   build installs emsdk into `.emsdk/` and builds `prebuilts/wasm/` from source on first use
   (`./gradlew prebuilts_wasm`; it takes a while, once per `filaVersion`).
-- **Adding a binding**: a `Fila*` shim in `c/` plus the Kotlin method and its `external fun` in
-  `commonMain` — see [Native Bindings](docs/bindings.md). The JNI forwarders and wasm export lists are
-  generated from those declarations (`:generateBindings`).
+- **Adding a binding**: the C function and its Kotlin `external fun` are generated
+  (`./gradlew generateCApi generateKotlinExternals`); you write the public Kotlin method over it in
+  `commonMain`. Commit the regenerated files with it. See [The Generated C API](docs/internals/c-api.md) and
+  [Native Bindings](docs/internals/bindings.md).
 - **Bumping `filaVersion`** (in `gradle.properties`): the prebuilts and headers are version-stamped and
-  refetch on the next build; then run `./gradlew apiGaps` to catch binding drift.
+  refetch on the next build; then regenerate and run `./gradlew apiGaps`
+  ([Upgrading Filament](docs/internals/upgrading-filament.md)).
 
 ## API parity
 
-This wrapper mirrors Filament's public C++ API. Every platform calls the same `c/` wrapper, so a
-binding added there reaches all of them. `./gradlew apiGaps` diffs Filament's public C++ methods
-(headers and libraries, by symbol) against what `c/` calls, and the `Fila*` functions against the Kotlin externals,
-into `build/reports/api-gaps.txt`.
+The Kotlin API follows **Filament's public C++ headers**, not the Android Java API. Every platform
+calls the same generated `c/` API, so a binding reaches all of them at once. `./gradlew apiGaps`
+reports the public C++ methods (headers and libraries, by symbol) that `c/` doesn't call, and the
+`Fila*` functions without a Kotlin external, into `build/reports/api-gaps.txt`.
 
-### Kotlin idiom vs. upstream shape
+### Kotlin idiom vs. C++ shape
 
-Mirroring the API is not the same as mirroring the Java. Two deliberate rules:
-
-- **Builders mirror upstream verbatim.** The seventeen `Builder` classes keep the fluent
-  `.width(64).height(64).build(engine)` chain, one method per upstream setter, in upstream's
-  order. This is what makes Filament's own C++ and Android docs readable against this library,
-  and `MaterialBuilder`'s fifty-odd setters would be an unusable constructor. Do not "modernize"
-  a builder into a DSL or a data class.
-- **Data classes only where nothing is nested in an `expect class`.** `Viewport` and
-  `MaterialKey` are `data class`es because they are plain common types. The option structs
-  (`BloomOptions`, `Renderer.ClearOptions`, `Engine.Config`, `LightManager.ShadowOptions`)
-  cannot be, and stay `class X()` with `var` fields configured through `apply { }`: an expect
-  constructor takes no `val`/`var` parameters, a nested `typealias` onto a top-level data class
-  is not actualized, and a nested classifier inherited from a supertype does not resolve through
-  the subclass name. The only shape that works is `interface` + internal per-platform impls; it
-  was built and rejected (an interface cannot be `sealed` across source sets, and Android's
-  wrapping actuals come out line-neutral). Re-verified on Kotlin 2.4.10 — don't re-litigate.
-- **Everything else is idiomatic Kotlin.** Outside a builder, a zero-argument `getX()` should be
-  a `val`, a `getX()`/`setX()` pair a `var`, a returned collection a `List`/`Set` rather than an
-  array, and an optional out-parameter `out: T? = null`. Raw backend handles are `internal`,
-  reachable only through the `@InternalFilamentApi` `nativeObject` accessors.
+- **Names, owners and defaults are C++'s.** A method lives on the class that declares it in C++,
+  keeps its name and takes C++'s default arguments. Nested types stay where C++ nests them; the
+  `Options.h` structs (`BloomOptions`, `FogOptions`, …) are top-level because they are in C++.
+- **Builders mirror C++ verbatim**: the fluent `.width(64).height(64).build(engine)` chain, one
+  method per C++ setter. This keeps Filament's own docs readable against this library. Don't turn a
+  builder into a DSL or a data class.
+- **Kotlin shape where Kotlin has one.** A `getX()`/`setX()` pair is a `var`, a zero-argument getter
+  a `val`, a value struct a plain class with `var` fields, a nullable C++ result a nullable type, a
+  self-destroying type `AutoCloseable`. Raw handles are `internal`, reachable only through the
+  `@InternalFilamentApi` `nativeObject` accessors.
+- **No invented API.** Don't add a wrapper, field or overload C++ doesn't have; conveniences belong in
+  `filament-compose`. Before trusting an unfamiliar struct field, grep the upstream header for it.
+- **No compatibility shims.** When C++ renames or removes something, so does Kotlin, in the same
+  release, listed in the changelog.
 
 ## Versioning & releases
 

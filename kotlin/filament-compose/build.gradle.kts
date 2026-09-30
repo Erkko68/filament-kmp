@@ -19,7 +19,7 @@ composeCompiler {
 }
 
 // Built-in materials, precompiled with `matc -p all -a all` (runtime compilation isn't available on web);
-// regenerate on each filaVersion bump, see docs/upgrading-filament.md.
+// regenerate on each filaVersion bump, see docs/internals/upgrading-filament.md.
 val generateEmbeddedMaterials = registerEmbeddedResources(
     taskName = "generateEmbeddedMaterials",
     inputDir = "src/commonMain/materials",

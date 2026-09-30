@@ -18,8 +18,8 @@ The compose layer's risk isn't pixels — it's **manual native lifecycle driven 
 1. **Dispose ordering** — entities removed from the scene *before* the scene is destroyed; the
    light component destroyed while its entity is still alive; `ColorGrading` freed before re-apply.
    These are guarded today only by hand-written ordering comments
-   ([Light.kt](../../kotlin/filament-compose/src/commonMain/kotlin/io/github/erkko68/filament/compose/scene/Light.kt#L143-L169),
-   [FilamentScene.kt](../../kotlin/filament-compose/src/commonMain/kotlin/io/github/erkko68/filament/compose/FilamentScene.kt#L59-L61)).
+   ([Light.kt](../../../kotlin/filament-compose/src/commonMain/kotlin/io/github/erkko68/filament/compose/scene/Light.kt#L143-L169),
+   [FilamentScene.kt](../../../kotlin/filament-compose/src/commonMain/kotlin/io/github/erkko68/filament/compose/FilamentScene.kt#L59-L61)).
 2. **No leaks** — leaving composition returns every Filament object the composables created.
 3. **Snapshot-keyed re-application** — a changed `LightSnapshot`/`CameraSnapshot`/`PostProcessing`
    pushes the new values; an unchanged one does not churn JNI.
@@ -175,13 +175,13 @@ resource, other targets return empty, so the suite skips off-JVM exactly like th
   empty, entity destroyed (the dispose-order comments in `MeshData.kt`). (The vertex/index buffers are
   freed in the same `onDispose`; they aren't separately asserted because the composable owns the handles
   internally — the renderable+entity teardown is the leak guard.)
-- **`MaterialLifecycleTest`** ✅ — `rememberMaterial` builds → `isValidMaterial` while composed → freed on
+- **`MaterialLifecycleTest`** ✅ — `rememberMaterial` builds → `engine.isValid(material)` while composed → freed on
   disposal; a bad payload returns `null` + fires `onError` without crashing. **That last path drove a core
   fix**: a malformed `.filamat` made Filament's C++ parser panic (`utils::PostconditionPanic`), which
   *terminates the process* — the throw unwinds across the prebuilt's `-fno-exceptions` frames before any
-  wrapper `try/catch` can run, so it can't be trapped after the fact. `Material.Builder` now sniffs the
-  `.filamat` magic (`isValidFilamatPayload`) in the JNI/native/wasm `payload()` and `build()` raises a
-  catchable `IllegalArgumentException` for a non-`.filamat` blob. `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
+  wrapper `try/catch` can run, so it can't be trapped after the fact. The common `Material.Builder.payload()`
+  sniffs the `.filamat` magic (`isValidFilamatPayload`), and `build()` returns `null` for a non-`.filamat`
+  blob without calling Filament. `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
   bytes (an uncatchable upstream crash, *not* a null-return) and the repo bundles no decodable test image
   for the happy path — that waits on an image asset.
 - **`EnvironmentLifecycleTest`** ✅ — `ApplySkybox` (a **color** skybox → `scene.skybox` set/cleared) and
@@ -194,7 +194,7 @@ resource, other targets return empty, so the suite skips off-JVM exactly like th
   polling inside a `withFrameNanos` loop on the JobSystem's worker threads). Driven from the Compose test's
   manual clock/dispatcher rather than a real `FilamentView` render loop, the load aborts natively
   (`utils::PreconditionPanic`) — the same coupling to the live frame/thread model that keeps `FilamentView`
-  itself out of the headless harness (the sample [`DuckScene`](../../samples/shared/src/commonMain/kotlin/eric/bitria/samples/scenes/DuckScene.kt)
+  itself out of the headless harness (the sample [`DuckScene`](../../../samples/shared/src/commonMain/kotlin/eric/bitria/samples/scenes/DuckScene.kt)
   drives exactly this path successfully *through* `FilamentSceneView`). The synchronous Primitive/Material/
   Environment composables don't hit this. Revisiting needs either a way to create+drive the engine on the
   composition thread or a synchronous glTF-load path. Note: an aborting test in `commonTest` SIGABRTs the

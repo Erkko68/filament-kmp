@@ -2,7 +2,7 @@ package buildlogic.apigen.kotlin
 
 /**
  * Writes the common `@ExternalSymbolName external fun` of every Fila* function a C header declares, named like the
- * C symbol (web binds by global name). C types map to the types externals take (docs/bindings.md): any pointer is a
+ * C symbol (web binds by global name). C types map to the types externals take (docs/internals/bindings.md): any pointer is a
  * `NativePointer`, 32-bit integers and enums an `Int`, 64-bit ones a `Long`.
  */
 internal class KotlinExternalsWriter(typeHeaders: Collection<String>) {

@@ -1,6 +1,8 @@
 # Native Bindings
 
-How the Kotlin API reaches Filament. Read this before adding or changing a binding.
+How the Kotlin API reaches the C API on each platform. Read this before adding or changing a binding.
+Where the C API itself comes from (generated from Filament's C++ headers) is covered in
+[The Generated C API](c-api.md).
 
 ## The idea
 
@@ -54,10 +56,15 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
 Each class also exposes its handle as `@InternalFilamentApi val nativeObject: NativePointer`, for
 code that calls the C API directly.
 
-## The boundary's rules
+## Declaring a binding
 
-The generators follow these; a hand-written `c/<module>/manual` function must too, since its Kotlin
-external is generated from its header the same way.
+Adding API is almost always a regenerate: list the header in `c/api-headers.txt` (or pick up a new
+Filament release), run `./gradlew generateCApi generateKotlinExternals`, then write the public Kotlin
+method over the new external. Only a `TODO(handwritten)` needs C written by hand, in
+`c/<module>/manual` (see [The Generated C API](c-api.md#hand-written-leftovers-cmodulemanual)).
+
+The generators follow these rules at the boundary; a hand-written `manual` function must too, since its
+Kotlin external is generated from its header the same way.
 
 1. **The Kotlin function is named exactly like the C function**, repeated in `@ExternalSymbolName`.
    Web resolves it by the Kotlin name and Native by the annotation, so the two must match.
@@ -99,11 +106,13 @@ When pointers must outlive one call (a C++ builder that reads them at `build()`)
 scope ends; `ptr.fromInterop(array)` copies back what C wrote into it:
 
 ```kotlin
-fun getEntities(out: IntArray): IntArray = interopScope {
+// C: bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* out) — a std::optional<bool> result
+fun getFeatureFlag(name: String): Boolean? = interopScope {
+    val out = ByteArray(1)
     val ptr = toInterop(out)
-    FilaScene_getEntities(nativeHandle, ptr, out.size)
+    val present = FilaEngine_getFeatureFlag(nativeHandle, toInterop(name), ptr)
     ptr.fromInterop(out)
-    out
+    if (present) out[0] != 0.toByte() else null
 }
 ```
 
@@ -170,7 +179,7 @@ included. The convention plugin opts every source set in, as skiko does
 A common `external fun` compiles to a JNI `native` method on its file's facade class
 (`Scene.kt` → `io.github.erkko68.filament.SceneKt`, or the `@file:JvmName`). JNI only finds it
 under a mangled C name, so `:generateBindings`
-([`buildlogic.bindings`](../build-logic/src/main/kotlin/buildlogic/bindings)) scans
+([`buildlogic.apigen.externals`](../../build-logic/src/main/kotlin/buildlogic/apigen/externals)) scans
 `kotlin/*/src/commonMain` for `@ExternalSymbolName` externals and writes one forwarder each:
 
 ```c
@@ -185,7 +194,7 @@ forwarders include every `Fila*` header, so the C compiler checks each call agai
 Kotlin declaration that disagrees on arity or on pointer-vs-integer fails to compile.
 
 `Filament.init()` loads the library: `System.loadLibrary` on Android, and on desktop
-[`FilamentLoader`](../desktop/src/main/java/io/github/erkko68/filament/desktop/FilamentLoader.java),
+[`FilamentLoader`](../../desktop/src/main/java/io/github/erkko68/filament/desktop/FilamentLoader.java),
 which extracts it from the runtime jar into a content-hashed cache dir.
 
 ### Kotlin/Native: direct calls
@@ -202,7 +211,7 @@ other threads until it returns. Skiko has the same trade-off.
 
 A top-level `external fun` with no `@JsModule` resolves to a global of the same name on both js
 and wasmJs. As soon as `filament-kmp.wasm`'s runtime is up, it copies every `_FilaX` export onto
-`globalThis.FilaX` itself ([`fila-globals.js`](../web/src/wasm/fila-globals.js), linked in with
+`globalThis.FilaX` itself ([`fila-globals.js`](../../web/src/wasm/fila-globals.js), linked in with
 `--post-js`), so no Kotlin call has to come first.
 
 The js target sees raw wasm values, so `:generateBindings` also writes three lists from the Kotlin
@@ -235,7 +244,10 @@ strings and package bytes go through its own `useFilamatCString`/`readFilamatByt
 ./gradlew :kotlin:filament:connectedAndroidDeviceTest   # device or emulator
 ```
 
-## C structs
+## Value structs
 
-A few C structs stay in the headers as the flattened functions' implementation detail; they no longer
-cross the boundary.
+C++ value structs (`BloomOptions`, `Engine.Config`, `LightManager.ShadowOptions`) cross as handles, never
+by value: the C API gives each a `_create` (seeded with the C++ defaults), `_destroy` and a getter/setter
+per field. The Kotlin side is a plain class with `var` fields; a property like `View.bloomOptions` copies
+it into a temporary handle on set and out of one on get, so the getter returns a snapshot: mutate it and
+assign it back.

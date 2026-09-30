@@ -81,7 +81,7 @@ dependencies {
 }
 ```
 
-Full details in [`desktop/README.md`](../desktop/README.md).
+Full details in [`desktop/README.md`](../../desktop/README.md).
 
 ## Published artifacts
 
@@ -95,7 +95,7 @@ implementation("io.github.erkko68.filament:filament-compose:0.6.0")
 
 Provides `rememberFilamentScene` / `FilamentView` (and the `FilamentSceneView` single-view shortcut), the declarative scene DSL (`Light`, `GltfInstance`, …), value-based `PostProcessing`, hoisted state (`rememberCameraState`, `rememberFilamentViewState`, `rememberSkyboxState`, …), and gesture modifiers (`orbitGestures`, `mapGestures`, `flightGestures`, `pickOnTap`).
 
-See **[Compose Integration](compose/README.md)** for the full component reference.
+See **[Compose Integration](../compose/README.md)** for the full component reference.
 
 ---
 
