@@ -50,6 +50,7 @@ foreach(target filament-c-jni fila-jni-forwarders)
 endforeach()
 
 if (APPLE)
+    target_sources(filament-c-jni PRIVATE src/main/cpp/MetalHelper.mm)
     target_link_libraries(filament-c-jni PRIVATE
         "-framework Cocoa" "-framework Metal" "-framework QuartzCore" "-framework CoreVideo" "-framework OpenGL")
     target_link_options(filament-c-jni PRIVATE
@@ -58,10 +59,12 @@ if (APPLE)
         "LINKER:-dead_strip")
 elseif (WIN32)
     # A DLL exports only what's declared JNIEXPORT, which is exactly the seal.
-    # PlatformWGL / BlueGL need OpenGL + GDI; utils::Path needs shlwapi.
+    # PlatformWGL / BlueGL need OpenGL + GDI; utils::Path needs shlwapi. D3DHelper loads d3d12.dll itself.
+    target_sources(filament-c-jni PRIVATE src/main/cpp/D3DHelper.cpp)
     target_link_libraries(filament-c-jni PRIVATE opengl32 gdi32 user32 shlwapi)
 else()
-    target_link_libraries(filament-c-jni PRIVATE GL)
+    target_sources(filament-c-jni PRIVATE src/main/cpp/GlxHelper.cpp)
+    target_link_libraries(filament-c-jni PRIVATE GL ${CMAKE_DL_LIBS})
     target_link_options(filament-c-jni PRIVATE
         "LINKER:--version-script=${seal}"
         "LINKER:--gc-sections"

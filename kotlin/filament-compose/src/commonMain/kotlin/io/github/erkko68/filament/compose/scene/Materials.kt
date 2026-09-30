@@ -5,13 +5,13 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.utils.TextureLoader
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -74,7 +74,7 @@ internal fun rememberMaterial(
     bytes: ByteArray,
     onError: ((Throwable) -> Unit)? = null,
 ): Material? {
-    val material = remember(engine, bytes) {
+    val material = rememberOwned(engine, bytes, create = {
         try {
             Material.Builder().payload(bytes).build(engine)
         } catch (e: Throwable) {
@@ -82,7 +82,7 @@ internal fun rememberMaterial(
             // broadly so a failed build never crashes the app.
             null
         }
-    }
+    }) { engine.destroy(it) }
 
     if (material == null) {
         LaunchedEffect(bytes) {
@@ -91,12 +91,6 @@ internal fun rememberMaterial(
             )
         }
         return null
-    }
-
-    DisposableEffect(material) {
-        onDispose {
-            engine.destroy(material)
-        }
     }
 
     return material
@@ -144,9 +138,9 @@ internal fun rememberTexture(
     type: TextureLoader.TextureType = TextureLoader.TextureType.COLOR,
     onError: ((Throwable) -> Unit)? = null,
 ): Texture? {
-    val texture = remember(engine, bytes, type) {
+    val texture = rememberOwned(engine, bytes, type, create = {
         TextureLoader.loadTexture(engine, bytes, type)
-    }
+    }) { engine.destroy(it) }
 
     if (texture == null) {
         LaunchedEffect(bytes, type) {
@@ -155,12 +149,6 @@ internal fun rememberTexture(
             )
         }
         return null
-    }
-
-    DisposableEffect(texture) {
-        onDispose {
-            engine.destroy(texture)
-        }
     }
 
     return texture
@@ -190,13 +178,7 @@ fun rememberMaterialInstance(
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance? {
     if (material == null) return null
-    val instance = remember(material) { material.createInstance() }
-
-    DisposableEffect(instance) {
-        onDispose { engine.destroy(instance) }
-    }
-
-    return instance
+    return rememberInstance(engine, material)
 }
 
 /**
@@ -249,25 +231,23 @@ internal fun rememberConfiguredMaterialInstance(
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     configure: MaterialInstance.() -> Unit,
 ): MaterialInstance {
-    val instance = remember(material) {
-        material.createInstance()
-    }
+    val instance = rememberInstance(engine, material)
 
     // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op
-    // onDispose keeps this a pure setter — the instance's own teardown is the effect below.
+    // onDispose keeps this a pure setter — the instance's own teardown is in rememberInstance.
     DisposableEffect(instance, *keys) {
         instance.configure()
         onDispose { }
     }
 
-    DisposableEffect(instance) {
-        onDispose {
-            engine.destroy(instance)
-        }
-    }
-
     return instance
 }
+
+@Composable
+private fun rememberInstance(engine: Engine, material: Material): MaterialInstance =
+    rememberOwned(engine, material, dependsOn = listOf(material), create = { material.createInstance() }) {
+        engine.destroy(it)
+    }
 
 /** Sets a `float3` parameter from a [LinearColor], keeping call sites typed against the colour value class. */
 fun MaterialInstance.setParameter(name: String, color: LinearColor) =

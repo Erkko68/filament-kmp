@@ -135,6 +135,9 @@ fun main() {
 }
 ```
 
+Frames reach Compose through a CPU readback by default; to keep them on the GPU, see the experimental
+[GPU-to-GPU frame sharing](platform-notes.md#gpu-to-gpu-frame-sharing-experimental).
+
 ### Web / WASM
 
 > [!WARNING]

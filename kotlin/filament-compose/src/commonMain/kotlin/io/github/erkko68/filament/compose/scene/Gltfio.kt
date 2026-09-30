@@ -1,11 +1,10 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.scene.GltfioContext.Companion.acquire
 import io.github.erkko68.filament.gltfio.AssetConfiguration
 import io.github.erkko68.filament.gltfio.AssetLoader
@@ -65,10 +64,5 @@ internal class GltfioContext private constructor(
  * leaves the composition.
  */
 @Composable
-internal fun rememberGltfioContext(engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine()): GltfioContext {
-    val context = remember(engine) { GltfioContext.acquire(engine) }
-    DisposableEffect(engine) {
-        onDispose { GltfioContext.release(engine) }
-    }
-    return context
-}
+internal fun rememberGltfioContext(engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine()): GltfioContext =
+    rememberOwned(engine, create = { GltfioContext.acquire(engine) }) { GltfioContext.release(engine) }

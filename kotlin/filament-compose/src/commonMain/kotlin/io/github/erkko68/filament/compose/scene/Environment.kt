@@ -13,6 +13,7 @@ import io.github.erkko68.filament.utils.IBLPrefilterContext
 import io.github.erkko68.filament.utils.Ktx1Bundle
 import io.github.erkko68.filament.utils.Ktx1Reader
 import kotlin.coroutines.cancellation.CancellationException
+import io.github.erkko68.filament.compose.internal.rememberOwned
 
 /**
  * A loaded image-based-lighting environment: the [indirectLightState] that lights the scene and
@@ -87,9 +88,9 @@ fun rememberKTXEnvironment(
         value = loadOrReport(onError, ibl)
     }
     iblBytes?.let { bytes ->
-        val reflections = remember(engine, bytes) {
+        val reflections = rememberOwned(engine, bytes, create = {
             Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
-        }
+        }) { engine.destroy(it) }
         val sh = remember(bytes) { Ktx1Bundle(bytes).use { bundle -> FloatArray(9 * 3).takeIf { bundle.getSphericalHarmonics(it) } } }
         DisposableEffect(reflections, sh) {
             if (reflections != null) {
@@ -101,7 +102,6 @@ fun rememberKTXEnvironment(
             onDispose {
                 indirectLightState.reflections = null
                 indirectLightState.irradianceSh = null
-                reflections?.let { engine.destroy(it) }
             }
         }
     }
@@ -112,9 +112,9 @@ fun rememberKTXEnvironment(
             value = loadOrReport(onError, skybox)
         }
         skyBytes?.let { bytes ->
-            val texture = remember(engine, bytes) {
+            val texture = rememberOwned(engine, bytes, create = {
                 Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
-            }
+            }) { engine.destroy(it) }
             DisposableEffect(texture) {
                 if (texture != null) {
                     skyboxState.source = SkyboxSource.Cubemap(texture)
@@ -123,7 +123,6 @@ fun rememberKTXEnvironment(
                 }
                 onDispose {
                     skyboxState.source = null
-                    texture?.let { engine.destroy(it) }
                 }
             }
         }
@@ -184,7 +183,10 @@ fun rememberHDREnvironment(
     hdrBytes?.let { bytes ->
         // Decode the HDR and run the GPU prefilter once per (engine, bytes, format). The work is
         // enqueued on the command stream, not blocking, so composition stays responsive.
-        val prefiltered = remember(engine, bytes, format) { prefilterHdr(engine, bytes, format) }
+        val prefiltered = rememberOwned(engine, bytes, format, create = { prefilterHdr(engine, bytes, format) }) {
+            engine.destroy(it.reflections)
+            engine.destroy(it.skybox)
+        }
 
         DisposableEffect(prefiltered) {
             if (prefiltered != null) {
@@ -196,10 +198,6 @@ fun rememberHDREnvironment(
             onDispose {
                 indirectLightState.reflections = null
                 skyboxState?.source = null
-                prefiltered?.let {
-                    engine.destroy(it.reflections)
-                    engine.destroy(it.skybox)
-                }
             }
         }
     }

@@ -1,9 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Material
@@ -11,6 +9,8 @@ import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.internal.Owned
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.noFilamentEngine
 
 /**
@@ -70,13 +70,14 @@ enum class StandardMaterial {
 // write-once cache never observed as state.
 @Stable
 internal class StandardMaterialCache(val engine: Engine) {
-    private val cache = HashMap<StandardMaterial, Material>()
+    private val cache = HashMap<StandardMaterial, Owned<Material>>()
 
-    fun get(type: StandardMaterial): Material =
-        cache.getOrPut(type) { type.build(engine) }
+    fun get(type: StandardMaterial): Material = cache.getOrPut(type) {
+        Owned(type.build(engine), listOf(engine)) { engine.destroy(it) }
+    }.value
 
     fun dispose() {
-        for (material in cache.values) engine.destroy(material)
+        for (material in cache.values) material.release()
         cache.clear()
     }
 }
@@ -107,11 +108,9 @@ fun rememberStandardMaterial(
         cache.get(type)
     } else {
         // Hoisted engine outside a scene: this call site owns the material.
-        val material = remember(engine, type) { type.build(engine) }
-        DisposableEffect(material) {
-            onDispose { engine.destroy(material) }
+        rememberOwned(engine, type, create = { type.build(engine) }) {
+            engine.destroy(it)
         }
-        material
     }
 }
 

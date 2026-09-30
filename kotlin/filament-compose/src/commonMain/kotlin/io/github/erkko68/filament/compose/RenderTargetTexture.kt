@@ -3,7 +3,6 @@ package io.github.erkko68.filament.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.remember
 import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.Viewport
@@ -12,6 +11,7 @@ import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.compose.internal.rememberOwned
 
 /**
  * Renders a [FilamentScene] off-screen through its own camera into a [Texture] that you can feed
@@ -57,7 +57,7 @@ fun rememberRenderTargetTexture(
     val engine = scene.engine
     if (width <= 0 || height <= 0) return null
 
-    val color = remember(engine, width, height) {
+    val color = rememberOwned(engine, width, height, create = {
         runCatching {
             Texture.Builder()
                 .width(width).height(height).levels(1)
@@ -66,9 +66,9 @@ fun rememberRenderTargetTexture(
                 .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
                 .build(engine)
         }.getOrNull()
-    } ?: return null
+    }) { engine.destroy(it) } ?: return null
 
-    val depth = remember(engine, width, height) {
+    val depth = rememberOwned(engine, width, height, create = {
         runCatching {
             Texture.Builder()
                 .width(width).height(height).levels(1)
@@ -77,9 +77,9 @@ fun rememberRenderTargetTexture(
                 .usage(Texture.Usage.DEPTH_ATTACHMENT)
                 .build(engine)
         }.getOrNull()
-    }
+    }) { engine.destroy(it) }
 
-    val target = remember(engine, color, depth) {
+    val target = rememberOwned(engine, color, depth, dependsOn = listOf(color, depth), create = {
         runCatching {
             RenderTarget.Builder()
                 .texture(RenderTarget.AttachmentPoint.COLOR, color)
@@ -90,11 +90,14 @@ fun rememberRenderTargetTexture(
                 }
                 .build(engine)
         }.getOrNull()
-    } ?: return null
+    }) { engine.destroy(it) } ?: return null
 
-    val view     = remember(engine) { engine.createView() }
-    val camera   = remember(engine) { engine.createCamera(engine.entityManager.create()) }
-    val renderer = remember(engine) { engine.createRenderer() }
+    val view     = rememberOwned(engine, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroy(it) }
+    val camera   = rememberOwned(engine, create = { engine.createCamera(engine.entityManager.create()) }) {
+        engine.destroyCameraComponent(it.entity)
+        engine.entityManager.destroy(it.entity)
+    }
+    val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroy(it) }
 
     // Wire the off-screen view. Keyed effect rather than a `remember` block — see FilamentView.
     DisposableEffect(view, scene.scene, camera, target, width, height) {
@@ -123,18 +126,6 @@ fun rememberRenderTargetTexture(
     DisposableEffect(cameraState, camera) {
         cameraState.attach(camera)
         onDispose { cameraState.detach(camera) }
-    }
-
-    DisposableEffect(engine, color, depth, target, view, camera, renderer) {
-        onDispose {
-            engine.destroy(renderer)
-            engine.destroy(view)
-            engine.destroyCameraComponent(camera.entity)
-            engine.entityManager.destroy(camera.entity)
-            engine.destroy(target)
-            engine.destroy(color)
-            depth?.let { engine.destroy(it) }
-        }
     }
 
     FilamentRenderLoop { renderer.renderStandaloneView(view) }

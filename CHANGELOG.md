@@ -27,7 +27,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Desktop runs on JNI instead of Project Panama (FFM)**: `filament-ffm*` is replaced by `filament-jni-desktop` + `filament-jni-runtime-<os>-<arch>` (group `io.github.erkko68.filament`), `NativeSurface` takes the window as a `Long` address, and the JVM floor drops from 22 to **17**.
 
 ### Added
-- **`./gradlew apiGaps`** (build): reports the Filament C++ API `c/` doesn't call (clang's AST + linker symbols, inline methods included); replaces `check-common-api.sh`.
+- **Experimental GPU-to-GPU frame sharing on Compose Desktop** (`filament-compose`): `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` skips the per-frame CPU readback on macOS (Metal), Windows (D3D12) and Linux (OpenGL), falling back to readback on failure.
+- **`./gradlew apiGaps`** (build): reports the Filament C++ API `c/` doesn't call (clang's AST + linker symbols, inline methods included) and `Fila*` functions without a Kotlin external; replaces `check-common-api.sh`.
 - **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` stops the render loop and keeps the last frame on screen, so a static or hidden view no longer renders every display refresh.
 - **JVM runtime for Windows on ARM**: `filament-jni-runtime-windows-arm64`, with Filament built from source since upstream ships no prebuilts for it.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `MaterialBuilder.initJs`.
@@ -38,6 +39,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED`, and **`MorphTargetBuffer.setPositionsAt` reads 3 floats per vertex** as documented, not 4 (`filament`).
 - **Compose no longer leaks a `ToneMapper` per color grade** (`filament-compose`).
 - **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform; they now reach Filament.
+- **Compose teardown no longer aborts the app** when scenes sit in a `LazyColumn` or other subcomposition, a composition pass is discarded, a glTF asset leaves mid-load, or `rememberRenderTargetTexture` resizes: Filament objects are now destroyed after everything created from them. Reported by [@kdroidFilter](https://github.com/kdroidFilter) in [#166](https://github.com/Erkko68/filament-kmp/pull/166).
 - **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph target count/weights, gltfio instance/material queries, shadow options, `customLut`, `geometryType` and more now work on web.
 
 ### Removed
