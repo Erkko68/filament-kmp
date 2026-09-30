@@ -41,8 +41,9 @@ class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
 
         val context = IBLPrefilterContext(engine)
         val toCubemap = IBLPrefilterContext.EquirectangularToCubemap(context)
-        val specular = IBLPrefilterContext.SpecularFilter(context)
-        val irradiance = IBLPrefilterContext.IrradianceFilter(context)
+        // Few samples: default 1024 overruns Mocha's 30s timeout under CI's SwiftShader.
+        val specular = IBLPrefilterContext.SpecularFilter(context, IBLPrefilterContext.SpecularFilter.Config(sampleCount = 16))
+        val irradiance = IBLPrefilterContext.IrradianceFilter(context, IBLPrefilterContext.IrradianceFilter.Config(sampleCount = 16))
         val cubemap = toCubemap(equirect)
         assertTrue(engine.isValid(cubemap))
 
