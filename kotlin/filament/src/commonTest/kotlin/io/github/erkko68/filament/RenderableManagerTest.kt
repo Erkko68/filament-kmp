@@ -40,7 +40,7 @@ class RenderableManagerTest : FilamentTestFixture() {
         // TODO: Building a renderable with a material instance is commented out because material creation panics under NOOP.
         // RenderableManager.Builder(1)
         //     .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
-        //     .geometryType(RenderableManager.GeometryType.STATIC)
+        //     .geometryType(RenderableManager.Builder.GeometryType.STATIC)
         //     .material(0, matInst)
         //     .boundingBox(boundingBox)
         //     .culling(true)
@@ -68,16 +68,16 @@ class RenderableManagerTest : FilamentTestFixture() {
         // rm.setChannel(inst, 2)
         // assertEquals(2, rm.getChannel(inst))
 
-        // rm.setCullingEnabled(inst, false)
+        // rm.setCulling(inst, false)
         // assertTrue(!rm.isCullingEnabled(inst))
 
         // rm.setFogEnabled(inst, false)
-        // assertTrue(!rm.isFogEnabled(inst))
+        // assertTrue(!rm.getFogEnabled(inst))
 
-        // rm.setShadowCaster(inst, false)
+        // rm.setCastShadows(inst, false)
         // assertTrue(!rm.isShadowCaster(inst))
 
-        // rm.setShadowReceiver(inst, false)
+        // rm.setReceiveShadows(inst, false)
         // assertTrue(!rm.isShadowReceiver(inst))
 
         // rm.setScreenSpaceContactShadows(inst, false)
@@ -103,8 +103,8 @@ class RenderableManagerTest : FilamentTestFixture() {
         //     .boneCount(10)
         //     .build(engine)
         // rm.setSkinningBuffer(inst, sb, 10, 0)
-        // rm.setBonesAsMatrices(inst, FloatArray(160), 10, 0)
-        // rm.setBonesAsQuaternions(inst, FloatArray(80), 10, 0)
+        // rm.setBones(inst, FloatArray(160), 10, 0)
+        // rm.setBones(inst, Array(10) { RenderableManager.Bone() })
 
         // // Clean up
         // rm.clearMaterialInstanceAt(inst, 0)

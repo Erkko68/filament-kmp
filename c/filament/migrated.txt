@@ -27,3 +27,5 @@ FilaTransformManager
 FilaTexture
 FilaColor
 FilaGeometrySurfaceOrientation
+FilaLightManager
+FilaRenderableManager

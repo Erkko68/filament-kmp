@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -43,119 +44,105 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
-    /**
-     * Primitive topology types.
-     */
+    /** Primitive topology types. */
     enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
+
     /**
-     * Type of geometry for a Renderable.
+     * A bone transform as a unit quaternion and a translation, the compact alternative to a 4x4 matrix.
      */
-    enum class GeometryType {
-        /**
-         * Dynamic geometry has no restriction
-         */
-        DYNAMIC,
-        /**
-         * Bounds and world space transform are immutable
-         */
-        STATIC_BOUNDS,
-        /**
-         * Skinning/morphing not allowed and Vertex/IndexBuffer immutables
-         */
-        STATIC
+    class Bone {
+        /** Rotation as a unit quaternion in (x, y, z, w) order. Default: identity. */
+        var unitQuaternion: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
+        /** Translation (x, y, z). Default: zero. */
+        var translation: FloatArray = FloatArray(3)
     }
 
     /**
      * Adds renderable components to entities using a builder pattern.
+     *
+     * @param count the number of primitives that will be supplied to the builder
      */
     class Builder(count: Int) {
         private val nativeBuilder = FilaRenderableManagerBuilder_create(count)
-        // The C++ builder keeps the bones pointer until build(), so the copy lives until then.
+        // The C++ builder keeps bone/weight pointers until build(), so the copies live until then.
         private val scope = InteropScope()
 
-        /**
-         * Specifies the geometry data for a primitive.
-         *
-         * Associates a vertex buffer and an index buffer with a primitive. Typically, each
-         * primitive is specified with a pair of daisy-chained calls: geometry(...) and
-         * material(...).
-         *
-         * @param index zero-based index of the primitive, must be less than the count passed to Builder constructor
-         * @param type specifies the topology of the primitive (e.g., PrimitiveType.TRIANGLES)
-         * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
-         * @param ib specifies the index buffer (either u16 or u32)
-         * @return Builder reference for chaining calls.
-         */
-        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_geometry(nativeBuilder, index, type.toNative(), vb.nativeHandle, ib.nativeHandle)
+        /** Outcome of [build]. */
+        enum class Result { Error, Success }
+
+        /** Type of geometry for a Renderable. */
+        enum class GeometryType {
+            /** Dynamic geometry has no restriction */
+            DYNAMIC,
+            /** Bounds and world space transform are immutable */
+            STATIC_BOUNDS,
+            /** Skinning/morphing not allowed and Vertex/IndexBuffer immutables */
+            STATIC
         }
-        /**
-         * Specifies the geometry data for a primitive with offset and count.
-         *
-         * @param index zero-based index of the primitive, must be less than the count passed to Builder constructor
-         * @param type specifies the topology of the primitive (e.g., PrimitiveType.TRIANGLES)
-         * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
-         * @param ib specifies the index buffer (either u16 or u32)
-         * @param offset specifies where in the index buffer to start reading (expressed as a number of indices)
-         * @param count number of indices to read (for triangles, this should be a multiple of 3)
-         * @return Builder reference for chaining calls.
-         */
-        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index, type.toNative(), vb.nativeHandle, ib.nativeHandle, offset, count)
+
+        companion object {
+            /** The channel renderables use by default. */
+            const val DEFAULT_CHANNEL: Int = 2
         }
+
         /**
          * Specifies the geometry data for a primitive with explicit min/max indices.
          *
          * @param index zero-based index of the primitive, must be less than the count passed to Builder constructor
          * @param type specifies the topology of the primitive (e.g., PrimitiveType.TRIANGLES)
-         * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
-         * @param ib specifies the index buffer (either u16 or u32)
+         * @param vertices specifies the vertex buffer, which in turn specifies a set of attributes
+         * @param indices specifies the index buffer (either u16 or u32)
          * @param offset specifies where in the index buffer to start reading (expressed as a number of indices)
          * @param minIndex specifies the minimum index contained in the index buffer
          * @param maxIndex specifies the maximum index contained in the index buffer
          * @param count number of indices to read (for triangles, this should be a multiple of 3)
          * @return Builder reference for chaining calls.
          */
-        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index, type.toNative(), vb.nativeHandle, ib.nativeHandle, offset, minIndex, maxIndex, count)
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
+            FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(nativeBuilder, index, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, minIndex, maxIndex, count)
         }
         /**
-         * Specifies the geometry data for a primitive (non-indexed version).
+         * Specifies the geometry data for a primitive with offset and count.
          *
-         * Filament primitives normally have an associated vertex buffer and index buffer. Typically,
-         * each primitive is specified with a pair of daisy-chained calls: geometry(...) and
+         * @param offset specifies where in the index buffer to start reading (expressed as a number of indices)
+         * @param count number of indices to read (for triangles, this should be a multiple of 3)
+         * @return Builder reference for chaining calls.
+         */
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int): Builder = apply {
+            FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(nativeBuilder, index, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, count)
+        }
+        /**
+         * Specifies the geometry data for a primitive, using the whole index buffer.
+         *
+         * Typically, each primitive is specified with a pair of daisy-chained calls: geometry(...) and
          * material(...).
          *
-         * Non-indexed rendering: when indices are not provided, the primitive is treated as a
-         * non-indexed draw and offset / count refer to vertex offset and vertex count
-         * respectively.
+         * @return Builder reference for chaining calls.
+         */
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer): Builder = apply {
+            FilaRenderableManagerBuilder_geometry_IndexBuffer(nativeBuilder, index, type.toNative(), vertices.nativeHandle, indices.nativeHandle)
+        }
+        /**
+         * Specifies the geometry data for a non-indexed primitive: offset / count refer to vertices.
          *
-         * Attribute-less rendering: This can be used for procedural rendering, where the vertex
-         * shader generates positions, UVs, etc procedurally, typically from gl_VertexIndex /
-         * gl_VertexID. The associated VertexBuffer may have bufferCount == 0 with
-         * no declared attributes. Attribute-less rendering requires FEATURE_LEVEL_1 or higher
-         * as GLES2 has no gl_VertexID and is incompatible with skinning and morphing.
+         * Attribute-less rendering: the vertex shader can generate positions procedurally from
+         * gl_VertexIndex / gl_VertexID, with a VertexBuffer that has bufferCount == 0. This requires
+         * FEATURE_LEVEL_1 or higher and is incompatible with skinning and morphing.
          *
-         * @param index zero-based index of the primitive, must be less than the count passed to Builder constructor
-         * @param type specifies the topology of the primitive (e.g., PrimitiveType.TRIANGLES)
-         * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
          * @param offset specifies where in the vertex buffer to start reading (expressed as a number of vertices)
          * @param count number of vertices to read (for triangles, this should be a multiple of 3)
          * @return Builder reference for chaining calls.
          */
-        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometryNonIndexed(nativeBuilder, index, type.toNative(), vb.nativeHandle, offset, count)
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, offset: Int, count: Int): Builder = apply {
+            FilaRenderableManagerBuilder_geometry_size_t_size_t(nativeBuilder, index, type.toNative(), vertices.nativeHandle, offset, count)
         }
         /**
-         * Specifies the geometry data for a primitive using all vertices (non-indexed version).
+         * Specifies the geometry data for a non-indexed primitive using all vertices.
          *
-         * @param index zero-based index of the primitive, must be less than the count passed to Builder constructor
-         * @param type specifies the topology of the primitive (e.g., PrimitiveType.TRIANGLES)
-         * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
          * @return Builder reference for chaining calls.
          */
-        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index, type.toNative(), vb.nativeHandle)
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer): Builder = apply {
+            FilaRenderableManagerBuilder_geometry(nativeBuilder, index, type.toNative(), vertices.nativeHandle)
         }
 
         /**
@@ -176,10 +163,8 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * Binds a material instance to the specified primitive.
          *
          * If no material is specified for a given primitive, Filament will fall back to a basic
-         * default material.
-         *
-         * The MaterialInstance's material must have a feature level equal or lower to the engine's
-         * selected feature level.
+         * default material. The MaterialInstance's material must have a feature level equal or lower
+         * to the engine's selected feature level.
          *
          * @param index zero-based index of the primitive, must be less than the count passed to
          * Builder constructor
@@ -190,41 +175,17 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
             FilaRenderableManagerBuilder_material(nativeBuilder, index, materialInstance.nativeHandle)
         }
         /**
-         * Sets the drawing order for blended primitives. The drawing order is either global or
-         * local (default) to this Renderable. In either case, the Renderable priority takes
-         * precedence.
-         *
-         * @param primitiveIndex the primitive of interest
-         * @param blendOrder draw order number (0 by default). Only the lowest 15 bits are used.
-         * @return Builder reference for chaining calls.
-         */
-        fun blendOrder(index: Int, blendOrder: Int): Builder = apply {
-            FilaRenderableManagerBuilder_blendOrder(nativeBuilder, index, blendOrder)
-        }
-        /**
-         * Sets whether the blend order is global or local to this Renderable (by default).
-         *
-         * @param primitiveIndex the primitive of interest
-         * @param enabled true for global, false for local blend ordering.
-         * @return Builder reference for chaining calls.
-         */
-        fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder = apply {
-            FilaRenderableManagerBuilder_globalBlendOrderEnabled(nativeBuilder, index, enabled)
-        }
-        /**
          * The axis-aligned bounding box of the renderable.
          *
          * This is an object-space AABB used for frustum culling. For skinning and morphing, this
          * should encompass all possible vertex positions. It is mandatory unless culling is
          * disabled for the renderable.
          *
-         * @param box axis-aligned bounding box
+         * @param axisAlignedBoundingBox axis-aligned bounding box
          * @return Builder reference for chaining calls.
          */
-        fun boundingBox(box: Box): Builder = apply {
-            FilaRenderableManagerBuilder_boundingBox(nativeBuilder, 
-                box.center[0], box.center[1], box.center[2],
-                box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
+        fun boundingBox(axisAlignedBoundingBox: Box): Builder = apply {
+            axisAlignedBoundingBox.toFloats().usePinned { FilaRenderableManagerBuilder_boundingBox(nativeBuilder, it) }
         }
         /**
          * Sets bits in a visibility mask. By default, this is 0x1.
@@ -235,27 +196,17 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * For example, to set bit 1 and reset bits 0 and 2 while leaving all other bits unaffected,
          * do: builder.layerMask(7, 2).
          *
-         * To change this at run time, see RenderableManager.setLayerMask.
-         *
          * @param select the set of bits to affect
-         * @param value the replacement values for the affected bits
+         * @param values the replacement values for the affected bits
          * @return Builder reference for chaining calls.
          */
-        fun layerMask(select: Int, value: Int): Builder = apply { FilaRenderableManagerBuilder_layerMask(nativeBuilder, select, value) }
+        fun layerMask(select: Int, values: Int): Builder = apply { FilaRenderableManagerBuilder_layerMask(nativeBuilder, select, values) }
         /**
          * Provides coarse-grained control over draw order.
          *
-         * In general Filament reserves the right to re-order renderables to allow for efficient
-         * rendering. However clients can control ordering at a coarse level using priority.
          * The priority is applied separately for opaque and translucent objects, that is, opaque
-         * objects are always drawn before translucent objects regardless of the priority.
-         *
-         * For example, this could be used to draw a semitransparent HUD on top of everything,
-         * without using a separate View. Note that priority is completely orthogonal to
-         * Builder.layerMask, which merely controls visibility.
-         *
-         * The Skybox always using the lowest priority, so it's drawn last, which may improve
-         * performance.
+         * objects are always drawn before translucent objects regardless of the priority. Priority is
+         * orthogonal to [layerMask], which merely controls visibility.
          *
          * @param priority clamped to the range [0..7], defaults to 4; 7 is lowest priority
          *                 (rendered last).
@@ -266,12 +217,11 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * Set the channel this renderable is associated to. There can be 8 channels.
          * All renderables in a given channel are rendered together, regardless of anything else.
          * They are sorted as usual within a channel.
-         * Channels work similarly to priorities, except that they enforce the strongest ordering.
          *
          * Channels 0 and 1 may not have render primitives using a material with refractionType
          * set to screenspace.
          *
-         * @param channel clamped to the range [0..7], defaults to 2.
+         * @param channel clamped to the range [0..7], defaults to [DEFAULT_CHANNEL].
          * @return Builder reference for chaining calls.
          */
         fun channel(channel: Int): Builder = apply { FilaRenderableManagerBuilder_channel(nativeBuilder, channel) }
@@ -281,135 +231,56 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * Note: Do not confuse frustum culling with backface culling. The latter is controlled via
          * the material.
          *
-         * @param enabled whether frustum culling is enabled
+         * @param enable whether frustum culling is enabled
          * @return Builder reference for chaining calls.
          */
-        fun culling(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_culling(nativeBuilder, enabled) }
+        fun culling(enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_culling(nativeBuilder, enable) }
+        /**
+         * Enables or disables a light channel. Light channel 0 is enabled by default.
+         *
+         * @param channel Light channel to enable or disable, between 0 and 7.
+         * @param enable Whether to enable or disable the light channel.
+         * @return Builder reference for chaining calls.
+         */
+        fun lightChannel(channel: Int, enable: Boolean = true): Builder = apply { FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
         /**
          * Controls if this renderable casts shadows, false by default.
          *
          * If the View's shadow type is set to ShadowType.VSM, castShadows should only be disabled
-         * if either is true:
-         *   - receiveShadows is also disabled
-         *   - the object is guaranteed to not cast shadows on itself or other objects (for example,
-         *     a ground plane)
+         * if either receiveShadows is also disabled, or the object is guaranteed to not cast shadows
+         * on itself or other objects (for example, a ground plane).
          *
-         * @param enabled whether shadow casting is enabled
+         * @param enable whether shadow casting is enabled
          * @return Builder reference for chaining calls.
          */
-        fun castShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_castShadows(nativeBuilder, enabled) }
+        fun castShadows(enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_castShadows(nativeBuilder, enable) }
         /**
          * Controls if this renderable receives shadows, true by default.
          *
-         * @param enabled whether shadow receiving is enabled
+         * @param enable whether shadow receiving is enabled
          * @return Builder reference for chaining calls.
          */
-        fun receiveShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_receiveShadows(nativeBuilder, enabled) }
+        fun receiveShadows(enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_receiveShadows(nativeBuilder, enable) }
         /**
          * Controls if this renderable uses screen-space contact shadows. This is more
          * expensive but can improve the quality of shadows, especially in large scenes.
          * (off by default).
          *
-         * @param enabled whether screen-space contact shadows are enabled
+         * @param enable whether screen-space contact shadows are enabled
          * @return Builder reference for chaining calls.
          */
-        fun screenSpaceContactShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enabled) }
-        /**
-         * Enables GPU vertex skinning for up to 255 bones, 0 by default.
-         *
-         * Skinning Buffer mode must be disabled.
-         *
-         * Each vertex can be affected by up to 4 bones simultaneously. The attached
-         * VertexBuffer must provide data in the BONE_INDICES slot (uvec4) and the
-         * BONE_WEIGHTS slot (float4).
-         *
-         * See also RenderableManager.setBonesAsMatrices() or RenderableManager.setBonesAsQuaternions(),
-         * which can be called on a per-frame basis to advance the animation.
-         *
-         * @param boneCount 0 to disable, otherwise the number of bone transforms (up to 255)
-         * @return Builder reference for chaining calls.
-         */
-        fun skinning(boneCount: Int): Builder = apply { FilaRenderableManagerBuilder_skinning(nativeBuilder, boneCount) }
-        /**
-         * Enables GPU vertex skinning for up to 255 bones with initial bone transforms, 0 by default.
-         *
-         * Skinning Buffer mode must be disabled.
-         *
-         * Each vertex can be affected by up to 4 bones simultaneously. The attached
-         * VertexBuffer must provide data in the BONE_INDICES slot (uvec4) and the
-         * BONE_WEIGHTS slot (float4).
-         *
-         * See also RenderableManager.setBonesAsMatrices() or RenderableManager.setBonesAsQuaternions(),
-         * which can be called on a per-frame basis to advance the animation.
-         *
-         * @param boneCount the number of bone transforms (up to 255)
-         * @param bones the initial set of transforms (one for each bone)
-         * @return Builder reference for chaining calls.
-         */
-        fun skinning(boneCount: Int, bones: FloatArray): Builder = apply {
-            FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount, scope.toInterop(bones))
-        }
+        fun screenSpaceContactShadows(enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enable) }
         /**
          * Allows bones to be swapped out and shared using SkinningBuffer.
          *
          * If skinning buffer mode is enabled, clients must call setSkinningBuffer() rather than
-         * setBonesAsMatrices() or setBonesAsQuaternions(). This allows sharing of data between renderables.
+         * setBones(). This allows sharing of data between renderables.
          *
-         * @param skinningBuffer the SkinningBuffer to use
-         * @param boneCount the number of bone transforms (up to 255)
-         * @param offset offset in the SkinningBuffer
+         * @param enabled If true, enables buffer object mode. False by default.
          * @return Builder reference for chaining calls.
          */
-        fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
-            FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount, offset)
-        }
-        /**
-         * Allows bones to be swapped out and shared using SkinningBuffer. This method must be
-         * called before skinning() for buffer-mode skinning.
-         *
-         * If skinning buffer mode is enabled, clients must call setSkinningBuffer() rather than
-         * setBonesAsMatrices() or setBonesAsQuaternions(). This allows sharing of data between renderables.
-         *
-         * @param enabled If true, enables buffer object mode.  False by default.
-         * @return Builder reference for chaining calls.
-         */
-        fun enableSkinningBuffers(enabled: Boolean): Builder = apply {
+        fun enableSkinningBuffers(enabled: Boolean = true): Builder = apply {
             FilaRenderableManagerBuilder_enableSkinningBuffers(nativeBuilder, enabled)
-        }
-        /**
-         * Controls if the renderable has legacy vertex morphing targets, zero by default. This is
-         * required to enable GPU morphing.
-         *
-         * For legacy morphing, the attached VertexBuffer must provide data in the
-         * appropriate VertexAttribute slots (MORPH_POSITION_0 etc). Legacy morphing only
-         * supports up to 4 morph targets and will be deprecated in the future. Legacy morphing must
-         * be enabled on the material definition: either via the legacyMorphing material attribute
-         * or by calling filamat.MaterialBuilder.useLegacyMorphing().
-         *
-         * See also RenderableManager.setMorphWeights(), which can be called on a per-frame basis
-         * to advance the animation.
-         *
-         * @param targetCount the number of morph targets
-         * @return Builder reference for chaining calls.
-         */
-        fun morphing(targetCount: Int): Builder = apply { FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount) }
-        /**
-         * Controls if the renderable has vertex morphing targets, zero by default. This is
-         * required to enable GPU morphing.
-         *
-         * Filament supports two morphing modes: standard (default) and legacy.
-         *
-         * For standard morphing, A MorphTargetBuffer must be provided.
-         * Standard morphing supports up to CONFIG_MAX_MORPH_TARGET_COUNT morph targets.
-         *
-         * See also RenderableManager.setMorphWeights(), which can be called on a per-frame basis
-         * to advance the animation.
-         *
-         * @param morphTargetBuffer the morph target buffer
-         * @return Builder reference for chaining calls.
-         */
-        fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
         }
         /**
          * Controls if this renderable is affected by the large-scale fog.
@@ -418,25 +289,125 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          *                True by default.
          * @return Builder reference for chaining calls.
          */
-        fun fog(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
+        fun fog(enabled: Boolean = true): Builder = apply { FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
         /**
-         * Enables or disables a light channel. Light channel 0 is enabled by default.
+         * Enables GPU vertex skinning from a region of a SkinningBuffer.
          *
-         * @param channel Light channel to enable or disable, between 0 and 7.
-         * @param enable Whether to enable or disable the light channel.
+         * @param skinningBuffer the SkinningBuffer to use
+         * @param count the number of bones to use (up to 256)
+         * @param offset offset in the SkinningBuffer
          * @return Builder reference for chaining calls.
          */
-        fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
+        fun skinning(skinningBuffer: SkinningBuffer, count: Int, offset: Int): Builder = apply {
+            FilaRenderableManagerBuilder_skinning_SkinningBuffer_size_t_size_t(nativeBuilder, skinningBuffer.nativeHandle, count, offset)
+        }
+        /**
+         * Enables GPU vertex skinning for up to 255 bones with initial bone transforms.
+         *
+         * Skinning Buffer mode must be disabled. Each vertex can be affected by up to 4 bones
+         * simultaneously. The attached VertexBuffer must provide data in the BONE_INDICES slot
+         * (uvec4) and the BONE_WEIGHTS slot (float4).
+         *
+         * @param boneCount the number of bone transforms (up to 255)
+         * @param transforms the initial 4x4 transforms, 16 floats per bone
+         * @return Builder reference for chaining calls.
+         */
+        fun skinning(boneCount: Int, transforms: FloatArray): Builder = apply {
+            FilaRenderableManagerBuilder_skinning_size_t_mat4f(nativeBuilder, boneCount, scope.toInterop(transforms))
+        }
+        /**
+         * Enables GPU vertex skinning for up to 255 bones with initial bone transforms.
+         *
+         * @param boneCount the number of bone transforms (up to 255)
+         * @param bones the initial set of transforms (one for each bone)
+         * @return Builder reference for chaining calls.
+         */
+        fun skinning(boneCount: Int, bones: Array<Bone>): Builder = apply {
+            FilaRenderableManagerBuilder_skinning_size_t_Bone(nativeBuilder, boneCount, scope.toInterop(bones.toFloats()))
+        }
+        /**
+         * Enables GPU vertex skinning for up to 255 bones, 0 by default.
+         *
+         * @param boneCount 0 to disable, otherwise the number of bone transforms (up to 255)
+         * @return Builder reference for chaining calls.
+         */
+        fun skinning(boneCount: Int): Builder = apply { FilaRenderableManagerBuilder_skinning_size_t(nativeBuilder, boneCount) }
+        /**
+         * Defines bone indices and weights pairs for vertex skinning, for primitives with more
+         * than 4 bones per vertex.
+         *
+         * @param primitiveIndex zero-based index of the primitive
+         * @param indicesAndWeights (bone index, weight) pairs, 2 floats per pair
+         * @param count number of pairs
+         * @param bonesPerVertex number of bones per vertex
+         * @return Builder reference for chaining calls.
+         */
+        fun boneIndicesAndWeights(primitiveIndex: Int, indicesAndWeights: FloatArray, count: Int, bonesPerVertex: Int): Builder = apply {
+            FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(nativeBuilder, primitiveIndex, scope.toInterop(indicesAndWeights), count, bonesPerVertex)
+        }
+        /**
+         * Controls if the renderable has legacy vertex morphing targets, zero by default.
+         *
+         * For legacy morphing, the attached VertexBuffer must provide data in the
+         * appropriate VertexAttribute slots (MORPH_POSITION_0 etc). Legacy morphing only
+         * supports up to 4 morph targets.
+         *
+         * @param targetCount the number of morph targets
+         * @return Builder reference for chaining calls.
+         */
+        fun morphing(targetCount: Int): Builder = apply { FilaRenderableManagerBuilder_morphing_size_t(nativeBuilder, targetCount) }
+        /**
+         * Controls if the renderable has vertex morphing targets, zero by default.
+         *
+         * For standard morphing, a MorphTargetBuffer must be provided. See also
+         * [RenderableManager.setMorphWeights], which can be called on a per-frame basis
+         * to advance the animation.
+         *
+         * @param morphTargetBuffer the morph target buffer
+         * @return Builder reference for chaining calls.
+         */
+        fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
+            FilaRenderableManagerBuilder_morphing_MorphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
+        }
+        /**
+         * Specifies the morph target buffer offset for a primitive.
+         *
+         * @param level the level of detail (lod), only 0 can be specified
+         * @param primitiveIndex zero-based index of the primitive
+         * @param offset specifies where in the morph target buffer to start reading (expressed as a number of vertices)
+         * @return Builder reference for chaining calls.
+         */
+        fun morphing(level: Int, primitiveIndex: Int, offset: Int): Builder = apply {
+            FilaRenderableManagerBuilder_morphing_uint8_t_size_t_size_t(nativeBuilder, level, primitiveIndex, offset)
+        }
+        /**
+         * Sets the drawing order for blended primitives. The drawing order is either global or
+         * local (default) to this Renderable. In either case, the Renderable priority takes
+         * precedence.
+         *
+         * @param primitiveIndex the primitive of interest
+         * @param blendOrder draw order number (0 by default). Only the lowest 15 bits are used.
+         * @return Builder reference for chaining calls.
+         */
+        fun blendOrder(primitiveIndex: Int, blendOrder: Int): Builder = apply {
+            FilaRenderableManagerBuilder_blendOrder(nativeBuilder, primitiveIndex, blendOrder)
+        }
+        /**
+         * Sets whether the blend order is global or local to this Renderable (by default).
+         *
+         * @param primitiveIndex the primitive of interest
+         * @param enabled true for global, false for local blend ordering.
+         * @return Builder reference for chaining calls.
+         */
+        fun globalBlendOrderEnabled(primitiveIndex: Int, enabled: Boolean): Builder = apply {
+            FilaRenderableManagerBuilder_globalBlendOrderEnabled(nativeBuilder, primitiveIndex, enabled)
+        }
         /**
          * Specifies the number of draw instances of this renderable. The default is 1 instance and
          * the maximum number of instances allowed is 32767. 0 is invalid.
          *
-         * All instances are culled using the same bounding box, so care must be taken to make
-         * sure all instances render inside the specified bounding box.
-         *
-         * The material must set its instanced parameter to true in order to use
-         * getInstanceIndex() in the vertex or fragment shader to get the instance index and
-         * possibly adjust the position or transform.
+         * All instances are culled using the same bounding box. The material must set its instanced
+         * parameter to true in order to use getInstanceIndex() in the shaders.
          *
          * @param instanceCount the number of instances silently clamped between 1 and 32767.
          * @return Builder reference for chaining calls.
@@ -445,54 +416,60 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
         /**
          * Adds the Renderable component to an entity.
          *
-         * @param engine Reference to the filament Engine to associate this Renderable with.
-         * @param entity Entity to add the Renderable component to.
-         *
          * If this component already exists on the given entity and the construction is successful,
          * it is first destroyed as if destroy(entity) was called. In case of error,
          * the existing component is unmodified.
+         *
+         * @param engine Reference to the filament Engine to associate this Renderable with.
+         * @param entity Entity to add the Renderable component to.
+         * @return [Result.Success] if the component was created
          */
-        fun build(engine: Engine, entity: Entity) {
-            FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
+        fun build(engine: Engine, entity: Entity): Result {
+            val result = FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
             FilaRenderableManagerBuilder_destroy(nativeBuilder)
             scope.release()
+            return if (result == 0) Result.Success else Result.Error
         }
     }
 
     /**
      * Checks if the given entity already has a renderable component.
      *
-     * @param entity the entity to check
+     * @param e the entity to check
      * @return true if the entity has a renderable component
      */
-    fun hasComponent(entity: Entity): Boolean = FilaRenderableManager_hasComponent(nativeHandle, entity)
+    fun hasComponent(e: Entity): Boolean = FilaRenderableManager_hasComponent(nativeHandle, e)
     /**
      * Gets a temporary handle that can be used to access the renderable state.
      *
-     * @param entity the entity to get the instance for
-     * @return Non-zero handle if the entity has a renderable component, otherwise null
+     * @param e the entity to get the instance for
+     * @return Non-zero handle if the entity has a renderable component, 0 otherwise
      */
-    fun getInstance(entity: Entity): EntityInstance = FilaRenderableManager_getInstance(nativeHandle, entity)
+    fun getInstance(e: Entity): EntityInstance = FilaRenderableManager_getInstance(nativeHandle, e)
+    /** The number of renderable components. */
+    val componentCount: Int get() = FilaRenderableManager_getComponentCount(nativeHandle)
+    /** Returns true if there are no renderable components. */
+    fun empty(): Boolean = FilaRenderableManager_empty(nativeHandle)
+    /** Returns the Entity of the component from its Instance. */
+    fun getEntity(i: EntityInstance): Entity = FilaRenderableManager_getEntity(nativeHandle, i)
+    /** All entities with a renderable component, in no particular order. */
+    val entities: IntArray get() = readInts(FilaRenderableManager_getEntities(nativeHandle), componentCount)
     /**
      * Destroys the renderable component in the given entity.
      *
-     * @param entity the entity whose renderable component is to be destroyed
+     * @param e the entity whose renderable component is to be destroyed
      */
-    fun destroy(entity: Entity) = FilaRenderableManager_destroy(nativeHandle, entity)
-    
+    fun destroy(e: Entity) = FilaRenderableManager_destroy(nativeHandle, e)
+
     /**
      * Changes the bounding box used for frustum culling.
      * The renderable must not have staticGeometry enabled.
      *
      * @param instance Instance of the component obtained from getInstance()
-     * @param box the new axis-aligned bounding box
-     * @see Builder.boundingBox()
-     * @see RenderableManager.getAxisAlignedBoundingBox()
+     * @param aabb the new axis-aligned bounding box
      */
-    fun setAxisAlignedBoundingBox(instance: EntityInstance, box: Box) {
-        FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance, 
-            box.center[0], box.center[1], box.center[2],
-            box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
+    fun setAxisAlignedBoundingBox(instance: EntityInstance, aabb: Box) {
+        aabb.toFloats().usePinned { FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance, it) }
     }
     /**
      * Gets the bounding box used for frustum culling.
@@ -500,173 +477,157 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param instance Instance of the component obtained from getInstance()
      * @param out optional output Box; if null, a new Box is created
      * @return the axis-aligned bounding box
-     * @see Builder.boundingBox()
-     * @see RenderableManager.setAxisAlignedBoundingBox()
      */
     fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box? = null): Box {
-        val center = FloatArray(3)
-        val halfExtent = FloatArray(3)
-        center.usePinned { c -> halfExtent.usePinned { h -> FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance, c, h) } }
+        val f = FloatArray(6)
+        f.usePinned { FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance, it) }
         val result = out ?: Box()
-        center.copyInto(result.center)
-        halfExtent.copyInto(result.halfExtent)
+        f.copyInto(result.center, 0, 0, 3)
+        f.copyInto(result.halfExtent, 0, 3, 6)
         return result
     }
-    
+
     /**
      * Changes the visibility bits.
      *
      * @param instance Instance of the component obtained from getInstance()
      * @param select the set of bits to affect
-     * @param value the replacement values for the affected bits
-     * @see Builder.layerMask()
-     * @see View.setVisibleLayers()
+     * @param values the replacement values for the affected bits
      */
-    fun setLayerMask(instance: EntityInstance, select: Int, value: Int) = FilaRenderableManager_setLayerMask(nativeHandle, instance, select, value)
+    fun setLayerMask(instance: EntityInstance, select: Int, values: Int) = FilaRenderableManager_setLayerMask(nativeHandle, instance, select, values)
+    /** Get the visibility bits. */
+    fun getLayerMask(instance: EntityInstance): Int = FilaRenderableManager_getLayerMask(nativeHandle, instance)
     /**
      * Changes the coarse-level draw ordering.
      *
      * @param instance Instance of the component obtained from getInstance()
      * @param priority the new priority clamped to [0..7]
-     * @see Builder.priority()
      */
     fun setPriority(instance: EntityInstance, priority: Int) = FilaRenderableManager_setPriority(nativeHandle, instance, priority)
-    /**
-     * Get the coarse-level draw ordering.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return the priority value
-     * @see Builder.priority()
-     */
+    /** Get the coarse-level draw ordering. */
     fun getPriority(instance: EntityInstance): Int = FilaRenderableManager_getPriority(nativeHandle, instance)
     /**
      * Changes the channel a renderable is associated to.
      *
      * @param instance Instance of the component obtained from getInstance()
      * @param channel the new channel value clamped to [0..7]
-     * @see Builder.channel()
      */
     fun setChannel(instance: EntityInstance, channel: Int) = FilaRenderableManager_setChannel(nativeHandle, instance, channel)
-    /**
-     * Get the channel a renderable is associated to.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return the channel value
-     * @see Builder.channel()
-     */
+    /** Get the channel a renderable is associated to. */
     fun getChannel(instance: EntityInstance): Int = FilaRenderableManager_getChannel(nativeHandle, instance)
-    /**
-     * Changes whether or not frustum culling is on.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param enabled whether frustum culling is enabled
-     * @see Builder.culling()
-     */
-    fun setCullingEnabled(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setCulling(nativeHandle, instance, enabled)
-    /**
-     * Get whether or not frustum culling is on.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return whether frustum culling is enabled
-     * @see Builder.culling()
-     */
+    /** Changes whether or not frustum culling is on. */
+    fun setCulling(instance: EntityInstance, enable: Boolean) = FilaRenderableManager_setCulling(nativeHandle, instance, enable)
+    /** Get whether or not frustum culling is on. */
     fun isCullingEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_isCullingEnabled(nativeHandle, instance)
+    /** Changes whether or not the large-scale fog is applied to this renderable. */
+    fun setFogEnabled(instance: EntityInstance, enable: Boolean) = FilaRenderableManager_setFogEnabled(nativeHandle, instance, enable)
+    /** Returns whether large-scale fog is enabled for this renderable. */
+    fun getFogEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_getFogEnabled(nativeHandle, instance)
     /**
-     * Changes whether or not the large-scale fog is applied to this renderable
+     * Enables or disables a light channel for this renderable.
      *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param enabled whether fog is enabled
-     * @see Builder.fog()
+     * @param channel light channel to enable or disable, between 0 and 7
+     * @param enable whether to enable the light channel
      */
-    fun setFogEnabled(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setFogEnabled(nativeHandle, instance, enabled)
-    /**
-     * Returns whether large-scale fog is enabled for this renderable.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return whether fog is enabled
-     * @see Builder.fog()
-     */
-    fun isFogEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_getFogEnabled(nativeHandle, instance)
-    /**
-     * Changes whether or not the renderable casts shadows.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param enabled whether shadow casting is enabled
-     * @see Builder.castShadows()
-     */
-    fun setShadowCaster(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setCastShadows(nativeHandle, instance, enabled)
-    /**
-     * Changes whether or not the renderable can receive shadows.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param enabled whether shadow receiving is enabled
-     * @see Builder.receiveShadows()
-     */
-    fun setShadowReceiver(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setReceiveShadows(nativeHandle, instance, enabled)
-    /**
-     * Changes whether or not the renderable can use screen-space contact shadows.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param enabled whether screen-space contact shadows are enabled
-     * @see Builder.screenSpaceContactShadows()
-     */
-    fun setScreenSpaceContactShadows(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setScreenSpaceContactShadows(nativeHandle, instance, enabled)
-    /**
-     * Checks if the renderable can cast shadows.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return whether the renderable casts shadows
-     * @see Builder.castShadows()
-     */
+    fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = FilaRenderableManager_setLightChannel(nativeHandle, instance, channel, enable)
+    /** Returns whether a light channel is enabled on this renderable. */
+    fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = FilaRenderableManager_getLightChannel(nativeHandle, instance, channel)
+    /** Changes whether or not the renderable casts shadows. */
+    fun setCastShadows(instance: EntityInstance, enable: Boolean) = FilaRenderableManager_setCastShadows(nativeHandle, instance, enable)
+    /** Changes whether or not the renderable can receive shadows. */
+    fun setReceiveShadows(instance: EntityInstance, enable: Boolean) = FilaRenderableManager_setReceiveShadows(nativeHandle, instance, enable)
+    /** Changes whether or not the renderable can use screen-space contact shadows. */
+    fun setScreenSpaceContactShadows(instance: EntityInstance, enable: Boolean) = FilaRenderableManager_setScreenSpaceContactShadows(nativeHandle, instance, enable)
+    /** Checks if the renderable can cast shadows. */
     fun isShadowCaster(instance: EntityInstance): Boolean = FilaRenderableManager_isShadowCaster(nativeHandle, instance)
-    /**
-     * Checks if the renderable can receive shadows.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return whether the renderable receives shadows
-     * @see Builder.receiveShadows()
-     */
+    /** Checks if the renderable can receive shadows. */
     fun isShadowReceiver(instance: EntityInstance): Boolean = FilaRenderableManager_isShadowReceiver(nativeHandle, instance)
-    /**
-     * Checks if the renderable can use screen-space contact shadows.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return whether screen-space contact shadows are enabled
-     * @see Builder.screenSpaceContactShadows()
-     */
+    /** Checks if the renderable can use screen-space contact shadows. */
     fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_isScreenSpaceContactShadowsEnabled(nativeHandle, instance)
-    
+
     /**
-     * Get the number of primitives in the given entity.
+     * Updates the bone transforms in the range [offset, offset + boneCount).
+     * The bones must be pre-allocated using Builder.skinning().
      *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return the number of primitives
+     * @param transforms the bone transforms
+     * @param boneCount the number of bones to set
+     * @param offset the index of the first bone to set
      */
+    fun setBones(instance: EntityInstance, transforms: Array<Bone>, boneCount: Int = transforms.size, offset: Int = 0) {
+        transforms.toFloats().usePinned { FilaRenderableManager_setBones_Bone_size_t_size_t(nativeHandle, instance, it, boneCount, offset) }
+    }
+    /**
+     * Updates the bone transforms in the range [offset, offset + boneCount).
+     * The bones must be pre-allocated using Builder.skinning().
+     *
+     * @param transforms 4x4 bone transforms, 16 floats per bone
+     * @param boneCount the number of bones to set
+     * @param offset the index of the first bone to set
+     */
+    fun setBones(instance: EntityInstance, transforms: FloatArray, boneCount: Int = transforms.size / 16, offset: Int = 0) {
+        transforms.usePinned { FilaRenderableManager_setBones_mat4f_size_t_size_t(nativeHandle, instance, it, boneCount, offset) }
+    }
+    /**
+     * Associates a region of a SkinningBuffer to a renderable instance.
+     *
+     * Note: due to hardware limitations offset + 256 must be smaller or equal to
+     * skinningBuffer.getBoneCount()
+     *
+     * @param skinningBuffer skinning buffer to associate to the instance
+     * @param count Size of the region in bones, must be smaller or equal to 256.
+     * @param offset Start offset of the region in bones
+     */
+    fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
+        FilaRenderableManager_setSkinningBuffer(nativeHandle, instance, skinningBuffer.nativeHandle, count, offset)
+    }
+    /**
+     * Updates the vertex morphing weights on a renderable, all zeroes by default.
+     *
+     * The renderable must be built with morphing enabled, see Builder.morphing(). In legacy
+     * morphing mode, only the first 4 weights are considered.
+     *
+     * @param weights morph target weights to set
+     * @param offset index of the first morph target weight to set
+     */
+    fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int = 0) {
+        weights.usePinned { FilaRenderableManager_setMorphWeights(nativeHandle, instance, it, weights.size, offset) }
+    }
+    /**
+     * Associates a MorphTargetBuffer offset to the given primitive.
+     *
+     * @param level the level of detail (lod), only 0 can be specified
+     * @param primitiveIndex the primitive of interest
+     * @param offset specifies where in the morph target buffer to start reading (expressed as a number of vertices)
+     */
+    fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
+        FilaRenderableManager_setMorphTargetBufferOffsetAt(nativeHandle, instance, level, primitiveIndex, offset)
+    }
+    /** Get the MorphTargetBuffer of the given renderable, or null if it has none. */
+    fun getMorphTargetBuffer(instance: EntityInstance): MorphTargetBuffer? =
+        FilaRenderableManager_getMorphTargetBuffer(nativeHandle, instance).takeIf { it != NullPointer }?.let { MorphTargetBuffer(it) }
+    /** Get the number of morph targets in the given entity. */
+    fun getMorphTargetCount(instance: EntityInstance): Int = FilaRenderableManager_getMorphTargetCount(nativeHandle, instance)
+    /** Get the number of primitives in the given entity. */
     fun getPrimitiveCount(instance: EntityInstance): Int = FilaRenderableManager_getPrimitiveCount(nativeHandle, instance)
-    /**
-     * Get the number of instances in the given entity.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return the number of instances
-     */
+    /** Get the number of instances in the given entity. */
     fun getInstanceCount(instance: EntityInstance): Int = FilaRenderableManager_getInstanceCount(nativeHandle, instance)
-    
+
     /**
      * Changes a material instance on a primitive.
      *
-     * @param instance Instance of the component obtained from getInstance()
      * @param primitiveIndex the primitive of interest
      * @param materialInstance the material instance to bind
      */
     fun setMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int, materialInstance: MaterialInstance) {
         FilaRenderableManager_setMaterialInstanceAt(nativeHandle, instance, primitiveIndex, materialInstance.nativeHandle)
     }
-        
+    /** Clears the material instance for a primitive (revert to default). */
+    fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
+        FilaRenderableManager_clearMaterialInstanceAt(nativeHandle, instance, primitiveIndex)
+    }
     /**
      * Gets a material instance on a primitive.
      *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
      * @return the material instance, or null for default
      */
     fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance? {
@@ -675,199 +636,44 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     }
 
     /**
-     * Retrieves the set of enabled attribute slots in the given primitive's VertexBuffer.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     */
-    fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute> =
-        attributeBitsetToSet(FilaRenderableManager_getEnabledAttributesAt(nativeHandle, instance, primitiveIndex))
-    
-    /**
      * Changes the geometry for a primitive.
      *
-     * @param instance Instance of the component obtained from getInstance()
      * @param primitiveIndex the primitive of interest
      * @param type primitive type
-     * @param vb vertex buffer for this primitive
-     * @param ib index buffer for this primitive
+     * @param vertices vertex buffer for this primitive
+     * @param indices index buffer for this primitive
      * @param offset index offset in the index buffer
      * @param count number of indices to render
      */
-    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
-        FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex, type.toNative(), vb.nativeHandle, ib.nativeHandle, offset, count)
-
+    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int) =
+        FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, count)
     /**
-     * Changes the geometry for a primitive (non-indexed).
+     * Changes the geometry for a non-indexed primitive.
      *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     * @param type primitive type
-     * @param vb vertex buffer for this primitive
      * @param offset vertex offset in the vertex buffer
      * @param count number of vertices to render
      */
-    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
-        FilaRenderableManager_setGeometryAtNonIndexed(nativeHandle, instance, primitiveIndex, type.toNative(), vb.nativeHandle, offset, count)
-    
+    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, offset: Int, count: Int) =
+        FilaRenderableManager_setGeometryAt_size_t_size_t(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, offset, count)
+
     /**
      * Sets the drawing order for blended primitives.
      *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     * @param blendOrder draw order number. Only the lowest 15 bits are used.
-     * @see Builder.blendOrder()
+     * @param order draw order number. Only the lowest 15 bits are used.
      */
-    fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) = 
-        FilaRenderableManager_setBlendOrderAt(nativeHandle, instance, primitiveIndex, blendOrder)
-    /**
-     * Gets the drawing order for blended primitives.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     * @return the draw order
-     * @see Builder.blendOrder()
-     */
+    fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, order: Int) =
+        FilaRenderableManager_setBlendOrderAt(nativeHandle, instance, primitiveIndex, order)
+    /** Gets the drawing order for blended primitives. */
     fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int = FilaRenderableManager_getBlendOrderAt(nativeHandle, instance, primitiveIndex)
-    /**
-     * Sets whether the blend order is global or local to this Renderable.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     * @param enabled true for global, false for local blend ordering
-     * @see Builder.globalBlendOrderEnabled()
-     */
-    fun setGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int, enabled: Boolean) = 
+    /** Sets whether the blend order is global or local to this Renderable. */
+    fun setGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int, enabled: Boolean) =
         FilaRenderableManager_setGlobalBlendOrderEnabledAt(nativeHandle, instance, primitiveIndex, enabled)
-    /**
-     * Gets whether the blend order is global or local to this Renderable.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     * @return true for global, false for local blend ordering
-     * @see Builder.globalBlendOrderEnabled()
-     */
-    fun isGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int): Boolean = 
+    /** Gets whether the blend order is global or local to this Renderable. */
+    fun isGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int): Boolean =
         FilaRenderableManager_isGlobalBlendOrderEnabledAt(nativeHandle, instance, primitiveIndex)
-    
-    /**
-     * Enables or disables a light channel for this renderable.
-     * Light channel 0 is enabled by default.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param channel light channel to enable or disable, between 0 and 7
-     * @param enable whether to enable the light channel
-     * @see Builder.lightChannel()
-     */
-    fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = FilaRenderableManager_setLightChannel(nativeHandle, instance, channel, enable)
-    /**
-     * Returns whether a light channel is enabled on this renderable.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param channel Light channel to query
-     * @return true if the light channel is enabled, false otherwise
-     */
-    fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = FilaRenderableManager_getLightChannel(nativeHandle, instance, channel)
- 
-    /**
-     * Get the number of morph targets in the given entity.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @return the number of morph targets
-     */
-    fun getMorphTargetCount(instance: EntityInstance): Int = FilaRenderableManager_getMorphTargetCount(nativeHandle, instance)
-    
-    /**
-     * Associates a region of a SkinningBuffer to a renderable instance.
-     *
-     * Note: due to hardware limitations offset + 256 must be smaller or equal to
-     * skinningBuffer.getBoneCount()
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param skinningBuffer skinning buffer to associate to the instance
-     * @param count Size of the region in bones, must be smaller or equal to 256.
-     * @param offset Start offset of the region in bones
-     */
-    fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
-        FilaRenderableManager_setSkinningBuffer(nativeHandle, instance, skinningBuffer.nativeHandle, count, offset)
-    }
-
-    /**
-     * Updates the vertex morphing weights on a renderable, all zeroes by default.
-     *
-     * The renderable must be built with morphing enabled, see Builder.morphing(). In legacy
-     * morphing mode, only the first 4 weights are considered.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param weights Pointer to morph target weights to be updated.
-     * @param offset Index of the first morph target weight to set at instance.
-     */
-    fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int = 0) {
-        weights.copyOfRange(offset, weights.size).usePinned { pinned ->
-            FilaRenderableManager_setMorphWeights(nativeHandle, instance, pinned, weights.size - offset, offset)
-        }
-    }
- 
-    /**
-     * Associates a MorphTargetBuffer to the given primitive.
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param level the level of detail (lod), only 0 can be specified
-     * @param primitiveIndex the primitive of interest
-     * @param offset specifies where in the morph target buffer to start reading (expressed as a number of vertices)
-     */
-    fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
-        FilaRenderableManager_setMorphTargetBufferOffsetAt(nativeHandle, instance, level, primitiveIndex, offset)
-    }
-
-    /**
-     * Updates the bone transforms in the range [offset, offset + boneCount).
-     * The bones must be pre-allocated using Builder.skinning().
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param matrices bone transform matrices
-     * @param boneCount the number of bones to set
-     * @param offset the offset of the first bone to set
-     */
-    fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) {
-        matrices.usePinned { pinned ->
-            FilaRenderableManager_setBonesAsMatrices(
-                nativeHandle, instance,
-                pinned,
-                boneCount, offset
-            )
-        }
-    }
-
-    /**
-     * Updates the bone transforms in the range [offset, offset + boneCount).
-     * The bones must be pre-allocated using Builder.skinning().
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param quaternions bone transforms as quaternions (4 float per bone)
-     * @param boneCount the number of bones to set
-     * @param offset the offset of the first bone to set
-     */
-    fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) {
-        quaternions.usePinned { pinned ->
-            FilaRenderableManager_setBonesAsQuaternions(
-                nativeHandle, instance,
-                pinned,
-                boneCount, offset
-            )
-        }
-    }
-
-    /**
-     * Clears the material instance for a primitive (revert to default).
-     *
-     * @param instance Instance of the component obtained from getInstance()
-     * @param primitiveIndex the primitive of interest
-     */
-    fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
-        FilaRenderableManager_clearMaterialInstanceAt(nativeHandle, instance, primitiveIndex)
-    }
-
+    /** Retrieves the set of enabled attribute slots in the given primitive's VertexBuffer. */
+    fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute> =
+        attributeBitsetToSet(FilaRenderableManager_getEnabledAttributesAt(nativeHandle, instance, primitiveIndex))
 }
 
 // PrimitiveType skips upstream's unused LINE_LOOP (2).
@@ -879,213 +685,17 @@ private fun RenderableManager.PrimitiveType.toNative(): Int = when (this) {
     RenderableManager.PrimitiveType.TRIANGLE_STRIP -> 5
 }
 
+// filament::Box's layout: center then halfExtent.
+private fun Box.toFloats() = center + halfExtent
+
+// RenderableManager::Bone's layout: quatf, float3, reserved float.
+internal fun Array<RenderableManager.Bone>.toFloats() = FloatArray(size * 8).also { out ->
+    forEachIndexed { i, b ->
+        b.unitQuaternion.copyInto(out, i * 8, 0, 4)
+        b.translation.copyInto(out, i * 8 + 4, 0, 3)
+    }
+}
+
 /** Converts a native attribute bitset into the corresponding set of [VertexBuffer.VertexAttribute]. */
 internal fun attributeBitsetToSet(bits: Int): Set<VertexBuffer.VertexAttribute> =
     VertexBuffer.VertexAttribute.entries.filterTo(mutableSetOf()) { (bits shr it.value) and 1 == 1 }
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_blendOrder")
-private external fun FilaRenderableManagerBuilder_blendOrder(builder: NativePointer, index: Int, blendOrder: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_boundingBox")
-private external fun FilaRenderableManagerBuilder_boundingBox(builder: NativePointer, cx: Float, cy: Float, cz: Float, hx: Float, hy: Float, hz: Float)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_build")
-private external fun FilaRenderableManagerBuilder_build(builder: NativePointer, engine: NativePointer, entity: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_castShadows")
-private external fun FilaRenderableManagerBuilder_castShadows(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_channel")
-private external fun FilaRenderableManagerBuilder_channel(builder: NativePointer, channel: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_create")
-private external fun FilaRenderableManagerBuilder_create(count: Int): NativePointer
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_culling")
-private external fun FilaRenderableManagerBuilder_culling(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_destroy")
-private external fun FilaRenderableManagerBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_enableSkinningBuffers")
-private external fun FilaRenderableManagerBuilder_enableSkinningBuffers(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_fog")
-private external fun FilaRenderableManagerBuilder_fog(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_geometry")
-private external fun FilaRenderableManagerBuilder_geometry(builder: NativePointer, index: Int, type: Int, vb: NativePointer, ib: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_geometryAt")
-private external fun FilaRenderableManagerBuilder_geometryAt(builder: NativePointer, index: Int, type: Int, vb: NativePointer, ib: NativePointer, offset: Int, count: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_geometryNonIndexed")
-private external fun FilaRenderableManagerBuilder_geometryNonIndexed(builder: NativePointer, index: Int, type: Int, vb: NativePointer, offset: Int, count: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_geometryNonIndexedNone")
-private external fun FilaRenderableManagerBuilder_geometryNonIndexedNone(builder: NativePointer, index: Int, type: Int, vb: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_geometryType")
-private external fun FilaRenderableManagerBuilder_geometryType(builder: NativePointer, type: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_geometryWithIndices")
-private external fun FilaRenderableManagerBuilder_geometryWithIndices(builder: NativePointer, index: Int, type: Int, vb: NativePointer, ib: NativePointer, offset: Int, minIndex: Int, maxIndex: Int, count: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_globalBlendOrderEnabled")
-private external fun FilaRenderableManagerBuilder_globalBlendOrderEnabled(builder: NativePointer, index: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_instances")
-private external fun FilaRenderableManagerBuilder_instances(builder: NativePointer, instanceCount: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_layerMask")
-private external fun FilaRenderableManagerBuilder_layerMask(builder: NativePointer, select: Int, value: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_lightChannel")
-private external fun FilaRenderableManagerBuilder_lightChannel(builder: NativePointer, channel: Int, enable: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_material")
-private external fun FilaRenderableManagerBuilder_material(builder: NativePointer, index: Int, materialInstance: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_morphTargetBuffer")
-private external fun FilaRenderableManagerBuilder_morphTargetBuffer(builder: NativePointer, mtb: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_morphing")
-private external fun FilaRenderableManagerBuilder_morphing(builder: NativePointer, targetCount: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_priority")
-private external fun FilaRenderableManagerBuilder_priority(builder: NativePointer, priority: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_receiveShadows")
-private external fun FilaRenderableManagerBuilder_receiveShadows(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_screenSpaceContactShadows")
-private external fun FilaRenderableManagerBuilder_screenSpaceContactShadows(builder: NativePointer, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_skinning")
-private external fun FilaRenderableManagerBuilder_skinning(builder: NativePointer, boneCount: Int)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_skinningBones")
-private external fun FilaRenderableManagerBuilder_skinningBones(builder: NativePointer, boneCount: Int, bones: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_skinningBuffer")
-private external fun FilaRenderableManagerBuilder_skinningBuffer(builder: NativePointer, sb: NativePointer, boneCount: Int, offset: Int)
-
-@ExternalSymbolName("FilaRenderableManager_clearMaterialInstanceAt")
-private external fun FilaRenderableManager_clearMaterialInstanceAt(rm: NativePointer, instance: Int, primitiveIndex: Int)
-
-@ExternalSymbolName("FilaRenderableManager_destroy")
-private external fun FilaRenderableManager_destroy(rm: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaRenderableManager_getAxisAlignedBoundingBox")
-private external fun FilaRenderableManager_getAxisAlignedBoundingBox(rm: NativePointer, instance: Int, center: NativePointer, halfExtent: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManager_getBlendOrderAt")
-private external fun FilaRenderableManager_getBlendOrderAt(rm: NativePointer, instance: Int, primitiveIndex: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getChannel")
-private external fun FilaRenderableManager_getChannel(rm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getEnabledAttributesAt")
-private external fun FilaRenderableManager_getEnabledAttributesAt(rm: NativePointer, instance: Int, primitiveIndex: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getFogEnabled")
-private external fun FilaRenderableManager_getFogEnabled(rm: NativePointer, instance: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_getInstance")
-private external fun FilaRenderableManager_getInstance(rm: NativePointer, entity: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getInstanceCount")
-private external fun FilaRenderableManager_getInstanceCount(rm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getLightChannel")
-private external fun FilaRenderableManager_getLightChannel(rm: NativePointer, instance: Int, channel: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_getMaterialInstanceAt")
-private external fun FilaRenderableManager_getMaterialInstanceAt(rm: NativePointer, instance: Int, primitiveIndex: Int): NativePointer
-
-@ExternalSymbolName("FilaRenderableManager_getMorphTargetCount")
-private external fun FilaRenderableManager_getMorphTargetCount(rm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getPrimitiveCount")
-private external fun FilaRenderableManager_getPrimitiveCount(rm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_getPriority")
-private external fun FilaRenderableManager_getPriority(rm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaRenderableManager_hasComponent")
-private external fun FilaRenderableManager_hasComponent(rm: NativePointer, entity: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_isCullingEnabled")
-private external fun FilaRenderableManager_isCullingEnabled(rm: NativePointer, instance: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_isGlobalBlendOrderEnabledAt")
-private external fun FilaRenderableManager_isGlobalBlendOrderEnabledAt(rm: NativePointer, instance: Int, primitiveIndex: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_isScreenSpaceContactShadowsEnabled")
-private external fun FilaRenderableManager_isScreenSpaceContactShadowsEnabled(rm: NativePointer, instance: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_isShadowCaster")
-private external fun FilaRenderableManager_isShadowCaster(rm: NativePointer, instance: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_isShadowReceiver")
-private external fun FilaRenderableManager_isShadowReceiver(rm: NativePointer, instance: Int): Boolean
-
-@ExternalSymbolName("FilaRenderableManager_setAxisAlignedBoundingBox")
-private external fun FilaRenderableManager_setAxisAlignedBoundingBox(rm: NativePointer, instance: Int, cx: Float, cy: Float, cz: Float, hx: Float, hy: Float, hz: Float)
-
-@ExternalSymbolName("FilaRenderableManager_setBlendOrderAt")
-private external fun FilaRenderableManager_setBlendOrderAt(rm: NativePointer, instance: Int, primitiveIndex: Int, blendOrder: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setBonesAsMatrices")
-private external fun FilaRenderableManager_setBonesAsMatrices(rm: NativePointer, instance: Int, matrices: NativePointer, boneCount: Int, offset: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setBonesAsQuaternions")
-private external fun FilaRenderableManager_setBonesAsQuaternions(rm: NativePointer, instance: Int, bones: NativePointer, boneCount: Int, offset: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setCastShadows")
-private external fun FilaRenderableManager_setCastShadows(rm: NativePointer, instance: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setChannel")
-private external fun FilaRenderableManager_setChannel(rm: NativePointer, instance: Int, channel: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setCulling")
-private external fun FilaRenderableManager_setCulling(rm: NativePointer, instance: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setFogEnabled")
-private external fun FilaRenderableManager_setFogEnabled(rm: NativePointer, instance: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setGeometryAt")
-private external fun FilaRenderableManager_setGeometryAt(rm: NativePointer, instance: Int, primitiveIndex: Int, type: Int, vb: NativePointer, ib: NativePointer, offset: Int, count: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setGeometryAtNonIndexed")
-private external fun FilaRenderableManager_setGeometryAtNonIndexed(rm: NativePointer, instance: Int, primitiveIndex: Int, type: Int, vb: NativePointer, offset: Int, count: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setGlobalBlendOrderEnabledAt")
-private external fun FilaRenderableManager_setGlobalBlendOrderEnabledAt(rm: NativePointer, instance: Int, primitiveIndex: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setLayerMask")
-private external fun FilaRenderableManager_setLayerMask(rm: NativePointer, instance: Int, select: Int, value: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setLightChannel")
-private external fun FilaRenderableManager_setLightChannel(rm: NativePointer, instance: Int, channel: Int, enable: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setMaterialInstanceAt")
-private external fun FilaRenderableManager_setMaterialInstanceAt(rm: NativePointer, instance: Int, primitiveIndex: Int, materialInstance: NativePointer)
-
-@ExternalSymbolName("FilaRenderableManager_setMorphTargetBufferOffsetAt")
-private external fun FilaRenderableManager_setMorphTargetBufferOffsetAt(rm: NativePointer, instance: Int, level: Int, primitiveIndex: Int, offset: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setMorphWeights")
-private external fun FilaRenderableManager_setMorphWeights(rm: NativePointer, instance: Int, weights: NativePointer, count: Int, offset: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setPriority")
-private external fun FilaRenderableManager_setPriority(rm: NativePointer, instance: Int, priority: Int)
-
-@ExternalSymbolName("FilaRenderableManager_setReceiveShadows")
-private external fun FilaRenderableManager_setReceiveShadows(rm: NativePointer, instance: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setScreenSpaceContactShadows")
-private external fun FilaRenderableManager_setScreenSpaceContactShadows(rm: NativePointer, instance: Int, enabled: Boolean)
-
-@ExternalSymbolName("FilaRenderableManager_setSkinningBuffer")
-private external fun FilaRenderableManager_setSkinningBuffer(rm: NativePointer, instance: Int, sb: NativePointer, count: Int, offset: Int)

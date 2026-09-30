@@ -53,6 +53,7 @@ class RenderableManagerBuilderTest : FilamentTestFixture() {
             .enableSkinningBuffers(true)
             .skinning(10)
             .skinning(10, FloatArray(160))
+            .skinning(2, arrayOf(RenderableManager.Bone(), RenderableManager.Bone()))
             .skinning(sb, 10, 0)
             .morphing(2)
             .morphing(mtb)

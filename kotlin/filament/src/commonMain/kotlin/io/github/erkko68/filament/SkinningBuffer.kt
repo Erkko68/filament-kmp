@@ -87,44 +87,26 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
     val boneCount: Int get() = FilaSkinningBuffer_getBoneCount(nativeHandle)
 
     /**
-     * Updates bone transforms in the range [offset, offset + boneCount).
-     *
-     * Each bone is specified as a 4x4 transformation matrix in row-major order.
+     * Updates bone transforms in the range [offset, offset + count).
      *
      * @param engine The engine
-     * @param matrices Array of 4x4 matrices (16 floats per matrix)
-     * @param boneCount Number of bones to set
-     * @param offset Offset in elements (not bytes) in the SkinningBuffer (default: 0)
+     * @param transforms The bone transforms
+     * @param count Number of bones to set
+     * @param offset Index of the first bone to set in the SkinningBuffer
      */
-    fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int = 0) {
-        matrices.usePinned { pinned ->
-            FilaSkinningBuffer_setBones_mat4f_size_t_size_t(
-                nativeHandle, engine.nativeHandle,
-                pinned,
-                boneCount, offset
-            )
-        }
+    fun setBones(engine: Engine, transforms: Array<RenderableManager.Bone>, count: Int = transforms.size, offset: Int = 0) {
+        transforms.toFloats().usePinned { FilaSkinningBuffer_setBones_Bone_size_t_size_t(nativeHandle, engine.nativeHandle, it, count, offset) }
     }
 
     /**
-     * Updates bone transforms in the range [offset, offset + boneCount) using quaternion+translation format.
-     *
-     * Each bone is a unit quaternion (4 floats: x, y, z, w), a translation (3 floats: x, y, z)
-     * and a reserved float: 8 floats per bone vs 16 for 4x4 matrices.
+     * Updates bone transforms in the range [offset, offset + count).
      *
      * @param engine The engine
-     * @param bones Array of quaternions and translations (8 floats per bone: qx, qy, qz, qw, tx, ty, tz, reserved)
-     * @param boneCount Number of bones to set
-     * @param offset Offset in elements (not bytes) in the SkinningBuffer (default: 0)
+     * @param transforms 4x4 bone transforms, 16 floats per bone
+     * @param count Number of bones to set
+     * @param offset Index of the first bone to set in the SkinningBuffer
      */
-    fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int = 0) {
-        // RenderableManager::Bone's layout: quatf + float3 + reserved float.
-        bones.usePinned { pinned ->
-            FilaSkinningBuffer_setBones_Bone_size_t_size_t(
-                nativeHandle, engine.nativeHandle,
-                pinned,
-                boneCount, offset
-            )
-        }
+    fun setBones(engine: Engine, transforms: FloatArray, count: Int = transforms.size / 16, offset: Int = 0) {
+        transforms.usePinned { FilaSkinningBuffer_setBones_mat4f_size_t_size_t(nativeHandle, engine.nativeHandle, it, count, offset) }
     }
 }
