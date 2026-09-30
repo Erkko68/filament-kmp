@@ -541,6 +541,7 @@ public final class io/github/erkko68/filament/utils/Half$Companion {
 }
 
 public final class io/github/erkko68/filament/utils/Half2 {
+	public fun <init> ()V
 	public fun <init> (Lio/github/erkko68/filament/utils/Half2;)V
 	public synthetic fun <init> (SLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (SSILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -595,6 +596,7 @@ public final class io/github/erkko68/filament/utils/Half2 {
 }
 
 public final class io/github/erkko68/filament/utils/Half3 {
+	public fun <init> ()V
 	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lio/github/erkko68/filament/utils/Half3;)V
@@ -672,6 +674,7 @@ public final class io/github/erkko68/filament/utils/Half3 {
 }
 
 public final class io/github/erkko68/filament/utils/Half4 {
+	public fun <init> ()V
 	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SSILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SSLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half3;SILkotlin/jvm/internal/DefaultConstructorMarker;)V

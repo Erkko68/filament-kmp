@@ -50,7 +50,7 @@ dependencies {
 val javaComponent = components["java"] as AdhocComponentWithVariants
 FilamentTarget.desktop.forEach { target ->
     val runtime = configurations.dependencyScope("runtime-${target.id}Dependencies")
-    dependencies.add(runtime.name, project(":desktop:runtime-${target.id}"))
+    dependencies { runtime(project(":desktop:runtime-${target.id}")) }
     val variant = configurations.consumable("runtime-${target.id}") {
         extendsFrom(configurations["implementation"], configurations["runtimeOnly"], runtime.get())
         attributes {
