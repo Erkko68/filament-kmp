@@ -10,6 +10,7 @@ import buildlogic.platform.FilamentTarget
 import buildlogic.platform.filamentLibDir
 import buildlogic.platform.hostPlatform
 import org.gradle.api.Project
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.register
 
 private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "camutils", "geometry", "filament-iblprefilter", "utils")
@@ -53,6 +54,8 @@ fun Project.registerApiGenTasks() {
         apiHeadersFile.set(apiHeadersFile())
         modules.set(apiHeaders().modules.keys.toList())
         cDir.set(root.dir("c"))
+        // Its TODOs note the functions these already write.
+        inputs.files(root.dir("c").asFileTree.matching { include("*/manual/*.h") }).withPathSensitivity(PathSensitivity.RELATIVE)
     }
 
     tasks.register<GenerateKotlinExternalsTask>("generateKotlinExternals") {

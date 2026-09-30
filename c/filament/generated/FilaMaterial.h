@@ -12,8 +12,7 @@ extern "C" {
 FilaMaterialParameterInfo* FilaMaterialParameterInfo_create(void);
 void FilaMaterialParameterInfo_destroy(FilaMaterialParameterInfo* self);
 const char* FilaMaterialParameterInfo_getName(const FilaMaterialParameterInfo* self);
-// TODO(handwritten) FilaMaterialParameterInfo_setName: const char * _Nonnull filament::Material::ParameterInfo::name
-//     const char * _Nonnull: the struct would keep the caller's pointer
+// no FilaMaterialParameterInfo_setName: filament::Material::ParameterInfo is only a result, and C would have to keep the pointer
 bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* self);
 void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value);
 bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self);

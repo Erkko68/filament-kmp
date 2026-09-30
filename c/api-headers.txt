@@ -54,6 +54,8 @@ geometry/SurfaceOrientation.h
 -filament::to_string
 # ParameterInfo* is an array C++ fills; FilaMaterialManual copies it into C's handles.
 -filament::Material::getParameters
+# C++ sugar binding a member function or functor; the callback overload (FilaViewManual) covers them.
+-filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
 
 [gltfio]
 gltfio/*.h
@@ -94,6 +96,8 @@ filamat/*.h
 -filamat::MaterialBuilder::getVariantFilter
 -filamat::MaterialBuilder::getFeatureLevel
 -filamat::MaterialBuilder::getApiLevel
+# Header-inline; Kotlin's MaterialPackage.invalidPackage does the same.
+-filamat::Package::invalidPackage
 
 [filament-utils]
 camutils/*.h

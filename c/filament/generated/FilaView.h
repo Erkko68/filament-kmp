@@ -30,6 +30,8 @@ void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self);
 // skipped utils::FixedCapacityVector<const Camera *> filament::View::getDirectionalShadowCameras() const
 // skipped void filament::View::setFroxelVizEnabled(bool enabled)
 // skipped FroxelConfigurationInfoWithAge filament::View::getFroxelConfigurationInfo() const: uses filament::View::FroxelConfigurationInfoWithAge
+// skipped void filament::View::pick(uint32_t x, uint32_t y, T * _Nonnull instance, backend::CallbackHandler * _Nullable handler): filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
+// skipped void filament::View::pick(uint32_t x, uint32_t y, T instance, backend::CallbackHandler * _Nullable handler): filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
 void FilaView_setName(FilaView* self, const char* name);
 const char* FilaView_getName(const FilaView* self);
 void FilaView_setScene(FilaView* self, FilaScene* scene);
@@ -105,10 +107,6 @@ void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling);
 bool FilaView_isFrustumCullingEnabled(const FilaView* self);
 // handwritten in manual/ FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
 //     void (*)(const PickingQueryResult &, PickingQuery * _Nonnull): takes C++ types
-// TODO(handwritten) FilaView_pick: template void filament::View::pick(uint32_t x, uint32_t y, T * _Nonnull instance, backend::CallbackHandler * _Nullable handler)
-//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations
-// TODO(handwritten) FilaView_pick: template void filament::View::pick(uint32_t x, uint32_t y, T instance, backend::CallbackHandler * _Nullable handler)
-//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out);
 FilaEntity FilaView_getFogEntity(const FilaView* self);

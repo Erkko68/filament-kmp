@@ -19,7 +19,7 @@ void FilaImageKtx1Bundle_destroy(FilaImageKtx1Bundle* self);
 // skipped bool image::Ktx1Bundle::allocateBlob(KtxBlobIndex index, uint32_t size): uses image::KtxBlobIndex
 bool FilaImageKtx1Bundle_serialize(const FilaImageKtx1Bundle* self, uint8_t* destination, uint32_t numBytes);
 uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self);
-// TODO(handwritten) FilaImageKtx1Bundle_getMetadata: const char * image::Ktx1Bundle::getMetadata(const char * key, size_t * valueSize) const
+// handwritten in manual/ FilaImageKtx1Bundle_getMetadata: const char * image::Ktx1Bundle::getMetadata(const char * key, size_t * valueSize) const
 //     size_t*: its width differs across targets
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value);
 bool FilaImageKtx1Bundle_getSphericalHarmonics(FilaImageKtx1Bundle* self, FilaFloat3* result);

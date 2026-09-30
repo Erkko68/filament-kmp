@@ -25,6 +25,18 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         .plus(api.records.values.flatMap { it.constructors })
         .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
     private val files = LinkedHashMap<String, Section>()
+    /**
+     * Records the API reads: taken by value, `const&`, `const*` or `&&`, and the records their fields hold. The others
+     * are only results (Engine::FeatureFlag), so a field C would have to keep a pointer for needs no setter.
+     */
+    private val inputRecords = run {
+        val output = Regex("""^(?!const\b).*[^&]&$|^(?!const\b).*\*$""")
+        val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
+        val taken = params.map { it.type }
+            .filterNot { output.matches(it.spelling.replace(Regex("""\s*_(Nonnull|Nullable|Null_unspecified)"""), "").trim()) }
+            .mapNotNullTo(HashSet()) { it.decl }
+        generateSequence(taken) { seen -> (seen + seen.flatMap { api.records[it]?.fields.orEmpty().mapNotNull { f -> f.type.decl } }).toHashSet().takeIf { it.size > seen.size } }.last()
+    }
 
     /** One generated header and its forwarders. */
     private class Section(val module: String) {
@@ -170,6 +182,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = "${self}_set$accessor"
+        if (bridges.borrowsPointer(field.type) && record.name !in inputRecords) {
+            section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
+            return
+        }
         if (setter !in functionNames) emit(setter, cpp, section) {
             if (bridges.borrowsPointer(field.type)) throw Unsupported("${field.type.spelling}: the struct would keep the caller's pointer")
             val param = bridges.param(field.type)

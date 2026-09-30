@@ -6,6 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class Ktx1BundleTest : UtilsTestFixture() {
@@ -21,6 +22,8 @@ class Ktx1BundleTest : UtilsTestFixture() {
             assertContentEquals(sh, result)
 
             bundle.setMetadata("KTXorientation", "S=r,T=u")
+            assertEquals("S=r,T=u", bundle.getMetadata("KTXorientation"))
+            assertNull(bundle.getMetadata("missing"))
             val bytes = ByteArray(bundle.serializedLength)
             assertTrue(bundle.serialize(bytes))
             assertFalse(bundle.serialize(ByteArray(1)))

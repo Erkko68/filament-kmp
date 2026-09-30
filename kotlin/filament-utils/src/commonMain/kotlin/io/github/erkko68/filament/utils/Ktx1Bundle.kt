@@ -45,6 +45,10 @@ class Ktx1Bundle @InternalFilamentApi constructor(nativeHandle: NativePointer) :
     /** The size of the KTX file [serialize] writes. */
     val serializedLength: Int get() = FilaImageKtx1Bundle_getSerializedLength(nativeHandle)
 
+    /** The KTX metadata value of [key], or null if it has none. */
+    fun getMetadata(key: String): String? =
+        stringFromInterop(key.useCString { FilaImageKtx1Bundle_getMetadata(nativeHandle, it, NullPointer) })
+
     /** Adds a key/value pair to the KTX metadata. */
     fun setMetadata(key: String, value: String) =
         key.useCString { k -> value.useCString { v -> FilaImageKtx1Bundle_setMetadata(nativeHandle, k, v) } }

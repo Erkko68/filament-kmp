@@ -1134,6 +1134,7 @@ public final class io/github/erkko68/filament/utils/Ktx1Bundle : java/lang/AutoC
 	public fun close ()V
 	public final fun destroy ()V
 	public final fun getArrayLength ()I
+	public final fun getMetadata (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getNativeObject ()J
 	public final fun getNumMipLevels ()I
 	public final fun getSerializedLength ()I

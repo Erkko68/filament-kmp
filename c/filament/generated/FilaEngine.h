@@ -62,14 +62,11 @@ void FilaEngineConfig_setEnableMultipleDirectionalLights(FilaEngineConfig* self,
 FilaEngineFeatureFlag* FilaEngineFeatureFlag_create(void);
 void FilaEngineFeatureFlag_destroy(FilaEngineFeatureFlag* self);
 const char* FilaEngineFeatureFlag_getName(const FilaEngineFeatureFlag* self);
-// TODO(handwritten) FilaEngineFeatureFlag_setName: const char * _Nonnull filament::Engine::FeatureFlag::name
-//     const char * _Nonnull: the struct would keep the caller's pointer
+// no FilaEngineFeatureFlag_setName: filament::Engine::FeatureFlag is only a result, and C would have to keep the pointer
 const char* FilaEngineFeatureFlag_getDescription(const FilaEngineFeatureFlag* self);
-// TODO(handwritten) FilaEngineFeatureFlag_setDescription: const char * _Nonnull filament::Engine::FeatureFlag::description
-//     const char * _Nonnull: the struct would keep the caller's pointer
+// no FilaEngineFeatureFlag_setDescription: filament::Engine::FeatureFlag is only a result, and C would have to keep the pointer
 const bool* FilaEngineFeatureFlag_getValue(const FilaEngineFeatureFlag* self);
-// TODO(handwritten) FilaEngineFeatureFlag_setValue: const bool * _Nonnull filament::Engine::FeatureFlag::value
-//     const bool * _Nonnull: the struct would keep the caller's pointer
+// no FilaEngineFeatureFlag_setValue: filament::Engine::FeatureFlag is only a result, and C would have to keep the pointer
 bool FilaEngineFeatureFlag_getConstant(const FilaEngineFeatureFlag* self);
 void FilaEngineFeatureFlag_setConstant(FilaEngineFeatureFlag* self, bool value);
 
