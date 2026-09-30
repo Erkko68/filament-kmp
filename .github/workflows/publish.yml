@@ -65,8 +65,16 @@ jobs:
           else
             echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
           fi
+      # Same target groups as ci.yml, so these restore main's caches instead of missing on a combined
+      # key: wasm is a source build of about 50 minutes.
       - uses: ./.github/actions/setup-filament-libs
-        with: { targets: 'ios-arm64 ios-simulator-arm64 macos-arm64 wasm android-arm64-v8a android-armeabi-v7a android-x86_64 android-x86' }
+        with: { targets: 'ios-arm64 ios-simulator-arm64' }
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: 'macos-arm64' }
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: 'wasm' }
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: 'android-arm64-v8a android-armeabi-v7a android-x86_64 android-x86' }
       # :android (filament-jni-android) builds libfilament-c.so per ABI with upstream's pinned NDK/CMake.
       - name: Install NDK + CMake
         run: |
