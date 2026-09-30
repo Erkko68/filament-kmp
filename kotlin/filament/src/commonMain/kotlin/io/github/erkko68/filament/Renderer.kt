@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -63,14 +64,14 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *          Clamped to 31.
      */
     class FrameRateOptions {
-        /** Desired frame interval (1 = render every vsync). */
-        var interval: Float = 1.0f
         /** Additional headroom for the GPU as a fraction of target frame time. */
         var headRoomRatio: Float = 0.0f
         /** Rate at which GPU load is adjusted; computed as 1/N frames to reach 64% target. */
-        var scaleRate: Float = 1.0f / 15.0f
+        var scaleRate: Float = 1.0f / 8.0f
         /** History size for load filtering (clamped to 31). */
         var history: Int = 15
+        /** Desired frame interval in units of 1 / [DisplayInfo.refreshRate] (1 = render every vsync). */
+        var interval: Int = 1
     }
 
     /**
@@ -82,20 +83,58 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     class ClearOptions {
         /** RGBA clear color. Values are stored as doubles. The backend converts them as-is based on format. */
         var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+        /** Value to clear the stencil buffer to. Default: 0. */
+        var clearStencil: Int = 0
         /** Whether the SwapChain should be cleared using clearColor. Default: false. */
         var clear: Boolean = false
         /** Whether the SwapChain content should be discarded. Default: true. Set false to preserve existing content. */
         var discard: Boolean = true
     }
 
-    /** Bit flags for the `flags` argument of [copyFrame]. */
-    object MirrorFrameFlag {
-        /** Indicates dstSwapChain should be committed after copyFrame. */
-        val COMMIT: Int = 0x1
-        /** Indicates presentation time should be set on dstSwapChain in copyFrame. */
-        val SET_PRESENTATION_TIME: Int = 0x2
-        /** Indicates dstSwapChain should be cleared to black before copyFrame. */
-        val CLEAR: Int = 0x4
+    /**
+     * Timing information about a frame. Times are nanoseconds since the steady-clock epoch; durations are
+     * nanoseconds.
+     */
+    class FrameInfo(
+        /** Monotonically increasing frame identifier. */
+        val frameId: Int,
+        /** Frame duration on the GPU. */
+        val gpuFrameDuration: Long,
+        /** Denoised frame duration on the GPU. */
+        val denoisedGpuFrameDuration: Long,
+        /** Renderer.beginFrame() time. */
+        val beginFrame: Long,
+        /** Renderer.endFrame() time. */
+        val endFrame: Long,
+        /** Backend thread time of frame start. */
+        val backendBeginFrame: Long,
+        /** Backend thread time of frame end. */
+        val backendEndFrame: Long,
+        /** GPU thread time of frame end, or 0. */
+        val gpuFrameComplete: Long,
+        /** VSYNC time of this frame. */
+        val vsync: Long,
+        /** Actual presentation time of this frame. */
+        val displayPresent: Long,
+        /** Deadline for queuing a frame. */
+        val presentDeadline: Long,
+        /** Display refresh period. */
+        val displayPresentInterval: Long,
+        /** Time between the start of composition and the expected present time. */
+        val compositionToPresentLatency: Long,
+        /** Time between vsync and the system's expected presentation time. */
+        val expectedPresentLatency: Long,
+        /** Frame scheduling callback entry time. */
+        val frameScheduleTime: Long,
+    )
+
+    companion object {
+        /** [copyFrame] flag: commit dstSwapChain after the copy. */
+        const val COMMIT: Int = 0x1
+        /** [copyFrame] flag: set dstSwapChain's presentation time to when the frame is copied. */
+        const val SET_PRESENTATION_TIME: Int = 0x2
+        /** [copyFrame] flag: clear dstSwapChain to black before the copy. */
+        const val CLEAR: Int = 0x4
     }
 
     private lateinit var _engine: Engine
@@ -106,48 +145,79 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     /** Get the Engine that created this Renderer. */
     val engine: Engine get() = _engine
 
-    private var _displayInfo = DisplayInfo()
-    /**
-     * Get/set display information for frame pacing and dynamic resolution.
-     * The getter returns a snapshot — mutate it and assign back to apply.
-     */
-    var displayInfo: DisplayInfo
-        get() = _displayInfo
-        set(value) {
-            _displayInfo = value
-            FilaRenderer_setDisplayInfo(nativeHandle, value.refreshRate)
-        }
+    /** Sets display information for frame pacing and dynamic resolution. */
+    fun setDisplayInfo(info: DisplayInfo) = withHandle({ FilaRendererDisplayInfo_create() }, { FilaRendererDisplayInfo_destroy(it) }) { o ->
+        FilaRendererDisplayInfo_setRefreshRate(o, info.refreshRate)
+        FilaRenderer_setDisplayInfo(nativeHandle, o)
+    }
 
-    private var _frameRateOptions = FrameRateOptions()
-    /**
-     * Get/set frame rate control and dynamic resolution options.
-     * The getter returns a snapshot — mutate it and assign back to apply.
-     */
-    var frameRateOptions: FrameRateOptions
-        get() = _frameRateOptions
-        set(value) {
-            _frameRateOptions = value
-            FilaRenderer_setFrameRateOptions(nativeHandle, value.headRoomRatio, value.scaleRate, value.history, value.interval)
-        }
+    /** Sets frame rate control and dynamic resolution options. */
+    fun setFrameRateOptions(options: FrameRateOptions) = withHandle({ FilaRendererFrameRateOptions_create() }, { FilaRendererFrameRateOptions_destroy(it) }) { o ->
+        FilaRendererFrameRateOptions_setHeadRoomRatio(o, options.headRoomRatio)
+        FilaRendererFrameRateOptions_setScaleRate(o, options.scaleRate)
+        FilaRendererFrameRateOptions_setHistory(o, options.history)
+        FilaRendererFrameRateOptions_setInterval(o, options.interval)
+        FilaRenderer_setFrameRateOptions(nativeHandle, o)
+    }
 
     /**
      * Get/set clear behavior for the SwapChain.
      * The getter returns a snapshot — mutate it and assign back to apply.
      */
     var clearOptions: ClearOptions
-        get() = run {
-            val outI = IntArray(2)
-            val outD = DoubleArray(4)
-            outI.usePinned { pi -> outD.usePinned { pd -> FilaRenderer_getClearOptions(nativeHandle, pi, pd) } }
+        get() = withHandle({ FilaRendererClearOptions_create() }, { FilaRendererClearOptions_destroy(it) }) { o ->
+            FilaRenderer_getClearOptions(nativeHandle, o)
             ClearOptions().apply {
-                clearColor = doubleArrayOf(outD[0], outD[1], outD[2], outD[3])
-                clear = (outI[0] != 0)
-                discard = (outI[1] != 0)
+                clearColor.usePinned { FilaRendererClearOptions_getClearColor(o, it) }
+                clearStencil = FilaRendererClearOptions_getClearStencil(o)
+                clear = FilaRendererClearOptions_getClear(o)
+                discard = FilaRendererClearOptions_getDiscard(o)
             }
         }
-        set(value) {
-            FilaRenderer_setClearOptions(nativeHandle, value.clearColor[0], value.clearColor[1], value.clearColor[2], value.clearColor[3], value.clear, value.discard)
+        set(value) = withHandle({ FilaRendererClearOptions_create() }, { FilaRendererClearOptions_destroy(it) }) { o ->
+            value.clearColor.usePinned { FilaRendererClearOptions_setClearColor(o, it) }
+            FilaRendererClearOptions_setClearStencil(o, value.clearStencil)
+            FilaRendererClearOptions_setClear(o, value.clear)
+            FilaRendererClearOptions_setDiscard(o, value.discard)
+            FilaRenderer_setClearOptions(nativeHandle, o)
         }
+
+    /**
+     * Returns up to [historySize] entries of frame timing history, most recent first. The history can be
+     * lost when beginFrame() switches SwapChain.
+     */
+    fun getFrameInfoHistory(historySize: Int = 1): List<FrameInfo> {
+        val handles = List(historySize) { FilaRendererFrameInfo_create() }
+        try {
+            val n = interopScope { FilaRenderer_getFrameInfoHistory(nativeHandle, historySize, toInterop(handles), handles.size) }
+            val ns = LongArray(1)
+            fun read(get: (NativePointer) -> Unit): Long { ns.usePinned(get); return ns[0] }
+            return handles.take(minOf(n, historySize)).map { p ->
+                FrameInfo(
+                    FilaRendererFrameInfo_getFrameId(p),
+                    read { FilaRendererFrameInfo_getGpuFrameDuration(p, it) },
+                    read { FilaRendererFrameInfo_getDenoisedGpuFrameDuration(p, it) },
+                    read { FilaRendererFrameInfo_getBeginFrame(p, it) },
+                    read { FilaRendererFrameInfo_getEndFrame(p, it) },
+                    read { FilaRendererFrameInfo_getBackendBeginFrame(p, it) },
+                    read { FilaRendererFrameInfo_getBackendEndFrame(p, it) },
+                    read { FilaRendererFrameInfo_getGpuFrameComplete(p, it) },
+                    read { FilaRendererFrameInfo_getVsync(p, it) },
+                    read { FilaRendererFrameInfo_getDisplayPresent(p, it) },
+                    read { FilaRendererFrameInfo_getPresentDeadline(p, it) },
+                    read { FilaRendererFrameInfo_getDisplayPresentInterval(p, it) },
+                    read { FilaRendererFrameInfo_getCompositionToPresentLatency(p, it) },
+                    read { FilaRendererFrameInfo_getExpectedPresentLatency(p, it) },
+                    read { FilaRendererFrameInfo_getFrameScheduleTime(p, it) },
+                )
+            }
+        } finally {
+            handles.forEach { FilaRendererFrameInfo_destroy(it) }
+        }
+    }
+
+    /** The maximum supported frame history size. */
+    val maxFrameHistorySize: Int get() = FilaRenderer_getMaxFrameHistorySize(nativeHandle)
 
     /**
      * Set the time at which the frame must be presented.
@@ -157,7 +227,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param monotonicClockNanos Time in nanoseconds.
      */
-    fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos)
+    fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime_int64_t(nativeHandle, monotonicClockNanos)
     /**
      * Set the real desired presentation time targeted for this frame.
      *
@@ -167,7 +237,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param monotonicClockNanos Desired presentation timestamp in steady_clock nanoseconds.
      */
-    fun setDesiredPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setDesiredPresentationTime(nativeHandle, monotonicClockNanos)
+    fun setDesiredPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setDesiredPresentationTime_int64_t(nativeHandle, monotonicClockNanos)
     /**
      * Set the deadline by which CPU and GPU rendering must complete for the buffer to meet its
      * target display latching window.
@@ -175,7 +245,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param monotonicClockNanos Deadline timestamp in steady_clock nanoseconds.
      */
-    fun setRenderingDeadline(monotonicClockNanos: Long) = FilaRenderer_setRenderingDeadline(nativeHandle, monotonicClockNanos)
+    fun setRenderingDeadline(monotonicClockNanos: Long) = FilaRenderer_setRenderingDeadline_int64_t(nativeHandle, monotonicClockNanos)
     /**
      * Set the VSYNC time expressed as the duration in nanoseconds since epoch of std::chrono::steady_clock.
      *
@@ -191,7 +261,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param vsyncSteadyClockTimeNano VSYNC time in steady_clock nanoseconds.
      */
-    fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano)
+    fun skipFrame(vsyncSteadyClockTimeNano: Long = 0) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano)
     /**
      * Check if the current frame should be rendered.
      *
@@ -214,7 +284,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      * @param frameTimeNanos VSYNC time in steady_clock nanoseconds, or 0 to use setVsyncTime().
      * @return true if frame should be rendered, false if behind schedule.
      */
-    fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos)
+    fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long = 0): Boolean = FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos)
     /**
      * Finish the current frame and schedule it for display.
      *
@@ -250,13 +320,10 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      * @param dstSwapChain Destination SwapChain.
      * @param dstViewport Destination viewport rectangle.
      * @param srcViewport Source viewport rectangle.
-     * @param flags Behavior flags (COMMIT, SET_PRESENTATION_TIME, CLEAR).
+     * @param flags Behavior flags ([COMMIT], [SET_PRESENTATION_TIME], [CLEAR]).
      */
     fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
-        FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle,
-            dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
-            srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
-            flags)
+        dstViewport.useNative { dst -> srcViewport.useNative { src -> FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle, dst, src, flags) } }
     }
 
     /**
@@ -278,13 +345,13 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (ptr, userData) = pixelsInto(buffer)
-        FilaRenderer_readPixels(
+        FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
             nativeHandle,
             xoffset, yoffset, width, height,
             ptr, buffer.sizeInBytes,
             buffer.format.ordinal, buffer.type.ordinal,
             buffer.alignment, buffer.left, buffer.top, buffer.stride,
-            NullPointer, Callbacks.keepBuffer, userData,
+            Callbacks.keepBuffer, userData,
         )
     }
 
@@ -294,13 +361,13 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      */
     @InternalFilamentApi
     fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, address: NativePointer, sizeInBytes: Int, format: Texture.Format, type: Texture.Type, stride: Int, onDone: () -> Unit) {
-        FilaRenderer_readPixels(
+        FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
             nativeHandle,
             xoffset, yoffset, width, height,
             address, sizeInBytes,
             format.ordinal, type.ordinal,
             1, 0, 0, stride,
-            NullPointer, Callbacks.keepBuffer, Callbacks.register(once = true) { onDone() },
+            Callbacks.keepBuffer, Callbacks.register(once = true) { onDone() },
         )
     }
 
@@ -319,13 +386,13 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (ptr, userData) = pixelsInto(buffer)
-        FilaRenderer_readPixelsRenderTarget(
+        FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
             nativeHandle, renderTarget.nativeHandle,
             xoffset, yoffset, width, height,
             ptr, buffer.sizeInBytes,
             buffer.format.ordinal, buffer.type.ordinal,
             buffer.alignment, buffer.left, buffer.top, buffer.stride,
-            NullPointer, Callbacks.keepBuffer, userData,
+            Callbacks.keepBuffer, userData,
         )
     }
 
@@ -346,13 +413,25 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param timeEpochInNs Epoch timestamp in steady_clock nanoseconds.
      */
-    fun setMaterialTimeEpoch(timeEpochInNs: Long) = FilaRenderer_setMaterialTimeEpoch(nativeHandle, timeEpochInNs)
+    fun setMaterialTimeEpoch(timeEpochInNs: Long) = FilaRenderer_setMaterialTimeEpoch_int64_t(nativeHandle, timeEpochInNs)
     /**
      * Pause the render thread for a specified duration in nanoseconds.
      *
      * @param timeNs Duration in nanoseconds to pause the render thread.
      */
     fun pauseRenderThread(timeNs: Long) = FilaRenderer_pauseRenderThread(nativeHandle, timeNs)
+    /**
+     * Whether GPU execution has fallen behind the CPU, to detect latency build-up when driving the
+     * presentation loop manually.
+     */
+    val hasGpuFallenBehind: Boolean get() = FilaRenderer_hasGpuFallenBehind(nativeHandle)
+    /**
+     * Sets the steady-clock time the frame scheduling callback was entered, so frame pacing can measure
+     * the CPU time spent before beginFrame().
+     *
+     * @param timeSteadyClockNano Steady-clock time in nanoseconds since epoch.
+     */
+    fun setFrameScheduleTime(timeSteadyClockNano: Long) = FilaRenderer_setFrameScheduleTime_uint64_t(nativeHandle, timeSteadyClockNano)
     /**
      * Skip the next N frames for frame pacing.
      *
@@ -379,75 +458,3 @@ private fun pixelsInto(buffer: Texture.PixelBufferDescriptor): Pair<NativePointe
     }
     return ptr to userData
 }
-
-@ExternalSymbolName("FilaRenderer_beginFrame")
-private external fun FilaRenderer_beginFrame(renderer: NativePointer, swapChain: NativePointer, frameTimeNanos: Long): Boolean
-
-@ExternalSymbolName("FilaRenderer_copyFrame")
-private external fun FilaRenderer_copyFrame(renderer: NativePointer, dstSwapChain: NativePointer, dstLeft: Int, dstBottom: Int, dstWidth: Int, dstHeight: Int, srcLeft: Int, srcBottom: Int, srcWidth: Int, srcHeight: Int, flags: Int)
-
-@ExternalSymbolName("FilaRenderer_endFrame")
-private external fun FilaRenderer_endFrame(renderer: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_getClearOptions")
-private external fun FilaRenderer_getClearOptions(renderer: NativePointer, ints: NativePointer, doubles: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_getFrameToSkipCount")
-private external fun FilaRenderer_getFrameToSkipCount(renderer: NativePointer): Int
-
-@ExternalSymbolName("FilaRenderer_getMaterialTime")
-private external fun FilaRenderer_getMaterialTime(renderer: NativePointer): Double
-
-@ExternalSymbolName("FilaRenderer_getUserTime")
-private external fun FilaRenderer_getUserTime(renderer: NativePointer): Double
-
-@ExternalSymbolName("FilaRenderer_pauseRenderThread")
-private external fun FilaRenderer_pauseRenderThread(renderer: NativePointer, timeNs: Long)
-
-@ExternalSymbolName("FilaRenderer_readPixels")
-private external fun FilaRenderer_readPixels(renderer: NativePointer, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: NativePointer, sizeInBytes: Int, format: Int, type: Int, alignment: Int, left: Int, top: Int, stride: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_readPixelsRenderTarget")
-private external fun FilaRenderer_readPixelsRenderTarget(renderer: NativePointer, renderTarget: NativePointer, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: NativePointer, sizeInBytes: Int, format: Int, type: Int, alignment: Int, left: Int, top: Int, stride: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_render")
-private external fun FilaRenderer_render(renderer: NativePointer, view: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_renderStandaloneView")
-private external fun FilaRenderer_renderStandaloneView(renderer: NativePointer, view: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_resetUserTime")
-private external fun FilaRenderer_resetUserTime(renderer: NativePointer)
-
-@ExternalSymbolName("FilaRenderer_setClearOptions")
-private external fun FilaRenderer_setClearOptions(renderer: NativePointer, clearColor_0: Double, clearColor_1: Double, clearColor_2: Double, clearColor_3: Double, clear: Boolean, discard: Boolean)
-
-@ExternalSymbolName("FilaRenderer_setDesiredPresentationTime")
-private external fun FilaRenderer_setDesiredPresentationTime(renderer: NativePointer, monotonicClockNanos: Long)
-
-@ExternalSymbolName("FilaRenderer_setDisplayInfo")
-private external fun FilaRenderer_setDisplayInfo(renderer: NativePointer, refreshRate: Float)
-
-@ExternalSymbolName("FilaRenderer_setFrameRateOptions")
-private external fun FilaRenderer_setFrameRateOptions(renderer: NativePointer, headRoomRatio: Float, scaleRate: Float, history: Int, interval: Float)
-
-@ExternalSymbolName("FilaRenderer_setMaterialTimeEpoch")
-private external fun FilaRenderer_setMaterialTimeEpoch(renderer: NativePointer, timeEpochInNs: Long)
-
-@ExternalSymbolName("FilaRenderer_setPresentationTime")
-private external fun FilaRenderer_setPresentationTime(renderer: NativePointer, monotonicClockNanos: Long)
-
-@ExternalSymbolName("FilaRenderer_setRenderingDeadline")
-private external fun FilaRenderer_setRenderingDeadline(renderer: NativePointer, monotonicClockNanos: Long)
-
-@ExternalSymbolName("FilaRenderer_setVsyncTime")
-private external fun FilaRenderer_setVsyncTime(renderer: NativePointer, steadyClockTimeNano: Long)
-
-@ExternalSymbolName("FilaRenderer_shouldRenderFrame")
-private external fun FilaRenderer_shouldRenderFrame(renderer: NativePointer): Boolean
-
-@ExternalSymbolName("FilaRenderer_skipFrame")
-private external fun FilaRenderer_skipFrame(renderer: NativePointer, vsyncSteadyClockTimeNano: Long)
-
-@ExternalSymbolName("FilaRenderer_skipNextFrames")
-private external fun FilaRenderer_skipNextFrames(renderer: NativePointer, frameCount: Int)

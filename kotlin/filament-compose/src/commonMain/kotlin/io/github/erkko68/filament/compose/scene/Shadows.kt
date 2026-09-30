@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Immutable
 import io.github.erkko68.filament.LightManager
+import io.github.erkko68.filament.ShadowType
 import io.github.erkko68.filament.View
 
 /**
@@ -167,10 +168,10 @@ internal fun Shadows?.applyTo(view: View) {
     view.isShadowingEnabled = this != null
     when (this) {
         null -> Unit
-        Shadows.Pcf  -> view.shadowType = View.ShadowType.PCF
-        Shadows.Pcfd -> view.shadowType = View.ShadowType.PCFd
+        Shadows.Pcf  -> view.shadowType = ShadowType.PCF
+        Shadows.Pcfd -> view.shadowType = ShadowType.PCFd
         is Shadows.Vsm -> {
-            view.shadowType = View.ShadowType.VSM
+            view.shadowType = ShadowType.VSM
             view.vsmShadowOptions = view.vsmShadowOptions.apply {
                 anisotropy = this@applyTo.anisotropy
                 mipmapping = this@applyTo.mipmapping
@@ -180,11 +181,11 @@ internal fun Shadows?.applyTo(view: View) {
             }
         }
         is Shadows.Dpcf -> {
-            view.shadowType = View.ShadowType.DPCF
+            view.shadowType = ShadowType.DPCF
             view.applySoftShadows(penumbraScale, penumbraRatioScale)
         }
         is Shadows.Pcss -> {
-            view.shadowType = View.ShadowType.PCSS
+            view.shadowType = ShadowType.PCSS
             view.applySoftShadows(penumbraScale, penumbraRatioScale)
         }
     }

@@ -160,7 +160,7 @@ known-good core configs when asserting option values under NOOP.
   (Perspective / Orthographic / Lens) plus eye position, exposure, shift, and scaling, read back via the
   camera's own getters.
 - **`ShadowsApplyTest`** (2) — the `null`-disables / non-null-enables toggle (everywhere), and each
-  technique's `View.ShadowType` selection (`@IgnoreJs` — `setShadowType` is unbound on web).
+  technique's `ShadowType` selection (`@IgnoreJs` — `setShadowType` is unbound on web).
 
 ### Tier B — `DEFAULT`, gated (`engine ?: return`) ✅ partially implemented
 

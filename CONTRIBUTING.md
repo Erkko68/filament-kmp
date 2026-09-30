@@ -73,7 +73,7 @@ Mirroring the API is not the same as mirroring the Java. Two deliberate rules:
   a builder into a DSL or a data class.
 - **Data classes only where nothing is nested in an `expect class`.** `Viewport` and
   `MaterialKey` are `data class`es because they are plain common types. The option structs
-  (`View.BloomOptions`, `Renderer.ClearOptions`, `Engine.Config`, `LightManager.ShadowOptions`)
+  (`BloomOptions`, `Renderer.ClearOptions`, `Engine.Config`, `LightManager.ShadowOptions`)
   cannot be, and stay `class X()` with `var` fields configured through `apply { }`: an expect
   constructor takes no `val`/`var` parameters, a nested `typealias` onto a top-level data class
   is not actualized, and a nested classifier inherited from a supertype does not resolve through

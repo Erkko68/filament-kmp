@@ -2,9 +2,13 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Immutable
 import io.github.erkko68.filament.ColorGrading
+import io.github.erkko68.filament.DepthOfFieldOptions
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.QualityLevel
 import io.github.erkko68.filament.ToneMapper
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.AntiAliasing as FilamentAntiAliasing
+import io.github.erkko68.filament.Dithering as FilamentDithering
 
 /**
  * Per-view visual configuration: post-processing effects plus render-quality options. Pass to
@@ -62,7 +66,7 @@ data class PostProcessing(
 data class Bloom(
     val strength: Float = 0.10f,
     val thresholdEnabled: Boolean = true,
-    val quality: View.Quality = View.Quality.LOW,
+    val quality: QualityLevel = QualityLevel.LOW,
     val resolution: Int = 0,
     val levels: Int = 6,
 )
@@ -92,7 +96,7 @@ data class AmbientOcclusion(
     val radius: Float = 0.3f,
     val bias: Float = 0.01f,
     val intensity: Float = 1.0f,
-    val quality: View.Quality = View.Quality.LOW,
+    val quality: QualityLevel = QualityLevel.LOW,
 )
 
 /** Anti-aliasing: MSAA (hardware), FXAA (post-process), and TAA (temporal). */
@@ -182,7 +186,7 @@ data class ColorGrade(
 data class DepthOfField(
     val cocScale: Float = 1.0f,
     val maxApertureDiameter: Float = 0.01f,
-    val filter: View.DepthOfFieldOptions.Filter = View.DepthOfFieldOptions.Filter.MEDIAN,
+    val filter: DepthOfFieldOptions.Filter = DepthOfFieldOptions.Filter.MEDIAN,
     val nativeResolution: Boolean = false,
 )
 
@@ -200,23 +204,23 @@ data class DynamicResolution(
     val minScale: Float = 0.5f,
     val maxScale: Float = 1.0f,
     val sharpness: Float = 0.9f,
-    val quality: View.Quality = View.Quality.LOW,
+    val quality: QualityLevel = QualityLevel.LOW,
     val homogeneousScaling: Boolean = false,
 )
 
 /**
- * Dithering applied at tonemap time. [View.Dithering.TEMPORAL] (Filament's native default)
+ * Dithering applied at tonemap time. [FilamentDithering.TEMPORAL] (Filament's native default)
  * hides 8-bit banding in dark gradients and bloom halos.
  */
 @Immutable
-data class Dithering(val mode: View.Dithering = View.Dithering.TEMPORAL)
+data class Dithering(val mode: FilamentDithering = FilamentDithering.TEMPORAL)
 
 /**
- * Precision of the view's HDR color buffer. [View.Quality.HIGH] (the native default) is
+ * Precision of the view's HDR color buffer. [QualityLevel.HIGH] (the native default) is
  * RGBA16F where supported — needed for emissive values above 1.0 to survive into bloom.
  */
 @Immutable
-data class RenderQuality(val hdrColorBuffer: View.Quality = View.Quality.HIGH)
+data class RenderQuality(val hdrColorBuffer: QualityLevel = QualityLevel.HIGH)
 
 /**
  * Applies this configuration to [view], allocating a [ColorGrading] if [colorGrade] is set.
@@ -275,8 +279,8 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
     // null keeps Filament's native default (FXAA on) — turning AA off requires an explicit
     // AntiAliasing(fxaaEnabled = false), consistent with "null = native default" elsewhere.
     view.antiAliasing = when {
-        antiAliasing == null || antiAliasing.fxaaEnabled -> View.AntiAliasing.FXAA
-        else -> View.AntiAliasing.NONE
+        antiAliasing == null || antiAliasing.fxaaEnabled -> FilamentAntiAliasing.FXAA
+        else -> FilamentAntiAliasing.NONE
     }
     view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply {
         this.enabled = antiAliasing?.taaEnabled == true
@@ -304,18 +308,18 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
     view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply {
         this.enabled = dynamicResolution != null
         dynamicResolution?.let {
-            this.minScale = it.minScale
-            this.maxScale = it.maxScale
+            this.minScale = floatArrayOf(it.minScale, it.minScale)
+            this.maxScale = floatArrayOf(it.maxScale, it.maxScale)
             this.sharpness = it.sharpness
             this.quality = it.quality
             this.homogeneousScaling = it.homogeneousScaling
         }
     }
 
-    view.dithering = dithering?.mode ?: View.Dithering.TEMPORAL
+    view.dithering = dithering?.mode ?: FilamentDithering.TEMPORAL
     // null restores Filament's native default (HIGH), like every other nullable effect here.
     view.renderQuality = view.renderQuality.apply {
-        this.hdrColorBuffer = renderQuality?.hdrColorBuffer ?: View.Quality.HIGH
+        this.hdrColorBuffer = renderQuality?.hdrColorBuffer ?: QualityLevel.HIGH
     }
 
     return colorGrade?.let { c ->

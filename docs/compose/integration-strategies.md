@@ -73,7 +73,7 @@ background alpha-0 so Compose content **behind** it shows through — the one ca
 and Web escape the "3D plane below Compose" rule above, because the surface moves in front and
 composites by alpha instead of being revealed by a hole punch.
 
-It sets `View.BlendMode.TRANSLUCENT` plus a `clear = true`, alpha-0 `ClearOptions` — the default
+It sets `BlendMode.TRANSLUCENT` plus a `clear = true`, alpha-0 `ClearOptions` — the default
 (`clear = false`, `discard = true`) leaves untouched swapchain pixels undefined, which shows up as
 opaque garbage. Each platform then needs its own surface change:
 

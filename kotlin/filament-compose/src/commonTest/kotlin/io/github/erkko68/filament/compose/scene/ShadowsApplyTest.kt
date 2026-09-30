@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.compose.scene
 
+import io.github.erkko68.filament.ShadowType
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import kotlin.test.Test
@@ -8,7 +9,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Verifies [Shadows.applyTo] toggles shadowing and selects the right [View.ShadowType]. Views are
+ * Verifies [Shadows.applyTo] toggles shadowing and selects the right [ShadowType]. Views are
  * freed by the engine on fixture teardown.
  */
 class ShadowsApplyTest : ComposeTestFixture() {
@@ -30,20 +31,20 @@ class ShadowsApplyTest : ComposeTestFixture() {
     fun eachTechniqueSelectsItsShadowType() {
         val view = newView()
         Shadows.Pcf.applyTo(view)
-        assertEquals(View.ShadowType.PCF, view.shadowType)
+        assertEquals(ShadowType.PCF, view.shadowType)
 
         Shadows.Pcfd.applyTo(view)
-        assertEquals(View.ShadowType.PCFd, view.shadowType)
+        assertEquals(ShadowType.PCFd, view.shadowType)
 
         Shadows.Vsm(highPrecision = true).applyTo(view)
-        assertEquals(View.ShadowType.VSM, view.shadowType)
+        assertEquals(ShadowType.VSM, view.shadowType)
         assertTrue(view.vsmShadowOptions.highPrecision)
 
         Shadows.Dpcf(penumbraScale = 2f).applyTo(view)
-        assertEquals(View.ShadowType.DPCF, view.shadowType)
+        assertEquals(ShadowType.DPCF, view.shadowType)
         assertEquals(2f, view.softShadowOptions.penumbraScale)
 
         Shadows.Pcss().applyTo(view)
-        assertEquals(View.ShadowType.PCSS, view.shadowType)
+        assertEquals(ShadowType.PCSS, view.shadowType)
     }
 }

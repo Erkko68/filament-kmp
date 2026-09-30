@@ -123,6 +123,16 @@ inline fun <T> interopScope(block: InteropScope.() -> T): T {
     }
 }
 
+// A native object from [create] for the duration of [block], destroyed afterwards.
+internal inline fun <T> withHandle(create: () -> NativePointer, destroy: (NativePointer) -> Unit, block: (NativePointer) -> T): T {
+    val handle = create()
+    try {
+        return block(handle)
+    } finally {
+        destroy(handle)
+    }
+}
+
 // The array's address for the duration of [block]; whatever C wrote there is in the array afterwards.
 
 @InternalFilamentApi

@@ -99,7 +99,7 @@ class FrameSemanticsTest : RenderingTestFixture() {
     @Test
     fun vsmShadowsStillRender() = withProbe { engine, probe ->
         litScene(engine, probe)
-        probe.view.shadowType = View.ShadowType.VSM
+        probe.view.shadowType = ShadowType.VSM
         val pixels = assertNotNull(probe.renderAndRead(), "readback did not complete")
 
         assertShadowPresent(pixels, probe, "VSM")
