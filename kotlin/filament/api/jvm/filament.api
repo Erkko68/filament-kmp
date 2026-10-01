@@ -472,6 +472,7 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun destroy (Lio/github/erkko68/filament/BufferObject;)Z
 	public final fun destroy (Lio/github/erkko68/filament/ColorGrading;)Z
 	public final fun destroy (Lio/github/erkko68/filament/Fence;)Z
+	public final fun destroy (Lio/github/erkko68/filament/FramePacer;)Z
 	public final fun destroy (Lio/github/erkko68/filament/IndexBuffer;)Z
 	public final fun destroy (Lio/github/erkko68/filament/IndirectLight;)Z
 	public final fun destroy (Lio/github/erkko68/filament/Material;)Z
@@ -832,6 +833,96 @@ public final class io/github/erkko68/filament/FogOptions {
 	public final fun setInScatteringStart (F)V
 	public final fun setMaximumOpacity (F)V
 	public final fun setSkyColor (Lio/github/erkko68/filament/Texture;)V
+}
+
+public final class io/github/erkko68/filament/FramePacer {
+	public fun <init> (J)V
+	public final fun applyPresentationTime (Lio/github/erkko68/filament/Renderer;)V
+	public final fun getConfiguration ()Lio/github/erkko68/filament/FramePacer$Configuration;
+	public final fun getEffectiveLatency ()J
+	public final fun getExpectedPresentationTime ()J
+	public final fun getNativeObject ()J
+	public final fun getPacingStatus ()Lio/github/erkko68/filament/FramePacer$PacingStatus;
+	public final fun getRenderingDeadline ()J
+	public final fun getSelectedFrameRate ()F
+	public final fun hasGpuFallenBehind (Lio/github/erkko68/filament/Renderer;)Z
+	public final fun isExactFrameRateAchieved ()Z
+	public final fun resetPacing ()V
+	public final fun setConfiguration (Lio/github/erkko68/filament/FramePacer$Configuration;)V
+	public final fun setupExtraFrame ()Z
+	public final fun setupFrame (Lio/github/erkko68/filament/FramePacer$VsyncTick;)Lio/github/erkko68/filament/FramePacer$FrameStatus;
+}
+
+public final class io/github/erkko68/filament/FramePacer$Builder {
+	public fun <init> ()V
+	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/FramePacer;
+	public final fun latency (J)Lio/github/erkko68/filament/FramePacer$Builder;
+	public final fun latencyFrames (I)Lio/github/erkko68/filament/FramePacer$Builder;
+	public final fun targetFrameRate (F)Lio/github/erkko68/filament/FramePacer$Builder;
+}
+
+public final class io/github/erkko68/filament/FramePacer$Configuration {
+	public fun <init> ()V
+	public fun <init> (FJ)V
+	public synthetic fun <init> (FJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component2 ()J
+	public final fun copy (FJ)Lio/github/erkko68/filament/FramePacer$Configuration;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/FramePacer$Configuration;FJILjava/lang/Object;)Lio/github/erkko68/filament/FramePacer$Configuration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatency ()J
+	public final fun getTargetFrameRate ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/FramePacer$FrameStatus : java/lang/Enum {
+	public static final field ACCEPTED Lio/github/erkko68/filament/FramePacer$FrameStatus;
+	public static final field SKIPPED_SPURIOUS Lio/github/erkko68/filament/FramePacer$FrameStatus;
+	public static final field SKIPPED_STALE Lio/github/erkko68/filament/FramePacer$FrameStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/FramePacer$FrameStatus;
+	public static fun values ()[Lio/github/erkko68/filament/FramePacer$FrameStatus;
+}
+
+public final class io/github/erkko68/filament/FramePacer$HardwareTimeline {
+	public fun <init> (JJ)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun copy (JJ)Lio/github/erkko68/filament/FramePacer$HardwareTimeline;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/FramePacer$HardwareTimeline;JJILjava/lang/Object;)Lio/github/erkko68/filament/FramePacer$HardwareTimeline;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDeadline ()J
+	public final fun getExpectedPresentationTime ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/FramePacer$PacingStatus : java/lang/Enum {
+	public static final field DISPLAY_STARVING Lio/github/erkko68/filament/FramePacer$PacingStatus;
+	public static final field DISPLAY_STUFFED Lio/github/erkko68/filament/FramePacer$PacingStatus;
+	public static final field STEADY Lio/github/erkko68/filament/FramePacer$PacingStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/FramePacer$PacingStatus;
+	public static fun values ()[Lio/github/erkko68/filament/FramePacer$PacingStatus;
+}
+
+public final class io/github/erkko68/filament/FramePacer$VsyncTick {
+	public fun <init> (JJLjava/lang/Long;Ljava/util/List;)V
+	public synthetic fun <init> (JJLjava/lang/Long;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()Ljava/lang/Long;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (JJLjava/lang/Long;Ljava/util/List;)Lio/github/erkko68/filament/FramePacer$VsyncTick;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/FramePacer$VsyncTick;JJLjava/lang/Long;Ljava/util/List;ILjava/lang/Object;)Lio/github/erkko68/filament/FramePacer$VsyncTick;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBaseTime ()J
+	public final fun getFrameScheduleTime ()Ljava/lang/Long;
+	public final fun getTimelines ()Ljava/util/List;
+	public final fun getVsyncPeriod ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/github/erkko68/filament/Gamut {

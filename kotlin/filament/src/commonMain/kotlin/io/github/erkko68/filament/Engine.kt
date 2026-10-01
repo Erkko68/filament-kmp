@@ -472,6 +472,9 @@ class Engine internal constructor(
     /** Destroys a Fence. */
     fun destroy(fence: Fence): Boolean =
         FilaEngine_destroy_Fence(nativeHandle, fence.nativeHandle).also { fence.nativeHandle = NullPointer }
+    /** Destroys a FramePacer. */
+    fun destroy(framePacer: FramePacer): Boolean =
+        FilaEngine_destroy_FramePacer(nativeHandle, framePacer.nativeHandle).also { framePacer.nativeHandle = NullPointer }
     /** Destroys an IndexBuffer. */
     fun destroy(indexBuffer: IndexBuffer): Boolean =
         FilaEngine_destroy_IndexBuffer(nativeHandle, indexBuffer.nativeHandle).also { indexBuffer.nativeHandle = NullPointer }
