@@ -1034,10 +1034,10 @@ typedef void (*FilaArgCallback)(void* arg, void* user);
 typedef void (*FilaBufferDescriptorCallback)(void* buffer, size_t size, void* user);
 typedef void (*FilaCallback)(void* user);
 typedef void (*FilaEngineAsyncCompletionCallback)(void*, FilaAsyncCallStatus);
-typedef void (*FilaEngineCreateCallback)(void * , void * );
+typedef void (*FilaEngineCreateCallback)(void*, void*);
 typedef void (*FilaIndexBufferAsyncCompletionCallback)(FilaIndexBuffer*, void*, FilaAsyncCallStatus);
-typedef void (*FilaKtxreaderKtx1ReaderCallback)(void *);
-typedef void (*FilaStreamCallback)(void *, void *);
+typedef void (*FilaKtxreaderKtx1ReaderCallback)(void*);
+typedef void (*FilaStreamCallback)(void*, void*);
 typedef void (*FilaTextureAsyncCompletionCallback)(FilaTexture*, void*, FilaAsyncCallStatus);
 typedef void (*FilaVertexBufferAsyncCompletionCallback)(FilaVertexBuffer*, void*, FilaAsyncCallStatus);
 

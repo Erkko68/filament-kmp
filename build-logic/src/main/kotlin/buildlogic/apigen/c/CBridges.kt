@@ -137,17 +137,17 @@ internal class CBridges(private val api: CppApi) {
         }
         // A math template's instantiation is one of the mirrored typedefs: vec3<float> is float3.
         MATH_VECTOR.matchEntire(decl.orEmpty())?.let { vector ->
-            val element = substitute(target.spelling.substringAfter('<').substringBeforeLast('>').trim(), lastAlias.orEmpty())
+            val element = substitute(target.args.single().spelling, lastAlias.orEmpty())
             decl = "filament::math::$element${vector.groupValues[1]}"
         }
         val bridge = DirectBridges(shape.const, indirection, result, lvalue)
         return when {
-            target.kind == Kind.FUNCTION && lastAlias != null && indirection != "&" -> functionPointer(lastAlias, target.spelling, indirection == "*")
+            target.kind == Kind.FUNCTION && lastAlias != null && indirection != "&" -> functionPointer(lastAlias, target, indirection == "*")
             decl in UPLOADS -> bridge.upload(decl!!, pixels = decl == PIXEL_BUFFER).also { callbackTypes += BUFFER_CALLBACK }
             decl in SEQUENCES -> sequence(target, bridge)
             decl == "std::optional" -> optional(target, bridge)
             decl == "std::function" && lastAlias != null -> function(lastAlias, target.args.single(), bridge)
-            decl == "utils::Invocable" -> bridge.invocable(target.spelling).let { (b, typedef) -> callbackTypes += typedef; b }
+            decl == "utils::Invocable" -> bridge.invocable(target).let { (b, typedef) -> callbackTypes += typedef; b }
             indirection == "&&" -> throw Unsupported("${type.spelling}: rvalue reference")
             target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
             target.kind == Kind.FUNCTION -> throw Unsupported("${type.spelling}: function type")
@@ -211,8 +211,7 @@ internal class CBridges(private val api: CppApi) {
      * which point at the same objects.
      */
     private fun pointers(type: CppType, shape: Shape, result: Boolean): CBridge {
-        // `const Material *const *` as C writes it: `const Material* const*`.
-        val spelling = NULLABILITY.replace(type.spelling, "").replace(Regex("""\s*\*"""), "*").replace(Regex("""\*(?=\w)"""), "* ").trim()
+        val spelling = cSpelling(type.spelling)
         if (type.kind == Kind.BUILTIN) {
             CAbi.checkPointee(shape.base)
             return CBridge(spelling, { it })
@@ -259,16 +258,12 @@ internal class CBridges(private val api: CppApi) {
      * A function pointer alias, or a pointer to a function type alias ([pointer]), whose parameters are all C types: C
      * declares the same pointer type under the alias's name.
      */
-    private fun functionPointer(alias: String, spelling: String, pointer: Boolean): CBridge {
-        var bare = NULLABILITY.replace(spelling, "").replace(Regex("\\s+"), " ").trim()
-        if (pointer && "(*)" !in bare) bare = bare.replaceFirst("(", "(*)(")
-        if ("(*)" !in bare) throw Unsupported("$spelling: function type")
-        val params = bare.substringAfter("(*)").trim().removeSurrounding("(", ")")
-        if (!CAbi.isBuiltin(bare.substringBefore("(*)").trim()) || params.split(',').any { !CAbi.isBuiltin(shape(it).base) }) {
-            throw Unsupported("$spelling: takes C++ types")
-        }
+    private fun functionPointer(alias: String, type: CppType, pointer: Boolean): CBridge {
+        if (!pointer && "(*" !in NULLABILITY.replace(type.spelling, "").replace(" ", "")) throw Unsupported("${type.spelling}: function type")
+        if (type.args.any { !CAbi.isBuiltin(shape(it.spelling).base) }) throw Unsupported("${type.spelling}: takes C++ types")
         val name = CNames.type(alias)
-        callbackTypes[name] = "typedef ${bare.replaceFirst("(*)", "(*$name)")};"
+        val params = type.args.drop(1).joinToString { cSpelling(it.spelling) }.ifEmpty { "void" }
+        callbackTypes[name] = "typedef ${cSpelling(type.args.first().spelling)} (*$name)($params);"
         return CBridge(name, { it })
     }
 }

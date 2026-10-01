@@ -1,5 +1,7 @@
 package buildlogic.apigen.c
 
+import buildlogic.apigen.cpp.CppType
+
 /**
  * The bridges of a value C passes as it is, given how C++ takes it: [const], [indirection] (`*`, `&`, `&&` or none),
  * as a parameter or a [result], and whether it outlives the call ([lvalue]). [CBridges] wraps these for sequences,
@@ -27,12 +29,12 @@ internal class DirectBridges(val const: Boolean, val indirection: String?, val r
      * A C++ callable C passes as a function pointer and its user data: `void (*)(void* user)`, or
      * `void (*)(void* arg, void* user)` for one pointer argument; NULL is an empty one. Returns it with its typedef.
      */
-    fun invocable(spelling: String): Pair<CBridge, Pair<String, String>> {
-        if (result) throw Unsupported("$spelling result")
-        val signature = spelling.substringAfter('<').substringBeforeLast('>')
-        val arg = signature.substringAfter('(').substringBeforeLast(')').trim().takeIf { it.isNotEmpty() && it != "void" }
-        if (signature.substringBefore('(').trim() != "void") throw Unsupported("$spelling: returns a value")
-        if (arg != null && (',' in arg || shape(arg).indirection != listOf("*"))) throw Unsupported("$spelling: C callbacks take at most one pointer")
+    fun invocable(type: CppType): Pair<CBridge, Pair<String, String>> {
+        if (result) throw Unsupported("${type.spelling} result")
+        val signature = type.args.single()
+        val arg = signature.args.drop(1).singleOrNull()
+        if (signature.args.first().spelling != "void") throw Unsupported("${type.spelling}: returns a value")
+        if (signature.args.size > 2 || (arg != null && shape(arg.spelling).indirection != listOf("*"))) throw Unsupported("${type.spelling}: C callbacks take at most one pointer")
         val (name, typedef) = if (arg == null) USER_CALLBACK else ARG_CALLBACK
         return CBridge(
             name,
