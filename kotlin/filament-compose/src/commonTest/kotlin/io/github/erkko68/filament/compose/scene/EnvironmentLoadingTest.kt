@@ -4,6 +4,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.testutils.GraphicsReady
+import io.github.erkko68.filament.compose.testutils.TestKtx
 import io.github.erkko68.filament.compose.testutils.awaitGraphicsReady
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
 import kotlin.test.BeforeTest
@@ -42,6 +43,24 @@ class EnvironmentLoadingTest {
         frameUntil { environment?.indirectLightState?.reflections != null }
 
         val env = assertNotNull(environment)
+        assertTrue(env.skyboxState?.source is SkyboxSource.Cubemap)
+        setContent {}
+        waitForIdle()
+        assertNull(env.indirectLightState.reflections, "disposal clears the reflections")
+        assertNull(env.skyboxState?.source)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun ktxEnvironmentLoadsReflectionsHarmonicsAndSkybox() = withUiThreadFilamentScene { setContent, engine, _ ->
+        var environment: Environment? = null
+        setContent {
+            environment = rememberKTXEnvironment(engine, skybox = { TestKtx.skybox }, ibl = { TestKtx.ibl })
+        }
+        frameUntil { environment?.indirectLightState?.reflections != null && environment?.skyboxState?.source != null }
+
+        val env = assertNotNull(environment)
+        assertNotNull(env.indirectLightState.irradianceSh, "cmgen writes spherical harmonics into the IBL")
         assertTrue(env.skyboxState?.source is SkyboxSource.Cubemap)
         setContent {}
         waitForIdle()

@@ -16,8 +16,8 @@ import kotlin.test.assertNull
  *
  * Assets are avoided deliberately: a **color** skybox needs no cubemap, and the IBL is built from
  * **spherical-harmonics** coefficients rather than a KTX/HDR cubemap — so the test needs no bundled
- * environment file. The texture-backed paths (cubemap skybox, cubemap IBL, `rememberKTXEnvironment`)
- * are left for when a bundled KTX asset is added.
+ * environment file. The texture-backed paths (`rememberKTXEnvironment`, `rememberHDREnvironment`) are
+ * covered by [EnvironmentLoadingTest].
  */
 class EnvironmentLifecycleTest : TierBSceneFixture() {
 
