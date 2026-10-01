@@ -16,27 +16,11 @@ import buildlogic.apigen.cpp.CppType
  */
 internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>, private val manual: Set<String> = emptySet()) {
     private val bridges = CBridges(api)
+    private val rules = BindingRules(api, bridges)
     private val surface = api.surface(headers)
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
-    /** Records the API's functions and constructors take (IBLPrefilterContext, only passed to its filters). */
-    private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
-        .plus(api.records.values.flatMap { it.constructors })
-        .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
     private val files = LinkedHashMap<String, Section>()
-    /**
-     * Records the API reads: taken by value, `const&`, `const*` or `&&`, and the records their fields hold. The others
-     * are only results (Engine::FeatureFlag), so a field C would have to keep a pointer for needs no setter.
-     */
-    private val inputRecords = run {
-        val output = Regex("""^(?!const\b).*[^&]&$|^(?!const\b).*\*$""")
-        val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
-        val taken = params.map { it.type }
-            .filterNot { output.matches(it.spelling.replace(Regex("""\s*_(Nonnull|Nullable|Null_unspecified)"""), "").trim()) }
-            .mapNotNullTo(HashSet()) { it.decl }
-        generateSequence(taken) { seen -> (seen + seen.flatMap { api.records[it]?.fields.orEmpty().mapNotNull { f -> f.type.decl } }).toHashSet().takeIf { it.size > seen.size } }.last()
-    }
-
     /** One generated header and its forwarders. */
     private class Section(val module: String) {
         val declarations = StringBuilder()
@@ -77,10 +61,8 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private fun record(record: CppRecord, file: Section) {
         val section = Section(file.module)
         val self = CNames.type(record.name)
-        // Constructing is only worth it for something to call or something taking it: not for Color's static helpers.
-        val instanceMethods = record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated }
         val cpp = bridges.cpp(record.name)
-        if (!bridges.uninstantiated(record) && record.allocatable && (instanceMethods || bridges.isValue(record.name) || record.name in parameterTypes)) {
+        if (rules.creates(record)) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
             skipped.forEach { section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), "")) }
             constructors.zip(suffixes(constructors.map { ctor -> ctor.map { it.type.spelling } })).forEach { (params, suffix) ->
@@ -90,36 +72,25 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                     "$self* $name(${cParams(null, bridged)})" to "return fila::c(new $cpp(${args(bridged)}));"
                 }
             }
-            if ((record.constructors.isNotEmpty() || record.declaredDestructor) && record.destructible) {
-                emit("${self}_destroy", "~${record.name}()", section) {
-                    "void ${self}_destroy($self* self)" to "delete fila::cpp(self);"
-                }
+        }
+        if (rules.destroys(record)) {
+            emit("${self}_destroy", "~${record.name}()", section) {
+                "void ${self}_destroy($self* self)" to "delete fila::cpp(self);"
             }
         }
-        if (!bridges.uninstantiated(record)) {
-            // C can't upcast: a base's functions take the base's handle.
-            record.bases.mapNotNull { api.records[it] }.filter { it !in bridges.twins(record) }.filter { base ->
-                !bridges.uninstantiated(base) && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
-            }.forEach { base ->
-                val baseType = CNames.type(base.name)
-                val name = "${self}_as${baseType.removePrefix("Fila")}"
-                val baseCpp = bridges.cpp(base.name)
-                emit(name, "static_cast<$baseCpp*>", section) {
-                    "$baseType* $name($self* self)" to "return fila::c(static_cast<$baseCpp*>(fila::cpp(self)));"
-                }
+        rules.upcasts(record).forEach { base ->
+            val baseType = CNames.type(base.name)
+            val name = "${self}_as${baseType.removePrefix("Fila")}"
+            val baseCpp = bridges.cpp(base.name)
+            emit(name, "static_cast<$baseCpp*>", section) {
+                "$baseType* $name($self* self)" to "return fila::c(static_cast<$baseCpp*>(fila::cpp(self)));"
             }
         }
-        // Deprecated API isn't bound at all, nor overloads only literals can call.
-        val (skipped, methods) = (record.methods + bridges.twins(record).flatMap { it.methods }).filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
-            // A const overload and its non-const twin take the same C arguments; the non-const one covers both.
-            .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
-            .partition { api.skipReason(it, record.name) != null }
+        val (skipped, methods) = rules.methods(record).partition { api.skipReason(it, record.name) != null }
         skipped.forEach { section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}")) }
         overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
-        if (bridges.isValue(record.name) && !bridges.uninstantiated(record)) {
-            (bridges.twins(record).flatMap { it.fields } + record.fields).filter { it.isPublic && !it.isDeprecated }.forEach { f ->
-                api.skipReason(f, record.name)?.let { section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}")) } ?: field(record, f, section)
-            }
+        rules.fields(record).forEach { f ->
+            api.skipReason(f, record.name)?.let { section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}")) } ?: field(record, f, section)
         }
         if (section.declarations.isEmpty()) return
         file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
@@ -181,7 +152,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = "${self}_set$accessor"
-        if (bridges.borrowsPointer(field.type) && record.name !in inputRecords) {
+        if (rules.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
             return
         }
