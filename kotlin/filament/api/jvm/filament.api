@@ -475,6 +475,7 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun destroy (Lio/github/erkko68/filament/FramePacer;)Z
 	public final fun destroy (Lio/github/erkko68/filament/IndexBuffer;)Z
 	public final fun destroy (Lio/github/erkko68/filament/IndirectLight;)Z
+	public final fun destroy (Lio/github/erkko68/filament/InstanceBuffer;)Z
 	public final fun destroy (Lio/github/erkko68/filament/Material;)Z
 	public final fun destroy (Lio/github/erkko68/filament/MaterialInstance;)Z
 	public final fun destroy (Lio/github/erkko68/filament/MorphTargetBuffer;)Z
@@ -536,6 +537,7 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun isValid (Lio/github/erkko68/filament/Fence;)Z
 	public final fun isValid (Lio/github/erkko68/filament/IndexBuffer;)Z
 	public final fun isValid (Lio/github/erkko68/filament/IndirectLight;)Z
+	public final fun isValid (Lio/github/erkko68/filament/InstanceBuffer;)Z
 	public final fun isValid (Lio/github/erkko68/filament/Material;)Z
 	public final fun isValid (Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/MaterialInstance;)Z
 	public final fun isValid (Lio/github/erkko68/filament/MorphTargetBuffer;)Z
@@ -1071,6 +1073,22 @@ public final class io/github/erkko68/filament/IndirectLight$Companion {
 	public static synthetic fun getColorEstimate$default (Lio/github/erkko68/filament/IndirectLight$Companion;[FFFF[FILjava/lang/Object;)[F
 	public final fun getDirectionEstimate ([F[F)[F
 	public static synthetic fun getDirectionEstimate$default (Lio/github/erkko68/filament/IndirectLight$Companion;[F[FILjava/lang/Object;)[F
+}
+
+public final class io/github/erkko68/filament/InstanceBuffer {
+	public fun <init> (J)V
+	public final fun getInstanceCount ()I
+	public final fun getLocalTransform (I)[F
+	public final fun getNativeObject ()J
+	public final fun setLocalTransforms ([FII)V
+	public static synthetic fun setLocalTransforms$default (Lio/github/erkko68/filament/InstanceBuffer;[FIIILjava/lang/Object;)V
+}
+
+public final class io/github/erkko68/filament/InstanceBuffer$Builder {
+	public fun <init> (I)V
+	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/InstanceBuffer;
+	public final fun localTransforms ([F)Lio/github/erkko68/filament/InstanceBuffer$Builder;
+	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/InstanceBuffer$Builder;
 }
 
 public abstract interface annotation class io/github/erkko68/filament/InternalFilamentApi : java/lang/annotation/Annotation {
@@ -1843,6 +1861,7 @@ public final class io/github/erkko68/filament/RenderableManager$Builder {
 	public final fun geometryType (Lio/github/erkko68/filament/RenderableManager$Builder$GeometryType;)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun globalBlendOrderEnabled (IZ)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun instances (I)Lio/github/erkko68/filament/RenderableManager$Builder;
+	public final fun instances (ILio/github/erkko68/filament/InstanceBuffer;)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun layerMask (II)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun lightChannel (IZ)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public static synthetic fun lightChannel$default (Lio/github/erkko68/filament/RenderableManager$Builder;IZILjava/lang/Object;)Lio/github/erkko68/filament/RenderableManager$Builder;

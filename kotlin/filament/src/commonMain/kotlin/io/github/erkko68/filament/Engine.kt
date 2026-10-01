@@ -475,6 +475,9 @@ class Engine internal constructor(
     /** Destroys a FramePacer. */
     fun destroy(framePacer: FramePacer): Boolean =
         FilaEngine_destroy_FramePacer(nativeHandle, framePacer.nativeHandle).also { framePacer.nativeHandle = NullPointer }
+    /** Destroys an InstanceBuffer. */
+    fun destroy(instanceBuffer: InstanceBuffer): Boolean =
+        FilaEngine_destroy_InstanceBuffer(nativeHandle, instanceBuffer.nativeHandle).also { instanceBuffer.nativeHandle = NullPointer }
     /** Destroys an IndexBuffer. */
     fun destroy(indexBuffer: IndexBuffer): Boolean =
         FilaEngine_destroy_IndexBuffer(nativeHandle, indexBuffer.nativeHandle).also { indexBuffer.nativeHandle = NullPointer }
@@ -527,6 +530,8 @@ class Engine internal constructor(
     fun isValid(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValid_VertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
     /** Whether [fence] is a live object of this Engine. */
     fun isValid(fence: Fence): Boolean = FilaEngine_isValid_Fence(nativeHandle, fence.nativeHandle)
+    /** Whether [instanceBuffer] is a live object of this Engine. */
+    fun isValid(instanceBuffer: InstanceBuffer): Boolean = FilaEngine_isValid_InstanceBuffer(nativeHandle, instanceBuffer.nativeHandle)
     /** Whether [indexBuffer] is a live object of this Engine. */
     fun isValid(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValid_IndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     /** Whether [skinningBuffer] is a live object of this Engine. */

@@ -437,6 +437,16 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun instances(instanceCount: Int): Builder = apply { FilaRenderableManagerBuilder_instances(nativeBuilder, instanceCount) }
+
+        /**
+         * Draws [instanceCount] instances (1 to [Engine.maxAutomaticInstances]), each with its local transform from
+         * [instanceBuffer], which must hold at least that many and outlive this renderable. All instances are culled
+         * with the same bounding box. Only [Material.VertexDomain.OBJECT] is supported; the material must be `instanced` to
+         * read `getInstanceIndex()`.
+         */
+        fun instances(instanceCount: Int, instanceBuffer: InstanceBuffer): Builder = apply {
+            FilaRenderableManagerBuilder_instances_InstanceBuffer(nativeBuilder, instanceCount, instanceBuffer.nativeHandle)
+        }
         /**
          * Adds the Renderable component to an entity.
          *
