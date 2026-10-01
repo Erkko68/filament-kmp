@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
-import io.github.erkko68.filament.testutils.createTestSurface
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -71,26 +70,21 @@ class RendererTest : FilamentTestFixture() {
         renderer.setVsyncTime(1000000L)
         renderer.skipFrame(1000000L)
         
-        val swap = engine.createSwapChain(100, 100, 0L)
-        
-        // TODO: The following beginFrame/endFrame and readPixels calls cause driver-specific precondition panics under the NOOP backend driver
-        // val begun = renderer.beginFrame(swap, 1000000L)
-        // if (begun) {
-        //     renderer.endFrame()
-        // }
+        renderer.setFrameScheduleTime(Engine.steadyClockTimeNano)
+        renderer.pauseRenderThread(1_000L)
+        assertFalse(renderer.hasGpuFallenBehind)
+        renderer.setMaterialTimeEpoch(Engine.steadyClockTimeNano)
+        assertTrue(renderer.materialTime >= 0.0)
 
-        // Frame skipping
+        // Frame skipping (beginFrame/readPixels panic under NOOP; RendererRenderingTest covers them)
+        assertTrue(renderer.shouldRenderFrame())
         renderer.skipNextFrames(3)
         assertEquals(3, renderer.frameToSkipCount)
-
-        // val buffer = Texture.PixelBufferDescriptor(ByteArray(100), 100, Texture.Format.RGBA, Texture.Type.UBYTE)
-        // renderer.readPixels(0, 0, 5, 5, buffer)
 
         renderer.resetUserTime()
         assertTrue(renderer.userTime >= 0.0)
 
         // Cleanup
-        engine.destroy(swap)
         engine.destroy(renderer)
     }
 }

@@ -83,6 +83,8 @@ gltfio/*.h
 -filament::gltfio::Animator::addInstance
 -filament::gltfio::AssetConfiguration::names
 -filament::gltfio::AssetLoader::getNames
+# Copies the deprecated (unbound, so null) gltfPath into a std::string unguarded; FilaGltfioManual passes "".
+-filament::gltfio::ResourceLoader::setConfiguration
 
 [filamat]
 filamat/*.h

@@ -159,6 +159,9 @@ class LightManagerTest : FilamentTestFixture() {
         // Intensity
         lm.setIntensity(inst, 10000f)
         assertEquals(10000f, lm.getIntensity(inst))
+        lm.setIntensity(inst, 100f, 0.5f) // watts × 683 lm/W × efficiency
+        assertEquals(34150f, lm.getIntensity(inst), 0.5f)
+        assertFalse(lm.empty())
 
         // Sun options
         lm.setSunAngularRadius(inst, 0.8f)
@@ -205,6 +208,9 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(10f, pos[0])
         assertEquals(20f, pos[1])
         assertEquals(30f, pos[2])
+
+        lm.setIntensityCandela(inst, 500f)
+        assertEquals(500f, lm.getIntensity(inst), 1e-3f)
 
         // Falloff
         lm.setFalloff(inst, 15f)

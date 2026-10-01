@@ -36,6 +36,7 @@ class EntityManagerTest : FilamentTestFixture() {
         val epoch = em.latestEpochID
         em.advanceEpoch()
         assertEquals(epoch + 1, em.latestEpochID)
+        em.reclaimSafeEpochs()
         em.flushNotifications()
     }
 }

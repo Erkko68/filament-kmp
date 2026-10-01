@@ -12,10 +12,6 @@ void FilaGltfioResourceLoader_destroy(FilaGltfioResourceLoader* self) {
     delete fila::cpp(self);
 }
 
-void FilaGltfioResourceLoader_setConfiguration(FilaGltfioResourceLoader* self, const FilaGltfioResourceConfiguration* config) {
-    fila::cpp(self)->setConfiguration(*fila::cpp(config));
-}
-
 void FilaGltfioResourceLoader_addResourceData(FilaGltfioResourceLoader* self, const char* uri, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
     fila::cpp(self)->addResourceData(uri, filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser));
 }

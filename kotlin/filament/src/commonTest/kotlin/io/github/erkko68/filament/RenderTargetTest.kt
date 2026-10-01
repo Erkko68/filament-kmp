@@ -44,4 +44,20 @@ class RenderTargetTest : FilamentTestFixture() {
         engine.destroy(target)
         engine.destroy(tex)
     }
+
+    @Test
+    fun testMultiview() {
+        val tex = Texture.Builder().width(8).height(8).depth(2)
+            .sampler(Texture.Sampler.SAMPLER_2D_ARRAY)
+            .format(Texture.InternalFormat.RGBA8)
+            .usage(Texture.Usage.COLOR_ATTACHMENT)
+            .build(engine)
+        val target = RenderTarget.Builder()
+            .texture(RenderTarget.AttachmentPoint.COLOR, tex)
+            .multiview(RenderTarget.AttachmentPoint.COLOR, layerCount = 2)
+            .build(engine)
+        assertTrue(engine.isValid(target))
+        engine.destroy(target)
+        engine.destroy(tex)
+    }
 }

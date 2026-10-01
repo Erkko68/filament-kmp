@@ -375,6 +375,7 @@ public final class io/github/erkko68/filament/utils/Float4 {
 	public final fun dec ()Lio/github/erkko68/filament/utils/Float4;
 	public final fun div (F)Lio/github/erkko68/filament/utils/Float4;
 	public final fun div (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun div (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float4;
 	public final fun div (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
 	public final fun equals (FF)Z
 	public final fun equals (Lio/github/erkko68/filament/utils/Float4;F)Z
@@ -1868,6 +1869,7 @@ public final class io/github/erkko68/filament/utils/VectorKt {
 	public static final fun div (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
 	public static final fun div (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
 	public static final fun div (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun div-TAu3aJA (SLio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
 	public static final fun div-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
 	public static final fun div-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
 	public static final fun dot (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)F
@@ -2115,6 +2117,7 @@ public final class io/github/erkko68/filament/utils/VectorKt {
 	public static final fun minus (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
 	public static final fun minus (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
 	public static final fun minus (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun minus-TAu3aJA (SLio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
 	public static final fun minus-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
 	public static final fun minus-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
 	public static final fun mix (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Float2;
@@ -2179,6 +2182,7 @@ public final class io/github/erkko68/filament/utils/VectorKt {
 	public static final fun plus (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
 	public static final fun plus (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
 	public static final fun plus (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun plus-TAu3aJA (SLio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
 	public static final fun plus-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
 	public static final fun plus-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
 	public static final fun reflect (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
@@ -2192,6 +2196,7 @@ public final class io/github/erkko68/filament/utils/VectorKt {
 	public static final fun times (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
 	public static final fun times (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
 	public static final fun times (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun times-TAu3aJA (SLio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
 	public static final fun times-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
 	public static final fun times-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
 	public static final fun transform (Lio/github/erkko68/filament/utils/Float2;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float2;

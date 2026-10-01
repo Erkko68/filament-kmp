@@ -69,6 +69,17 @@ class TransformManagerTest : FilamentTestFixture() {
 
         assertEquals(entity, tm.getParent(childInst))
 
+        // Reparent under a second root created from a double transform, then detach.
+        val otherEntity = EntityManager.get().create()
+        tm.create(otherEntity, 0, testDouble)
+        val otherInst = tm.getInstance(otherEntity)
+        assertEquals(5.0, tm.getTransformAccurate(otherInst)[12])
+        tm.setParent(childInst, otherInst)
+        assertEquals(otherEntity, tm.getParent(childInst))
+        assertEquals(0, tm.getChildCount(inst))
+        tm.setParent(childInst, 0)
+        assertEquals(0, tm.getChildCount(otherInst))
+
         // Transactions & Settings
         tm.openLocalTransformTransaction()
         tm.commitLocalTransformTransaction()
@@ -84,5 +95,7 @@ class TransformManagerTest : FilamentTestFixture() {
         
         EntityManager.get().destroy(entity)
         EntityManager.get().destroy(childEntity)
+        tm.destroy(otherEntity)
+        EntityManager.get().destroy(otherEntity)
     }
 }

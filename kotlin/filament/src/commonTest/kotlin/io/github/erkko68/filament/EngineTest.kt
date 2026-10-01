@@ -213,8 +213,62 @@ class EngineTest {
                     .quality(ColorGrading.QualityLevel.HIGH)
                     .toneMapper(ToneMapper.Linear())
             )
+            .featureLevel(Engine.FeatureLevel.FEATURE_LEVEL_1)
+            .paused(true)
             .build()!!
         assertTrue(engine.isValid)
+        assertEquals(Engine.FeatureLevel.FEATURE_LEVEL_1, engine.activeFeatureLevel)
+        assertTrue(engine.isPaused)
+        Engine.destroy(engine)
+    }
+
+    @Test
+    fun testResourceCountsAndValidity() {
+        Filament.init()
+        val engine = Engine.create(Engine.Backend.NOOP)!!
+        assertTrue(engine.maxAutomaticInstances > 0)
+        val counts = {
+            with(engine) {
+                listOf(
+                    bufferObjectCount, vertexBufferCount, indexBufferCount, skinningBufferCount, morphTargetBufferCount,
+                    instanceBufferCount, indirectLightCount, sceneCount, skyboxeCount, colorGradingCount,
+                    swapChainCount, streamCount, textureCount, renderTargetCount,
+                )
+            }
+        }
+        val before = counts()
+
+        val bo = BufferObject.Builder().size(4).name("bo").build(engine)
+        val vb = VertexBuffer.Builder().vertexCount(1).bufferCount(1)
+            .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.AttributeType.FLOAT3, 0, 12)
+            .name("vb").build(engine)
+        val ib = IndexBuffer.Builder().indexCount(3).bufferType(IndexBuffer.IndexType.USHORT).name("ib").build(engine)
+        val sb = SkinningBuffer.Builder().boneCount(1).name("sb").build(engine)
+        val mtb = MorphTargetBuffer.Builder().vertexCount(1).count(1).name("mtb").build(engine)
+        val inb = InstanceBuffer.Builder(1).build(engine)
+        val il = IndirectLight.Builder().radiance(1, floatArrayOf(1f, 1f, 1f)).build(engine)
+        val scene = engine.createScene()
+        val sky = Skybox.Builder().color(0f, 0f, 0f, 1f).build(engine)
+        val cg = ColorGrading.Builder().build(engine)
+        val swap = engine.createSwapChain(1, 1)
+        val stream = Stream.Builder().width(1).height(1).build(engine)
+        val tex = Texture.Builder().width(1).height(1).format(Texture.InternalFormat.RGBA8)
+            .usage(Texture.Usage.COLOR_ATTACHMENT).build(engine)
+        val rt = RenderTarget.Builder().texture(RenderTarget.AttachmentPoint.COLOR, tex).build(engine)
+
+        assertEquals(before.map { it + 1 }, counts())
+        with(engine) {
+            assertTrue(isValid(bo) && isValid(vb) && isValid(ib) && isValid(sb) && isValid(mtb) && isValid(inb))
+            assertTrue(isValid(il) && isValid(scene) && isValid(sky) && isValid(cg) && isValid(swap) && isValid(stream))
+            assertTrue(isValid(tex) && isValid(rt))
+        }
+
+        with(engine) {
+            destroy(rt); destroy(tex); destroy(stream); destroy(swap); destroy(cg); destroy(sky); destroy(scene)
+            destroy(il); destroy(inb); destroy(mtb); destroy(sb); destroy(ib); destroy(vb); destroy(bo)
+        }
+        assertEquals(before, counts())
+        assertFalse(engine.isValid(bo))
         Engine.destroy(engine)
     }
 }

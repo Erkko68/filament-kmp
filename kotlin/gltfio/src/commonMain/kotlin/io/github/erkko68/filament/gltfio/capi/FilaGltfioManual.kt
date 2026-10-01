@@ -9,3 +9,6 @@ internal external fun FilaGltfio_getUberarchiveData(): NativePointer
 
 @ExternalSymbolName("FilaGltfio_getUberarchiveSize")
 internal external fun FilaGltfio_getUberarchiveSize(): Int
+
+@ExternalSymbolName("FilaGltfioResourceLoader_setConfiguration")
+internal external fun FilaGltfioResourceLoader_setConfiguration(self: NativePointer, config: NativePointer)

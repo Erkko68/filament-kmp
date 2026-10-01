@@ -6,6 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class FilamentAssetTest : GltfioTestFixture() {
@@ -161,6 +162,37 @@ class FilamentAssetTest : GltfioTestFixture() {
         asset.releaseSourceData()
 
         loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
+    fun testScenesAndDetachedComponents() {
+        val bytes = TestGlb.getDuckGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
+        val asset = assertNotNull(loader.createAsset(bytes))
+        assertEquals(1, asset.sceneCount)
+        assertNull(asset.getSceneName(0)) // Duck's scene is unnamed
+        assertTrue(asset.wireframe != 0) // created lazily, owned by the asset
+
+        val scene = engine.createScene()
+        asset.addEntitiesToScene(scene, asset.entities, sceneFilter = 1) // bit 0: glTF scene 0
+        assertTrue(scene.entityCount > 0)
+
+        assertFalse(asset.areFilamentComponentsDetached)
+        asset.detachFilamentComponents()
+        assertTrue(asset.areFilamentComponentsDetached)
+        // The client now owns the components; destroy them before the asset frees their material instances.
+        (asset.entities + asset.root).forEach {
+            engine.destroy(it)
+            engine.entityManager.destroy(it)
+        }
+        loader.destroyAsset(asset)
+
+        engine.destroy(scene)
         AssetLoader.destroy(loader)
         provider.destroy()
     }

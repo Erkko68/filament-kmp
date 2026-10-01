@@ -248,6 +248,23 @@ class ViewTest : FilamentTestFixture() {
         assertTrue(Viewport(0, 0, 0, 10).empty())
 
         view.blendMode = BlendMode.TRANSLUCENT
+
+        val grading = ColorGrading.Builder().build(engine)
+        view.colorGrading = grading
+        assertEquals(grading, view.colorGrading)
+        view.colorGrading = null
+        assertNull(view.colorGrading)
+        engine.destroy(grading)
+
+        val color = Texture.Builder().width(8).height(8).format(Texture.InternalFormat.RGBA8)
+            .usage(Texture.Usage.COLOR_ATTACHMENT).build(engine)
+        val target = RenderTarget.Builder().texture(RenderTarget.AttachmentPoint.COLOR, color).build(engine)
+        view.renderTarget = target
+        assertEquals(target, view.renderTarget)
+        view.renderTarget = null
+        assertNull(view.renderTarget)
+        engine.destroy(target)
+        engine.destroy(color)
         assertEquals(BlendMode.TRANSLUCENT, view.blendMode)
 
         view.setVisibleLayers(0x3, 0x1)

@@ -129,8 +129,8 @@ data class Float2(var x: Float = 0.0f, var y: Float = 0.0f) {
     }
 
     operator fun unaryMinus() = Float2(-x, -y)
-    operator fun inc() = Float2(x++, y++)
-    operator fun dec() = Float2(x--, y--)
+    operator fun inc() = Float2(x + 1.0f, y + 1.0f)
+    operator fun dec() = Float2(x - 1.0f, y - 1.0f)
 
     inline operator fun plus(v: Float) = Float2(x + v, y + v)
     inline operator fun minus(v: Float) = Float2(x - v, y - v)
@@ -313,8 +313,8 @@ data class Float3(var x: Float = 0.0f, var y: Float = 0.0f, var z: Float = 0.0f)
     }
 
     operator fun unaryMinus() = Float3(-x, -y, -z)
-    operator fun inc() = Float3(x++, y++, z++)
-    operator fun dec() = Float3(x--, y--, z--)
+    operator fun inc() = Float3(x + 1.0f, y + 1.0f, z + 1.0f)
+    operator fun dec() = Float3(x - 1.0f, y - 1.0f, z - 1.0f)
 
     inline operator fun plus(v: Float) = Float3(x + v, y + v, z + v)
     inline operator fun minus(v: Float) = Float3(x - v, y - v, z - v)
@@ -578,8 +578,8 @@ data class Float4(
     }
 
     operator fun unaryMinus() = Float4(-x, -y, -z, -w)
-    operator fun inc() = Float4(x++, y++, z++, w++)
-    operator fun dec() = Float4(x--, y--, z--, w--)
+    operator fun inc() = Float4(x + 1.0f, y + 1.0f, z + 1.0f, w + 1.0f)
+    operator fun dec() = Float4(x - 1.0f, y - 1.0f, z - 1.0f, w - 1.0f)
 
     inline operator fun plus(v: Float) = Float4(x + v, y + v, z + v, w + v)
     inline operator fun minus(v: Float) = Float4(x - v, y - v, z - v, w - v)
@@ -602,19 +602,9 @@ data class Float4(
 
     inline operator fun plus(v: Float3) = Float4(x + v.x, y + v.y, z + v.z, w)
     inline operator fun minus(v: Float3) = Float4(x - v.x, y - v.y, z - v.z, w)
-    inline operator fun times(v: Float3) = Float4(x * v.x, y * v.y, v.z, w) // Error in original: should be v.z
-    // Wait, original: x * v.x, y * v.y, z + v.z, w. Actually it's plus(v: Float3).
-    // Let me re-read. Oh, lines 582-585.
-    // Fixed port:
-    // inline operator fun plus(v: Float3) = Float4(x + v.x, y + v.y, z + v.z, w)
-    // Actually, I should stick to original logic if it's there, but fix obvious typos.
-    // Original line 584: inline operator fun times(v: Float3) = Float4(x * v.x, y * v.y, z * v.z, w)
-    // Wait, original lines 582-585:
-    // 582:     inline operator fun plus(v: Float3) = Float4(x + v.x, y + v.y, z + v.z, w)
-    // 583:     inline operator fun minus(v: Float3) = Float4(x - v.x, y - v.y, z - v.z, w)
-    // 584:     inline operator fun times(v: Float3) = Float4(x * v.x, y * v.y, z * v.z, w)
-    // 585:     inline operator fun div(v: Float3) = Float4(x / v.x, y / v.y, z / v.z, w)
-    
+    inline operator fun times(v: Float3) = Float4(x * v.x, y * v.y, z * v.z, w)
+    inline operator fun div(v: Float3) = Float4(x / v.x, y / v.y, z / v.z, w)
+
     inline operator fun plus(v: Float4) = Float4(x + v.x, y + v.y, z + v.z, w + v.w)
     inline operator fun minus(v: Float4) = Float4(x - v.x, y - v.y, z - v.z, w - v.w)
     inline operator fun times(v: Float4) = Float4(x * v.x, y * v.y, z * v.z, w * v.w)
@@ -650,7 +640,7 @@ inline fun Float.compareTo(v: Float, delta: Float): Float = when {
     else -> compareTo(v).toFloat()
 }
 
-inline fun Float.equals(v: Float, delta: Float) = (this - v).absoluteValue < delta
+inline fun Float.equals(v: Float, delta: Float) = (this - v).absoluteValue <= delta
 inline fun abs(v: Float2) = Float2(abs(v.x), abs(v.y))
 inline fun length(v: Float2) = sqrt(v.x * v.x + v.y * v.y)
 inline fun length2(v: Float2) = v.x * v.x + v.y * v.y
@@ -1604,8 +1594,8 @@ data class Half2(var x: Half = Half.POSITIVE_ZERO, var y: Half = Half.POSITIVE_Z
     }
 
     operator fun unaryMinus() = Half2(-x, -y)
-    operator fun inc() = Half2(x++, y++)
-    operator fun dec() = Half2(x--, y--)
+    operator fun inc() = Half2(x.inc(), y.inc())
+    operator fun dec() = Half2(x.dec(), y.dec())
 
     inline operator fun plus(v: Half) = Half2(x + v, y + v)
     inline operator fun minus(v: Half) = Half2(x - v, y - v)
@@ -1780,8 +1770,8 @@ data class Half3(
     }
 
     operator fun unaryMinus() = Half3(-x, -y, -z)
-    operator fun inc() = Half3(x++, y++, z++)
-    operator fun dec() = Half3(x--, y--, z--)
+    operator fun inc() = Half3(x.inc(), y.inc(), z.inc())
+    operator fun dec() = Half3(x.dec(), y.dec(), z.dec())
 
     inline operator fun plus(v: Half) = Half3(x + v, y + v, z + v)
     inline operator fun minus(v: Half) = Half3(x - v, y - v, z - v)
@@ -2029,8 +2019,8 @@ data class Half4(
     }
 
     operator fun unaryMinus() = Half4(-x, -y, -z, -w)
-    operator fun inc() = Half4(x++, y++, z++, w++)
-    operator fun dec() = Half4(x--, y--, z--, w--)
+    operator fun inc() = Half4(x.inc(), y.inc(), z.inc(), w.inc())
+    operator fun dec() = Half4(x.dec(), y.dec(), z.dec(), w.dec())
 
     inline operator fun plus(v: Half) = Half4(x + v, y + v, z + v, w + v)
     inline operator fun minus(v: Half) = Half4(x - v, y - v, z - v, w - v)
@@ -2062,6 +2052,11 @@ data class Half4(
 
     fun toFloatArray() = floatArrayOf(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
 }
+
+inline operator fun Half.plus(v: Half2) = Half2(this + v.x, this + v.y)
+inline operator fun Half.minus(v: Half2) = Half2(this - v.x, this - v.y)
+inline operator fun Half.times(v: Half2) = Half2(this * v.x, this * v.y)
+inline operator fun Half.div(v: Half2) = Half2(this / v.x, this / v.y)
 
 inline fun min(v: Half2) = min(v.x, v.y)
 inline fun min(a: Half2, b: Half2) = Half2(min(a.x, b.x), min(a.y, b.y))
@@ -2400,8 +2395,8 @@ data class Int2(var x: Int = 0, var y: Int = 0) {
     }
 
     operator fun unaryMinus() = Int2(-x, -y)
-    operator fun inc() = Int2(x++, y++)
-    operator fun dec() = Int2(x--, y--)
+    operator fun inc() = Int2(x + 1, y + 1)
+    operator fun dec() = Int2(x - 1, y - 1)
 
     inline operator fun plus(v: Int) = Int2(x + v, y + v)
     inline operator fun minus(v: Int) = Int2(x - v, y - v)
@@ -2567,8 +2562,8 @@ data class Int3(var x: Int = 0, var y: Int = 0, var z: Int = 0) {
     }
 
     operator fun unaryMinus() = Int3(-x, -y, -z)
-    operator fun inc() = Int3(x++, y++, z++)
-    operator fun dec() = Int3(x--, y--, z--)
+    operator fun inc() = Int3(x + 1, y + 1, z + 1)
+    operator fun dec() = Int3(x - 1, y - 1, z - 1)
 
     inline operator fun plus(v: Int) = Int3(x + v, y + v, z + v)
     inline operator fun minus(v: Int) = Int3(x - v, y - v, z - v)
@@ -2810,8 +2805,8 @@ data class Int4(
     }
 
     operator fun unaryMinus() = Int4(-x, -y, -z, -w)
-    operator fun inc() = Int4(x++, y++, z++, w++)
-    operator fun dec() = Int4(x--, y--, z--, w--)
+    operator fun inc() = Int4(x + 1, y + 1, z + 1, w + 1)
+    operator fun dec() = Int4(x - 1, y - 1, z - 1, w - 1)
 
     inline operator fun plus(v: Int) = Int4(x + v, y + v, z + v, w + v)
     inline operator fun minus(v: Int) = Int4(x - v, y - v, z - v, w - v)

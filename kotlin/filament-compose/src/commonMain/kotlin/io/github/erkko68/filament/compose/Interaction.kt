@@ -85,19 +85,20 @@ private fun Manipulator.syncTo(cameraState: CameraState) {
     cameraState.up     = Direction(u[0], u[1], u[2])
 }
 
-// Shared drag + pinch-zoom logic. [strafe] controls whether drag pans or orbits. Also keeps
+// Shared drag + pinch-zoom logic. [secondaryStrafes]: a secondary-button drag strafes (orbit's pan);
+// MAP's plain grab already pans and ignores strafe grabs, so it passes false. Also keeps
 // the manipulator's viewport in sync with the element's size, so callers don't have to wire
 // onSizeChanged/setViewport by hand.
 private fun Modifier.manipulatorDragGestures(
     manipulator: Manipulator,
-    alwaysStrafe: Boolean,
+    secondaryStrafes: Boolean,
     onSync: () -> Unit,
 ): Modifier = this
     .onSizeChanged { manipulator.setViewport(it.width, it.height) }
     .pointerInput(manipulator) {
         awaitEachGesture {
             val down = awaitFirstDownAnyButton()
-            val strafe = alwaysStrafe || currentEvent.buttons.isSecondaryPressed
+            val strafe = secondaryStrafes && currentEvent.buttons.isSecondaryPressed
             var pinchMode = false
             var prevPinchDistance = 0f
 
@@ -251,7 +252,7 @@ fun rememberOrbitCameraController(
  * | Scroll wheel                   | Zoom   |
  */
 fun Modifier.orbitGestures(controller: OrbitCameraController): Modifier =
-    manipulatorDragGestures(controller.manipulator, alwaysStrafe = false) { controller.sync() }
+    manipulatorDragGestures(controller.manipulator, secondaryStrafes = true) { controller.sync() }
 
 // ── Map camera ────────────────────────────────────────────────────────────────
 
@@ -298,7 +299,10 @@ fun rememberMapCameraController(
     val state = remember(cameraState, mapWidth, mapHeight, minDistance, zoomSpeed) {
         val manipulator = Manipulator.Builder()
             .targetPosition(home.x, home.y, home.z)
-            .upVector(0f, 1f, 0f)
+            // Top-down over the XZ plane through the target, north (-Z) up; without a ground plane MAP
+            // puts the eye on the target.
+            .groundPlane(0f, 1f, 0f, home.y)
+            .upVector(0f, 0f, -1f)
             .zoomSpeed(zoomSpeed)
             .mapExtent(mapWidth, mapHeight)
             .mapMinDistance(minDistance)
@@ -322,7 +326,7 @@ fun rememberMapCameraController(
  * | Scroll wheel        | Zoom   |
  */
 fun Modifier.mapGestures(controller: MapCameraController): Modifier =
-    manipulatorDragGestures(controller.manipulator, alwaysStrafe = true) { controller.sync() }
+    manipulatorDragGestures(controller.manipulator, secondaryStrafes = false) { controller.sync() }
 
 // ── Flight camera ─────────────────────────────────────────────────────────────
 

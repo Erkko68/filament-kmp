@@ -12,6 +12,9 @@ extern "C" {
 const void* FilaGltfio_getUberarchiveData(void);
 uint32_t FilaGltfio_getUberarchiveSize(void);
 
+// ResourceLoader::setConfiguration, with gltfPath "" instead of null (the constructor guards null; this doesn't).
+void FilaGltfioResourceLoader_setConfiguration(FilaGltfioResourceLoader* self, const FilaGltfioResourceConfiguration* config);
+
 #ifdef __cplusplus
 }
 #endif

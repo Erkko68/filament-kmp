@@ -1,0 +1,36 @@
+// Source for params.filamat — lit, masked, double-sided material with specular anti-aliasing and
+// one parameter per type, for the capability-gated MaterialInstance getters and setParameter overloads.
+// Recompile on every filaVersion bump — see docs/internals/upgrading-filament.md:
+//   matc -p all -a all -o params.filamat params.mat
+
+material {
+    name : Params,
+    shadingModel : lit,
+    blending : masked,
+    doubleSided : true,
+    specularAntiAliasing : true,
+    variantFilter : [ directionalLighting, shadowReceiver, skinning, vsm, fog, ssr, stereo ],
+    parameters : [
+        { type : bool,  name : b1 },
+        { type : bool2, name : b2 },
+        { type : bool3, name : b3 },
+        { type : bool4, name : b4 },
+        { type : int,   name : i1 },
+        { type : int2,  name : i2 },
+        { type : int3,  name : i3 },
+        { type : int4,  name : i4 },
+        { type : uint2, name : u2 },
+        { type : uint4, name : u4 },
+        { type : float2, name : f2 },
+        { type : float4, name : f4 },
+        { type : sampler2d, name : tex },
+        { type : samplerExternal, name : ext, transformName : extTransform }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = texture(materialParams_tex, vec2(0.5)) * materialParams.f4;
+    }
+}

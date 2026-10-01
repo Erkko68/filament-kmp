@@ -10,9 +10,6 @@ internal external fun FilaGltfioResourceLoader_create(config: NativePointer): Na
 @ExternalSymbolName("FilaGltfioResourceLoader_destroy")
 internal external fun FilaGltfioResourceLoader_destroy(self: NativePointer)
 
-@ExternalSymbolName("FilaGltfioResourceLoader_setConfiguration")
-internal external fun FilaGltfioResourceLoader_setConfiguration(self: NativePointer, config: NativePointer)
-
 @ExternalSymbolName("FilaGltfioResourceLoader_addResourceData")
 internal external fun FilaGltfioResourceLoader_addResourceData(self: NativePointer, uri: NativePointer, buffer: NativePointer, bufferSize: Int, bufferCallback: NativePointer, bufferUser: NativePointer)
 

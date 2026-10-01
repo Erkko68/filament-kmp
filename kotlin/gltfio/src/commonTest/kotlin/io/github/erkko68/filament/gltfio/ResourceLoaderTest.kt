@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -18,8 +19,9 @@ class ResourceLoaderTest : GltfioTestFixture() {
 
     @Test
     fun testNormalizeSkinningWeightsConstructor() {
-        val loader = ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true))
-        loader.destroy()
+        ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true)).use { loader ->
+            loader.setConfiguration(ResourceConfiguration(engine, normalizeSkinningWeights = false))
+        }
     }
 
     @Test
@@ -90,10 +92,12 @@ class ResourceLoaderTest : GltfioTestFixture() {
         resourceLoader.addTextureProvider("image/png", stb)
         resourceLoader.addTextureProvider("image/ktx2", ktx2)
         assertTrue(resourceLoader.loadResources(asset))
-        createWebpProvider(engine)?.destroy()
+        val webp = createWebpProvider(engine)
+        assertEquals(isWebpSupported(), webp != null)
+        webp?.close()
 
         resourceLoader.destroy()
-        stb.destroy()
+        stb.close()
         ktx2.destroy()
         assetLoader.destroyAsset(asset)
         AssetLoader.destroy(assetLoader)

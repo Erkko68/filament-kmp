@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -86,5 +87,22 @@ class AssetLoaderTest : GltfioTestFixture() {
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
         provider.destroy()
+    }
+
+    @Test
+    fun testMaterialsAndGc() {
+        val bytes = TestGlb.getDuckGlbBytes()
+        if (bytes.isEmpty()) return
+
+        createUbershaderProvider(engine).use { provider ->
+            val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
+            val asset = assertNotNull(loader.createAsset(bytes))
+            assertEquals(loader.materialsCount, loader.materials.size)
+            assertEquals(provider.materialsCount, loader.materialProvider.materialsCount)
+            assertEquals(provider.materialsCount, provider.materials.size)
+            loader.destroyAsset(asset)
+            loader.gc()
+            AssetLoader.destroy(loader)
+        }
     }
 }

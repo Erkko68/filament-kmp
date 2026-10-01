@@ -42,7 +42,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Filament C++ API not bound before, on every platform** (`filament`): `Engine.createAsync`, object counts and `defaultMaterial`, `Renderer.getFrameInfoHistory`, `RenderableManager.computeAABB`, `Exposure`, `FramePacer`, `FramePipelineEstimator`, `FrameHistoryStream`, `InstanceBuffer`, async calls (`runCommandAsync`, builder `async`, `set*Async`), `ColorGrading.Builder.outputColorSpace` with `ColorSpace`, `MaterialInstance.setConstant`/`compile`/`commit` and unsigned (`uint`…`uint4`) parameters, `Camera.getEyeFromViewMatrix`, `RenderTarget.Builder.multiview`, builder `name()`, `isCreationComplete` and more.
 - **gltfio additions** (`gltfio`): `detachFilamentComponents`, `recomputeBoundingBoxes`, `detachMaterialInstances`, `addEntitiesToScene`, `MaterialKey` specular/volume/dispersion fields.
 - **`Ktx2Reader`, `TangentSpaceMesh` (with `aux`/`getAux`), `Transcoder`, `IBLPrefilterContext.IrradianceFilter` and `Manipulator.getRay`** (`filament-utils`).
-- **The rest of filamat's `MaterialBuilder`** (`filamat`): `constant`, sampler `filterable`/`multisample`/`stages`, `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `stereoscopic*`, `output` and more.
+- **The rest of filamat's `MaterialBuilder`** (`filamat`): `constant`, sampler `filterable`/`multisample`/`stages`, `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `stereoscopic*`, `output`, compute materials (`MaterialDomain.COMPUTE`, `groupSize`) and more.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `MaterialBuilder.initJs`.
 - **Experimental GPU-to-GPU frame sharing on Compose Desktop** (`filament-compose`): `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` skips the per-frame CPU readback on macOS, Windows and Linux.
 - **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` pauses the render loop and keeps the last frame.
@@ -57,6 +57,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED` (`filament`).
 - **`MorphTargetBuffer.setPositionsAt` reads 3 floats per vertex**, not 4 (`filament`).
 - **Compose leaked a `ToneMapper` per color grade** (`filament-compose`).
+- **Vector and matrix math fixes** (`filament-utils`): `++`/`--` no longer mutate their operand, `Float4 * Float3` keeps `z`, `equal`/`compareTo` match exact values at `delta = 0`, and `fract` follows GLSL for negatives.
+- **`rememberMapCameraController` didn't work**: its eye sat on the target and drags never panned; it now looks down on the XZ plane, north up (`filament-compose`).
 - **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph weights, gltfio instance queries, shadow options, `customLut`, `geometryType` and more now work on web.
 
 ### Removed

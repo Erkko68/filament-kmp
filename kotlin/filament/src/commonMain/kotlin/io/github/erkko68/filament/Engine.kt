@@ -297,8 +297,14 @@ class Engine internal constructor(
         /** Sets the feature level; the effective level is the minimum of this and the backend's maximum. */
         fun featureLevel(featureLevel: FeatureLevel): Builder = apply { FilaEngineBuilder_featureLevel(nativeBuilder, featureLevel.ordinal) }
 
+        // Single-threaded wasm can't unpause Filament's queue, so there the pause is only tracked by the Engine.
+        private var startPaused = false
+
         /** Starts the Engine paused; set [Engine.isPaused] to false to resume. */
-        fun paused(paused: Boolean): Builder = apply { FilaEngineBuilder_paused(nativeBuilder, paused) }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "only sets Engine.isPaused, which is tracked locally there: the wasm build has no render thread to pause.")
+        fun paused(paused: Boolean): Builder = apply {
+            if (singleThreaded) startPaused = paused else FilaEngineBuilder_paused(nativeBuilder, paused)
+        }
 
         /** Sets a feature flag's value. */
         fun feature(name: String, value: Boolean): Builder = apply { name.useCString { FilaEngineBuilder_feature(nativeBuilder, it, value) } }
@@ -311,7 +317,7 @@ class Engine internal constructor(
             val platform = enginePlatform(backend, sharedContext)
             val handle = FilaEngineBuilder_build(nativeBuilder)
             FilaEngineBuilder_destroy(nativeBuilder)
-            return engineOf(handle, platform)
+            return engineOf(handle, platform)?.also { if (startPaused) it.isPaused = true }
         }
 
         /**

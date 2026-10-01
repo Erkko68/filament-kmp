@@ -11,7 +11,7 @@ extern "C" {
 // filament::gltfio::ResourceLoader
 FilaGltfioResourceLoader* FilaGltfioResourceLoader_create(const FilaGltfioResourceConfiguration* config);
 void FilaGltfioResourceLoader_destroy(FilaGltfioResourceLoader* self);
-void FilaGltfioResourceLoader_setConfiguration(FilaGltfioResourceLoader* self, const FilaGltfioResourceConfiguration* config);
+// skipped void filament::gltfio::ResourceLoader::setConfiguration(const ResourceConfiguration & config)
 void FilaGltfioResourceLoader_addResourceData(FilaGltfioResourceLoader* self, const char* uri, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
 void FilaGltfioResourceLoader_addTextureProvider(FilaGltfioResourceLoader* self, const char* mimeType, FilaGltfioTextureProvider* provider);
 bool FilaGltfioResourceLoader_hasResourceData(const FilaGltfioResourceLoader* self, const char* uri);

@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import io.github.erkko68.filament.testsupport.TestEnv
@@ -10,7 +11,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import io.github.erkko68.filament.Entity
 
 class FilamentInstanceTest : GltfioTestFixture() {
     @Test
@@ -150,6 +150,8 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val instance = asset.instance
         // The synthetic asset declares two KHR_materials_variants.
         assertEquals(2, instance.materialVariantCount)
+        assertEquals("red", instance.getMaterialVariantName(0))
+        assertEquals("blue", instance.getMaterialVariantName(1))
 
         instance.applyMaterialVariant(0)
         instance.applyMaterialVariant(1)
@@ -184,6 +186,49 @@ class FilamentInstanceTest : GltfioTestFixture() {
 
         resourceLoader.destroy()
         loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
+    fun testInverseBindMatricesAndBoundingBoxes() {
+        val bytes = TestGlb.getFoxGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
+        val asset = assertNotNull(loader.createAsset(bytes))
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
+        resourceLoader.loadResources(asset)
+
+        val instance = asset.instance
+        val matrices = instance.getInverseBindMatricesAt(0)
+        assertEquals(16 * instance.getJointCountAt(0), matrices.size)
+        assertEquals(1f, matrices[15]) // affine: bottom-right is 1
+        instance.recomputeBoundingBoxes()
+        assertFalse(instance.boundingBox.isEmpty())
+
+        resourceLoader.destroy()
+        loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
+    fun testDetachedMaterialInstances() {
+        val bytes = TestGlb.getDuckGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
+        val asset = assertNotNull(loader.createAsset(bytes))
+        val instance = asset.instance
+        val materialInstances = instance.materialInstances
+        instance.detachMaterialInstances()
+        loader.destroyAsset(asset)
+        // Detached instances outlive the asset; the client destroys them.
+        materialInstances.forEach { engine.destroy(it) }
+
         AssetLoader.destroy(loader)
         provider.destroy()
     }

@@ -61,6 +61,6 @@ class SurfaceOrientationTest : FilamentTestFixture() {
             .triangleCount(2)
             .triangles(intArrayOf(0, 1, 2, 2, 1, 3))
         
-        assertNotNull(builder.build()).destroy()
+        assertNotNull(builder.build()).use { assertEquals(4, it.vertexCount) }
     }
 }

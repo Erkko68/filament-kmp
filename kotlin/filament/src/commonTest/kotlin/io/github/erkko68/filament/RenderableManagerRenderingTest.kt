@@ -5,6 +5,7 @@ import io.github.erkko68.filament.testutils.TestMaterials
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /** Real-backend coverage for [RenderableManager] bindings (needs a material instance). */
@@ -60,7 +61,9 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         rm.setLayerMask(inst, 0xFF, 0x01)
         assertEquals(0x01, rm.getLayerMask(inst))
         rm.setPriority(inst, 5)
+        assertEquals(5, rm.getPriority(inst))
         rm.setChannel(inst, 2)
+        assertEquals(2, rm.getChannel(inst))
         rm.setCulling(inst, false)
         assertTrue(!rm.isCullingEnabled(inst))
         rm.setFogEnabled(inst, false)
@@ -80,9 +83,18 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         assertTrue(VertexBuffer.VertexAttribute.POSITION in attrs)
         assertTrue(VertexBuffer.VertexAttribute.COLOR !in attrs)
         rm.setBlendOrderAt(inst, 0, 2)
+        assertEquals(2, rm.getBlendOrderAt(inst, 0))
+        rm.setGlobalBlendOrderEnabledAt(inst, 0, true)
+        assertTrue(rm.isGlobalBlendOrderEnabledAt(inst, 0))
         rm.setGlobalBlendOrderEnabledAt(inst, 0, false)
+        assertTrue(!rm.isGlobalBlendOrderEnabledAt(inst, 0))
         rm.setLightChannel(inst, 0, true)
         assertTrue(rm.getLightChannel(inst, 0))
+
+        rm.setGeometryAt(inst, 0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib, 0, 3)
+        rm.setGeometryAt(inst, 0, RenderableManager.PrimitiveType.POINTS, vb, 0, 3)
+        rm.clearMaterialInstanceAt(inst, 0)
+        assertNull(rm.getMaterialInstanceAt(inst, 0))
 
         rm.destroy(entity)
         em.destroy(entity)
