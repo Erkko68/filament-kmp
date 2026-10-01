@@ -14,9 +14,8 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.register
 
 private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "camutils", "geometry", "filament-iblprefilter", "utils")
-private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
 
-/** C modules, by the Kotlin package of their generated externals. */
+/** The Kotlin package of each C module's generated externals; the modules are `c/api-headers.txt`'s sections. */
 private val GENERATED_MODULES = mapOf(
     "filament" to "io.github.erkko68.filament.capi",
     "filamat" to "io.github.erkko68.filament.filamat.capi",
@@ -38,6 +37,8 @@ private val GENERATED_MODULES = mapOf(
  */
 fun Project.registerApiGenTasks() {
     val root = layout.projectDirectory
+    val modules = apiHeaders().modules.keys.toList()
+    check(GENERATED_MODULES.keys == modules.toSet()) { "GENERATED_MODULES must list the api-headers.txt modules $modules" }
     tasks.register<ApiModelTask>("apiModel") {
         group = "verification"
         description = "Reports the Filament C++ API surface clang sees in the public headers."
@@ -52,7 +53,7 @@ fun Project.registerApiGenTasks() {
         includeDir.set(root.dir("include"))
         publicHeaders.from(apiHeaderFiles())
         apiHeadersFile.set(apiHeadersFile())
-        modules.set(apiHeaders().modules.keys.toList())
+        this.modules.set(modules)
         cDir.set(root.dir("c"))
         // Its TODOs note the functions these already write; the forwarders it compiles include FilaBridge.hpp.
         inputs.files(root.dir("c").asFileTree.matching { include("*/manual/*.h", "*/manual/*.hpp") }).withPathSensitivity(PathSensitivity.RELATIVE)
@@ -87,7 +88,7 @@ fun Project.registerApiGenTasks() {
         buildDir.set(layout.buildDirectory.dir("cmake/api-gaps"))
         outputDir.set(layout.buildDirectory.dir("filament-c/api-gaps"))
         arguments.add("-DJNI_HOME=${System.getProperty("java.home").replace('\\', '/')}")
-        targets.addAll(C_MODULES.map { "fila-$it" })
+        targets.addAll(modules.map { "fila-$it" })
     }
 
     tasks.register<ApiGapsTask>("apiGaps") {
