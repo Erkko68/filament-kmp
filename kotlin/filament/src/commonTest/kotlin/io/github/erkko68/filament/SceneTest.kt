@@ -64,4 +64,41 @@ class SceneTest : FilamentTestFixture() {
         EntityManager.get().destroy(e2)
         engine.destroy(scene)
     }
+
+    @Test
+    fun testEnvironmentAndComponentCounts() {
+        val scene = engine.createScene()
+        val sky = Skybox.Builder().color(0f, 0f, 0f, 1f).build(engine)
+        val ibl = IndirectLight.Builder().radiance(1, floatArrayOf(1f, 1f, 1f)).build(engine)
+        scene.skybox = sky
+        scene.indirectLight = ibl
+        assertEquals(sky, scene.skybox)
+        assertEquals(ibl, scene.indirectLight)
+        scene.skybox = null
+        scene.indirectLight = null
+        assertNull(scene.skybox)
+
+        val em = EntityManager.get()
+        val light = em.create()
+        LightManager.Builder(LightManager.Type.DIRECTIONAL).build(engine, light)
+        // Default material: building a renderable needs no material under NOOP.
+        val vb = VertexBuffer.Builder().vertexCount(3).bufferCount(1)
+            .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.AttributeType.FLOAT3, 0, 12)
+            .build(engine)
+        val renderable = em.create()
+        RenderableManager.Builder(1)
+            .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, 0, 3)
+            .boundingBox(Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f)))
+            .build(engine, renderable)
+        scene.addEntities(intArrayOf(light, renderable, em.create()))
+        assertEquals(1, scene.lightCount)
+        assertEquals(1, scene.renderableCount)
+
+        engine.destroy(light)
+        engine.destroy(renderable)
+        engine.destroy(scene)
+        engine.destroy(vb)
+        engine.destroy(sky)
+        engine.destroy(ibl)
+    }
 }

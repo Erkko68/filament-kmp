@@ -89,7 +89,12 @@ class CameraTest : FilamentTestFixture() {
         val lens = Camera.projection(50.0, 1.0, 0.1, 100.0)
         val identity = Camera.inverseProjection(lens).let { inv -> DoubleArray(16) { i -> (0..3).sumOf { k -> lens[k * 4 + i % 4] * inv[(i / 4) * 4 + k] } } }
         for (i in 0 until 16) assertEquals(if (i % 5 == 0) 1.0 else 0.0, identity[i], 1e-9)
+        val lensF = FloatArray(16) { lens[it].toFloat() }
+        val invF = Camera.inverseProjection(lensF)
+        for (i in 0 until 16) assertEquals(Camera.inverseProjection(lens)[i].toFloat(), invF[i], 1e-4f)
         assertTrue(Camera.computeEffectiveFocalLength(0.05, 10.0) > 0.05)
+        // Focusing closer narrows the effective field of view.
+        assertTrue(Camera.computeEffectiveFov(60.0, 1.0) < 60.0)
 
         // Cleanup
         engine.destroyCameraComponent(entity)

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,19 +12,12 @@ import kotlin.test.assertTrue
 class TextureTest : FilamentTestFixture() {
     @Test
     fun testTextureUsageFlags() {
-        val c = Texture.Usage.COLOR_ATTACHMENT
-        val d = Texture.Usage.DEPTH_ATTACHMENT
-        val s = Texture.Usage.STENCIL_ATTACHMENT
-        val u = Texture.Usage.UPLOADABLE
-        val sa = Texture.Usage.SAMPLEABLE
-        val sub = Texture.Usage.SUBPASS_INPUT
-        val src = Texture.Usage.BLIT_SRC
-        val dst = Texture.Usage.BLIT_DST
-        val pr = Texture.Usage.PROTECTED
-        val gen = Texture.Usage.GEN_MIPMAPPABLE
-        val def = Texture.Usage.DEFAULT
-
-        assertTrue(c != 0)
+        val flags = with(Texture.Usage) {
+            listOf(COLOR_ATTACHMENT, DEPTH_ATTACHMENT, STENCIL_ATTACHMENT, UPLOADABLE, SAMPLEABLE, SUBPASS_INPUT, BLIT_SRC, BLIT_DST, PROTECTED, GEN_MIPMAPPABLE)
+        }
+        assertEquals(flags.size, flags.distinct().size)
+        flags.forEach { assertEquals(1, it.countOneBits()) }
+        assertEquals(Texture.Usage.UPLOADABLE or Texture.Usage.SAMPLEABLE, Texture.Usage.DEFAULT)
     }
 
     @Test
@@ -51,7 +46,6 @@ class TextureTest : FilamentTestFixture() {
             .levels(1)
             .format(Texture.InternalFormat.RGBA8)
             .usage(Texture.Usage.SAMPLEABLE)
-            //.swizzle(Texture.Swizzle.CHANNEL_0, Texture.Swizzle.CHANNEL_1, Texture.Swizzle.CHANNEL_2, Texture.Swizzle.CHANNEL_3)
             .build(engine)
 
         assertNotNull(tex)
@@ -64,16 +58,7 @@ class TextureTest : FilamentTestFixture() {
         assertEquals(Texture.Sampler.SAMPLER_2D, tex.target)
         assertEquals(Texture.InternalFormat.RGBA8, tex.format)
 
-        val pbd = Texture.PixelBufferDescriptor(ByteArray(64 * 64 * 4), 64 * 64 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
-        
-        // setImage overloads
-        // TODO: The following setImage/generateMipmaps calls cause driver-specific precondition panics under the NOOP backend driver
-        // tex.setImage(engine, 0, pbd)
-        // tex.setImage(engine, 0, 0, 0, 32, 32, pbd)
-        // tex.setImage(engine, 0, 0, 0, 0, 32, 32, 1, pbd)
-
-        // tex.generateMipmaps(engine)
-
+        // setImage / generateMipmaps panic under NOOP; TextureRenderingTest covers them.
         engine.destroy(tex)
     }
 
@@ -91,15 +76,19 @@ class TextureTest : FilamentTestFixture() {
         assertTrue(Texture.computeTextureDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 100, 100, 1) > 0)
     }
 
-    private fun compileOnlyVerifications(tex: Texture, engine: Engine, stream: Stream, pbd: Texture.PixelBufferDescriptor) {
-        tex.setImage(engine, 0, 0, 0, 0, 32, 32, 1, pbd)
-        tex.generateMipmaps(engine)
-        tex.setExternalStream(engine, stream)
-        
-        Texture.Builder()
-            .import(12345L)
-            .name("imported")
-            .external()
-            .swizzle(Texture.Swizzle.CHANNEL_0, Texture.Swizzle.CHANNEL_1, Texture.Swizzle.CHANNEL_2, Texture.Swizzle.CHANNEL_3)
+    @Test
+    fun testBuilderOptions() {
+        val named = Texture.Builder().width(4).height(4).format(Texture.InternalFormat.RGBA8).name("named").apply {
+            // Filament's wasm build rejects swizzling whatever the backend reports.
+            if (Texture.isTextureSwizzleSupported(engine) && TestEnv.target != TestTarget.JS) {
+                swizzle(Texture.Swizzle.CHANNEL_2, Texture.Swizzle.CHANNEL_1, Texture.Swizzle.CHANNEL_0, Texture.Swizzle.SUBSTITUTE_ONE)
+            }
+        }.build(engine)
+        val imported = Texture.Builder().width(4).height(4).format(Texture.InternalFormat.RGBA8).import(1L).build(engine)
+        val external = Texture.Builder().width(4).height(4).format(Texture.InternalFormat.RGBA8).external().build(engine)
+        assertTrue(engine.isValid(named) && engine.isValid(imported) && engine.isValid(external))
+        engine.destroy(named)
+        engine.destroy(imported)
+        engine.destroy(external)
     }
 }

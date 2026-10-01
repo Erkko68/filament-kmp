@@ -17,4 +17,7 @@ object TestMaterials {
 
     /** Unlit material declaring bool/int/float specialization constants — see constants.mat. */
     fun getConstantsMaterialBytes(): ByteArray = EmbeddedMaterials.constants
+
+    /** Lit, masked, double-sided material with specular AA and one parameter per type — see params.mat. */
+    fun getParamsMaterialBytes(): ByteArray = EmbeddedMaterials.params
 }

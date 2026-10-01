@@ -66,6 +66,57 @@ class RendererRenderingTest : RenderingTestFixture() {
         engine.destroy(swapChain)
     }
 
+    @Test
+    fun testStandaloneViewReadbackAndCopyFrame() {
+        val engine = engine ?: return
+        val w = 8
+        val h = 8
+        val color = Texture.Builder().width(w).height(h).format(Texture.InternalFormat.RGBA8)
+            .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.BLIT_SRC).build(engine)
+        val target = RenderTarget.Builder().texture(RenderTarget.AttachmentPoint.COLOR, color).build(engine)
+        val renderer = engine.createRenderer()
+        val scene = engine.createScene()
+        val camera = engine.createCamera(engine.entityManager.create())
+        val view = engine.createView().apply {
+            this.scene = scene
+            this.camera = camera
+            this.viewport = Viewport(0, 0, w, h)
+            this.renderTarget = target
+        }
+
+        // Off-screen: outside beginFrame/endFrame, then read the target back.
+        renderer.renderStandaloneView(view)
+        val pixels = ByteArray(w * h * 4)
+        val readbackDone = io.github.erkko68.filament.testutils.ReadbackFlag()
+        renderer.readPixels(target, 0, 0, w, h, Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) {
+            readbackDone.done = true
+        })
+        var tries = 0
+        while (!readbackDone.done && tries++ < 20) engine.flushAndWait()
+        if (TestEnv.target != TestTarget.JS) assertTrue(readbackDone.done, "render target readPixels callback never fired")
+
+        // On-screen, mirrored into a second swap chain.
+        view.renderTarget = null
+        val swapChain = engine.createSwapChain(w, h)
+        val mirror = engine.createSwapChain(w, h)
+        if (renderer.beginFrame(swapChain, 0L)) {
+            renderer.render(view)
+            renderer.copyFrame(mirror, Viewport(0, 0, w, h), Viewport(0, 0, w, h), Renderer.COMMIT)
+            renderer.endFrame()
+        }
+        engine.flushAndWait()
+
+        engine.destroy(view)
+        engine.destroyCameraComponent(camera.entity)
+        engine.entityManager.destroy(camera.entity)
+        engine.destroy(scene)
+        engine.destroy(renderer)
+        engine.destroy(mirror)
+        engine.destroy(swapChain)
+        engine.destroy(target)
+        engine.destroy(color)
+    }
+
     companion object {
         private const val SWAP_CHAIN_CONFIG_READABLE = 0x2L
     }

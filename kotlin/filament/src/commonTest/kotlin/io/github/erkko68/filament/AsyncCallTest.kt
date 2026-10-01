@@ -1,6 +1,7 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testutils.pumpUntil
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -25,22 +26,6 @@ class AsyncCallTest {
     @AfterTest
     fun tearDown() {
         engine?.let { it.flushAndWait(); Engine.destroy(it) }
-    }
-
-    // Completions run on the main thread once the async queue has served them; without threads (web) the queue
-    // only advances as frames tick the backend, so render empty ones.
-    private fun Engine.pumpUntil(done: () -> Boolean) {
-        val swapChain = createSwapChain(1, 1, 0L)
-        val renderer = createRenderer()
-        repeat(200) {
-            if (done()) return@repeat
-            if (renderer.beginFrame(swapChain, 0L)) renderer.endFrame()
-            flushAndWait()
-            pumpMessageQueues()
-        }
-        destroy(renderer)
-        destroy(swapChain)
-        assertTrue(done(), "async completion never arrived")
     }
 
     @Test
@@ -100,10 +85,11 @@ class AsyncCallTest {
         val pixels = { Texture.PixelBufferDescriptor(ByteArray(16), 16, Texture.Format.RGBA, Texture.Type.UBYTE) }
         texture.setImageAsync(engine, 0, pixels()) { _, s -> statuses += "image" to s }
         texture.setImageAsync(engine, 0, 0, 0, 2, 2, pixels()) { _, s -> statuses += "region" to s }
+        texture.setImageAsync(engine, 0, 0, 0, 0, 2, 2, 1, pixels()) { _, s -> statuses += "volume" to s }
 
-        engine.pumpUntil { statuses.size == 8 }
+        engine.pumpUntil { statuses.size == 9 }
         assertEquals(
-            listOf("ib", "ib data", "vb", "vb object", "vb data", "texture", "image", "region").map { it to AsyncCallStatus.COMPLETED }.toSet(),
+            listOf("ib", "ib data", "vb", "vb object", "vb data", "texture", "image", "region", "volume").map { it to AsyncCallStatus.COMPLETED }.toSet(),
             statuses.toSet(),
         )
         assertTrue(ib.isCreationComplete && vb.isCreationComplete && texture.isCreationComplete())
