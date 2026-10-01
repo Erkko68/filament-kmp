@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.compose.scene
 
+import io.github.erkko68.filament.utils.Float2
 import io.github.erkko68.filament.utils.Float3
 import io.github.erkko68.filament.utils.Quaternion
 import kotlin.test.Test
@@ -418,5 +419,18 @@ class TypesTest {
             Rotation.axisAngle(Direction(0f, 1f, 0f), 30f),
             Rotation.axisAngle(Direction(0f, 1f, 0f), 31f),
         )
+    }
+
+    @Test
+    fun conversionsFromAndToFilamentUtilsVectors() {
+        assertEquals(Direction(2f, 2f, 2f), Direction(2f))
+        assertEquals(Scale(1f, 2f, 3f), Scale(Float3(1f, 2f, 3f)))
+        assertEquals(Float3(1f, 2f, 3f), Scale(1f, 2f, 3f).toFloat3())
+        assertEquals(LinearColor(0.1f, 0.2f, 0.3f), LinearColor(Float3(0.1f, 0.2f, 0.3f)))
+        assertEquals(LensShift(0.5f, -0.5f), LensShift(Float2(0.5f, -0.5f)))
+        assertEquals(Float2(0.5f, -0.5f), LensShift(0.5f, -0.5f).toFloat2())
+        assertEquals(LensScaling(2f, 2f), LensScaling(2f))
+        assertEquals(LensScaling(1f, 3f), LensScaling(Float2(1f, 3f)))
+        assertEquals(Float2(1f, 3f), LensScaling(1f, 3f).toFloat2())
     }
 }

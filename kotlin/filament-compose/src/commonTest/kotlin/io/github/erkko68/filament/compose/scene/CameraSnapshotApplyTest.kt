@@ -4,8 +4,10 @@ import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
+import io.github.erkko68.filament.utils.Float4
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /**
  * Verifies [CameraSnapshot.applyTo] pushes eye/target/up, each [Projection] variant, exposure,
@@ -84,5 +86,28 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         val scaling = camera.getScaling()
         assertEquals(0.5, scaling[0], 1e-4)
         assertEquals(0.5, scaling[1], 1e-4)
+    }
+
+    @Test
+    fun matricesAreReadableOnlyWhileAttached() {
+        val state = CameraState(
+            Position(3f, 4f, 5f), Position(0f), Direction(0f, 1f, 0f), Projection.Perspective(), Exposure(),
+            10f, LensShift.None, LensScaling.Identity,
+        )
+        assertNull(state.viewMatrix)
+        assertNull(state.projectionMatrix)
+
+        val camera = newCamera()
+        state.attach(camera)
+        state.snapshot().applyTo(camera, aspect = 1.0)
+        // The view matrix takes the eye to the origin; a perspective projection divides by -z.
+        val eyeInView = state.viewMatrix!! * Float4(3f, 4f, 5f, 1f)
+        assertEquals(0f, eyeInView.x, 1e-4f)
+        assertEquals(0f, eyeInView.y, 1e-4f)
+        assertEquals(0f, eyeInView.z, 1e-4f)
+        assertEquals(-1f, state.projectionMatrix!![2, 3])
+
+        state.detach(camera)
+        assertNull(state.viewMatrix)
     }
 }

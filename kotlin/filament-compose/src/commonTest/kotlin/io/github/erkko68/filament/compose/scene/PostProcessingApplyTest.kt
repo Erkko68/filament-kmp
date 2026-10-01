@@ -1,6 +1,9 @@
 package io.github.erkko68.filament.compose.scene
 
+import io.github.erkko68.filament.QualityLevel
+import io.github.erkko68.filament.ToneMapper
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.Dithering as FilamentDithering
 import io.github.erkko68.filament.AntiAliasing as FilamentAntiAliasing
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import kotlin.test.Test
@@ -103,5 +106,34 @@ class PostProcessingApplyTest : ComposeTestFixture() {
 
         val none = PostProcessing(colorGrade = null).applyTo(view, engine)
         assertNull(none, "no ColorGrading should be allocated when colorGrade is null")
+    }
+
+    @Test
+    fun ditheringAndRenderQualityApply() {
+        val view = newView()
+        PostProcessing(dithering = Dithering(FilamentDithering.NONE), renderQuality = RenderQuality(QualityLevel.LOW))
+            .applyTo(view, engine)
+        assertEquals(FilamentDithering.NONE, view.dithering)
+        assertEquals(QualityLevel.LOW, view.renderQuality.hdrColorBuffer)
+
+        // Null restores the native defaults.
+        PostProcessing().applyTo(view, engine)
+        assertEquals(FilamentDithering.TEMPORAL, view.dithering)
+        assertEquals(QualityLevel.HIGH, view.renderQuality.hdrColorBuffer)
+    }
+
+    @Test
+    fun everyToneMappingBuildsAColorGrading() {
+        val view = newView()
+        val toneMappings = listOf(
+            ToneMapping.ACES, ToneMapping.ACESLegacy, ToneMapping.Filmic, ToneMapping.PBRNeutral, ToneMapping.GT7,
+            ToneMapping.Linear, ToneMapping.DisplayRange, ToneMapping.Agx(ToneMapper.Agx.AgxLook.PUNCHY),
+            ToneMapping.Generic(contrast = 1.4f),
+        )
+        for (toneMapping in toneMappings) {
+            val grading = assertNotNull(PostProcessing(colorGrade = ColorGrade(toneMapping = toneMapping)).applyTo(view, engine), "$toneMapping")
+            assertTrue(engine.isValid(grading))
+            engine.destroy(grading)
+        }
     }
 }
