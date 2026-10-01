@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.filamat
 
+import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.filamat.testutils.FilamatTestFixture
 import kotlin.test.Test
@@ -163,5 +164,70 @@ class MaterialBuilderTest : FilamatTestFixture() {
         assertEquals(MaterialBuilder.UniformType.FLOAT2, uv0.type)
         assertEquals("mesh_uv0", uv0.attributeName)
         assertEquals("HAS_ATTRIBUTE_UV0", uv0.defineName)
+    }
+
+    private fun MaterialBuilder.buildValid(): MaterialPackage =
+        build().also { assertTrue(it.isValid, "material did not compile") }
+
+    private fun unlit() = MaterialBuilder()
+        .shading(MaterialBuilder.Shading.UNLIT)
+        .material("void material(inout MaterialInputs m) { prepareMaterial(m); }")
+
+    @Test
+    fun testCompilerOptions() {
+        unlit()
+            .name("Options")
+            .featureLevel(Engine.FeatureLevel.FEATURE_LEVEL_1)
+            .setApiLevel(1)
+            .instanced(true)
+            .shadowFarAttenuation(true)
+            .vertexDomainDeviceJittered(true)
+            .useDefaultDepthVariant()
+            .stereoscopicType(Engine.StereoscopicType.INSTANCED)
+            .stereoscopicEyeCount(2)
+            .workarounds(MaterialBuilder.Workarounds.NONE)
+            .noSamplerValidation(true)
+            .includeEssl1(false)
+            .compilationParameters("")
+            .printShaders(false)
+            .saveRawVariants(false)
+            .generateDebugInfo(true)
+            .buildValid()
+    }
+
+    @Test
+    fun testCustomBlending() {
+        unlit()
+            .name("CustomBlend")
+            .blending(MaterialBuilder.BlendingMode.CUSTOM)
+            .customBlendFunctions(
+                MaterialBuilder.BlendFunction.SRC_ALPHA, MaterialBuilder.BlendFunction.ONE,
+                MaterialBuilder.BlendFunction.ONE_MINUS_SRC_ALPHA, MaterialBuilder.BlendFunction.ZERO,
+            )
+            .buildValid()
+    }
+
+    @Test
+    fun testPostProcessOutput() {
+        MaterialBuilder()
+            .name("PostProcess")
+            .enableFramebufferFetch() // only meant for post-process materials
+            .materialDomain(MaterialBuilder.MaterialDomain.POST_PROCESS)
+            .output(
+                MaterialBuilder.VariableQualifier.OUT, MaterialBuilder.OutputTarget.COLOR,
+                MaterialBuilder.ParameterPrecision.DEFAULT, MaterialBuilder.OutputType.FLOAT4, "color",
+            )
+            .material("void postProcess(inout PostProcessInputs p) { p.color = vec4(1.0); }")
+            .buildValid()
+    }
+
+    @Test
+    fun testComputeGroupSize() {
+        MaterialBuilder()
+            .name("Compute")
+            .materialDomain(MaterialBuilder.MaterialDomain.COMPUTE)
+            .groupSize(8, 8, 1)
+            .material("void compute() {}")
+            .buildValid()
     }
 }

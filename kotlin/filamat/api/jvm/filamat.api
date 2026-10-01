@@ -162,6 +162,7 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$Interpolat
 }
 
 public final class io/github/erkko68/filament/filamat/MaterialBuilder$MaterialDomain : java/lang/Enum {
+	public static final field COMPUTE Lio/github/erkko68/filament/filamat/MaterialBuilder$MaterialDomain;
 	public static final field POST_PROCESS Lio/github/erkko68/filament/filamat/MaterialBuilder$MaterialDomain;
 	public static final field SURFACE Lio/github/erkko68/filament/filamat/MaterialBuilder$MaterialDomain;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;

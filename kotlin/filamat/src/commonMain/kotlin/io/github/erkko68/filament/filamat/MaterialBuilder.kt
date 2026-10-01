@@ -247,7 +247,9 @@ class MaterialBuilder() {
         /** Regular surface shading in the scene (default). */
         SURFACE,
         /** Full-screen post-processing effect. */
-        POST_PROCESS
+        POST_PROCESS,
+        /** Compute shader; set its work group size with [groupSize]. */
+        COMPUTE
     }
 
     /** How ambient occlusion is applied to specular indirect lighting. */
