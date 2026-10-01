@@ -16,12 +16,18 @@ runs:
         # Skip the largest sub-caches that don't pull their weight:
         #   - jdks/                — JDK distributions restored by setup-java in seconds.
         #   - caches/*/transforms  — artifact transform outputs (Gradle 9 layout); regenerated
-        #                            cheaply from the (cached) module artifacts. Often
+        #                            cheaply from the module artifacts. Often
         #                            500 MB – 1 GB per job.
         #   - caches/build-cache-* — Local build cache outputs we don't share between
         #                            jobs anyway.
+        #   - caches/modules-2     — downloaded dependencies: ~400 MB per job (7 GB in all), and
+        #                            Maven re-downloads them in a minute or two. That space keeps
+        #                            the slow-to-rebuild caches (wasm Filament libs, emsdk, AVD) alive.
+        #   - wrapper/dists        — the Gradle distribution, saved once per OS; a ~10 s download.
         gradle-home-cache-excludes: |
           jdks
           caches/transforms-*
           caches/*/transforms
           caches/build-cache-*
+          caches/modules-2
+          wrapper/dists

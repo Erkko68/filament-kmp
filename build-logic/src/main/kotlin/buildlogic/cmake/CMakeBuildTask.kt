@@ -48,7 +48,9 @@ abstract class CMakeBuildTask @Inject constructor(private val exec: ExecOperatio
         run(listOf("-S", sourceDir.get().asFile.path, "-B", build,
             "-DCMAKE_BUILD_TYPE=${buildType.get()}",
             "-DFILA_OUTPUT_DIR=${output.invariantSeparatorsPath}") + arguments.get())
-        run(listOf("--build", build, "--config", buildType.get(), "--parallel", "--target") + targets.get())
+        // A bare --parallel is an unbounded `make -j`: ~100 Filament-including compiles at once swap a 7 GB macOS runner.
+        val jobs = Runtime.getRuntime().availableProcessors().toString()
+        run(listOf("--build", build, "--config", buildType.get(), "--parallel", jobs, "--target") + targets.get())
     }
 
     private fun run(args: List<String>) {
