@@ -31,6 +31,10 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         assertContentEquals(floatArrayOf(0.25f, 0.5f, 0.75f), inst.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
         inst.setParameter("intensity", 2f)
         assertContentEquals(floatArrayOf(2f), inst.getParameter("intensity", MaterialInstance.FloatElement.FLOAT))
+        inst.setParameter("flags", 0xFFFFFFFFu)
+        assertContentEquals(intArrayOf(-1), inst.getParameter("flags", MaterialInstance.UIntElement.UINT))
+        inst.setParameter("ids", 1u, 2u, 0x80000000u)
+        assertContentEquals(intArrayOf(1, 2, Int.MIN_VALUE), inst.getParameter("ids", MaterialInstance.UIntElement.UINT3))
 
         inst.setScissor(0, 0, 100, 100)
         inst.unsetScissor()

@@ -194,9 +194,11 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
             bindings += Binding(name, cpp, null)
         } catch (e: Unsupported) {
-            val note = if (name in manual) "handwritten in manual/" else "TODO(handwritten)"
+            // By hand as itself, or as one function per case (`_aux_float2`, … for a std::variant).
+            val handwritten = manual.filter { it == name || it.startsWith("${name}_") }
+            val note = if (handwritten.isNotEmpty()) "handwritten in manual/" else "TODO(handwritten)"
             section.declarations.appendLine("// $note $name: $cpp\n//     ${e.message}")
-            bindings += Binding(name, cpp, if (name in manual) null else "todo: ${e.message}")
+            if (handwritten.isEmpty()) bindings += Binding(name, cpp, "todo: ${e.message}") else handwritten.forEach { bindings += Binding(it, cpp, null) }
         }
     }
 

@@ -9,6 +9,20 @@ import kotlin.test.assertTrue
 
 class RenderableManagerTest : FilamentTestFixture() {
     @Test
+    fun testComputeAABB() {
+        // float4 positions; vertex 1 isn't indexed, so it stays out of the box.
+        val vertices = floatArrayOf(0f, 0f, 0f, 9f, 100f, 100f, 100f, 9f, 2f, -1f, 4f, 9f)
+        val expected = Box().set(floatArrayOf(0f, -1f, 0f), floatArrayOf(2f, 0f, 4f))
+        assertEquals(expected, RenderableManager.computeAABB(vertices, intArrayOf(0, 2), stride = 16))
+        assertEquals(expected, RenderableManager.computeAABB(vertices, shortArrayOf(0, 2), stride = 16))
+        // Half floats: 1.0 = 0x3C00, 2.0 = 0x4000, -1.0 = 0xBC00.
+        val halves = shortArrayOf(0x3C00, 0x4000, 0xBC00.toShort(), 0xBC00.toShort(), 0x3C00, 0x4000)
+        val halfBox = Box().set(floatArrayOf(-1f, 1f, -1f), floatArrayOf(1f, 2f, 2f))
+        assertEquals(halfBox, RenderableManager.computeAABB(halves, intArrayOf(0, 1)))
+        assertEquals(halfBox, RenderableManager.computeAABB(halves, shortArrayOf(0, 1)))
+    }
+
+    @Test
     fun testRenderableManagerLifecycleAndGeometry() {
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         if (bytes.isEmpty()) return

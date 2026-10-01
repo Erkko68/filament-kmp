@@ -136,7 +136,9 @@ val name: String get() = stringFromInterop(FilaMaterial_getName(nativeHandle)) ?
 `Callbacks.userOnly` (`void (*)(void*)`) or `Callbacks.argUser` (`void (*)(T*, void*)`) as the
 function pointer. A `once` callback frees itself after firing; `Callbacks.release(userData)` the
 others once C can no longer call them. The lambda runs on whichever thread C calls from (usually
-Filament's driver thread; on web, during the frame tick).
+Filament's driver thread; on web, during the frame tick). Async completions also pass an
+`AsyncCallStatus`: register them with `Callbacks.registerStatus(once) { arg, status -> … }` and pass
+`Callbacks.userStatus` (`void (*)(void*, status)`) or `Callbacks.argUserStatus` (`void (*)(T*, void*, status)`).
 
 ### Asynchronous uploads
 

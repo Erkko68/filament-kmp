@@ -16,18 +16,6 @@ FilaToneMapper* FilaGenericToneMapper_asToneMapper(FilaGenericToneMapper* self) 
     return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
-void FilaGenericToneMapper_invoke(const FilaGenericToneMapper* self, const FilaFloat3* x, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->operator()(std::bit_cast<filament::math::float3>(*x)));
-}
-
-bool FilaGenericToneMapper_isOneDimensional(const FilaGenericToneMapper* self) {
-    return fila::cpp(self)->isOneDimensional();
-}
-
-bool FilaGenericToneMapper_isLDR(const FilaGenericToneMapper* self) {
-    return fila::cpp(self)->isLDR();
-}
-
 float FilaGenericToneMapper_getContrast(const FilaGenericToneMapper* self) {
     return fila::cpp(self)->getContrast();
 }

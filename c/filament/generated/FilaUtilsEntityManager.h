@@ -8,12 +8,11 @@
 extern "C" {
 #endif
 
-// utils::EntityManager::Listener
-void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, uint32_t n, const FilaEntity* entities);
-
 // utils::EntityManager
 // skipped void utils::EntityManager::registerChangeCallback(const void * token, ChangeCallback callback)
 // skipped void utils::EntityManager::unregisterChangeCallback(const void * token)
+// skipped void utils::EntityManager::registerListener(Listener * l): uses utils::EntityManager::Listener
+// skipped void utils::EntityManager::unregisterListener(Listener * l): uses utils::EntityManager::Listener
 // skipped PagedArenaBitset utils::EntityManager::getAliveEntities() const
 // skipped void utils::EntityManager::registerWatermark(std::atomic<uint64_t> * watermark, utils::ImmutableCString name, const PagedArenaBitset * entityBitset, Mutex * entityBitsetLock)
 // skipped void utils::EntityManager::unregisterWatermark(std::atomic<uint64_t> * watermark)
@@ -28,8 +27,6 @@ FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self);
 void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities);
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e);
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e);
-void FilaUtilsEntityManager_registerListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l);
-void FilaUtilsEntityManager_unregisterListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l);
 void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self);
 void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self);
 void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out);

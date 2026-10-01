@@ -27,6 +27,8 @@ FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* self, FilaEngine* engi
 FilaTextureBuilder* FilaTextureBuilder_import(FilaTextureBuilder* self, int64_t id);
 
 // filament::Texture
+// skipped void filament::Texture::setExternalImage(Engine & engine, ExternalImageHandleRef image)
+// skipped void filament::Texture::setExternalImage(Engine & engine, void * _Nonnull image, size_t plane)
 bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureFormat format);
 bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureFormat format);
 bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format);
@@ -48,9 +50,6 @@ void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescrip
 uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
 uint32_t FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
 uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
-// TODO(handwritten) FilaTexture_setExternalImage_ExternalImageHandleRef: void filament::Texture::setExternalImage(Engine & engine, ExternalImageHandleRef image)
-//     ExternalImageHandleRef: alias of a pointer
-void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, uint32_t plane);
 void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaStream* stream);
 void FilaTexture_generateMipmaps(const FilaTexture* self, FilaEngine* engine);
 bool FilaTexture_isCreationComplete(const FilaTexture* self);

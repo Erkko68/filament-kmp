@@ -2,6 +2,7 @@ package buildlogic.apigen.c
 
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppField
+import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppRecord
 
 /** What C binds of a record: `_create`/`_destroy`, upcasts, methods and field accessors. [CApiWriter] writes them. */
@@ -38,11 +39,26 @@ internal class BindingRules(private val api: CppApi, private val bridges: CBridg
 
     /**
      * The methods C binds, its twins' too. Not deprecated ones, nor overloads only literals call; a const overload's
-     * non-const twin takes the same C arguments and covers both.
+     * non-const twin takes the same C arguments and covers both. Nor overrides of an upcast base's methods, nor a
+     * `(name, nameLength, …)` overload of a `(name, …)` one: C calls those through the base and the C string.
      */
-    fun methods(record: CppRecord) = (record.methods + bridges.twins(record).flatMap { it.methods })
-        .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
-        .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
+    fun methods(record: CppRecord): List<CppMethod> {
+        val all = (record.methods + bridges.twins(record).flatMap { it.methods })
+            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
+        val bases = upcasts(record)
+        val signatures = all.mapTo(HashSet()) { m -> m.name to m.params.map { passed(it.type.spelling) } }
+        return all.filterNot { m -> m.isOverride && bases.any { b -> b.methods.any { it.name == m.name } } || lengthOverload(m, signatures) }
+            .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
+    }
+
+    /** A `size_t …Length` right after a `char*` that an overload without it covers (not an array's `size`). */
+    private fun lengthOverload(m: CppMethod, signatures: Set<Pair<String, List<String>>>) = m.params.zipWithNext().withIndex().any { (i, p) ->
+        shape(p.first.type.spelling).let { it.base == "char" && it.indirection == listOf("*") } && p.second.name.endsWith("Length") &&
+            m.name to m.params.filterIndexed { j, _ -> j != i + 1 }.map { passed(it.type.spelling) } in signatures
+    }
+
+    /** What a parameter passes: a by-value one's top-level `const` and nullability aside. */
+    private fun passed(spelling: String) = shape(spelling).let { if (it.indirection.isEmpty()) it.base else cSpelling(spelling) }
 
     /** The fields C gets a getter and setter for: a value record's public ones, its twins' first. */
     fun fields(record: CppRecord): List<CppField> = if (!bridges.isValue(record.name) || bridges.uninstantiated(record)) emptyList() else

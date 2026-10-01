@@ -12,9 +12,6 @@ extern "C" {
 FilaPBRNeutralToneMapper* FilaPBRNeutralToneMapper_create(void);
 void FilaPBRNeutralToneMapper_destroy(FilaPBRNeutralToneMapper* self);
 FilaToneMapper* FilaPBRNeutralToneMapper_asToneMapper(FilaPBRNeutralToneMapper* self);
-void FilaPBRNeutralToneMapper_invoke(const FilaPBRNeutralToneMapper* self, const FilaFloat3* color, FilaFloat3* out);
-bool FilaPBRNeutralToneMapper_isOneDimensional(const FilaPBRNeutralToneMapper* self);
-bool FilaPBRNeutralToneMapper_isLDR(const FilaPBRNeutralToneMapper* self);
 
 
 #ifdef __cplusplus

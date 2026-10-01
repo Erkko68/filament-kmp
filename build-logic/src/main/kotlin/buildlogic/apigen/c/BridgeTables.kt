@@ -53,7 +53,6 @@ internal val FUNCTION_INSTANTIATIONS = mapOf(
     "filament::RenderableManager::computeAABB" to math("float4", "half4", "float3", "half3")
         .flatMap { v -> listOf("uint16_t", "uint32_t").map { mapOf("VECTOR" to v, "INDEX" to it) } },
     "filament::geometry::TangentSpaceMesh::getAux" to each("T", math("float2", "float3", "float4", "ushort3", "ushort4")),
-    "ktxreader::Ktx1Reader::toCompressedFilamentEnum" to each("T", listOf("filament::backend::CompressedPixelDataType")),
     // ColorConversion::ACCURATE, the default.
     "filament::Color::toLinear" to listOf(emptyMap()),
     "filament::Color::toSRGB" to listOf(emptyMap()),

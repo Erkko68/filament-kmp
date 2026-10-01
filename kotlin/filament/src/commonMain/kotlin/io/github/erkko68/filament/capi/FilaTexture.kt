@@ -115,9 +115,6 @@ internal external fun FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHa
 @ExternalSymbolName("FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void")
 internal external fun FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(self: NativePointer, engine: NativePointer, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: NativePointer, bufferSize: Int, bufferFormat: Int, bufferType: Int, bufferAlignment: Int, bufferLeft: Int, bufferTop: Int, bufferStride: Int, bufferCallback: NativePointer, bufferUser: NativePointer, handler: NativePointer, callback: NativePointer, user: NativePointer): Int
 
-@ExternalSymbolName("FilaTexture_setExternalImage_void_size_t")
-internal external fun FilaTexture_setExternalImage_void_size_t(self: NativePointer, engine: NativePointer, image: NativePointer, plane: Int)
-
 @ExternalSymbolName("FilaTexture_setExternalStream")
 internal external fun FilaTexture_setExternalStream(self: NativePointer, engine: NativePointer, stream: NativePointer)
 

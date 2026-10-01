@@ -12,12 +12,3 @@ internal external fun FilaLinearToneMapper_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaLinearToneMapper_asToneMapper")
 internal external fun FilaLinearToneMapper_asToneMapper(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaLinearToneMapper_invoke")
-internal external fun FilaLinearToneMapper_invoke(self: NativePointer, c: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaLinearToneMapper_isOneDimensional")
-internal external fun FilaLinearToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaLinearToneMapper_isLDR")
-internal external fun FilaLinearToneMapper_isLDR(self: NativePointer): Boolean

@@ -15,7 +15,7 @@ FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_vertexC
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_normals(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* normals, uint32_t stride);
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_tangents(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat4* tangents, uint32_t stride);
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_uvs(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat2* uvs, uint32_t stride);
-// TODO(handwritten) FilaGeometryTangentSpaceMeshBuilder_aux: Builder & filament::geometry::TangentSpaceMesh::Builder::aux(AuxAttribute attribute, InData data, size_t stride)
+// handwritten in manual/ FilaGeometryTangentSpaceMeshBuilder_aux: Builder & filament::geometry::TangentSpaceMesh::Builder::aux(AuxAttribute attribute, InData data, size_t stride)
 //     InData: std::variant
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_positions(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* positions, uint32_t stride);
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangleCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t triangleCount);

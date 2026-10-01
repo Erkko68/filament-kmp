@@ -74,9 +74,13 @@ actual fun readPointers(ptr: NativePointer, count: Int): List<NativePointer> = r
 
 actual object Callbacks {
     actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer = WasmCallbacks.register(once) { a, _ -> fn(a) }
+    actual fun registerStatus(once: Boolean, fn: (arg: NativePointer, status: Int) -> Unit): NativePointer =
+        WasmCallbacks.register(once) { a, b -> fn(a, b) }
     actual fun release(userData: NativePointer) = WasmCallbacks.release(userData)
     actual val userOnly: NativePointer get() = WasmCallbacks.userOnly
     actual val argUser: NativePointer get() = WasmCallbacks.argUser
+    actual val userStatus: NativePointer get() = WasmCallbacks.userStatus
+    actual val argUserStatus: NativePointer get() = WasmCallbacks.argUserStatus
     actual val keepBuffer: NativePointer get() = WasmCallbacks.keepBuffer
 }
 

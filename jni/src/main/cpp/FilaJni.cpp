@@ -83,9 +83,12 @@ static void dispatch(void* userData, jlong a, jlong b) {
     if (callback->once) release(env, callback);
 }
 
-// One trampoline per C callback shape, matching web's Callbacks (userOnly, argUser, keepBuffer, freeBuffer).
+// One trampoline per C callback shape, matching web's Callbacks (userOnly, argUser, userStatus, argUserStatus, keepBuffer, freeBuffer).
 static void userOnly(void* userData) { dispatch(userData, 0, 0); }
 static void argUser(void* arg, void* userData) { dispatch(userData, reinterpret_cast<jlong>(arg), 0); }
+// Async completions: the status (AsyncCallStatus) arrives as `b`.
+static void userStatus(void* userData, int status) { dispatch(userData, 0, status); }
+static void argUserStatus(void* arg, void* userData, int status) { dispatch(userData, reinterpret_cast<jlong>(arg), status); }
 static void keepBuffer(void* buffer, size_t size, void* userData) {
     dispatch(userData, reinterpret_cast<jlong>(buffer), static_cast<jlong>(size));
 }
@@ -119,6 +122,8 @@ FILA_JNI(void, releaseCallback)(JNIEnv* env, jclass, jlong userData) {
 
 FILA_JNI(jlong, userOnly)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&userOnly); }
 FILA_JNI(jlong, argUser)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&argUser); }
+FILA_JNI(jlong, userStatus)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&userStatus); }
+FILA_JNI(jlong, argUserStatus)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&argUserStatus); }
 FILA_JNI(jlong, keepBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&keepBuffer); }
 FILA_JNI(jlong, freeBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&freeBuffer); }
 

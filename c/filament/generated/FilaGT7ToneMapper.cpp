@@ -16,16 +16,4 @@ FilaToneMapper* FilaGT7ToneMapper_asToneMapper(FilaGT7ToneMapper* self) {
     return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
-void FilaGT7ToneMapper_invoke(const FilaGT7ToneMapper* self, const FilaFloat3* color, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->operator()(std::bit_cast<filament::math::float3>(*color)));
-}
-
-bool FilaGT7ToneMapper_isOneDimensional(const FilaGT7ToneMapper* self) {
-    return fila::cpp(self)->isOneDimensional();
-}
-
-bool FilaGT7ToneMapper_isLDR(const FilaGT7ToneMapper* self) {
-    return fila::cpp(self)->isLDR();
-}
-
 } // extern "C"

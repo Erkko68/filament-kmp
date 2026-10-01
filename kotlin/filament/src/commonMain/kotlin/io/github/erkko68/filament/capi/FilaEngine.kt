@@ -232,9 +232,6 @@ internal external fun FilaEngine_destroy_VertexBuffer(self: NativePointer, p: Na
 @ExternalSymbolName("FilaEngine_destroy_Fence")
 internal external fun FilaEngine_destroy_Fence(self: NativePointer, p: NativePointer): Boolean
 
-@ExternalSymbolName("FilaEngine_destroy_Sync")
-internal external fun FilaEngine_destroy_Sync(self: NativePointer, p: NativePointer): Boolean
-
 @ExternalSymbolName("FilaEngine_destroy_IndexBuffer")
 internal external fun FilaEngine_destroy_IndexBuffer(self: NativePointer, p: NativePointer): Boolean
 
@@ -364,9 +361,6 @@ internal external fun FilaEngine_destroyCameraComponent(self: NativePointer, ent
 @ExternalSymbolName("FilaEngine_createFence")
 internal external fun FilaEngine_createFence(self: NativePointer): NativePointer
 
-@ExternalSymbolName("FilaEngine_createSync")
-internal external fun FilaEngine_createSync(self: NativePointer): NativePointer
-
 @ExternalSymbolName("FilaEngine_isValid_BufferObject")
 internal external fun FilaEngine_isValid_BufferObject(self: NativePointer, p: NativePointer): Boolean
 
@@ -375,9 +369,6 @@ internal external fun FilaEngine_isValid_VertexBuffer(self: NativePointer, p: Na
 
 @ExternalSymbolName("FilaEngine_isValid_Fence")
 internal external fun FilaEngine_isValid_Fence(self: NativePointer, p: NativePointer): Boolean
-
-@ExternalSymbolName("FilaEngine_isValid_Sync")
-internal external fun FilaEngine_isValid_Sync(self: NativePointer, p: NativePointer): Boolean
 
 @ExternalSymbolName("FilaEngine_isValid_IndexBuffer")
 internal external fun FilaEngine_isValid_IndexBuffer(self: NativePointer, p: NativePointer): Boolean

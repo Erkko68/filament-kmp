@@ -13,15 +13,6 @@ internal external fun FilaAgxToneMapper_destroy(self: NativePointer)
 @ExternalSymbolName("FilaAgxToneMapper_asToneMapper")
 internal external fun FilaAgxToneMapper_asToneMapper(self: NativePointer): NativePointer
 
-@ExternalSymbolName("FilaAgxToneMapper_invoke")
-internal external fun FilaAgxToneMapper_invoke(self: NativePointer, v: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaAgxToneMapper_isOneDimensional")
-internal external fun FilaAgxToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaAgxToneMapper_isLDR")
-internal external fun FilaAgxToneMapper_isLDR(self: NativePointer): Boolean
-
 @ExternalSymbolName("FilaAgxToneMapper_getLook")
 internal external fun FilaAgxToneMapper_getLook(self: NativePointer): Int
 

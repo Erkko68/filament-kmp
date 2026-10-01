@@ -169,7 +169,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
         fun name(name: String): Builder = apply { interopScope { FilaTextureBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
-         * Creates an external texture. The content must be set using setExternalImage() or setExternalStream().
+         * Creates an external texture. The content must be set using [Texture.setExternalStream].
          *
          * The sampler can be SAMPLER_EXTERNAL or SAMPLER_2D depending on the format. Generally
          * YUV formats must use SAMPLER_EXTERNAL. This depends on the backend features and is not
@@ -182,16 +182,30 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
         fun external(): Builder = apply { FilaTextureBuilder_external(nativeBuilder) }
 
         /**
+         * Creates the Texture asynchronously: [callback] runs once on the main thread when its memory is allocated
+         * ([AsyncCallStatus.CANCELED] if it never was). Until then, only async calls on it are safe; check
+         * [Texture.isCreationComplete]. Needs [Engine.isAsynchronousModeEnabled].
+         */
+        fun async(callback: (Texture, AsyncCallStatus) -> Unit = { _, _ -> }): Builder = apply { asyncCallback = callback }
+
+        /**
          * Creates the Texture object and returns a pointer to it.
          *
          * @param engine Reference to the filament Engine to associate this Texture with.
          * @return pointer to the newly created object.
          */
         fun build(engine: Engine): Texture {
+            var built: Texture? = null
+            asyncCallback?.let { callback ->
+                val user = asyncCompletion({ built ?: Texture(it) }, callback)
+                FilaTextureBuilder_async(nativeBuilder, NullPointer, Callbacks.argUserStatus, user)
+            }
             val handle = FilaTextureBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaTextureBuilder_destroy(nativeBuilder)
-            return Texture(handle)
+            return Texture(handle).also { built = it }
         }
+
+        private var asyncCallback: ((Texture, AsyncCallStatus) -> Unit)? = null
     }
 
     /**
@@ -393,6 +407,22 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
     }
 
     /**
+     * [setImage], asynchronously: returns an ID for [Engine.cancelAsyncCall], and [callback] runs once on the main
+     * thread with how it ended. Needs [Engine.isAsynchronousModeEnabled].
+     */
+    fun setImageAsync(
+        engine: Engine, level: Int, descriptor: PixelBufferDescriptor,
+        callback: ((Texture, AsyncCallStatus) -> Unit)? = null,
+    ): Int = with(descriptor) {
+        val upload = upload(storage, sizeInBytes, this.callback)
+        FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(
+            nativeHandle, engine.nativeHandle, level,
+            upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+            NullPointer, Callbacks.argUserStatus, asyncCompletion({ this@Texture }, callback ?: { _, _ -> }),
+        )
+    }
+
+    /**
      * Updates a rectangular sub-region of a 2D texture level.
      *
      * The descriptor's callback is invoked when the driver has consumed the data.
@@ -410,6 +440,19 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
         FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
             nativeHandle, engine.nativeHandle, level, xoffset, yoffset, width, height,
             upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+        )
+    }
+
+    /** [setImage], asynchronously; see the level-only [setImageAsync]. */
+    fun setImageAsync(
+        engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor,
+        callback: ((Texture, AsyncCallStatus) -> Unit)? = null,
+    ): Int = with(descriptor) {
+        val upload = upload(storage, sizeInBytes, this.callback)
+        FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(
+            nativeHandle, engine.nativeHandle, level, xoffset, yoffset, width, height,
+            upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+            NullPointer, Callbacks.argUserStatus, asyncCompletion({ this@Texture }, callback ?: { _, _ -> }),
         )
     }
 
@@ -434,6 +477,19 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
         FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(
             nativeHandle, engine.nativeHandle, level, xoffset, yoffset, zoffset, width, height, depth,
             upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+        )
+    }
+
+    /** [setImage], asynchronously; see the level-only [setImageAsync]. */
+    fun setImageAsync(
+        engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor,
+        callback: ((Texture, AsyncCallStatus) -> Unit)? = null,
+    ): Int = with(descriptor) {
+        val upload = upload(storage, sizeInBytes, this.callback)
+        FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(
+            nativeHandle, engine.nativeHandle, level, xoffset, yoffset, zoffset, width, height, depth,
+            upload.ptr, upload.size, format.ordinal, type.ordinal, alignment, left, top, stride, upload.callback, upload.userData,
+            NullPointer, Callbacks.argUserStatus, asyncCompletion({ this@Texture }, callback ?: { _, _ -> }),
         )
     }
 

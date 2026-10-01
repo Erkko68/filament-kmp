@@ -12,12 +12,3 @@ internal external fun FilaACESLegacyToneMapper_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaACESLegacyToneMapper_asToneMapper")
 internal external fun FilaACESLegacyToneMapper_asToneMapper(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaACESLegacyToneMapper_invoke")
-internal external fun FilaACESLegacyToneMapper_invoke(self: NativePointer, c: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaACESLegacyToneMapper_isOneDimensional")
-internal external fun FilaACESLegacyToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaACESLegacyToneMapper_isLDR")
-internal external fun FilaACESLegacyToneMapper_isLDR(self: NativePointer): Boolean

@@ -179,7 +179,11 @@ class Engine internal constructor(
         var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         /** Initial size in bytes of the shared uniform buffer used for batching. */
         var sharedUboInitialSizeInBytes: Int = 256 * 64
-        /** How asynchronous operations are handled; check [Engine.isAsynchronousModeEnabled] before using them. */
+        /**
+         * How asynchronous operations are handled. They also need the `backend.enable_asynchronous_operation`
+         * [Builder.feature] and a backend that supports them; check [Engine.isAsynchronousModeEnabled] before using them.
+         * Without threads (web) THREAD_PREFERRED falls back to AMORTIZATION, which advances only as frames render.
+         */
         var asynchronousMode: AsynchronousMode = AsynchronousMode.NONE
         /** Unreferenced material definitions kept alive to avoid recompiling; 0 destroys them immediately. */
         var materialCacheCapacity: Int = 0
@@ -472,6 +476,12 @@ class Engine internal constructor(
     /** Destroys a Fence. */
     fun destroy(fence: Fence): Boolean =
         FilaEngine_destroy_Fence(nativeHandle, fence.nativeHandle).also { fence.nativeHandle = NullPointer }
+    /** Destroys a FramePacer. */
+    fun destroy(framePacer: FramePacer): Boolean =
+        FilaEngine_destroy_FramePacer(nativeHandle, framePacer.nativeHandle).also { framePacer.nativeHandle = NullPointer }
+    /** Destroys an InstanceBuffer. */
+    fun destroy(instanceBuffer: InstanceBuffer): Boolean =
+        FilaEngine_destroy_InstanceBuffer(nativeHandle, instanceBuffer.nativeHandle).also { instanceBuffer.nativeHandle = NullPointer }
     /** Destroys an IndexBuffer. */
     fun destroy(indexBuffer: IndexBuffer): Boolean =
         FilaEngine_destroy_IndexBuffer(nativeHandle, indexBuffer.nativeHandle).also { indexBuffer.nativeHandle = NullPointer }
@@ -524,6 +534,8 @@ class Engine internal constructor(
     fun isValid(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValid_VertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
     /** Whether [fence] is a live object of this Engine. */
     fun isValid(fence: Fence): Boolean = FilaEngine_isValid_Fence(nativeHandle, fence.nativeHandle)
+    /** Whether [instanceBuffer] is a live object of this Engine. */
+    fun isValid(instanceBuffer: InstanceBuffer): Boolean = FilaEngine_isValid_InstanceBuffer(nativeHandle, instanceBuffer.nativeHandle)
     /** Whether [indexBuffer] is a live object of this Engine. */
     fun isValid(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValid_IndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     /** Whether [skinningBuffer] is a live object of this Engine. */
@@ -600,6 +612,27 @@ class Engine internal constructor(
     var isPaused: Boolean
         get() = if (singleThreaded) paused else FilaEngine_isPaused(nativeHandle)
         set(value) { if (singleThreaded) paused = value else FilaEngine_setPaused(nativeHandle, value) }
+    /**
+     * Queues [command] to run asynchronously, in order with the other async calls (texture and buffer uploads), and
+     * returns an ID for [cancelAsyncCall]. Meant for resource preparation such as asset loading; flooding it delays
+     * those uploads. [onComplete] runs once on the main thread (see [pumpMessageQueues]): [AsyncCallStatus.COMPLETED]
+     * if [command] ran, [AsyncCallStatus.CANCELED] if it never did. Needs [isAsynchronousModeEnabled].
+     */
+    fun runCommandAsync(command: () -> Unit, onComplete: ((AsyncCallStatus) -> Unit)? = null): Int {
+        val commandUser = Callbacks.register(once = false) { command() }
+        val user = Callbacks.registerStatus(once = true) { _, status ->
+            Callbacks.release(commandUser) // the command ran or never will
+            onComplete?.invoke(AsyncCallStatus.entries[status])
+        }
+        return FilaEngine_runCommandAsync(nativeHandle, Callbacks.userOnly, commandUser, NullPointer, Callbacks.userStatus, user)
+    }
+
+    /**
+     * Cancels the async call [id] ([runCommandAsync], `setBufferAsync`, `setBufferAtAsync`, `setImageAsync`…). Its
+     * completion callback still runs, with [AsyncCallStatus.CANCELED]. False if it's running, done or already canceled.
+     */
+    fun cancelAsyncCall(id: Int): Boolean = FilaEngine_cancelAsyncCall(nativeHandle, id)
+
     /** Runs the pending user callbacks now instead of later, e.g. once per frame after the vsync tick. */
     fun pumpMessageQueues() = FilaEngine_pumpMessageQueues(nativeHandle)
     /** Switches the command queue to unprotected mode, after a frame on a protected SwapChain. */
@@ -669,3 +702,15 @@ class Engine internal constructor(
         )
     }
 }
+
+/** How an asynchronous call ended; its completion callback runs exactly once either way. */
+enum class AsyncCallStatus {
+    /** The operation ran to completion. */
+    COMPLETED,
+    /** The operation never ran: it was canceled ([Engine.cancelAsyncCall]) or dropped at shutdown. */
+    CANCELED,
+}
+
+/** userData for an `argUserStatus` completion that hands [callback] the Kotlin object [wrap] makes of its argument. */
+internal fun <T> asyncCompletion(wrap: (NativePointer) -> T, callback: (T, AsyncCallStatus) -> Unit): NativePointer =
+    Callbacks.registerStatus(once = true) { arg, status -> callback(wrap(arg), AsyncCallStatus.entries[status]) }

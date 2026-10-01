@@ -67,8 +67,6 @@ typedef struct FilaFilmicToneMapper FilaFilmicToneMapper;
 typedef struct FilaFogOptions FilaFogOptions;
 typedef struct FilaFrameHistoryStream FilaFrameHistoryStream;
 typedef struct FilaFrameHistoryStreamNewFramesRange FilaFrameHistoryStreamNewFramesRange;
-typedef struct FilaFrameHistoryStreamNewFramesRangeIterator FilaFrameHistoryStreamNewFramesRangeIterator;
-typedef struct FilaFrameHistoryStreamResult FilaFrameHistoryStreamResult;
 typedef struct FilaFramePacer FilaFramePacer;
 typedef struct FilaFramePacerBuilder FilaFramePacerBuilder;
 typedef struct FilaFramePacerConfiguration FilaFramePacerConfiguration;
@@ -125,7 +123,6 @@ typedef struct FilaStereoscopicOptions FilaStereoscopicOptions;
 typedef struct FilaStream FilaStream;
 typedef struct FilaStreamBuilder FilaStreamBuilder;
 typedef struct FilaSwapChain FilaSwapChain;
-typedef struct FilaSync FilaSync;
 typedef struct FilaTemporalAntiAliasingOptions FilaTemporalAntiAliasingOptions;
 typedef struct FilaTexture FilaTexture;
 typedef struct FilaTextureBuilder FilaTextureBuilder;
@@ -146,11 +143,8 @@ typedef struct FilaPixelBufferDescriptor FilaPixelBufferDescriptor;
 typedef struct FilaPlatform FilaPlatform;
 typedef struct FilaPlatformCompositorTiming FilaPlatformCompositorTiming;
 typedef struct FilaPlatformDriverConfig FilaPlatformDriverConfig;
-typedef struct FilaPlatformExternalImage FilaPlatformExternalImage;
-typedef struct FilaPlatformExternalImageHandle FilaPlatformExternalImageHandle;
 typedef struct FilaPlatformFrameTimestamps FilaPlatformFrameTimestamps;
 typedef struct FilaPlatformSwapChain FilaPlatformSwapChain;
-typedef struct FilaPlatformSync FilaPlatformSync;
 typedef struct FilaPresentCallable FilaPresentCallable;
 typedef struct FilaColorColorSpace FilaColorColorSpace;
 typedef struct FilaColorGamut FilaColorGamut;
@@ -160,7 +154,6 @@ typedef struct FilaColorTransferFunction FilaColorTransferFunction;
 typedef struct FilaGeometrySurfaceOrientation FilaGeometrySurfaceOrientation;
 typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientationBuilder;
 typedef struct FilaUtilsEntityManager FilaUtilsEntityManager;
-typedef struct FilaUtilsEntityManagerListener FilaUtilsEntityManagerListener;
 
 // filament::AgxToneMapper::AgxLook
 typedef enum FilaAgxToneMapperAgxLook {

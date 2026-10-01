@@ -33,6 +33,12 @@ object Callbacks {
     /** `void (*)(T* arg, void* userData)` — e.g. picking, frame-completed, material compile. */
     val argUser: Int by lazy { fila.addFunction(fn2 { arg, user -> fire(user, arg, 0) }, "vii") }
 
+    /** `void (*)(void* userData, AsyncCallStatus status)`; the lambda's `b` is the status. */
+    val userStatus: Int by lazy { fila.addFunction(fn2 { user, status -> fire(user, 0, status) }, "vii") }
+
+    /** `void (*)(T* arg, void* userData, AsyncCallStatus status)`; the lambda's `b` is the status. */
+    val argUserStatus: Int by lazy { fila.addFunction(fn3 { arg, user, status -> fire(user, arg, status) }, "viii") }
+
     /**
      * FilaBufferCallback `void (*)(void* buffer, size_t size, void* userData)`: frees the heap
      * copy made for the upload, then runs the registered lambda if [userData] isn't 0.

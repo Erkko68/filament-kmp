@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -46,5 +47,16 @@ class ColorGradingTest : FilamentTestFixture() {
         assertNotNull(grading)
         assertTrue(engine.isValid(grading))
         engine.destroy(grading)
+    }
+
+    @Test
+    fun testOutputColorSpace() {
+        val linear = Gamut.Rec709 - TransferFunction.Linear - WhitePoint.D65
+        assertEquals(ColorSpace(Gamut.Rec709.primaries, TransferFunction(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0), WhitePoint.D65), linear)
+        for (colorSpace in listOf(linear, Gamut.Rec709 - TransferFunction.sRGB - WhitePoint.D65)) {
+            val grading = ColorGrading.Builder().outputColorSpace(colorSpace).build(engine)
+            assertTrue(engine.isValid(grading))
+            engine.destroy(grading)
+        }
     }
 }

@@ -30,9 +30,3 @@ internal external fun FilaGltfioAssetConfiguration_setEntities(self: NativePoint
 
 @ExternalSymbolName("FilaGltfioAssetConfiguration_getDefaultNodeName")
 internal external fun FilaGltfioAssetConfiguration_getDefaultNodeName(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaGltfioAssetConfiguration_getExt")
-internal external fun FilaGltfioAssetConfiguration_getExt(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaGltfioAssetConfiguration_setExt")
-internal external fun FilaGltfioAssetConfiguration_setExt(self: NativePointer, value: NativePointer)

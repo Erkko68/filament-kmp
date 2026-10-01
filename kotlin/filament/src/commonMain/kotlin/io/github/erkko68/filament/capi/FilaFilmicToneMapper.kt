@@ -12,12 +12,3 @@ internal external fun FilaFilmicToneMapper_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaFilmicToneMapper_asToneMapper")
 internal external fun FilaFilmicToneMapper_asToneMapper(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaFilmicToneMapper_invoke")
-internal external fun FilaFilmicToneMapper_invoke(self: NativePointer, x: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaFilmicToneMapper_isOneDimensional")
-internal external fun FilaFilmicToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaFilmicToneMapper_isLDR")
-internal external fun FilaFilmicToneMapper_isLDR(self: NativePointer): Boolean

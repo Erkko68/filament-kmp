@@ -152,10 +152,6 @@ uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBuff
     return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
-void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, uint32_t plane) {
-    fila::cpp(self)->setExternalImage(*fila::cpp(engine), image, static_cast<size_t>(plane));
-}
-
 void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaStream* stream) {
     fila::cpp(self)->setExternalStream(*fila::cpp(engine), fila::cpp(stream));
 }

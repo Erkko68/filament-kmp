@@ -12,12 +12,3 @@ internal external fun FilaGT7ToneMapper_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaGT7ToneMapper_asToneMapper")
 internal external fun FilaGT7ToneMapper_asToneMapper(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaGT7ToneMapper_invoke")
-internal external fun FilaGT7ToneMapper_invoke(self: NativePointer, color: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaGT7ToneMapper_isOneDimensional")
-internal external fun FilaGT7ToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaGT7ToneMapper_isLDR")
-internal external fun FilaGT7ToneMapper_isLDR(self: NativePointer): Boolean

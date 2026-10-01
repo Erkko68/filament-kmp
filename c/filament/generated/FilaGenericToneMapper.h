@@ -12,9 +12,6 @@ extern "C" {
 FilaGenericToneMapper* FilaGenericToneMapper_create(float contrast, float midGrayIn, float midGrayOut, float hdrMax);
 void FilaGenericToneMapper_destroy(FilaGenericToneMapper* self);
 FilaToneMapper* FilaGenericToneMapper_asToneMapper(FilaGenericToneMapper* self);
-void FilaGenericToneMapper_invoke(const FilaGenericToneMapper* self, const FilaFloat3* x, FilaFloat3* out);
-bool FilaGenericToneMapper_isOneDimensional(const FilaGenericToneMapper* self);
-bool FilaGenericToneMapper_isLDR(const FilaGenericToneMapper* self);
 float FilaGenericToneMapper_getContrast(const FilaGenericToneMapper* self);
 float FilaGenericToneMapper_getMidGrayIn(const FilaGenericToneMapper* self);
 float FilaGenericToneMapper_getMidGrayOut(const FilaGenericToneMapper* self);

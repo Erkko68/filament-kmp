@@ -12,12 +12,3 @@ internal external fun FilaPBRNeutralToneMapper_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaPBRNeutralToneMapper_asToneMapper")
 internal external fun FilaPBRNeutralToneMapper_asToneMapper(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaPBRNeutralToneMapper_invoke")
-internal external fun FilaPBRNeutralToneMapper_invoke(self: NativePointer, color: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaPBRNeutralToneMapper_isOneDimensional")
-internal external fun FilaPBRNeutralToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaPBRNeutralToneMapper_isLDR")
-internal external fun FilaPBRNeutralToneMapper_isLDR(self: NativePointer): Boolean

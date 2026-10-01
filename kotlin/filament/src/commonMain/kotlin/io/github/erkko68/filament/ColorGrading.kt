@@ -307,13 +307,37 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
         }
 
         /**
+         * Sets the color space the graded color is converted to (default: Rec709-sRGB-D65). Only Rec709-sRGB-D65
+         * and Rec709-Linear-D65 are supported, and only the transfer function is taken into account.
+         */
+        fun outputColorSpace(colorSpace: ColorSpace): Builder {
+            val p = colorSpace.primaries
+            withHandle({ FilaColorPrimaries_create() }, { FilaColorPrimaries_destroy(it) }) { primaries ->
+                interopScope {
+                    FilaColorPrimaries_setR(primaries, toInterop(p.r))
+                    FilaColorPrimaries_setG(primaries, toInterop(p.g))
+                    FilaColorPrimaries_setB(primaries, toInterop(p.b))
+                }
+                val t = colorSpace.transferFunction
+                withHandle({ FilaColorTransferFunction_create_double_double(t.a, t.b, t.c, t.d, t.e, t.f, t.g) },
+                    { FilaColorTransferFunction_destroy(it) }) { tf ->
+                    withHandle({ interopScope { FilaColorColorSpace_create(primaries, tf, toInterop(colorSpace.whitePoint)) } },
+                        { FilaColorColorSpace_destroy(it) }) { FilaColorGradingBuilder_outputColorSpace(nativeHandle, it) }
+                }
+            }
+            return this
+        }
+
+        /**
          * Creates the ColorGrading object.
          *
          * @param engine Engine to associate this ColorGrading with
          * @return The newly created ColorGrading
          */
         fun build(engine: Engine): ColorGrading {
-            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
+            val handle = FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle)
+            FilaColorGradingBuilder_destroy(nativeHandle)
+            return ColorGrading(handle)
         }
     }
 

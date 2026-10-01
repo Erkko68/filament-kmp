@@ -64,15 +64,6 @@ internal external fun FilaMaterialBuilder_destroy(self: NativePointer)
 @ExternalSymbolName("FilaMaterialBuilder_package")
 internal external fun FilaMaterialBuilder_package(self: NativePointer, payload: NativePointer, size: Int): NativePointer
 
-@ExternalSymbolName("FilaMaterialBuilder_constant_size_t_int32_t")
-internal external fun FilaMaterialBuilder_constant_size_t_int32_t(self: NativePointer, name: NativePointer, nameLength: Int, value: Int): NativePointer
-
-@ExternalSymbolName("FilaMaterialBuilder_constant_size_t_float")
-internal external fun FilaMaterialBuilder_constant_size_t_float(self: NativePointer, name: NativePointer, nameLength: Int, value: Float): NativePointer
-
-@ExternalSymbolName("FilaMaterialBuilder_constant_size_t_bool")
-internal external fun FilaMaterialBuilder_constant_size_t_bool(self: NativePointer, name: NativePointer, nameLength: Int, value: Boolean): NativePointer
-
 @ExternalSymbolName("FilaMaterialBuilder_constant_int32_t")
 internal external fun FilaMaterialBuilder_constant_int32_t(self: NativePointer, name: NativePointer, value: Int): NativePointer
 

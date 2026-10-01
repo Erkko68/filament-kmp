@@ -12,9 +12,6 @@ extern "C" {
 FilaACESToneMapper* FilaACESToneMapper_create(void);
 void FilaACESToneMapper_destroy(FilaACESToneMapper* self);
 FilaToneMapper* FilaACESToneMapper_asToneMapper(FilaACESToneMapper* self);
-void FilaACESToneMapper_invoke(const FilaACESToneMapper* self, const FilaFloat3* c, FilaFloat3* out);
-bool FilaACESToneMapper_isOneDimensional(const FilaACESToneMapper* self);
-bool FilaACESToneMapper_isLDR(const FilaACESToneMapper* self);
 
 
 #ifdef __cplusplus

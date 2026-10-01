@@ -73,9 +73,13 @@ actual fun readPointers(ptr: NativePointer, count: Int): List<NativePointer> {
 
 actual object Callbacks {
     actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer = JniCallbacks.register(once) { a, _ -> fn(a) }
+    actual fun registerStatus(once: Boolean, fn: (arg: NativePointer, status: Int) -> Unit): NativePointer =
+        JniCallbacks.register(once) { a, b -> fn(a, b.toInt()) }
     actual fun release(userData: NativePointer) = JniCallbacks.release(userData)
     actual val userOnly: NativePointer get() = JniCallbacks.userOnly
     actual val argUser: NativePointer get() = JniCallbacks.argUser
+    actual val userStatus: NativePointer get() = JniCallbacks.userStatus
+    actual val argUserStatus: NativePointer get() = JniCallbacks.argUserStatus
     actual val keepBuffer: NativePointer get() = JniCallbacks.keepBuffer
 }
 

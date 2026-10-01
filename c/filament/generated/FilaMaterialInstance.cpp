@@ -16,100 +16,16 @@ const char* FilaMaterialInstance_getName(const FilaMaterialInstance* self) {
     return fila::cpp(self)->getName();
 }
 
-void FilaMaterialInstance_setParameter_size_t_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaTexture* texture, const FilaTextureSampler* sampler) {
-    fila::cpp(self)->setParameter(name, static_cast<size_t>(nameLength), fila::cpp(texture), *fila::cpp(sampler));
-}
-
 void FilaMaterialInstance_setParameter_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler) {
     fila::cpp(self)->setParameter(name, fila::cpp(texture), *fila::cpp(sampler));
-}
-
-void FilaMaterialInstance_setParameter_size_t_RgbType_float3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbType type, const FilaFloat3* color) {
-    fila::cpp(self)->setParameter(name, static_cast<size_t>(nameLength), static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
 }
 
 void FilaMaterialInstance_setParameter_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
     fila::cpp(self)->setParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
 }
 
-void FilaMaterialInstance_setParameter_size_t_RgbaType_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbaType type, const FilaFloat4* color) {
-    fila::cpp(self)->setParameter(name, static_cast<size_t>(nameLength), static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
-}
-
 void FilaMaterialInstance_setParameter_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
     fila::cpp(self)->setParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float(FilaMaterialInstance* self, const char* name, uint32_t nameLength, float value) {
-    fila::cpp(self)->setParameter<float>(name, static_cast<size_t>(nameLength), value);
-}
-
-void FilaMaterialInstance_setParameter_size_t_int32_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, int32_t value) {
-    fila::cpp(self)->setParameter<int32_t>(name, static_cast<size_t>(nameLength), value);
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint32_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, uint32_t value) {
-    fila::cpp(self)->setParameter<uint32_t>(name, static_cast<size_t>(nameLength), value);
-}
-
-void FilaMaterialInstance_setParameter_size_t_int2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt2* value) {
-    fila::cpp(self)->setParameter<filament::math::int2>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::int2>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_int3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt3* value) {
-    fila::cpp(self)->setParameter<filament::math::int3>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::int3>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_int4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt4* value) {
-    fila::cpp(self)->setParameter<filament::math::int4>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::int4>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint2* value) {
-    fila::cpp(self)->setParameter<filament::math::uint2>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::uint2>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint3* value) {
-    fila::cpp(self)->setParameter<filament::math::uint3>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::uint3>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint4* value) {
-    fila::cpp(self)->setParameter<filament::math::uint4>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::uint4>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat2* value) {
-    fila::cpp(self)->setParameter<filament::math::float2>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::float2>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat3* value) {
-    fila::cpp(self)->setParameter<filament::math::float3>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::float3>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat4* value) {
-    fila::cpp(self)->setParameter<filament::math::float4>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::float4>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_mat3f(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat3f* value) {
-    fila::cpp(self)->setParameter<filament::math::mat3f>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::mat3f>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_mat4f(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat4f* value) {
-    fila::cpp(self)->setParameter<filament::math::mat4f>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::mat4f>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool(FilaMaterialInstance* self, const char* name, uint32_t nameLength, bool value) {
-    fila::cpp(self)->setParameter<bool>(name, static_cast<size_t>(nameLength), value);
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool2* value) {
-    fila::cpp(self)->setParameter<filament::math::bool2>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::bool2>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool3* value) {
-    fila::cpp(self)->setParameter<filament::math::bool3>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::bool3>(*value));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool4* value) {
-    fila::cpp(self)->setParameter<filament::math::bool4>(name, static_cast<size_t>(nameLength), std::bit_cast<filament::math::bool4>(*value));
 }
 
 void FilaMaterialInstance_setParameter_float(FilaMaterialInstance* self, const char* name, float value) {
@@ -184,78 +100,6 @@ void FilaMaterialInstance_setParameter_bool4(FilaMaterialInstance* self, const c
     fila::cpp(self)->setParameter<filament::math::bool4>(name, std::bit_cast<filament::math::bool4>(*value));
 }
 
-void FilaMaterialInstance_setParameter_size_t_float_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const float* values, uint32_t count) {
-    fila::cpp(self)->setParameter<float>(name, static_cast<size_t>(nameLength), values, static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_int32_t_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const int32_t* values, uint32_t count) {
-    fila::cpp(self)->setParameter<int32_t>(name, static_cast<size_t>(nameLength), values, static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint32_t_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const uint32_t* values, uint32_t count) {
-    fila::cpp(self)->setParameter<uint32_t>(name, static_cast<size_t>(nameLength), values, static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_int2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt2* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::int2>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_int3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt3* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::int3>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_int4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt4* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::int4>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint2* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::uint2>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint3* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::uint3>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_uint4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint4* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::uint4>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat2* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::float2>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat3* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::float3>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_float4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat4* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::float4>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_mat3f_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat3f* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::mat3f>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_mat4f_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat4f* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::mat4f>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const bool* values, uint32_t count) {
-    fila::cpp(self)->setParameter<bool>(name, static_cast<size_t>(nameLength), values, static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool2* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::bool2>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool3* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::bool3>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
-void FilaMaterialInstance_setParameter_size_t_bool4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool4* values, uint32_t count) {
-    fila::cpp(self)->setParameter<filament::math::bool4>(name, static_cast<size_t>(nameLength), fila::cpp(values), static_cast<size_t>(count));
-}
-
 void FilaMaterialInstance_setParameter_float_size_t(FilaMaterialInstance* self, const char* name, const float* values, uint32_t count) {
     fila::cpp(self)->setParameter<float>(name, values, static_cast<size_t>(count));
 }
@@ -328,62 +172,6 @@ void FilaMaterialInstance_setParameter_bool4_size_t(FilaMaterialInstance* self, 
     fila::cpp(self)->setParameter<filament::math::bool4>(name, fila::cpp(values), static_cast<size_t>(count));
 }
 
-float FilaMaterialInstance_getParameter_size_t_float(const FilaMaterialInstance* self, const char* name, uint32_t nameLength) {
-    return fila::cpp(self)->getParameter<float>(name, static_cast<size_t>(nameLength));
-}
-
-int32_t FilaMaterialInstance_getParameter_size_t_int32_t(const FilaMaterialInstance* self, const char* name, uint32_t nameLength) {
-    return fila::cpp(self)->getParameter<int32_t>(name, static_cast<size_t>(nameLength));
-}
-
-uint32_t FilaMaterialInstance_getParameter_size_t_uint32_t(const FilaMaterialInstance* self, const char* name, uint32_t nameLength) {
-    return fila::cpp(self)->getParameter<uint32_t>(name, static_cast<size_t>(nameLength));
-}
-
-void FilaMaterialInstance_getParameter_size_t_int2(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaInt2* out) {
-    *out = std::bit_cast<FilaInt2>(fila::cpp(self)->getParameter<filament::math::int2>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_int3(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaInt3* out) {
-    *out = std::bit_cast<FilaInt3>(fila::cpp(self)->getParameter<filament::math::int3>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_int4(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaInt4* out) {
-    *out = std::bit_cast<FilaInt4>(fila::cpp(self)->getParameter<filament::math::int4>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_uint2(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaUint2* out) {
-    *out = std::bit_cast<FilaUint2>(fila::cpp(self)->getParameter<filament::math::uint2>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_uint3(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaUint3* out) {
-    *out = std::bit_cast<FilaUint3>(fila::cpp(self)->getParameter<filament::math::uint3>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_uint4(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaUint4* out) {
-    *out = std::bit_cast<FilaUint4>(fila::cpp(self)->getParameter<filament::math::uint4>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_float2(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getParameter<filament::math::float2>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_float3(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getParameter<filament::math::float3>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_float4(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getParameter<filament::math::float4>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_mat3f(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaMat3f* out) {
-    *out = std::bit_cast<FilaMat3f>(fila::cpp(self)->getParameter<filament::math::mat3f>(name, static_cast<size_t>(nameLength)));
-}
-
-void FilaMaterialInstance_getParameter_size_t_mat4f(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getParameter<filament::math::mat4f>(name, static_cast<size_t>(nameLength)));
-}
-
 float FilaMaterialInstance_getParameter_float(const FilaMaterialInstance* self, const char* name) {
     return fila::cpp(self)->getParameter<float>(name);
 }
@@ -440,18 +228,6 @@ void FilaMaterialInstance_getParameter_mat4f(const FilaMaterialInstance* self, c
     *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getParameter<filament::math::mat4f>(name));
 }
 
-void FilaMaterialInstance_setConstant_size_t_int32_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, int32_t value) {
-    fila::cpp(self)->setConstant<int32_t>(name, static_cast<size_t>(nameLength), value);
-}
-
-void FilaMaterialInstance_setConstant_size_t_float(FilaMaterialInstance* self, const char* name, uint32_t nameLength, float value) {
-    fila::cpp(self)->setConstant<float>(name, static_cast<size_t>(nameLength), value);
-}
-
-void FilaMaterialInstance_setConstant_size_t_bool(FilaMaterialInstance* self, const char* name, uint32_t nameLength, bool value) {
-    fila::cpp(self)->setConstant<bool>(name, static_cast<size_t>(nameLength), value);
-}
-
 void FilaMaterialInstance_setConstant_int32_t(FilaMaterialInstance* self, const char* name, int32_t value) {
     fila::cpp(self)->setConstant<int32_t>(name, value);
 }
@@ -462,18 +238,6 @@ void FilaMaterialInstance_setConstant_float(FilaMaterialInstance* self, const ch
 
 void FilaMaterialInstance_setConstant_bool(FilaMaterialInstance* self, const char* name, bool value) {
     fila::cpp(self)->setConstant<bool>(name, value);
-}
-
-int32_t FilaMaterialInstance_getConstant_size_t_int32_t(const FilaMaterialInstance* self, const char* name, uint32_t nameLength) {
-    return fila::cpp(self)->getConstant<int32_t>(name, static_cast<size_t>(nameLength));
-}
-
-float FilaMaterialInstance_getConstant_size_t_float(const FilaMaterialInstance* self, const char* name, uint32_t nameLength) {
-    return fila::cpp(self)->getConstant<float>(name, static_cast<size_t>(nameLength));
-}
-
-bool FilaMaterialInstance_getConstant_size_t_bool(const FilaMaterialInstance* self, const char* name, uint32_t nameLength) {
-    return fila::cpp(self)->getConstant<bool>(name, static_cast<size_t>(nameLength));
 }
 
 int32_t FilaMaterialInstance_getConstant_int32_t(const FilaMaterialInstance* self, const char* name) {
