@@ -21,6 +21,9 @@ internal fun shape(spelling: String): Shape {
     return Shape(s.trim(), const, indirection)
 }
 
+/** [spelling] as C writes it: `const Material *const *` is `const Material* const*`. */
+internal fun cSpelling(spelling: String) = NULLABILITY.replace(spelling, "").replace(Regex("""\s*\*"""), "*").replace(Regex("""\*(?=\w)"""), "* ").trim()
+
 private val TRAILING_CONST = Regex("""(^|\W)const$""")
 /** Annotations that don't change what C passes: nullability, `__restrict`. */
 internal val NULLABILITY = Regex("""\b(_Nonnull|_Nullable|_Null_unspecified|__restrict)\b""")

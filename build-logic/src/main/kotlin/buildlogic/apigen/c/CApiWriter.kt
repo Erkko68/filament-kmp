@@ -12,32 +12,20 @@ import buildlogic.apigen.cpp.CppType
 /**
  * Writes the C API for what [headers] declare: per module a `Types.h` (handles, enums, math mirrors) and an
  * `Includes.hpp` of [headers], and per top-level class or namespace a header and its C++ forwarders. What can't be
- * bridged becomes a `TODO(handwritten)` comment where its declaration would be.
+ * bridged becomes a `TODO(handwritten)` comment where its declaration would be; for one [manual] writes by hand, a note it's done.
  */
-/** [manual]: the functions c/<module>/manual writes by hand; a TODO for one of those notes it's done. */
 internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>, private val manual: Set<String> = emptySet()) {
     private val bridges = CBridges(api)
+    private val rules = BindingRules(api, bridges)
     private val surface = api.surface(headers)
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
-    /** Records the API's functions and constructors take (IBLPrefilterContext, only passed to its filters). */
-    private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
-        .plus(api.records.values.flatMap { it.constructors })
-        .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
-    private val files = LinkedHashMap<String, Section>()
-    /**
-     * Records the API reads: taken by value, `const&`, `const*` or `&&`, and the records their fields hold. The others
-     * are only results (Engine::FeatureFlag), so a field C would have to keep a pointer for needs no setter.
-     */
-    private val inputRecords = run {
-        val output = Regex("""^(?!const\b).*[^&]&$|^(?!const\b).*\*$""")
-        val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
-        val taken = params.map { it.type }
-            .filterNot { output.matches(it.spelling.replace(Regex("""\s*_(Nonnull|Nullable|Null_unspecified)"""), "").trim()) }
-            .mapNotNullTo(HashSet()) { it.decl }
-        generateSequence(taken) { seen -> (seen + seen.flatMap { api.records[it]?.fields.orEmpty().mapNotNull { f -> f.type.decl } }).toHashSet().takeIf { it.size > seen.size } }.last()
-    }
+    /** After [write]: each C function the C++ API calls for, bound or not. */
+    val bindings = ArrayList<Binding>()
 
+    /** C function [c] for the C++ [cpp]; [gap] is null once bound (generated or in manual/), else `todo: …` or `skipped: …`. */
+    class Binding(val c: String, val cpp: String, val gap: String?)
+    private val files = LinkedHashMap<String, Section>()
     /** One generated header and its forwarders. */
     private class Section(val module: String) {
         val declarations = StringBuilder()
@@ -78,12 +66,13 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private fun record(record: CppRecord, file: Section) {
         val section = Section(file.module)
         val self = CNames.type(record.name)
-        // Constructing is only worth it for something to call or something taking it: not for Color's static helpers.
-        val instanceMethods = record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated }
         val cpp = bridges.cpp(record.name)
-        if (!bridges.uninstantiated(record) && record.allocatable && (instanceMethods || bridges.isValue(record.name) || record.name in parameterTypes)) {
+        if (rules.creates(record)) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
-            skipped.forEach { section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), "")) }
+            skipped.forEach {
+                section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), ""))
+                bindings += Binding(CNames.function(record.name, "create"), "${record.name}(${spelled(it)})", "skipped: ${api.skipReason(it)}")
+            }
             constructors.zip(suffixes(constructors.map { ctor -> ctor.map { it.type.spelling } })).forEach { (params, suffix) ->
                 val name = CNames.function(record.name, "create", suffix)
                 emit(name, "$cpp(${spelled(params)})", section) {
@@ -91,36 +80,31 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                     "$self* $name(${cParams(null, bridged)})" to "return fila::c(new $cpp(${args(bridged)}));"
                 }
             }
-            if ((record.constructors.isNotEmpty() || record.declaredDestructor) && record.destructible) {
-                emit("${self}_destroy", "~${record.name}()", section) {
-                    "void ${self}_destroy($self* self)" to "delete fila::cpp(self);"
-                }
+        }
+        if (rules.destroys(record)) {
+            emit("${self}_destroy", "~${record.name}()", section) {
+                "void ${self}_destroy($self* self)" to "delete fila::cpp(self);"
             }
         }
-        if (!bridges.uninstantiated(record)) {
-            // C can't upcast: a base's functions take the base's handle.
-            record.bases.mapNotNull { api.records[it] }.filter { it !in bridges.twins(record) }.filter { base ->
-                !bridges.uninstantiated(base) && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
-            }.forEach { base ->
-                val baseType = CNames.type(base.name)
-                val name = "${self}_as${baseType.removePrefix("Fila")}"
-                val baseCpp = bridges.cpp(base.name)
-                emit(name, "static_cast<$baseCpp*>", section) {
-                    "$baseType* $name($self* self)" to "return fila::c(static_cast<$baseCpp*>(fila::cpp(self)));"
-                }
+        rules.upcasts(record).forEach { base ->
+            val baseType = CNames.type(base.name)
+            val name = "${self}_as${baseType.removePrefix("Fila")}"
+            val baseCpp = bridges.cpp(base.name)
+            emit(name, "${record.name} as ${base.name}", section) {
+                "$baseType* $name($self* self)" to "return fila::c(static_cast<$baseCpp*>(fila::cpp(self)));"
             }
         }
-        // Deprecated API isn't bound at all, nor overloads only literals can call.
-        val (skipped, methods) = (record.methods + bridges.twins(record).flatMap { it.methods }).filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
-            // A const overload and its non-const twin take the same C arguments; the non-const one covers both.
-            .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
-            .partition { api.skipReason(it, record.name) != null }
-        skipped.forEach { section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}")) }
+        val (skipped, methods) = rules.methods(record).partition { api.skipReason(it, record.name) != null }
+        skipped.forEach {
+            section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}"))
+            bindings += Binding(CNames.function(record.name, it.name), signature(it), "skipped: ${api.skipReason(it, record.name)}")
+        }
         overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
-        if (bridges.isValue(record.name) && !bridges.uninstantiated(record)) {
-            (bridges.twins(record).flatMap { it.fields } + record.fields).filter { it.isPublic && !it.isDeprecated }.forEach { f ->
-                api.skipReason(f, record.name)?.let { section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}")) } ?: field(record, f, section)
-            }
+        rules.fields(record).forEach { f ->
+            api.skipReason(f, record.name)?.let {
+                section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}"))
+                bindings += Binding("${CNames.type(record.name)}_get${f.name.replaceFirstChar(Char::uppercaseChar)}", "${f.type.spelling} ${record.name}::${f.name}", "skipped: $it")
+            } ?: field(record, f, section)
         }
         if (section.declarations.isEmpty()) return
         file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
@@ -148,7 +132,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                 val name = baseName(overload.method) + if (suffix.isEmpty()) "" else "_$suffix"
                 emit(name, signature(overload.method), section, overload.method.guard) { forwarder(overload.method, name, overload.templateArguments) }
             }
-            unlisted.forEach { section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations") }
+            unlisted.forEach {
+                section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations")
+                bindings += Binding(baseName(it), "template ${signature(it)}", "todo: FUNCTION_INSTANTIATIONS lists no instantiations")
+            }
         }
     }
 
@@ -182,8 +169,9 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = "${self}_set$accessor"
-        if (bridges.borrowsPointer(field.type) && record.name !in inputRecords) {
+        if (rules.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
+            bindings += Binding(setter, cpp, "skipped: ${record.name} is only a result, and C would have to keep the pointer")
             return
         }
         if (setter !in functionNames) emit(setter, cpp, section) {
@@ -204,9 +192,11 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             section.declarations.appendLine("$signature;")
             val guarded = if (guard == null) "    $body" else "#if $guard\n    $body\n#else\n    fila::unavailable(\"$name\");\n#endif"
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
+            bindings += Binding(name, cpp, null)
         } catch (e: Unsupported) {
             val note = if (name in manual) "handwritten in manual/" else "TODO(handwritten)"
             section.declarations.appendLine("// $note $name: $cpp\n//     ${e.message}")
+            bindings += Binding(name, cpp, if (name in manual) null else "todo: ${e.message}")
         }
     }
 
@@ -250,16 +240,13 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         return header("${module}_Types", include, body.toString())
     }
 
-    /** The C++ headers, and the `fila::cpp`/`fila::c` overloads between the module's C types and C++'s. */
+    /** The C++ headers, and the `fila::cpp`/`fila::c` overloads between the module's C types and C++'s (`FILA_TYPE`, from manual/FilaBridge.hpp). */
     private fun includes(module: String): String {
         val text = StringBuilder("$BANNER\n#pragma once\n\n")
-        if (module == baseModule) text.append("#include <array>\n#include <bit>\n#include <cstdio>\n#include <cstdlib>\n#include <iterator>\n#include <memory>\n#include <optional>\n#include <string_view>\n#include <vector>\n\n").append(headers.joinToString("") { "#include <$it>\n" })
+        if (module == baseModule) text.append("#include \"../manual/FilaBridge.hpp\"\n\n").append(headers.joinToString("") { "#include <$it>\n" })
         else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("#include \"Types.h\"\n\nnamespace fila {\n\n")
-        if (module == baseModule) {
-            text.append(PRELUDE)
-            bridges.mathTypes.forEach { text.appendLine("FILA_TYPE(${CNames.type(it)}, $it)") }
-        }
+        if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("FILA_TYPE(${CNames.type(it)}, $it)") }
         moduleRecords(module).filter { it.accessible && !bridges.uninstantiated(it) }
             .forEach { text.appendLine("FILA_TYPE(${CNames.type(it.name)}, ${bridges.cpp(it.name)})") }
         return text.append("\n} // namespace fila\n").toString()
@@ -299,145 +286,6 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
 
     private companion object {
         const val BANNER = "// Generated by generateCApi from Filament's public headers; do not edit."
-        val PRELUDE = """
-            |// Called by a function whose C++ the target's headers leave out (#if guards around the declaration).
-            |[[noreturn]] inline void unavailable(const char* name) {
-            |    std::fprintf(stderr, "%s is unavailable on this platform\n", name);
-            |    std::abort();
-            |}
-            |
-            |// C and C++ types naming one object (a handle, a math mirror): cpp() and c() convert pointers between them.
-            |#define FILA_TYPE(C, ...) \
-            |    inline __VA_ARGS__* cpp(C* p) { return reinterpret_cast<__VA_ARGS__*>(p); } \
-            |    inline const __VA_ARGS__* cpp(const C* p) { return reinterpret_cast<const __VA_ARGS__*>(p); } \
-            |    inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
-            |    inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
-            |
-            |// C's array as the FixedCapacityVector<T>, std::vector<T>, Slice<T> or std::array<T, N> the callee takes; element(i) makes each T. A Slice's
-            |// elements live as long as the Items, until the end of the call.
-            |template<typename F>
-            |struct Items {
-            |    uint32_t count;
-            |    F element;
-            |    mutable std::shared_ptr<void> storage;
-            |
-            |    template<typename T>
-            |    utils::FixedCapacityVector<T> vector() const {
-            |        auto v = utils::FixedCapacityVector<T>::with_capacity(count);
-            |        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
-            |        return v;
-            |    }
-            |
-            |    template<typename T>
-            |    operator utils::FixedCapacityVector<T>() const { return vector<T>(); }
-            |
-            |    template<typename T>
-            |    operator std::vector<T>() const {
-            |        std::vector<T> v;
-            |        v.reserve(count);
-            |        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
-            |        return v;
-            |    }
-            |
-            |    template<typename T, size_t N>
-            |    operator std::array<T, N>() const {
-            |        std::array<T, N> a{};
-            |        for (uint32_t i = 0; i < count && i < N; i++) a[i] = T(element(i));
-            |        return a;
-            |    }
-            |
-            |    template<typename T>
-            |    operator utils::Slice<T>() const {
-            |        auto v = std::make_shared<utils::FixedCapacityVector<std::remove_const_t<T>>>(vector<std::remove_const_t<T>>());
-            |        storage = v;
-            |        return { v->data(), v->size() };
-            |    }
-            |};
-            |
-            |template<typename F>
-            |Items<F> items(uint32_t count, F element) { return { count, element }; }
-            |
-            |// C's callback as the utils::Invocable the callee takes: the lambda, or an empty one (unset) when C passed NULL.
-            |template<typename L>
-            |struct Callable {
-            |    bool set;
-            |    L lambda;
-            |
-            |    template<typename T>
-            |    operator T() && { return set ? T(std::move(lambda)) : T(); }
-            |};
-            |
-            |template<typename L>
-            |Callable<L> callable(bool set, L lambda) { return { set, std::move(lambda) }; }
-            |
-            |// C's array as the std::array<T, N> the callee takes by pointer or reference: element(i) makes each T, and
-            |// store(t, i) writes the callee's changes back into C's array when the call ends.
-            |template<typename F, typename S>
-            |struct Updated {
-            |    uint32_t count;
-            |    F element;
-            |    S store;
-            |    std::shared_ptr<void> storage;
-            |    void (*writeBack)(Updated&) = nullptr;
-            |
-            |    template<typename T, size_t N>
-            |    std::array<T, N>* array() {
-            |        auto a = std::make_shared<std::array<T, N>>();
-            |        for (uint32_t i = 0; i < count && i < N; i++) (*a)[i] = T(element(i));
-            |        storage = a;
-            |        writeBack = [](Updated& u) {
-            |            auto& a = *static_cast<std::array<T, N>*>(u.storage.get());
-            |            for (uint32_t i = 0; i < u.count && i < N; i++) u.store(a[i], i);
-            |        };
-            |        return a.get();
-            |    }
-            |
-            |    template<typename T, size_t N>
-            |    operator std::array<T, N>*() { return array<T, N>(); }
-            |
-            |    template<typename T, size_t N>
-            |    operator std::array<T, N>&() { return *array<T, N>(); }
-            |
-            |    ~Updated() { if (writeBack) writeBack(*this); }
-            |};
-            |
-            |template<typename F, typename S>
-            |Updated<F, S> updated(uint32_t count, F element, S store) { return { count, element, store }; }
-            |
-            |// Fills an array field from C's array, up to either's size.
-            |template<typename T, size_t N, typename F>
-            |void assign(T (&array)[N], const Items<F>& items) {
-            |    for (uint32_t i = 0; i < items.count && i < N; i++) array[i] = T(items.element(i));
-            |}
-            |
-            |// Stores up to capacity of items into C's array; returns how many there are.
-            |template<typename V, typename F>
-            |uint32_t copy(const V& items, uint32_t capacity, F store) {
-            |    for (uint32_t i = 0; i < capacity && i < std::size(items); i++) store(items[i], i);
-            |    return uint32_t(std::size(items));
-            |}
-            |
-            |// C's nullable pointer as the std::optional the callee takes; convert(*p) makes its value.
-            |template<typename T, typename F>
-            |auto optional(const T* p, F convert) -> std::optional<decltype(convert(*p))> {
-            |    if (!p) return std::nullopt;
-            |    return convert(*p);
-            |}
-            |
-            |// Stores an optional's value, if it has one; returns whether it did.
-            |template<typename T, typename F>
-            |bool present(const std::optional<T>& o, F store) {
-            |    if (o) store(*o);
-            |    return o.has_value();
-            |}
-            |
-            |// StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).
-            |inline utils::StaticString staticString(const char* s) {
-            |    static_assert(sizeof(utils::StaticString) == sizeof(std::string_view));
-            |    return std::bit_cast<utils::StaticString>(std::string_view(s));
-            |}
-            |
-            |""".trimMargin()
         // Names the forwarders declare themselves.
         val RESERVED = setOf("self", "out")
     }

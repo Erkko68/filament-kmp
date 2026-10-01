@@ -25,6 +25,7 @@ clang JSON AST ──► C++ API model ───────────► apiM
                         │                    │
                         │    generateBindings ◄┘  JNI forwarders, wasm export lists  (build/, not committed)
                         │
+                        ├──► apiCoverage ──► c/api-coverage.txt: bound in C, called by Kotlin? (committed)
                         └──► apiGaps ──► C++ API the C layer doesn't call               (report)
 ```
 
@@ -34,6 +35,7 @@ clang JSON AST ──► C++ API model ───────────► apiM
 | `./gradlew generateCApi` | the same headers + `c/api-headers.txt` | `c/<module>/generated/` and each module's `Types.h` |
 | `./gradlew generateKotlinExternals` | `c/<module>/{generated,manual}/*.h` | each Kotlin module's `capi` package |
 | `./gradlew generateBindings` | the common `external fun`s | `build/generated/bindings/` (runs as part of every native build) |
+| `./gradlew apiCoverage` | the headers + `c/` + the Kotlin sources | `c/api-coverage.txt`; warns when `c/` or `capi` is stale |
 | `./gradlew apiGaps` | Filament's libraries + the `c/` objects | `build/reports/api-gaps.txt` (macOS and Linux hosts) |
 
 The generated C and Kotlin files are committed. A diff in them is the review surface for an upgrade
@@ -121,12 +123,20 @@ per C++ class, and follows the C++ header:
 - **No invented API.** A convenience wrapper that doesn't exist in C++ doesn't belong in the
   bindings; it goes in `filament-compose` or your own code.
 
-## Checking coverage: `apiGaps`
+## Checking coverage: `apiCoverage` and `apiGaps`
+
+`./gradlew apiCoverage` writes `c/api-coverage.txt`, one line per C function the C++ API calls for:
+`wrapped` (a public Kotlin wrapper calls it), `unwrapped` (bound, with an internal external, but no wrapper calls it yet), `todo` (to
+write by hand, with the reason) or `skipped` (left out on purpose). It's committed, so after an
+upgrade `git diff c/api-coverage.txt` shows what upstream added or removed and how far each got;
+`grep '^unwrapped'` is the Kotlin backlog. It also warns when the committed `c/*/generated` or `capi`
+files aren't what the generators would write now. It never fails the build. Changes to our public
+Kotlin API are `apiDump`'s: review the diff in each module's `api/`.
 
 `./gradlew apiGaps` compares Filament's public C++ methods (from clang's AST, inline ones included,
 plus template instances only the libraries define) against the symbols the `c/` objects reference
-when built at `-O0`, so inline calls stay calls. It reports by symbol, never by parsing names, and
-also lists `Fila*` functions without a Kotlin external. Struct fields and enum values aren't covered.
+when built at `-O0`, so inline calls stay calls. It reports by symbol, never by parsing names: a
+cross-check that doesn't trust the generator's view. Struct fields and enum values aren't covered.
 It needs `clang++`, `nm` and `c++filt`, so it runs on macOS and Linux hosts.
 
 ## Known limits
