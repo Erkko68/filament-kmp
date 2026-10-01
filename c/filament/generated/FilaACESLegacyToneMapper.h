@@ -12,9 +12,6 @@ extern "C" {
 FilaACESLegacyToneMapper* FilaACESLegacyToneMapper_create(void);
 void FilaACESLegacyToneMapper_destroy(FilaACESLegacyToneMapper* self);
 FilaToneMapper* FilaACESLegacyToneMapper_asToneMapper(FilaACESLegacyToneMapper* self);
-void FilaACESLegacyToneMapper_invoke(const FilaACESLegacyToneMapper* self, const FilaFloat3* c, FilaFloat3* out);
-bool FilaACESLegacyToneMapper_isOneDimensional(const FilaACESLegacyToneMapper* self);
-bool FilaACESLegacyToneMapper_isLDR(const FilaACESLegacyToneMapper* self);
 
 
 #ifdef __cplusplus

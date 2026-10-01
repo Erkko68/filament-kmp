@@ -12,9 +12,6 @@ extern "C" {
 FilaAgxToneMapper* FilaAgxToneMapper_create(FilaAgxToneMapperAgxLook look);
 void FilaAgxToneMapper_destroy(FilaAgxToneMapper* self);
 FilaToneMapper* FilaAgxToneMapper_asToneMapper(FilaAgxToneMapper* self);
-void FilaAgxToneMapper_invoke(const FilaAgxToneMapper* self, const FilaFloat3* v, FilaFloat3* out);
-bool FilaAgxToneMapper_isOneDimensional(const FilaAgxToneMapper* self);
-bool FilaAgxToneMapper_isLDR(const FilaAgxToneMapper* self);
 FilaAgxToneMapperAgxLook FilaAgxToneMapper_getLook(const FilaAgxToneMapper* self);
 void FilaAgxToneMapper_setLook(FilaAgxToneMapper* self, FilaAgxToneMapperAgxLook value);
 

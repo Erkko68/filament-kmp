@@ -13,77 +13,14 @@ internal external fun FilaMaterialInstance_getMaterial(self: NativePointer): Nat
 @ExternalSymbolName("FilaMaterialInstance_getName")
 internal external fun FilaMaterialInstance_getName(self: NativePointer): NativePointer
 
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_Texture_TextureSampler")
-internal external fun FilaMaterialInstance_setParameter_size_t_Texture_TextureSampler(self: NativePointer, name: NativePointer, nameLength: Int, texture: NativePointer, sampler: NativePointer)
-
 @ExternalSymbolName("FilaMaterialInstance_setParameter_Texture_TextureSampler")
 internal external fun FilaMaterialInstance_setParameter_Texture_TextureSampler(self: NativePointer, name: NativePointer, texture: NativePointer, sampler: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_RgbType_float3")
-internal external fun FilaMaterialInstance_setParameter_size_t_RgbType_float3(self: NativePointer, name: NativePointer, nameLength: Int, type: Int, color: NativePointer)
 
 @ExternalSymbolName("FilaMaterialInstance_setParameter_RgbType_float3")
 internal external fun FilaMaterialInstance_setParameter_RgbType_float3(self: NativePointer, name: NativePointer, type: Int, color: NativePointer)
 
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_RgbaType_float4")
-internal external fun FilaMaterialInstance_setParameter_size_t_RgbaType_float4(self: NativePointer, name: NativePointer, nameLength: Int, type: Int, color: NativePointer)
-
 @ExternalSymbolName("FilaMaterialInstance_setParameter_RgbaType_float4")
 internal external fun FilaMaterialInstance_setParameter_RgbaType_float4(self: NativePointer, name: NativePointer, type: Int, color: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float")
-internal external fun FilaMaterialInstance_setParameter_size_t_float(self: NativePointer, name: NativePointer, nameLength: Int, value: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int32_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_int32_t(self: NativePointer, name: NativePointer, nameLength: Int, value: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint32_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint32_t(self: NativePointer, name: NativePointer, nameLength: Int, value: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int2")
-internal external fun FilaMaterialInstance_setParameter_size_t_int2(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int3")
-internal external fun FilaMaterialInstance_setParameter_size_t_int3(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int4")
-internal external fun FilaMaterialInstance_setParameter_size_t_int4(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint2")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint2(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint3")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint3(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint4")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint4(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float2")
-internal external fun FilaMaterialInstance_setParameter_size_t_float2(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float3")
-internal external fun FilaMaterialInstance_setParameter_size_t_float3(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float4")
-internal external fun FilaMaterialInstance_setParameter_size_t_float4(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_mat3f")
-internal external fun FilaMaterialInstance_setParameter_size_t_mat3f(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_mat4f")
-internal external fun FilaMaterialInstance_setParameter_size_t_mat4f(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool(self: NativePointer, name: NativePointer, nameLength: Int, value: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool2")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool2(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool3")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool3(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool4")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool4(self: NativePointer, name: NativePointer, nameLength: Int, value: NativePointer)
 
 @ExternalSymbolName("FilaMaterialInstance_setParameter_float")
 internal external fun FilaMaterialInstance_setParameter_float(self: NativePointer, name: NativePointer, value: Float)
@@ -139,60 +76,6 @@ internal external fun FilaMaterialInstance_setParameter_bool3(self: NativePointe
 @ExternalSymbolName("FilaMaterialInstance_setParameter_bool4")
 internal external fun FilaMaterialInstance_setParameter_bool4(self: NativePointer, name: NativePointer, value: NativePointer)
 
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_float_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int32_t_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_int32_t_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint32_t_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint32_t_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int2_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_int2_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int3_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_int3_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_int4_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_int4_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint2_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint2_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint3_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint3_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_uint4_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_uint4_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float2_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_float2_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float3_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_float3_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_float4_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_float4_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_mat3f_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_mat3f_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_mat4f_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_mat4f_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool2_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool2_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool3_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool3_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setParameter_size_t_bool4_size_t")
-internal external fun FilaMaterialInstance_setParameter_size_t_bool4_size_t(self: NativePointer, name: NativePointer, nameLength: Int, values: NativePointer, count: Int)
-
 @ExternalSymbolName("FilaMaterialInstance_setParameter_float_size_t")
 internal external fun FilaMaterialInstance_setParameter_float_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
 
@@ -247,48 +130,6 @@ internal external fun FilaMaterialInstance_setParameter_bool3_size_t(self: Nativ
 @ExternalSymbolName("FilaMaterialInstance_setParameter_bool4_size_t")
 internal external fun FilaMaterialInstance_setParameter_bool4_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
 
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_float")
-internal external fun FilaMaterialInstance_getParameter_size_t_float(self: NativePointer, name: NativePointer, nameLength: Int): Float
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_int32_t")
-internal external fun FilaMaterialInstance_getParameter_size_t_int32_t(self: NativePointer, name: NativePointer, nameLength: Int): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_uint32_t")
-internal external fun FilaMaterialInstance_getParameter_size_t_uint32_t(self: NativePointer, name: NativePointer, nameLength: Int): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_int2")
-internal external fun FilaMaterialInstance_getParameter_size_t_int2(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_int3")
-internal external fun FilaMaterialInstance_getParameter_size_t_int3(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_int4")
-internal external fun FilaMaterialInstance_getParameter_size_t_int4(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_uint2")
-internal external fun FilaMaterialInstance_getParameter_size_t_uint2(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_uint3")
-internal external fun FilaMaterialInstance_getParameter_size_t_uint3(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_uint4")
-internal external fun FilaMaterialInstance_getParameter_size_t_uint4(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_float2")
-internal external fun FilaMaterialInstance_getParameter_size_t_float2(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_float3")
-internal external fun FilaMaterialInstance_getParameter_size_t_float3(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_float4")
-internal external fun FilaMaterialInstance_getParameter_size_t_float4(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_mat3f")
-internal external fun FilaMaterialInstance_getParameter_size_t_mat3f(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaMaterialInstance_getParameter_size_t_mat4f")
-internal external fun FilaMaterialInstance_getParameter_size_t_mat4f(self: NativePointer, name: NativePointer, nameLength: Int, out: NativePointer)
-
 @ExternalSymbolName("FilaMaterialInstance_getParameter_float")
 internal external fun FilaMaterialInstance_getParameter_float(self: NativePointer, name: NativePointer): Float
 
@@ -331,15 +172,6 @@ internal external fun FilaMaterialInstance_getParameter_mat3f(self: NativePointe
 @ExternalSymbolName("FilaMaterialInstance_getParameter_mat4f")
 internal external fun FilaMaterialInstance_getParameter_mat4f(self: NativePointer, name: NativePointer, out: NativePointer)
 
-@ExternalSymbolName("FilaMaterialInstance_setConstant_size_t_int32_t")
-internal external fun FilaMaterialInstance_setConstant_size_t_int32_t(self: NativePointer, name: NativePointer, nameLength: Int, value: Int)
-
-@ExternalSymbolName("FilaMaterialInstance_setConstant_size_t_float")
-internal external fun FilaMaterialInstance_setConstant_size_t_float(self: NativePointer, name: NativePointer, nameLength: Int, value: Float)
-
-@ExternalSymbolName("FilaMaterialInstance_setConstant_size_t_bool")
-internal external fun FilaMaterialInstance_setConstant_size_t_bool(self: NativePointer, name: NativePointer, nameLength: Int, value: Boolean)
-
 @ExternalSymbolName("FilaMaterialInstance_setConstant_int32_t")
 internal external fun FilaMaterialInstance_setConstant_int32_t(self: NativePointer, name: NativePointer, value: Int)
 
@@ -348,15 +180,6 @@ internal external fun FilaMaterialInstance_setConstant_float(self: NativePointer
 
 @ExternalSymbolName("FilaMaterialInstance_setConstant_bool")
 internal external fun FilaMaterialInstance_setConstant_bool(self: NativePointer, name: NativePointer, value: Boolean)
-
-@ExternalSymbolName("FilaMaterialInstance_getConstant_size_t_int32_t")
-internal external fun FilaMaterialInstance_getConstant_size_t_int32_t(self: NativePointer, name: NativePointer, nameLength: Int): Int
-
-@ExternalSymbolName("FilaMaterialInstance_getConstant_size_t_float")
-internal external fun FilaMaterialInstance_getConstant_size_t_float(self: NativePointer, name: NativePointer, nameLength: Int): Float
-
-@ExternalSymbolName("FilaMaterialInstance_getConstant_size_t_bool")
-internal external fun FilaMaterialInstance_getConstant_size_t_bool(self: NativePointer, name: NativePointer, nameLength: Int): Boolean
 
 @ExternalSymbolName("FilaMaterialInstance_getConstant_int32_t")
 internal external fun FilaMaterialInstance_getConstant_int32_t(self: NativePointer, name: NativePointer): Int

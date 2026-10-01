@@ -181,6 +181,7 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
             isPublic = isPublic,
             isDeprecated = node.children().any { it["kind"] == "DeprecatedAttr" },
             isApi = node["isImplicit"] != true && node["explicitlyDeleted"] != true && (!name.startsWith("operator") || name == "operator()"),
+            isOverride = node.children().any { it["kind"] == "OverrideAttr" || it["kind"] == "FinalAttr" },
             templateParameters = templateParameters,
             guard = locationOf[node]?.let { l -> l.header?.let { guards.at(it, l.line) } },
         )

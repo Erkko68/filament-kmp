@@ -126,7 +126,7 @@ class CppRecord(
 
 /**
  * A method, or a namespace-level function ([owner] is the namespace, [isStatic] set). [mangled] is null for members
- * of class templates. [isApi]: written by hand, not deleted, not an operator but `()`.
+ * of class templates. [isApi]: written by hand, not deleted, not an operator but `()`. [isOverride]: `override` or `final`.
  */
 class CppMethod(
     val owner: String,
@@ -140,6 +140,7 @@ class CppMethod(
     val isPublic: Boolean,
     val isDeprecated: Boolean,
     val isApi: Boolean,
+    val isOverride: Boolean = false,
     /** A function template's named parameters, in order; null for a plain function. */
     val templateParameters: List<String>? = null,
     /** The header's `#if` condition around the declaration (e.g. `UTILS_HAS_THREADING`), or null. */
@@ -154,7 +155,7 @@ class CppMethod(
                 ?.let { a -> CppType(t.spelling.replace(Regex("\\b${t.decl!!.substringAfterLast("::")}\\b"), a.spelling), a.decl, a.kind, a.args) } ?: t
         }
         return CppMethod(owner, name, header, mangled, substitute(returns), params.map { CppParam(it.name, substitute(it.type), it.default) },
-            isStatic, isConst, isPublic, isDeprecated, isApi, guard = guard)
+            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard)
     }
 
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +

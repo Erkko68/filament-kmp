@@ -12,12 +12,3 @@ internal external fun FilaDisplayRangeToneMapper_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaDisplayRangeToneMapper_asToneMapper")
 internal external fun FilaDisplayRangeToneMapper_asToneMapper(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaDisplayRangeToneMapper_invoke")
-internal external fun FilaDisplayRangeToneMapper_invoke(self: NativePointer, c: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaDisplayRangeToneMapper_isOneDimensional")
-internal external fun FilaDisplayRangeToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaDisplayRangeToneMapper_isLDR")
-internal external fun FilaDisplayRangeToneMapper_isLDR(self: NativePointer): Boolean

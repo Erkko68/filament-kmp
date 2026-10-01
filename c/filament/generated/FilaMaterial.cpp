@@ -84,18 +84,6 @@ FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, cons
     return fila::c(&fila::cpp(self)->package(payload, static_cast<size_t>(size)));
 }
 
-FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_int32_t(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, int32_t value) {
-    return fila::c(&fila::cpp(self)->constant<int32_t>(name, static_cast<size_t>(nameLength), value));
-}
-
-FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_float(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, float value) {
-    return fila::c(&fila::cpp(self)->constant<float>(name, static_cast<size_t>(nameLength), value));
-}
-
-FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_bool(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, bool value) {
-    return fila::c(&fila::cpp(self)->constant<bool>(name, static_cast<size_t>(nameLength), value));
-}
-
 FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value) {
     return fila::c(&fila::cpp(self)->constant<int32_t>(name, value));
 }

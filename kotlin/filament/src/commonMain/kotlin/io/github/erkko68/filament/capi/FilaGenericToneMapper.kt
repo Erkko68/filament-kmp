@@ -13,15 +13,6 @@ internal external fun FilaGenericToneMapper_destroy(self: NativePointer)
 @ExternalSymbolName("FilaGenericToneMapper_asToneMapper")
 internal external fun FilaGenericToneMapper_asToneMapper(self: NativePointer): NativePointer
 
-@ExternalSymbolName("FilaGenericToneMapper_invoke")
-internal external fun FilaGenericToneMapper_invoke(self: NativePointer, x: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaGenericToneMapper_isOneDimensional")
-internal external fun FilaGenericToneMapper_isOneDimensional(self: NativePointer): Boolean
-
-@ExternalSymbolName("FilaGenericToneMapper_isLDR")
-internal external fun FilaGenericToneMapper_isLDR(self: NativePointer): Boolean
-
 @ExternalSymbolName("FilaGenericToneMapper_getContrast")
 internal external fun FilaGenericToneMapper_getContrast(self: NativePointer): Float
 

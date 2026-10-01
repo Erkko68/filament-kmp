@@ -32,9 +32,6 @@ void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, Fil
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
-FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_int32_t(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, int32_t value);
-FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_float(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, float value);
-FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_bool(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, bool value);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_float(FilaMaterialBuilder* self, const char* name, float value);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_bool(FilaMaterialBuilder* self, const char* name, bool value);
