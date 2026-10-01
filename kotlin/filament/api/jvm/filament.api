@@ -356,6 +356,7 @@ public final class io/github/erkko68/filament/ColorGrading$Builder {
 	public final fun gamutMapping (Z)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun luminanceScaling (Z)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun nightAdaptation (F)Lio/github/erkko68/filament/ColorGrading$Builder;
+	public final fun outputColorSpace (Lio/github/erkko68/filament/ColorSpace;)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun quality (Lio/github/erkko68/filament/ColorGrading$QualityLevel;)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun saturation (F)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun shadowsMidtonesHighlights ([F[F[F[F)Lio/github/erkko68/filament/ColorGrading$Builder;
@@ -381,6 +382,16 @@ public final class io/github/erkko68/filament/ColorGrading$QualityLevel : java/l
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/ColorGrading$QualityLevel;
 	public static fun values ()[Lio/github/erkko68/filament/ColorGrading$QualityLevel;
+}
+
+public final class io/github/erkko68/filament/ColorSpace {
+	public fun <init> (Lio/github/erkko68/filament/Primaries;Lio/github/erkko68/filament/TransferFunction;[F)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPrimaries ()Lio/github/erkko68/filament/Primaries;
+	public final fun getTransferFunction ()Lio/github/erkko68/filament/TransferFunction;
+	public final fun getWhitePoint ()[F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/github/erkko68/filament/DepthOfFieldOptions {
@@ -731,6 +742,23 @@ public final class io/github/erkko68/filament/EntityManager$Companion {
 	public final fun getMaxEntityCount ()I
 }
 
+public final class io/github/erkko68/filament/Exposure {
+	public static final field INSTANCE Lio/github/erkko68/filament/Exposure;
+	public final fun ev100 (FFF)F
+	public final fun ev100 (Lio/github/erkko68/filament/Camera;)F
+	public final fun ev100FromIlluminance (F)F
+	public final fun ev100FromLuminance (F)F
+	public final fun exposure (F)F
+	public final fun exposure (FFF)F
+	public final fun exposure (Lio/github/erkko68/filament/Camera;)F
+	public final fun illuminance (F)F
+	public final fun illuminance (FFF)F
+	public final fun illuminance (Lio/github/erkko68/filament/Camera;)F
+	public final fun luminance (F)F
+	public final fun luminance (FFF)F
+	public final fun luminance (Lio/github/erkko68/filament/Camera;)F
+}
+
 public final class io/github/erkko68/filament/Fence {
 	public static final field Companion Lio/github/erkko68/filament/Fence$Companion;
 	public static final field FENCE_WAIT_FOR_EVER J
@@ -804,6 +832,18 @@ public final class io/github/erkko68/filament/FogOptions {
 	public final fun setInScatteringStart (F)V
 	public final fun setMaximumOpacity (F)V
 	public final fun setSkyColor (Lio/github/erkko68/filament/Texture;)V
+}
+
+public final class io/github/erkko68/filament/Gamut {
+	public static final field Companion Lio/github/erkko68/filament/Gamut$Companion;
+	public fun <init> (Lio/github/erkko68/filament/Primaries;)V
+	public fun <init> ([F[F[F)V
+	public final fun getPrimaries ()Lio/github/erkko68/filament/Primaries;
+	public final fun minus (Lio/github/erkko68/filament/TransferFunction;)Lio/github/erkko68/filament/PartialColorSpace;
+}
+
+public final class io/github/erkko68/filament/Gamut$Companion {
+	public final fun getRec709 ()Lio/github/erkko68/filament/Gamut;
 }
 
 public final class io/github/erkko68/filament/GuardBandOptions {
@@ -1460,9 +1500,23 @@ public final class io/github/erkko68/filament/NativeSurface {
 	public final fun getNativeWindow ()Ljava/lang/Object;
 }
 
+public final class io/github/erkko68/filament/PartialColorSpace {
+	public final fun minus ([F)Lio/github/erkko68/filament/ColorSpace;
+}
+
 public abstract interface annotation class io/github/erkko68/filament/PlatformGap : java/lang/annotation/Annotation {
 	public abstract fun behavior ()Ljava/lang/String;
 	public abstract fun platforms ()[Lio/github/erkko68/filament/FilamentPlatform;
+}
+
+public final class io/github/erkko68/filament/Primaries {
+	public fun <init> ([F[F[F)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getB ()[F
+	public final fun getG ()[F
+	public final fun getR ()[F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/github/erkko68/filament/QualityLevel : java/lang/Enum {
@@ -2468,6 +2522,36 @@ public final class io/github/erkko68/filament/ToneMapper$PBRNeutralToneMapper : 
 	public fun <init> ()V
 }
 
+public final class io/github/erkko68/filament/TransferFunction {
+	public static final field Companion Lio/github/erkko68/filament/TransferFunction$Companion;
+	public fun <init> (DDDDD)V
+	public fun <init> (DDDDDDD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()D
+	public final fun component4 ()D
+	public final fun component5 ()D
+	public final fun component6 ()D
+	public final fun component7 ()D
+	public final fun copy (DDDDDDD)Lio/github/erkko68/filament/TransferFunction;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/TransferFunction;DDDDDDDILjava/lang/Object;)Lio/github/erkko68/filament/TransferFunction;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getA ()D
+	public final fun getB ()D
+	public final fun getC ()D
+	public final fun getD ()D
+	public final fun getE ()D
+	public final fun getF ()D
+	public final fun getG ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/TransferFunction$Companion {
+	public final fun getLinear ()Lio/github/erkko68/filament/TransferFunction;
+	public final fun getSRGB ()Lio/github/erkko68/filament/TransferFunction;
+}
+
 public final class io/github/erkko68/filament/TransformManager {
 	public fun <init> (J)V
 	public final fun commitLocalTransformTransaction ()V
@@ -2738,6 +2822,11 @@ public final class io/github/erkko68/filament/VsmShadowOptions {
 	public final fun setLightBleedReduction (F)V
 	public final fun setMipmapping (Z)V
 	public final fun setMsaaSamples (I)V
+}
+
+public final class io/github/erkko68/filament/WhitePoint {
+	public static final field INSTANCE Lio/github/erkko68/filament/WhitePoint;
+	public final fun getD65 ()[F
 }
 
 public final class io/github/erkko68/filament/interop/Callbacks {
