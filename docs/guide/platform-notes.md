@@ -137,7 +137,7 @@ single-threaded wasm, marked in source with **`@PlatformGap`** so they show up i
 | :--- | :--- | :--- |
 | `Renderer.readPixels` (both overloads) | Asynchronous: the pixels land when the browser has run more frames, then the callback fires. A synchronous poll loop inside one task never sees it | Keep rendering and check the buffer from the callback or `requestAnimationFrame` |
 | `Stream` | `setDimensions` throws: `FStream` waits on a fence internally, which single-threaded wasm rejects | External video streams have no WebGL source anyway |
-| `Engine.isPaused` | Tracked locally only; pausing needs threads | Stop your own frame loop instead |
+| `Engine.isPaused`, `Engine.Builder.paused` | Tracked locally only; pausing needs threads | Stop your own frame loop instead |
 | `Fence.wait`, `Engine.flushAndWait` | The timeout is clamped to 0 (a non-blocking poll); a `FLUSH` has already executed every command | Poll across frames until `CONDITION_SATISFIED` |
 | `SwapChain.setFrameCompletedCallback` | Never fires: the OpenGL/WebGL backend implements it as a no-op (same on Android and GL desktop) | — |
 | `SwapChain.isFrameRateChangeSupported` | Returns false; pacing is managed by the browser | — |
