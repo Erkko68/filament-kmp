@@ -128,19 +128,19 @@ internal class CBridges(private val api: CppApi) {
             target = api.aliases.getValue(target.decl!!)
             if (shape(target.spelling).indirection.isNotEmpty()) throw Unsupported("${type.spelling}: alias of a pointer")
         }
-        if (isArray(target)) return sequence(target, Bridge(shape.const, indirection, result, lvalue))
+        if (isArray(target)) return sequence(target, DirectBridges(shape.const, indirection, result, lvalue))
         var decl = target.decl
         if (target.kind == Kind.TEMPLATE_PARAMETER) {
             val argument = INSTANTIATIONS[decl!!.substringBeforeLast("::")]?.get(decl.substringAfterLast("::"))
                 ?: throw Unsupported("${type.spelling}: template parameter")
-            return Bridge(shape.const, indirection, result, lvalue).builtin(argument)
+            return DirectBridges(shape.const, indirection, result, lvalue).builtin(argument)
         }
         // A math template's instantiation is one of the mirrored typedefs: vec3<float> is float3.
         MATH_VECTOR.matchEntire(decl.orEmpty())?.let { vector ->
             val element = substitute(target.spelling.substringAfter('<').substringBeforeLast('>').trim(), lastAlias.orEmpty())
             decl = "filament::math::$element${vector.groupValues[1]}"
         }
-        val bridge = Bridge(shape.const, indirection, result, lvalue)
+        val bridge = DirectBridges(shape.const, indirection, result, lvalue)
         return when {
             target.kind == Kind.FUNCTION && lastAlias != null && indirection != "&" -> functionPointer(lastAlias, target.spelling, indirection == "*")
             decl in UPLOADS -> bridge.upload(decl!!, pixels = decl == PIXEL_BUFFER).also { callbackTypes += BUFFER_CALLBACK }
@@ -169,7 +169,7 @@ internal class CBridges(private val api: CppApi) {
      * the callee takes. A result fills C's array up to its capacity and returns how many there are. Math elements are
      * contiguous mirrors; value records, the handles C created to copy into.
      */
-    private fun sequence(type: CppType, bridge: Bridge): CBridge {
+    private fun sequence(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.byValue && !bridge.result && !bridge.const && type.decl == "std::array") return updated(type)
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
         // std::array's second argument is its size.
@@ -229,7 +229,7 @@ internal class CBridges(private val api: CppApi) {
      * A std::optional crosses as a nullable pointer: a parameter's NULL is nullopt; a result fills `out` and returns
      * whether there was a value.
      */
-    private fun optional(type: CppType, bridge: Bridge): CBridge {
+    private fun optional(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
         val value = if (bridge.result) result(type.args.single(), bridge.lvalue) else param(type.args.single())
         if (value.extra.isNotEmpty() || value.c.endsWith("*")) throw Unsupported("${type.spelling}: C passes its value by pointer")
@@ -241,7 +241,7 @@ internal class CBridges(private val api: CppApi) {
      * A `std::function` alias C passes as a function pointer of the same shape, declared under the alias's name: its
      * arguments cross as results do. NULL is an empty function. Filament's take their user data as an argument.
      */
-    private fun function(alias: String, signature: CppType, bridge: Bridge): CBridge {
+    private fun function(alias: String, signature: CppType, bridge: DirectBridges): CBridge {
         if (bridge.result || !bridge.byValue) throw Unsupported("$alias by reference or as a result")
         val returns = signature.args.first()
         if (returns.spelling != "void") throw Unsupported("$alias: returns a value")
@@ -270,137 +270,5 @@ internal class CBridges(private val api: CppApi) {
         val name = CNames.type(alias)
         callbackTypes[name] = "typedef ${bare.replaceFirst("(*)", "(*$name)")};"
         return CBridge(name, { it })
-    }
-
-    private class Bridge(val const: Boolean, val indirection: String?, val result: Boolean, val lvalue: Boolean) {
-        val byValue = indirection == null || (indirection == "&" && const)
-        val c = if (const) "const " else ""
-
-        /** A buffer C lends Filament: Kotlin's `Upload` fields, and a pixel buffer's layout between size and callback. */
-        fun upload(decl: String, pixels: Boolean): CBridge {
-            if (result || !(byValue || indirection == "&&")) throw Unsupported("$decl result")
-            val layout = if (pixels) PIXEL_LAYOUT else emptyList()
-            return CBridge(
-                "void*",
-                { n ->
-                    val args = layout.joinToString("") { (c, suffix) -> ", " + if (c.startsWith("Fila")) "static_cast<$BACKEND::${c.removePrefix("Fila")}>($n$suffix)" else "$n$suffix" }
-                    "$decl($n, ${n}Size$args, ${n}Callback, ${n}User)"
-                },
-                extra = listOf("uint32_t" to "Size") + layout + listOf(BUFFER_CALLBACK.first to "Callback", "void*" to "User"),
-            )
-        }
-
-        /**
-         * A C++ callable C passes as a function pointer and its user data: `void (*)(void* user)`, or
-         * `void (*)(void* arg, void* user)` for one pointer argument; NULL is an empty one. Returns it with its typedef.
-         */
-        fun invocable(spelling: String): Pair<CBridge, Pair<String, String>> {
-            if (result) throw Unsupported("$spelling result")
-            val signature = spelling.substringAfter('<').substringBeforeLast('>')
-            val arg = signature.substringAfter('(').substringBeforeLast(')').trim().takeIf { it.isNotEmpty() && it != "void" }
-            if (signature.substringBefore('(').trim() != "void") throw Unsupported("$spelling: returns a value")
-            if (arg != null && (',' in arg || shape(arg).indirection != listOf("*"))) throw Unsupported("$spelling: C callbacks take at most one pointer")
-            val (name, typedef) = if (arg == null) USER_CALLBACK else ARG_CALLBACK
-            return CBridge(
-                name,
-                { n -> "fila::callable($n, " + (if (arg == null) "[=] { $n(${n}User); }" else "[=](auto* arg) { $n((void*) arg, ${n}User); }") + ")" },
-                extra = listOf("void*" to "User"),
-            ) to (name to typedef)
-        }
-
-        fun scalar(decl: String, scalar: Scalar): CBridge {
-            if (!byValue) throw Unsupported("$decl by pointer")
-            return CBridge(scalar.c, if (result) scalar.toC else scalar.toCpp, out = result && CAbi.returnsThroughPointer(scalar.c))
-        }
-
-        /** Strings cross as NUL-terminated `const char*`: copied in, and out only when the C++ string outlives the call. */
-        fun string(decl: String): CBridge {
-            if (!byValue) throw Unsupported("$decl by pointer")
-            return when {
-                // Only literals make a StaticString; fila::staticString makes one because everything taking it copies it.
-                !result -> CBridge("const char*", { if (decl == STATIC_STRING) "fila::staticString($it)" else "$decl($it)" })
-                // ponytail: assumes the view is NUL-terminated (literals, CString storage); an out length if one isn't.
-                decl == "std::string_view" -> CBridge("const char*", { "($it).data()" })
-                // A temporary: copied into C's buffer, not NUL-terminated; returns its length.
-                indirection == null && !lvalue -> CBridge(
-                    "uint32_t",
-                    { call -> "fila::copy($call, outCapacity, [&](char x, uint32_t i) { out[i] = x; })" },
-                    extra = listOf("char*" to "out", "uint32_t" to "outCapacity"),
-                )
-                else -> CBridge("const char*", { "($it).c_str()" })
-            }
-        }
-
-        fun builtin(base: String): CBridge {
-            if (byValue) {
-                val cType = CAbi.byValue(base)
-                return CBridge(cType, if (cType == base) { v -> v } else cast(cType, base), out = result && CAbi.returnsThroughPointer(cType))
-            }
-            CAbi.checkPointee(base)
-            return when {
-                indirection == "*" -> CBridge("$c$base*", { it })
-                result -> CBridge("$base*", { "&$it" })
-                else -> CBridge("$base*", { "*$it" })
-            }
-        }
-
-        fun enum(decl: String, wideType: String?): CBridge {
-            if (!byValue) throw Unsupported("$decl by pointer")
-            val name = CNames.type(decl)
-            return CBridge(name, cast(name, decl), out = result && wideType != null && CAbi.returnsThroughPointer(wideType))
-        }
-
-        fun entity() = when {
-            !byValue -> pointer("FilaEntity", "utils::Entity")
-            result -> CBridge("FilaEntity", { "utils::Entity::smuggle($it)" })
-            else -> CBridge("FilaEntity", { "utils::Entity::import($it)" })
-        }
-
-        fun instance(alias: String): CBridge {
-            if (!byValue) throw Unsupported("$alias by pointer")
-            return CBridge("uint32_t", if (result) { v -> "$v.asValue()" } else { v -> "$alias($v)" })
-        }
-
-        /** Structs never cross by value: parameters come by `const` pointer, results go out through one. */
-        fun math(decl: String): CBridge {
-            val name = CNames.type(decl)
-            return when {
-                !byValue -> handle(name)
-                result -> CBridge(name, { "std::bit_cast<$name>($it)" }, out = true)
-                else -> CBridge("const $name*", { "std::bit_cast<$decl>(*$it)" })
-            }
-        }
-
-        /** A value struct taken or returned by value is copied: in from a `const` pointer, out into one C created. */
-        fun record(decl: String, value: Boolean, copyable: Boolean): CBridge {
-            val name = CNames.type(decl)
-            return when {
-                !value && indirection == null -> throw Unsupported("$decl by value")
-                !value || !byValue -> handle(name)
-                !result -> CBridge("const $name*", { "*fila::cpp($it)" })
-                // C can't create one to copy into; a reference's outlives the call, so C borrows it.
-                !copyable && indirection == "&" -> handle(name)
-                !copyable -> throw Unsupported("$decl result: C can't create one to copy it into")
-                else -> CBridge(name, { it }, out = true, store = { v, out -> "*fila::cpp($out) = $v;" })
-            }
-        }
-
-        /** Casts to C's [cType] for a result, to C++'s [cpp] for a parameter. */
-        private fun cast(cType: String, cpp: String) = if (result) { v: String -> "static_cast<$cType>($v)" } else { v -> "static_cast<$cpp>($v)" }
-
-        /** C passes a pointer whichever of `*` or `&` C++ takes. */
-        private fun pointer(cName: String, cppName: String): CBridge {
-            val cType = "$c$cName*"
-            val address = if (indirection == "*") "" else "&"
-            return if (result) CBridge(cType, { "reinterpret_cast<$cType>($address$it)" })
-            else CBridge(cType, { (if (indirection == "*") "" else "*") + "reinterpret_cast<$c$cppName*>($it)" })
-        }
-
-        /** A pointer to a record's handle or a math mirror, converted by the `FILA_TYPE` overloads. */
-        private fun handle(cName: String): CBridge {
-            val ref = indirection != "*"
-            return if (result) CBridge("$c$cName*", { "fila::c(${if (ref) "&" else ""}$it)" })
-            else CBridge("$c$cName*", { "${if (ref) "*" else ""}fila::cpp($it)" })
-        }
     }
 }
