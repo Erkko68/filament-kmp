@@ -147,4 +147,39 @@ class InteractionTest : ComposeTestFixture() {
             assertEquals(10f, flyForOneSecond(setContent, 10f, 1f, scrollSteps = 50f), 0.5f) // clamped
         }
     }
+
+    // Zoom out by scrolling, then check that a saved bookmark and resetToHome() both restore the start pose.
+    @OptIn(ExperimentalTestApi::class)
+    private fun ComposeUiTest.assertBookmarksRestorePose(cam: CameraState, controller: CameraController, zoom: () -> Unit) {
+        controller.setViewport(100, 100)
+        val start = cam.eye
+        controller.saveBookmark().use { home ->
+            zoom()
+            assertTrue(cam.eyeDistanceTo(start.x, start.y, start.z) > 0.1f, "zooming should move the camera")
+            controller.jumpToBookmark(home)
+            assertEquals(0f, cam.eyeDistanceTo(start.x, start.y, start.z), 1e-2f)
+        }
+        zoom()
+        controller.resetToHome()
+        assertEquals(0f, cam.eyeDistanceTo(start.x, start.y, start.z), 1e-2f)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun orbitAndMapBookmarksRestorePose() = run {
+        withFilamentScene(engine, scene) { setContent ->
+            val orbitCam = newCameraState(Position(0f, 0f, 5f))
+            lateinit var orbit: OrbitCameraController
+            setContent { orbit = rememberOrbitCameraController(orbitCam) }
+            waitForIdle()
+            assertBookmarksRestorePose(orbitCam, orbit) { orbit.manipulator.scroll(50, 50, 20f); orbit.sync() }
+
+            val mapCam = newCameraState(Position(0f, 10f, 0f))
+            lateinit var map: MapCameraController
+            setContent { map = rememberMapCameraController(mapCam) }
+            waitForIdle()
+            assertTrue(mapCam.eye.y > mapCam.target.y + 1f, "map looks down on its target: ${mapCam.eye}")
+            assertBookmarksRestorePose(mapCam, map) { map.manipulator.scroll(50, 50, 20f); map.sync() }
+        }
+    }
 }
