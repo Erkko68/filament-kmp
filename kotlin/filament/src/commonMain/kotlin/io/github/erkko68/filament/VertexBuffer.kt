@@ -149,16 +149,30 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
         fun name(name: String): Builder = apply { interopScope { FilaVertexBufferBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
+         * Creates the VertexBuffer asynchronously: [callback] runs once on the main thread when its memory is allocated
+         * ([AsyncCallStatus.CANCELED] if it never was). Until then, only async calls on it are safe; check
+         * [VertexBuffer.isCreationComplete]. Needs [Engine.isAsynchronousModeEnabled].
+         */
+        fun async(callback: (VertexBuffer, AsyncCallStatus) -> Unit = { _, _ -> }): Builder = apply { asyncCallback = callback }
+
+        /**
          * Creates the VertexBuffer object.
          *
          * @param engine Engine to associate this VertexBuffer with
          * @return The newly created VertexBuffer
          */
         fun build(engine: Engine): VertexBuffer {
+            var built: VertexBuffer? = null
+            asyncCallback?.let { callback ->
+                val user = asyncCompletion({ built ?: VertexBuffer(it) }, callback)
+                FilaVertexBufferBuilder_async(nativeBuilder, NullPointer, Callbacks.argUserStatus, user)
+            }
             val handle = FilaVertexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaVertexBufferBuilder_destroy(nativeBuilder)
-            return VertexBuffer(handle)
+            return VertexBuffer(handle).also { built = it }
         }
+
+        private var asyncCallback: ((VertexBuffer, AsyncCallStatus) -> Unit)? = null
     }
 
     /**
@@ -204,6 +218,21 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
     }
 
     /**
+     * [setBufferAt], asynchronously: returns an ID for [Engine.cancelAsyncCall], and [callback] runs once on the main
+     * thread with how it ended. Needs [Engine.isAsynchronousModeEnabled].
+     */
+    fun setBufferAtAsync(
+        engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int = 0, count: Int = 0,
+        callback: ((VertexBuffer, AsyncCallStatus) -> Unit)? = null,
+    ): Int {
+        val upload = upload(data, if (count > 0) count else data.size, null)
+        return FilaVertexBuffer_setBufferAtAsync(
+            nativeHandle, engine.nativeHandle, bufferIndex, upload.ptr, upload.size, upload.callback, upload.userData,
+            destOffsetInBytes, NullPointer, Callbacks.argUserStatus, asyncCompletion({ this }, callback ?: { _, _ -> }),
+        )
+    }
+
+    /**
      * Associates a BufferObject with a buffer in this vertex buffer set.
      *
      * This is only available when buffer objects mode is enabled via enableBufferObjects().
@@ -216,6 +245,14 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
     fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
         FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.nativeHandle, bufferIndex, bufferObject.nativeHandle)
     }
+
+    /** [setBufferObjectAt], asynchronously; see [setBufferAtAsync]. */
+    fun setBufferObjectAtAsync(
+        engine: Engine, bufferIndex: Int, bufferObject: BufferObject, callback: ((VertexBuffer, AsyncCallStatus) -> Unit)? = null,
+    ): Int = FilaVertexBuffer_setBufferObjectAtAsync(
+        nativeHandle, engine.nativeHandle, bufferIndex, bufferObject.nativeHandle,
+        NullPointer, Callbacks.argUserStatus, asyncCompletion({ this }, callback ?: { _, _ -> }),
+    )
 
     /**
      * Returns whether the asynchronous creation of this VertexBuffer has completed; always true

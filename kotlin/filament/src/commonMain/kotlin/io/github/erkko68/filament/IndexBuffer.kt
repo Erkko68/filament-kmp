@@ -58,16 +58,30 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
         fun name(name: String): Builder = apply { interopScope { FilaIndexBufferBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
+         * Creates the IndexBuffer asynchronously: [callback] runs once on the main thread when its memory is allocated
+         * ([AsyncCallStatus.CANCELED] if it never was). Until then, only async calls on it are safe; check
+         * [IndexBuffer.isCreationComplete]. Needs [Engine.isAsynchronousModeEnabled].
+         */
+        fun async(callback: (IndexBuffer, AsyncCallStatus) -> Unit = { _, _ -> }): Builder = apply { asyncCallback = callback }
+
+        /**
          * Creates the IndexBuffer object.
          *
          * @param engine Engine to associate this IndexBuffer with
          * @return The newly created IndexBuffer
          */
         fun build(engine: Engine): IndexBuffer {
+            var built: IndexBuffer? = null
+            asyncCallback?.let { callback ->
+                val user = asyncCompletion({ built ?: IndexBuffer(it) }, callback)
+                FilaIndexBufferBuilder_async(nativeBuilder, NullPointer, Callbacks.argUserStatus, user)
+            }
             val handle = FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaIndexBufferBuilder_destroy(nativeBuilder)
-            return IndexBuffer(handle)
+            return IndexBuffer(handle).also { built = it }
         }
+
+        private var asyncCallback: ((IndexBuffer, AsyncCallStatus) -> Unit)? = null
     }
 
     /**
@@ -107,6 +121,21 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
         FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, upload.callback, upload.userData, destOffsetInBytes)
+    }
+
+    /**
+     * [setBuffer], asynchronously: returns an ID for [Engine.cancelAsyncCall], and [callback] runs once on the main
+     * thread with how it ended. Needs [Engine.isAsynchronousModeEnabled].
+     */
+    fun setBufferAsync(
+        engine: Engine, data: ByteArray, destOffsetInBytes: Int = 0, count: Int = 0,
+        callback: ((IndexBuffer, AsyncCallStatus) -> Unit)? = null,
+    ): Int {
+        val upload = upload(data, if (count > 0) count else data.size, null)
+        return FilaIndexBuffer_setBufferAsync(
+            nativeHandle, engine.nativeHandle, upload.ptr, upload.size, upload.callback, upload.userData, destOffsetInBytes,
+            NullPointer, Callbacks.argUserStatus, asyncCompletion({ this }, callback ?: { _, _ -> }),
+        )
     }
 
     /**

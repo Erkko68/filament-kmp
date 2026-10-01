@@ -86,17 +86,19 @@ actual fun readFloats(ptr: NativePointer, count: Int): FloatArray =
 actual fun readPointers(ptr: NativePointer, count: Int): List<NativePointer> =
     if (count == 0) emptyList() else ptr.toCPointer<COpaquePointerVar>()!!.let { p -> List(count) { p[it].toLong() } }
 
-private class Callback(val once: Boolean, val fn: (NativePointer) -> Unit)
+private class Callback(val once: Boolean, val fn: (NativePointer, Int) -> Unit)
 
-private fun dispatch(userData: COpaquePointer?, arg: NativePointer) {
+private fun dispatch(userData: COpaquePointer?, arg: NativePointer, status: Int = 0) {
     val ref = userData!!.asStableRef<Callback>()
     val callback = ref.get()
     if (callback.once) ref.dispose()
-    upcall { callback.fn(arg) }
+    upcall { callback.fn(arg, status) }
 }
 
 actual object Callbacks {
-    actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer =
+    actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer = registerStatus(once) { a, _ -> fn(a) }
+
+    actual fun registerStatus(once: Boolean, fn: (arg: NativePointer, status: Int) -> Unit): NativePointer =
         StableRef.create(Callback(once, fn)).asCPointer().toLong()
 
     actual fun release(userData: NativePointer) {
@@ -105,6 +107,9 @@ actual object Callbacks {
 
     actual val userOnly: NativePointer = staticCFunction { userData: COpaquePointer? -> dispatch(userData, NullPointer) }.toLong()
     actual val argUser: NativePointer = staticCFunction { arg: COpaquePointer?, userData: COpaquePointer? -> dispatch(userData, arg.toLong()) }.toLong()
+    actual val userStatus: NativePointer = staticCFunction { userData: COpaquePointer?, status: Int -> dispatch(userData, NullPointer, status) }.toLong()
+    actual val argUserStatus: NativePointer =
+        staticCFunction { arg: COpaquePointer?, userData: COpaquePointer?, status: Int -> dispatch(userData, arg.toLong(), status) }.toLong()
     actual val keepBuffer: NativePointer = staticCFunction { buffer: COpaquePointer?, _: ULong, userData: COpaquePointer? -> dispatch(userData, buffer.toLong()) }.toLong()
 }
 

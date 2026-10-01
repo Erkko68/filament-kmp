@@ -91,6 +91,8 @@ expect fun stringFromInterop(ptr: NativePointer): String?
 @InternalFilamentApi
 expect object Callbacks {
     fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer
+    /** [register] for [userStatus] and [argUserStatus]: the lambda also gets the `AsyncCallStatus` ordinal. */
+    fun registerStatus(once: Boolean, fn: (arg: NativePointer, status: Int) -> Unit): NativePointer
     fun release(userData: NativePointer)
 
     /** `void (*)(void* userData)`. */
@@ -98,6 +100,12 @@ expect object Callbacks {
 
     /** `void (*)(T* arg, void* userData)`. */
     val argUser: NativePointer
+
+    /** `void (*)(void* userData, AsyncCallStatus status)`. */
+    val userStatus: NativePointer
+
+    /** `void (*)(T* arg, void* userData, AsyncCallStatus status)`. */
+    val argUserStatus: NativePointer
 
     /** FilaBufferCallback, `void (*)(void* buffer, size_t size, void* userData)`: the lambda gets the buffer. */
     val keepBuffer: NativePointer

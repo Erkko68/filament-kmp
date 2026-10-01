@@ -29,6 +29,8 @@ object FilaJni {
     @JvmStatic external fun releaseCallback(userData: Long)
     @JvmStatic external fun userOnly(): Long
     @JvmStatic external fun argUser(): Long
+    @JvmStatic external fun userStatus(): Long
+    @JvmStatic external fun argUserStatus(): Long
     @JvmStatic external fun keepBuffer(): Long
     @JvmStatic external fun freeBuffer(): Long
 }
@@ -54,6 +56,12 @@ object Callbacks {
 
     /** `void (*)(T* arg, void* userData)` — e.g. picking, frame-completed, material compile. */
     val argUser: Long by lazy { FilaJni.argUser() }
+
+    /** `void (*)(void* userData, AsyncCallStatus status)`; `b` is the status. */
+    val userStatus: Long by lazy { FilaJni.userStatus() }
+
+    /** `void (*)(T* arg, void* userData, AsyncCallStatus status)`; `b` is the status. */
+    val argUserStatus: Long by lazy { FilaJni.argUserStatus() }
 
     /** FilaBufferCallback that frees an [upload] copy, then runs the registered lambda if userData isn't 0. */
     val freeBuffer: Long by lazy { FilaJni.freeBuffer() }
