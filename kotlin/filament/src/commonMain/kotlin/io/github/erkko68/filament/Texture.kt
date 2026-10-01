@@ -169,7 +169,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
         fun name(name: String): Builder = apply { interopScope { FilaTextureBuilder_name(nativeBuilder, toInterop(name)) } }
 
         /**
-         * Creates an external texture. The content must be set using setExternalImage() or setExternalStream().
+         * Creates an external texture. The content must be set using [Texture.setExternalStream].
          *
          * The sampler can be SAMPLER_EXTERNAL or SAMPLER_2D depending on the format. Generally
          * YUV formats must use SAMPLER_EXTERNAL. This depends on the backend features and is not

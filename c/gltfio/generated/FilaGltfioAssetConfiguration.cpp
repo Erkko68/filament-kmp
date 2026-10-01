@@ -40,12 +40,4 @@ char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfi
     return fila::cpp(self)->defaultNodeName;
 }
 
-FilaGltfioAssetConfigurationExtended* FilaGltfioAssetConfiguration_getExt(const FilaGltfioAssetConfiguration* self) {
-    return fila::c(fila::cpp(self)->ext);
-}
-
-void FilaGltfioAssetConfiguration_setExt(FilaGltfioAssetConfiguration* self, FilaGltfioAssetConfigurationExtended* value) {
-    fila::cpp(self)->ext = fila::cpp(value);
-}
-
 } // extern "C"

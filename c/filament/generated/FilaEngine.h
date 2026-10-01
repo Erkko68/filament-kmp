@@ -87,6 +87,9 @@ FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 
 // filament::Engine
 // skipped const backend::Driver * _Nonnull filament::Engine::getDriver() const
+// skipped Sync * _Nonnull filament::Engine::createSync(): uses filament::Sync
+// skipped bool filament::Engine::destroy(const Sync * _Nullable p): uses filament::Sync
+// skipped bool filament::Engine::isValid(const Sync * _Nullable p) const: uses filament::Sync
 // skipped Platform * _Nullable filament::Engine::getPlatform() const
 // skipped void * _Nullable filament::Engine::streamAlloc(size_t size, size_t alignment)
 // skipped utils::JobSystem & filament::Engine::getJobSystem()
@@ -101,7 +104,6 @@ void FilaEngine_destroy_Engine(FilaEngine* engine);
 bool FilaEngine_destroy_BufferObject(FilaEngine* self, const FilaBufferObject* p);
 bool FilaEngine_destroy_VertexBuffer(FilaEngine* self, const FilaVertexBuffer* p);
 bool FilaEngine_destroy_Fence(FilaEngine* self, const FilaFence* p);
-bool FilaEngine_destroy_Sync(FilaEngine* self, const FilaSync* p);
 bool FilaEngine_destroy_IndexBuffer(FilaEngine* self, const FilaIndexBuffer* p);
 bool FilaEngine_destroy_SkinningBuffer(FilaEngine* self, const FilaSkinningBuffer* p);
 bool FilaEngine_destroy_MorphTargetBuffer(FilaEngine* self, const FilaMorphTargetBuffer* p);
@@ -145,11 +147,9 @@ FilaCamera* FilaEngine_createCamera(FilaEngine* self, FilaEntity entity);
 FilaCamera* FilaEngine_getCameraComponent(FilaEngine* self, FilaEntity entity);
 void FilaEngine_destroyCameraComponent(FilaEngine* self, FilaEntity entity);
 FilaFence* FilaEngine_createFence(FilaEngine* self);
-FilaSync* FilaEngine_createSync(FilaEngine* self);
 bool FilaEngine_isValid_BufferObject(const FilaEngine* self, const FilaBufferObject* p);
 bool FilaEngine_isValid_VertexBuffer(const FilaEngine* self, const FilaVertexBuffer* p);
 bool FilaEngine_isValid_Fence(const FilaEngine* self, const FilaFence* p);
-bool FilaEngine_isValid_Sync(const FilaEngine* self, const FilaSync* p);
 bool FilaEngine_isValid_IndexBuffer(const FilaEngine* self, const FilaIndexBuffer* p);
 bool FilaEngine_isValid_SkinningBuffer(const FilaEngine* self, const FilaSkinningBuffer* p);
 bool FilaEngine_isValid_MorphTargetBuffer(const FilaEngine* self, const FilaMorphTargetBuffer* p);

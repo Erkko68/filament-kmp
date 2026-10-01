@@ -320,10 +320,6 @@ bool FilaEngine_destroy_Fence(FilaEngine* self, const FilaFence* p) {
     return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
-bool FilaEngine_destroy_Sync(FilaEngine* self, const FilaSync* p) {
-    return fila::cpp(self)->destroy(fila::cpp(p));
-}
-
 bool FilaEngine_destroy_IndexBuffer(FilaEngine* self, const FilaIndexBuffer* p) {
     return fila::cpp(self)->destroy(fila::cpp(p));
 }
@@ -496,10 +492,6 @@ FilaFence* FilaEngine_createFence(FilaEngine* self) {
     return fila::c(fila::cpp(self)->createFence());
 }
 
-FilaSync* FilaEngine_createSync(FilaEngine* self) {
-    return fila::c(fila::cpp(self)->createSync());
-}
-
 bool FilaEngine_isValid_BufferObject(const FilaEngine* self, const FilaBufferObject* p) {
     return fila::cpp(self)->isValid(fila::cpp(p));
 }
@@ -509,10 +501,6 @@ bool FilaEngine_isValid_VertexBuffer(const FilaEngine* self, const FilaVertexBuf
 }
 
 bool FilaEngine_isValid_Fence(const FilaEngine* self, const FilaFence* p) {
-    return fila::cpp(self)->isValid(fila::cpp(p));
-}
-
-bool FilaEngine_isValid_Sync(const FilaEngine* self, const FilaSync* p) {
     return fila::cpp(self)->isValid(fila::cpp(p));
 }
 

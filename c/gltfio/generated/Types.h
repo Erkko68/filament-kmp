@@ -10,7 +10,6 @@ extern "C" {
 
 typedef struct FilaGltfioAnimator FilaGltfioAnimator;
 typedef struct FilaGltfioAssetConfiguration FilaGltfioAssetConfiguration;
-typedef struct FilaGltfioAssetConfigurationExtended FilaGltfioAssetConfigurationExtended;
 typedef struct FilaGltfioAssetLoader FilaGltfioAssetLoader;
 typedef struct FilaGltfioFilamentAsset FilaGltfioFilamentAsset;
 typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;

@@ -4,9 +4,6 @@ package io.github.erkko68.filament.utils.capi
 import io.github.erkko68.filament.interop.ExternalSymbolName
 import io.github.erkko68.filament.interop.NativePointer
 
-@ExternalSymbolName("FilaKtxreaderKtx1Reader_toCompressedFilamentEnum")
-internal external fun FilaKtxreaderKtx1Reader_toCompressedFilamentEnum(format: Int): Int
-
 @ExternalSymbolName("FilaKtxreaderKtx1Reader_createTexture_Callback_void")
 internal external fun FilaKtxreaderKtx1Reader_createTexture_Callback_void(engine: NativePointer, ktx: NativePointer, srgb: Boolean, callback: NativePointer, userdata: NativePointer): NativePointer
 

@@ -4,9 +4,6 @@ package io.github.erkko68.filament.capi
 import io.github.erkko68.filament.interop.ExternalSymbolName
 import io.github.erkko68.filament.interop.NativePointer
 
-@ExternalSymbolName("FilaUtilsEntityManagerListener_onEntitiesDestroyed")
-internal external fun FilaUtilsEntityManagerListener_onEntitiesDestroyed(self: NativePointer, n: Int, entities: NativePointer)
-
 @ExternalSymbolName("FilaUtilsEntityManager_get")
 internal external fun FilaUtilsEntityManager_get(): NativePointer
 
@@ -33,12 +30,6 @@ internal external fun FilaUtilsEntityManager_destroy_Entity(self: NativePointer,
 
 @ExternalSymbolName("FilaUtilsEntityManager_isAlive")
 internal external fun FilaUtilsEntityManager_isAlive(self: NativePointer, e: Int): Boolean
-
-@ExternalSymbolName("FilaUtilsEntityManager_registerListener")
-internal external fun FilaUtilsEntityManager_registerListener(self: NativePointer, l: NativePointer)
-
-@ExternalSymbolName("FilaUtilsEntityManager_unregisterListener")
-internal external fun FilaUtilsEntityManager_unregisterListener(self: NativePointer, l: NativePointer)
 
 @ExternalSymbolName("FilaUtilsEntityManager_advanceEpoch")
 internal external fun FilaUtilsEntityManager_advanceEpoch(self: NativePointer)

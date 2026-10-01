@@ -8,7 +8,6 @@ namespace fila {
 
 FILA_TYPE(FilaGltfioAnimator, filament::gltfio::Animator)
 FILA_TYPE(FilaGltfioAssetConfiguration, filament::gltfio::AssetConfiguration)
-FILA_TYPE(FilaGltfioAssetConfigurationExtended, filament::gltfio::AssetConfigurationExtended)
 FILA_TYPE(FilaGltfioAssetLoader, filament::gltfio::AssetLoader)
 FILA_TYPE(FilaGltfioFilamentAsset, filament::gltfio::FilamentAsset)
 FILA_TYPE(FilaGltfioFilamentInstance, filament::gltfio::FilamentInstance)

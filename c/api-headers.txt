@@ -14,6 +14,10 @@ filament/*.h
 utils/EntityManager.h
 # Filament's Kotlin module binds it, as Android's does (the first section matching a header takes it).
 geometry/SurfaceOrientation.h
+# A platform Sync handle, usable only from platform C++ (e.g. a Vulkan fence fd).
+-filament::Sync
+# Platform image handles: an ExternalImageHandle only platform C++ makes, or an iOS-only CVPixelBufferRef plane.
+-filament::Texture::setExternalImage
 # C++ iterator sugar over getFrameInfoHistory; FilaFrameHistoryStreamManual drains getNewFrames into FrameInfo handles.
 -filament::FrameHistoryStream::Result
 -filament::FrameHistoryStream::NewFramesRange::*
@@ -38,7 +42,8 @@ geometry/SurfaceOrientation.h
 -filament::builderMakeName
 # Builders redeclare name(); the engine reads the rest.
 -filament::BuilderNameMixin
-# Entity recycling across threads, for Filament's own component managers.
+# Entity recycling across threads and destruction listeners, for Filament's own component managers.
+-utils::EntityManager::Listener
 -utils::EntityManager::getAliveEntities
 -utils::EntityManager::getMissedGarbage
 -utils::EntityManager::registerWatermark
@@ -72,6 +77,8 @@ gltfio/*.h
 -filament::gltfio::TrsTransformManager
 # Lives in libgltfio (JIT via filamat), which only desktop prebuilds; every platform links gltfio_core.
 -filament::gltfio::createJitShaderProvider
+# Desktop-only (isSupported() is false on Android, iOS and web, where using it aborts).
+-filament::gltfio::AssetConfigurationExtended
 # Internal instance type, and utils' name component manager (not part of the C API).
 -filament::gltfio::Animator::addInstance
 -filament::gltfio::AssetConfiguration::names
@@ -115,3 +122,5 @@ image/Ktx1Bundle.h
 # KTX container internals; Ktx1Reader turns a bundle into a texture.
 -image::KtxInfo
 -image::KtxBlobIndex
+# For compressed uploads, which PixelBufferDescriptor doesn't express in Kotlin; createTexture handles them.
+-ktxreader::Ktx1Reader::toCompressedFilamentEnum

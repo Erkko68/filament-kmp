@@ -4,10 +4,6 @@
 
 extern "C" {
 
-void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, uint32_t n, const FilaEntity* entities) {
-    fila::cpp(self)->onEntitiesDestroyed(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(entities));
-}
-
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void) {
     return fila::c(&utils::EntityManager::get());
 }
@@ -42,14 +38,6 @@ void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEnt
 
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e) {
     return fila::cpp(self)->isAlive(utils::Entity::import(e));
-}
-
-void FilaUtilsEntityManager_registerListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l) {
-    fila::cpp(self)->registerListener(fila::cpp(l));
-}
-
-void FilaUtilsEntityManager_unregisterListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l) {
-    fila::cpp(self)->unregisterListener(fila::cpp(l));
 }
 
 void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self) {
