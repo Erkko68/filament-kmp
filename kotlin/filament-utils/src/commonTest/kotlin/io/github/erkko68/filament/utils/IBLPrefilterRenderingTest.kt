@@ -40,23 +40,28 @@ class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
         engine.flushAndWait()
 
         val context = IBLPrefilterContext(engine)
-        val toCubemap = IBLPrefilterContext.EquirectangularToCubemap(context)
-        // Few samples: default 1024 overruns Mocha's 30s timeout under CI's SwiftShader.
-        val specular = IBLPrefilterContext.SpecularFilter(context, IBLPrefilterContext.SpecularFilter.Config(sampleCount = 16))
-        val irradiance = IBLPrefilterContext.IrradianceFilter(context, IBLPrefilterContext.IrradianceFilter.Config(sampleCount = 16))
-        val cubemap = toCubemap(equirect)
-        assertTrue(engine.isValid(cubemap))
+        val cubemap: Texture
+        val filtered: Texture
+        val irradianceOut: Texture
+        IBLPrefilterContext.EquirectangularToCubemap(context).use { toCubemap ->
+            // Few samples: default 1024 overruns Mocha's 30s timeout under CI's SwiftShader.
+            IBLPrefilterContext.SpecularFilter(context, IBLPrefilterContext.SpecularFilter.Config(sampleCount = 16)).use { specular ->
+                IBLPrefilterContext.IrradianceFilter(context, IBLPrefilterContext.IrradianceFilter.Config(sampleCount = 16)).use { irradiance ->
+                    cubemap = toCubemap(equirect)
+                    assertTrue(engine.isValid(cubemap))
 
-        val filtered = specular(IBLPrefilterContext.SpecularFilter.Options(lodOffset = 2f), cubemap)
-        assertTrue(engine.isValid(filtered))
-        // Given an output texture, the filters write into it and hand it back.
-        val irradianceOut = irradiance(cubemap)
-        assertSame(irradianceOut, irradiance(cubemap, irradianceOut))
-
-        engine.flushAndWait()
-        irradiance.destroy()
-        specular.destroy()
-        toCubemap.destroy()
+                    filtered = specular(IBLPrefilterContext.SpecularFilter.Options(lodOffset = 2f), cubemap)
+                    assertTrue(engine.isValid(filtered))
+                    engine.destroy(specular(cubemap))
+                    // Given an output texture, the filters write into it and hand it back.
+                    irradianceOut = irradiance(cubemap)
+                    assertSame(irradianceOut, irradiance(cubemap, irradianceOut))
+                    val options = IBLPrefilterContext.IrradianceFilter.Options(lodOffset = 1f, generateMipmap = false)
+                    assertSame(irradianceOut, irradiance(options, cubemap, irradianceOut))
+                    engine.flushAndWait()
+                }
+            }
+        }
         context.destroy()
         engine.destroy(irradianceOut)
         engine.destroy(filtered)

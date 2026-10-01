@@ -167,8 +167,8 @@ class ManipulatorTest : UtilsTestFixture() {
         m.getLookAt(eye, FloatArray(3), FloatArray(3))
         assertTrue(eye[2] < 10f - 1e-3f)
         assertTrue(Bookmark.duration(home, moved) >= 0.0)
-        listOf(home, moved, halfway).forEach { it.destroy() }
-        m.destroy()
+        listOf(home, moved, halfway).forEach { it.close() }
+        m.close()
     }
 
     @Test
