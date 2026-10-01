@@ -126,10 +126,10 @@ per C++ class, and follows the C++ header:
 ## Checking coverage: `apiCoverage` and `apiGaps`
 
 `./gradlew apiCoverage` writes `c/api-coverage.txt`, one line per C function the C++ API calls for:
-`kotlin` (the public Kotlin API calls it), `c-only` (bound, but no Kotlin wrapper yet), `todo` (to
+`wrapped` (a public Kotlin wrapper calls it), `unwrapped` (bound, with an internal external, but no wrapper calls it yet), `todo` (to
 write by hand, with the reason) or `skipped` (left out on purpose). It's committed, so after an
 upgrade `git diff c/api-coverage.txt` shows what upstream added or removed and how far each got;
-`grep '^c-only'` is the Kotlin backlog. It also warns when the committed `c/*/generated` or `capi`
+`grep '^unwrapped'` is the Kotlin backlog. It also warns when the committed `c/*/generated` or `capi`
 files aren't what the generators would write now. It never fails the build. Changes to our public
 Kotlin API are `apiDump`'s: review the diff in each module's `api/`.
 
