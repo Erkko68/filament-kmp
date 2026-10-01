@@ -19,8 +19,9 @@ class ResourceLoaderTest : GltfioTestFixture() {
 
     @Test
     fun testNormalizeSkinningWeightsConstructor() {
-        // Not setConfiguration: it copies the unbound (deprecated) gltfPath into a std::string unguarded, so it aborts.
-        ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true)).use { }
+        ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true)).use { loader ->
+            loader.setConfiguration(ResourceConfiguration(engine, normalizeSkinningWeights = false))
+        }
     }
 
     @Test
