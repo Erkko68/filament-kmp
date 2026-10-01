@@ -235,6 +235,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.ios == 'true'
     runs-on: macos-26
+    timeout-minutes: 60 # a wedged simulator otherwise hangs until GitHub's 6 h limit
     steps:
       - uses: actions/checkout@v7
       # Real-backend (Metal) tests need a booted simulator with a graphics context (K/N's
@@ -259,7 +260,14 @@ jobs:
             --no-configuration-cache
       - name: Run iOS simulator tests
         run: |
-          xcrun simctl bootstatus "${{ steps.sim.outputs.device }}" -b || true
+          # bootstatus -b waits forever on a wedged simulator: give it 5 min (perl alarm; macOS has no timeout),
+          # then reboot it once.
+          DEV="${{ steps.sim.outputs.device }}"
+          if ! perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$DEV" -b; then
+            xcrun simctl shutdown "$DEV" || true
+            xcrun simctl boot "$DEV" || true
+            perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$DEV" -b
+          fi
           ./gradlew \
             :kotlin:filament:iosSimulatorArm64Test \
             :kotlin:filamat:iosSimulatorArm64Test \
