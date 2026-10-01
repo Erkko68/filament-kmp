@@ -20,8 +20,10 @@ package io.github.erkko68.filament.utils
 
 import kotlin.math.absoluteValue
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MatrixTest {
@@ -583,5 +585,105 @@ class MatrixTest {
          * is the @receiver integer.
          */
         private fun Int.floatArray() = FloatArray(this) { (it + 1).toFloat() }
+    }
+
+    private fun assertVecNear(expected: Float3, actual: Float3) =
+        assertTrue(length(expected - actual) < 1e-4f, "expected $expected, got $actual")
+
+    @Test
+    fun mat2AccessorsOperatorsAndComparisons() {
+        val m = Mat2.of(1f, 2f, 3f, 4f) // row-major: columns (1, 3) and (2, 4)
+        assertEquals(Float2(1f, 3f), m[0]); assertEquals(Float2(2f, 4f), m[MatrixColumn.Y]); assertEquals(3f, m[0, 1])
+        assertEquals(4f, m[MatrixColumn.Y, 1]); assertEquals(3f, m(2, 1)); assertEquals(m, Mat2(m)); assertEquals(Mat2(), Mat2.identity())
+        val n = Mat2(m); n[0] = Float2(5f, 6f); n[1, 1] = 7f; n(1, 2, 8f); assertEquals(Mat2(Float2(5f, 6f), Float2(8f, 7f)), n)
+        assertFailsWith<IllegalArgumentException> { m[2] }
+        assertEquals(Mat2.of(-1f, -2f, -3f, -4f), -m)
+        assertEquals(Mat2.of(2f, 3f, 4f, 5f), m + 1f); assertEquals(Mat2.of(0f, 1f, 2f, 3f), m - 1f)
+        assertEquals(Mat2.of(2f, 4f, 6f, 8f), m * 2f); assertEquals(Mat2.of(0.5f, 1f, 1.5f, 2f), m / 2f)
+        var i = m; i++; assertEquals(m + 1f, i); assertEquals(Mat2.of(1f, 2f, 3f, 4f), m); i--; assertEquals(m, i)
+        assertEquals(Float2(5f, 11f), m * Float2(1f, 2f))
+        assertEquals(Mat2.of(1f, 3f, 2f, 4f), transpose(m))
+        assertContentEquals(floatArrayOf(1f, 2f, 3f, 4f), m.toFloatArray()); assertContentEquals(floatArrayOf(1f, 3f, 2f, 4f), m.toFloatArrayColumn())
+        assertTrue(m.toString().isNotEmpty())
+        assertEquals(Mat2(Float2(-1f, 1f), Float2(0f, 1f)), m.compareTo(2f)); assertEquals(Mat2(Float2(0f, 0f), Float2(0f, 0f)), m.compareTo(m))
+        assertTrue(m.equals(m)); assertTrue(Mat2(Float2(2f), Float2(2f)).equals(2f)); assertFalse(m.equals(2f, delta = 0.5f))
+        assertEquals(Bool2(false, false), equal(m, 2f)); assertEquals(Bool2(true, true), equal(m, m))
+        assertEquals(Bool2(true, true), notEqual(m, 2f)); assertEquals(Bool2(false, false), notEqual(m, m, delta = 0.1f))
+    }
+
+    @Test
+    fun mat3AccessorsOperatorsAndComparisons() {
+        val m = Mat3.of(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f)
+        assertEquals(Float3(1f, 4f, 7f), m[0]); assertEquals(Float3(3f, 6f, 9f), m[MatrixColumn.Z]); assertEquals(4f, m[0, 1])
+        assertEquals(6f, m[MatrixColumn.Z, 1]); assertEquals(4f, m(2, 1)); assertEquals(m, Mat3(m))
+        val n = Mat3(m); n[0] = Float3(0f); n[1, 1] = 1f; n(3, 3, 2f); assertEquals(Mat3(Float3(0f), Float3(2f, 1f, 8f), Float3(3f, 6f, 2f)), n)
+        assertFailsWith<IllegalArgumentException> { m[3] }
+        assertEquals(-1f, (-m)[0, 0]); assertEquals(2f, (m + 1f)[0, 0]); assertEquals(0f, (m - 1f)[0, 0])
+        assertEquals(2f, (m * 2f)[0, 0]); assertEquals(0.5f, (m / 2f)[0, 0])
+        var i = m; i++; assertEquals(m + 1f, i); i--; assertEquals(m, i); assertEquals(1f, m[0, 0])
+        assertEquals(Float3(14f, 32f, 50f), m * Float3(1f, 2f, 3f))
+        assertEquals(m, transpose(transpose(m)))
+        assertContentEquals(floatArrayOf(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f), m.toFloatArray())
+        assertContentEquals(floatArrayOf(1f, 4f, 7f, 2f, 5f, 8f, 3f, 6f, 9f), m.toFloatArrayColumn())
+        assertTrue(m.toString().isNotEmpty())
+        assertEquals(Float3(-1f, 1f, 1f), m.compareTo(2f)[0]); assertEquals(Mat3(Float3(0f), Float3(0f), Float3(0f)), m.compareTo(m))
+        assertTrue(m.equals(m)); assertFalse(m.equals(2f))
+        assertEquals(Bool3(false, false, false), equal(m, 2f)); assertEquals(Bool3(true, true, true), equal(m, m))
+        assertEquals(Bool3(true, true, true), notEqual(m, 2f)); assertEquals(Bool3(false, false, false), notEqual(m, m))
+    }
+
+    @Test
+    fun mat4AccessorsOperatorsAndComparisons() {
+        val m = Mat4(Float3(1f, 0f, 0f), Float3(0f, 2f, 0f), Float3(0f, 0f, 3f), Float3(4f, 5f, 6f))
+        assertEquals(Float3(1f, 0f, 0f), m.right); assertEquals(Float3(0f, 2f, 0f), m.up)
+        assertEquals(Float3(0f, 0f, 3f), m.forward); assertEquals(Float3(4f, 5f, 6f), m.position)
+        assertEquals(Float4(4f, 5f, 6f, 1f), m[3]); assertEquals(Float4(4f, 5f, 6f, 1f), m[MatrixColumn.W]); assertEquals(5f, m[3, 1])
+        assertEquals(5f, m[MatrixColumn.W, 1]); assertEquals(5f, m(2, 4)); assertEquals(m, Mat4(m))
+        val n = Mat4(m)
+        n.right = Float3(2f, 0f, 0f); n.up = Float3(0f, 3f, 0f); n.forward = Float3(0f, 0f, 4f); n.position = Float3(1f)
+        n[3] = Float4(1f, 1f, 1f, 1f); n[0, 0] = 9f; n(4, 4, 2f)
+        assertEquals(Mat4(Float4(9f, 0f, 0f, 0f), Float4(0f, 3f, 0f, 0f), Float4(0f, 0f, 4f, 0f), Float4(1f, 1f, 1f, 2f)), n)
+        assertFailsWith<IllegalArgumentException> { m[4] }
+        assertEquals(-1f, (-m)[0, 0]); assertEquals(2f, (m + 1f)[0, 0]); assertEquals(0f, (m - 1f)[0, 0])
+        assertEquals(2f, (m * 2f)[0, 0]); assertEquals(0.5f, (m / 2f)[0, 0])
+        var i = m; i++; assertEquals(m + 1f, i); i--; assertEquals(m, i); assertEquals(1f, m[0, 0])
+        assertEquals(Float4(5f, 7f, 9f, 1f), m * Float4(1f, 1f, 1f, 1f))
+        assertEquals(m, transpose(transpose(m))); assertEquals(Float4(4f, 5f, 6f, 1f), transpose(m).let { Float4(it[0, 3], it[1, 3], it[2, 3], it[3, 3]) })
+        assertEquals(Float4(-1f, -1f, -1f, -1f), m.compareTo(2f)[0]); assertEquals(Mat4(Float4(0f), Float4(0f), Float4(0f), Float4(0f)), m.compareTo(m))
+        assertTrue(m.equals(m)); assertFalse(m.equals(2f))
+        assertEquals(Bool4(false, false, false, false), equal(m, 2f)); assertEquals(Bool4(true, true, true, true), equal(m, m))
+        assertEquals(Bool4(true, true, true, true), notEqual(m, 2f)); assertEquals(Bool4(false, false, false, false), notEqual(m, m))
+    }
+
+    @Test
+    fun eulerAnglesRoundTripInEveryOrder() {
+        for (order in RotationsOrder.entries) {
+            val angles = Float3().apply { this[order.yaw] = 30f; this[order.pitch] = 20f; this[order.roll] = 10f }
+            val m = rotation(angles, order)
+            assertVecNear(angles, eulerAngles(m, order))
+            assertVecNear(angles, m.toEulerAngles(order))
+            // The matrix and its quaternion rotate vectors the same way.
+            val v = Float3(1f, 2f, 3f)
+            assertVecNear((m * Float4(v, 0f)).xyz, m.toQuaternion() * v)
+            assertVecNear((m * Float4(v, 0f)).xyz, quaternion(m) * v)
+        }
+        // Pitch at ±90° locks the gimbal: roll folds into yaw and still reproduces the matrix.
+        for (order in RotationsOrder.entries) {
+            val angles = Float3().apply { this[order.yaw] = 30f; this[order.pitch] = 90f }
+            val m = rotation(angles, order)
+            val v = Float3(1f, 2f, 3f)
+            assertVecNear((m * Float4(v, 0f)).xyz, (rotation(eulerAngles(m, order), order) * Float4(v, 0f)).xyz)
+        }
+    }
+
+    @Test
+    fun lookAtAndLookTowardsPlaceTheCamera() {
+        val eye = Float3(0f, 0f, 5f)
+        val m = lookAt(eye, Float3(0f), Float3(0f, 1f, 0f))
+        assertEquals(eye, m.position)
+        assertVecNear(Float3(0f, 0f, 1f), m.forward) // the camera looks down its -forward axis
+        assertVecNear(Float3(0f, 1f, 0f), m.up)
+        val t = lookTowards(eye, Float3(0f, 0f, -1f), Float3(0f, 1f, 0f))
+        assertVecNear(m.forward, t.forward); assertEquals(eye, t.position)
     }
 }

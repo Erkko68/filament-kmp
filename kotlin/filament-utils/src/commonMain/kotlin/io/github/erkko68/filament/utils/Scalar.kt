@@ -18,6 +18,7 @@
 
 package io.github.erkko68.filament.utils
 
+import kotlin.math.floor
 import kotlin.math.pow
 
 /** π as a Float. */
@@ -126,9 +127,9 @@ inline fun radians(v: Float) = v * (FPI / 180.0f)
  * Returns the fractional part of [v].
  *
  * @param v the input value
- * @return `v % 1`
+ * @return `v - floor(v)`, in [0, 1) also for negative [v] (as GLSL's `fract`)
  */
-inline fun fract(v: Float) = v % 1
+inline fun fract(v: Float) = v - floor(v)
 
 /**
  * Returns [v] squared.

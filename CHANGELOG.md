@@ -57,6 +57,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED` (`filament`).
 - **`MorphTargetBuffer.setPositionsAt` reads 3 floats per vertex**, not 4 (`filament`).
 - **Compose leaked a `ToneMapper` per color grade** (`filament-compose`).
+- **Vector and matrix math fixes** (`filament-utils`): `++`/`--` no longer mutate their operand, `Float4 * Float3` keeps `z`, `equal`/`compareTo` match exact values at `delta = 0`, and `fract` follows GLSL for negatives.
 - **`rememberMapCameraController` didn't work**: its eye sat on the target and drags never panned; it now looks down on the XZ plane, north up (`filament-compose`).
 - **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph weights, gltfio instance queries, shadow options, `customLut`, `geometryType` and more now work on web.
 
