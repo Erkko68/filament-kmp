@@ -1,6 +1,5 @@
 package buildlogic.apigen.gaps
 
-import buildlogic.apigen.cpp.ClangAstDump
 import buildlogic.apigen.cpp.CppApiReader
 import buildlogic.apigen.relativeHeaders
 import org.gradle.api.DefaultTask
@@ -43,7 +42,7 @@ abstract class ApiGapsTask @Inject constructor(private val exec: ExecOperations)
     fun run() {
         val nm = SymbolReader(exec)
         val include = includeDir.get().asFile
-        val headers = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir)
+        val headers = CppApiReader(exec, temporaryDir)
             .read(include, relativeHeaders(publicHeaders.files, include)).headerApi()
         val demangler = Demangler(exec)
         val headerMethods = demangler.demangle(headers.methods)

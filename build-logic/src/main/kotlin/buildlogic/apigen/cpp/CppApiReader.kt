@@ -1,10 +1,12 @@
 package buildlogic.apigen.cpp
 
+import org.gradle.process.ExecOperations
 import java.io.File
 import java.math.BigInteger
 
 /** Builds a [CppApi] from clang's AST of [headers]; nothing here parses C++ itself. */
-internal class CppApiReader(private val ast: ClangAstDump, private val workDir: File) {
+internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
+    private val ast = ClangAstDump(exec, workDir)
     private val scopes = CppScopes()
     private val records = LinkedHashMap<String, CppRecord>()
     private val enums = LinkedHashMap<String, CppEnum>()

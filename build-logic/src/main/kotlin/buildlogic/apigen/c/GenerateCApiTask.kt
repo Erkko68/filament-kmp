@@ -1,7 +1,6 @@
 package buildlogic.apigen.c
 
 import buildlogic.apigen.ApiHeaders
-import buildlogic.apigen.cpp.ClangAstDump
 import buildlogic.apigen.cpp.CppApiReader
 import buildlogic.apigen.relativeHeaders
 import org.gradle.api.DefaultTask
@@ -51,7 +50,7 @@ abstract class GenerateCApiTask @Inject constructor(private val exec: ExecOperat
         val include = includeDir.get().asFile
         val headers = relativeHeaders(publicHeaders.files, include)
         val apiHeaders = ApiHeaders.parse(apiHeadersFile.get().asFile.readText())
-        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers).skipping(apiHeaders.skipped)
+        val api = CppApiReader(exec, temporaryDir).read(include, headers).skipping(apiHeaders.skipped)
         api.unknownSkips().takeIf { it.isNotEmpty() }?.let { throw GradleException("api-headers.txt skips unknown declarations: $it") }
         val c = cDir.get().asFile
         // Functions c/<module>/manual already writes by hand, so their TODOs say so instead.

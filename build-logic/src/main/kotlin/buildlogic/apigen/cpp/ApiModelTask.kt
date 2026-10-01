@@ -29,7 +29,7 @@ abstract class ApiModelTask @Inject constructor(private val exec: ExecOperations
     fun run() {
         val include = includeDir.get().asFile
         val headers = relativeHeaders(publicHeaders.files, include)
-        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers)
+        val api = CppApiReader(exec, temporaryDir).read(include, headers)
         val surface = api.surface(headers)
         val unresolved = sortedSetOf<String>()
         val unsupported = sortedSetOf<String>()

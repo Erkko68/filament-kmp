@@ -54,8 +54,8 @@ fun Project.registerApiGenTasks() {
         apiHeadersFile.set(apiHeadersFile())
         modules.set(apiHeaders().modules.keys.toList())
         cDir.set(root.dir("c"))
-        // Its TODOs note the functions these already write.
-        inputs.files(root.dir("c").asFileTree.matching { include("*/manual/*.h") }).withPathSensitivity(PathSensitivity.RELATIVE)
+        // Its TODOs note the functions these already write; the forwarders it compiles include FilaBridge.hpp.
+        inputs.files(root.dir("c").asFileTree.matching { include("*/manual/*.h", "*/manual/*.hpp") }).withPathSensitivity(PathSensitivity.RELATIVE)
     }
 
     tasks.register<GenerateKotlinExternalsTask>("generateKotlinExternals") {
