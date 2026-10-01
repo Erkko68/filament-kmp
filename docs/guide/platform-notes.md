@@ -104,9 +104,6 @@ Each platform's `libfilament-c` (`.dll`, `.dylib`, `.so`) ships in its `filament
 
 ## Web / WASM
 
-> [!WARNING]
-> The web target is **experimental** and not feature-complete.
-
 ### filament-kmp.js and WASM bundle
 
 The web targets call the same C API as JVM and iOS (`c/`), compiled with Emscripten into
