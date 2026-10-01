@@ -1279,6 +1279,7 @@ public final class io/github/erkko68/filament/MaterialInstance {
 	public final fun getNativeObject ()J
 	public final fun getParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$FloatElement;)[F
 	public final fun getParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$IntElement;)[I
+	public final fun getParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$UIntElement;)[I
 	public final fun getShadowCullingMode ()Lio/github/erkko68/filament/Material$CullingMode;
 	public final fun getSpecularAntiAliasingThreshold ()F
 	public final fun getSpecularAntiAliasingVariance ()F
@@ -1310,6 +1311,7 @@ public final class io/github/erkko68/filament/MaterialInstance {
 	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$BooleanElement;[ZII)V
 	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$FloatElement;[FII)V
 	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$IntElement;[III)V
+	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/MaterialInstance$UIntElement;[III)V
 	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/RgbType;FFF)V
 	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/RgbaType;FFFF)V
 	public final fun setParameter (Ljava/lang/String;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/TextureSampler;)V
@@ -1317,6 +1319,10 @@ public final class io/github/erkko68/filament/MaterialInstance {
 	public final fun setParameter (Ljava/lang/String;ZZ)V
 	public final fun setParameter (Ljava/lang/String;ZZZ)V
 	public final fun setParameter (Ljava/lang/String;ZZZZ)V
+	public final fun setParameter-7IvYBaQ (Ljava/lang/String;III)V
+	public final fun setParameter-BltQuoY (Ljava/lang/String;II)V
+	public final fun setParameter-Dk9Dpv4 (Ljava/lang/String;IIII)V
+	public final fun setParameter-Qn1smSk (Ljava/lang/String;I)V
 	public final fun setPolygonOffset (FF)V
 	public final fun setScissor (IIII)V
 	public final fun setSpecularAntiAliasingThreshold (F)V
@@ -1399,6 +1405,16 @@ public final class io/github/erkko68/filament/MaterialInstance$StencilOperation 
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/MaterialInstance$StencilOperation;
 	public static fun values ()[Lio/github/erkko68/filament/MaterialInstance$StencilOperation;
+}
+
+public final class io/github/erkko68/filament/MaterialInstance$UIntElement : java/lang/Enum {
+	public static final field UINT Lio/github/erkko68/filament/MaterialInstance$UIntElement;
+	public static final field UINT2 Lio/github/erkko68/filament/MaterialInstance$UIntElement;
+	public static final field UINT3 Lio/github/erkko68/filament/MaterialInstance$UIntElement;
+	public static final field UINT4 Lio/github/erkko68/filament/MaterialInstance$UIntElement;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/MaterialInstance$UIntElement;
+	public static fun values ()[Lio/github/erkko68/filament/MaterialInstance$UIntElement;
 }
 
 public final class io/github/erkko68/filament/MorphTargetBuffer {

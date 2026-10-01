@@ -53,6 +53,13 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      */
     enum class IntElement { INT, INT2, INT3, INT4 }
     /**
+     * Element types for unsigned integer parameter arrays, passed as [IntArray] bit patterns.
+     *
+     * - UINT: Single 32-bit unsigned integer
+     * - UINT2/UINT3/UINT4: 2, 3, or 4 component unsigned integer vectors
+     */
+    enum class UIntElement { UINT, UINT2, UINT3, UINT4 }
+    /**
      * Element types for floating-point parameter arrays.
      *
      * - FLOAT: Single 32-bit float
@@ -120,24 +127,38 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param x Integer value
      */
     fun setParameter(name: String, x: Int) { name.useCString { FilaMaterialInstance_setParameter_int32_t(nativeHandle, it, x) } }
+    /**
+     * Sets an unsigned integer parameter.
+     * @param name Parameter name as defined in the material
+     * @param x Unsigned integer value
+     */
+    fun setParameter(name: String, x: UInt) { name.useCString { FilaMaterialInstance_setParameter_uint32_t(nativeHandle, it, x.toInt()) } }
     /** Sets a 2-component boolean vector parameter. */
     fun setParameter(name: String, x: Boolean, y: Boolean) = setParameter(name, BooleanElement.BOOL2, booleanArrayOf(x, y), 0, 1)
     /** Sets a 2-component float vector parameter. */
     fun setParameter(name: String, x: Float, y: Float) = setParameter(name, FloatElement.FLOAT2, floatArrayOf(x, y), 0, 1)
     /** Sets a 2-component integer vector parameter. */
     fun setParameter(name: String, x: Int, y: Int) = setParameter(name, IntElement.INT2, intArrayOf(x, y), 0, 1)
+    /** Sets a 2-component unsigned integer vector parameter. */
+    fun setParameter(name: String, x: UInt, y: UInt) = setParameter(name, UIntElement.UINT2, intArrayOf(x.toInt(), y.toInt()), 0, 1)
     /** Sets a 3-component boolean vector parameter. */
     fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) = setParameter(name, BooleanElement.BOOL3, booleanArrayOf(x, y, z), 0, 1)
     /** Sets a 3-component float vector parameter. */
     fun setParameter(name: String, x: Float, y: Float, z: Float) = setParameter(name, FloatElement.FLOAT3, floatArrayOf(x, y, z), 0, 1)
     /** Sets a 3-component integer vector parameter. */
     fun setParameter(name: String, x: Int, y: Int, z: Int) = setParameter(name, IntElement.INT3, intArrayOf(x, y, z), 0, 1)
+    /** Sets a 3-component unsigned integer vector parameter. */
+    fun setParameter(name: String, x: UInt, y: UInt, z: UInt) =
+        setParameter(name, UIntElement.UINT3, intArrayOf(x.toInt(), y.toInt(), z.toInt()), 0, 1)
     /** Sets a 4-component boolean vector parameter. */
     fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean, w: Boolean) = setParameter(name, BooleanElement.BOOL4, booleanArrayOf(x, y, z, w), 0, 1)
     /** Sets a 4-component float vector parameter. */
     fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) = setParameter(name, FloatElement.FLOAT4, floatArrayOf(x, y, z, w), 0, 1)
     /** Sets a 4-component integer vector parameter. */
     fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) = setParameter(name, IntElement.INT4, intArrayOf(x, y, z, w), 0, 1)
+    /** Sets a 4-component unsigned integer vector parameter. */
+    fun setParameter(name: String, x: UInt, y: UInt, z: UInt, w: UInt) =
+        setParameter(name, UIntElement.UINT4, intArrayOf(x.toInt(), y.toInt(), z.toInt(), w.toInt()), 0, 1)
 
     /**
      * Sets a texture parameter with sampler configuration.
@@ -193,6 +214,27 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
                     IntElement.INT2 -> FilaMaterialInstance_setParameter_int2_size_t(nativeHandle, it, p, count)
                     IntElement.INT3 -> FilaMaterialInstance_setParameter_int3_size_t(nativeHandle, it, p, count)
                     IntElement.INT4 -> FilaMaterialInstance_setParameter_int4_size_t(nativeHandle, it, p, count)
+                }
+            }
+        }
+    }
+    /**
+     * Sets a parameter from an unsigned integer array.
+     *
+     * @param name Parameter name as defined in the material
+     * @param element Array element type (UINT, UINT2, UINT3, or UINT4)
+     * @param v Source array of bit patterns, flattened
+     * @param offset Index into v to start copying from
+     * @param count Number of elements to copy
+     */
+    fun setParameter(name: String, element: UIntElement, v: IntArray, offset: Int, count: Int) {
+        v.copyOfRange(offset, v.size).usePinned { p ->
+            name.useCString {
+                when (element) {
+                    UIntElement.UINT -> FilaMaterialInstance_setParameter_uint32_t_size_t(nativeHandle, it, p, count)
+                    UIntElement.UINT2 -> FilaMaterialInstance_setParameter_uint2_size_t(nativeHandle, it, p, count)
+                    UIntElement.UINT3 -> FilaMaterialInstance_setParameter_uint3_size_t(nativeHandle, it, p, count)
+                    UIntElement.UINT4 -> FilaMaterialInstance_setParameter_uint4_size_t(nativeHandle, it, p, count)
                 }
             }
         }
@@ -277,6 +319,21 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
             IntElement.INT2 -> IntArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_int2(nativeHandle, it, o) } }
             IntElement.INT3 -> IntArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_int3(nativeHandle, it, o) } }
             IntElement.INT4 -> IntArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_int4(nativeHandle, it, o) } }
+        }
+    }
+    /**
+     * Gets the value of an unsigned integer parameter.
+     *
+     * @param name Parameter name as defined in the material
+     * @param element Parameter type (UINT, UINT2, UINT3, or UINT4)
+     * @return The value's components, as bit patterns
+     */
+    fun getParameter(name: String, element: UIntElement): IntArray = name.useCString {
+        when (element) {
+            UIntElement.UINT -> intArrayOf(FilaMaterialInstance_getParameter_uint32_t(nativeHandle, it))
+            UIntElement.UINT2 -> IntArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_uint2(nativeHandle, it, o) } }
+            UIntElement.UINT3 -> IntArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_uint3(nativeHandle, it, o) } }
+            UIntElement.UINT4 -> IntArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_uint4(nativeHandle, it, o) } }
         }
     }
 

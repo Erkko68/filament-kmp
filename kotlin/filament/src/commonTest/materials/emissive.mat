@@ -7,7 +7,9 @@ material {
     shadingModel : unlit,
     parameters : [
         { type : float3, name : color },
-        { type : float,  name : intensity }
+        { type : float,  name : intensity },
+        { type : uint,   name : flags },
+        { type : uint3,  name : ids }
     ]
 }
 
