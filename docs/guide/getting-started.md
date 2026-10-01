@@ -140,8 +140,8 @@ Frames reach Compose through a CPU readback by default; to keep them on the GPU,
 
 ### Web / WASM
 
-> [!WARNING]
-> The web target is **experimental**. The API matches the other platforms; the remaining limits come from WebGL and single-threaded wasm (see [Platform Notes](platform-notes.md#web--wasm)).
+> [!NOTE]
+> The web API matches the other platforms; the remaining limits come from WebGL and single-threaded wasm (see [Platform Notes](platform-notes.md#web--wasm)).
 
 Enable the experimental Compose JS canvas flag:
 
