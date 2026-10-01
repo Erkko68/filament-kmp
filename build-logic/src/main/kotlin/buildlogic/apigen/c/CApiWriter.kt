@@ -20,6 +20,11 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private val surface = api.surface(headers)
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
+    /** After [write]: each C function the C++ API calls for, bound or not. */
+    val bindings = ArrayList<Binding>()
+
+    /** C function [c] for the C++ [cpp]; [gap] is null once bound (generated or in manual/), else `todo: …` or `skipped: …`. */
+    class Binding(val c: String, val cpp: String, val gap: String?)
     private val files = LinkedHashMap<String, Section>()
     /** One generated header and its forwarders. */
     private class Section(val module: String) {
@@ -64,7 +69,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val cpp = bridges.cpp(record.name)
         if (rules.creates(record)) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
-            skipped.forEach { section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), "")) }
+            skipped.forEach {
+                section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), ""))
+                bindings += Binding(CNames.function(record.name, "create"), "${record.name}(${spelled(it)})", "skipped: ${api.skipReason(it)}")
+            }
             constructors.zip(suffixes(constructors.map { ctor -> ctor.map { it.type.spelling } })).forEach { (params, suffix) ->
                 val name = CNames.function(record.name, "create", suffix)
                 emit(name, "$cpp(${spelled(params)})", section) {
@@ -82,15 +90,21 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             val baseType = CNames.type(base.name)
             val name = "${self}_as${baseType.removePrefix("Fila")}"
             val baseCpp = bridges.cpp(base.name)
-            emit(name, "static_cast<$baseCpp*>", section) {
+            emit(name, "${record.name} as ${base.name}", section) {
                 "$baseType* $name($self* self)" to "return fila::c(static_cast<$baseCpp*>(fila::cpp(self)));"
             }
         }
         val (skipped, methods) = rules.methods(record).partition { api.skipReason(it, record.name) != null }
-        skipped.forEach { section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}")) }
+        skipped.forEach {
+            section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}"))
+            bindings += Binding(CNames.function(record.name, it.name), signature(it), "skipped: ${api.skipReason(it, record.name)}")
+        }
         overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
         rules.fields(record).forEach { f ->
-            api.skipReason(f, record.name)?.let { section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}")) } ?: field(record, f, section)
+            api.skipReason(f, record.name)?.let {
+                section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}"))
+                bindings += Binding("${CNames.type(record.name)}_get${f.name.replaceFirstChar(Char::uppercaseChar)}", "${f.type.spelling} ${record.name}::${f.name}", "skipped: $it")
+            } ?: field(record, f, section)
         }
         if (section.declarations.isEmpty()) return
         file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
@@ -118,7 +132,10 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                 val name = baseName(overload.method) + if (suffix.isEmpty()) "" else "_$suffix"
                 emit(name, signature(overload.method), section, overload.method.guard) { forwarder(overload.method, name, overload.templateArguments) }
             }
-            unlisted.forEach { section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations") }
+            unlisted.forEach {
+                section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations")
+                bindings += Binding(baseName(it), "template ${signature(it)}", "todo: FUNCTION_INSTANTIATIONS lists no instantiations")
+            }
         }
     }
 
@@ -154,6 +171,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val setter = "${self}_set$accessor"
         if (rules.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
+            bindings += Binding(setter, cpp, "skipped: ${record.name} is only a result, and C would have to keep the pointer")
             return
         }
         if (setter !in functionNames) emit(setter, cpp, section) {
@@ -174,9 +192,11 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             section.declarations.appendLine("$signature;")
             val guarded = if (guard == null) "    $body" else "#if $guard\n    $body\n#else\n    fila::unavailable(\"$name\");\n#endif"
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
+            bindings += Binding(name, cpp, null)
         } catch (e: Unsupported) {
             val note = if (name in manual) "handwritten in manual/" else "TODO(handwritten)"
             section.declarations.appendLine("// $note $name: $cpp\n//     ${e.message}")
+            bindings += Binding(name, cpp, if (name in manual) null else "todo: ${e.message}")
         }
     }
 

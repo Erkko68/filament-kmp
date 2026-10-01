@@ -3,6 +3,7 @@ package buildlogic.apigen
 import buildlogic.apigen.c.GenerateCApiTask
 import buildlogic.apigen.cpp.ApiModelTask
 import buildlogic.apigen.externals.GenerateBindingsTask
+import buildlogic.apigen.gaps.ApiCoverageTask
 import buildlogic.apigen.gaps.ApiGapsTask
 import buildlogic.apigen.kotlin.GenerateKotlinExternalsTask
 import buildlogic.cmake.registerCApiBuild
@@ -32,7 +33,8 @@ private val GENERATED_MODULES = mapOf(
  * c/           CppApi → c/<module>/generated                       generateCApi    (committed)
  * kotlin/      c/<module>/{generated,manual} → Kotlin externals     generateKotlinExternals (committed)
  * externals/   common Kotlin externals → JNI forwarders, wasm tables  generateBindings (build/)
- * gaps/        C++ API the C API doesn't call                         apiGaps  (report)
+ * gaps/        what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
+ *              C++ API the C API's objects don't call                 apiGaps  (report)
  * ```
  */
 fun Project.registerApiGenTasks() {
@@ -77,6 +79,18 @@ fun Project.registerApiGenTasks() {
         cDir.set(root.dir("c"))
         wasmRuntimes.put("filamat", "filamat-kmp")
         outputDir.set(layout.buildDirectory.dir("generated/bindings"))
+    }
+
+    tasks.register<ApiCoverageTask>("apiCoverage") {
+        group = "verification"
+        description = "Writes c/api-coverage.txt: what of the C++ API the C and Kotlin APIs bind; warns on stale generated code."
+        includeDir.set(root.dir("include"))
+        publicHeaders.from(apiHeaderFiles())
+        apiHeadersFile.set(apiHeadersFile())
+        cDir.set(root.dir("c"))
+        kotlinDir.set(root.dir("kotlin"))
+        packages.set(GENERATED_MODULES)
+        report.set(root.file("c/api-coverage.txt"))
     }
 
     if (hostPlatform() == "windows") return // nm can't read MSVC objects

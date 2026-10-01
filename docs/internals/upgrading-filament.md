@@ -30,7 +30,7 @@ time, Native calls the C symbol directly, and web finds it in the wasm exports.
   the same `Fila*` functions, so there is no separate per-platform surface to audit.
 - **Our C API → the Kotlin externals.** Every `Fila*` function gets a common `external fun`.
 
-`./gradlew apiGaps` audits both.
+`./gradlew apiCoverage` audits both, and what of the C API the public Kotlin API calls.
 
 ---
 
@@ -48,7 +48,7 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 
 # 4. Regenerate the C API and the Kotlin externals, then review their diff
 ./gradlew generateCApi generateKotlinExternals
-./gradlew apiGaps                                        # C++ API missing from c/, Fila* missing from Kotlin
+./gradlew apiCoverage                                    # then git diff c/api-coverage.txt: what's new, bound, unbound
 
 # 5. Adapt the Kotlin API (per-layer recipe below), update tests
 scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
@@ -121,7 +121,8 @@ per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and
 
 ```sh
 ./gradlew generateCApi generateKotlinExternals
-./gradlew apiGaps    # writes build/reports/api-gaps.txt
+./gradlew apiCoverage    # rewrites c/api-coverage.txt; review its diff
+./gradlew apiGaps        # cross-check by symbol: build/reports/api-gaps.txt
 ```
 
 Review the diff in `c/*/generated/` and the `capi/` packages: it is the whole C-level change of the
