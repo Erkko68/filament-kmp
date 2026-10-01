@@ -16,60 +16,22 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ## [0.7.0] — 2026-10-01
 
 > [!WARNING]
-> **Source-breaking release** — every platform now runs on one C API generated from Filament's C++ headers, and the Kotlin API follows the C++ API instead of Android's Java. Follow the **[migration guide](docs/migration/from-0.6.0.md)**.
->
-> **Web setup changed** — `filament.js`/`filament.wasm` are replaced by `filament-kmp.js`/`.wasm` (plus optional `filamat-kmp.*`) from each GitHub release. See [Getting Started → Web](docs/guide/getting-started.md#web--wasm).
->
-> **Desktop needs only JDK 17** — the runtime moved from `io.github.erkko68.filament-ffm` to `io.github.erkko68.filament:filament-jni-*`; update any runtime you depend on directly.
+> **Source-breaking release.** Follow the **[migration guide](docs/migration/from-0.6.0.md)**; it lists every API change, addition and fix.
 
 ### Changed
-- **Compose Multiplatform 1.12.1, Kotlin 2.4.20** (`filament-compose`): consumers resolve Compose 1.12.1 transitively; skiko stays 0.150.1.
-- **One C API on every platform, generated from Filament's C++ headers**: Android, iOS, desktop and web call the same `Fila*` functions, so the API and its behavior match everywhere — see [The Generated C API](docs/internals/c-api.md).
-- **The Kotlin API follows Filament's C++ API** (`filament`, `gltfio`, `filament-utils`, `filamat`, **source-breaking**): C++'s names, owners, overloads and defaults — see the [migration guide](docs/migration/from-0.6.0.md#3-api-renames).
-- **`destroy(x)` / `isValid(x)` overloads replace `destroyX` / `isValidX`** on `Engine` (`filament`, **source-breaking**); `destroy(entity)` destroys only its components, as in C++.
-- **`Options.h` structs and enums are top-level** (`filament`, **source-breaking**): `View.BloomOptions` → `BloomOptions`, `View.Quality` → `QualityLevel`, and the rest.
-- **Failures return null** (`filament`): `Engine.create`, `Engine.Builder.build`, `Material.Builder.build` (non-`.filamat` payloads), `SurfaceOrientation.Builder.build`, `Engine.getFeatureFlag`.
-- **`Colors` is `Color`** with top-level `RgbType`/`RgbaType`, and its conversions no longer modify their input (`filament`).
-- **`Camera` returns C++'s types** (`filament`): `Double` `near`/`cullingFar`/`getPosition`, `Float` FOV, `DoubleArray`-only matrices.
-- **C++ defaults** (`filament`, behavior-changing): `ShadowOptions.lispsm = true` (also compose `ShadowConfig`), `TextureSampler` `NEAREST`/`CLAMP_TO_EDGE`, stencil `face = FRONT_AND_BACK`, tone mapper constructors.
-- **gltfio follows its C++ API** (`gltfio`): `AssetLoader.create(AssetConfiguration)`, `ResourceLoader(ResourceConfiguration)` with explicit `addTextureProvider`, `create*Provider` factories, per-index name getters, `Aabb` bounding boxes.
-- **filament-utils follows its C++ API** (`filament-utils`): `Ktx1Reader`/`Ktx1Bundle` replace `KTX1Loader`, `IBLPrefilterContext` nests its filters, top-level `Mode`/`Fov`/`Bookmark`.
-- **filamat follows its C++ API** (`filamat`): `MaterialBuilder.init()`/`shutdown()` replace the `Filamat` object, `parameter(name, …)` replaces `uniformParameter`/`samplerParameter`, `MaterialPackage.data` replaces `buffer`.
-- **Android runs on our C API over JNI** (`filament-jni` + `filament-jni-android`, `libfilament-c.so` per ABI) instead of upstream's `filament-android`/`gltfio-android`/`filament-utils-android`/`filamat-android`.
-- **Web runs on our C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` holds the runtime (package `io.github.erkko68.filament.wasm`).
-- **Desktop runs on JNI instead of Project Panama (FFM)**: `filament-jni-desktop` + `filament-jni-runtime-<os>-<arch>`, `NativeSurface` takes a `Long` window handle, JVM floor 22 → **17**.
-- **`nativeObject` is the C handle on every platform** (`Long`; `Int` on web), not an upstream Java or JS object.
+- **The API is generated from Filament's C++ headers**: every platform calls one `Fila*` C API, and the Kotlin API follows C++'s names, owners and defaults — see [The Generated C API](docs/internals/c-api.md).
+- **Web runs on our own wasm runtime**: replace `filament.js`/`.wasm` with `filament-kmp.js`/`.wasm` from the GitHub release — see [Getting Started → Web](docs/guide/getting-started.md#web--wasm).
+- **Android no longer uses upstream's AARs**: it runs on the same C API over JNI.
+- **Improved CPU readback on Compose Desktop** (the default): each frame reads back through `Renderer` into its own Skia image.
 
 ### Added
-- **Filament C++ API not bound before, on every platform** (`filament`): `Engine.createAsync`, object counts and `defaultMaterial`, `Renderer.getFrameInfoHistory`, `RenderableManager.computeAABB`, `Exposure`, `FramePacer`, `FramePipelineEstimator`, `FrameHistoryStream`, `InstanceBuffer`, async calls (`runCommandAsync`, builder `async`, `set*Async`), `ColorGrading.Builder.outputColorSpace` with `ColorSpace`, `MaterialInstance.setConstant`/`compile`/`commit` and unsigned (`uint`…`uint4`) parameters, `Camera.getEyeFromViewMatrix`, `RenderTarget.Builder.multiview`, builder `name()`, `isCreationComplete` and more.
-- **gltfio additions** (`gltfio`): `detachFilamentComponents`, `recomputeBoundingBoxes`, `detachMaterialInstances`, `addEntitiesToScene`, `MaterialKey` specular/volume/dispersion fields.
-- **`Ktx2Reader`, `TangentSpaceMesh` (with `aux`/`getAux`), `Transcoder`, `IBLPrefilterContext.IrradianceFilter` and `Manipulator.getRay`** (`filament-utils`).
-- **The rest of filamat's `MaterialBuilder`** (`filamat`): `constant`, sampler `filterable`/`multisample`/`stages`, `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `stereoscopic*`, `output`, compute materials (`MaterialDomain.COMPUTE`, `groupSize`) and more.
-- **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `MaterialBuilder.initJs`.
-- **Experimental GPU-to-GPU frame sharing on Compose Desktop** (`filament-compose`): `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` skips the per-frame CPU readback on macOS, Windows and Linux.
-- **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` pauses the render loop and keeps the last frame.
-- **JVM runtime for Windows on ARM**: `filament-jni-runtime-windows-arm64`.
-- **Runtime Material sample** scene compiling shaders with filamat.
-- **API generator** (build): `generateCApi`, `generateKotlinExternals` and `apiGaps` replace the hand-written C layer and `check-common-api.sh`.
+- **Windows on ARM** desktop runtime (`filament-jni-runtime-windows-arm64`); desktop now needs only JDK 17.
+- **Experimental GPU-to-GPU frame sharing on Compose Desktop** (macOS, Windows, Linux): opt in with `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled`.
+- **`renderingEnabled` on `FilamentView` / `FilamentSceneView`**: `false` stops rendering and keeps the last frame.
 
 ### Fixed
-- **Filament panics say why on desktop and Android**: the message and native call stack are logged (stderr / logcat, and Android's crash-report abort message) before the process aborts, instead of only `uncaught exception of type utils::PreconditionPanic`.
-- **Compose teardown no longer aborts the app** in a `LazyColumn` or other subcomposition, on a discarded composition, a glTF asset leaving mid-load, or a resized `rememberRenderTargetTexture`. Reported by [@kdroidFilter](https://github.com/kdroidFilter) in [#166](https://github.com/Erkko68/filament-kmp/pull/166).
-- **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform.
-- **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED` (`filament`).
-- **`MorphTargetBuffer.setPositionsAt` reads 3 floats per vertex**, not 4 (`filament`).
-- **Compose leaked a `ToneMapper` per color grade** (`filament-compose`).
-- **Vector and matrix math fixes** (`filament-utils`): `++`/`--` no longer mutate their operand, `Float4 * Float3` keeps `z`, `equal`/`compareTo` match exact values at `delta = 0`, and `fract` follows GLSL for negatives.
-- **`rememberMapCameraController` didn't work**: its eye sat on the target and drags never panned; it now looks down on the XZ plane, north up (`filament-compose`).
-- **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph weights, gltfio instance queries, shadow options, `customLut`, `geometryType` and more now work on web.
-
-### Removed
-- **`io.github.erkko68.filament-ffm` artifacts**, the embind externals in `io.github.erkko68.filament.web` and `downloadPrebuilts_web`.
-- **API with no C++ counterpart** (`filament`): `VertexAttribute.UNUSED`, `SurfaceOrientation.getQuatsAsShort`, `Scene.getEntities`/`removeEntity` aliases, `Renderer` display-info and frame-rate getters.
-
-### Migration from `0.6.0`
-
-No material rebuild (still Filament 1.77.1). Update the web runtime files and any directly declared desktop runtime, then follow the **[migration guide](docs/migration/from-0.6.0.md)**: `filament-compose`-only apps mostly need the setup steps; direct binding users get mechanical renames the compiler points to.
+- **Compose manages the Filament lifecycle correctly**: views work inside a `LazyColumn` and other subcompositions, and teardown no longer aborts the app. Reported by [@kdroidFilter](https://github.com/kdroidFilter) in [#166](https://github.com/Erkko68/filament-kmp/pull/166).
+- **Filament panics log their reason** (message and native stack) on desktop and Android before aborting, instead of failing silently.
 
 ## [0.6.0] — 2026-09-25
 

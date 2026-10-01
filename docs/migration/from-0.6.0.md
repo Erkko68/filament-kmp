@@ -10,6 +10,8 @@ This release changes how the library works underneath and, as a result, part of 
 
 The Filament version is unchanged (1.77.1), so your `.filamat` files keep working.
 
+This guide is the full list of changes in 0.7.0; the [changelog](../../CHANGELOG.md) has the summary.
+
 ## What you need to do
 
 | You use | Steps |
@@ -23,6 +25,11 @@ The Filament version is unchanged (1.77.1), so your `.filamat` files keep workin
 > lives on the class that declares it in C++.
 
 ## 1. Setup
+
+### Toolchain
+
+`filament-compose` now builds on **Compose Multiplatform 1.12.1** and **Kotlin 2.4.20**; consumers resolve
+Compose 1.12.1 transitively (skiko stays 0.150.1).
 
 ### Web
 
@@ -208,6 +215,10 @@ These take C++'s values now. Check them if your scene looks different after upgr
   `entityManager.destroy(entity)`.
 - **`Material.Builder.build()` returns `null` for a payload that isn't a `.filamat`** instead of crashing.
 - **`Color` conversions no longer modify the array you pass in**; they return a new one.
+- **`nativeObject` is the C handle on every platform** (`Long`; `Int` on web), not an upstream Java or JS
+  object.
+- **Compose Desktop's CPU readback** (still the default) reads each frame back through `Renderer` into its
+  own Skia image, replacing the old two-slot buffer.
 
 ## 5. Removed
 
@@ -218,13 +229,56 @@ These take C++'s values now. Check them if your scene looks different after upgr
 
 ## 6. New
 
-Much of Filament's C++ API that 0.6.0 didn't bind is now available on every platform, for example
-`Engine.createAsync`, per-type object counts, `Renderer.getFrameInfoHistory`,
-`MaterialInstance.setConstant` / `compile` / `commit`, `Camera.getEyeFromViewMatrix`,
-`RenderTarget.Builder.multiview`, gltfio's `detachFilamentComponents` / `recomputeBoundingBoxes`,
-filament-utils' `Ktx2Reader`, `TangentSpaceMesh` and `Transcoder`, and the rest of filamat's
-`MaterialBuilder`. The [changelog](../../CHANGELOG.md) lists them per module; the
-[API reference](https://erkko68.github.io/filament-kmp/api/) has the details.
+Filament C++ API that 0.6.0 didn't bind, now on every platform:
+
+- **`filament`**: `Engine.createAsync`, per-type object counts and `defaultMaterial`,
+  `Renderer.getFrameInfoHistory`, `RenderableManager.computeAABB`, `Exposure`, `FramePacer`,
+  `FramePipelineEstimator`, `FrameHistoryStream`, `InstanceBuffer`, async calls (`runCommandAsync`, builder
+  `async`, `set*Async`), `ColorGrading.Builder.outputColorSpace` with `ColorSpace`,
+  `MaterialInstance.setConstant` / `compile` / `commit` and unsigned (`uint`…`uint4`) parameters,
+  `Camera.getEyeFromViewMatrix`, `RenderTarget.Builder.multiview`, builder `name()`, `isCreationComplete`
+  and more.
+- **`gltfio`**: `detachFilamentComponents`, `recomputeBoundingBoxes`, `detachMaterialInstances`,
+  `addEntitiesToScene`, `MaterialKey` specular / volume / dispersion fields.
+- **`filament-utils`**: `Ktx2Reader`, `TangentSpaceMesh` (with `aux` / `getAux`), `Transcoder`,
+  `IBLPrefilterContext.IrradianceFilter`, `Manipulator.getRay`.
+- **`filamat`**: the rest of `MaterialBuilder`: `constant`, sampler `filterable` / `multisample` / `stages`,
+  `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `stereoscopic*`, `output`, compute
+  materials (`MaterialDomain.COMPUTE`, `groupSize`) and more. `MaterialBuilder` also runs on web through
+  the optional `filamat-kmp.wasm`; load it with `MaterialBuilder.initJs`.
+
+Beyond the bindings:
+
+- **Windows on ARM** desktop runtime: `filament-jni-runtime-windows-arm64`.
+- **Experimental GPU-to-GPU frame sharing on Compose Desktop** (macOS, Windows, Linux):
+  `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` skips the per-frame CPU readback. See
+  [Platform Notes](../guide/platform-notes.md).
+- **`renderingEnabled` on `FilamentView` / `FilamentSceneView`**: `false` pauses the render loop and keeps
+  the last frame.
+- **Runtime Material sample**: a scene that compiles its shaders with filamat.
+- **API generator** (contributors): `generateCApi`, `generateKotlinExternals` and `apiGaps` replace the
+  hand-written C layer and `check-common-api.sh`.
+
+The [API reference](https://erkko68.github.io/filament-kmp/api/) has the details.
+
+## 7. Fixed
+
+- **Compose teardown no longer aborts the app** in a `LazyColumn` or other subcomposition, on a discarded
+  composition, a glTF asset leaving mid-load, or a resized `rememberRenderTargetTexture`.
+- **Filament panics say why on desktop and Android**: the message and native call stack are logged (stderr /
+  logcat, and Android's crash-report abort message) before the process aborts, instead of only
+  `uncaught exception of type utils::PreconditionPanic`.
+- **Compressed `Texture.InternalFormat`s** (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`.
+- **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED`.
+- **`MorphTargetBuffer.setPositionsAt` reads 3 floats per vertex**, not 4.
+- **Compose leaked a `ToneMapper` per color grade.**
+- **Vector and matrix math** (`filament-utils`): `++` / `--` no longer mutate their operand,
+  `Float4 * Float3` keeps `z`, `equal` / `compareTo` match exact values at `delta = 0`, and `fract` follows
+  GLSL for negatives.
+- **`rememberMapCameraController`**: its eye sat on the target and drags never panned; it now looks down on
+  the XZ plane, north up.
+- **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph weights, gltfio instance
+  queries, shadow options, `customLut`, `geometryType` and more now work on web.
 
 ---
 
