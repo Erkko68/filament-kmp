@@ -13,6 +13,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-10-01
+
 > [!WARNING]
 > **Source-breaking release** — every platform now runs on one C API generated from Filament's C++ headers, and the Kotlin API follows the C++ API instead of Android's Java. Follow the **[migration guide](docs/migration/from-0.6.0.md)**.
 >
@@ -528,7 +530,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/Erkko68/filament-kmp/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/Erkko68/filament-kmp/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Erkko68/filament-kmp/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/Erkko68/filament-kmp/compare/0.3.1...0.4.0

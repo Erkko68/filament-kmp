@@ -20,7 +20,7 @@ API-surface enforcement) are done, and the focus shifts to tracking upstream and
 
 ## The generated C API
 
-**Done** (next release): every platform calls one `Fila*` C API generated from Filament's public C++
+**Done** in `0.7.0`: every platform calls one `Fila*` C API generated from Filament's public C++
 headers, and the Kotlin API follows C++ (names, owners, defaults). Android no longer uses upstream's
 Java bindings, web no longer uses embind, and a Filament upgrade is a regenerate plus a reviewed diff.
 How it works: [The Generated C API](docs/internals/c-api.md).
