@@ -27,9 +27,6 @@ How it works: [The Generated C API](docs/internals/c-api.md).
 
 What's next for it:
 
-- **Surface native panics as Kotlin exceptions.** A Filament precondition failure aborts the
-  process today. Catching `utils::Panic` in the generated C wrappers and rethrowing on the Kotlin side
-  would make misuse debuggable, starting with the desktop and Android JNI paths.
 - **Shrink the hand-written remainder.** The few `c/<module>/manual` functions are callbacks that
   take C++ types and arrays C++ fills; each one the generator learns is one less to maintain.
 - **Track upstream's header annotations.**

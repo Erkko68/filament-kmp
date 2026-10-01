@@ -51,6 +51,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **API generator** (build): `generateCApi`, `generateKotlinExternals` and `apiGaps` replace the hand-written C layer and `check-common-api.sh`.
 
 ### Fixed
+- **Filament panics say why on desktop and Android**: the message and native call stack are logged (stderr / logcat, and Android's crash-report abort message) before the process aborts, instead of only `uncaught exception of type utils::PreconditionPanic`.
 - **Compose teardown no longer aborts the app** in a `LazyColumn` or other subcomposition, on a discarded composition, a glTF asset leaving mid-load, or a resized `rememberRenderTargetTexture`. Reported by [@kdroidFilter](https://github.com/kdroidFilter) in [#166](https://github.com/Erkko68/filament-kmp/pull/166).
 - **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform.
 - **`Fence.wait` reports `CONDITION_SATISFIED`** instead of a nonexistent `ALREADY_SIGNALED` (`filament`).

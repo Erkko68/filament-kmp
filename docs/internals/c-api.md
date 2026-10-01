@@ -131,9 +131,12 @@ It needs `clang++`, `nm` and `c++filt`, so it runs on macOS and Linux hosts.
 
 ## Known limits
 
-- **Native panics abort the process.** A Filament precondition failure (`utils::Panic`), such as a
-  wrong-sized buffer or destroying an engine with live objects, terminates the app on JVM, Android
-  and iOS, and traps the wasm on web. The C layer doesn't catch them yet. Known bad inputs are
+- **Native panics abort the process, by design.** A Filament precondition failure (`utils::Panic`),
+  such as a wrong-sized buffer or destroying an engine with live objects, is misuse to fix. On JVM
+  and Android a panic handler set in `JNI_OnLoad` logs its message and call stack, then aborts:
+  Filament built with exceptions doesn't log them itself. iOS's prebuilt has no exceptions and does
+  the same on its own. Web throws a JS error with the message. Catching them on every platform would
+  need a check after every call from Kotlin/Native, which can't unwind C++. Known bad inputs are
   checked on the Kotlin side first (a non-`.filamat` payload makes `Material.Builder.build` return
   null instead of panicking).
 - **API guarded by `#if`** in a header (e.g. `UTILS_HAS_THREADING`) is generated on every target;

@@ -176,10 +176,12 @@ Filament reports errors two ways, and the bindings keep both:
   bytes it can't parse. Check them.
 - **Precondition failures abort the process.** Filament panics on misuse (a buffer smaller than
   declared, a parameter name the material doesn't have, destroying an `Engine` that still owns
-  objects, a `.filamat` compiled for another `MATERIAL_VERSION`). That terminates the app on Android,
-  iOS and desktop and traps the wasm on web; it can't be caught from Kotlin. The console/logcat shows
-  Filament's message. Most come from destroy order: destroy what you created, in reverse order,
-  before the engine.
+  objects, a `.filamat` compiled for another `MATERIAL_VERSION`). It's a bug to fix, not an error to
+  handle, so on Android, desktop and iOS it can't be caught: Filament's message and call stack go to
+  logcat / stderr / the console, then the app terminates. On Android the message is also the crash
+  report's abort message. On web the call throws a JS error carrying the message (`JsException` on
+  wasmJs), which `catch (e: Throwable)` can see; treat the module as broken afterwards. Most come
+  from destroy order: destroy what you created, in reverse order, before the engine.
 
 ## Threading model
 

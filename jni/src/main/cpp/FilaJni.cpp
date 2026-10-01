@@ -6,7 +6,11 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include <utils/Panic.h>
+
 #ifdef __ANDROID__
+#include <android/set_abort_message.h>
+
 // Private upstream header (backend/include/private/backend/VirtualMachineEnv.h); only this entry is needed.
 namespace filament {
 class VirtualMachineEnv {
@@ -16,6 +20,16 @@ public:
 } // namespace filament
 #endif
 
+// A panic is API misuse to fix, not an error to catch: log why, then abort, on any thread. Filament built with
+// exceptions (as here) leaves logging to the catcher, so an uncaught panic used to abort with no reason.
+static void abortOnPanic(void*, utils::Panic const& panic) {
+    panic.log();
+#ifdef __ANDROID__
+    android_set_abort_message(panic.what()); // the tombstone's "Abort message", seen in crash reports
+#endif
+    std::abort();
+}
+
 static JavaVM* sVm = nullptr;
 static jmethodID sInvoke = nullptr; // FilaCallback.invoke(long, long)
 
@@ -23,6 +37,7 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env;
     if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) return -1;
     sVm = vm;
+    utils::Panic::setPanicHandler(abortOnPanic, nullptr);
 #ifdef __ANDROID__
     // Filament's Android backend (streams, EGL helpers) needs the VM, as in upstream filament-android.
     filament::VirtualMachineEnv::JNI_OnLoad(vm);
