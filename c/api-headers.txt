@@ -14,6 +14,9 @@ filament/*.h
 utils/EntityManager.h
 # Filament's Kotlin module binds it, as Android's does (the first section matching a header takes it).
 geometry/SurfaceOrientation.h
+# C++ iterator sugar over getFrameInfoHistory; FilaFrameHistoryStreamManual drains getNewFrames into FrameInfo handles.
+-filament::FrameHistoryStream::Result
+-filament::FrameHistoryStream::NewFramesRange::*
 # Debugging aids (upstream marks them so) and raw pointers into the engine's internals.
 -filament::DebugRegistry
 -filament::Engine::getFeatureFlagPtr

@@ -835,6 +835,25 @@ public final class io/github/erkko68/filament/FogOptions {
 	public final fun setSkyColor (Lio/github/erkko68/filament/Texture;)V
 }
 
+public final class io/github/erkko68/filament/FrameHistoryStream : java/lang/AutoCloseable {
+	public fun <init> (Lio/github/erkko68/filament/Renderer;)V
+	public fun close ()V
+	public final fun getNewFrames ()Ljava/util/List;
+}
+
+public final class io/github/erkko68/filament/FrameHistoryStream$Result {
+	public fun <init> (ILio/github/erkko68/filament/Renderer$FrameInfo;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lio/github/erkko68/filament/Renderer$FrameInfo;
+	public final fun copy (ILio/github/erkko68/filament/Renderer$FrameInfo;)Lio/github/erkko68/filament/FrameHistoryStream$Result;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/FrameHistoryStream$Result;ILio/github/erkko68/filament/Renderer$FrameInfo;ILjava/lang/Object;)Lio/github/erkko68/filament/FrameHistoryStream$Result;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrameId ()I
+	public final fun getFrameInfo ()Lio/github/erkko68/filament/Renderer$FrameInfo;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/github/erkko68/filament/FramePacer {
 	public fun <init> (J)V
 	public final fun applyPresentationTime (Lio/github/erkko68/filament/Renderer;)V
@@ -921,6 +940,56 @@ public final class io/github/erkko68/filament/FramePacer$VsyncTick {
 	public final fun getFrameScheduleTime ()Ljava/lang/Long;
 	public final fun getTimelines ()Ljava/util/List;
 	public final fun getVsyncPeriod ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/FramePipelineEstimator {
+	public static final field INSTANCE Lio/github/erkko68/filament/FramePipelineEstimator;
+	public final fun estimatePacing (Ljava/util/List;JD)Lio/github/erkko68/filament/FramePipelineEstimator$PacingSizing;
+	public final fun estimatePacing (Ljava/util/List;JLio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;)Lio/github/erkko68/filament/FramePipelineEstimator$PacingSizing;
+	public static synthetic fun estimatePacing$default (Lio/github/erkko68/filament/FramePipelineEstimator;Ljava/util/List;JLio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;ILjava/lang/Object;)Lio/github/erkko68/filament/FramePipelineEstimator$PacingSizing;
+	public final fun estimateWorkload (Ljava/util/List;D)Lio/github/erkko68/filament/FramePipelineEstimator$Workload;
+	public final fun estimateWorkload (Ljava/util/List;Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;)Lio/github/erkko68/filament/FramePipelineEstimator$Workload;
+	public static synthetic fun estimateWorkload$default (Lio/github/erkko68/filament/FramePipelineEstimator;Ljava/util/List;Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;ILjava/lang/Object;)Lio/github/erkko68/filament/FramePipelineEstimator$Workload;
+	public final fun getZScore (Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;)D
+}
+
+public final class io/github/erkko68/filament/FramePipelineEstimator$PacingSizing {
+	public fun <init> ()V
+	public fun <init> (IJ)V
+	public synthetic fun <init> (IJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()J
+	public final fun copy (IJ)Lio/github/erkko68/filament/FramePipelineEstimator$PacingSizing;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/FramePipelineEstimator$PacingSizing;IJILjava/lang/Object;)Lio/github/erkko68/filament/FramePipelineEstimator$PacingSizing;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatencyFrames ()I
+	public final fun getSafeDelayDuration ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/FramePipelineEstimator$TargetPercentile : java/lang/Enum {
+	public static final field P50 Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;
+	public static final field P90 Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;
+	public static final field P95 Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;
+	public static fun values ()[Lio/github/erkko68/filament/FramePipelineEstimator$TargetPercentile;
+}
+
+public final class io/github/erkko68/filament/FramePipelineEstimator$Workload {
+	public fun <init> ()V
+	public fun <init> (JF)V
+	public synthetic fun <init> (JFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()F
+	public final fun copy (JF)Lio/github/erkko68/filament/FramePipelineEstimator$Workload;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/FramePipelineEstimator$Workload;JFILjava/lang/Object;)Lio/github/erkko68/filament/FramePipelineEstimator$Workload;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIdealFrameDuration ()J
+	public final fun getIdealFrameRate ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

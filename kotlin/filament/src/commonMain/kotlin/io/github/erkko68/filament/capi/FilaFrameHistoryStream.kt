@@ -4,21 +4,6 @@ package io.github.erkko68.filament.capi
 import io.github.erkko68.filament.interop.ExternalSymbolName
 import io.github.erkko68.filament.interop.NativePointer
 
-@ExternalSymbolName("FilaFrameHistoryStreamResult_create")
-internal external fun FilaFrameHistoryStreamResult_create(): NativePointer
-
-@ExternalSymbolName("FilaFrameHistoryStreamResult_create_FrameInfo")
-internal external fun FilaFrameHistoryStreamResult_create_FrameInfo(info: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaFrameHistoryStreamResult_create_uint32_t")
-internal external fun FilaFrameHistoryStreamResult_create_uint32_t(frameId: Int): NativePointer
-
-@ExternalSymbolName("FilaFrameHistoryStreamResult_getFrameId")
-internal external fun FilaFrameHistoryStreamResult_getFrameId(self: NativePointer): Int
-
-@ExternalSymbolName("FilaFrameHistoryStreamResult_getMissingId")
-internal external fun FilaFrameHistoryStreamResult_getMissingId(self: NativePointer): Int
-
 @ExternalSymbolName("FilaFrameHistoryStreamNewFramesRange_create")
 internal external fun FilaFrameHistoryStreamNewFramesRange_create(history: NativePointer, historyCount: Int, pLastProcessedFrameId: NativePointer): NativePointer
 

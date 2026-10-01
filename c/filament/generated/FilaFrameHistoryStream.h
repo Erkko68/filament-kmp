@@ -8,24 +8,15 @@
 extern "C" {
 #endif
 
-// filament::FrameHistoryStream::Result
-FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create(void);
-FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_FrameInfo(const FilaRendererFrameInfo* info);
-FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_uint32_t(uint32_t frameId);
-uint32_t FilaFrameHistoryStreamResult_getFrameId(const FilaFrameHistoryStreamResult* self);
-uint32_t FilaFrameHistoryStreamResult_getMissingId(const FilaFrameHistoryStreamResult* self);
-
 // filament::FrameHistoryStream::NewFramesRange
 FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_create(const FilaRendererFrameInfo* const* history, uint32_t historyCount, uint32_t* pLastProcessedFrameId);
-// TODO(handwritten) FilaFrameHistoryStreamNewFramesRange_begin: iterator filament::FrameHistoryStream::NewFramesRange::begin() const
-//     filament::FrameHistoryStream::NewFramesRange::Iterator by value
-// TODO(handwritten) FilaFrameHistoryStreamNewFramesRange_end: iterator filament::FrameHistoryStream::NewFramesRange::end() const
-//     filament::FrameHistoryStream::NewFramesRange::Iterator by value
+// skipped iterator filament::FrameHistoryStream::NewFramesRange::begin() const: filament::FrameHistoryStream::NewFramesRange::*
+// skipped iterator filament::FrameHistoryStream::NewFramesRange::end() const: filament::FrameHistoryStream::NewFramesRange::*
 
 // filament::FrameHistoryStream
 FilaFrameHistoryStream* FilaFrameHistoryStream_create(FilaRenderer* renderer);
 void FilaFrameHistoryStream_destroy(FilaFrameHistoryStream* self);
-// TODO(handwritten) FilaFrameHistoryStream_getNewFrames: NewFramesRange filament::FrameHistoryStream::getNewFrames()
+// handwritten in manual/ FilaFrameHistoryStream_getNewFrames: NewFramesRange filament::FrameHistoryStream::getNewFrames()
 //     filament::FrameHistoryStream::NewFramesRange by value
 
 

@@ -190,27 +190,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
         val handles = List(historySize) { FilaRendererFrameInfo_create() }
         try {
             val n = interopScope { FilaRenderer_getFrameInfoHistory(nativeHandle, historySize, toInterop(handles), handles.size) }
-            val ns = LongArray(1)
-            fun read(get: (NativePointer) -> Unit): Long { ns.usePinned(get); return ns[0] }
-            return handles.take(minOf(n, historySize)).map { p ->
-                FrameInfo(
-                    FilaRendererFrameInfo_getFrameId(p),
-                    read { FilaRendererFrameInfo_getGpuFrameDuration(p, it) },
-                    read { FilaRendererFrameInfo_getDenoisedGpuFrameDuration(p, it) },
-                    read { FilaRendererFrameInfo_getBeginFrame(p, it) },
-                    read { FilaRendererFrameInfo_getEndFrame(p, it) },
-                    read { FilaRendererFrameInfo_getBackendBeginFrame(p, it) },
-                    read { FilaRendererFrameInfo_getBackendEndFrame(p, it) },
-                    read { FilaRendererFrameInfo_getGpuFrameComplete(p, it) },
-                    read { FilaRendererFrameInfo_getVsync(p, it) },
-                    read { FilaRendererFrameInfo_getDisplayPresent(p, it) },
-                    read { FilaRendererFrameInfo_getPresentDeadline(p, it) },
-                    read { FilaRendererFrameInfo_getDisplayPresentInterval(p, it) },
-                    read { FilaRendererFrameInfo_getCompositionToPresentLatency(p, it) },
-                    read { FilaRendererFrameInfo_getExpectedPresentLatency(p, it) },
-                    read { FilaRendererFrameInfo_getFrameScheduleTime(p, it) },
-                )
-            }
+            return handles.take(minOf(n, historySize)).map { frameInfoOf(it) }
         } finally {
             handles.forEach { FilaRendererFrameInfo_destroy(it) }
         }
@@ -457,4 +437,55 @@ private fun pixelsInto(buffer: Texture.PixelBufferDescriptor): Pair<NativePointe
         buffer.callback?.invoke()
     }
     return ptr to userData
+}
+
+/** The FrameInfo a native one holds. */
+internal fun frameInfoOf(p: NativePointer): Renderer.FrameInfo {
+    val ns = LongArray(1)
+    fun read(get: (NativePointer) -> Unit): Long { ns.usePinned(get); return ns[0] }
+    return Renderer.FrameInfo(
+        FilaRendererFrameInfo_getFrameId(p),
+        read { FilaRendererFrameInfo_getGpuFrameDuration(p, it) },
+        read { FilaRendererFrameInfo_getDenoisedGpuFrameDuration(p, it) },
+        read { FilaRendererFrameInfo_getBeginFrame(p, it) },
+        read { FilaRendererFrameInfo_getEndFrame(p, it) },
+        read { FilaRendererFrameInfo_getBackendBeginFrame(p, it) },
+        read { FilaRendererFrameInfo_getBackendEndFrame(p, it) },
+        read { FilaRendererFrameInfo_getGpuFrameComplete(p, it) },
+        read { FilaRendererFrameInfo_getVsync(p, it) },
+        read { FilaRendererFrameInfo_getDisplayPresent(p, it) },
+        read { FilaRendererFrameInfo_getPresentDeadline(p, it) },
+        read { FilaRendererFrameInfo_getDisplayPresentInterval(p, it) },
+        read { FilaRendererFrameInfo_getCompositionToPresentLatency(p, it) },
+        read { FilaRendererFrameInfo_getExpectedPresentLatency(p, it) },
+        read { FilaRendererFrameInfo_getFrameScheduleTime(p, it) },
+    )
+}
+
+/** Native copies of these FrameInfos for the duration of [block]. */
+internal fun <T> List<Renderer.FrameInfo>.useNative(block: (List<NativePointer>) -> T): T {
+    val handles = map { info ->
+        FilaRendererFrameInfo_create().also { p ->
+            FilaRendererFrameInfo_setFrameId(p, info.frameId)
+            FilaRendererFrameInfo_setGpuFrameDuration(p, info.gpuFrameDuration)
+            FilaRendererFrameInfo_setDenoisedGpuFrameDuration(p, info.denoisedGpuFrameDuration)
+            FilaRendererFrameInfo_setBeginFrame(p, info.beginFrame)
+            FilaRendererFrameInfo_setEndFrame(p, info.endFrame)
+            FilaRendererFrameInfo_setBackendBeginFrame(p, info.backendBeginFrame)
+            FilaRendererFrameInfo_setBackendEndFrame(p, info.backendEndFrame)
+            FilaRendererFrameInfo_setGpuFrameComplete(p, info.gpuFrameComplete)
+            FilaRendererFrameInfo_setVsync(p, info.vsync)
+            FilaRendererFrameInfo_setDisplayPresent(p, info.displayPresent)
+            FilaRendererFrameInfo_setPresentDeadline(p, info.presentDeadline)
+            FilaRendererFrameInfo_setDisplayPresentInterval(p, info.displayPresentInterval)
+            FilaRendererFrameInfo_setCompositionToPresentLatency(p, info.compositionToPresentLatency)
+            FilaRendererFrameInfo_setExpectedPresentLatency(p, info.expectedPresentLatency)
+            FilaRendererFrameInfo_setFrameScheduleTime(p, info.frameScheduleTime)
+        }
+    }
+    try {
+        return block(handles)
+    } finally {
+        handles.forEach { FilaRendererFrameInfo_destroy(it) }
+    }
 }

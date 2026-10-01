@@ -101,7 +101,7 @@ function would have been, with the C++ signature it stands in for:
 Today that is a small set: `Scene::forEach`, `Material::getParameters`, `View::pick`'s callback,
 `SwapChain` frame callbacks, a few gltfio/filamat/filament-utils helpers
 (`FilaGltfioManual`, `FilaFilamatMaterialBuilderManual`, `FilaUtilsManual`,
-`FilaImageKtx1BundleManual`), `FramePacer::VsyncTick::timelines`, and `TangentSpaceMesh::Builder::aux`. A manual function follows the
+`FilaImageKtx1BundleManual`), `FramePacer::VsyncTick::timelines`, `FrameHistoryStream::getNewFrames`, and `TangentSpaceMesh::Builder::aux`. A manual function follows the
 same ABI rules and gets its Kotlin external generated the same way. One C++ function can become
 several, named `<function>_<case>` (`FilaGeometryTangentSpaceMeshBuilder_aux_float2`, … one per
 `std::variant` alternative).

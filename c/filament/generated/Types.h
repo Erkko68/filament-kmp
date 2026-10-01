@@ -67,8 +67,6 @@ typedef struct FilaFilmicToneMapper FilaFilmicToneMapper;
 typedef struct FilaFogOptions FilaFogOptions;
 typedef struct FilaFrameHistoryStream FilaFrameHistoryStream;
 typedef struct FilaFrameHistoryStreamNewFramesRange FilaFrameHistoryStreamNewFramesRange;
-typedef struct FilaFrameHistoryStreamNewFramesRangeIterator FilaFrameHistoryStreamNewFramesRangeIterator;
-typedef struct FilaFrameHistoryStreamResult FilaFrameHistoryStreamResult;
 typedef struct FilaFramePacer FilaFramePacer;
 typedef struct FilaFramePacerBuilder FilaFramePacerBuilder;
 typedef struct FilaFramePacerConfiguration FilaFramePacerConfiguration;
