@@ -16,10 +16,9 @@ internal class BindingRules(private val api: CppApi, private val bridges: CBridg
      * are only results (Engine::FeatureFlag).
      */
     private val inputRecords = run {
-        val output = Regex("""^(?!const\b).*[^&]&$|^(?!const\b).*\*$""")
         val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
         val taken = params.map { it.type }
-            .filterNot { output.matches(it.spelling.replace(Regex("""\s*_(Nonnull|Nullable|Null_unspecified)"""), "").trim()) }
+            .filter { t -> shape(t.spelling).let { it.const || it.indirection.lastOrNull().let { i -> i == null || i == "&&" } } }
             .mapNotNullTo(HashSet()) { it.decl }
         generateSequence(taken) { seen -> (seen + seen.flatMap { api.records[it]?.fields.orEmpty().mapNotNull { f -> f.type.decl } }).toHashSet().takeIf { it.size > seen.size } }.last()
     }
