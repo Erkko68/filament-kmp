@@ -71,6 +71,30 @@ class TangentSpaceMesh @InternalFilamentApi constructor(internal val nativeHandl
         /** The triangles in 16-bit indices, 3 per triangle. */
         fun triangles(triangles: ShortArray): Builder = apply { FilaGeometryTangentSpaceMeshBuilder_triangles_ushort3(nativeBuilder, heap.toInterop(triangles)) }
 
+        /**
+         * Auxiliary input, mapped along when the mesh is remeshed: float2, float3 or float4 per vertex
+         * ([components] 2–4). Read it back with [TangentSpaceMesh.getAux] and the same [components].
+         */
+        fun aux(attribute: AuxAttribute, data: FloatArray, components: Int, stride: Int = 0): Builder = apply {
+            val p = heap.toInterop(data)
+            when (components) {
+                2 -> FilaGeometryTangentSpaceMeshBuilder_aux_float2(nativeBuilder, attribute.ordinal, p, stride)
+                3 -> FilaGeometryTangentSpaceMeshBuilder_aux_float3(nativeBuilder, attribute.ordinal, p, stride)
+                4 -> FilaGeometryTangentSpaceMeshBuilder_aux_float4(nativeBuilder, attribute.ordinal, p, stride)
+                else -> throw IllegalArgumentException("float aux takes 2, 3 or 4 components, not $components")
+            }
+        }
+
+        /** Auxiliary input as unsigned shorts (e.g. joint indices): ushort3 or ushort4 per vertex ([components] 3–4). */
+        fun aux(attribute: AuxAttribute, data: ShortArray, components: Int, stride: Int = 0): Builder = apply {
+            val p = heap.toInterop(data)
+            when (components) {
+                3 -> FilaGeometryTangentSpaceMeshBuilder_aux_ushort3(nativeBuilder, attribute.ordinal, p, stride)
+                4 -> FilaGeometryTangentSpaceMeshBuilder_aux_ushort4(nativeBuilder, attribute.ordinal, p, stride)
+                else -> throw IllegalArgumentException("ushort aux takes 3 or 4 components, not $components")
+            }
+        }
+
         /** The algorithm to use; the one built with may differ if the input doesn't suit it. */
         fun algorithm(algorithm: Algorithm): Builder = apply { FilaGeometryTangentSpaceMeshBuilder_algorithm(nativeBuilder, algorithm.ordinal) }
 
@@ -106,6 +130,25 @@ class TangentSpaceMesh @InternalFilamentApi constructor(internal val nativeHandl
 
     /** Copies out the tangent-space quaternions as 4 half floats per vertex (quath). */
     fun getHalfQuats(out: ShortArray, stride: Int = 0) = out.usePinned { FilaGeometryTangentSpaceMesh_getQuats_quath_size_t(nativeHandle, it, stride) }
+
+    /** Copies out an auxiliary attribute given to [Builder.aux] as floats, [components] (2–4) per vertex. */
+    fun getAux(attribute: AuxAttribute, out: FloatArray, components: Int, stride: Int = 0) = out.usePinned {
+        when (components) {
+            2 -> FilaGeometryTangentSpaceMesh_getAux_float2_size_t(nativeHandle, attribute.ordinal, it, stride)
+            3 -> FilaGeometryTangentSpaceMesh_getAux_float3_size_t(nativeHandle, attribute.ordinal, it, stride)
+            4 -> FilaGeometryTangentSpaceMesh_getAux_float4_size_t(nativeHandle, attribute.ordinal, it, stride)
+            else -> throw IllegalArgumentException("float aux takes 2, 3 or 4 components, not $components")
+        }
+    }
+
+    /** Copies out an auxiliary attribute given to [Builder.aux] as unsigned shorts, [components] (3–4) per vertex. */
+    fun getAux(attribute: AuxAttribute, out: ShortArray, components: Int, stride: Int = 0) = out.usePinned {
+        when (components) {
+            3 -> FilaGeometryTangentSpaceMesh_getAux_ushort3_size_t(nativeHandle, attribute.ordinal, it, stride)
+            4 -> FilaGeometryTangentSpaceMesh_getAux_ushort4_size_t(nativeHandle, attribute.ordinal, it, stride)
+            else -> throw IllegalArgumentException("ushort aux takes 3 or 4 components, not $components")
+        }
+    }
 
     /** The number of output triangles. */
     val triangleCount: Int get() = FilaGeometryTangentSpaceMesh_getTriangleCount(nativeHandle)

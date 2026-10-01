@@ -1706,6 +1706,10 @@ public final class io/github/erkko68/filament/utils/TangentSpaceMesh : java/lang
 	public fun <init> (J)V
 	public fun close ()V
 	public final fun destroy ()V
+	public final fun getAux (Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[FII)V
+	public final fun getAux (Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[SII)V
+	public static synthetic fun getAux$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[FIIILjava/lang/Object;)V
+	public static synthetic fun getAux$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[SIIILjava/lang/Object;)V
 	public final fun getHalfQuats ([SI)V
 	public static synthetic fun getHalfQuats$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh;[SIILjava/lang/Object;)V
 	public final fun getNativeObject ()J
@@ -1748,6 +1752,10 @@ public final class io/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribut
 public final class io/github/erkko68/filament/utils/TangentSpaceMesh$Builder {
 	public fun <init> ()V
 	public final fun algorithm (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Algorithm;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun aux (Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[FII)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public final fun aux (Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[SII)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public static synthetic fun aux$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[FIIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
+	public static synthetic fun aux$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;Lio/github/erkko68/filament/utils/TangentSpaceMesh$AuxAttribute;[SIIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
 	public final fun build ()Lio/github/erkko68/filament/utils/TangentSpaceMesh;
 	public final fun normals ([FI)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;
 	public static synthetic fun normals$default (Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;[FIILjava/lang/Object;)Lio/github/erkko68/filament/utils/TangentSpaceMesh$Builder;

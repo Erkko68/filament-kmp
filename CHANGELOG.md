@@ -39,9 +39,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`nativeObject` is the C handle on every platform** (`Long`; `Int` on web), not an upstream Java or JS object.
 
 ### Added
-- **Filament C++ API not bound before, on every platform** (`filament`): `Engine.createAsync`, object counts and `defaultMaterial`, `Renderer.getFrameInfoHistory`, `MaterialInstance.setConstant`/`compile`/`commit` and unsigned (`uint`…`uint4`) parameters, `Camera.getEyeFromViewMatrix`, `RenderTarget.Builder.multiview`, builder `name()`, `isCreationComplete` and more.
+- **Filament C++ API not bound before, on every platform** (`filament`): `Engine.createAsync`, object counts and `defaultMaterial`, `Renderer.getFrameInfoHistory`, `RenderableManager.computeAABB`, `MaterialInstance.setConstant`/`compile`/`commit` and unsigned (`uint`…`uint4`) parameters, `Camera.getEyeFromViewMatrix`, `RenderTarget.Builder.multiview`, builder `name()`, `isCreationComplete` and more.
 - **gltfio additions** (`gltfio`): `detachFilamentComponents`, `recomputeBoundingBoxes`, `detachMaterialInstances`, `addEntitiesToScene`, `MaterialKey` specular/volume/dispersion fields.
-- **`Ktx2Reader`, `TangentSpaceMesh`, `Transcoder`, `IBLPrefilterContext.IrradianceFilter` and `Manipulator.getRay`** (`filament-utils`).
+- **`Ktx2Reader`, `TangentSpaceMesh` (with `aux`/`getAux`), `Transcoder`, `IBLPrefilterContext.IrradianceFilter` and `Manipulator.getRay`** (`filament-utils`).
 - **The rest of filamat's `MaterialBuilder`** (`filamat`): `constant`, sampler `filterable`/`multisample`/`stages`, `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `stereoscopic*`, `output` and more.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `MaterialBuilder.initJs`.
 - **Experimental GPU-to-GPU frame sharing on Compose Desktop** (`filament-compose`): `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` skips the per-frame CPU readback on macOS, Windows and Linux.

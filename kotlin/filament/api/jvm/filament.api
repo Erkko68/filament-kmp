@@ -1544,6 +1544,7 @@ public final class io/github/erkko68/filament/RenderTarget$Builder {
 }
 
 public final class io/github/erkko68/filament/RenderableManager {
+	public static final field Companion Lio/github/erkko68/filament/RenderableManager$Companion;
 	public fun <init> (J)V
 	public final fun clearMaterialInstanceAt (II)V
 	public final fun destroy (I)V
@@ -1662,6 +1663,17 @@ public final class io/github/erkko68/filament/RenderableManager$Builder$Result :
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/RenderableManager$Builder$Result;
 	public static fun values ()[Lio/github/erkko68/filament/RenderableManager$Builder$Result;
+}
+
+public final class io/github/erkko68/filament/RenderableManager$Companion {
+	public final fun computeAABB ([F[III)Lio/github/erkko68/filament/Box;
+	public final fun computeAABB ([F[SII)Lio/github/erkko68/filament/Box;
+	public final fun computeAABB ([S[III)Lio/github/erkko68/filament/Box;
+	public final fun computeAABB ([S[SII)Lio/github/erkko68/filament/Box;
+	public static synthetic fun computeAABB$default (Lio/github/erkko68/filament/RenderableManager$Companion;[F[IIIILjava/lang/Object;)Lio/github/erkko68/filament/Box;
+	public static synthetic fun computeAABB$default (Lio/github/erkko68/filament/RenderableManager$Companion;[F[SIIILjava/lang/Object;)Lio/github/erkko68/filament/Box;
+	public static synthetic fun computeAABB$default (Lio/github/erkko68/filament/RenderableManager$Companion;[S[IIIILjava/lang/Object;)Lio/github/erkko68/filament/Box;
+	public static synthetic fun computeAABB$default (Lio/github/erkko68/filament/RenderableManager$Companion;[S[SIIILjava/lang/Object;)Lio/github/erkko68/filament/Box;
 }
 
 public final class io/github/erkko68/filament/RenderableManager$PrimitiveType : java/lang/Enum {

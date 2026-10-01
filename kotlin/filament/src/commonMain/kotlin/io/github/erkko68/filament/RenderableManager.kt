@@ -57,6 +57,30 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
         var translation: FloatArray = FloatArray(3)
     }
 
+    companion object {
+        init { Filament.init() } // statics are callable before any Engine exists
+
+        /**
+         * Computes the bounding box of the vertices [indices] points at, for [Builder.boundingBox].
+         *
+         * @param vertices Positions, x/y/z first in each vertex; extra components are skipped by [stride]
+         * @param indices 32-bit indices of the vertices to bound
+         * @param count Number of indices to read
+         * @param stride Bytes between vertices; 12 for packed float3, 16 for float4
+         */
+        fun computeAABB(vertices: FloatArray, indices: IntArray, count: Int = indices.size, stride: Int = 12): Box =
+            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_float3_uint32_t_size_t_size_t(v, i, count, stride, it) } } }
+        /** [computeAABB] with 16-bit indices. */
+        fun computeAABB(vertices: FloatArray, indices: ShortArray, count: Int = indices.size, stride: Int = 12): Box =
+            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_float3_uint16_t_size_t_size_t(v, i, count, stride, it) } } }
+        /** [computeAABB] over half-float positions; [stride] is 6 for packed half3, 8 for half4. */
+        fun computeAABB(vertices: ShortArray, indices: IntArray, count: Int = indices.size, stride: Int = 6): Box =
+            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_half3_uint32_t_size_t_size_t(v, i, count, stride, it) } } }
+        /** [computeAABB] over half-float positions with 16-bit indices. */
+        fun computeAABB(vertices: ShortArray, indices: ShortArray, count: Int = indices.size, stride: Int = 6): Box =
+            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_half3_uint16_t_size_t_size_t(v, i, count, stride, it) } } }
+    }
+
     /**
      * Adds renderable components to entities using a builder pattern.
      *
