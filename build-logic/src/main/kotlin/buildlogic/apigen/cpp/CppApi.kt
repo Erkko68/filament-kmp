@@ -37,6 +37,9 @@ class CppApi(
         // A by-value parameter's const isn't part of the signature.
         "$owner::${method.name}(${method.params.joinToString(", ") { it.type.decl ?: it.type.spelling.let { s -> if ('*' in s || '&' in s) s else s.removePrefix("const ") } }})"
 
+    /** Whether the constant [name] is skipped, by name or by its record's `Record::const *`. */
+    fun skipsConstant(name: String) = skipReason(name) != null || name.substringBeforeLast("::") + CONSTANTS in skipped
+
     /** The overloads of [name] as [skipped] entries spell them. */
     fun overloads(name: String) = (records.values.flatMap { it.methods } + functions).map { overload(it) }.filter { it.startsWith("$name(") }.distinct()
 
@@ -52,11 +55,13 @@ class CppApi(
 
     /** [skipped] entries that name nothing, stale after an upstream rename or removal. */
     fun unknownSkips() = skipped.filterNot { entry ->
+        if (entry.endsWith(CONSTANTS)) return@filterNot entry.removeSuffix(CONSTANTS).let { r -> publicConstants.any { it.substringBeforeLast("::") == r } }
         if (entry.endsWith(")")) return@filterNot (records.values.flatMap { it.methods } + functions).any { overload(it) == entry }
         val name = entry.removeSuffix("::*")
         val owner = name.substringBeforeLast("::")
         val member = name.substringAfterLast("::")
-        name in records || records[owner]?.let { r -> r.methods.any { it.name == member } || r.fields.any { it.name == member } } == true ||
+        name in enums || name in constants || enums[owner]?.constants?.any { it.first == member } == true ||
+            name in records || records[owner]?.let { r -> r.methods.any { it.name == member } || r.fields.any { it.name == member } } == true ||
             functions.any { it.owner == owner && it.name == member }
     }
 
@@ -187,3 +192,6 @@ sealed interface CppValue {
     data class Aggregate(val elements: List<CppValue>) : CppValue { override fun toString() = elements.joinToString(prefix = "{", postfix = "}") }
     data class Unsupported(val kind: String) : CppValue { override fun toString() = "<$kind>" }
 }
+
+/** A [CppApi.skipped] entry's suffix for every constant of a record. */
+private const val CONSTANTS = "::const *"

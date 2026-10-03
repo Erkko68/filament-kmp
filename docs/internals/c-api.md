@@ -140,6 +140,8 @@ API, `declared` when the hand-written Kotlin API has that name in the matching c
 through the API's aliases too: `Texture.InternalFormat` for `backend::TextureFormat`), `undeclared`
 when it doesn't, or `untyped` when Kotlin has no declaration of the enum at all. It matches names in the
 Kotlin sources, it doesn't compile them; `grep '^undeclared'` after an upgrade shows the new ones.
+Ones Kotlin leaves out on purpose are `-name` entries in `c/api-headers.txt` (`-Record::const *` for
+all of a record's constants), which drops them from the list.
 
 `./gradlew apiGaps` compares Filament's public C++ methods (from clang's AST, inline ones included,
 plus template instances only the libraries define) against the symbols the `c/` objects reference

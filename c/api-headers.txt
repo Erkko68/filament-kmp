@@ -8,6 +8,9 @@
 # `-name` leaves a C++ declaration out: a record (with everything nested), a member, or a function. `-Record::*` keeps
 # the record's handle but none of its members. Methods and fields whose types use a skipped record go too. The
 # generated headers note each skipped member; an entry naming nothing fails the generator.
+#
+# An enum, enum value or constant has no C function: its `-name` only tells apiCoverage that Kotlin leaves it undeclared
+# on purpose. `-Record::const *` names every constant of the record.
 
 [filament]
 filament/*.h
@@ -87,6 +90,18 @@ geometry/SurfaceOrientation.h
 -filament::Stream::Builder::name(utils::StaticString)
 -filament::Texture::Builder::name(utils::StaticString)
 -filament::VertexBuffer::Builder::name(utils::StaticString)
+# Not in the Kotlin API: compressed pixel buffers, Platform's device info and timestamps, the frame-scheduled callback's
+# flags; BASE_LEVEL is 0.
+-filament::backend::CompressedPixelDataType
+-filament::backend::Platform::DeviceInfoType
+-filament::backend::Platform::CompositorTiming::INVALID
+-filament::backend::Platform::FrameTimestamps::INVALID
+-filament::backend::Platform::FrameTimestamps::PENDING
+-filament::SwapChain::CALLBACK_DEFAULT_USE_METAL_COMPLETION_HANDLER
+-filament::Texture::BASE_LEVEL
+# AttachmentPoint.entries and getSupportedColorAttachmentsCount say as much.
+-filament::RenderTarget::MIN_SUPPORTED_COLOR_ATTACHMENTS_COUNT
+-filament::RenderTarget::MAX_SUPPORTED_COLOR_ATTACHMENTS_COUNT
 
 [gltfio]
 gltfio/*.h
@@ -133,6 +148,10 @@ filamat/*.h
 -filamat::MaterialBuilder::getApiLevel
 # Header-inline; Kotlin's MaterialPackage.invalidPackage does the same.
 -filamat::Package::invalidPackage
+# Kotlin takes the stages as a Set<ShaderStage>.
+-filament::backend::ShaderStageFlags
+# The compiler's internal limits.
+-filamat::MaterialBuilder::const *
 
 [filament-utils]
 camutils/*.h
@@ -149,3 +168,7 @@ image/Ktx1Bundle.h
 -image::KtxBlobIndex
 # For compressed uploads, which PixelBufferDescriptor doesn't express in Kotlin; createTexture handles them.
 -ktxreader::Ktx1Reader::toCompressedFilamentEnum
+# A size sentinel; Key.entries.size.
+-filament::camutils::Manipulator::Key::COUNT
+# OpenGL format codes for KtxInfo's fields, which Kotlin doesn't expose.
+-image::Ktx1Bundle::const *

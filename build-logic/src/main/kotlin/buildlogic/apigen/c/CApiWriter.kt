@@ -21,12 +21,13 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
     /** The enums C declares and the public constants of the records it binds: what the Kotlin API declares by hand. */
-    val enums get() = surface.mapNotNull { api.enums[it] }.sortedBy { it.name }
+    val enums get() = surface.mapNotNull { api.enums[it] }.filter { api.skipReason(it.name) == null }.sortedBy { it.name }
+    fun skipped(name: String) = api.skipReason(name) != null
     /** The names code outside spells [name] by: Texture::InternalFormat for backend::TextureFormat. */
     fun aliasesOf(name: String): Set<String> = generateSequence(setOf(name)) { names ->
         (names + api.aliases.filterValues { it.decl in names }.keys).takeIf { it.size > names.size }
     }.last()
-    val constants get() = api.publicConstants.filter { it.substringBeforeLast("::") in surface && api.skipReason(it) == null }.sorted()
+    val constants get() = api.publicConstants.filter { it.substringBeforeLast("::") in surface && !api.skipsConstant(it) }.sorted()
     /** After [write]: each C function the C++ API calls for, bound or not. */
     val bindings = ArrayList<Binding>()
 
