@@ -48,7 +48,7 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 
 # 4. Regenerate the C API and the Kotlin externals, then review their diff
 ./gradlew generateCApi generateKotlinExternals
-./gradlew apiCoverage                                    # then git diff c/api-coverage.txt: what's new, bound, unbound
+./gradlew apiCoverage                                    # then git diff c/api-coverage.txt: what's new, bound, unbound, undeclared
 
 # 5. Adapt the Kotlin API (per-layer recipe below), update tests
 scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
@@ -138,7 +138,8 @@ release. What to look for:
 The C++ side is compared by symbol, never by parsing names: the public methods of every `*_PUBLIC`
 class as clang's AST reports them (inline ones included), plus template instances only the
 libraries define, minus every symbol the `c/` objects mention when built at `-O0` (so inline calls
-stay calls). Struct fields and enum values aren't covered. The task runs on macOS and Linux hosts (it needs
+stay calls). Struct fields and enum values aren't covered there: new enum values and class constants show as
+`undeclared` in `c/api-coverage.txt`. The task runs on macOS and Linux hosts (it needs
 `clang++`, `nm` and `c++filt`).
 
 ### 5. Apply the changes

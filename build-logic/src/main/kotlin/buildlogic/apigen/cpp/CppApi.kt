@@ -19,8 +19,10 @@ class CppApi(
      * `Record::method(Type, …)` one overload (by its parameters' declared types).
      */
     val skipped: Set<String> = emptySet(),
+    /** The [constants] code outside can name: at namespace scope or public in a record. */
+    val publicConstants: Set<String> = emptySet(),
 ) {
-    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, functions, names)
+    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, functions, names, publicConstants)
 
     /** The [skipped] entry that leaves out [name] (a record, member or function), or null. */
     fun skipReason(name: String): String? = generateSequence(name) { it.substringBeforeLast("::", "").ifEmpty { null } }

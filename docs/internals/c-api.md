@@ -135,6 +135,12 @@ upgrade `git diff c/api-coverage.txt` shows what upstream added or removed and h
 files aren't what the generators would write now. It never fails the build. Changes to our public
 Kotlin API are `apiDump`'s: review the diff in each module's `api/`.
 
+A second section lists what no function carries: each enum value and public class constant of the bound
+API, `declared` when the hand-written Kotlin API has that name in the matching class or enum (found
+through the API's aliases too: `Texture.InternalFormat` for `backend::TextureFormat`), `undeclared`
+when it doesn't, or `untyped` when Kotlin has no declaration of the enum at all. It matches names in the
+Kotlin sources, it doesn't compile them; `grep '^undeclared'` after an upgrade shows the new ones.
+
 `./gradlew apiGaps` compares Filament's public C++ methods (from clang's AST, inline ones included,
 plus template instances only the libraries define) against the symbols the `c/` objects reference
 when built at `-O0`, so inline calls stay calls. It reports by symbol, never by parsing names: a
