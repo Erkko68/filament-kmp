@@ -332,6 +332,78 @@ void FilaMaterial_setDefaultParameter_bool4(FilaMaterial* self, const char* name
     fila::cpp(self)->setDefaultParameter<filament::math::bool4>(name, std::bit_cast<filament::math::bool4>(*value));
 }
 
+void FilaMaterial_setDefaultParameter_float_size_t(FilaMaterial* self, const char* name, const float* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<float>(name, values, static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_int32_t_size_t(FilaMaterial* self, const char* name, const int32_t* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<int32_t>(name, values, static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_uint32_t_size_t(FilaMaterial* self, const char* name, const uint32_t* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<uint32_t>(name, values, static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_int2_size_t(FilaMaterial* self, const char* name, const FilaInt2* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::int2>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_int3_size_t(FilaMaterial* self, const char* name, const FilaInt3* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::int3>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_int4_size_t(FilaMaterial* self, const char* name, const FilaInt4* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::int4>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_uint2_size_t(FilaMaterial* self, const char* name, const FilaUint2* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::uint2>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_uint3_size_t(FilaMaterial* self, const char* name, const FilaUint3* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::uint3>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_uint4_size_t(FilaMaterial* self, const char* name, const FilaUint4* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::uint4>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_float2_size_t(FilaMaterial* self, const char* name, const FilaFloat2* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::float2>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_float3_size_t(FilaMaterial* self, const char* name, const FilaFloat3* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::float3>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_float4_size_t(FilaMaterial* self, const char* name, const FilaFloat4* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::float4>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_mat3f_size_t(FilaMaterial* self, const char* name, const FilaMat3f* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::mat3f>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_mat4f_size_t(FilaMaterial* self, const char* name, const FilaMat4f* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::mat4f>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_bool_size_t(FilaMaterial* self, const char* name, const bool* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<bool>(name, values, static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_bool2_size_t(FilaMaterial* self, const char* name, const FilaBool2* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::bool2>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_bool3_size_t(FilaMaterial* self, const char* name, const FilaBool3* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::bool3>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
+void FilaMaterial_setDefaultParameter_bool4_size_t(FilaMaterial* self, const char* name, const FilaBool4* values, uint32_t count) {
+    fila::cpp(self)->setDefaultParameter<filament::math::bool4>(name, fila::cpp(values), static_cast<size_t>(count));
+}
+
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self) {
     return fila::c(fila::cpp(self)->getDefaultInstance());
 }

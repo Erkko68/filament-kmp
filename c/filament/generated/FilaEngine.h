@@ -95,6 +95,7 @@ FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 // skipped utils::JobSystem & filament::Engine::getJobSystem()
 // skipped DebugRegistry & filament::Engine::getDebugRegistry(): uses filament::DebugRegistry
 // skipped bool * _Nullable filament::Engine::getFeatureFlagPtr(const char * _Nonnull name) const
+// skipped void filament::Engine::compile(backend::CompilerPriorityQueue priority, const Material * _Nonnull material, const View * _Nonnull view, FeatureState shadowReceiver, FeatureState skinning, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback): filament::Engine::compile(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable)
 uint32_t FilaEngine_getFeatureFlags(const FilaEngine* self, FilaEngineFeatureFlag* const* out, uint32_t outCapacity);
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
 void FilaEngine_createAsync(FilaEngineCreateCallback callback, void* user, FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);

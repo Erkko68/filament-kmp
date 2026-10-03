@@ -94,7 +94,7 @@ uint32_t FilaLightManager_getComponentCount(const FilaLightManager* self);
 bool FilaLightManager_hasComponent(const FilaLightManager* self, FilaEntity e);
 bool FilaLightManager_empty(const FilaLightManager* self);
 FilaEntity FilaLightManager_getEntity(const FilaLightManager* self, uint32_t i);
-const FilaEntity* FilaLightManager_getEntities(const FilaLightManager* self);
+uint32_t FilaLightManager_getAllEntities(const FilaLightManager* self, FilaEntity* out, uint32_t outCapacity);
 uint32_t FilaLightManager_getInstance(const FilaLightManager* self, FilaEntity e);
 void FilaLightManager_destroy(FilaLightManager* self, FilaEntity e);
 FilaLightManagerType FilaLightManager_getType(const FilaLightManager* self, uint32_t i);

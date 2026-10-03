@@ -13,6 +13,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **Filament 1.77.2** upstream; `MATERIAL_VERSION` is unchanged, so `.filamat` files keep working.
+- **`entities` is now `allEntities`** on `RenderableManager`, `LightManager` and `TransformManager`, following C++'s `getAllEntities()`.
+
+### Added
+- **`RenderableManager.setGeometryAt` without `offset`/`count`**: draws the whole buffer.
+- **`Fence.WAIT_FOR_EVER`**, C++'s new name for `FENCE_WAIT_FOR_EVER`.
+
 ## [0.7.0] — 2026-10-01
 
 > [!WARNING]

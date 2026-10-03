@@ -19,8 +19,8 @@ internal external fun FilaTransformManager_empty(self: NativePointer): Boolean
 @ExternalSymbolName("FilaTransformManager_getEntity")
 internal external fun FilaTransformManager_getEntity(self: NativePointer, i: Int): Int
 
-@ExternalSymbolName("FilaTransformManager_getEntities")
-internal external fun FilaTransformManager_getEntities(self: NativePointer): NativePointer
+@ExternalSymbolName("FilaTransformManager_getAllEntities")
+internal external fun FilaTransformManager_getAllEntities(self: NativePointer, out: NativePointer, outCapacity: Int): Int
 
 @ExternalSymbolName("FilaTransformManager_setAccurateTranslationsEnabled")
 internal external fun FilaTransformManager_setAccurateTranslationsEnabled(self: NativePointer, enable: Boolean)

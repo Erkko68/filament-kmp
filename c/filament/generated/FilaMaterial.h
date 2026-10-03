@@ -31,6 +31,7 @@ void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, Fil
 // filament::Material::Builder
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
+// skipped Builder & filament::Material::Builder::package(utils::Slice<const uint8_t> payload): filament::Material::Builder::package(utils::Slice)
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_float(FilaMaterialBuilder* self, const char* name, float value);
@@ -42,6 +43,7 @@ FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEng
 
 // filament::Material
 // skipped size_t filament::Material::getParameters(ParameterInfo * _Nonnull parameters, size_t count) const
+// skipped void filament::Material::setDefaultParameter(std::string_view name, utils::Slice<const T> values): filament::Material::setDefaultParameter(std::string_view, utils::Slice)
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
@@ -97,6 +99,24 @@ void FilaMaterial_setDefaultParameter_bool(FilaMaterial* self, const char* name,
 void FilaMaterial_setDefaultParameter_bool2(FilaMaterial* self, const char* name, const FilaBool2* value);
 void FilaMaterial_setDefaultParameter_bool3(FilaMaterial* self, const char* name, const FilaBool3* value);
 void FilaMaterial_setDefaultParameter_bool4(FilaMaterial* self, const char* name, const FilaBool4* value);
+void FilaMaterial_setDefaultParameter_float_size_t(FilaMaterial* self, const char* name, const float* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_int32_t_size_t(FilaMaterial* self, const char* name, const int32_t* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_uint32_t_size_t(FilaMaterial* self, const char* name, const uint32_t* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_int2_size_t(FilaMaterial* self, const char* name, const FilaInt2* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_int3_size_t(FilaMaterial* self, const char* name, const FilaInt3* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_int4_size_t(FilaMaterial* self, const char* name, const FilaInt4* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_uint2_size_t(FilaMaterial* self, const char* name, const FilaUint2* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_uint3_size_t(FilaMaterial* self, const char* name, const FilaUint3* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_uint4_size_t(FilaMaterial* self, const char* name, const FilaUint4* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_float2_size_t(FilaMaterial* self, const char* name, const FilaFloat2* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_float3_size_t(FilaMaterial* self, const char* name, const FilaFloat3* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_float4_size_t(FilaMaterial* self, const char* name, const FilaFloat4* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_mat3f_size_t(FilaMaterial* self, const char* name, const FilaMat3f* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_mat4f_size_t(FilaMaterial* self, const char* name, const FilaMat4f* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_bool_size_t(FilaMaterial* self, const char* name, const bool* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_bool2_size_t(FilaMaterial* self, const char* name, const FilaBool2* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_bool3_size_t(FilaMaterial* self, const char* name, const FilaBool3* values, uint32_t count);
+void FilaMaterial_setDefaultParameter_bool4_size_t(FilaMaterial* self, const char* name, const FilaBool4* values, uint32_t count);
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self);
 
 

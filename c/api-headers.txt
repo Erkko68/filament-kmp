@@ -64,6 +64,29 @@ geometry/SurfaceOrientation.h
 -filament::Material::getParameters
 # C++ sugar binding a member function or functor; the callback overload (FilaViewManual) covers them.
 -filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
+# 1.77.2's utils::Slice twins of the pointer + count overloads C binds, and its FeatureState twin of compile's tribool.
+-filament::Camera::setCustomEyeProjection(utils::Slice, filament::math::mat4, double, double)
+-filament::Engine::compile(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable)
+-filament::Material::Builder::package(utils::Slice)
+-filament::Material::setDefaultParameter(std::string_view, utils::Slice)
+-filament::MaterialInstance::setParameter(std::string_view, utils::Slice)
+-filament::RenderableManager::Builder::skinning(utils::Slice)
+-filament::RenderableManager::setBones(filament::RenderableManager::Instance, utils::Slice, size_t)
+-filament::RenderableManager::setMorphWeights(filament::RenderableManager::Instance, utils::Slice, size_t)
+-filament::Scene::addEntities(utils::Slice)
+-filament::Scene::removeEntities(utils::Slice)
+-filament::SkinningBuffer::setBones(filament::Engine, utils::Slice, size_t)
+-utils::EntityManager::create(utils::Slice)
+-utils::EntityManager::destroy(utils::Slice)
+# Only literals make a StaticString; name(ImmutableCString) copies C's string.
+-filament::BufferObject::Builder::name(utils::StaticString)
+-filament::IndexBuffer::Builder::name(utils::StaticString)
+-filament::InstanceBuffer::Builder::name(utils::StaticString)
+-filament::MorphTargetBuffer::Builder::name(utils::StaticString)
+-filament::SkinningBuffer::Builder::name(utils::StaticString)
+-filament::Stream::Builder::name(utils::StaticString)
+-filament::Texture::Builder::name(utils::StaticString)
+-filament::VertexBuffer::Builder::name(utils::StaticString)
 
 [gltfio]
 gltfio/*.h

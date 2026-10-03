@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 // filament::Scene
+// skipped void filament::Scene::addEntities(utils::Slice<const utils::Entity> entities): filament::Scene::addEntities(utils::Slice)
+// skipped void filament::Scene::removeEntities(utils::Slice<const utils::Entity> entities): filament::Scene::removeEntities(utils::Slice)
 void FilaScene_setSkybox(FilaScene* self, FilaSkybox* skybox);
 FilaSkybox* FilaScene_getSkybox(const FilaScene* self);
 void FilaScene_setIndirectLight(FilaScene* self, FilaIndirectLight* ibl);

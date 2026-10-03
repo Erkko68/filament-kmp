@@ -32,7 +32,11 @@ class CppApi(
             ?: usesSkipped(method.params.map { it.type } + method.returns)
 
     private fun overload(method: CppMethod, owner: String = method.owner) =
-        "$owner::${method.name}(${method.params.joinToString(", ") { it.type.decl ?: it.type.spelling }})"
+        // A by-value parameter's const isn't part of the signature.
+        "$owner::${method.name}(${method.params.joinToString(", ") { it.type.decl ?: it.type.spelling.let { s -> if ('*' in s || '&' in s) s else s.removePrefix("const ") } }})"
+
+    /** The overloads of [name] as [skipped] entries spell them. */
+    fun overloads(name: String) = (records.values.flatMap { it.methods } + functions).map { overload(it) }.filter { it.startsWith("$name(") }.distinct()
 
     fun skipReason(field: CppField, owner: String): String? = skipReason("$owner::${field.name}") ?: usesSkipped(listOf(field.type))
 

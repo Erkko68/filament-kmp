@@ -21,7 +21,7 @@ FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTarget
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_name(FilaMorphTargetBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable) {

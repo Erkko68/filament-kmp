@@ -32,6 +32,7 @@ void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self);
 // skipped FroxelConfigurationInfoWithAge filament::View::getFroxelConfigurationInfo() const: uses filament::View::FroxelConfigurationInfoWithAge
 // skipped void filament::View::pick(uint32_t x, uint32_t y, T * _Nonnull instance, backend::CallbackHandler * _Nullable handler): filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
 // skipped void filament::View::pick(uint32_t x, uint32_t y, T instance, backend::CallbackHandler * _Nullable handler): filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
+// skipped void filament::View::pick(const uint32_t x, const uint32_t y, T functor, backend::CallbackHandler * _Nullable handler): filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
 void FilaView_setName(FilaView* self, const char* name);
 const char* FilaView_getName(const FilaView* self);
 void FilaView_setScene(FilaView* self, FilaScene* scene);

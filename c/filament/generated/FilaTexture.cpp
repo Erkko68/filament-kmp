@@ -49,7 +49,7 @@ FilaTextureBuilder* FilaTextureBuilder_swizzle(FilaTextureBuilder* self, FilaTex
 }
 
 FilaTextureBuilder* FilaTextureBuilder_name(FilaTextureBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self) {

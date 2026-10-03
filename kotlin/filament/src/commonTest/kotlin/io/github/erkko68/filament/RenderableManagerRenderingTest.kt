@@ -56,7 +56,7 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         val b = rm.getAxisAlignedBoundingBox(inst)
         assertEquals(2f, b.halfExtent[0])
         assertEquals(entity, rm.getEntity(inst))
-        assertTrue(entity in rm.entities)
+        assertTrue(entity in rm.allEntities)
 
         rm.setLayerMask(inst, 0xFF, 0x01)
         assertEquals(0x01, rm.getLayerMask(inst))
@@ -93,6 +93,8 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
 
         rm.setGeometryAt(inst, 0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib, 0, 3)
         rm.setGeometryAt(inst, 0, RenderableManager.PrimitiveType.POINTS, vb, 0, 3)
+        rm.setGeometryAt(inst, 0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
+        rm.setGeometryAt(inst, 0, RenderableManager.PrimitiveType.POINTS, vb)
         rm.clearMaterialInstanceAt(inst, 0)
         assertNull(rm.getMaterialInstanceAt(inst, 0))
 

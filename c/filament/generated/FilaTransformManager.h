@@ -17,7 +17,7 @@ uint32_t FilaTransformManager_getInstance(const FilaTransformManager* self, Fila
 uint32_t FilaTransformManager_getComponentCount(const FilaTransformManager* self);
 bool FilaTransformManager_empty(const FilaTransformManager* self);
 FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* self, uint32_t i);
-const FilaEntity* FilaTransformManager_getEntities(const FilaTransformManager* self);
+uint32_t FilaTransformManager_getAllEntities(const FilaTransformManager* self, FilaEntity* out, uint32_t outCapacity);
 void FilaTransformManager_setAccurateTranslationsEnabled(FilaTransformManager* self, bool enable);
 bool FilaTransformManager_isAccurateTranslationsEnabled(const FilaTransformManager* self);
 void FilaTransformManager_create_mat4f(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4f* localTransform);

@@ -21,7 +21,7 @@ FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t he
 }
 
 FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine) {

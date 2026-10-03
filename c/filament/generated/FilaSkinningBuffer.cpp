@@ -21,7 +21,7 @@ FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBuff
 }
 
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_name(FilaSkinningBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* self, FilaEngine* engine) {
