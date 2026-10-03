@@ -112,16 +112,16 @@ FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_SkinningBuff
     return fila::c(&fila::cpp(self)->skinning(fila::cpp(skinningBuffer), static_cast<size_t>(count), static_cast<size_t>(offset)));
 }
 
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, uint32_t boneCount) {
+    return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount)));
+}
+
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_mat4f(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaMat4f* transforms) {
     return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount), fila::cpp(transforms)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_Bone(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaRenderableManagerBone* bones) {
     return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount), fila::cpp(bones)));
-}
-
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, uint32_t boneCount) {
-    return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, const FilaFloat2* indicesAndWeights, uint32_t count, uint32_t bonesPerVertex) {
@@ -180,8 +180,8 @@ FilaEntity FilaRenderableManager_getEntity(const FilaRenderableManager* self, ui
     return utils::Entity::smuggle(fila::cpp(self)->getEntity(filament::RenderableManager::Instance(i)));
 }
 
-const FilaEntity* FilaRenderableManager_getEntities(const FilaRenderableManager* self) {
-    return reinterpret_cast<const FilaEntity*>(fila::cpp(self)->getEntities());
+uint32_t FilaRenderableManager_getAllEntities(const FilaRenderableManager* self, FilaEntity* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getAllEntities(), outCapacity, [&](auto& x, uint32_t i) { out[i] = utils::Entity::smuggle(x); });
 }
 
 void FilaRenderableManager_destroy(FilaRenderableManager* self, FilaEntity e) {
@@ -316,8 +316,16 @@ FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRend
     return fila::c(fila::cpp(self)->getMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex)));
 }
 
+void FilaRenderableManager_setGeometryAt_IndexBuffer(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices) {
+    fila::cpp(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), fila::cpp(indices));
+}
+
 void FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t count) {
     fila::cpp(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), fila::cpp(indices), static_cast<size_t>(offset), static_cast<size_t>(count));
+}
+
+void FilaRenderableManager_setGeometryAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices) {
+    fila::cpp(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices));
 }
 
 void FilaRenderableManager_setGeometryAt_size_t_size_t(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, uint32_t offset, uint32_t count) {

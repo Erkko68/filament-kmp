@@ -22,8 +22,8 @@ class TransformManagerTest : FilamentTestFixture() {
         assertTrue(inst != 0)
         assertEquals(entity, tm.getEntity(inst))
         assertFalse(tm.empty())
-        assertTrue(entity in tm.entities)
-        assertEquals(tm.componentCount, tm.entities.size)
+        assertTrue(entity in tm.allEntities)
+        assertEquals(tm.componentCount, tm.allEntities.size)
 
         // Set & Get Local transforms (both float and double overloads)
         val testFloat = floatArrayOf(

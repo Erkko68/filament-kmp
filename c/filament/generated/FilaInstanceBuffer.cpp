@@ -17,7 +17,7 @@ FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_localTransforms(FilaInstanc
 }
 
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_name(FilaInstanceBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine) {

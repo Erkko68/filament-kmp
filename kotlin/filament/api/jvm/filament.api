@@ -776,6 +776,7 @@ public final class io/github/erkko68/filament/Exposure {
 public final class io/github/erkko68/filament/Fence {
 	public static final field Companion Lio/github/erkko68/filament/Fence$Companion;
 	public static final field FENCE_WAIT_FOR_EVER J
+	public static final field WAIT_FOR_EVER J
 	public fun <init> (JJ)V
 	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getNativeObject ()J
@@ -1118,12 +1119,12 @@ public final class io/github/erkko68/filament/LightManager {
 	public fun <init> (J)V
 	public final fun destroy (I)V
 	public final fun empty ()Z
+	public final fun getAllEntities ()[I
 	public final fun getColor (I[F)[F
 	public static synthetic fun getColor$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getComponentCount ()I
 	public final fun getDirection (I[F)[F
 	public static synthetic fun getDirection$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
-	public final fun getEntities ()[I
 	public final fun getEntity (I)I
 	public final fun getFalloff (I)F
 	public final fun getInstance (I)I
@@ -1772,10 +1773,15 @@ public final class io/github/erkko68/filament/RenderTarget$AttachmentPoint : jav
 	public static final field COLOR5 Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static final field COLOR6 Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static final field COLOR7 Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
+	public static final field Companion Lio/github/erkko68/filament/RenderTarget$AttachmentPoint$Companion;
 	public static final field DEPTH Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static fun values ()[Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
+}
+
+public final class io/github/erkko68/filament/RenderTarget$AttachmentPoint$Companion {
+	public final fun getCOLOR0 ()Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 }
 
 public final class io/github/erkko68/filament/RenderTarget$Builder {
@@ -1796,12 +1802,12 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun clearMaterialInstanceAt (II)V
 	public final fun destroy (I)V
 	public final fun empty ()Z
+	public final fun getAllEntities ()[I
 	public final fun getAxisAlignedBoundingBox (I)Lio/github/erkko68/filament/Box;
 	public final fun getBlendOrderAt (II)I
 	public final fun getChannel (I)I
 	public final fun getComponentCount ()I
 	public final fun getEnabledAttributesAt (II)Ljava/util/Set;
-	public final fun getEntities ()[I
 	public final fun getEntity (I)I
 	public final fun getFogEnabled (I)Z
 	public final fun getInstance (I)I
@@ -1830,7 +1836,9 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun setChannel (II)V
 	public final fun setCulling (IZ)V
 	public final fun setFogEnabled (IZ)V
+	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;II)V
+	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;Lio/github/erkko68/filament/IndexBuffer;)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;Lio/github/erkko68/filament/IndexBuffer;II)V
 	public final fun setGlobalBlendOrderEnabledAt (IIZ)V
 	public final fun setLayerMask (III)V
@@ -1999,6 +2007,9 @@ public final class io/github/erkko68/filament/Renderer$DisplayInfo {
 }
 
 public final class io/github/erkko68/filament/Renderer$FrameInfo {
+	public static final field Companion Lio/github/erkko68/filament/Renderer$FrameInfo$Companion;
+	public static final field INVALID J
+	public static final field PENDING J
 	public fun <init> (IJJJJJJJJJJJJJJ)V
 	public final fun getBackendBeginFrame ()J
 	public final fun getBackendEndFrame ()J
@@ -2015,6 +2026,9 @@ public final class io/github/erkko68/filament/Renderer$FrameInfo {
 	public final fun getGpuFrameDuration ()J
 	public final fun getPresentDeadline ()J
 	public final fun getVsync ()J
+}
+
+public final class io/github/erkko68/filament/Renderer$FrameInfo$Companion {
 }
 
 public final class io/github/erkko68/filament/Renderer$FrameRateOptions {
@@ -2205,6 +2219,14 @@ public final class io/github/erkko68/filament/SurfaceOrientation$Builder {
 }
 
 public final class io/github/erkko68/filament/SwapChain {
+	public static final field CONFIG_APPLE_CVPIXELBUFFER J
+	public static final field CONFIG_ENABLE_XCB J
+	public static final field CONFIG_HAS_STENCIL_BUFFER J
+	public static final field CONFIG_MSAA_4_SAMPLES J
+	public static final field CONFIG_PROTECTED_CONTENT J
+	public static final field CONFIG_READABLE J
+	public static final field CONFIG_SRGB_COLORSPACE J
+	public static final field CONFIG_TRANSPARENT J
 	public static final field Companion Lio/github/erkko68/filament/SwapChain$Companion;
 	public fun <init> (JJ)V
 	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2763,10 +2785,10 @@ public final class io/github/erkko68/filament/TransformManager {
 	public static synthetic fun create$default (Lio/github/erkko68/filament/TransformManager;IIILjava/lang/Object;)V
 	public final fun destroy (I)V
 	public final fun empty ()Z
+	public final fun getAllEntities ()[I
 	public final fun getChildCount (I)I
 	public final fun getChildren (I[I)I
 	public final fun getComponentCount ()I
-	public final fun getEntities ()[I
 	public final fun getEntity (I)I
 	public final fun getInstance (I)I
 	public final fun getNativeObject ()J
@@ -2877,6 +2899,7 @@ public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute : jav
 	public static final field CUSTOM5 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field CUSTOM6 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field CUSTOM7 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public static final field Companion Lio/github/erkko68/filament/VertexBuffer$VertexAttribute$Companion;
 	public static final field POSITION Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field TANGENTS Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field UV0 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
@@ -2885,6 +2908,17 @@ public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute : jav
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static fun values ()[Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+}
+
+public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute$Companion {
+	public final fun getMORPH_POSITION_0 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_POSITION_1 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_POSITION_2 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_POSITION_3 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_0 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_1 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_2 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_3 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 }
 
 public final class io/github/erkko68/filament/View {

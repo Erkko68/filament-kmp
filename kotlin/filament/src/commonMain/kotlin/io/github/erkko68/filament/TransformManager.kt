@@ -46,7 +46,7 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
     fun getEntity(i: EntityInstance): Entity = FilaTransformManager_getEntity(nativeHandle, i)
 
     /** All the entities managed by this manager, in no particular order. */
-    val entities: IntArray get() = readInts(FilaTransformManager_getEntities(nativeHandle), componentCount)
+    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned { FilaTransformManager_getAllEntities(nativeHandle, it, a.size) } }
 
     /**
      * Enables or disables the accurate translation mode (disabled by default).

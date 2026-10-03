@@ -11,6 +11,7 @@ extern "C" {
 // filament::Texture::Builder
 FilaTextureBuilder* FilaTextureBuilder_create(void);
 void FilaTextureBuilder_destroy(FilaTextureBuilder* self);
+// skipped Builder & filament::Texture::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaTextureBuilder* FilaTextureBuilder_width(FilaTextureBuilder* self, uint32_t width);
 FilaTextureBuilder* FilaTextureBuilder_height(FilaTextureBuilder* self, uint32_t height);
 FilaTextureBuilder* FilaTextureBuilder_depth(FilaTextureBuilder* self, uint32_t depth);

@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // filament::MaterialInstance
+// skipped void filament::MaterialInstance::setParameter(std::string_view name, utils::Slice<const T> values): .*\(.*utils::Slice.*\)
 FilaMaterialInstance* FilaMaterialInstance_duplicate(const FilaMaterialInstance* other, const char* name);
 const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance* self);
 const char* FilaMaterialInstance_getName(const FilaMaterialInstance* self);

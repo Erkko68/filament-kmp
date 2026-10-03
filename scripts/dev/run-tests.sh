@@ -1,26 +1,15 @@
 #!/usr/bin/env bash
 #
-# Run the Kotlin Multiplatform test suites across every target this repo
-# supports. Mirrors what `.github/workflows/test.yml` does on CI, with two
-# exceptions:
-#   * The CI `jvm` matrix runs on 4 host OSes (macos-arm64 / linux-x64 /
-#     linux-arm64 / windows-x64 / windows-arm64). Locally we just run `jvmTest` on the current
-#     host — whichever prebuilt happens to be cached under prebuilts/.
-#   * Android tests need a running emulator (or physical device); we try to
-#     boot the first AVD that `emulator -list-avds` knows about if `adb
-#     devices` shows none, then run `connectedAndroidDeviceTest` against it.
+# Run the test suites of every target this repo supports: what `.github/workflows/ci.yml` runs, on this host.
+# Each task is its own Gradle invocation with two workers: several Kotlin compilers plus GPU tests at once
+# is more than a dev machine takes.
 #
-# Targets (each can be skipped via flag — see below):
-#   * jvm     — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:jvmTest
-#   * js      — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:jsTest
-#                (needs Chrome on PATH for Karma)
-#   * wasm    — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:wasmJsTest
-#                (needs Chrome on PATH for Karma)
-#   * ios     — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:iosSimulatorArm64Test
-#                (macOS host only; arm64 simulator)
-#                (filament-compose runs on jvm/js/wasm/ios only, mirroring CI)
-#   * android — connectedAndroidDeviceTest on every module
-#                (needs ANDROID_HOME, an AVD, adb on PATH)
+# Targets (each can be skipped via flag, see below):
+#   * jvm     — :desktop:test, then jvmTest on every module (the host's prebuilt only; CI covers the other OSes)
+#   * js      — jsTest on every module and :web (needs Chrome for Karma)
+#   * wasm    — wasmJsTest on every module and :web (needs Chrome for Karma)
+#   * ios     — iosSimulatorArm64Test on every module (macOS only; boots a simulator)
+#   * android — connectedAndroidDeviceTest on every module (boots the first AVD when no device is attached)
 #
 # Usage:
 #   scripts/dev/run-tests.sh                 # run everything the host supports
@@ -42,11 +31,8 @@ MODULES=(
   ":kotlin:filamat"
   ":kotlin:filament-utils"
   ":kotlin:gltfio"
+  ":kotlin:filament-compose"
 )
-
-# filament-compose runs on jvm/js/ios only (mirrors ci.yml); its Android
-# instrumented job is a pending follow-up, so it stays out of the Android loop.
-COMPOSE_MODULE=":kotlin:filament-compose"
 
 # Defaults: run every target. Disable on non-macOS for iOS.
 RUN_JVM=1
@@ -88,7 +74,7 @@ EXIT=0
 run_gradle() {
   local label="$1"; shift
   echo "──────── $label ────────"
-  if ! ./gradlew "$@" --no-configuration-cache; then
+  if ! ./gradlew "$@" --max-workers=2 --no-configuration-cache; then
     echo "✗ $label failed" >&2
     EXIT=1
   else
@@ -96,28 +82,25 @@ run_gradle() {
   fi
 }
 
-# ── JVM ───────────────────────────────────────────────────────────────────────
+# run_tests <task> [gradle args…]: <task> on every module, one invocation each.
+run_tests() {
+  local task="$1"; shift
+  for m in "${MODULES[@]}"; do run_gradle "${m}:${task}" "${m}:${task}" "$@"; done
+}
+
 if [[ $RUN_JVM -eq 1 ]]; then
-  tasks=()
-  for m in "${MODULES[@]}"; do tasks+=("$m:jvmTest"); done
-  tasks+=("$COMPOSE_MODULE:jvmTest")
-  run_gradle "jvmTest" "${tasks[@]}"
+  run_gradle ":desktop:test" :desktop:test
+  run_tests jvmTest
 fi
 
-# ── JS ────────────────────────────────────────────────────────────────────────
 if [[ $RUN_JS -eq 1 ]]; then
-  tasks=()
-  for m in "${MODULES[@]}"; do tasks+=("$m:jsTest"); done
-  tasks+=("$COMPOSE_MODULE:jsTest")
-  run_gradle "jsTest" "${tasks[@]}"
+  run_tests jsTest
+  run_gradle ":web:jsTest" :web:jsTest
 fi
 
-# ── Wasm ──────────────────────────────────────────────────────────────────────
 if [[ $RUN_WASM -eq 1 ]]; then
-  tasks=()
-  for m in "${MODULES[@]}"; do tasks+=("$m:wasmJsTest"); done
-  tasks+=("$COMPOSE_MODULE:wasmJsTest")
-  run_gradle "wasmJsTest" "${tasks[@]}"
+  run_tests wasmJsTest
+  run_gradle ":web:wasmJsTest" :web:wasmJsTest
 fi
 
 # ── iOS (macOS only) ──────────────────────────────────────────────────────────
@@ -129,18 +112,18 @@ maybe_boot_simulator() {
   # Reuse an already-booted iPhone if present.
   local booted
   booted="$(xcrun simctl list devices booted 2>/dev/null | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
-  if [[ -n "$booted" ]]; then SIM_DEVICE="$booted"; echo "Using booted simulator: $SIM_DEVICE"; return 0; fi
+  [[ -n "$booted" ]] && SIM_DEVICE="$booted"
   # Fall back to the first available iPhone if the preferred one doesn't exist.
   if ! xcrun simctl list devices available 2>/dev/null | grep -q "$SIM_DEVICE ("; then
     SIM_DEVICE="$(xcrun simctl list devices available 2>/dev/null | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
   fi
   [[ -n "$SIM_DEVICE" ]] || { echo "Skipping ios: no iPhone simulator available" >&2; return 1; }
-  echo "Booting simulator: $SIM_DEVICE"
-  xcrun simctl boot "$SIM_DEVICE" 2>/dev/null || true
-  for _ in $(seq 1 30); do
-    xcrun simctl list devices booted 2>/dev/null | grep -q "$SIM_DEVICE (" && return 0
-    sleep 2
-  done
+  echo "Simulator: $SIM_DEVICE"
+  # A simulator listed as booted can have a dead session; bootstatus -b boots it if needed and waits (5 min at most:
+  # it waits forever on a wedged one, and macOS has no timeout).
+  perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$SIM_DEVICE" -b >/dev/null 2>&1 && return 0
+  xcrun simctl shutdown "$SIM_DEVICE" 2>/dev/null || true
+  perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$SIM_DEVICE" -b >/dev/null 2>&1 && return 0
   echo "Skipping ios: simulator '$SIM_DEVICE' failed to boot" >&2
   return 1
 }
@@ -149,10 +132,7 @@ if [[ $RUN_IOS -eq 1 ]]; then
   if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "Skipping ios: not on macOS" >&2
   elif maybe_boot_simulator; then
-    tasks=()
-    for m in "${MODULES[@]}"; do tasks+=("$m:iosSimulatorArm64Test"); done
-    tasks+=("$COMPOSE_MODULE:iosSimulatorArm64Test")
-    run_gradle "iosSimulatorArm64Test" "${tasks[@]}" "-PiosSimulatorDevice=$SIM_DEVICE"
+    run_tests iosSimulatorArm64Test "-PiosSimulatorDevice=$SIM_DEVICE"
   else
     EXIT=1
   fi
@@ -171,7 +151,7 @@ maybe_boot_emulator() {
   avd="$("$emu" -list-avds 2>/dev/null | head -1)"
   [[ -n "$avd" ]] || { echo "Skipping android: no AVDs available" >&2; return 1; }
   echo "Booting AVD: $avd"
-  "$emu" -avd "$avd" -no-snapshot -no-audio -no-boot-anim > /tmp/run-tests-emulator.log 2>&1 &
+  "$emu" -avd "$avd" -no-window -no-snapshot -no-audio -no-boot-anim > /tmp/run-tests-emulator.log 2>&1 &
   local pid=$!
   # Wait up to 120s for boot_completed.
   for _ in $(seq 1 60); do
@@ -191,9 +171,7 @@ if [[ $RUN_ANDROID -eq 1 ]]; then
   if ! command -v adb >/dev/null 2>&1; then
     echo "Skipping android: adb not on PATH" >&2
   elif maybe_boot_emulator; then
-    tasks=()
-    for m in "${MODULES[@]}"; do tasks+=("$m:connectedAndroidDeviceTest"); done
-    run_gradle "connectedAndroidDeviceTest" "${tasks[@]}"
+    run_tests connectedAndroidDeviceTest
     if [[ -n "$EMULATOR_PID" ]]; then
       # Only kill the emulator we started; leave a pre-existing one alone.
       adb emu kill >/dev/null 2>&1 || true

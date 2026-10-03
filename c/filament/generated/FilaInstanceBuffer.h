@@ -11,6 +11,7 @@ extern "C" {
 // filament::InstanceBuffer::Builder
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create(uint32_t instanceCount);
 void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self);
+// skipped Builder & filament::InstanceBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_localTransforms(FilaInstanceBufferBuilder* self, const FilaMat4f* localTransforms);
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_name(FilaInstanceBufferBuilder* self, const char* name);
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine);

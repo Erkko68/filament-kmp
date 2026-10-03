@@ -250,5 +250,59 @@ internal external fun FilaMaterial_setDefaultParameter_bool3(self: NativePointer
 @ExternalSymbolName("FilaMaterial_setDefaultParameter_bool4")
 internal external fun FilaMaterial_setDefaultParameter_bool4(self: NativePointer, name: NativePointer, value: NativePointer)
 
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float_size_t")
+internal external fun FilaMaterial_setDefaultParameter_float_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_int32_t_size_t")
+internal external fun FilaMaterial_setDefaultParameter_int32_t_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_uint32_t_size_t")
+internal external fun FilaMaterial_setDefaultParameter_uint32_t_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_int2_size_t")
+internal external fun FilaMaterial_setDefaultParameter_int2_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_int3_size_t")
+internal external fun FilaMaterial_setDefaultParameter_int3_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_int4_size_t")
+internal external fun FilaMaterial_setDefaultParameter_int4_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_uint2_size_t")
+internal external fun FilaMaterial_setDefaultParameter_uint2_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_uint3_size_t")
+internal external fun FilaMaterial_setDefaultParameter_uint3_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_uint4_size_t")
+internal external fun FilaMaterial_setDefaultParameter_uint4_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float2_size_t")
+internal external fun FilaMaterial_setDefaultParameter_float2_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float3_size_t")
+internal external fun FilaMaterial_setDefaultParameter_float3_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float4_size_t")
+internal external fun FilaMaterial_setDefaultParameter_float4_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_mat3f_size_t")
+internal external fun FilaMaterial_setDefaultParameter_mat3f_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_mat4f_size_t")
+internal external fun FilaMaterial_setDefaultParameter_mat4f_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_bool_size_t")
+internal external fun FilaMaterial_setDefaultParameter_bool_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_bool2_size_t")
+internal external fun FilaMaterial_setDefaultParameter_bool2_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_bool3_size_t")
+internal external fun FilaMaterial_setDefaultParameter_bool3_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_bool4_size_t")
+internal external fun FilaMaterial_setDefaultParameter_bool4_size_t(self: NativePointer, name: NativePointer, values: NativePointer, count: Int)
+
 @ExternalSymbolName("FilaMaterial_getDefaultInstance")
 internal external fun FilaMaterial_getDefaultInstance(self: NativePointer): NativePointer

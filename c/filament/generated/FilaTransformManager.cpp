@@ -24,8 +24,8 @@ FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* self, uint
     return utils::Entity::smuggle(fila::cpp(self)->getEntity(filament::TransformManager::Instance(i)));
 }
 
-const FilaEntity* FilaTransformManager_getEntities(const FilaTransformManager* self) {
-    return reinterpret_cast<const FilaEntity*>(fila::cpp(self)->getEntities());
+uint32_t FilaTransformManager_getAllEntities(const FilaTransformManager* self, FilaEntity* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getAllEntities(), outCapacity, [&](auto& x, uint32_t i) { out[i] = utils::Entity::smuggle(x); });
 }
 
 void FilaTransformManager_setAccurateTranslationsEnabled(FilaTransformManager* self, bool enable) {

@@ -85,14 +85,14 @@ internal external fun FilaRenderableManagerBuilder_fog(self: NativePointer, enab
 @ExternalSymbolName("FilaRenderableManagerBuilder_skinning_SkinningBuffer_size_t_size_t")
 internal external fun FilaRenderableManagerBuilder_skinning_SkinningBuffer_size_t_size_t(self: NativePointer, skinningBuffer: NativePointer, count: Int, offset: Int): NativePointer
 
+@ExternalSymbolName("FilaRenderableManagerBuilder_skinning_size_t")
+internal external fun FilaRenderableManagerBuilder_skinning_size_t(self: NativePointer, boneCount: Int): NativePointer
+
 @ExternalSymbolName("FilaRenderableManagerBuilder_skinning_size_t_mat4f")
 internal external fun FilaRenderableManagerBuilder_skinning_size_t_mat4f(self: NativePointer, boneCount: Int, transforms: NativePointer): NativePointer
 
 @ExternalSymbolName("FilaRenderableManagerBuilder_skinning_size_t_Bone")
 internal external fun FilaRenderableManagerBuilder_skinning_size_t_Bone(self: NativePointer, boneCount: Int, bones: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaRenderableManagerBuilder_skinning_size_t")
-internal external fun FilaRenderableManagerBuilder_skinning_size_t(self: NativePointer, boneCount: Int): NativePointer
 
 @ExternalSymbolName("FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t")
 internal external fun FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(self: NativePointer, primitiveIndex: Int, indicesAndWeights: NativePointer, count: Int, bonesPerVertex: Int): NativePointer
@@ -136,8 +136,8 @@ internal external fun FilaRenderableManager_empty(self: NativePointer): Boolean
 @ExternalSymbolName("FilaRenderableManager_getEntity")
 internal external fun FilaRenderableManager_getEntity(self: NativePointer, i: Int): Int
 
-@ExternalSymbolName("FilaRenderableManager_getEntities")
-internal external fun FilaRenderableManager_getEntities(self: NativePointer): NativePointer
+@ExternalSymbolName("FilaRenderableManager_getAllEntities")
+internal external fun FilaRenderableManager_getAllEntities(self: NativePointer, out: NativePointer, outCapacity: Int): Int
 
 @ExternalSymbolName("FilaRenderableManager_destroy")
 internal external fun FilaRenderableManager_destroy(self: NativePointer, e: Int)
@@ -238,8 +238,14 @@ internal external fun FilaRenderableManager_clearMaterialInstanceAt(self: Native
 @ExternalSymbolName("FilaRenderableManager_getMaterialInstanceAt")
 internal external fun FilaRenderableManager_getMaterialInstanceAt(self: NativePointer, instance: Int, primitiveIndex: Int): NativePointer
 
+@ExternalSymbolName("FilaRenderableManager_setGeometryAt_IndexBuffer")
+internal external fun FilaRenderableManager_setGeometryAt_IndexBuffer(self: NativePointer, instance: Int, primitiveIndex: Int, type: Int, vertices: NativePointer, indices: NativePointer)
+
 @ExternalSymbolName("FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t")
 internal external fun FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(self: NativePointer, instance: Int, primitiveIndex: Int, type: Int, vertices: NativePointer, indices: NativePointer, offset: Int, count: Int)
+
+@ExternalSymbolName("FilaRenderableManager_setGeometryAt")
+internal external fun FilaRenderableManager_setGeometryAt(self: NativePointer, instance: Int, primitiveIndex: Int, type: Int, vertices: NativePointer)
 
 @ExternalSymbolName("FilaRenderableManager_setGeometryAt_size_t_size_t")
 internal external fun FilaRenderableManager_setGeometryAt_size_t_size_t(self: NativePointer, instance: Int, primitiveIndex: Int, type: Int, vertices: NativePointer, offset: Int, count: Int)

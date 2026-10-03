@@ -435,7 +435,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
     /** Returns the Entity of the component from its Instance. */
     fun getEntity(i: EntityInstance): Entity = FilaLightManager_getEntity(nativeHandle, i)
     /** All entities with a light component, in no particular order. */
-    val entities: IntArray get() = readInts(FilaLightManager_getEntities(nativeHandle), componentCount)
+    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned { FilaLightManager_getAllEntities(nativeHandle, it, a.size) } }
     /**
      * Get the light component instance for an entity.
      * @param entity Entity with a light component

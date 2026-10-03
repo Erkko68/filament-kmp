@@ -12,27 +12,31 @@ class CppApi(
     val enums: Map<String, CppEnum>,
     val aliases: Map<String, CppType>,
     val constants: Map<String, CppValue>,
+    /** The [constants] code outside can name: at namespace scope or public in a record. */
+    val publicConstants: Set<String>,
     /** Namespace-level functions. */
     val functions: List<CppMethod>,
     /**
-     * Qualified names left out of the API; `Record::*` keeps the record but none of its members, and
-     * `Record::method(Type, …)` one overload (by its parameters' declared types).
+     * Regexes of the qualified names left out of the API; a name goes with everything nested in it, so `Record::.*`
+     * keeps the record but none of its members. `Record::method\(Type, …\)` names one overload (by its parameters'
+     * declared types).
      */
     val skipped: Set<String> = emptySet(),
 ) {
-    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, functions, names)
+    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, publicConstants, functions, names)
+
+    private val patterns = skipped.map(::Regex)
+    private val skips = HashMap<String, String>()
+
+    /** The [skipped] entry matching [name] itself, or null. */
+    private fun skip(name: String) = skips.getOrPut(name) { patterns.firstOrNull { it.matches(name) }?.pattern.orEmpty() }.ifEmpty { null }
 
     /** The [skipped] entry that leaves out [name] (a record, member or function), or null. */
-    fun skipReason(name: String): String? = generateSequence(name) { it.substringBeforeLast("::", "").ifEmpty { null } }
-        .firstNotNullOfOrNull { n -> n.takeIf { it in skipped } ?: "$n::*".takeIf { n != name && it in skipped } }
+    fun skipReason(name: String): String? = generateSequence(name) { it.substringBeforeLast("::", "").ifEmpty { null } }.firstNotNullOfOrNull(::skip)
 
     /** Why [method] of [owner] is left out: it's skipped, or its signature uses a skipped record. */
     fun skipReason(method: CppMethod, owner: String = method.owner): String? =
-        skipReason("$owner::${method.name}") ?: overload(method, owner).takeIf { it in skipped }
-            ?: usesSkipped(method.params.map { it.type } + method.returns)
-
-    private fun overload(method: CppMethod, owner: String = method.owner) =
-        "$owner::${method.name}(${method.params.joinToString(", ") { it.type.decl ?: it.type.spelling }})"
+        skipReason("$owner::${method.name}") ?: skip(overload(method, owner)) ?: usesSkipped(method.params.map { it.type } + method.returns)
 
     fun skipReason(field: CppField, owner: String): String? = skipReason("$owner::${field.name}") ?: usesSkipped(listOf(field.type))
 
@@ -44,20 +48,43 @@ class CppApi(
         .map { decl -> generateSequence(decl) { aliases[it]?.decl }.last() }
         .firstNotNullOfOrNull { decl -> decl.takeIf { it in records }?.let(::skipReason)?.let { "uses $decl" } }
 
-    /** [skipped] entries that name nothing, stale after an upstream rename or removal. */
-    fun unknownSkips() = skipped.filterNot { entry ->
-        if (entry.endsWith(")")) return@filterNot (records.values.flatMap { it.methods } + functions).any { overload(it) == entry }
-        val name = entry.removeSuffix("::*")
-        val owner = name.substringBeforeLast("::")
-        val member = name.substringAfterLast("::")
-        name in records || records[owner]?.let { r -> r.methods.any { it.name == member } || r.fields.any { it.name == member } } == true ||
-            functions.any { it.owner == owner && it.name == member }
+    private fun overload(method: CppMethod, owner: String = method.owner) =
+        "$owner::${method.name}(${method.params.joinToString(", ") { parameter(it.type) }})"
+
+    // A by-value parameter's const isn't part of the signature.
+    private fun parameter(type: CppType) = type.decl ?: type.spelling.let { if ('*' in it || '&' in it) it else it.removePrefix("const ") }
+
+    /** Everything a [skipped] entry can name, as it spells it. */
+    private val names by lazy {
+        (records.keys + enums.keys + publicConstants +
+            records.values.flatMap { r -> (r.methods.map { it.name } + r.fields.map { it.name }).map { "${r.name}::$it" } } +
+            enums.values.flatMap { e -> e.constants.map { "${e.name}::${it.first}" } } +
+            functions.map { "${it.owner}::${it.name}" } + (records.values.flatMap { it.methods } + functions).map { overload(it) }).toSet()
     }
+
+    /** [skipped] entries that name nothing, stale after an upstream rename or removal. */
+    fun unknownSkips() = patterns.filter { names.none(it::matches) }.map { it.pattern }
+
+    /** The overloads of [name] as [skipped] entries spell them. */
+    fun overloads(name: String) = names.filter { it.startsWith("$name(") }
 
     /** The records API [headers] declare that code outside can name: what gets bound. */
     fun apiRecords(headers: Set<String>) = records.values.filter { it.accessible && it.header in headers && skipReason(it.name) == null }
 
     fun apiFunctions(headers: Set<String>) = functions.filter { it.header in headers && it.isApi && !it.isDeprecated && skipReason(it) == null }
+
+    /** The enums [surface] reaches: Kotlin declares their values by hand. */
+    fun apiEnums(headers: Set<String>) = surface(headers).mapNotNull { enums[it] }.filter { skipReason(it.name) == null }.sortedBy { it.name }
+
+    /** The public constants of the records [surface] reaches. */
+    fun apiConstants(headers: Set<String>) = surface(headers).let { surface ->
+        publicConstants.filter { it.substringBeforeLast("::") in surface && skipReason(it) == null }.sorted()
+    }
+
+    /** The names code outside spells [name] by: Texture::InternalFormat for backend::TextureFormat. */
+    fun aliasesOf(name: String): Set<String> = generateSequence(setOf(name)) { names ->
+        (names + aliases.filterValues { it.decl in names }.keys).takeIf { it.size > names.size }
+    }.last()
 
     /** [apiRecords] and [apiFunctions], plus every type their public members reach. */
     fun surface(headers: Set<String>): Set<String> {

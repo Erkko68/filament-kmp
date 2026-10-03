@@ -487,7 +487,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     /** Returns the Entity of the component from its Instance. */
     fun getEntity(i: EntityInstance): Entity = FilaRenderableManager_getEntity(nativeHandle, i)
     /** All entities with a renderable component, in no particular order. */
-    val entities: IntArray get() = readInts(FilaRenderableManager_getEntities(nativeHandle), componentCount)
+    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned { FilaRenderableManager_getAllEntities(nativeHandle, it, a.size) } }
     /**
      * Destroys the renderable component in the given entity.
      *
@@ -673,6 +673,12 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      */
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int) =
         FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, count)
+    /** Changes the geometry for the given primitive, drawing all of [indices]. */
+    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer) =
+        FilaRenderableManager_setGeometryAt_IndexBuffer(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, indices.nativeHandle)
+    /** Changes the geometry for a non-indexed primitive, drawing all of [vertices]. */
+    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer) =
+        FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle)
     /**
      * Changes the geometry for a non-indexed primitive.
      *

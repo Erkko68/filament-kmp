@@ -21,7 +21,7 @@ FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* self, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user) {

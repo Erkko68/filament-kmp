@@ -130,7 +130,7 @@ class LightManagerTest : FilamentTestFixture() {
         assertTrue(lm.isDirectional(inst))
         assertFalse(lm.isSpotLight(inst))
         assertEquals(entity, lm.getEntity(inst))
-        assertTrue(entity in lm.entities)
+        assertTrue(entity in lm.allEntities)
 
         // Shadow options round-trip through the native struct
         lm.setShadowOptions(inst, LightManager.ShadowOptions().apply {

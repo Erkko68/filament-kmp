@@ -5,9 +5,13 @@
 # headers (backend/, math/, utils/) are bridged as C types only, into the first module. `!glob` excludes headers
 # (the generator fails on listed headers it finds no declarations in).
 #
-# `-name` leaves a C++ declaration out: a record (with everything nested), a member, or a function. `-Record::*` keeps
-# the record's handle but none of its members. Methods and fields whose types use a skipped record go too. The
-# generated headers note each skipped member; an entry naming nothing fails the generator.
+# `-regex` leaves out the C++ declarations whose qualified name it matches: a record (with everything nested), a member,
+# or a function; one overload as `-Record::method\(Type, …\)`. `-Record::.*` keeps the record's handle but none of its
+# members. Methods and fields whose types use a skipped record go too. The generated headers note each skipped member;
+# an entry matching nothing fails the generator.
+#
+# An enum, enum value or constant has no C function: its entry only tells apiCoverage that Kotlin leaves it undeclared
+# on purpose.
 
 [filament]
 filament/*.h
@@ -20,7 +24,7 @@ geometry/SurfaceOrientation.h
 -filament::Texture::setExternalImage
 # C++ iterator sugar over getFrameInfoHistory; FilaFrameHistoryStreamManual drains getNewFrames into FrameInfo handles.
 -filament::FrameHistoryStream::Result
--filament::FrameHistoryStream::NewFramesRange::*
+-filament::FrameHistoryStream::NewFramesRange::.*
 # Debugging aids (upstream marks them so) and raw pointers into the engine's internals.
 -filament::DebugRegistry
 -filament::Engine::getFeatureFlagPtr
@@ -63,13 +67,30 @@ geometry/SurfaceOrientation.h
 # ParameterInfo* is an array C++ fills; FilaMaterialManual copies it into C's handles.
 -filament::Material::getParameters
 # C++ sugar binding a member function or functor; the callback overload (FilaViewManual) covers them.
--filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
+-filament::View::pick\(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler\)
+# 1.77.2's utils::Slice twins of the pointer + count overloads C binds, and its FeatureState twin of compile's tribool.
+-.*\(.*utils::Slice.*\)
+-filament::Engine::compile\(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable\)
+# Only literals make a StaticString; name(ImmutableCString) copies C's string.
+-filament::\w+::Builder::name\(utils::StaticString\)
+# Not in the Kotlin API: compressed pixel buffers, Platform's device info and timestamps, the frame-scheduled callback's
+# flags; BASE_LEVEL is 0.
+-filament::backend::CompressedPixelDataType
+-filament::backend::Platform::DeviceInfoType
+-filament::backend::Platform::CompositorTiming::INVALID
+-filament::backend::Platform::FrameTimestamps::INVALID
+-filament::backend::Platform::FrameTimestamps::PENDING
+-filament::SwapChain::CALLBACK_DEFAULT_USE_METAL_COMPLETION_HANDLER
+-filament::Texture::BASE_LEVEL
+# AttachmentPoint.entries and getSupportedColorAttachmentsCount say as much.
+-filament::RenderTarget::MIN_SUPPORTED_COLOR_ATTACHMENTS_COUNT
+-filament::RenderTarget::MAX_SUPPORTED_COLOR_ATTACHMENTS_COUNT
 
 [gltfio]
 gltfio/*.h
 !gltfio/math.h
 # Driven by ResourceLoader and AssetLoader, or only for writing a C++ MaterialProvider.
--filament::gltfio::TextureProvider::*
+-filament::gltfio::TextureProvider::.*
 -filament::gltfio::processShaderString
 -filament::gltfio::MaterialKey::padding
 -filament::gltfio::MaterialKey::padding2
@@ -110,6 +131,10 @@ filamat/*.h
 -filamat::MaterialBuilder::getApiLevel
 # Header-inline; Kotlin's MaterialPackage.invalidPackage does the same.
 -filamat::Package::invalidPackage
+# Kotlin takes the stages as a Set<ShaderStage>.
+-filament::backend::ShaderStageFlags
+# The compiler's internal limits.
+-filamat::MaterialBuilder::[A-Z_]+
 
 [filament-utils]
 camutils/*.h
@@ -126,3 +151,7 @@ image/Ktx1Bundle.h
 -image::KtxBlobIndex
 # For compressed uploads, which PixelBufferDescriptor doesn't express in Kotlin; createTexture handles them.
 -ktxreader::Ktx1Reader::toCompressedFilamentEnum
+# A size sentinel; Key.entries.size.
+-filament::camutils::Manipulator::Key::COUNT
+# OpenGL format codes for KtxInfo's fields, which Kotlin doesn't expose.
+-image::Ktx1Bundle::[A-Z0-9_x]+

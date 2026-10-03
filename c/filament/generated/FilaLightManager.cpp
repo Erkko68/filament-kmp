@@ -312,8 +312,8 @@ FilaEntity FilaLightManager_getEntity(const FilaLightManager* self, uint32_t i) 
     return utils::Entity::smuggle(fila::cpp(self)->getEntity(filament::LightManager::Instance(i)));
 }
 
-const FilaEntity* FilaLightManager_getEntities(const FilaLightManager* self) {
-    return reinterpret_cast<const FilaEntity*>(fila::cpp(self)->getEntities());
+uint32_t FilaLightManager_getAllEntities(const FilaLightManager* self, FilaEntity* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getAllEntities(), outCapacity, [&](auto& x, uint32_t i) { out[i] = utils::Entity::smuggle(x); });
 }
 
 uint32_t FilaLightManager_getInstance(const FilaLightManager* self, FilaEntity e) {

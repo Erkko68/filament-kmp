@@ -81,7 +81,10 @@ abstract class GenerateCApiTask @Inject constructor(private val exec: ExecOperat
 /** The [CApiWriter] of [headers] under [include]; `c/<module>/manual` under [c] says which functions are hand-written. */
 internal fun cApiWriter(exec: ExecOperations, workDir: File, include: File, headers: Set<String>, apiHeaders: ApiHeaders, c: File): CApiWriter {
     val api = CppApiReader(exec, workDir).read(include, headers).skipping(apiHeaders.skipped)
-    api.unknownSkips().takeIf { it.isNotEmpty() }?.let { throw GradleException("api-headers.txt skips unknown declarations: $it") }
+    val unknown = api.unknownSkips().map { entry ->
+        entry + api.overloads(entry.substringBefore("\\(")).ifEmpty { null }?.joinToString(prefix = " (has: ", postfix = ")").orEmpty()
+    }
+    if (unknown.isNotEmpty()) throw GradleException("api-headers.txt skips unknown declarations: ${unknown.joinToString()}")
     val manual = apiHeaders.modules.keys.flatMap { c.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
         .flatMap { MANUAL_FUNCTION.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
     return CApiWriter(api, apiHeaders, headers, manual)

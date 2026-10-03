@@ -9,14 +9,16 @@ extern "C" {
 #endif
 
 // utils::EntityManager
-// skipped void utils::EntityManager::registerChangeCallback(const void * token, ChangeCallback callback)
-// skipped void utils::EntityManager::unregisterChangeCallback(const void * token)
-// skipped void utils::EntityManager::registerListener(Listener * l): uses utils::EntityManager::Listener
-// skipped void utils::EntityManager::unregisterListener(Listener * l): uses utils::EntityManager::Listener
+// skipped void utils::EntityManager::registerChangeCallback(const void * _Nonnull token, ChangeCallback callback)
+// skipped void utils::EntityManager::unregisterChangeCallback(const void * _Nonnull token)
+// skipped void utils::EntityManager::create(Slice<Entity> entities): .*\(.*utils::Slice.*\)
+// skipped void utils::EntityManager::destroy(Slice<const Entity> entities): .*\(.*utils::Slice.*\)
+// skipped void utils::EntityManager::registerListener(Listener * _Nonnull l): uses utils::EntityManager::Listener
+// skipped void utils::EntityManager::unregisterListener(Listener * _Nonnull l): uses utils::EntityManager::Listener
 // skipped PagedArenaBitset utils::EntityManager::getAliveEntities() const
-// skipped void utils::EntityManager::registerWatermark(std::atomic<uint64_t> * watermark, utils::ImmutableCString name, const PagedArenaBitset * entityBitset, Mutex * entityBitsetLock)
-// skipped void utils::EntityManager::unregisterWatermark(std::atomic<uint64_t> * watermark)
-// skipped void utils::EntityManager::rebindWatermark(const std::atomic<uint64_t> * oldW, std::atomic<uint64_t> * newW, ImmutableCString newName, const PagedArenaBitset * newEntityBitset, Mutex * newEntityBitsetLock)
+// skipped void utils::EntityManager::registerWatermark(std::atomic<uint64_t> * _Nonnull watermark, utils::ImmutableCString name, const PagedArenaBitset * _Nullable entityBitset, Mutex * _Nullable entityBitsetLock)
+// skipped void utils::EntityManager::unregisterWatermark(std::atomic<uint64_t> * _Nonnull watermark)
+// skipped void utils::EntityManager::rebindWatermark(const std::atomic<uint64_t> * _Nonnull oldW, std::atomic<uint64_t> * _Nonnull newW, ImmutableCString newName, const PagedArenaBitset * _Nullable newEntityBitset, Mutex * _Nullable newEntityBitsetLock)
 // skipped uint64_t utils::EntityManager::getMissedGarbage(std::vector<const PagedArenaBitset *> & out, uint64_t readerWatermark)
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void);
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self);
@@ -24,7 +26,7 @@ uint32_t FilaUtilsEntityManager_getMaxEntityCount(void);
 uint32_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self);
 void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities);
 FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self);
-void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities);
+void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, const FilaEntity* entities);
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e);
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e);
 void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self);

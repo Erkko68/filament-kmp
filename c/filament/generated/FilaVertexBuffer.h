@@ -11,6 +11,7 @@ extern "C" {
 // filament::VertexBuffer::Builder
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_create(void);
 void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* self);
+// skipped Builder & filament::VertexBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* self, uint32_t bufferCount);
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_vertexCount(FilaVertexBufferBuilder* self, uint32_t vertexCount);
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* self, bool enabled);

@@ -54,8 +54,9 @@ function they declare gets C functions. Types they only *use* from other headers
 The scope is declared, not inferred:
 
 - `!glob` drops a header; `-filament::View::setDebugCamera` drops a declaration (a record with
-  everything nested in it, a member, or one overload by signature); `-Record::*` keeps the handle
-  but none of its members.
+  everything nested in it, a member, or one overload as `-Record::method\(Type\)`). Each `-` entry is
+  a regex matched against the whole qualified name, so `-Record::.*` keeps the handle but none of
+  its members.
 - Each skip has a comment saying why: debugging aids, engine internals (`getDriver`,
   `getJobSystem`), C++-only sugar another overload covers, upstream's "internal use" blocks.
 - The generated header notes every member it skipped. An entry that names nothing fails the
@@ -134,6 +135,14 @@ upgrade `git diff c/api-coverage.txt` shows what upstream added or removed and h
 `grep '^unwrapped'` is the Kotlin backlog. It also warns when the committed `c/*/generated` or `capi`
 files aren't what the generators would write now. It never fails the build. Changes to our public
 Kotlin API are `apiDump`'s: review the diff in each module's `api/`.
+
+A second section lists what no function carries: each enum value and public class constant of the bound
+API, `declared` when the hand-written Kotlin API has that name in the matching class or enum (found
+through the API's aliases too: `Texture.InternalFormat` for `backend::TextureFormat`), `undeclared`
+when it doesn't, or `untyped` when Kotlin has no declaration of the enum at all. It matches names in the
+Kotlin sources, it doesn't compile them; `grep '^undeclared'` after an upgrade shows the new ones.
+Ones Kotlin leaves out on purpose are `-` entries in `c/api-headers.txt` (`-Record::[A-Z_]+` for
+all of a record's constants), which drops them from the list.
 
 `./gradlew apiGaps` compares Filament's public C++ methods (from clang's AST, inline ones included,
 plus template instances only the libraries define) against the symbols the `c/` objects reference

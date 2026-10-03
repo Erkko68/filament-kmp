@@ -235,8 +235,8 @@ internal external fun FilaLightManager_empty(self: NativePointer): Boolean
 @ExternalSymbolName("FilaLightManager_getEntity")
 internal external fun FilaLightManager_getEntity(self: NativePointer, i: Int): Int
 
-@ExternalSymbolName("FilaLightManager_getEntities")
-internal external fun FilaLightManager_getEntities(self: NativePointer): NativePointer
+@ExternalSymbolName("FilaLightManager_getAllEntities")
+internal external fun FilaLightManager_getAllEntities(self: NativePointer, out: NativePointer, outCapacity: Int): Int
 
 @ExternalSymbolName("FilaLightManager_getInstance")
 internal external fun FilaLightManager_getInstance(self: NativePointer, e: Int): Int

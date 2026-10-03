@@ -14,7 +14,7 @@ import buildlogic.apigen.cpp.CppType
  * `Includes.hpp` of [headers], and per top-level class or namespace a header and its C++ forwarders. What can't be
  * bridged becomes a `TODO(handwritten)` comment where its declaration would be; for one [manual] writes by hand, a note it's done.
  */
-internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>, private val manual: Set<String> = emptySet()) {
+internal class CApiWriter(val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>, private val manual: Set<String> = emptySet()) {
     private val bridges = CBridges(api)
     private val rules = BindingRules(api, bridges)
     private val surface = api.surface(headers)

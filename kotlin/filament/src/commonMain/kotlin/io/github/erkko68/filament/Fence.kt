@@ -57,6 +57,8 @@ class Fence @InternalFilamentApi constructor(
     companion object {
         /** Disables [wait]'s timeout. */
         const val FENCE_WAIT_FOR_EVER: Long = -1L // uint64_t(-1)
+        /** Disables [wait]'s timeout. */
+        const val WAIT_FOR_EVER: Long = FENCE_WAIT_FOR_EVER
 
         /**
          * Client-side wait on a Fence and destroy the Fence.

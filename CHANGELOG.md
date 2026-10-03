@@ -13,6 +13,17 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-10-03
+
+### Changed
+- **Filament 1.77.2** upstream; `MATERIAL_VERSION` is unchanged, so `.filamat` files keep working.
+- **`entities` is now `allEntities`** on `RenderableManager`, `LightManager` and `TransformManager`, following C++'s `getAllEntities()`.
+
+### Added
+- **`RenderableManager.setGeometryAt` without `offset`/`count`**: draws the whole buffer.
+- **`Fence.WAIT_FOR_EVER`**, C++'s new name for `FENCE_WAIT_FOR_EVER`.
+- **Constants and enum values the headers declare**: `SwapChain.CONFIG_*`, `Renderer.FrameInfo.INVALID`/`PENDING`, `VertexAttribute.MORPH_*`, `AttachmentPoint.COLOR0`.
+
 ## [0.7.0] — 2026-10-01
 
 > [!WARNING]
@@ -492,7 +503,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.1...HEAD
+[0.7.1]: https://github.com/Erkko68/filament-kmp/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/Erkko68/filament-kmp/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/Erkko68/filament-kmp/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Erkko68/filament-kmp/compare/0.4.0...0.5.0

@@ -12,6 +12,7 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
     private val enums = LinkedHashMap<String, CppEnum>()
     private val aliases = LinkedHashMap<String, CppType>()
     private val constants = HashMap<String, CppValue>()
+    private val publicConstants = HashSet<String>()
     private val functions = ArrayList<CppMethod>()
     private val values = CppValues(scopes, constants)
     private val seenHeaders = HashSet<String>()
@@ -40,7 +41,7 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
         }
         val missed = headers.filterNot { it in seenHeaders }
         check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to CppApiReader.FILTERS" }
-        return CppApi(records, enums, aliases, constants, functions)
+        return CppApi(records, enums, aliases, constants, publicConstants, functions)
     }
 
     /**
@@ -79,7 +80,7 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
             "VarDecl" -> {
                 scopes.variable(qualified)
                 values.declared(node["id"] as String, qualified)
-                initializer(node)?.let { constants[qualified] = values.of(it, scope) }
+                initializer(node)?.let { constants[qualified] = values.of(it, scope); if (accessible) publicConstants += qualified }
             }
         }
     }

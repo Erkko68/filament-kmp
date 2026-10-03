@@ -28,8 +28,8 @@ FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self) {
     return utils::Entity::smuggle(fila::cpp(self)->create());
 }
 
-void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities) {
-    fila::cpp(self)->destroy(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
+void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, const FilaEntity* entities) {
+    fila::cpp(self)->destroy(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(entities));
 }
 
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e) {

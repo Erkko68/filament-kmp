@@ -13,7 +13,7 @@ headers) is Gradle's job: the `prebuilts`, `prebuilts_<id>`, `setupEmsdk` and `d
 | :--- | :--- |
 | [`dev/upgrade-diff.sh`](dev/upgrade-diff.sh) | Diffs upstream Filament between two tags across every surface that drives this repo's bindings: public C++ headers, backend headers, Android Java sources, upstream's web build config, material/engine enums, feature-flag defaults, and `RELEASE_NOTES.md`. Opens with a **HIGHLIGHTS** section (MATERIAL_VERSION bump, `CONFIG_MAX_*` changes, feature-flag flips, added/removed Java classes). Tags optional: no args = `filaVersion` → latest upstream release; one arg = `filaVersion` → that tag. Run on every `filaVersion` bump. `--summary` for a file-level overview; omit for full unified diffs. Keeps a shallow clone in `scripts/dev/.filament-src-cache/`. |
 | [`dev/rebuild-materials.sh`](dev/rebuild-materials.sh) | Recompiles every committed `.filamat` with the `matc` of the current `filaVersion` (pulled from the release tarball cached by `./gradlew prebuilts`), and syncs the shared `emissive.filamat` copy. Run whenever `MATERIAL_VERSION` changes — the engine rejects blobs built by another version. |
-| [`dev/run-tests.sh`](dev/run-tests.sh) | Runs the test suite across every KMP target this repo supports (JVM, JS, iOS simulator, Android). Mirrors what [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) does on CI. Auto-boots the first available AVD if no device is attached when running android tests. Pass `jvm`/`js`/`ios`/`android` (any combination) to scope; or `--no-<target>` to skip one. iOS is skipped automatically off macOS. |
+| [`dev/run-tests.sh`](dev/run-tests.sh) | Runs the test suite across every KMP target this repo supports (JVM, JS, wasm, iOS simulator, Android), one Gradle task at a time. Mirrors what [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) does on CI. Boots a simulator for ios, and the first available AVD if no device is attached for android. Pass `jvm`/`js`/`wasm`/`ios`/`android` (any combination) to scope; or `--no-<target>` to skip one. iOS is skipped automatically off macOS. |
 | [`dev/clean_all.sh`](dev/clean_all.sh) | Nukes every Gradle/CMake/Kotlin build directory in the repo. Last-resort cache reset. |
 
 ## First-time setup
@@ -41,5 +41,5 @@ scripts/dev/upgrade-diff.sh --summary                 # 1. scope: filaVersion �
 ./gradlew apiGaps                                     #    C++ API missing from the bindings (build/reports/api-gaps.txt)
 scripts/dev/rebuild-materials.sh                      #    recompile .filamat when MATERIAL_VERSION changed
 #                                                       5. adapt the Kotlin API + update tests (see the doc)
-scripts/dev/run-tests.sh                               # 6. verify jvm + js + ios (+ android if attached)
+scripts/dev/run-tests.sh                               # 6. verify jvm + js + wasm + ios + android
 ```

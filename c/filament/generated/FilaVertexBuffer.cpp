@@ -37,7 +37,7 @@ FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBuff
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_name(FilaVertexBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
+    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_async(FilaVertexBufferBuilder* self, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user) {
