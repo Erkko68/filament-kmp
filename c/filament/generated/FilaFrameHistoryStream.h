@@ -10,8 +10,8 @@ extern "C" {
 
 // filament::FrameHistoryStream::NewFramesRange
 FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_create(const FilaRendererFrameInfo* const* history, uint32_t historyCount, uint32_t* pLastProcessedFrameId);
-// skipped iterator filament::FrameHistoryStream::NewFramesRange::begin() const: filament::FrameHistoryStream::NewFramesRange::*
-// skipped iterator filament::FrameHistoryStream::NewFramesRange::end() const: filament::FrameHistoryStream::NewFramesRange::*
+// skipped iterator filament::FrameHistoryStream::NewFramesRange::begin() const: filament::FrameHistoryStream::NewFramesRange::.*
+// skipped iterator filament::FrameHistoryStream::NewFramesRange::end() const: filament::FrameHistoryStream::NewFramesRange::.*
 
 // filament::FrameHistoryStream
 FilaFrameHistoryStream* FilaFrameHistoryStream_create(FilaRenderer* renderer);

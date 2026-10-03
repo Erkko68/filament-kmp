@@ -11,7 +11,7 @@ extern "C" {
 // filament::BufferObject::Builder
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void);
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self);
-// skipped Builder & filament::BufferObject::Builder::name(const utils::StaticString & name): filament::BufferObject::Builder::name(utils::StaticString)
+// skipped Builder & filament::BufferObject::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* self, const char* name);

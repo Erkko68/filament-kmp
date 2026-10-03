@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 // filament::Camera
-// skipped void filament::Camera::setCustomEyeProjection(utils::Slice<const math::mat4> projection, const math::mat4 & projectionForCulling, double near, double far): filament::Camera::setCustomEyeProjection(utils::Slice, filament::math::mat4, double, double)
+// skipped void filament::Camera::setCustomEyeProjection(utils::Slice<const math::mat4> projection, const math::mat4 & projectionForCulling, double near, double far): .*\(.*utils::Slice.*\)
 // skipped class Frustum filament::Camera::getFrustum() const: uses filament::Frustum
 void FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far, FilaMat4* out);
 void FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far, FilaMat4* out);

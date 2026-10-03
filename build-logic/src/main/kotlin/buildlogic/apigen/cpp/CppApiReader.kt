@@ -41,7 +41,7 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
         }
         val missed = headers.filterNot { it in seenHeaders }
         check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to CppApiReader.FILTERS" }
-        return CppApi(records, enums, aliases, constants, functions, publicConstants = publicConstants)
+        return CppApi(records, enums, aliases, constants, publicConstants, functions)
     }
 
     /**

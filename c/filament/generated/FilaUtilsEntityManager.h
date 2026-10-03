@@ -11,8 +11,8 @@ extern "C" {
 // utils::EntityManager
 // skipped void utils::EntityManager::registerChangeCallback(const void * _Nonnull token, ChangeCallback callback)
 // skipped void utils::EntityManager::unregisterChangeCallback(const void * _Nonnull token)
-// skipped void utils::EntityManager::create(Slice<Entity> entities): utils::EntityManager::create(utils::Slice)
-// skipped void utils::EntityManager::destroy(Slice<const Entity> entities): utils::EntityManager::destroy(utils::Slice)
+// skipped void utils::EntityManager::create(Slice<Entity> entities): .*\(.*utils::Slice.*\)
+// skipped void utils::EntityManager::destroy(Slice<const Entity> entities): .*\(.*utils::Slice.*\)
 // skipped void utils::EntityManager::registerListener(Listener * _Nonnull l): uses utils::EntityManager::Listener
 // skipped void utils::EntityManager::unregisterListener(Listener * _Nonnull l): uses utils::EntityManager::Listener
 // skipped PagedArenaBitset utils::EntityManager::getAliveEntities() const

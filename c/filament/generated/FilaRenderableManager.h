@@ -20,8 +20,8 @@ void FilaRenderableManagerBone_setTranslation(FilaRenderableManagerBone* self, c
 // filament::RenderableManager::Builder
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count);
 void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* self);
-// skipped Builder & filament::RenderableManager::Builder::skinning(utils::Slice<const math::mat4f> transforms): filament::RenderableManager::Builder::skinning(utils::Slice)
-// skipped Builder & filament::RenderableManager::Builder::skinning(utils::Slice<const Bone> bones): filament::RenderableManager::Builder::skinning(utils::Slice)
+// skipped Builder & filament::RenderableManager::Builder::skinning(utils::Slice<const math::mat4f> transforms): .*\(.*utils::Slice.*\)
+// skipped Builder & filament::RenderableManager::Builder::skinning(utils::Slice<const Bone> bones): .*\(.*utils::Slice.*\)
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t minIndex, uint32_t maxIndex, uint32_t count);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t count);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices);
@@ -57,9 +57,9 @@ FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances_InstanceBuf
 FilaRenderableManagerBuilderResult FilaRenderableManagerBuilder_build(const FilaRenderableManagerBuilder* self, FilaEngine* engine, FilaEntity entity);
 
 // filament::RenderableManager
-// skipped void filament::RenderableManager::setBones(Instance instance, utils::Slice<const Bone> transforms, size_t offset): filament::RenderableManager::setBones(filament::RenderableManager::Instance, utils::Slice, size_t)
-// skipped void filament::RenderableManager::setBones(Instance instance, utils::Slice<const math::mat4f> transforms, size_t offset): filament::RenderableManager::setBones(filament::RenderableManager::Instance, utils::Slice, size_t)
-// skipped void filament::RenderableManager::setMorphWeights(Instance instance, utils::Slice<const float> weights, size_t offset): filament::RenderableManager::setMorphWeights(filament::RenderableManager::Instance, utils::Slice, size_t)
+// skipped void filament::RenderableManager::setBones(Instance instance, utils::Slice<const Bone> transforms, size_t offset): .*\(.*utils::Slice.*\)
+// skipped void filament::RenderableManager::setBones(Instance instance, utils::Slice<const math::mat4f> transforms, size_t offset): .*\(.*utils::Slice.*\)
+// skipped void filament::RenderableManager::setMorphWeights(Instance instance, utils::Slice<const float> weights, size_t offset): .*\(.*utils::Slice.*\)
 bool FilaRenderableManager_hasComponent(const FilaRenderableManager* self, FilaEntity e);
 uint32_t FilaRenderableManager_getInstance(const FilaRenderableManager* self, FilaEntity e);
 uint32_t FilaRenderableManager_getComponentCount(const FilaRenderableManager* self);

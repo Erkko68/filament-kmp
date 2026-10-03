@@ -11,7 +11,7 @@ extern "C" {
 // filament::Stream::Builder
 FilaStreamBuilder* FilaStreamBuilder_create(void);
 void FilaStreamBuilder_destroy(FilaStreamBuilder* self);
-// skipped Builder & filament::Stream::Builder::name(const utils::StaticString & name): filament::Stream::Builder::name(utils::StaticString)
+// skipped Builder & filament::Stream::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width);
 FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height);
 FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* name);

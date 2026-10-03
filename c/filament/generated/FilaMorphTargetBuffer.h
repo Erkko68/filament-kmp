@@ -11,7 +11,7 @@ extern "C" {
 // filament::MorphTargetBuffer::Builder
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create(void);
 void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self);
-// skipped Builder & filament::MorphTargetBuffer::Builder::name(const utils::StaticString & name): filament::MorphTargetBuffer::Builder::name(utils::StaticString)
+// skipped Builder & filament::MorphTargetBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_vertexCount(FilaMorphTargetBufferBuilder* self, uint32_t vertexCount);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTargetBufferBuilder* self, uint32_t count);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_name(FilaMorphTargetBufferBuilder* self, const char* name);

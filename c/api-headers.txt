@@ -5,12 +5,13 @@
 # headers (backend/, math/, utils/) are bridged as C types only, into the first module. `!glob` excludes headers
 # (the generator fails on listed headers it finds no declarations in).
 #
-# `-name` leaves a C++ declaration out: a record (with everything nested), a member, or a function. `-Record::*` keeps
-# the record's handle but none of its members. Methods and fields whose types use a skipped record go too. The
-# generated headers note each skipped member; an entry naming nothing fails the generator.
+# `-regex` leaves out the C++ declarations whose qualified name it matches: a record (with everything nested), a member,
+# or a function; one overload as `-Record::method\(Type, …\)`. `-Record::.*` keeps the record's handle but none of its
+# members. Methods and fields whose types use a skipped record go too. The generated headers note each skipped member;
+# an entry matching nothing fails the generator.
 #
-# An enum, enum value or constant has no C function: its `-name` only tells apiCoverage that Kotlin leaves it undeclared
-# on purpose. `-Record::const *` names every constant of the record.
+# An enum, enum value or constant has no C function: its entry only tells apiCoverage that Kotlin leaves it undeclared
+# on purpose.
 
 [filament]
 filament/*.h
@@ -23,7 +24,7 @@ geometry/SurfaceOrientation.h
 -filament::Texture::setExternalImage
 # C++ iterator sugar over getFrameInfoHistory; FilaFrameHistoryStreamManual drains getNewFrames into FrameInfo handles.
 -filament::FrameHistoryStream::Result
--filament::FrameHistoryStream::NewFramesRange::*
+-filament::FrameHistoryStream::NewFramesRange::.*
 # Debugging aids (upstream marks them so) and raw pointers into the engine's internals.
 -filament::DebugRegistry
 -filament::Engine::getFeatureFlagPtr
@@ -66,30 +67,12 @@ geometry/SurfaceOrientation.h
 # ParameterInfo* is an array C++ fills; FilaMaterialManual copies it into C's handles.
 -filament::Material::getParameters
 # C++ sugar binding a member function or functor; the callback overload (FilaViewManual) covers them.
--filament::View::pick(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler)
+-filament::View::pick\(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler\)
 # 1.77.2's utils::Slice twins of the pointer + count overloads C binds, and its FeatureState twin of compile's tribool.
--filament::Camera::setCustomEyeProjection(utils::Slice, filament::math::mat4, double, double)
--filament::Engine::compile(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable)
--filament::Material::Builder::package(utils::Slice)
--filament::Material::setDefaultParameter(std::string_view, utils::Slice)
--filament::MaterialInstance::setParameter(std::string_view, utils::Slice)
--filament::RenderableManager::Builder::skinning(utils::Slice)
--filament::RenderableManager::setBones(filament::RenderableManager::Instance, utils::Slice, size_t)
--filament::RenderableManager::setMorphWeights(filament::RenderableManager::Instance, utils::Slice, size_t)
--filament::Scene::addEntities(utils::Slice)
--filament::Scene::removeEntities(utils::Slice)
--filament::SkinningBuffer::setBones(filament::Engine, utils::Slice, size_t)
--utils::EntityManager::create(utils::Slice)
--utils::EntityManager::destroy(utils::Slice)
+-.*\(.*utils::Slice.*\)
+-filament::Engine::compile\(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable\)
 # Only literals make a StaticString; name(ImmutableCString) copies C's string.
--filament::BufferObject::Builder::name(utils::StaticString)
--filament::IndexBuffer::Builder::name(utils::StaticString)
--filament::InstanceBuffer::Builder::name(utils::StaticString)
--filament::MorphTargetBuffer::Builder::name(utils::StaticString)
--filament::SkinningBuffer::Builder::name(utils::StaticString)
--filament::Stream::Builder::name(utils::StaticString)
--filament::Texture::Builder::name(utils::StaticString)
--filament::VertexBuffer::Builder::name(utils::StaticString)
+-filament::\w+::Builder::name\(utils::StaticString\)
 # Not in the Kotlin API: compressed pixel buffers, Platform's device info and timestamps, the frame-scheduled callback's
 # flags; BASE_LEVEL is 0.
 -filament::backend::CompressedPixelDataType
@@ -107,7 +90,7 @@ geometry/SurfaceOrientation.h
 gltfio/*.h
 !gltfio/math.h
 # Driven by ResourceLoader and AssetLoader, or only for writing a C++ MaterialProvider.
--filament::gltfio::TextureProvider::*
+-filament::gltfio::TextureProvider::.*
 -filament::gltfio::processShaderString
 -filament::gltfio::MaterialKey::padding
 -filament::gltfio::MaterialKey::padding2
@@ -151,7 +134,7 @@ filamat/*.h
 # Kotlin takes the stages as a Set<ShaderStage>.
 -filament::backend::ShaderStageFlags
 # The compiler's internal limits.
--filamat::MaterialBuilder::const *
+-filamat::MaterialBuilder::[A-Z_]+
 
 [filament-utils]
 camutils/*.h
@@ -171,4 +154,4 @@ image/Ktx1Bundle.h
 # A size sentinel; Key.entries.size.
 -filament::camutils::Manipulator::Key::COUNT
 # OpenGL format codes for KtxInfo's fields, which Kotlin doesn't expose.
--image::Ktx1Bundle::const *
+-image::Ktx1Bundle::[A-Z0-9_x]+

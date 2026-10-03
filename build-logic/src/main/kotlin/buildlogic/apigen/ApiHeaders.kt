@@ -8,7 +8,7 @@ import java.nio.file.Paths
 
 /**
  * `c/api-headers.txt`: globs under Filament's include dir, grouped by the C module their API is generated into, and
- * the `-name` declarations left out of it ([skipped]).
+ * the `-regex` declarations left out of it ([skipped]).
  */
 internal class ApiHeaders(val modules: Map<String, List<String>>, val skipped: Set<String> = emptySet()) {
     val globs get() = modules.values.flatten().filterNot { it.startsWith("!") }

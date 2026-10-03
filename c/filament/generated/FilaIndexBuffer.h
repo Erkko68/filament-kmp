@@ -11,7 +11,7 @@ extern "C" {
 // filament::IndexBuffer::Builder
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void);
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
-// skipped Builder & filament::IndexBuffer::Builder::name(const utils::StaticString & name): filament::IndexBuffer::Builder::name(utils::StaticString)
+// skipped Builder & filament::IndexBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name);

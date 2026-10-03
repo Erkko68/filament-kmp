@@ -31,7 +31,7 @@ void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, Fil
 // filament::Material::Builder
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
-// skipped Builder & filament::Material::Builder::package(utils::Slice<const uint8_t> payload): filament::Material::Builder::package(utils::Slice)
+// skipped Builder & filament::Material::Builder::package(utils::Slice<const uint8_t> payload): .*\(.*utils::Slice.*\)
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value);
 FilaMaterialBuilder* FilaMaterialBuilder_constant_float(FilaMaterialBuilder* self, const char* name, float value);
@@ -43,7 +43,7 @@ FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEng
 
 // filament::Material
 // skipped size_t filament::Material::getParameters(ParameterInfo * _Nonnull parameters, size_t count) const
-// skipped void filament::Material::setDefaultParameter(std::string_view name, utils::Slice<const T> values): filament::Material::setDefaultParameter(std::string_view, utils::Slice)
+// skipped void filament::Material::setDefaultParameter(std::string_view name, utils::Slice<const T> values): .*\(.*utils::Slice.*\)
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);

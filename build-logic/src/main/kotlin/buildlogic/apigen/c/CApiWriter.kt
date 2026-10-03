@@ -14,20 +14,12 @@ import buildlogic.apigen.cpp.CppType
  * `Includes.hpp` of [headers], and per top-level class or namespace a header and its C++ forwarders. What can't be
  * bridged becomes a `TODO(handwritten)` comment where its declaration would be; for one [manual] writes by hand, a note it's done.
  */
-internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>, private val manual: Set<String> = emptySet()) {
+internal class CApiWriter(val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>, private val manual: Set<String> = emptySet()) {
     private val bridges = CBridges(api)
     private val rules = BindingRules(api, bridges)
     private val surface = api.surface(headers)
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
-    /** The enums C declares and the public constants of the records it binds: what the Kotlin API declares by hand. */
-    val enums get() = surface.mapNotNull { api.enums[it] }.filter { api.skipReason(it.name) == null }.sortedBy { it.name }
-    fun skipped(name: String) = api.skipReason(name) != null
-    /** The names code outside spells [name] by: Texture::InternalFormat for backend::TextureFormat. */
-    fun aliasesOf(name: String): Set<String> = generateSequence(setOf(name)) { names ->
-        (names + api.aliases.filterValues { it.decl in names }.keys).takeIf { it.size > names.size }
-    }.last()
-    val constants get() = api.publicConstants.filter { it.substringBeforeLast("::") in surface && !api.skipsConstant(it) }.sorted()
     /** After [write]: each C function the C++ API calls for, bound or not. */
     val bindings = ArrayList<Binding>()
 
