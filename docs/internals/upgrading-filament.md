@@ -54,7 +54,7 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
 
 # 6. Verify
-scripts/dev/run-tests.sh                                 # jvm + js + ios (+ android if a device is attached)
+scripts/dev/run-tests.sh                                 # jvm + js + wasm + ios + android
 ```
 
 ---
