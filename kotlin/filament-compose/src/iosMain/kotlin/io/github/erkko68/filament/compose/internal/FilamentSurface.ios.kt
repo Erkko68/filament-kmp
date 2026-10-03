@@ -32,9 +32,6 @@ import platform.UIKit.UIColor
 import platform.UIKit.UIScreen
 import platform.UIKit.UIView
 
-/** `SwapChain::CONFIG_TRANSPARENT` — not exposed as a constant by the bindings yet. */
-private const val SWAP_CHAIN_CONFIG_TRANSPARENT = 0x1L
-
 @Composable
 internal actual fun FilamentSurface(
     modifier: Modifier,
@@ -89,7 +86,7 @@ internal actual fun FilamentSurface(
                             if (!surfaceAttached) {
                                 swapChainRef.value = engine.createSwapChain(
                                     NativeSurface(interpretCPointer(metalLayer.objcPtr())),
-                                    if (transparent) SWAP_CHAIN_CONFIG_TRANSPARENT else 0L,
+                                    if (transparent) SwapChain.CONFIG_TRANSPARENT else 0L,
                                 )
                                 surfaceAttached = true
                             }

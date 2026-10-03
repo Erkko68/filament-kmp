@@ -30,7 +30,12 @@ class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: N
      * The maximum number of color attachments supported is platform-dependent.
      */
     enum class AttachmentPoint {
-        COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH
+        COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH;
+
+        companion object {
+            /** The 1st color attachment: [COLOR]. */
+            val COLOR0 = COLOR
+        }
     }
 
     /**

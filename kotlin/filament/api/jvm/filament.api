@@ -1773,10 +1773,15 @@ public final class io/github/erkko68/filament/RenderTarget$AttachmentPoint : jav
 	public static final field COLOR5 Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static final field COLOR6 Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static final field COLOR7 Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
+	public static final field Companion Lio/github/erkko68/filament/RenderTarget$AttachmentPoint$Companion;
 	public static final field DEPTH Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 	public static fun values ()[Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
+}
+
+public final class io/github/erkko68/filament/RenderTarget$AttachmentPoint$Companion {
+	public final fun getCOLOR0 ()Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;
 }
 
 public final class io/github/erkko68/filament/RenderTarget$Builder {
@@ -2002,6 +2007,9 @@ public final class io/github/erkko68/filament/Renderer$DisplayInfo {
 }
 
 public final class io/github/erkko68/filament/Renderer$FrameInfo {
+	public static final field Companion Lio/github/erkko68/filament/Renderer$FrameInfo$Companion;
+	public static final field INVALID J
+	public static final field PENDING J
 	public fun <init> (IJJJJJJJJJJJJJJ)V
 	public final fun getBackendBeginFrame ()J
 	public final fun getBackendEndFrame ()J
@@ -2018,6 +2026,9 @@ public final class io/github/erkko68/filament/Renderer$FrameInfo {
 	public final fun getGpuFrameDuration ()J
 	public final fun getPresentDeadline ()J
 	public final fun getVsync ()J
+}
+
+public final class io/github/erkko68/filament/Renderer$FrameInfo$Companion {
 }
 
 public final class io/github/erkko68/filament/Renderer$FrameRateOptions {
@@ -2208,6 +2219,14 @@ public final class io/github/erkko68/filament/SurfaceOrientation$Builder {
 }
 
 public final class io/github/erkko68/filament/SwapChain {
+	public static final field CONFIG_APPLE_CVPIXELBUFFER J
+	public static final field CONFIG_ENABLE_XCB J
+	public static final field CONFIG_HAS_STENCIL_BUFFER J
+	public static final field CONFIG_MSAA_4_SAMPLES J
+	public static final field CONFIG_PROTECTED_CONTENT J
+	public static final field CONFIG_READABLE J
+	public static final field CONFIG_SRGB_COLORSPACE J
+	public static final field CONFIG_TRANSPARENT J
 	public static final field Companion Lio/github/erkko68/filament/SwapChain$Companion;
 	public fun <init> (JJ)V
 	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2880,6 +2899,7 @@ public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute : jav
 	public static final field CUSTOM5 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field CUSTOM6 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field CUSTOM7 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public static final field Companion Lio/github/erkko68/filament/VertexBuffer$VertexAttribute$Companion;
 	public static final field POSITION Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field TANGENTS Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static final field UV0 Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
@@ -2888,6 +2908,17 @@ public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute : jav
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 	public static fun values ()[Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+}
+
+public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute$Companion {
+	public final fun getMORPH_POSITION_0 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_POSITION_1 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_POSITION_2 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_POSITION_3 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_0 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_1 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_2 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getMORPH_TANGENTS_3 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
 }
 
 public final class io/github/erkko68/filament/View {

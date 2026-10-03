@@ -126,7 +126,14 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
         val expectedPresentLatency: Long,
         /** Frame scheduling callback entry time. */
         val frameScheduleTime: Long,
-    )
+    ) {
+        companion object {
+            /** A time the platform doesn't support. */
+            const val INVALID: Long = -1
+            /** A time that isn't available yet. */
+            const val PENDING: Long = -2
+        }
+    }
 
     companion object {
         /** [copyFrame] flag: commit dstSwapChain after the copy. */

@@ -50,6 +50,23 @@ class SwapChain @InternalFilamentApi constructor(
     }
 
     companion object {
+        /** [Engine.createSwapChain] flag: a transparent swap chain. */
+        const val CONFIG_TRANSPARENT: Long = 0x1
+        /** [Engine.createSwapChain] flag: the swap chain can be read back (see [Renderer.readPixels]). */
+        const val CONFIG_READABLE: Long = 0x2
+        /** [Engine.createSwapChain] flag: the native window is an XCB window, not XLIB. */
+        const val CONFIG_ENABLE_XCB: Long = 0x4
+        /** [Engine.createSwapChain] flag: the native window is a CVPixelBufferRef (Metal). */
+        const val CONFIG_APPLE_CVPIXELBUFFER: Long = 0x8
+        /** [Engine.createSwapChain] flag: an sRGB swap chain; see [isSRGBSwapChainSupported]. */
+        const val CONFIG_SRGB_COLORSPACE: Long = 0x10
+        /** [Engine.createSwapChain] flag: the swap chain has a stencil component. */
+        const val CONFIG_HAS_STENCIL_BUFFER: Long = 0x20
+        /** [Engine.createSwapChain] flag: a protected swap chain; see [isProtectedContentSupported]. */
+        const val CONFIG_PROTECTED_CONTENT: Long = 0x40
+        /** [Engine.createSwapChain] flag: a 4x multisampled swap chain; see [isMSAASwapChainSupported]. */
+        const val CONFIG_MSAA_4_SAMPLES: Long = 0x80
+
         /**
          * Checks if protected content (DRM) rendering is supported on this platform.
          *

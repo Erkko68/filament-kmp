@@ -15,9 +15,6 @@ import androidx.compose.ui.node.Ref
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.erkko68.filament.*
 
-/** `SwapChain::CONFIG_TRANSPARENT` — not exposed as a constant by the bindings yet. */
-private const val SWAP_CHAIN_CONFIG_TRANSPARENT = 0x1L
-
 @Composable
 internal actual fun FilamentSurface(
     modifier: Modifier,
@@ -53,7 +50,7 @@ internal actual fun FilamentSurface(
                             onAvailable = { surface, width, height ->
                                 swapChainRef.value = engine.createSwapChain(
                                     NativeSurface(surface),
-                                    SWAP_CHAIN_CONFIG_TRANSPARENT,
+                                    SwapChain.CONFIG_TRANSPARENT,
                                 )
                                 updateViewport(width, height)
                             },

@@ -20,6 +20,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Added
 - **`RenderableManager.setGeometryAt` without `offset`/`count`**: draws the whole buffer.
 - **`Fence.WAIT_FOR_EVER`**, C++'s new name for `FENCE_WAIT_FOR_EVER`.
+- **Constants and enum values the headers declare**: `SwapChain.CONFIG_*`, `Renderer.FrameInfo.INVALID`/`PENDING`, `VertexAttribute.MORPH_*`, `AttachmentPoint.COLOR0`.
 
 ## [0.7.0] — 2026-10-01
 
