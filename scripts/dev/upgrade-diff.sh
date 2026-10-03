@@ -62,7 +62,8 @@ AREAS=(
   "Feature flag defaults (silent behavior toggles)|libs/utils/include/private/utils/FeatureFlagManager.h libs/utils/src/FeatureFlagManager.cpp"
   "gltfio public headers|libs/gltfio/include"
   "filamat public headers|libs/filamat/include"
-  "filament-utils native deps (ktxreader / iblprefilter / camutils)|libs/ktxreader/include libs/iblprefilter/include libs/camutils/include"
+  "filament-utils native deps (ktxreader / iblprefilter / camutils / geometry / image)|libs/ktxreader/include libs/iblprefilter/include libs/camutils/include libs/geometry/include libs/image/include/image/Ktx1Bundle.h"
+  "utils headers in c/api-headers.txt|libs/utils/include/utils/EntityManager.h"
   "Release notes (Filament's own narrative)|RELEASE_NOTES.md"
 )
 
