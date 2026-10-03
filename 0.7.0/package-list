@@ -1,0 +1,16 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:filamat
+io.github.erkko68.filament.filamat
+module:filament
+io.github.erkko68.filament
+io.github.erkko68.filament.interop
+module:filament-compose
+io.github.erkko68.filament.compose
+io.github.erkko68.filament.compose.scene
+io.github.erkko68.filament.compose.scene.primitives
+module:filament-utils
+io.github.erkko68.filament.utils
+module:gltfio
+io.github.erkko68.filament.gltfio

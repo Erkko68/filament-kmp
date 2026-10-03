@@ -1,0 +1,302 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Companion</title>
+<link href="../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament/-swap-chain/-companion/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.7.1"><span class="versions-dropdown-button-text">0.7.1</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.1"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.7.1</span></a><a href="../../../../../older/0.7.0/kotlin/filament/io.github.erkko68.filament/-swap-chain/-companion/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.7.0</span></a><a href="../../../../../older/0.6.0/kotlin/filament/io.github.erkko68.filament/-swap-chain/-companion/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.6.0</span></a><a href="../../../../../older/0.5.0/kotlin/filament/io.github.erkko68.filament/-swap-chain/-companion/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.5.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.5.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/commonMain" data-filter=":kotlin:filament/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament::io.github.erkko68.filament/SwapChain.Companion///PointingToDeclaration//-156239448">
+  <div class="breadcrumbs"><a href="../../../index.html">filament</a><span class="delimiter">/</span><a href="../../index.html">io.github.erkko68.filament</a><span class="delimiter">/</span><a href="../index.html">SwapChain</a><span class="delimiter">/</span><span class="current">Companion</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Companion</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Companion</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1438520541%2FProperties%2F-156239448" anchor-label="CONFIG_APPLE_CVPIXELBUFFER" id="1438520541%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-a-p-p-l-e_-c-v-p-i-x-e-l-b-u-f-f-e-r.html"><span>CONFIG_</span><wbr><span>APPLE_</span><wbr><span><span>CVPIXELBUFFER</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1438520541%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-a-p-p-l-e_-c-v-p-i-x-e-l-b-u-f-f-e-r.html">CONFIG_APPLE_CVPIXELBUFFER</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">8</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: the native window is a CVPixelBufferRef (Metal).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1149052556%2FProperties%2F-156239448" anchor-label="CONFIG_ENABLE_XCB" id="-1149052556%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-e-n-a-b-l-e_-x-c-b.html"><span>CONFIG_</span><wbr><span>ENABLE_</span><wbr><span>XCB</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1149052556%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-e-n-a-b-l-e_-x-c-b.html">CONFIG_ENABLE_XCB</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">4</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: the native window is an XCB window, not XLIB.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="564952423%2FProperties%2F-156239448" anchor-label="CONFIG_HAS_STENCIL_BUFFER" id="564952423%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-h-a-s_-s-t-e-n-c-i-l_-b-u-f-f-e-r.html"><span>CONFIG_</span><wbr><span>HAS_</span><wbr><span>STENCIL_</span><wbr><span>BUFFER</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="564952423%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-h-a-s_-s-t-e-n-c-i-l_-b-u-f-f-e-r.html">CONFIG_HAS_STENCIL_BUFFER</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">32</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: the swap chain has a stencil component.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-665810038%2FProperties%2F-156239448" anchor-label="CONFIG_MSAA_4_SAMPLES" id="-665810038%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-m-s-a-a_4_-s-a-m-p-l-e-s.html"><span>CONFIG_</span><wbr><span>MSAA_</span><wbr><span>4_</span><wbr><span>SAMPLES</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-665810038%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-m-s-a-a_4_-s-a-m-p-l-e-s.html">CONFIG_MSAA_4_SAMPLES</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">128</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: a 4x multisampled swap chain; see <a href="is-m-s-a-a-swap-chain-supported.html">isMSAASwapChainSupported</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="242222211%2FProperties%2F-156239448" anchor-label="CONFIG_PROTECTED_CONTENT" id="242222211%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-p-r-o-t-e-c-t-e-d_-c-o-n-t-e-n-t.html"><span>CONFIG_</span><wbr><span>PROTECTED_</span><wbr><span>CONTENT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="242222211%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-p-r-o-t-e-c-t-e-d_-c-o-n-t-e-n-t.html">CONFIG_PROTECTED_CONTENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">64</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: a protected swap chain; see <a href="is-protected-content-supported.html">isProtectedContentSupported</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1123824031%2FProperties%2F-156239448" anchor-label="CONFIG_READABLE" id="1123824031%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-r-e-a-d-a-b-l-e.html"><span>CONFIG_</span><wbr><span>READABLE</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1123824031%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-r-e-a-d-a-b-l-e.html">CONFIG_READABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">2</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: the swap chain can be read back (see <a href="../../-renderer/read-pixels.html">Renderer.readPixels</a>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-985009341%2FProperties%2F-156239448" anchor-label="CONFIG_SRGB_COLORSPACE" id="-985009341%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-s-r-g-b_-c-o-l-o-r-s-p-a-c-e.html"><span>CONFIG_</span><wbr><span>SRGB_</span><wbr><span>COLORSPACE</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-985009341%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-s-r-g-b_-c-o-l-o-r-s-p-a-c-e.html">CONFIG_SRGB_COLORSPACE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">16</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: an sRGB swap chain; see <a href="is-s-r-g-b-swap-chain-supported.html">isSRGBSwapChainSupported</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1320960441%2FProperties%2F-156239448" anchor-label="CONFIG_TRANSPARENT" id="1320960441%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-n-f-i-g_-t-r-a-n-s-p-a-r-e-n-t.html"><span>CONFIG_</span><wbr><span><span>TRANSPARENT</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1320960441%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-c-o-n-f-i-g_-t-r-a-n-s-p-a-r-e-n-t.html">CONFIG_TRANSPARENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">1</span></div><div class="brief "><p class="paragraph"><a href="../../-engine/create-swap-chain.html">Engine.createSwapChain</a> flag: a transparent swap chain.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1886181318%2FFunctions%2F-156239448" anchor-label="isMSAASwapChainSupported" id="1886181318%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-m-s-a-a-swap-chain-supported.html"><span>is</span><wbr><span>MSAASwap</span><wbr><span>Chain</span><wbr><span><span>Supported</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1886181318%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-m-s-a-a-swap-chain-supported.html"><span class="token function">isMSAASwapChainSupported</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../../-engine/index.html">Engine</a><span class="token punctuation">, </span></span><span class="parameter ">samples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if Multi-Sample Anti-Aliasing (MSAA) swap chain is supported.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1079379458%2FFunctions%2F-156239448" anchor-label="isProtectedContentSupported" id="1079379458%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-protected-content-supported.html"><span>is</span><wbr><span>Protected</span><wbr><span>Content</span><wbr><span><span>Supported</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1079379458%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-protected-content-supported.html"><span class="token function">isProtectedContentSupported</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../../-engine/index.html">Engine</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if protected content (DRM) rendering is supported on this platform.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1127344533%2FFunctions%2F-156239448" anchor-label="isSRGBSwapChainSupported" id="-1127344533%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-s-r-g-b-swap-chain-supported.html"><span>is</span><wbr><span>SRGBSwap</span><wbr><span>Chain</span><wbr><span><span>Supported</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1127344533%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-s-r-g-b-swap-chain-supported.html"><span class="token function">isSRGBSwapChainSupported</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../../-engine/index.html">Engine</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if sRGB swap chain is supported on this platform.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

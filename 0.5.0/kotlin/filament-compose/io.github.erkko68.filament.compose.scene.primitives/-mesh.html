@@ -1,0 +1,117 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Mesh</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.compose.scene.primitives/-mesh.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-compose/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-compose/commonMain" data-filter=":kotlin:filament-compose/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="member" id="content" pageids="filament-compose::io.github.erkko68.filament.compose.scene.primitives//Mesh/io.github.erkko68.filament.compose.FilamentSceneScope#io.github.erkko68.filament.MaterialInstance?#kotlin.FloatArray#kotlin.FloatArray#kotlin.FloatArray#kotlin.IntArray#io.github.erkko68.filament.Box?#io.github.erkko68.filament.compose.scene.Position#io.github.erkko68.filament.compose.scene.Rotation#io.github.erkko68.filament.compose.scene.Scale#io.github.erkko68.filament.compose.scene.Position#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean#kotlin.Function1[io.github.erkko68.filament.compose.EntityScope,kotlin.Unit]/PointingToDeclaration//-552819475">
+  <div class="breadcrumbs"><a href="../index.html">filament-compose</a><span class="delimiter">/</span><a href="index.html">io.github.erkko68.filament.compose.scene.primitives</a><span class="delimiter">/</span><span class="current">Mesh</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Mesh</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="../io.github.erkko68.filament.compose/-filament-scene-scope/index.html">FilamentSceneScope</a><span class="token punctuation">.</span><a href="-mesh.html"><span class="token function">Mesh</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">material<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-material-instance/index.html">MaterialInstance</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">positions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">normals<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">uvs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">indices<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a><span class="token punctuation">, </span></span><span class="parameter ">boundingBox<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-box/index.html">Box</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">position<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-position/index.html">Position</a><span class="token operator"> = </span>Position(0f)<span class="token punctuation">, </span></span><span class="parameter ">rotation<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-rotation/index.html">Rotation</a><span class="token operator"> = </span>Rotation.Identity<span class="token punctuation">, </span></span><span class="parameter ">scale<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-scale/index.html">Scale</a><span class="token operator"> = </span>Scale(1f)<span class="token punctuation">, </span></span><span class="parameter ">pivot<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-position/index.html">Position</a><span class="token operator"> = </span>Position(0f)<span class="token punctuation">, </span></span><span class="parameter ">visible<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">castShadows<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">receiveShadows<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">onCreate<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose/-entity-scope/index.html">EntityScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{}</span></span><span class="token punctuation">)</span></div><p class="paragraph">Renders a custom triangle mesh from raw vertex data — the escape hatch for geometry the built-in primitives (<a href="-cube.html">Cube</a>, <a href="-sphere.html">Sphere</a>, <a href="-plane.html">Plane</a>, <a href="-cylinder.html">Cylinder</a>) don't cover (procedural terrain, generated meshes, imported non-glTF geometry).</p><p class="paragraph">Vertices are non-interleaved: <a href="-mesh.html">positions</a> (xyz triples), <a href="-mesh.html">normals</a> (xyz triples), and <a href="-mesh.html">uvs</a> (uv pairs) are parallel arrays addressed by <a href="-mesh.html">indices</a> (a flat list of triangle corner indices, 3 per triangle). The tangent frame Filament's LIT shaders need is derived automatically from the normals, UVs, and topology — supply correct normals and UVs.</p><p class="paragraph">Geometry arrays are compared by <strong>content</strong>: re-creating identical arrays on recomposition is safe (no GPU re-upload); changing any element re-uploads the buffers and rebuilds the renderable. Still prefer <code class="lang-kotlin">remember</code>-ing large arrays to skip the comparison cost.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">Mesh(<br>    material  = myMaterial,<br>    positions = floatArrayOf(/* x,y,z, … */),<br>     normals   = floatArrayOf(/* x,y,z, … */),<br>     uvs       = floatArrayOf(/* u,v, … */),<br>     indices   = intArrayOf(0, 1, 2, /* … */),<br> )</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>material</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Material applied to the whole mesh, or null while it is still loading.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>positions</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Vertex positions as xyz triples. Length must be a multiple of 3.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>normals</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Per-vertex normals as xyz triples. Must match <a href="-mesh.html">positions</a> in length.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>uvs</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Per-vertex UVs as uv pairs. Length must be <code class="lang-kotlin">2 * vertexCount</code>.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>indices</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Triangle indices (32-bit). Length must be a multiple of 3.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>bounding</span><wbr><span><span>Box</span></span></u></div></span></div><div><div class="title"><p class="paragraph">AABB used for frustum culling. Defaults to one computed from <a href="-mesh.html">positions</a>. Provide an explicit box if you skip culling or animate vertices beyond the static bounds.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>position</span></span></u></div></span></div><div><div class="title"><p class="paragraph">World-space position of the <a href="-mesh.html">pivot</a> point.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>rotation</span></span></u></div></span></div><div><div class="title"><p class="paragraph">World-space rotation. Build one with <a href="../io.github.erkko68.filament.compose.scene/-rotation/-companion/axis-angle.html">Rotation.axisAngle</a>/<a href="../io.github.erkko68.filament.compose.scene/-rotation/-companion/euler.html">Rotation.euler</a>.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>scale</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Per-axis scale.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>pivot</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Mesh-space point that rotation/scale revolve around and that ends up at <a href="-mesh.html">position</a>. Defaults to the mesh origin.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>visible</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Whether this renderable is in the scene. False removes it from the scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>cast</span><wbr><span><span>Shadows</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Whether the mesh casts shadows onto other renderables. On by default.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>receive</span><wbr><span><span>Shadows</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Whether the mesh receives shadows cast by others. On by default.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>on</span><wbr><span><span>Create</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Runs once when the mesh enters the scene, with the renderable entity and engine in scope (<a href="../io.github.erkko68.filament.compose/-entity-scope/index.html">EntityScope</a>) — use it to register the mesh with <code class="lang-kotlin">view.pick</code> callbacks or other entity-keyed maps.</p></div></div></div></div></div></div></div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

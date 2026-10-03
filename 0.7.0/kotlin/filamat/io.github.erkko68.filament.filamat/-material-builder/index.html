@@ -1,0 +1,1551 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MaterialBuilder</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.filamat/-material-builder/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.7.0"><span class="versions-dropdown-button-text">0.7.0</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.0"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.7.0</span></a><a href="../../../../older/0.6.0/kotlin/filamat/io.github.erkko68.filament.filamat/-material-builder/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.6.0</span></a><a href="../../../../older/0.5.0/kotlin/filamat/io.github.erkko68.filament.filamat/-material-builder/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.5.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.5.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filamat/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filamat/commonMain" data-filter=":kotlin:filamat/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filamat::io.github.erkko68.filament.filamat/MaterialBuilder///PointingToDeclaration//-2133506438">
+  <div class="breadcrumbs"><a href="../../index.html">filamat</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament.filamat</a><span class="delimiter">/</span><span class="current">MaterialBuilder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Material</span><wbr><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">MaterialBuilder</a></div><p class="paragraph">MaterialBuilder compiles Filament material source code into binary packages.</p><p class="paragraph">MaterialBuilder takes high-level material definitions and generates optimized shaders for multiple backends (OpenGL, Vulkan, Metal, WebGPU). The resulting MaterialPackage can be loaded by Filament's Material system.</p><p class="paragraph"><strong>Initialization:</strong> Call <a href="-companion/init.html">MaterialBuilder.init</a> before building any material, and <a href="-companion/shutdown.html">MaterialBuilder.shutdown</a> when finished.</p><p class="paragraph"><strong>Compilation:</strong> Configure material properties using methods like name(), shading(), blendingMode(), etc., then call build() to generate the package.</p><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-material-package/index.html"><span>Material</span><wbr><span><span>Package</span></span></a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-1161154762%2FConstructors%2F-2133506438" anchor-label="MaterialBuilder" id="-1161154762%2FConstructors%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-material-builder.html"><span>Material</span><wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1161154762%2FConstructors%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="1093395073%2FClasslikes%2F-2133506438" anchor-label="Attribute" id="1093395073%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-attribute/index.html"><span><span>Attribute</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1093395073%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-attribute/index.html">Attribute</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>type<span class="token operator">: </span><a href="-uniform-type/index.html">MaterialBuilder.UniformType</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>location<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-vertex-buffer/-vertex-attribute/index.html">VertexBuffer.VertexAttribute</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>attributeName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>defineName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A vertex attribute a material can <a href="require.html">require</a>: its <a href="../../../../kotlin/filamat/io.github.erkko68.filament.filamat/-material-builder/-attribute/--root--.html">name</a>, shader type and slot, and the names shaders use for it (<a href="../../../../kotlin/filamat/io.github.erkko68.filament.filamat/-material-builder/-attribute/--root--.html">attributeName</a>, e.g. <code class="lang-kotlin">mesh_uv0</code>, and <a href="../../../../kotlin/filamat/io.github.erkko68.filament.filamat/-material-builder/-attribute/--root--.html">defineName</a>, e.g. <code class="lang-kotlin">HAS_ATTRIBUTE_UV0</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2052852852%2FClasslikes%2F-2133506438" anchor-label="BlendFunction" id="2052852852%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-blend-function/index.html"><span>Blend</span><wbr><span><span>Function</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2052852852%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-blend-function/index.html">BlendFunction</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-blend-function/index.html">MaterialBuilder.BlendFunction</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">A blend factor, for <a href="custom-blend-functions.html">customBlendFunctions</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1473473169%2FClasslikes%2F-2133506438" anchor-label="BlendingMode" id="1473473169%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-blending-mode/index.html"><span>Blending</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1473473169%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-blending-mode/index.html">BlendingMode</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-blending-mode/index.html">MaterialBuilder.BlendingMode</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Blending modes determine how material color combines with background color.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-173209583%2FClasslikes%2F-2133506438" anchor-label="Companion" id="-173209583%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-173209583%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1968915463%2FClasslikes%2F-2133506438" anchor-label="ConstantType" id="1968915463%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-constant-type/index.html"><span>Constant</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1968915463%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-constant-type/index.html">ConstantType</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-constant-type/index.html">MaterialBuilder.ConstantType</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Type of a specialization <a href="constant.html">constant</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="388204298%2FClasslikes%2F-2133506438" anchor-label="CullingMode" id="388204298%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-culling-mode/index.html"><span>Culling</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="388204298%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-culling-mode/index.html">CullingMode</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-culling-mode/index.html">MaterialBuilder.CullingMode</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Which triangle faces are culled before rasterization.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="500741753%2FClasslikes%2F-2133506438" anchor-label="Interpolation" id="500741753%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-interpolation/index.html"><span><span>Interpolation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="500741753%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-interpolation/index.html">Interpolation</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-interpolation/index.html">MaterialBuilder.Interpolation</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Vertex attribute interpolation in the fragment shader.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="768526298%2FClasslikes%2F-2133506438" anchor-label="MaterialDomain" id="768526298%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-material-domain/index.html"><span>Material</span><wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="768526298%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-material-domain/index.html">MaterialDomain</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-material-domain/index.html">MaterialBuilder.MaterialDomain</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Which pipeline stage the material targets.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1908231560%2FClasslikes%2F-2133506438" anchor-label="Optimization" id="-1908231560%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-optimization/index.html"><span><span>Optimization</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1908231560%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-optimization/index.html">Optimization</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-optimization/index.html">MaterialBuilder.Optimization</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Shader optimization level applied at compile time.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-951352941%2FClasslikes%2F-2133506438" anchor-label="OutputTarget" id="-951352941%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-output-target/index.html"><span>Output</span><wbr><span><span>Target</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-951352941%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-output-target/index.html">OutputTarget</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-output-target/index.html">MaterialBuilder.OutputTarget</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Attachment a post-process <a href="output.html">output</a> writes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1887681738%2FClasslikes%2F-2133506438" anchor-label="OutputType" id="1887681738%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-output-type/index.html"><span>Output</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1887681738%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-output-type/index.html">OutputType</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-output-type/index.html">MaterialBuilder.OutputType</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Type of a post-process <a href="output.html">output</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="274193168%2FClasslikes%2F-2133506438" anchor-label="ParameterPrecision" id="274193168%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-parameter-precision/index.html"><span>Parameter</span><wbr><span><span>Precision</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="274193168%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-parameter-precision/index.html">ParameterPrecision</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-parameter-precision/index.html">MaterialBuilder.ParameterPrecision</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Precision level for numeric parameters.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2047694898%2FClasslikes%2F-2133506438" anchor-label="Platform" id="2047694898%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-platform/index.html"><span><span>Platform</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2047694898%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-platform/index.html">Platform</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-platform/index.html">MaterialBuilder.Platform</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Platform class to generate shaders for.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="637695383%2FClasslikes%2F-2133506438" anchor-label="ReflectionMode" id="637695383%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-reflection-mode/index.html"><span>Reflection</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="637695383%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-reflection-mode/index.html">ReflectionMode</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-reflection-mode/index.html">MaterialBuilder.ReflectionMode</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Source of reflections for the material.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1142606029%2FClasslikes%2F-2133506438" anchor-label="RefractionMode" id="1142606029%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-refraction-mode/index.html"><span>Refraction</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1142606029%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-refraction-mode/index.html">RefractionMode</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-refraction-mode/index.html">MaterialBuilder.RefractionMode</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Source of refracted light for refractive materials.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2101418774%2FClasslikes%2F-2133506438" anchor-label="RefractionType" id="2101418774%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-refraction-type/index.html"><span>Refraction</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2101418774%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-refraction-type/index.html">RefractionType</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-refraction-type/index.html">MaterialBuilder.RefractionType</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Geometry model used to compute refraction.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="853598814%2FClasslikes%2F-2133506438" anchor-label="SamplerFormat" id="853598814%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-sampler-format/index.html"><span>Sampler</span><wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="853598814%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-sampler-format/index.html">SamplerFormat</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-sampler-format/index.html">MaterialBuilder.SamplerFormat</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Data format for sampler parameters.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1550176901%2FClasslikes%2F-2133506438" anchor-label="SamplerType" id="-1550176901%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-sampler-type/index.html"><span>Sampler</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1550176901%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-sampler-type/index.html">SamplerType</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-sampler-type/index.html">MaterialBuilder.SamplerType</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Sampler types for texture parameters.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-39795837%2FClasslikes%2F-2133506438" anchor-label="ShaderQuality" id="-39795837%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-shader-quality/index.html"><span>Shader</span><wbr><span><span>Quality</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-39795837%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-shader-quality/index.html">ShaderQuality</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-shader-quality/index.html">MaterialBuilder.ShaderQuality</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Shader quality: lower trades accuracy for speed. <a href="-shader-quality/-d-e-f-a-u-l-t/index.html">DEFAULT</a> picks per platform.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2079369564%2FClasslikes%2F-2133506438" anchor-label="ShaderStage" id="-2079369564%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-shader-stage/index.html"><span>Shader</span><wbr><span><span>Stage</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2079369564%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-shader-stage/index.html">ShaderStage</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-shader-stage/index.html">MaterialBuilder.ShaderStage</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">A shader stage, for the stages a sampler <a href="parameter.html">parameter</a> is visible to.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1652068403%2FClasslikes%2F-2133506438" anchor-label="Shading" id="1652068403%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-shading/index.html"><span><span>Shading</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1652068403%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-shading/index.html">Shading</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-shading/index.html">MaterialBuilder.Shading</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Shading model determines how light interacts with the material surface.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-622329587%2FClasslikes%2F-2133506438" anchor-label="SpecularAmbientOcclusion" id="-622329587%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-specular-ambient-occlusion/index.html"><span>Specular</span><wbr><span>Ambient</span><wbr><span><span>Occlusion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-622329587%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-specular-ambient-occlusion/index.html">SpecularAmbientOcclusion</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-specular-ambient-occlusion/index.html">MaterialBuilder.SpecularAmbientOcclusion</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">How ambient occlusion is applied to specular indirect lighting.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1715843340%2FClasslikes%2F-2133506438" anchor-label="TargetApi" id="-1715843340%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-target-api/index.html"><span>Target</span><wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1715843340%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-target-api/index.html">TargetApi</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-target-api/index.html">MaterialBuilder.TargetApi</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Graphics API(s) to generate shaders for.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="318827658%2FClasslikes%2F-2133506438" anchor-label="TransparencyMode" id="318827658%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-transparency-mode/index.html"><span>Transparency</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="318827658%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-transparency-mode/index.html">TransparencyMode</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-transparency-mode/index.html">MaterialBuilder.TransparencyMode</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">How transparent objects are rendered (<a href="-blending-mode/-t-r-a-n-s-p-a-r-e-n-t/index.html">BlendingMode.TRANSPARENT</a>/<a href="-blending-mode/-f-a-d-e/index.html">BlendingMode.FADE</a> only).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1959689393%2FClasslikes%2F-2133506438" anchor-label="UniformType" id="-1959689393%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-uniform-type/index.html"><span>Uniform</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1959689393%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-uniform-type/index.html">UniformType</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-uniform-type/index.html">MaterialBuilder.UniformType</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Uniform variable types in material parameters.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2134186569%2FClasslikes%2F-2133506438" anchor-label="Variable" id="2134186569%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-variable/index.html"><span><span>Variable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2134186569%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-variable/index.html">Variable</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-variable/index.html">MaterialBuilder.Variable</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Custom vertex attribute variable slots.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1834521649%2FClasslikes%2F-2133506438" anchor-label="VariableQualifier" id="-1834521649%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-variable-qualifier/index.html"><span>Variable</span><wbr><span><span>Qualifier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1834521649%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-variable-qualifier/index.html">VariableQualifier</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-variable-qualifier/index.html">MaterialBuilder.VariableQualifier</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Qualifier of a post-process <a href="output.html">output</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1734532931%2FClasslikes%2F-2133506438" anchor-label="VertexDomain" id="-1734532931%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-vertex-domain/index.html"><span>Vertex</span><wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1734532931%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-vertex-domain/index.html">VertexDomain</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-vertex-domain/index.html">MaterialBuilder.VertexDomain</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Coordinate space the vertex shader's <code class="lang-kotlin">material()</code> output is expressed in.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1761215528%2FClasslikes%2F-2133506438" anchor-label="Workarounds" id="1761215528%2FClasslikes%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-workarounds/index.html"><span><span>Workarounds</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1761215528%2FClasslikes%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-workarounds/index.html">Workarounds</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-workarounds/index.html">MaterialBuilder.Workarounds</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Driver workarounds baked into the shaders.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1779901906%2FFunctions%2F-2133506438" anchor-label="alphaToCoverage" id="-1779901906%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="alpha-to-coverage.html"><span>alpha</span><wbr><span>To</span><wbr><span><span>Coverage</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1779901906%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="alpha-to-coverage.html"><span class="token function">alphaToCoverage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Converts fragment alpha to MSAA coverage; smoother <a href="-blending-mode/-m-a-s-k-e-d/index.html">BlendingMode.MASKED</a> edges under MSAA.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1770462684%2FFunctions%2F-2133506438" anchor-label="blending" id="-1770462684%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="blending.html"><span><span>blending</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1770462684%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="blending.html"><span class="token function">blending</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">blending<span class="token operator">: </span><a href="-blending-mode/index.html">MaterialBuilder.BlendingMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets how the material blends with the render target (<a href="-blending-mode/-o-p-a-q-u-e/index.html">BlendingMode.OPAQUE</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-606701924%2FFunctions%2F-2133506438" anchor-label="build" id="-606701924%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-606701924%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-material-package/index.html">MaterialPackage</a></div><div class="brief "><p class="paragraph">Compiles the material and returns the resulting package (check <a href="../-material-package/is-valid.html">MaterialPackage.isValid</a> before use).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1597166053%2FFunctions%2F-2133506438" anchor-label="clearCoatIorChange" id="1597166053%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-coat-ior-change.html"><span>clear</span><wbr><span>Coat</span><wbr><span>Ior</span><wbr><span><span>Change</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1597166053%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="clear-coat-ior-change.html"><span class="token function">clearCoatIorChange</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clearCoatIorChange<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Makes the clear coat layer's IOR affect the base layer (physically correct; default: true).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1774103597%2FFunctions%2F-2133506438" anchor-label="coloredPenumbra" id="1774103597%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="colored-penumbra.html"><span>colored</span><wbr><span><span>Penumbra</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1774103597%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="colored-penumbra.html"><span class="token function">coloredPenumbra</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">coloredPenumbra<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Enables colored shadow penumbras for this material's transparent shadows.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-905419815%2FFunctions%2F-2133506438" anchor-label="colorWrite" id="-905419815%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="color-write.html"><span>color</span><wbr><span><span>Write</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-905419815%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="color-write.html"><span class="token function">colorWrite</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Enables/disables writes to the color buffer (default: true).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1368047545%2FFunctions%2F-2133506438" anchor-label="compilationParameters" id="-1368047545%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="compilation-parameters.html"><span>compilation</span><wbr><span><span>Parameters</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1368047545%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="compilation-parameters.html"><span class="token function">compilationParameters</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">params<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Records the compiler parameters (matc's command line) in the package.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="43526339%2FFunctions%2F-2133506438" anchor-label="constant" id="43526339%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="constant.html"><span><span>constant</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="43526339%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="constant.html"><span class="token function">constant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="-constant-type/index.html">MaterialBuilder.ConstantType</a><span class="token punctuation">, </span></span><span class="parameter ">defaultValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="constant.html"><span class="token function">constant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="-constant-type/index.html">MaterialBuilder.ConstantType</a><span class="token punctuation">, </span></span><span class="parameter ">defaultValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="constant.html"><span class="token function">constant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="-constant-type/index.html">MaterialBuilder.ConstantType</a><span class="token punctuation">, </span></span><span class="parameter ">defaultValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Declares a specialization constant with its default value, settable per material instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1786834318%2FFunctions%2F-2133506438" anchor-label="culling" id="-1786834318%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="culling.html"><span><span>culling</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1786834318%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="culling.html"><span class="token function">culling</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">culling<span class="token operator">: </span><a href="-culling-mode/index.html">MaterialBuilder.CullingMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets face culling (<a href="-culling-mode/-b-a-c-k/index.html">CullingMode.BACK</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="934825002%2FFunctions%2F-2133506438" anchor-label="customBlendFunctions" id="934825002%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="custom-blend-functions.html"><span>custom</span><wbr><span>Blend</span><wbr><span><span>Functions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="934825002%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="custom-blend-functions.html"><span class="token function">customBlendFunctions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">srcRGB<span class="token operator">: </span><a href="-blend-function/index.html">MaterialBuilder.BlendFunction</a><span class="token punctuation">, </span></span><span class="parameter ">srcA<span class="token operator">: </span><a href="-blend-function/index.html">MaterialBuilder.BlendFunction</a><span class="token punctuation">, </span></span><span class="parameter ">dstRGB<span class="token operator">: </span><a href="-blend-function/index.html">MaterialBuilder.BlendFunction</a><span class="token punctuation">, </span></span><span class="parameter ">dstA<span class="token operator">: </span><a href="-blend-function/index.html">MaterialBuilder.BlendFunction</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">The blend factors of <a href="-blending-mode/-c-u-s-t-o-m/index.html">BlendingMode.CUSTOM</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="762961415%2FFunctions%2F-2133506438" anchor-label="customSurfaceShading" id="762961415%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="custom-surface-shading.html"><span>custom</span><wbr><span>Surface</span><wbr><span><span>Shading</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="762961415%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="custom-surface-shading.html"><span class="token function">customSurfaceShading</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">customSurfaceShading<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Enables custom surface shading: the material provides its own <code class="lang-kotlin">surfaceShading()</code> function.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2020983624%2FFunctions%2F-2133506438" anchor-label="depthCulling" id="2020983624%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="depth-culling.html"><span>depth</span><wbr><span><span>Culling</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2020983624%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="depth-culling.html"><span class="token function">depthCulling</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Enables/disables depth testing (default: true).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-224497863%2FFunctions%2F-2133506438" anchor-label="depthWrite" id="-224497863%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="depth-write.html"><span>depth</span><wbr><span><span>Write</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-224497863%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="depth-write.html"><span class="token function">depthWrite</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Enables/disables writes to the depth buffer (default: true, except for blended modes).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="28098867%2FFunctions%2F-2133506438" anchor-label="doubleSided" id="28098867%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="double-sided.html"><span>double</span><wbr><span><span>Sided</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="28098867%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="double-sided.html"><span class="token function">doubleSided</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">doubleSided<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Renders both faces and flips the normal on back faces; implies <a href="-culling-mode/-n-o-n-e/index.html">CullingMode.NONE</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1687616864%2FFunctions%2F-2133506438" anchor-label="enableFramebufferFetch" id="1687616864%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enable-framebuffer-fetch.html"><span>enable</span><wbr><span>Framebuffer</span><wbr><span><span>Fetch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1687616864%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="enable-framebuffer-fetch.html"><span class="token function">enableFramebufferFetch</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Lets post-process materials read the framebuffer they write.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1663579827%2FFunctions%2F-2133506438" anchor-label="featureLevel" id="1663579827%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="feature-level.html"><span>feature</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1663579827%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="feature-level.html"><span class="token function">featureLevel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">featureLevel<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-engine/-feature-level/index.html">Engine.FeatureLevel</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the minimum feature level the material needs.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-235962489%2FFunctions%2F-2133506438" anchor-label="flipUV" id="-235962489%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flip-u-v.html"><span>flip</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-235962489%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="flip-u-v.html"><span class="token function">flipUV</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">flipUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Flips the V texture coordinate at compile time (default: true, matching Filament's convention).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2076435043%2FFunctions%2F-2133506438" anchor-label="generateDebugInfo" id="2076435043%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="generate-debug-info.html"><span>generate</span><wbr><span>Debug</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2076435043%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="generate-debug-info.html"><span class="token function">generateDebugInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">generateDebugInfo<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Includes debug info in the generated SPIR-V.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1238672040%2FFunctions%2F-2133506438" anchor-label="groupSize" id="1238672040%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="group-size.html"><span>group</span><wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1238672040%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="group-size.html"><span class="token function">groupSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets a compute material's work group size.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="428622035%2FFunctions%2F-2133506438" anchor-label="includeEssl1" id="428622035%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="include-essl1.html"><span>include</span><wbr><span><span>Essl1</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="428622035%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="include-essl1.html"><span class="token function">includeEssl1</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Also generates ESSL 1.0 shaders, for feature level 0.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1182456000%2FFunctions%2F-2133506438" anchor-label="instanced" id="-1182456000%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="instanced.html"><span><span>instanced</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1182456000%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="instanced.html"><span class="token function">instanced</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Enables instanced rendering: shaders get the instance index.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="393644013%2FFunctions%2F-2133506438" anchor-label="interpolation" id="393644013%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="interpolation.html"><span><span>interpolation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="393644013%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="interpolation.html"><span class="token function">interpolation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">interpolation<span class="token operator">: </span><a href="-interpolation/index.html">MaterialBuilder.Interpolation</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the interpolation of the shading normal (default: SMOOTH).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1360307434%2FFunctions%2F-2133506438" anchor-label="linearFog" id="-1360307434%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="linear-fog.html"><span>linear</span><wbr><span><span>Fog</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1360307434%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="linear-fog.html"><span class="token function">linearFog</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Computes fog linearly rather than exponentially, a cheaper approximation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1141493596%2FFunctions%2F-2133506438" anchor-label="maskThreshold" id="1141493596%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mask-threshold.html"><span>mask</span><wbr><span><span>Threshold</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1141493596%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="mask-threshold.html"><span class="token function">maskThreshold</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">threshold<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the alpha cutoff for <a href="-blending-mode/-m-a-s-k-e-d/index.html">BlendingMode.MASKED</a> (default: 0.4).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-260057438%2FFunctions%2F-2133506438" anchor-label="material" id="-260057438%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material.html"><span><span>material</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-260057438%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="material.html"><span class="token function">material</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">code<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">line<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the fragment-stage code, a GLSL <code class="lang-kotlin">void material(inout MaterialInputs)</code>; <a href="material.html">line</a> is its first line in the source, for error messages.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1408218503%2FFunctions%2F-2133506438" anchor-label="materialDomain" id="1408218503%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-domain.html"><span>material</span><wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1408218503%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="material-domain.html"><span class="token function">materialDomain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">materialDomain<span class="token operator">: </span><a href="-material-domain/index.html">MaterialBuilder.MaterialDomain</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the material domain (<a href="-material-domain/-s-u-r-f-a-c-e/index.html">MaterialDomain.SURFACE</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-989804330%2FFunctions%2F-2133506438" anchor-label="materialSource" id="-989804330%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-source.html"><span>material</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-989804330%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="material-source.html"><span class="token function">materialSource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">source<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Records the material's <code class="lang-kotlin">.mat</code> source in the package.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1483198558%2FFunctions%2F-2133506438" anchor-label="materialVertex" id="1483198558%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-vertex.html"><span>material</span><wbr><span><span>Vertex</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1483198558%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="material-vertex.html"><span class="token function">materialVertex</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">code<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">line<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the vertex-stage code, a GLSL <code class="lang-kotlin">void materialVertex(inout MaterialVertexInputs)</code>; <a href="material-vertex.html">line</a> as in <a href="material.html">material</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="385639801%2FFunctions%2F-2133506438" anchor-label="multiBounceAmbientOcclusion" id="385639801%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="multi-bounce-ambient-occlusion.html"><span>multi</span><wbr><span>Bounce</span><wbr><span>Ambient</span><wbr><span><span>Occlusion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="385639801%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="multi-bounce-ambient-occlusion.html"><span class="token function">multiBounceAmbientOcclusion</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">multiBounceAO<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Simulates extra light bounces in occluded areas to reduce over-darkening from AO.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="77633727%2FFunctions%2F-2133506438" anchor-label="name" id="77633727%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="name.html"><span><span>name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="77633727%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="name.html"><span class="token function">name</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the material's name (shown in tooling and debug output).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-529926801%2FFunctions%2F-2133506438" anchor-label="noSamplerValidation" id="-529926801%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="no-sampler-validation.html"><span>no</span><wbr><span>Sampler</span><wbr><span><span>Validation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-529926801%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="no-sampler-validation.html"><span class="token function">noSamplerValidation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Skips validating samplers against the feature level's limits.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="758332615%2FFunctions%2F-2133506438" anchor-label="optimization" id="758332615%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="optimization.html"><span><span>optimization</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="758332615%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="optimization.html"><span class="token function">optimization</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">optimization<span class="token operator">: </span><a href="-optimization/index.html">MaterialBuilder.Optimization</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the shader optimization level (<a href="-optimization/-p-e-r-f-o-r-m-a-n-c-e/index.html">Optimization.PERFORMANCE</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-927043482%2FFunctions%2F-2133506438" anchor-label="output" id="-927043482%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="output.html"><span><span>output</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-927043482%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="output.html"><span class="token function">output</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">qualifier<span class="token operator">: </span><a href="-variable-qualifier/index.html">MaterialBuilder.VariableQualifier</a><span class="token punctuation">, </span></span><span class="parameter ">target<span class="token operator">: </span><a href="-output-target/index.html">MaterialBuilder.OutputTarget</a><span class="token punctuation">, </span></span><span class="parameter ">precision<span class="token operator">: </span><a href="-parameter-precision/index.html">MaterialBuilder.ParameterPrecision</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="-output-type/index.html">MaterialBuilder.OutputType</a><span class="token punctuation">, </span></span><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">location<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>-1</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Adds a fragment shader output; post-process materials only. <a href="output.html">location</a> -1 lets filamat pick.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2068889343%2FFunctions%2F-2133506438" anchor-label="parameter" id="2068889343%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="parameter.html"><span><span>parameter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2068889343%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="parameter.html"><span class="token function">parameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="-uniform-type/index.html">MaterialBuilder.UniformType</a><span class="token punctuation">, </span></span><span class="parameter ">precision<span class="token operator">: </span><a href="-parameter-precision/index.html">MaterialBuilder.ParameterPrecision</a><span class="token operator"> = </span>ParameterPrecision.DEFAULT</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Declares a uniform parameter, settable via <code class="lang-kotlin">MaterialInstance.setParameter</code>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="parameter.html"><span class="token function">parameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">size<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="-uniform-type/index.html">MaterialBuilder.UniformType</a><span class="token punctuation">, </span></span><span class="parameter ">precision<span class="token operator">: </span><a href="-parameter-precision/index.html">MaterialBuilder.ParameterPrecision</a><span class="token operator"> = </span>ParameterPrecision.DEFAULT</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Declares a uniform array parameter of <a href="parameter.html">size</a> elements.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="parameter.html"><span class="token function">parameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">samplerType<span class="token operator">: </span><a href="-sampler-type/index.html">MaterialBuilder.SamplerType</a><span class="token punctuation">, </span></span><span class="parameter ">format<span class="token operator">: </span><a href="-sampler-format/index.html">MaterialBuilder.SamplerFormat</a><span class="token operator"> = </span>SamplerFormat.FLOAT<span class="token punctuation">, </span></span><span class="parameter ">precision<span class="token operator">: </span><a href="-parameter-precision/index.html">MaterialBuilder.ParameterPrecision</a><span class="token operator"> = </span>ParameterPrecision.DEFAULT<span class="token punctuation">, </span></span><span class="parameter ">filterable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">multisample<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transformName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter ">stages<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="-shader-stage/index.html">MaterialBuilder.ShaderStage</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Declares a texture sampler parameter, settable via <code class="lang-kotlin">MaterialInstance.setParameter</code>. <a href="parameter.html">transformName</a> names a mat3 uniform transforming its UVs; <a href="parameter.html">stages</a> limits the shader stages that see it (all when null).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1345048327%2FFunctions%2F-2133506438" anchor-label="platform" id="1345048327%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="platform.html"><span><span>platform</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1345048327%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="platform.html"><span class="token function">platform</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">platform<span class="token operator">: </span><a href="-platform/index.html">MaterialBuilder.Platform</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Selects the platform class to generate shaders for (<a href="-platform/-a-l-l/index.html">Platform.ALL</a> to cover everything).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1265636720%2FFunctions%2F-2133506438" anchor-label="postLightingBlending" id="-1265636720%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="post-lighting-blending.html"><span>post</span><wbr><span>Lighting</span><wbr><span><span>Blending</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1265636720%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="post-lighting-blending.html"><span class="token function">postLightingBlending</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">blending<span class="token operator">: </span><a href="-blending-mode/index.html">MaterialBuilder.BlendingMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets how the post-lighting color blends with the lit result.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1883078644%2FFunctions%2F-2133506438" anchor-label="printShaders" id="1883078644%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="print-shaders.html"><span>print</span><wbr><span><span>Shaders</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1883078644%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="print-shaders.html"><span class="token function">printShaders</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">printShaders<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Prints the generated shaders to the log.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="35895868%2FFunctions%2F-2133506438" anchor-label="quality" id="35895868%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="quality.html"><span><span>quality</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="35895868%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="quality.html"><span class="token function">quality</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">quality<span class="token operator">: </span><a href="-shader-quality/index.html">MaterialBuilder.ShaderQuality</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the shader quality (<a href="-shader-quality/-d-e-f-a-u-l-t/index.html">ShaderQuality.DEFAULT</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1308680089%2FFunctions%2F-2133506438" anchor-label="reflectionMode" id="-1308680089%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reflection-mode.html"><span>reflection</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1308680089%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reflection-mode.html"><span class="token function">reflectionMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><a href="-reflection-mode/index.html">MaterialBuilder.ReflectionMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets where reflections are sampled from (<a href="-reflection-mode/-d-e-f-a-u-l-t/index.html">ReflectionMode.DEFAULT</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1567591591%2FFunctions%2F-2133506438" anchor-label="refractionMode" id="1567591591%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="refraction-mode.html"><span>refraction</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1567591591%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="refraction-mode.html"><span class="token function">refractionMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">refraction<span class="token operator">: </span><a href="-refraction-mode/index.html">MaterialBuilder.RefractionMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets where refracted light is sampled from (<a href="-refraction-mode/-n-o-n-e/index.html">RefractionMode.NONE</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-802579449%2FFunctions%2F-2133506438" anchor-label="refractionType" id="-802579449%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="refraction-type.html"><span>refraction</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-802579449%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="refraction-type.html"><span class="token function">refractionType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">refractionType<span class="token operator">: </span><a href="-refraction-type/index.html">MaterialBuilder.RefractionType</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the refraction geometry model (<a href="-refraction-type/-s-o-l-i-d/index.html">RefractionType.SOLID</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="695345828%2FFunctions%2F-2133506438" anchor-label="require" id="695345828%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="require.html"><span><span>require</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="695345828%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="require.html"><span class="token function">require</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">attribute<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-vertex-buffer/-vertex-attribute/index.html">VertexBuffer.VertexAttribute</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Requires the given vertex <a href="require.html">attribute</a> to be present in rendered geometry (e.g. UV1, COLOR).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2056523370%2FFunctions%2F-2133506438" anchor-label="saveRawVariants" id="-2056523370%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="save-raw-variants.html"><span>save</span><wbr><span>Raw</span><wbr><span><span>Variants</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2056523370%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="save-raw-variants.html"><span class="token function">saveRawVariants</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">saveRawVariants<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Saves each variant's raw shader text, for debugging.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1119080732%2FFunctions%2F-2133506438" anchor-label="setApiLevel" id="1119080732%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-api-level.html"><span>set</span><wbr><span>Api</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1119080732%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-api-level.html"><span class="token function">setApiLevel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">apiLevel<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the API level the material is compiled against (default: 1).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="434750809%2FFunctions%2F-2133506438" anchor-label="shaderDefine" id="434750809%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shader-define.html"><span>shader</span><wbr><span><span>Define</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="434750809%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="shader-define.html"><span class="token function">shaderDefine</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Adds a preprocessor define to the material's shader code.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1508073761%2FFunctions%2F-2133506438" anchor-label="shading" id="1508073761%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shading.html"><span><span>shading</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1508073761%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="shading.html"><span class="token function">shading</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">shading<span class="token operator">: </span><a href="-shading/index.html">MaterialBuilder.Shading</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the shading model (LIT, UNLIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="698299810%2FFunctions%2F-2133506438" anchor-label="shadowFarAttenuation" id="698299810%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-far-attenuation.html"><span>shadow</span><wbr><span>Far</span><wbr><span><span>Attenuation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="698299810%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="shadow-far-attenuation.html"><span class="token function">shadowFarAttenuation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Fades shadows out towards the shadow far plane.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-124901068%2FFunctions%2F-2133506438" anchor-label="shadowMultiplier" id="-124901068%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-multiplier.html"><span>shadow</span><wbr><span><span>Multiplier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-124901068%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="shadow-multiplier.html"><span class="token function">shadowMultiplier</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">shadowMultiplier<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">UNLIT only: multiplies the final color by the shadowing factor, for shadow-receiver planes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1738288871%2FFunctions%2F-2133506438" anchor-label="specularAmbientOcclusion" id="1738288871%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="specular-ambient-occlusion.html"><span>specular</span><wbr><span>Ambient</span><wbr><span><span>Occlusion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1738288871%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="specular-ambient-occlusion.html"><span class="token function">specularAmbientOcclusion</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">specularAO<span class="token operator">: </span><a href="-specular-ambient-occlusion/index.html">MaterialBuilder.SpecularAmbientOcclusion</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets how AO is applied to specular lighting (<a href="-specular-ambient-occlusion/-n-o-n-e/index.html">SpecularAmbientOcclusion.NONE</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-173798914%2FFunctions%2F-2133506438" anchor-label="specularAntiAliasing" id="-173798914%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="specular-anti-aliasing.html"><span>specular</span><wbr><span>Anti</span><wbr><span><span>Aliasing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-173798914%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="specular-anti-aliasing.html"><span class="token function">specularAntiAliasing</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">specularAntiAliasing<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Reduces specular shimmering/aliasing on curved geometry (LIT models only).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-721210585%2FFunctions%2F-2133506438" anchor-label="specularAntiAliasingThreshold" id="-721210585%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="specular-anti-aliasing-threshold.html"><span>specular</span><wbr><span>Anti</span><wbr><span>Aliasing</span><wbr><span><span>Threshold</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-721210585%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="specular-anti-aliasing-threshold.html"><span class="token function">specularAntiAliasingThreshold</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">threshold<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Clamping threshold of the specular AA roughness increase, in <code class="lang-kotlin">[0, 1]</code> (default: 0.2).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2139917671%2FFunctions%2F-2133506438" anchor-label="specularAntiAliasingVariance" id="-2139917671%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="specular-anti-aliasing-variance.html"><span>specular</span><wbr><span>Anti</span><wbr><span>Aliasing</span><wbr><span><span>Variance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2139917671%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="specular-anti-aliasing-variance.html"><span class="token function">specularAntiAliasingVariance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">screenSpaceVariance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Screen-space variance of the specular AA filter kernel, in <code class="lang-kotlin">[0, 1]</code> (default: 0.15).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1948572429%2FFunctions%2F-2133506438" anchor-label="stereoscopicEyeCount" id="1948572429%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stereoscopic-eye-count.html"><span>stereoscopic</span><wbr><span>Eye</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1948572429%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="stereoscopic-eye-count.html"><span class="token function">stereoscopicEyeCount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">eyeCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets how many eyes stereoscopic rendering draws.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="688646037%2FFunctions%2F-2133506438" anchor-label="stereoscopicType" id="688646037%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stereoscopic-type.html"><span>stereoscopic</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="688646037%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="stereoscopic-type.html"><span class="token function">stereoscopicType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">stereoscopicType<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-engine/-stereoscopic-type/index.html">Engine.StereoscopicType</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the stereoscopic technique the shaders support.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1042979747%2FFunctions%2F-2133506438" anchor-label="targetApi" id="1042979747%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="target-api.html"><span>target</span><wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1042979747%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="target-api.html"><span class="token function">targetApi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetApi<span class="token operator">: </span><a href="-target-api/index.html">MaterialBuilder.TargetApi</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Selects the graphics API(s) to generate shaders for; fewer APIs → smaller package.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1816973319%2FFunctions%2F-2133506438" anchor-label="transparencyMode" id="1816973319%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transparency-mode.html"><span>transparency</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1816973319%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="transparency-mode.html"><span class="token function">transparencyMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><a href="-transparency-mode/index.html">MaterialBuilder.TransparencyMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the transparency rendering strategy (<a href="-transparency-mode/-d-e-f-a-u-l-t/index.html">TransparencyMode.DEFAULT</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="755116605%2FFunctions%2F-2133506438" anchor-label="transparentShadow" id="755116605%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transparent-shadow.html"><span>transparent</span><wbr><span><span>Shadow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="755116605%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="transparent-shadow.html"><span class="token function">transparentShadow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">transparentShadow<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Makes this transparent material cast (dithered) transparent shadows.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="245119284%2FFunctions%2F-2133506438" anchor-label="useDefaultDepthVariant" id="245119284%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="use-default-depth-variant.html"><span>use</span><wbr><span>Default</span><wbr><span>Depth</span><wbr><span><span>Variant</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="245119284%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="use-default-depth-variant.html"><span class="token function">useDefaultDepthVariant</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Uses Filament's default depth variant, skipping a custom vertex shader in depth-only passes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1947663072%2FFunctions%2F-2133506438" anchor-label="useLegacyMorphing" id="1947663072%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="use-legacy-morphing.html"><span>use</span><wbr><span>Legacy</span><wbr><span><span>Morphing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1947663072%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="use-legacy-morphing.html"><span class="token function">useLegacyMorphing</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Uses the legacy (non-CPU-skinning-aware) morph target implementation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-478604727%2FFunctions%2F-2133506438" anchor-label="variable" id="-478604727%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="variable.html"><span><span>variable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-478604727%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="variable.html"><span class="token function">variable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="-variable/index.html">MaterialBuilder.Variable</a><span class="token punctuation">, </span></span><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Names a custom interpolant (<a href="-variable/index.html">Variable</a> slot) passed from the vertex to the fragment stage.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="variable.html"><span class="token function">variable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="-variable/index.html">MaterialBuilder.Variable</a><span class="token punctuation">, </span></span><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">precision<span class="token operator">: </span><a href="-parameter-precision/index.html">MaterialBuilder.ParameterPrecision</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Names a custom interpolant with an explicit <a href="variable.html">precision</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-434669589%2FFunctions%2F-2133506438" anchor-label="variantFilter" id="-434669589%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="variant-filter.html"><span>variant</span><wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-434669589%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="variant-filter.html"><span class="token function">variantFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">variantFilter<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Bitmask of shader variants to exclude from compilation, shrinking the package.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="732190055%2FFunctions%2F-2133506438" anchor-label="vertexDomain" id="732190055%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vertex-domain.html"><span>vertex</span><wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="732190055%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="vertex-domain.html"><span class="token function">vertexDomain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">domain<span class="token operator">: </span><a href="-vertex-domain/index.html">MaterialBuilder.VertexDomain</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the coordinate space of the vertex output (<a href="-vertex-domain/-o-b-j-e-c-t/index.html">VertexDomain.OBJECT</a> by default).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1091189044%2FFunctions%2F-2133506438" anchor-label="vertexDomainDeviceJittered" id="-1091189044%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vertex-domain-device-jittered.html"><span>vertex</span><wbr><span>Domain</span><wbr><span>Device</span><wbr><span><span>Jittered</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1091189044%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="vertex-domain-device-jittered.html"><span class="token function">vertexDomainDeviceJittered</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Applies the view's TAA jitter to <a href="-vertex-domain/-d-e-v-i-c-e/index.html">VertexDomain.DEVICE</a> positions.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="815539211%2FFunctions%2F-2133506438" anchor-label="workarounds" id="815539211%2FFunctions%2F-2133506438" data-filterable-set=":kotlin:filamat/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filamat/commonMain" data-filterable-set=":kotlin:filamat/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="workarounds.html"><span><span>workarounds</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="815539211%2FFunctions%2F-2133506438"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filamat/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="workarounds.html"><span class="token function">workarounds</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">workarounds<span class="token operator">: </span><a href="-workarounds/index.html">MaterialBuilder.Workarounds</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">MaterialBuilder</a></div><div class="brief "><p class="paragraph">Sets the driver workarounds baked into the shaders.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

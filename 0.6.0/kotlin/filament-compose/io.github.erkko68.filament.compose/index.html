@@ -1,0 +1,585 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>io.github.erkko68.filament.compose</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.compose/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.6.0"><span class="versions-dropdown-button-text">0.6.0</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.6.0</span></a><a href="../../../older/0.5.0/kotlin/filament-compose/io.github.erkko68.filament.compose/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.5.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.5.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-compose/commonMain">common</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-compose/webMain">web</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-compose/commonMain" data-filter=":kotlin:filament-compose/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-compose/webMain" data-filter=":kotlin:filament-compose/webMain">
+                                <span class="checkbox--icon"></span>
+                                web
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageids="filament-compose::io.github.erkko68.filament.compose////PointingToDeclaration//1703601762">
+  <div class="breadcrumbs"><a href="../index.html">filament-compose</a><span class="delimiter">/</span><span class="current">io.github.erkko68.filament.compose</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="1595510024%2FClasslikes%2F-552819475" anchor-label="CameraController" id="1595510024%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-camera-controller/index.html"><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1595510024%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-camera-controller/index.html">CameraController</a></div><div class="brief "><p class="paragraph">Common surface shared by <a href="-orbit-camera-controller/index.html">OrbitCameraController</a>, <a href="-map-camera-controller/index.html">MapCameraController</a> and <a href="-flight-camera-controller/index.html">FlightCameraController</a> — the operations that make sense for any manipulator-driven camera, so generic UI (a "reset view" button, save/restore of viewpoints) can drive whichever controller is active without caring about the control scheme. Mode-specific extras — flight's per-frame <a href="-flight-camera-controller/update.html">FlightCameraController.update</a> — live on the concrete types, not here.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1574567992%2FClasslikes%2F-552819475" anchor-label="EntityScope" id="-1574567992%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-entity-scope/index.html"><span>Entity</span><wbr><span><span>Scope</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1574567992%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-entity-scope/index.html">EntityScope</a></div><div class="brief "><p class="paragraph">Receiver for the <code class="lang-kotlin">onCreate</code> callback of entity-producing scene composables — <a href="../io.github.erkko68.filament.compose.scene/-group.html">Group</a> and the primitives (<code class="lang-kotlin">Cube</code>, <code class="lang-kotlin">Sphere</code>, <code class="lang-kotlin">Plane</code>, <code class="lang-kotlin">Cylinder</code>, <code class="lang-kotlin">Mesh</code>). Exposes the created <a href="-entity-scope/entity.html">entity</a> together with the <a href="-entity-scope/engine.html">engine</a>, so one-time setup (manager operations, pick registries) needs no extra plumbing — the same scope-receiver shape as <code class="lang-kotlin">GltfInstance</code>'s richer <a href="../io.github.erkko68.filament.compose.scene/-gltf-instance-scope/index.html">GltfInstanceScope</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-147286606%2FClasslikes%2F-552819475" anchor-label="FilamentDsl" id="-147286606%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-dsl/index.html"><span>Filament</span><wbr><span><span>Dsl</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-147286606%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-dsl-marker/index.html"><span class="token annotation builtin">DslMarker</span></a></div></div><span class="token keyword">annotation class </span><a href="-filament-dsl/index.html">FilamentDsl</a></div><div class="brief "><p class="paragraph">Restricts the implicit-receiver search inside nested scene declarations. See <a href="-filament-scene-scope/index.html">FilamentSceneScope</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1484609772%2FClasslikes%2F-552819475" anchor-label="FilamentEffectScope" id="1484609772%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-effect-scope/index.html"><span>Filament</span><wbr><span>Effect</span><wbr><span><span>Scope</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1484609772%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-filament-effect-scope/index.html">FilamentEffectScope</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="396511811%2FClasslikes%2F-552819475" anchor-label="FilamentScene" id="396511811%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-scene/index.html"><span>Filament</span><wbr><span><span>Scene</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="396511811%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-filament-scene/index.html">FilamentScene</a></div><div class="brief "><p class="paragraph">A handle to a Filament <a href="../../../kotlin/filament/io.github.erkko68.filament/-scene/index.html">Scene</a> and its <a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a>, produced by <a href="remember-filament-scene.html">rememberFilamentScene</a> and consumed by one or more <a href="-filament-view.html">FilamentView</a>s. The scene is the <i>world</i> — entities, lights, skybox, IBL — and knows nothing about cameras or viewports.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="779776427%2FClasslikes%2F-552819475" anchor-label="FilamentSceneScope" id="779776427%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-scene-scope/index.html"><span>Filament</span><wbr><span>Scene</span><wbr><span><span>Scope</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="779776427%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-filament-scene-scope/index.html">FilamentSceneScope</a></div><div class="brief "><p class="paragraph">Receiver for the content lambda of <a href="remember-filament-scene.html">rememberFilamentScene</a>. Scene-content composables (<a href="../io.github.erkko68.filament.compose.scene/-light.html">io.github.erkko68.filament.compose.scene.Light</a>, <code class="lang-kotlin">GltfInstance</code>, <code class="lang-kotlin">Group</code>, primitives, <a href="-filament-effect.html">FilamentEffect</a>, …) are extensions on this scope, so they only compile inside a scene declaration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-656451869%2FClasslikes%2F-552819475" anchor-label="FilamentViewState" id="-656451869%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-view-state/index.html"><span>Filament</span><wbr><span>View</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-656451869%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-filament-view-state/index.html">FilamentViewState</a></div><div class="brief "><p class="paragraph">Hoisted handle to a <a href="-filament-view.html">FilamentView</a>'s live Filament objects. Create with <a href="remember-filament-view-state.html">rememberFilamentViewState</a>, pass to a <a href="-filament-view.html">FilamentView</a>, and use it for imperative access — picking, reading the viewport, or reaching the raw <a href="../../../kotlin/filament/io.github.erkko68.filament/-view/index.html">View</a>/<a href="../../../kotlin/filament/io.github.erkko68.filament/-renderer/index.html">Renderer</a> for advanced work.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1184054152%2FClasslikes%2F-552819475" anchor-label="FlightCameraController" id="-1184054152%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-flight-camera-controller/index.html"><span>Flight</span><wbr><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1184054152%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable.html"><span class="token annotation builtin">Stable</span></a></div></div><span class="token keyword">class </span><a href="-flight-camera-controller/index.html">FlightCameraController</a> : <a href="-camera-controller/index.html">CameraController</a></div><div class="brief "><p class="paragraph">Drives a <a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a> using a Filament <a href="../../../kotlin/filament-utils/io.github.erkko68.filament.utils/-manipulator/index.html">Manipulator</a> in FLIGHT mode (first-person).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1760193154%2FClasslikes%2F-552819475" anchor-label="FrameInfo" id="-1760193154%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-frame-info/index.html"><span>Frame</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1760193154%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="-frame-info/index.html">FrameInfo</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>frameTimeNanos<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>deltaSeconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>elapsedSeconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Timing passed to an <a href="-on-frame.html">OnFrame</a> callback, computed once per display refresh.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="910962524%2FClasslikes%2F-552819475" anchor-label="MapCameraController" id="910962524%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-map-camera-controller/index.html"><span>Map</span><wbr><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="910962524%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-map-camera-controller/index.html">MapCameraController</a> : <a href="-camera-controller/index.html">CameraController</a></div><div class="brief "><p class="paragraph">Drives a <a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a> using a Filament <a href="../../../kotlin/filament-utils/io.github.erkko68.filament.utils/-manipulator/index.html">Manipulator</a> in MAP mode (top-down 2-D pan/zoom). Pair with <code class="lang-kotlin">Projection.Orthographic</code> on the <a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1461022254%2FClasslikes%2F-552819475" anchor-label="OrbitCameraController" id="1461022254%2FClasslikes%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-orbit-camera-controller/index.html"><span>Orbit</span><wbr><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1461022254%2FClasslikes%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-orbit-camera-controller/index.html">OrbitCameraController</a> : <a href="-camera-controller/index.html">CameraController</a></div><div class="brief "><p class="paragraph">Drives a <a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a> using a Filament <a href="../../../kotlin/filament-utils/io.github.erkko68.filament.utils/-manipulator/index.html">Manipulator</a> in ORBIT mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1188076959%2FProperties%2F-552819475" anchor-label="LocalFilamentEngine" id="-1188076959%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-local-filament-engine.html"><span>Local</span><wbr><span>Filament</span><wbr><span><span>Engine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1188076959%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="-local-filament-engine.html">LocalFilamentEngine</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ProvidableCompositionLocal.html">ProvidableCompositionLocal</a><span class="token operator">&lt;</span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The <a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a> backing the enclosing <a href="remember-filament-scene.html">rememberFilamentScene</a>, or null outside one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1603933805%2FFunctions%2F949496355" anchor-label="FilamentApp" id="1603933805%2FFunctions%2F949496355" data-filterable-set=":kotlin:filament-compose/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/webMain" data-filterable-set=":kotlin:filament-compose/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-app.html"><span>Filament</span><wbr><span><span>App</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1603933805%2FFunctions%2F949496355"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament-compose/webMain" data-filterable-set=":kotlin:filament-compose/webMain" data-active="" data-toggle=":kotlin:filament-compose/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/webMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-filament-app.html"><span class="token function">FilamentApp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Entry point for Filament-powered Compose web apps.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-163499442%2FFunctions%2F-552819475" anchor-label="FilamentEffect" id="-163499442%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-effect.html"><span>Filament</span><wbr><span><span>Effect</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-163499442%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-filament-scene-scope/index.html">FilamentSceneScope</a><span class="token punctuation">.</span><a href="-filament-effect.html"><span class="token function">FilamentEffect</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>keys<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">block<span class="token operator">: </span><a href="-filament-effect-scope/index.html">FilamentEffectScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Escape hatch for direct Filament API access inside <a href="remember-filament-scene.html">rememberFilamentScene</a>. Use it to add custom renderables to the scene or drive per-frame updates that the scene composables don't cover. For per-view, imperative access (picking, the raw <code class="lang-kotlin">View</code>/<code class="lang-kotlin">Renderer</code>), use <a href="-filament-view-state/index.html">FilamentViewState</a> instead; for the camera, use <a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">io.github.erkko68.filament.compose.scene.CameraState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="730114393%2FFunctions%2F-552819475" anchor-label="FilamentSceneView" id="730114393%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-scene-view.html"><span>Filament</span><wbr><span>Scene</span><wbr><span><span>View</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="730114393%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-filament-scene-view.html"><span class="token function">FilamentSceneView</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a><span class="token punctuation">, </span></span><span class="parameter ">environment<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-environment/index.html">Environment</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token operator"> = </span>rememberCameraState()<span class="token punctuation">, </span></span><span class="parameter ">viewState<span class="token operator">: </span><a href="-filament-view-state/index.html">FilamentViewState</a><span class="token operator"> = </span>rememberFilamentViewState()<span class="token punctuation">, </span></span><span class="parameter ">postProcessing<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-post-processing/index.html">PostProcessing</a><span class="token operator"> = </span>PostProcessing()<span class="token punctuation">, </span></span><span class="parameter ">frustumCullingEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">shadows<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-shadows/index.html">Shadows</a><span class="token operator">?</span><span class="token operator"> = </span>Shadows.Pcf<span class="token punctuation">, </span></span><span class="parameter ">screenSpaceRefractionEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">stencilBufferEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transparent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="-filament-scene-scope/index.html">FilamentSceneScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Overload wiring a loaded <a href="../io.github.erkko68.filament.compose.scene/-environment/index.html">io.github.erkko68.filament.compose.scene.Environment</a> (from <code class="lang-kotlin">rememberKTXEnvironment</code> / <code class="lang-kotlin">rememberHDREnvironment</code>) into the all-in-one view without threading its two states by hand. <a href="-filament-scene-view.html">engine</a> and <a href="-filament-scene-view.html">environment</a> are required and therefore lead the list — the engine must be the same one the environment's textures were loaded on. <a href="-filament-scene-view.html">modifier</a> keeps its place as the first optional parameter; all other parameters match the primary overload.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-filament-scene-view.html"><span class="token function">FilamentSceneView</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">engine<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a><span class="token operator"> = </span>rememberFilamentEngine()<span class="token punctuation">, </span></span><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token operator"> = </span>rememberCameraState()<span class="token punctuation">, </span></span><span class="parameter ">viewState<span class="token operator">: </span><a href="-filament-view-state/index.html">FilamentViewState</a><span class="token operator"> = </span>rememberFilamentViewState()<span class="token punctuation">, </span></span><span class="parameter ">skyboxState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-skybox-state/index.html">SkyboxState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">indirectLightState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-indirect-light-state/index.html">IndirectLightState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">postProcessing<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-post-processing/index.html">PostProcessing</a><span class="token operator"> = </span>PostProcessing()<span class="token punctuation">, </span></span><span class="parameter ">frustumCullingEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">shadows<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-shadows/index.html">Shadows</a><span class="token operator">?</span><span class="token operator"> = </span>Shadows.Pcf<span class="token punctuation">, </span></span><span class="parameter ">screenSpaceRefractionEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">stencilBufferEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transparent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="-filament-scene-scope/index.html">FilamentSceneScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">All-in-one entry point for the common single-view case: declares a scene and renders it through one viewport in a single call. Equivalent to a <a href="remember-filament-scene.html">rememberFilamentScene</a> feeding one <a href="-filament-view.html">FilamentView</a> — reach for those directly when you need multiple views over one scene, or to hoist the scene as a value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-238250672%2FFunctions%2F-552819475" anchor-label="FilamentView" id="-238250672%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-view.html"><span>Filament</span><wbr><span><span>View</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-238250672%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-filament-view.html"><span class="token function">FilamentView</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scene<span class="token operator">: </span><a href="-filament-scene/index.html">FilamentScene</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token operator"> = </span>rememberCameraState()<span class="token punctuation">, </span></span><span class="parameter ">viewState<span class="token operator">: </span><a href="-filament-view-state/index.html">FilamentViewState</a><span class="token operator"> = </span>rememberFilamentViewState()<span class="token punctuation">, </span></span><span class="parameter ">postProcessing<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-post-processing/index.html">PostProcessing</a><span class="token operator"> = </span>PostProcessing()<span class="token punctuation">, </span></span><span class="parameter ">frustumCullingEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">shadows<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-shadows/index.html">Shadows</a><span class="token operator">?</span><span class="token operator"> = </span>Shadows.Pcf<span class="token punctuation">, </span></span><span class="parameter ">screenSpaceRefractionEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">stencilBufferEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transparent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A viewport onto a <a href="-filament-scene/index.html">FilamentScene</a>. Each <code class="lang-kotlin">FilamentView</code> owns one Filament <code class="lang-kotlin">View</code>, <code class="lang-kotlin">Camera</code>, <code class="lang-kotlin">Renderer</code>, and platform surface, and renders the given <a href="-filament-view.html">scene</a> through them. Place several <code class="lang-kotlin">FilamentView</code>s — anywhere in your layout — to render one scene through different cameras and post-processing setups.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1229527778%2FFunctions%2F-552819475" anchor-label="flightGestures" id="-1229527778%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flight-gestures.html"><span>flight</span><wbr><span><span>Gestures</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1229527778%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token punctuation">.</span><a href="flight-gestures.html"><span class="token function">flightGestures</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">controller<span class="token operator">: </span><a href="-flight-camera-controller/index.html">FlightCameraController</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a></div><div class="brief "><p class="paragraph">Attaches flight camera gesture and keyboard handling to this element.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="823114872%2FFunctions%2F-552819475" anchor-label="mapGestures" id="823114872%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="map-gestures.html"><span>map</span><wbr><span><span>Gestures</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="823114872%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token punctuation">.</span><a href="map-gestures.html"><span class="token function">mapGestures</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">controller<span class="token operator">: </span><a href="-map-camera-controller/index.html">MapCameraController</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a></div><div class="brief "><p class="paragraph">Attaches map gesture handling to this element.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1072738369%2FFunctions%2F-552819475" anchor-label="OnFrame" id="1072738369%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-on-frame.html"><span>On</span><wbr><span><span>Frame</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1072738369%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-on-frame.html"><span class="token function">OnFrame</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onFrame<span class="token operator">: </span><span class="token punctuation">(</span><a href="-frame-info/index.html">FrameInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The single per-frame primitive for <code class="lang-kotlin">filament-compose</code>: runs <a href="-on-frame.html">onFrame</a> once per display refresh (via <code class="lang-kotlin">withFrameNanos</code>) without triggering recomposition. Every other per-frame helper — <a href="remember-scene-clock.html">rememberSceneClock</a>, <a href="-filament-effect.html">FilamentEffect</a>'s <code class="lang-kotlin">onFrame</code>, <code class="lang-kotlin">rememberFlightCameraController</code>, <a href="../io.github.erkko68.filament.compose.scene/remember-animation-state.html">io.github.erkko68.filament.compose.scene.rememberAnimationState</a> — is built on this.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-334849828%2FFunctions%2F-552819475" anchor-label="orbitGestures" id="-334849828%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="orbit-gestures.html"><span>orbit</span><wbr><span><span>Gestures</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-334849828%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token punctuation">.</span><a href="orbit-gestures.html"><span class="token function">orbitGestures</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">controller<span class="token operator">: </span><a href="-orbit-camera-controller/index.html">OrbitCameraController</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a></div><div class="brief "><p class="paragraph">Attaches orbit gesture handling to this element.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1452255830%2FFunctions%2F-552819475" anchor-label="pickOnTap" id="1452255830%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pick-on-tap.html"><span>pick</span><wbr><span>On</span><wbr><span><span>Tap</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1452255830%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token punctuation">.</span><a href="pick-on-tap.html"><span class="token function">pickOnTap</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">viewState<span class="token operator">: </span><a href="-filament-view-state/index.html">FilamentViewState</a><span class="token punctuation">, </span></span><span class="parameter ">onPick<span class="token operator">: </span><span class="token punctuation">(</span><a href="../../../kotlin/filament/io.github.erkko68.filament/-view/-picking-query-result/index.html">View.PickingQueryResult</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a></div><div class="brief "><p class="paragraph">Issues a Filament picking query at every tap position and delivers the result to <a href="pick-on-tap.html">onPick</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1421593282%2FFunctions%2F-552819475" anchor-label="rememberFilamentEngine" id="-1421593282%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-filament-engine.html"><span>remember</span><wbr><span>Filament</span><wbr><span><span>Engine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1421593282%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-filament-engine.html"><span class="token function">rememberFilamentEngine</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">backend<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/-backend/index.html">Engine.Backend</a><span class="token operator"> = </span>Engine.Backend.DEFAULT</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a></div><div class="brief "><p class="paragraph">Creates and remembers an <a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a> for the lifetime of the composition.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1411467257%2FFunctions%2F-552819475" anchor-label="rememberFilamentScene" id="-1411467257%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-filament-scene.html"><span>remember</span><wbr><span>Filament</span><wbr><span><span>Scene</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1411467257%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-filament-scene.html"><span class="token function">rememberFilamentScene</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a><span class="token punctuation">, </span></span><span class="parameter ">environment<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-environment/index.html">Environment</a><span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="-filament-scene-scope/index.html">FilamentSceneScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-filament-scene/index.html">FilamentScene</a></div><div class="brief "><p class="paragraph">Overload wiring a loaded <a href="../io.github.erkko68.filament.compose.scene/-environment/index.html">Environment</a> (from <code class="lang-kotlin">rememberKTXEnvironment</code> / <code class="lang-kotlin">rememberHDREnvironment</code>) into the scene in one argument, instead of threading its two states by hand:</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-filament-scene.html"><span class="token function">rememberFilamentScene</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-engine/index.html">Engine</a><span class="token operator"> = </span>rememberFilamentEngine()<span class="token punctuation">, </span></span><span class="parameter ">skyboxState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-skybox-state/index.html">SkyboxState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">indirectLightState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-indirect-light-state/index.html">IndirectLightState</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="-filament-scene-scope/index.html">FilamentSceneScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-filament-scene/index.html">FilamentScene</a></div><div class="brief "><p class="paragraph">Declares a Filament <a href="../../../kotlin/filament/io.github.erkko68.filament/-scene/index.html">Scene</a> as a value. The <a href="remember-filament-scene.html">content</a> lambda declares the world — lights, models, primitives, groups — via scene composables; it emits no UI and runs once at this call site regardless of how many <a href="-filament-view.html">FilamentView</a>s later render the scene.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="633146651%2FFunctions%2F-552819475" anchor-label="rememberFilamentViewState" id="633146651%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-filament-view-state.html"><span>remember</span><wbr><span>Filament</span><wbr><span>View</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="633146651%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-filament-view-state.html"><span class="token function">rememberFilamentViewState</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-filament-view-state/index.html">FilamentViewState</a></div><div class="brief "><p class="paragraph">Creates and remembers a <a href="-filament-view-state/index.html">FilamentViewState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1084169336%2FFunctions%2F-552819475" anchor-label="rememberFlightCameraController" id="-1084169336%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-flight-camera-controller.html"><span>remember</span><wbr><span>Flight</span><wbr><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1084169336%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-flight-camera-controller.html"><span class="token function">rememberFlightCameraController</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token punctuation">, </span></span><span class="parameter ">startPitch<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">startYaw<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">maxMoveSpeed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">10.0f</span><span class="token punctuation">, </span></span><span class="parameter ">initialMoveSpeed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter ">speedSteps<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">20</span><span class="token punctuation">, </span></span><span class="parameter ">moveDamping<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">15.0f</span><span class="token punctuation">, </span></span><span class="parameter ">panSpeedX<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.01f</span><span class="token punctuation">, </span></span><span class="parameter ">panSpeedY<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.01f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-flight-camera-controller/index.html">FlightCameraController</a></div><div class="brief "><p class="paragraph">Creates and remembers a <a href="-flight-camera-controller/index.html">FlightCameraController</a> driving <a href="remember-flight-camera-controller.html">cameraState</a> in FLIGHT mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="144825585%2FFunctions%2F-552819475" anchor-label="rememberMapCameraController" id="144825585%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-map-camera-controller.html"><span>remember</span><wbr><span>Map</span><wbr><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="144825585%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-map-camera-controller.html"><span class="token function">rememberMapCameraController</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token punctuation">, </span></span><span class="parameter ">mapWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">512.0f</span><span class="token punctuation">, </span></span><span class="parameter ">mapHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">512.0f</span><span class="token punctuation">, </span></span><span class="parameter ">minDistance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter ">zoomSpeed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.01f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-map-camera-controller/index.html">MapCameraController</a></div><div class="brief "><p class="paragraph">Creates and remembers a <a href="-map-camera-controller/index.html">MapCameraController</a> driving <a href="remember-map-camera-controller.html">cameraState</a> in MAP mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2013553673%2FFunctions%2F-552819475" anchor-label="rememberOrbitCameraController" id="-2013553673%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-orbit-camera-controller.html"><span>remember</span><wbr><span>Orbit</span><wbr><span>Camera</span><wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2013553673%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-orbit-camera-controller.html"><span class="token function">rememberOrbitCameraController</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token punctuation">, </span></span><span class="parameter ">zoomSpeed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.01f</span><span class="token punctuation">, </span></span><span class="parameter ">orbitSpeedX<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.01f</span><span class="token punctuation">, </span></span><span class="parameter ">orbitSpeedY<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.01f</span><span class="token punctuation">, </span></span><span class="parameter ">panningEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-orbit-camera-controller/index.html">OrbitCameraController</a></div><div class="brief "><p class="paragraph">Creates and remembers an <a href="-orbit-camera-controller/index.html">OrbitCameraController</a> that drives <a href="remember-orbit-camera-controller.html">cameraState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1535703157%2FFunctions%2F-552819475" anchor-label="rememberRenderTargetTexture" id="1535703157%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-render-target-texture.html"><span>remember</span><wbr><span>Render</span><wbr><span>Target</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1535703157%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-render-target-texture.html"><span class="token function">rememberRenderTargetTexture</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scene<span class="token operator">: </span><a href="-filament-scene/index.html">FilamentScene</a><span class="token punctuation">, </span></span><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token operator"> = </span>rememberCameraState()<span class="token punctuation">, </span></span><span class="parameter ">width<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">512</span><span class="token punctuation">, </span></span><span class="parameter ">height<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">512</span><span class="token punctuation">, </span></span><span class="parameter ">postProcessing<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-post-processing/index.html">PostProcessing</a><span class="token operator"> = </span>PostProcessing(enabled = false)</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../kotlin/filament/io.github.erkko68.filament/-texture/index.html">Texture</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Renders a <a href="-filament-scene/index.html">FilamentScene</a> off-screen through its own camera into a <a href="../../../kotlin/filament/io.github.erkko68.filament/-texture/index.html">Texture</a> that you can feed back into a material — the building block for mini-maps, security-camera monitors, portals and thumbnails. Returns the color attachment as a sampleable <a href="../../../kotlin/filament/io.github.erkko68.filament/-texture/index.html">Texture</a> (null until valid).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1850743225%2FFunctions%2F-552819475" anchor-label="rememberSceneClock" id="-1850743225%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-scene-clock.html"><span>remember</span><wbr><span>Scene</span><wbr><span><span>Clock</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1850743225%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-scene-clock.html"><span class="token function">rememberSceneClock</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/State.html">State</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">A monotonic per-frame clock as a <code class="lang-kotlin">State&lt;Float&gt;</code> — seconds elapsed since the composable entered the composition. Reading the value triggers recomposition every frame, so use it with a <code class="lang-kotlin">by</code> delegate inside scene composables to drive animations cheaply:</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
