@@ -69,7 +69,7 @@ Set it before the first `rememberFilamentEngine()`. Only engines that `rememberF
 
 - If a setup isn't covered (e.g. Compose fell back to software rendering, or the backend doesn't match Compose's API), it logs one line with the reason and uses CPU readback.
 - Views find Compose's GPU context through their window, so use one Compose surface per window (a `ComposeWindow`, or a single `ComposePanel`); with several in one window a view may pick another surface's context.
-- If it **fails**, it prints a report (versions, GPU, stack trace) to the console, switches to CPU readback for the rest of the session and asks you to [open an issue](https://github.com/Erkko68/filament-kmp/issues/new) with the report. A crash inside the GPU driver can't be caught this way.
+- If it **fails**, it prints a report (versions, GPU, stack trace) to the console, switches to CPU readback for the rest of the session and asks you to [open an issue](https://github.com/Erkko68/filament-kmp/issues/new?template=gpu_frame_sharing.yml) with the report. A crash inside the GPU driver can't be caught this way.
 
 ### Pixel readback overhead
 

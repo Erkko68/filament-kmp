@@ -121,7 +121,7 @@ workflow** button (pick `jvm` / `js` / `ios` / `android` / `all`).
 
 ## Labels
 
-- **platform:** `android` · `ios` · `jvm-desktop` · `web-js` · `common`
+- **platform:** `android` · `ios` · `jvm-desktop` · `web` · `common`
 - **area:** `bindings` · `build` · `compose` · `samples` · `ci` · `docs`
 - **type/triage:** `bug` · `enhancement` · `question` · `upstream-filament` ·
   `blocked-upstream` · `needs-repro` · `needs-triage` · `good first issue` · `help wanted`
