@@ -1,0 +1,28 @@
+name: GPU-to-GPU frame sharing report
+description: Compose Desktop's experimental GPU-to-GPU frame sharing failed, fell back, or drew wrong
+title: "[GPU-to-GPU] "
+labels: ["bug", "needs-triage", "platform: jvm-desktop", "area: compose"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled`. When it fails, the console prints
+        a report between two `====` lines: paste all of it below and you're done, it already has the
+        versions, GPU and stack trace.
+  - type: textarea
+    id: report
+    attributes:
+      label: Console report
+      description: >-
+        The whole block, or the `GPU-to-GPU frame sharing unavailable` line. If nothing was printed
+        (hard crash, wrong pixels), paste the crash log (`hs_err_pid*.log`) or write "none".
+      render: text
+    validations: { required: true }
+  - type: textarea
+    id: details
+    attributes:
+      label: Anything else?
+      description: >-
+        What you saw (black view, flicker, upside down, crash on resize…) and anything unusual:
+        several GPUs, `skiko.gpu.priority`, an explicit `Engine.Backend`, several Compose surfaces in
+        one window. If there was no report, add OS, GPU and filament-kmp version here.

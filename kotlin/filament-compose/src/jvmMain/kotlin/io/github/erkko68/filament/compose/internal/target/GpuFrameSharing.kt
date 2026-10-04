@@ -8,7 +8,7 @@ import java.util.Collections
 import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 
-private const val ISSUES_URL = "https://github.com/Erkko68/filament-kmp/issues/new"
+private const val ISSUES_URL = "https://github.com/Erkko68/filament-kmp/issues/new?template=gpu_frame_sharing.yml"
 
 /** The desktop OS, which decides the API Compose draws with and so the GPU-to-GPU path. */
 internal enum class DesktopOs {

@@ -1,59 +1,41 @@
 name: Bug report
-description: Something in the Filament KMP wrapper is broken
+description: Something in filament-kmp is broken
 labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Before filing: please check whether this is a **wrapper** bug or a **Filament engine**
-        bug. If the same symptom would happen using Filament directly from C++/JS (rendering
-        artifacts, backend errors, shader/material issues, native crashes), report it at
-        [google/filament](https://github.com/google/filament/issues) and link it here — see
-        CONTRIBUTING.md.
+        If the same thing happens using Filament directly from C++/JS (rendering artifacts, shader or
+        material errors, crashes inside the engine), it belongs at
+        [google/filament](https://github.com/google/filament/issues). Not sure? File it here.
   - type: dropdown
     id: platforms
     attributes:
-      label: Affected platform(s)
+      label: Platform(s)
       multiple: true
-      options: [Android, iOS, JVM/Desktop, Web/JS, Common/all]
+      options: [Android, iOS, JVM/Desktop, Web/JS, All]
     validations: { required: true }
   - type: input
-    id: lib-version
+    id: version
     attributes:
-      label: Filament KMP version
-      placeholder: "e.g. 0.3.0"
+      label: filament-kmp version
+      placeholder: "0.7.1"
     validations: { required: true }
-  - type: input
-    id: fila-version
-    attributes:
-      label: Filament version (filaVersion)
-      placeholder: "e.g. 1.71.5"
-    validations: { required: false }
   - type: textarea
     id: what-happened
     attributes:
       label: What happened?
-      description: What you expected vs. what actually happened. Include logs/stack traces.
+      description: What you did, what you expected, what you got. A minimal sample or a diff against `samples/` gets it fixed fastest.
     validations: { required: true }
   - type: textarea
-    id: repro
+    id: logs
     attributes:
-      label: Steps to reproduce
-      description: Ideally a minimal sample or a diff against one of the apps in `samples/`.
-    validations: { required: true }
+      label: Logs / stack trace
+      description: Pasted as-is; no need for code fences.
+      render: text
   - type: input
     id: env
     attributes:
       label: Environment
-      description: OS, device/browser, GPU/driver (for web, the `GL_RENDERER` string helps a lot).
-      placeholder: "e.g. Windows 11, Chrome 124, ANGLE (NVIDIA ... Direct3D11)"
-    validations: { required: false }
-  - type: checkboxes
-    id: checks
-    attributes:
-      label: Pre-flight
-      options:
-        - label: I searched existing issues and this isn't a duplicate.
-          required: true
-        - label: I considered whether this is an upstream Filament (engine) bug.
-          required: true
+      description: OS, device or browser, GPU.
+      placeholder: "Windows 11, Chrome 141, NVIDIA RTX 3060"
