@@ -221,4 +221,53 @@ class GltfAssetLoadingTest {
         waitForIdle()
         assertSceneEmpty(scene, "asset + instance leaked after disposal")
     }
+
+    /**
+     * A .gltf whose buffer lives in another file: the bytes parse, but the loader has nothing to resolve the URI
+     * with, so the resources can't be loaded. That is a failure like any other: one [onError], no asset.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun unresolvedExternalBufferIsReported() = withUiThreadFilamentScene { setContent, _, scene ->
+        val gltf = """{"asset":{"version":"2.0"},"scene":0,"scenes":[{"nodes":[0]}],"nodes":[{"mesh":0}],
+            "meshes":[{"primitives":[{"attributes":{"POSITION":0}}]}],
+            "accessors":[{"bufferView":0,"componentType":5126,"count":3,"type":"VEC3","min":[0,0,0],"max":[1,1,0]}],
+            "bufferViews":[{"buffer":0,"byteLength":36}],
+            "buffers":[{"uri":"missing.bin","byteLength":36}]}""".encodeToByteArray()
+        var asset: GltfAsset? = null
+        var errors = 0
+        setContent {
+            val a = rememberGltfAsset(onError = { errors++ }) { gltf }
+            asset = a
+            GltfInstance(asset = a)
+        }
+        repeat(30) { mainClock.advanceTimeByFrame(); waitForIdle() }
+
+        assertEquals(1, errors, "onError should fire exactly once when the resources can't be loaded")
+        assertNull(asset, "a failed load should leave the asset null")
+        assertEquals(0, scene.entityCount, "nothing should reach the scene when the load fails")
+
+        setContent {}
+        waitForIdle()
+    }
+
+    /** The counterpart: a .gltf with its buffer embedded as a data URI is self-contained, and loads. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun embeddedBufferLoads() = withUiThreadFilamentScene { setContent, _, scene ->
+        val gltf = """{"asset":{"version":"2.0"},"scene":0,"scenes":[{"nodes":[0]}],"nodes":[{"mesh":0}],
+            "meshes":[{"primitives":[{"attributes":{"POSITION":0}}]}],
+            "accessors":[{"bufferView":0,"componentType":5126,"count":3,"type":"VEC3","min":[0,0,0],"max":[1,1,0]}],
+            "bufferViews":[{"buffer":0,"byteLength":36}],
+            "buffers":[{"uri":"data:application/octet-stream;base64,AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAAAA","byteLength":36}]}""".encodeToByteArray()
+        var errors = 0
+        setContent { GltfInstance(asset = rememberGltfAsset(onError = { errors++ }) { gltf }) }
+
+        assertTrue(pumpUntil { scene.renderableCount > 0 }, "a .gltf with embedded data should load")
+        assertEquals(0, errors)
+
+        setContent {}
+        waitForIdle()
+        assertSceneEmpty(scene, "asset + instance leaked after disposal")
+    }
 }

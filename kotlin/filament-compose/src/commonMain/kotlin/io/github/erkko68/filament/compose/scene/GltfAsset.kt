@@ -55,6 +55,9 @@ class GltfAsset internal constructor(
      */
     internal var primaryInstanceClaimed = false
 
+    /** The resources couldn't be loaded: [rememberGltfAsset] returns null from then on. */
+    internal var failed by mutableStateOf(false)
+
     /** The loader uploading this asset's resources, until the load completes or is abandoned. */
     internal var resourceLoader: ResourceLoader? = null
 
@@ -118,7 +121,21 @@ internal fun rememberGltfAsset(
             resourceLoader.addTextureProvider("image/jpeg", stb)
             resourceLoader.addTextureProvider("image/ktx2", ktx2)
         }
-        resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
+        // Only self-contained bytes can be loaded: nothing here resolves a .gltf's .bin or image files. Checked up
+        // front because asyncBeginLoad reports a missing file on desktop only; elsewhere it loads what it has.
+        // (data: URIs are listed too, but gltfio decodes those itself.)
+        val external = gltfAsset.filamentAsset.resourceUris.filterNot { it.startsWith("data:") }
+        if (external.isNotEmpty() || !resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)) {
+            gltfAsset.releaseResourceLoader()
+            gltfAsset.failed = true
+            onError?.invoke(
+                IllegalArgumentException(
+                    "Failed to load the glTF's resources" +
+                        if (external.isEmpty()) "" else " — it references external files: ${external.joinToString()}",
+                ),
+            )
+            return@LaunchedEffect
+        }
         while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
             resourceLoader.asyncUpdateLoad()
             withFrameNanos { }
@@ -127,7 +144,7 @@ internal fun rememberGltfAsset(
         gltfAsset.releaseResourceLoader()
     }
 
-    return gltfAsset
+    return gltfAsset.takeUnless { it.failed }
 }
 
 /**
@@ -136,8 +153,9 @@ internal fun rememberGltfAsset(
  *
  * Returns null while loading **and** on failure — it never throws inside composition, so a
  * bad model can't crash the app. Pass [onError] to react to failures (show a placeholder,
- * log, retry). Both failure modes are reported: the [load] lambda throwing (missing file,
- * network error) and the bytes failing to parse as glb/glTF.
+ * log, retry). Every failure mode is reported: the [load] lambda throwing (missing file,
+ * network error), the bytes failing to parse as glb/glTF, and a resource they reference being
+ * missing (only self-contained bytes load: a .glb, or a .gltf with embedded data).
  *
  * Can be called either inside `rememberFilamentScene { }` (engine is picked up from
  * [LocalFilamentEngine]) or outside it by hoisting the engine via [rememberFilamentEngine]:
@@ -165,7 +183,8 @@ internal fun rememberGltfAsset(
  * (when this call leaves composition) — see [GltfAsset].
  *
  * @param key Reloads the asset when this value changes. Defaults to [Unit] for static assets.
- * @param onError Invoked once if [load] throws or the bytes don't parse. The asset stays null.
+ * @param onError Invoked once if [load] throws, the bytes don't parse, or their resources can't be loaded.
+ *   The asset stays null.
  * @param engine The Filament engine that owns the asset's GPU resources. Defaults to the
  *   engine in the current composition scope.
  * @param load Suspend function that produces the raw glb/glTF bytes.
