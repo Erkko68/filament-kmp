@@ -13,14 +13,16 @@ import kotlin.test.assertTrue
 class IdleFrameLoopTest : ComposeTestFixture() {
 
     @Test
-    fun lightOutsideAGroupRunsNoFrameLoop() {
-        assertFalse(requestsFrames(engine, scene) { DirectionalLight() })
-        assertFalse(requestsFrames(engine, scene) { Group { DirectionalLight(followGroupRotation = false) } })
+    fun lightTurningWithItsGroupRunsNoFrameLoop() {
+        assertFalse(requestsFrames(engine, scene) { DirectionalLight(followGroupRotation = false) })
+        // Filament turns a parented light itself; a point light has no direction to pin.
+        assertFalse(requestsFrames(engine, scene) { Group { DirectionalLight() } })
+        assertFalse(requestsFrames(engine, scene) { Group { PointLight() } })
     }
 
     @Test
-    fun lightFollowingItsGroupRunsAFrameLoop() {
-        assertTrue(requestsFrames(engine, scene) { Group { DirectionalLight() } })
+    fun lightPinnedInWorldSpaceRunsAFrameLoop() {
+        assertTrue(requestsFrames(engine, scene) { Group { DirectionalLight(followGroupRotation = false) } })
     }
 
     @Test

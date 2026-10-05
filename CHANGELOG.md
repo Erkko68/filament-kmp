@@ -22,6 +22,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Android waits for the swap chain to be destroyed before its `Surface` is released** (`filament-compose`), as Filament requires in `surfaceDestroyed`.
 - **A view given another engine no longer crashes** (`filament-compose`): its surface is rebuilt on the new engine.
 - **Web views render at the display's resolution, not `devicePixelRatio` times it** (`filament-compose`): a HiDPI screen rendered 4× or more the pixels shown, and `pick` coordinates were off by that factor.
+- **Positioned lights sit where `position` says, not twice as far** (`filament-compose`, behavior-breaking): `PointLight`/`SpotLight`/`FocusedSpotLight` applied it both to the light and to its transform.
+- **Lights in a rotated `Group` turn with it once, not twice** (`filament-compose`, behavior-breaking), and `followGroupRotation = false` now does pin the aim in world space.
 - **A paused view shows its scene before it stops** (`filament-compose`): with `renderingEnabled = false` a view that started paused, was resized, or had its surface rebuilt stayed blank or stale. Based on [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
 
 ## [0.7.1] — 2026-10-03

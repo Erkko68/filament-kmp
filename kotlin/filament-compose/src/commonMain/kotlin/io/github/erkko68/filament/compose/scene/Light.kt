@@ -87,7 +87,7 @@ internal data class LightSnapshot(
     val cone: SpotCone,
     val sun: SunParams,
     val lightChannels: Set<Int>,
-    val followGroupRotation: Boolean = false,
+    val followGroupRotation: Boolean = true,
 ) {
     // Build-time component creation. `shadow`/`castLight` (and `type`) can only be set here — the
     // runtime LightManager exposes no setter for shadow options or castLight — so a change to any
@@ -95,7 +95,6 @@ internal data class LightSnapshot(
     fun buildInto(engine: Engine, entity: Entity) {
         val builder = LightManager.Builder(type)
             .direction(direction.x, direction.y, direction.z)
-            .position(position.x, position.y, position.z)
             .color(color.r, color.g, color.b)
             .castLight(castLight)
             .falloff(falloff)
@@ -133,8 +132,8 @@ internal data class LightSnapshot(
         lm.setShadowCaster(li, shadow != null)
         for (channel in 0..7) lm.setLightChannel(li, channel, channel in lightChannels)
 
-        // Position via transform so Group hierarchy works. Translation only — directional lights
-        // derive their direction from `direction`, not the transform's rotation.
+        // Position via the transform alone, so Group hierarchy works: Filament applies it to the light's own
+        // position, which stays at the origin.
         val tm = engine.transformManager
         tm.setTransform(
             tm.getInstance(entity),
@@ -195,31 +194,41 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
         onDispose { }
     }
 
-    // Opt-in: re-aim the light by the parent Group's world rotation each frame (the lighting analog
-    // of CameraNode). Only when followGroupRotation is on and parented: a frame loop keeps the window
-    // rendering every vsync.
-    if (snapshot.followGroupRotation && parent != null) {
-        FollowGroupRotation(engine, entity, parent, snapshot)
+    // Filament turns a parented light with its Group. Pinning its aim in world space is what takes per-frame
+    // work, as the Group can move without a recomposition.
+    if (!snapshot.followGroupRotation && parent != null) {
+        PinWorldDirection(engine, entity, parent, snapshot)
     }
 }
 
 @Composable
-private fun FollowGroupRotation(engine: Engine, entity: Entity, parent: Entity, snapshot: LightSnapshot) {
+private fun PinWorldDirection(engine: Engine, entity: Entity, parent: Entity, snapshot: LightSnapshot) {
     val world = remember { FloatArray(16) }
     OnFrame {
         val tm = engine.transformManager
         if (!tm.hasComponent(parent)) return@OnFrame
         tm.getWorldTransform(tm.getInstance(parent), world)
-        val d = snapshot.direction
-        val x = world[0] * d.x + world[4] * d.y + world[8] * d.z
-        val y = world[1] * d.x + world[5] * d.y + world[9] * d.z
-        val z = world[2] * d.x + world[6] * d.y + world[10] * d.z
-        val len = sqrt(x * x + y * y + z * z)
-        if (len > 0f) {
-            val lm = engine.lightManager
-            lm.setDirection(lm.getInstance(entity), x / len, y / len, z / len)
-        }
+        val d = pinnedLocalDirection(world, snapshot.direction) ?: return@OnFrame
+        val lm = engine.lightManager
+        lm.setDirection(lm.getInstance(entity), d.x, d.y, d.z)
     }
+}
+
+/**
+ * The local direction that ends up as [direction] in world space under the column-major [world] transform.
+ * Filament transforms directions by the cofactor matrix, det(M)·M⁻ᵀ, which Mᵀ undoes up to the sign of det(M).
+ * Null for a degenerate transform.
+ */
+internal fun pinnedLocalDirection(world: FloatArray, direction: Direction): Direction? {
+    val d = direction
+    val x = world[0] * d.x + world[1] * d.y + world[2] * d.z
+    val y = world[4] * d.x + world[5] * d.y + world[6] * d.z
+    val z = world[8] * d.x + world[9] * d.y + world[10] * d.z
+    val det = world[0] * (world[5] * world[10] - world[9] * world[6]) -
+        world[4] * (world[1] * world[10] - world[9] * world[2]) +
+        world[8] * (world[1] * world[6] - world[5] * world[2])
+    val len = sqrt(x * x + y * y + z * z) * if (det < 0f) -1f else 1f
+    return if (len != 0f && len.isFinite()) Direction(x / len, y / len, z / len) else null
 }
 
 // ── Public: type-specific light composables ───────────────────────────────────
@@ -244,9 +253,9 @@ private fun FollowGroupRotation(engine: Engine, entity: Entity, parent: Entity, 
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Which channels (0–7) this light affects; a renderable is lit only if it
  *   shares an enabled channel. Channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
- *   frame, matching how meshes rotate with their group (e.g. a sun rig that tilts with its parent).
- *   On by default; set false to keep the light's aim fixed in world space.
+ * @param followGroupRotation When inside a [Group], [direction] turns with the group, matching how
+ *   meshes rotate with it (e.g. a sun rig that tilts with its parent). On by default; set false to keep
+ *   the light's aim fixed in world space, which re-aims it every frame.
  */
 @Composable
 fun FilamentSceneScope.DirectionalLight(
@@ -274,8 +283,8 @@ fun FilamentSceneScope.DirectionalLight(
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
- *   frame, matching how meshes rotate with their group. On by default.
+ * @param followGroupRotation When inside a [Group], [direction] turns with the group, matching how
+ *   meshes rotate with it. On by default.
  */
 @Composable
 fun FilamentSceneScope.SunLight(
@@ -336,8 +345,8 @@ fun FilamentSceneScope.PointLight(
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
- *   frame, matching how meshes rotate with their group. On by default.
+ * @param followGroupRotation When inside a [Group], [direction] turns with the group, matching how
+ *   meshes rotate with it. On by default.
  */
 @Composable
 fun FilamentSceneScope.SpotLight(
@@ -371,8 +380,8 @@ fun FilamentSceneScope.SpotLight(
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
- *   frame, matching how meshes rotate with their group. On by default.
+ * @param followGroupRotation When inside a [Group], [direction] turns with the group, matching how
+ *   meshes rotate with it. On by default.
  */
 @Composable
 fun FilamentSceneScope.FocusedSpotLight(

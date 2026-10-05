@@ -44,8 +44,8 @@ fun withFilamentScene(
     scene: Scene,
     body: ComposeUiTest.(setContent: SetSceneContent) -> Unit,
 ) = runComposeUiTest {
-    // Drive the frame clock manually. `OnFrame` runs an unbounded `withFrameNanos` loop (a light in
-    // a `Group` runs one for `followGroupRotation`), so with the default auto-advancing clock the
+    // Drive the frame clock manually. `OnFrame` runs an unbounded `withFrameNanos` loop (a `CameraNode`
+    // in a `Group` runs one), so with the default auto-advancing clock the
     // composition is never idle and `waitForIdle()` hangs forever. Disabling auto-advance lets idle
     // work settle without time passing; tests call `advanceTimeByFrame()` to step `OnFrame` on demand.
     mainClock.autoAdvance = false

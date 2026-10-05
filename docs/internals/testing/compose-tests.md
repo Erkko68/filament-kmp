@@ -66,8 +66,8 @@ to drive them — only those locals. Two test utils in
 @OptIn(ExperimentalTestApi::class)
 fun withFilamentScene(engine: Engine, scene: Scene, body: ComposeUiTest.(SetSceneContent) -> Unit) =
   runComposeUiTest {
-    // OnFrame runs an unbounded withFrameNanos loop (every light registers one for
-    // followGroupRotation). With the default auto-advancing clock the composition is never idle and
+    // OnFrame runs an unbounded withFrameNanos loop (a CameraNode in a Group
+    // registers one). With the default auto-advancing clock the composition is never idle and
     // waitForIdle() hangs forever — so drive the clock manually.
     mainClock.autoAdvance = false
     // One real setContent hosts a swappable, state-driven slot. Android's setContent is one-shot
