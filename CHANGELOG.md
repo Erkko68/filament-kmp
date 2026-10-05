@@ -38,6 +38,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Content moved out of a `Group` leaves it** (`filament-compose`): a node moved with `movableContentOf` stayed under the old group's transform.
 - **`Mesh` and the primitives change `castShadows`/`receiveShadows` in place** (`filament-compose`), instead of rebuilding the entity and running `onCreate` again.
 - **A cross-fade cut to `crossFadeDuration = 0` while paused no longer poses the model with NaNs** (`filament-compose`).
+- **Overlapping web views each show their own scene** (`filament-compose`): where two overlapped, the one drawn first showed the other's pixels.
 - **A paused view shows its scene before it stops** (`filament-compose`): with `renderingEnabled = false` a view that started paused, was resized, or had its surface rebuilt stayed blank or stale. Based on [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
 
 ## [0.7.1] — 2026-10-03
