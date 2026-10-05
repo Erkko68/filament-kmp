@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.viewinterop.HtmlElementView
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
@@ -81,6 +83,7 @@ internal actual fun FilamentSurface(
             val left = pos.x.roundToInt()
             val top = pos.y.roundToInt()
             entry.rect = IntRect(left, top, left + size.width, top + size.height)
+            entry.visible = coords.boundsInWindow().roundToIntRect()
 
             if (size != lastSize) {
                 lastSize = size

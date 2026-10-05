@@ -28,6 +28,8 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     /** A view, its destination 2D canvas, and its current window-space bounds (Compose px). */
     class Entry(val view: View, val target: HTMLCanvasElement) {
         var rect: IntRect = IntRect(0, 0, 0, 0)
+        /** The part of [rect] on screen, clipped by the window and by scrolling parents; empty when none is. */
+        var visible: IntRect = IntRect(0, 0, 0, 0)
         val ctx: CanvasRenderingContext2D? = target.getContext("2d") as? CanvasRenderingContext2D
         /**
          * Defensive guard skipped over in [renderFrame]. Teardown is synchronous — [unregister]
@@ -40,7 +42,8 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         var paused: Boolean = false
         // Whether a frame rendered while paused is on the canvas; until then a paused view keeps rendering.
         var shownPaused: Boolean = false
-        val idle: Boolean get() = paused && shownPaused
+        /** Nothing to render: scrolled or clipped out of sight, or paused with its frame shown. */
+        val idle: Boolean get() = visible.isEmpty || (paused && shownPaused)
     }
 
     private val canvas: HTMLCanvasElement = engine.canvas
@@ -104,18 +107,19 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         instances.remove(engine)
     }
 
-    private fun renderFrame() {
+    internal fun renderFrame() {
         if (entries.none { !it.idle }) return
 
         // Entry rects are Compose layout pixels, which on web are already device pixels (the density is
         // devicePixelRatio): scaling them again would render devicePixelRatio² too many.
         // The offscreen canvas must span every view's window rect so each can be rendered into its
         // own slice in one frame; views sit at distinct screen positions so they don't overlap.
+        // Only what is on screen: a view scrolled far away would otherwise grow the canvas to reach it.
         var unionW = 0
         var unionH = 0
         for (e in entries) {
-            unionW = max(unionW, e.rect.right)
-            unionH = max(unionH, e.rect.bottom)
+            unionW = max(unionW, e.visible.right)
+            unionH = max(unionH, e.visible.bottom)
         }
         if (unionW <= 0 || unionH <= 0) return
         if (canvas.width != unionW || canvas.height != unionH) {
