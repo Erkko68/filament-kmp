@@ -103,8 +103,10 @@ internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene
     val rotation          = state.rotation
 
     // Rebuilt only for new textures or harmonics; intensity and rotation are set on the live object below, so
-    // animating them costs no IndirectLight per frame.
-    val ibl = rememberOwned(engine, scene, reflections, irradianceCubemap, irradianceSh, create = {
+    // animating them costs no IndirectLight per frame. A state change gets here a frame late, so textures we
+    // loaded (dependsOn) stay alive until this lets go of them.
+    val ibl = rememberOwned(engine, scene, reflections, irradianceCubemap, irradianceSh,
+                            dependsOn = listOf(reflections, irradianceCubemap), create = {
         val builder = FilamentIndirectLight.Builder()
         reflections?.let { builder.reflections(it) }
         when {

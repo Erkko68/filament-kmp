@@ -10,6 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Tier-B (real-backend) lifecycle coverage for the environment apply paths: `ApplySkybox` and
@@ -40,6 +41,38 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
         ) {
             val state = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)))
             ApplySkybox(state, engine, scene)
+        }
+    }
+
+    /** A color is set on the live Skybox: animating it must not rebuild the Skybox every frame. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun colorUpdatesTheSkyboxInPlace() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            val state = SkyboxState(SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)), false, 1f, 0)
+            setContent { ApplySkybox(state, engine, scene) }
+            waitForIdle()
+            val skybox = assertNotNull(scene.skybox)
+
+            state.source = SkyboxSource.Color(LinearColor(1f, 0f, 0f), alpha = 0.5f)
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertSame(skybox, scene.skybox, "a new color should not rebuild the Skybox")
+
+            // Intensity has no setter: that does need a new one.
+            state.intensity = 2f
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(2f, assertNotNull(scene.skybox).intensity)
+            assertTrue(!engine.isValid(skybox), "the replaced Skybox is destroyed")
+
+            state.source = null
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertNull(scene.skybox, "a null source removes the skybox")
         }
     }
 
