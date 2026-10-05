@@ -37,6 +37,14 @@ internal actual fun FilamentSurface(
         onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
     }
 
+    fun destroySwapChain() {
+        val swapChain = swapChainRef.value ?: return
+        swapChainRef.value = null
+        engine.destroy(swapChain)
+        // Android frees the Surface as soon as its callback returns: the backend must be done with it by then.
+        engine.flushAndWait()
+    }
+
     // factory runs once, so the surface type and its swapchain flags are fixed at creation —
     // key() rebuilds both when transparency is toggled.
     key(transparent) {
@@ -56,8 +64,7 @@ internal actual fun FilamentSurface(
                             },
                             onResized = ::updateViewport,
                             onDestroyed = {
-                                swapChainRef.value?.let { engine.destroy(it) }
-                                swapChainRef.value = null
+                                destroySwapChain()
                             },
                         )
                     }
@@ -72,8 +79,7 @@ internal actual fun FilamentSurface(
                                 updateViewport(width, height)
                             }
                             override fun surfaceDestroyed(holder: SurfaceHolder) {
-                                swapChainRef.value?.let { engine.destroy(it) }
-                                swapChainRef.value = null
+                                destroySwapChain()
                             }
                         })
                     }
@@ -84,8 +90,7 @@ internal actual fun FilamentSurface(
 
         DisposableEffect(Unit) {
             onDispose {
-                swapChainRef.value?.let { engine.destroy(it) }
-                swapChainRef.value = null
+                destroySwapChain()
             }
         }
     }
