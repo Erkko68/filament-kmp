@@ -17,11 +17,14 @@ import androidx.compose.ui.unit.dp
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.compose.scene.Bloom
 import io.github.erkko68.filament.compose.scene.CameraState
+import io.github.erkko68.filament.compose.scene.ColorGrade
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Environment
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberIndirectLightState
@@ -337,5 +340,34 @@ class FilamentViewTest {
         assertFalse(engine.isValid(firstView))
         assertTrue(engine.isValid(assertNotNull(viewState.view)), "the view is rebuilt for the new scene")
         assertEquals(0, assertNotNull(viewState.view).visibleRenderableCount, "and renders it")
+    }
+
+    /** Baking a ColorGrading's LUT is expensive: only a new grade rebuilds it, not the options around it. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun colorGradingIsRebuiltForANewGradeOnly() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        var postProcessing by mutableStateOf(PostProcessing(colorGrade = ColorGrade(contrast = 1.2f), bloom = Bloom(strength = 0.1f)))
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState, postProcessing = postProcessing) {}
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        val view = assertNotNull(viewState.view)
+        val grading = assertNotNull(view.colorGrading)
+
+        postProcessing = postProcessing.copy(bloom = Bloom(strength = 0.5f))
+        repeat(2) { mainClock.advanceTimeByFrame() }
+        assertEquals(0.5f, view.bloomOptions.strength)
+        assertTrue(view.colorGrading === grading, "another option should not rebuild the ColorGrading")
+
+        postProcessing = postProcessing.copy(colorGrade = ColorGrade(contrast = 1.5f))
+        repeat(2) { mainClock.advanceTimeByFrame() }
+        val regraded = assertNotNull(view.colorGrading)
+        assertTrue(engine.isValid(regraded) && !engine.isValid(grading), "a new grade replaces and destroys the old one")
+
+        postProcessing = postProcessing.copy(colorGrade = null)
+        repeat(2) { mainClock.advanceTimeByFrame() }
+        assertNull(view.colorGrading)
+        assertFalse(engine.isValid(regraded))
     }
 }

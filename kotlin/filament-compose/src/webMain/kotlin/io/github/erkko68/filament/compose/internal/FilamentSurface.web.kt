@@ -5,7 +5,6 @@ package io.github.erkko68.filament.compose.internal
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -54,9 +53,11 @@ internal actual fun FilamentSurface(
     renderingEnabled: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
-    val compositor = remember(engine) { WebViewCompositor.of(engine) }
     val target = remember { document.createElement("canvas") as HTMLCanvasElement }
-    val entry = remember(compositor, view, target) { compositor.register(view, target) }
+    // Owned, so a discarded composition unregisters too: the compositor must never draw a destroyed view.
+    val entry = rememberOwned(engine, view, target, dependsOn = listOf(view), create = {
+        WebViewCompositor.of(engine).register(view, target)
+    }) { WebViewCompositor.of(engine).unregister(it) }
 
     // Keep a mutable ref so the size callback always dispatches to the latest lambda.
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
@@ -65,13 +66,6 @@ internal actual fun FilamentSurface(
     SideEffect {
         entry.paused = !renderingEnabled
         if (renderingEnabled) entry.shownPaused = false
-    }
-
-    DisposableEffect(compositor, entry) {
-        onDispose {
-            entry.disposed = true
-            compositor.unregister(entry)
-        }
     }
 
     var lastSize by remember { mutableStateOf(IntSize.Zero) }

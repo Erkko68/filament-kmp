@@ -12,6 +12,7 @@ import io.github.erkko68.filament.compose.internal.FilamentSurface
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Shadows
+import io.github.erkko68.filament.compose.scene.ApplyPostProcessing
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.internal.rememberOwned
@@ -103,12 +104,7 @@ fun FilamentView(
         onDispose {}
     }
 
-    // Apply post-processing as a value. Re-applies whenever the config changes; the allocated
-    // ColorGrading (if any) is destroyed on dispose / before re-apply.
-    DisposableEffect(view, postProcessing, engine) {
-        val colorGrading = postProcessing.applyTo(view, engine)
-        onDispose { colorGrading?.let { engine.destroy(it) } }
-    }
+    ApplyPostProcessing(postProcessing, view, engine)
 
     // Expose the live View/Renderer through the hoisted handle.
     DisposableEffect(viewState, view, renderer) {
