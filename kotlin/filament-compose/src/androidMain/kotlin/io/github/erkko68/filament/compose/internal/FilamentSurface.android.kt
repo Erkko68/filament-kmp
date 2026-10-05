@@ -31,8 +31,11 @@ internal actual fun FilamentSurface(
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
+    val gate = rememberPausedFrameGate(renderingEnabled)
+
     fun updateViewport(width: Int, height: Int) {
         if (width <= 0 || height <= 0) return
+        gate.reset() // a new or resized surface has shown nothing yet
         view.viewport = Viewport(0, 0, width, height)
         onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
     }
@@ -95,11 +98,12 @@ internal actual fun FilamentSurface(
         }
     }
 
-    FilamentRenderLoop(renderingEnabled) { frameTime ->
+    FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) { frameTime ->
         val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)
             renderer.endFrame()
+            gate.delivered(paused = !renderingEnabled)
         }
     }
 }

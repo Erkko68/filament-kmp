@@ -10,7 +10,8 @@ import io.github.erkko68.filament.View
  * Platform-specific rendering surface.
  * Manages SwapChain lifecycle, viewport updates, and the render loop.
  * Calls [onResize] with the new aspect ratio whenever the drawable size changes.
- * While [renderingEnabled] is false no frame is rendered and the last one stays displayed.
+ * While [renderingEnabled] is false the surface renders only until the current scene is on screen, then keeps
+ * it displayed without rendering (see [PausedFrameGate]).
  */
 @Composable
 internal expect fun FilamentSurface(

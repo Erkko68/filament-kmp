@@ -29,6 +29,7 @@ import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
 import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -196,5 +197,52 @@ class FilamentViewTest {
                 Engine.destroy(other)
             }
         }
+    }
+
+    /**
+     * `renderingEnabled = false` holds the last frame, so there has to be one: a view that starts paused, or is
+     * paused over a change, still renders until that scene is on screen, and only then stops.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun pausedViewStillRendersItsScene() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState, renderingEnabled = false) {
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
+            }
+        }
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        // -1 until the view has been rendered.
+        assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount, "a view that starts paused should render its scene")
+
+        // Then it holds that frame: hiding the cube is not rendered until rendering resumes.
+        var visible by mutableStateOf(true)
+        var enabled by mutableStateOf(true)
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState, renderingEnabled = enabled) {
+                Cube(
+                    rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f,
+                    position = Position(0f, 0f, -50f), visible = visible,
+                )
+            }
+        }
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount)
+
+        // Paused together with a change: that change still gets on screen.
+        enabled = false
+        visible = false
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        assertEquals(0, assertNotNull(viewState.view).visibleRenderableCount, "the change made with the pause should be rendered")
+
+        // A later change, well after the pause, is not.
+        visible = true
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        assertEquals(0, assertNotNull(viewState.view).visibleRenderableCount, "a settled paused view should not render")
+
+        enabled = true
+        repeat(5) { mainClock.advanceTimeByFrame() }
+        assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount, "resuming renders again")
     }
 }

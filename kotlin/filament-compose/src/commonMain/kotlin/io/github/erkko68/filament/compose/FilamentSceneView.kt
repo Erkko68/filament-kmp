@@ -47,8 +47,9 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
  * @param transparent Enable alpha transparency blending for the view surface.
  * @param renderingEnabled Render a frame on every display refresh. `false` stops rendering — no
- *   GPU or CPU work per frame — and keeps the last frame on screen (it is not re-rendered on resize
- *   either); set it back to `true` to resume. Use it to pause a static or off-screen view.
+ *   GPU or CPU work per frame — once the current scene is on screen, and keeps it there (a resize
+ *   renders it once more at the new size); set it back to `true` to resume. Use it to pause a
+ *   static or off-screen view.
  * @param content Scene composables ([io.github.erkko68.filament.compose.scene.DirectionalLight],
  *   `GltfInstance`, `Group`, primitives, …).
  */

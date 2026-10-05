@@ -94,9 +94,12 @@ internal actual fun FilamentSurface(
         }
     }
 
-    FilamentRenderLoop(renderingEnabled) { frameTime ->
+    // Targets keep up to two frames in flight, so the third shown after a pause was rendered paused.
+    val gate = rememberPausedFrameGate(renderingEnabled, framesToSettle = 3, target)
+    FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) { frameTime ->
         val current = target ?: return@FilamentRenderLoop
         val image = current.renderFrame(renderer, view, frameTime) ?: return@FilamentRenderLoop
+        gate.delivered(paused = !renderingEnabled)
         previousImage.value?.close()
         previousImage.value = displayedImage
         displayedImage = image

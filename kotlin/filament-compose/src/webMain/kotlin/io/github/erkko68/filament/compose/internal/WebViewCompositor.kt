@@ -38,6 +38,9 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         var disposed: Boolean = false
         /** Rendering disabled by the owning view: skipped, so its 2D canvas keeps the last frame. */
         var paused: Boolean = false
+        // Whether a frame rendered while paused is on the canvas; until then a paused view keeps rendering.
+        var shownPaused: Boolean = false
+        val idle: Boolean get() = paused && shownPaused
     }
 
     private val canvas: HTMLCanvasElement = engine.canvas
@@ -102,7 +105,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     }
 
     private fun renderFrame() {
-        if (entries.none { !it.paused }) return
+        if (entries.none { !it.idle }) return
 
         // Entry rects are Compose layout pixels, which on web are already device pixels (the density is
         // devicePixelRatio): scaling them again would render devicePixelRatio² too many.
@@ -121,9 +124,10 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         }
 
         val sc = swapChain ?: engine.createSwapChain(NativeSurface(canvas)).also { swapChain = it }
-        if (renderer.beginFrame(sc, Engine.steadyClockTimeNano)) {
+        val rendered = renderer.beginFrame(sc, Engine.steadyClockTimeNano)
+        if (rendered) {
             for (e in entries) {
-                if (e.disposed || e.paused) continue
+                if (e.disposed || e.idle) continue
                 val r = e.rect
                 if (r.width <= 0 || r.height <= 0) continue
 
@@ -137,7 +141,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
         // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == r.top.
         for (e in entries) {
-            if (e.disposed || e.paused) continue
+            if (e.disposed || e.idle) continue
             val r = e.rect
             val ctx = e.ctx ?: continue
             if (r.width <= 0 || r.height <= 0) continue
@@ -150,6 +154,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
             val height = r.height.toDouble()
             ctx.clearRect(0.0, 0.0, width, height)
             ctx.drawImage(canvas, r.left.toDouble(), r.top.toDouble(), width, height, 0.0, 0.0, width, height)
+            if (rendered && e.paused) e.shownPaused = true
         }
     }
 

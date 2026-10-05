@@ -60,7 +60,10 @@ internal actual fun FilamentSurface(
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
-    SideEffect { entry.paused = !renderingEnabled }
+    SideEffect {
+        entry.paused = !renderingEnabled
+        if (renderingEnabled) entry.shownPaused = false
+    }
 
     DisposableEffect(compositor, entry) {
         onDispose {
@@ -81,6 +84,7 @@ internal actual fun FilamentSurface(
 
             if (size != lastSize) {
                 lastSize = size
+                entry.shownPaused = false // a resized view shows its scene at the new size
                 if (size.width > 0 && size.height > 0) {
                     onResizeRef.value?.invoke(size.width.toDouble() / size.height.toDouble())
                 }
