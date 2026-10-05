@@ -20,11 +20,17 @@ import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Environment
+import io.github.erkko68.filament.compose.scene.LinearColor
+import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberIndirectLightState
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
+import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
 import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -117,5 +123,47 @@ class FilamentViewTest {
         repeat(3) { mainClock.advanceTimeByFrame() }
         assertNotNull(scene)
         assertTrue(viewState?.view?.scene != null, "the scene renders through the environment overload")
+    }
+
+    /** Compose rows run top-down, Filament's bottom-up: the top and bottom rows are both inside the viewport. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun pickReachesTheFirstAndLastRows() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState) {
+                // Fills the view: every pixel picks it.
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
+            }
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        val viewport = assertNotNull(viewState.view).viewport
+
+        fun pick(y: Int): Int {
+            var result: View.PickingQueryResult? = null
+            runOnUiThread { viewState.pick(viewport.width / 2, y) { result = it } }
+            repeat(30) {
+                if (result != null) return@repeat
+                mainClock.advanceTimeByFrame()
+                runOnUiThread { engine.flushAndWait() }
+            }
+            return assertNotNull(result, "no picking result for row $y").renderable
+        }
+        assertNotEquals(0, pick(viewport.height / 2), "the cube should fill the view")
+        assertNotEquals(0, pick(0), "top row")
+        assertNotEquals(0, pick(viewport.height - 1), "bottom row")
+
+        // Outside the viewport: ignored, where Filament would abort.
+        var outside = false
+        runOnUiThread {
+            viewState.pick(viewport.width, 0) { outside = true }
+            viewState.pick(0, viewport.height) { outside = true }
+            viewState.pick(-1, -1) { outside = true }
+        }
+        repeat(5) {
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        assertFalse(outside, "a pick outside the viewport should be ignored")
     }
 }

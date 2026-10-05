@@ -38,11 +38,14 @@ class FilamentViewState internal constructor() {
      * Issues a Filament picking query at viewport pixel ([x], [y]) **in Compose coordinates**
      * (origin top-left, like pointer-input offsets) and delivers the result to [onResult] on
      * the render thread. The conversion to Filament's bottom-left viewport origin happens
-     * internally. No-op while not attached.
+     * internally. No-op while not attached, or for a pixel outside the viewport.
      */
     fun pick(x: Int, y: Int, onResult: (View.PickingQueryResult) -> Unit) {
         val v = view ?: return
-        v.pick(x, v.viewport.height - y, onResult)
+        val viewport = v.viewport
+        // Filament reads the pixel back unchecked: one outside the viewport aborts the process.
+        if (x !in 0 until viewport.width || y !in 0 until viewport.height) return
+        v.pick(x, viewport.height - 1 - y, onResult)
     }
 
     internal fun attach(view: View, renderer: Renderer) {
