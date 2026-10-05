@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.compose.testutils
 
 import androidx.compose.runtime.AbstractApplier
+import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionLocalProvider
@@ -21,7 +22,9 @@ import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.FilamentSceneScopeInstance
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.test.assertNull
 
 /**
@@ -238,13 +241,15 @@ fun composeScene(
 }
 
 /**
- * Whether [content], once composed, is waiting for the next frame: an `OnFrame` (`withFrameNanos`) loop is
- * running, which keeps a window redrawing every vsync. Composed on the calling thread in a composition of its
- * own (the test clock can't tell a pending frame request from none), then disposed.
+ * Whether [content], once composed and run for [frames] frames, is waiting for the next one: an `OnFrame`
+ * (`withFrameNanos`) loop is running, which keeps a window redrawing every vsync. Composed on the calling thread
+ * in a composition of its own (the test clock can't tell a pending frame request from none), then disposed.
  */
-fun requestsFrames(engine: Engine, scene: Scene, content: @Composable FilamentSceneScope.() -> Unit): Boolean {
-    // Unconfined: effects run up to their first suspension inside setContent.
-    val recomposer = Recomposer(Dispatchers.Unconfined)
+fun requestsFrames(engine: Engine, scene: Scene, frames: Int = 0, content: @Composable FilamentSceneScope.() -> Unit): Boolean {
+    // Unconfined: effects run up to their first suspension inside setContent, and a sent frame runs in place.
+    val clock = BroadcastFrameClock()
+    val recomposer = Recomposer(Dispatchers.Unconfined + clock)
+    val running = CoroutineScope(Dispatchers.Unconfined + clock).launch { recomposer.runRecomposeAndApplyChanges() }
     val composition = Composition(NoNodes, recomposer)
     try {
         composition.setContent {
@@ -255,11 +260,13 @@ fun requestsFrames(engine: Engine, scene: Scene, content: @Composable FilamentSc
                 FilamentSceneScopeInstance.content()
             }
         }
-        // Nothing is invalidated after the first composition, so pending work means frame awaiters.
+        repeat(frames) { clock.sendFrame(it * 16_000_000L) }
+        // Nothing is left invalidated, so pending work means frame awaiters.
         return recomposer.hasPendingWork
     } finally {
         composition.dispose()
         recomposer.cancel()
+        running.cancel()
     }
 }
 

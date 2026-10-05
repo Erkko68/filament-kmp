@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`rememberRenderTargetTexture(renderingEnabled = …)`** (`filament-compose`): `false` stops redrawing the texture once the current scene is in it, as on `FilamentView`.
+
 ### Fixed
 - **Still scenes stop redrawing every frame** (`filament-compose`): `GltfInstance`, lights and `CameraNode` run a frame loop only when they have per-frame work. From [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
 - **glTF models without bounds no longer blink while rotating** (`filament-compose`): `GltfInstance` rebuilds the infinite bounding boxes gltfio leaves. From [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
@@ -32,6 +35,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`GltfInstance`'s `castShadows`/`receiveShadows` go back to the asset's flags when set to null again** (`filament-compose`), instead of keeping the last override.
 - **Web views scrolled out of sight no longer grow the engine's canvas to reach them** (`filament-compose`): it spans only what is on screen, and hidden views aren't rendered.
 - **Changing a post-processing option no longer re-bakes the view's `ColorGrading`** (`filament-compose`): only a new `colorGrade` does.
+- **Content moved out of a `Group` leaves it** (`filament-compose`): a node moved with `movableContentOf` stayed under the old group's transform.
+- **`Mesh` and the primitives change `castShadows`/`receiveShadows` in place** (`filament-compose`), instead of rebuilding the entity and running `onCreate` again.
+- **A cross-fade cut to `crossFadeDuration = 0` while paused no longer poses the model with NaNs** (`filament-compose`).
 - **A paused view shows its scene before it stops** (`filament-compose`): with `renderingEnabled = false` a view that started paused, was resized, or had its surface rebuilt stayed blank or stale. Based on [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
 
 ## [0.7.1] — 2026-10-03

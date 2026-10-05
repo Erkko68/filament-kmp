@@ -7,6 +7,7 @@ import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.Viewport
 import io.github.erkko68.filament.compose.internal.FilamentRenderLoop
+import io.github.erkko68.filament.compose.internal.rememberPausedFrameGate
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.ApplyPostProcessing
@@ -45,6 +46,8 @@ import io.github.erkko68.filament.compose.internal.rememberOwned
  * @param height Texture height in pixels.
  * @param postProcessing Post-processing configuration for the off-screen view. Defaults to
  *   `PostProcessing(enabled = false)`, which skips the pass entirely — see the note above.
+ * @param renderingEnabled Redraw the texture on every display refresh. `false` stops once the current
+ *   scene is in it and keeps that frame, as on [FilamentView]: for a thumbnail, or a monitor nobody sees.
  * @return The color texture being rendered into, or null for a non-positive size.
  */
 @Composable
@@ -54,6 +57,7 @@ fun rememberRenderTargetTexture(
     width: Int = 512,
     height: Int = 512,
     postProcessing: PostProcessing = PostProcessing(enabled = false),
+    renderingEnabled: Boolean = true,
 ): Texture? {
     val engine = scene.engine
     if (width <= 0 || height <= 0) return null
@@ -125,7 +129,11 @@ fun rememberRenderTargetTexture(
         onDispose { cameraState.detach(camera) }
     }
 
-    FilamentRenderLoop { renderer.renderStandaloneView(view) }
+    val gate = rememberPausedFrameGate(renderingEnabled, 1, target)
+    FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) {
+        renderer.renderStandaloneView(view)
+        gate.delivered(paused = !renderingEnabled)
+    }
 
     return color
 }

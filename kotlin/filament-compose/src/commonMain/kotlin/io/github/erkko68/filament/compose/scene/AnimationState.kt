@@ -124,7 +124,8 @@ class AnimationState internal constructor(
         animator.applyAnimation(ci, currentTime)
 
         if (blend < 1f) {
-            blend = (blend + dt / crossFadeDuration).coerceAtMost(1f)
+            // A duration set to 0 mid-fade ends it: paused (dt = 0), the division would be 0 / 0.
+            blend = if (crossFadeDuration > 0f) (blend + dt / crossFadeDuration).coerceAtMost(1f) else 1f
             val pi = previousIndex
             if (pi != null && pi in 0 until count) {
                 previousTime = wrap(previousTime + dt * speed, animator.getAnimationDuration(pi), loop)
