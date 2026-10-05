@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.compose.internal
 
+import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.Scale
@@ -44,4 +46,17 @@ internal fun transformMatrix(
         m20, m21, m22, 0f,   // column 2
         tx,  ty,  tz,  1f,   // column 3 (translation, pivot-adjusted)
     )
+}
+
+/**
+ * Parents [entity]'s transform to [parent]'s, or to nothing for null: a node moved out of its Group has to
+ * let go of it. Gives [entity] a transform component if it needs one.
+ */
+internal fun Engine.setParent(entity: Entity, parent: Entity?) {
+    val tm = transformManager
+    if (!tm.hasComponent(entity)) {
+        if (parent == null) return
+        tm.create(entity)
+    }
+    tm.setParent(tm.getInstance(entity), if (parent != null) tm.getInstance(parent) else 0)
 }

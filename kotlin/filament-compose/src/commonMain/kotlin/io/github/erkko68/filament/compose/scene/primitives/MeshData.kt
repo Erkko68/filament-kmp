@@ -19,6 +19,7 @@ import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.internal.rememberOwned
+import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.compose.scene.LocalGroupVisible
 import io.github.erkko68.filament.compose.scene.LocalParentEntity
@@ -139,8 +140,8 @@ internal fun Mesh(
         engine.destroy(it.indexBuffer)
     }
 
-    val entity = rememberOwned(engine, handles, material, castShadows, receiveShadows,
-                               dependsOn = listOf(handles, material), create = {
+    // Keyed on the material too: the entity keeps the instance it was built with alive, so it can't take another.
+    val entity = rememberOwned(engine, handles, material, dependsOn = listOf(handles, material), create = {
         engine.entityManager.create().also { e ->
             RenderableManager.Builder(1)
                 .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, handles.vertexBuffer, handles.indexBuffer)
@@ -157,6 +158,14 @@ internal fun Mesh(
 
     DisposableEffect(entity) {
         EntityScopeImpl(entity, engine).onCreate()
+        onDispose { }
+    }
+
+    DisposableEffect(entity, castShadows, receiveShadows) {
+        val rm = engine.renderableManager
+        val renderable = rm.getInstance(entity)
+        rm.setCastShadows(renderable, castShadows)
+        rm.setReceiveShadows(renderable, receiveShadows)
         onDispose { }
     }
 
@@ -180,11 +189,7 @@ internal fun Mesh(
     // Reparent to the surrounding Group, if any. Re-runs when the parent identity changes
     // (e.g. the user moves this composable into/out of a Group at runtime).
     DisposableEffect(entity, parent) {
-        if (parent != null) {
-            val tm = engine.transformManager
-            if (!tm.hasComponent(entity)) tm.create(entity)
-            tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
-        }
+        engine.setParent(entity, parent)
         onDispose { }
     }
 }

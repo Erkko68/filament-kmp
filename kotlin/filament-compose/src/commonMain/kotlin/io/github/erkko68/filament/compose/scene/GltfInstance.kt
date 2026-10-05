@@ -8,6 +8,7 @@ import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.internal.logWarn
+import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.compose.OnFrame
@@ -173,13 +174,7 @@ fun FilamentSceneScope.GltfInstance(
     // Reparent the asset root to the surrounding Group, if any. gltfio always creates a
     // transform component on the root, so no need to create one here.
     DisposableEffect(instance, parent) {
-        if (parent != null) {
-            val tm = engine.transformManager
-            val root = instance.root
-            if (tm.hasComponent(root)) {
-                tm.setParent(tm.getInstance(root), tm.getInstance(parent))
-            }
-        }
+        engine.setParent(instance.root, parent)
         onDispose { }
     }
 

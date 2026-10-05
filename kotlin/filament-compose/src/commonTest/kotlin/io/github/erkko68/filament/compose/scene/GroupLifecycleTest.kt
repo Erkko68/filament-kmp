@@ -1,6 +1,14 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentWithReceiverOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.ExperimentalTestApi
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
+import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import io.github.erkko68.filament.compose.testutils.assertEntitiesDestroyed
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.composeScene
@@ -66,5 +74,42 @@ class GroupLifecycleTest : ComposeTestFixture() {
                 }
             }
         }
+    }
+
+    /** A node moved out of its Group keeps its entity, so it has to let go of the Group's transform itself. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun contentMovedOutOfAGroupIsUnparented() = withFilamentScene(engine, scene) { setContent ->
+        var grouped by mutableStateOf(true)
+        var outer = -1
+        var inner = -1
+        setContent {
+            val content = remember {
+                movableContentWithReceiverOf<FilamentSceneScope> {
+                    PointLight()
+                    Group(onCreate = { inner = entity }) {}
+                }
+            }
+            Group(onCreate = { outer = entity }) { if (grouped) content() }
+            if (!grouped) content()
+        }
+        waitForIdle()
+        val tm = engine.transformManager
+        val light = buildList { scene.forEach(::add) }.single()
+        assertEquals(outer, tm.getParent(tm.getInstance(light)))
+        assertEquals(outer, tm.getParent(tm.getInstance(inner)))
+
+        grouped = false
+        mainClock.advanceTimeByFrame()
+        waitForIdle()
+        assertEquals(light, buildList { scene.forEach(::add) }.single(), "moved, not rebuilt")
+        assertEquals(0, tm.getParent(tm.getInstance(light)), "the moved light should have no parent")
+        assertEquals(0, tm.getParent(tm.getInstance(inner)), "the moved group should have no parent")
+        assertEquals(0, tm.getChildCount(tm.getInstance(outer)))
+
+        grouped = true
+        mainClock.advanceTimeByFrame()
+        waitForIdle()
+        assertEquals(outer, tm.getParent(tm.getInstance(light)), "and moves back in")
     }
 }

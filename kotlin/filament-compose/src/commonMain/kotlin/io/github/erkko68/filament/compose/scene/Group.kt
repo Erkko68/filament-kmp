@@ -11,6 +11,7 @@ import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.internal.rememberOwned
+import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.internal.transformMatrix
 
 /**
@@ -90,10 +91,7 @@ fun FilamentSceneScope.Group(
 
     // Nested groups: this group is itself a child of the outer one.
     DisposableEffect(groupEntity, outerParent) {
-        if (outerParent != null) {
-            val tm = engine.transformManager
-            tm.setParent(tm.getInstance(groupEntity), tm.getInstance(outerParent))
-        }
+        engine.setParent(groupEntity, outerParent)
         onDispose {}
     }
 

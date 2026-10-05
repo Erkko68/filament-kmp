@@ -11,6 +11,7 @@ import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.internal.rememberOwned
+import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.OnFrame
@@ -187,10 +188,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     }
 
     DisposableEffect(entity, parent) {
-        if (parent != null) {
-            val tm = engine.transformManager
-            tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
-        }
+        engine.setParent(entity, parent)
         onDispose { }
     }
 
@@ -454,11 +452,7 @@ fun FilamentSceneScope.Light(
     // Only create a transform when parented — otherwise leave positioning to builder.position(),
     // which a transform component would override.
     DisposableEffect(entity, parent) {
-        if (parent != null) {
-            val tm = engine.transformManager
-            if (!tm.hasComponent(entity)) tm.create(entity)
-            tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
-        }
+        engine.setParent(entity, parent)
         onDispose { }
     }
 }

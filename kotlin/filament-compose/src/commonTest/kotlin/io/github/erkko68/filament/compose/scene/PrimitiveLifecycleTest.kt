@@ -1,6 +1,9 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.EntityScope
@@ -81,6 +84,37 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
                     "$name renderable component should be gone after disposal",
                 )
             }
+        }
+    }
+
+    /** Shadow flags have setters: changing them keeps the entity (and doesn't run `onCreate` again). */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun shadowFlagsChangeInPlace() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val material = materialInstance() ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            var shadows by mutableStateOf(true)
+            var created = 0
+            var entity = 0
+            setContent {
+                Cube(material, castShadows = shadows, receiveShadows = shadows, onCreate = { created++; entity = this.entity })
+            }
+            waitForIdle()
+            val rm = engine.renderableManager
+            assertTrue(rm.isShadowCaster(rm.getInstance(entity)) && rm.isShadowReceiver(rm.getInstance(entity)))
+
+            shadows = false
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(1, created, "a shadow flag should not rebuild the entity")
+            assertTrue(!rm.isShadowCaster(rm.getInstance(entity)) && !rm.isShadowReceiver(rm.getInstance(entity)))
+
+            setContent {}
+            waitForIdle()
+            assertSceneEmpty(scene)
         }
     }
 }
