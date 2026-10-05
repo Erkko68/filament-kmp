@@ -166,4 +166,35 @@ class FilamentViewTest {
         }
         assertFalse(outside, "a pick outside the viewport should be ignored")
     }
+
+    /** A view handed another engine moves its surface over too, instead of rendering into the old engine's target. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun viewFollowsAnEngineChange() = withEngine { first, setContent ->
+        var second: Engine? = null
+        runOnUiThread { second = Engine.create(Engine.Backend.DEFAULT) }
+        val other = assertNotNull(second)
+        try {
+            var engine by mutableStateOf(first)
+            val viewState = FilamentViewState()
+            setContent {
+                FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState) { DirectionalLight() }
+            }
+            repeat(3) { mainClock.advanceTimeByFrame() }
+            val firstView = assertNotNull(viewState.view)
+
+            engine = other
+            repeat(5) { mainClock.advanceTimeByFrame() }
+            assertTrue(viewState.view != null && viewState.view !== firstView, "the view is rebuilt on the new engine")
+            assertTrue(other.isValid(assertNotNull(viewState.view)), "the view belongs to the new engine")
+
+            setContent {}
+            mainClock.advanceTimeByFrame()
+        } finally {
+            runOnUiThread {
+                other.flushAndWait()
+                Engine.destroy(other)
+            }
+        }
+    }
 }

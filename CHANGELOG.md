@@ -20,6 +20,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`rememberGltfAsset` reports resources it can't load** (`filament-compose`): a `.gltf` referencing a missing buffer or image calls `onError` and stays null, instead of entering the scene incomplete.
 - **Animating `IndirectLightState.intensity`/`rotation` no longer rebuilds the `IndirectLight` every frame** (`filament-compose`).
 - **Android waits for the swap chain to be destroyed before its `Surface` is released** (`filament-compose`), as Filament requires in `surfaceDestroyed`.
+- **A view given another engine no longer crashes** (`filament-compose`): its surface is rebuilt on the new engine.
 
 ## [0.7.1] — 2026-10-03
 

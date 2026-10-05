@@ -45,9 +45,9 @@ internal actual fun FilamentSurface(
         engine.flushAndWait()
     }
 
-    // factory runs once, so the surface type and its swapchain flags are fixed at creation —
-    // key() rebuilds both when transparency is toggled.
-    key(transparent) {
+    // factory runs once, so the surface type, its swapchain flags, and the engine and view it captures are
+    // fixed at creation — key() rebuilds it when any of them changes.
+    key(engine, view, transparent) {
         AndroidView(
             modifier = modifier,
             factory = { context ->

@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -51,9 +51,9 @@ internal actual fun FilamentSurface(
     var target by remember { mutableStateOf<OffscreenTarget?>(null) }
     val window = LocalAwtWindow.current
 
-    // Keep a mutable ref so DisposableEffect(textureSize) always dispatches to the latest lambda.
-    val onResizeRef = remember { Ref<(Double) -> Unit>() }
-    SideEffect { onResizeRef.value = onResize }
+    // Updated in composition, not in a SideEffect: those run after the effect below, which would then
+    // call the previous lambda (and its previous, destroyed camera) when the view changes.
+    val currentOnResize by rememberUpdatedState(onResize)
 
     DisposableEffect(Unit) {
         onDispose {
@@ -76,13 +76,14 @@ internal actual fun FilamentSurface(
         }
     }
 
-    DisposableEffect(textureSize, transparent) {
+    // Keyed on the engine and view too: a target outliving them would be rendered into by the next ones.
+    DisposableEffect(engine, view, textureSize, transparent) {
         val w = textureSize.width
         val h = textureSize.height
 
         if (w > 0 && h > 0) {
             view.viewport = Viewport(0, 0, w, h)
-            onResizeRef.value?.invoke(w.toDouble() / h.toDouble())
+            currentOnResize(w.toDouble() / h.toDouble())
             target = OffscreenTarget(engine, window, w, h, transparent)
         }
 

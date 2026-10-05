@@ -48,9 +48,9 @@ internal actual fun FilamentSurface(
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
-    // factory runs once, so layer opacity and swapchain flags are fixed at creation —
-    // key() rebuilds both when transparency is toggled.
-    key(transparent) {
+    // factory runs once, so layer opacity, swapchain flags, and the engine and view it captures are fixed
+    // at creation — key() rebuilds it when any of them changes.
+    key(engine, view, transparent) {
         UIKitView(
             factory = {
                 object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
