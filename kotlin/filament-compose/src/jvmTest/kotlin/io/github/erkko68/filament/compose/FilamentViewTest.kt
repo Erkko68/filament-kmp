@@ -245,4 +245,97 @@ class FilamentViewTest {
         repeat(5) { mainClock.advanceTimeByFrame() }
         assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount, "resuming renders again")
     }
+
+    /** Filament answers a picking query by rendering: a settled paused view has to render for it, then settle again. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun pickOnAPausedViewIsAnswered() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        var visible by mutableStateOf(true)
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState, renderingEnabled = false) {
+                Cube(
+                    rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f,
+                    position = Position(0f, 0f, -50f), visible = visible,
+                )
+            }
+        }
+        repeat(30) { mainClock.advanceTimeByFrame() }
+        val view = assertNotNull(viewState.view)
+        // Settled: a change is not rendered.
+        visible = false
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        assertEquals(1, view.visibleRenderableCount, "a settled paused view should not render")
+
+        var result: View.PickingQueryResult? = null
+        runOnUiThread { viewState.pick(view.viewport.width / 2, view.viewport.height / 2) { result = it } }
+        repeat(30) {
+            if (result != null) return@repeat
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        assertNotNull(result, "a paused view should answer a pick")
+        assertEquals(0, view.visibleRenderableCount, "answering it renders the scene as it is now")
+        assertEquals(0, viewState.pendingPicks)
+
+        // Answered: it settles again.
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        visible = true
+        repeat(10) { mainClock.advanceTimeByFrame() }
+        assertEquals(0, view.visibleRenderableCount, "the view should settle again once the pick is answered")
+    }
+
+    /** Desktop debounces a resize, stretching the old surface over the new layout: a pick is given in layout pixels. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun pickFollowsTheLayoutWhileTheSurfaceLags() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        var size by mutableStateOf(64.dp)
+        setContent {
+            FilamentSceneView(Modifier.size(size), engine = engine, viewState = viewState) {
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
+            }
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        val before = assertNotNull(viewState.view).viewport
+
+        size = 128.dp
+        repeat(2) { mainClock.advanceTimeByFrame() }
+        val layout = viewState.layoutSize
+        assertEquals(before.width, assertNotNull(viewState.view).viewport.width, "the surface should still be the old size")
+        assertEquals(before.width * 2, layout.width)
+
+        var result: View.PickingQueryResult? = null
+        runOnUiThread { viewState.pick(layout.width - 1, layout.height - 1) { result = it } }
+        repeat(30) {
+            if (result != null) return@repeat
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        assertNotEquals(0, assertNotNull(result, "a pick in the grown layout should be answered").renderable)
+    }
+
+    /** A view keeps the scene it was created for alive, so one handed another scene has to be a new view. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun viewFollowsASceneChange() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        var second by mutableStateOf(false)
+        var firstScene: FilamentScene? = null
+        setContent {
+            val a = if (!second) rememberFilamentScene(engine) { DirectionalLight() }.also { firstScene = it } else null
+            val b = if (second) rememberFilamentScene(engine) { DirectionalLight() } else null
+            FilamentView(a ?: b!!, Modifier.size(64.dp), viewState = viewState)
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        val firstView = assertNotNull(viewState.view)
+        val replaced = assertNotNull(firstScene).scene
+
+        second = true
+        repeat(5) { mainClock.advanceTimeByFrame() }
+        assertFalse(engine.isValid(replaced), "the scene that left should not be kept by the view")
+        assertFalse(engine.isValid(firstView))
+        assertTrue(engine.isValid(assertNotNull(viewState.view)), "the view is rebuilt for the new scene")
+        assertEquals(0, assertNotNull(viewState.view).visibleRenderableCount, "and renders it")
+    }
 }

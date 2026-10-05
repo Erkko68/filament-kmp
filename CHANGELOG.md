@@ -26,6 +26,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Lights in a rotated `Group` turn with it once, not twice** (`filament-compose`, behavior-breaking), and `followGroupRotation = false` now does pin the aim in world space.
 - **Reloading or removing an environment no longer draws a frame with destroyed textures** (`filament-compose`): the scene's `IndirectLight` and `Skybox` keep the textures of `rememberKTXEnvironment`/`rememberHDREnvironment` alive until they let go of them.
 - **Animating a color `SkyboxState.source` no longer rebuilds the `Skybox` every frame** (`filament-compose`).
+- **`FilamentViewState.pick` is answered on a paused view** (`filament-compose`): with `renderingEnabled = false` nothing rendered, so the result never came; the view now renders until it does.
+- **Picking stays accurate while a desktop view is being resized** (`filament-compose`): `pick` takes layout pixels, which the debounced surface doesn't match until it catches up.
+- **A `FilamentView` handed another scene lets go of the old one** (`filament-compose`): the view kept the first scene alive until it left the composition itself.
 - **A paused view shows its scene before it stops** (`filament-compose`): with `renderingEnabled = false` a view that started paused, was resized, or had its surface rebuilt stayed blank or stale. Based on [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
 
 ## [0.7.1] — 2026-10-03

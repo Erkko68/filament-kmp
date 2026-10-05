@@ -92,7 +92,7 @@ fun rememberRenderTargetTexture(
         }.getOrNull()
     }) { engine.destroy(it) } ?: return null
 
-    val view     = rememberOwned(engine, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroy(it) }
+    val view     = rememberOwned(engine, scene.scene, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroy(it) }
     val camera   = rememberOwned(engine, create = { engine.createCamera(engine.entityManager.create()) }) {
         engine.destroyCameraComponent(it.entity)
         engine.entityManager.destroy(it.entity)

@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.BlendMode
 import io.github.erkko68.filament.compose.internal.FilamentSurface
@@ -70,7 +71,8 @@ fun FilamentView(
 
     // The scene is owned by the FilamentScene handle, not the view.
     val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroy(it) }
-    val view     = rememberOwned(engine, dependsOn = listOf(filamentScene), create = { engine.createView() }) { engine.destroy(it) }
+    // Keyed on the scene: the view keeps the scene it was created for alive, so it can't move to another.
+    val view     = rememberOwned(engine, filamentScene, dependsOn = listOf(filamentScene), create = { engine.createView() }) { engine.destroy(it) }
     val camera   = rememberOwned(engine, create = { engine.createCamera(engine.entityManager.create()) }) {
         engine.destroyCameraComponent(it.entity)
         engine.entityManager.destroy(it.entity)
@@ -136,12 +138,13 @@ fun FilamentView(
     }
 
     FilamentSurface(
-        modifier = modifier,
+        modifier = modifier.onSizeChanged { viewState.layoutSize = it },
         engine   = engine,
         renderer = renderer,
         view     = view,
         transparent = transparent,
-        renderingEnabled = renderingEnabled,
+        // Filament answers a picking query by rendering.
+        renderingEnabled = renderingEnabled || viewState.pendingPicks > 0,
         onResize = onResize,
     )
 }
