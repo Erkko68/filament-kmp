@@ -21,6 +21,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Animating `IndirectLightState.intensity`/`rotation` no longer rebuilds the `IndirectLight` every frame** (`filament-compose`).
 - **Android waits for the swap chain to be destroyed before its `Surface` is released** (`filament-compose`), as Filament requires in `surfaceDestroyed`.
 - **A view given another engine no longer crashes** (`filament-compose`): its surface is rebuilt on the new engine.
+- **Web views render at the display's resolution, not `devicePixelRatio` times it** (`filament-compose`): a HiDPI screen rendered 4× or more the pixels shown, and `pick` coordinates were off by that factor.
 
 ## [0.7.1] — 2026-10-03
 

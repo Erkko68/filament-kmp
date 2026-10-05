@@ -11,7 +11,6 @@ import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.max
-import kotlin.math.roundToInt
 import io.github.erkko68.filament.canvas
 
 /**
@@ -105,17 +104,15 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     private fun renderFrame() {
         if (entries.none { !it.paused }) return
 
-        val dpr = window.devicePixelRatio.coerceAtLeast(1.0)
-
+        // Entry rects are Compose layout pixels, which on web are already device pixels (the density is
+        // devicePixelRatio): scaling them again would render devicePixelRatio² too many.
         // The offscreen canvas must span every view's window rect so each can be rendered into its
         // own slice in one frame; views sit at distinct screen positions so they don't overlap.
         var unionW = 0
         var unionH = 0
         for (e in entries) {
-            val physRight = (e.rect.right * dpr).roundToInt()
-            val physBottom = (e.rect.bottom * dpr).roundToInt()
-            unionW = max(unionW, physRight)
-            unionH = max(unionH, physBottom)
+            unionW = max(unionW, e.rect.right)
+            unionH = max(unionH, e.rect.bottom)
         }
         if (unionW <= 0 || unionH <= 0) return
         if (canvas.width != unionW || canvas.height != unionH) {
@@ -129,46 +126,30 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
                 if (e.disposed || e.paused) continue
                 val r = e.rect
                 if (r.width <= 0 || r.height <= 0) continue
-                val physLeft = (r.left * dpr).roundToInt()
-                val physTop = (r.top * dpr).roundToInt()
-                val physRight = (r.right * dpr).roundToInt()
-                val physBottom = (r.bottom * dpr).roundToInt()
-                val physWidth = physRight - physLeft
-                val physHeight = physBottom - physTop
-                if (physWidth <= 0 || physHeight <= 0) continue
 
                 // Compose rect is top-left origin; Filament viewport origin is bottom-left.
-                e.view.viewport = Viewport(physLeft, unionH - (physTop + physHeight), physWidth, physHeight)
+                e.view.viewport = Viewport(r.left, unionH - r.bottom, r.width, r.height)
                 renderer.render(e.view)
             }
             renderer.endFrame()
         }
 
         // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
-        // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == physTop.
+        // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == r.top.
         for (e in entries) {
             if (e.disposed || e.paused) continue
             val r = e.rect
             val ctx = e.ctx ?: continue
             if (r.width <= 0 || r.height <= 0) continue
-            val physLeft = (r.left * dpr).roundToInt()
-            val physTop = (r.top * dpr).roundToInt()
-            val physRight = (r.right * dpr).roundToInt()
-            val physBottom = (r.bottom * dpr).roundToInt()
-            val physWidth = physRight - physLeft
-            val physHeight = physBottom - physTop
-            if (physWidth <= 0 || physHeight <= 0) continue
 
-            if (e.target.width != physWidth || e.target.height != physHeight) {
-                e.target.width = physWidth
-                e.target.height = physHeight
+            if (e.target.width != r.width || e.target.height != r.height) {
+                e.target.width = r.width
+                e.target.height = r.height
             }
-            ctx.clearRect(0.0, 0.0, physWidth.toDouble(), physHeight.toDouble())
-            ctx.drawImage(
-                canvas,
-                physLeft.toDouble(), physTop.toDouble(), physWidth.toDouble(), physHeight.toDouble(),
-                0.0, 0.0, physWidth.toDouble(), physHeight.toDouble(),
-            )
+            val width = r.width.toDouble()
+            val height = r.height.toDouble()
+            ctx.clearRect(0.0, 0.0, width, height)
+            ctx.drawImage(canvas, r.left.toDouble(), r.top.toDouble(), width, height, 0.0, 0.0, width, height)
         }
     }
 
