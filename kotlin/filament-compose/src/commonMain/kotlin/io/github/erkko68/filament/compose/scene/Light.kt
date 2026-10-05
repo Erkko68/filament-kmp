@@ -196,11 +196,17 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     }
 
     // Opt-in: re-aim the light by the parent Group's world rotation each frame (the lighting analog
-    // of CameraNode). Always registered but inert unless followGroupRotation is on and parented, so
-    // the call count stays stable across recompositions.
+    // of CameraNode). Only when followGroupRotation is on and parented: a frame loop keeps the window
+    // rendering every vsync.
+    if (snapshot.followGroupRotation && parent != null) {
+        FollowGroupRotation(engine, entity, parent, snapshot)
+    }
+}
+
+@Composable
+private fun FollowGroupRotation(engine: Engine, entity: Entity, parent: Entity, snapshot: LightSnapshot) {
     val world = remember { FloatArray(16) }
     OnFrame {
-        if (!snapshot.followGroupRotation || parent == null) return@OnFrame
         val tm = engine.transformManager
         if (!tm.hasComponent(parent)) return@OnFrame
         tm.getWorldTransform(tm.getInstance(parent), world)

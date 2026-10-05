@@ -7,11 +7,13 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
+import io.github.erkko68.filament.compose.testutils.requestsFrames
 import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -173,5 +175,19 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
             waitForIdle()
             assertSceneEmpty(scene, "GltfInstance leaked after visibility toggling")
         }
+    }
+
+    /** Only a hoisted [AnimationState] needs a frame loop: a still model must not keep the window redrawing. */
+    @Test
+    fun frameLoopRunsOnlyWithAnAnimationState() {
+        val engine = engine ?: return
+        val scene = scene ?: return
+        val asset = morphCube() ?: return
+
+        assertFalse(requestsFrames(engine, scene) { GltfInstance(asset = asset) }, "a still instance asked for frames")
+        assertTrue(
+            requestsFrames(engine, scene) { GltfInstance(asset = asset, animationState = rememberAnimationState()) },
+            "an animated instance should run a frame loop",
+        )
     }
 }

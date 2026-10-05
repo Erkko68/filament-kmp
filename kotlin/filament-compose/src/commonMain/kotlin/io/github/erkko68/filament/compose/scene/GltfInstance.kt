@@ -194,9 +194,10 @@ fun FilamentSceneScope.GltfInstance(
         onDispose { }
     }
 
-    // Auto-advancing, cross-fading playback driven by the hoisted AnimationState.
-    OnFrame { frame ->
-        animationState?.apply(instance.animator, frame.deltaSeconds)
+    // Auto-advancing, cross-fading playback driven by the hoisted AnimationState. Only with one: a frame loop keeps
+    // the window rendering every vsync.
+    if (animationState != null) {
+        OnFrame { frame -> animationState.apply(instance.animator, frame.deltaSeconds) }
     }
 
     // Vertex morph-target weights, applied to every renderable that has morph targets.

@@ -1,7 +1,10 @@
 package io.github.erkko68.filament.compose.testutils
 
+import androidx.compose.runtime.AbstractApplier
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +19,7 @@ import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.FilamentSceneScopeInstance
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Sets scene [content] as the active composition, wrapping it in the three composition locals that
@@ -40,8 +44,8 @@ fun withFilamentScene(
     scene: Scene,
     body: ComposeUiTest.(setContent: SetSceneContent) -> Unit,
 ) = runComposeUiTest {
-    // Drive the frame clock manually. `OnFrame` runs an unbounded `withFrameNanos` loop (every light
-    // registers one for `followGroupRotation`), so with the default auto-advancing clock the
+    // Drive the frame clock manually. `OnFrame` runs an unbounded `withFrameNanos` loop (a light in
+    // a `Group` runs one for `followGroupRotation`), so with the default auto-advancing clock the
     // composition is never idle and `waitForIdle()` hangs forever. Disabling auto-advance lets idle
     // work settle without time passing; tests call `advanceTimeByFrame()` to step `OnFrame` on demand.
     mainClock.autoAdvance = false
@@ -195,4 +199,39 @@ fun composeScene(
     setContent {}
     waitForIdle()
     afterDispose()
+}
+
+/**
+ * Whether [content], once composed, is waiting for the next frame: an `OnFrame` (`withFrameNanos`) loop is
+ * running, which keeps a window redrawing every vsync. Composed on the calling thread in a composition of its
+ * own (the test clock can't tell a pending frame request from none), then disposed.
+ */
+fun requestsFrames(engine: Engine, scene: Scene, content: @Composable FilamentSceneScope.() -> Unit): Boolean {
+    // Unconfined: effects run up to their first suspension inside setContent.
+    val recomposer = Recomposer(Dispatchers.Unconfined)
+    val composition = Composition(NoNodes, recomposer)
+    try {
+        composition.setContent {
+            CompositionLocalProvider(
+                LocalFilamentEngine provides engine,
+                LocalFilamentScene provides scene,
+            ) {
+                FilamentSceneScopeInstance.content()
+            }
+        }
+        // Nothing is invalidated after the first composition, so pending work means frame awaiters.
+        return recomposer.hasPendingWork
+    } finally {
+        composition.dispose()
+        recomposer.cancel()
+    }
+}
+
+/** Scene composables emit no nodes. */
+private object NoNodes : AbstractApplier<Unit>(Unit) {
+    override fun insertTopDown(index: Int, instance: Unit) {}
+    override fun insertBottomUp(index: Int, instance: Unit) {}
+    override fun remove(index: Int, count: Int) {}
+    override fun move(from: Int, to: Int, count: Int) {}
+    override fun onClear() {}
 }
