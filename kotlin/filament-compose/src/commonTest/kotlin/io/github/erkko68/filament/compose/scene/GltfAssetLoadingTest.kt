@@ -9,6 +9,7 @@ import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -185,5 +186,39 @@ class GltfAssetLoadingTest {
         setContent {}
         waitForIdle()
         assertSceneEmpty(scene, "reloaded asset leaked after disposal")
+    }
+
+    /**
+     * gltfio leaves an infinite box on renderables it has no bounds for, which culling turns to NaNs (the model
+     * blinks as it rotates). `GltfInstance` rebuilds those boxes from the vertices before the instance enters the
+     * scene. Here rather than in [GltfInstanceLifecycleTest]: recomputing runs jobs, so it needs the engine's thread.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun unboundedRenderablesGetFiniteBounds() = withUiThreadFilamentScene { setContent, engine, scene ->
+        val rm = engine.renderableManager
+        fun halfExtents(entities: IntArray) = entities.filter { rm.hasComponent(it) }
+            .map { rm.getAxisAlignedBoundingBox(rm.getInstance(it)).halfExtent }
+        var untouched = emptyList<FloatArray>()
+        var composed = emptyList<FloatArray>()
+        setContent {
+            val asset = rememberGltfAsset { TestGlb.getUnboundedTriangleGlbBytes() }
+            GltfInstance(asset = asset, onCreate = {
+                // The asset's own instance, which GltfInstance doesn't touch, keeps gltfio's box.
+                untouched = halfExtents(this.asset.instance.entities)
+                composed = halfExtents(instance.entities)
+            })
+        }
+
+        assertTrue(pumpUntil { scene.renderableCount > 0 }, "the triangle should reach the scene")
+        // Guards the fixture: without an unbounded asset the check below would be vacuous.
+        assertTrue(untouched.isNotEmpty() && untouched.all { h -> h.any { !it.isFinite() } }, "fixture should be unbounded")
+        // The triangle spans (0,0,0)..(1,1,0).
+        assertEquals(1, composed.size)
+        assertContentEquals(floatArrayOf(0.5f, 0.5f, 0f), composed.single())
+
+        setContent {}
+        waitForIdle()
+        assertSceneEmpty(scene, "asset + instance leaked after disposal")
     }
 }

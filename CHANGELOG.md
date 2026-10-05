@@ -15,6 +15,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Fixed
 - **Still scenes stop redrawing every frame** (`filament-compose`): `GltfInstance`, lights and `CameraNode` run a frame loop only when they have per-frame work. From [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
+- **glTF models without bounds no longer blink while rotating** (`filament-compose`): `GltfInstance` rebuilds the infinite bounding boxes gltfio leaves. From [@kdroidFilter](https://github.com/kdroidFilter)'s fork.
 
 ## [0.7.1] — 2026-10-03
 

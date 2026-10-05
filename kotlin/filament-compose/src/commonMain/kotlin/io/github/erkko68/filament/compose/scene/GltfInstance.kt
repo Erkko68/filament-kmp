@@ -146,6 +146,7 @@ fun FilamentSceneScope.GltfInstance(
     val createdFired = remember(instance) { booleanArrayOf(false) }
     DisposableEffect(instance, effectiveVisible) {
         if (effectiveVisible) {
+            if (!createdFired[0]) instance.boundUnboundedRenderables(engine)
             scene.addEntities(instance.entities)
             if (!createdFired[0]) {
                 createdFired[0] = true
@@ -238,4 +239,18 @@ fun FilamentSceneScope.GltfInstance(
     SideEffect {
         GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onUpdate()
     }
+}
+
+/**
+ * gltfio gives the renderables of an instance it computed no bounds for an infinite box ("Missing bounding box in
+ * ..."). Culled through the instance's transform, that box turns to NaNs, so the renderable is drawn or dropped
+ * depending on its rotation: a turning model blinks. Such boxes are rebuilt from the vertices, which needs the
+ * resources loaded and the source data still there.
+ */
+private fun FilamentInstance.boundUnboundedRenderables(engine: Engine) {
+    val rm = engine.renderableManager
+    val unbounded = entities.any { entity ->
+        rm.hasComponent(entity) && rm.getAxisAlignedBoundingBox(rm.getInstance(entity)).halfExtent.any { !it.isFinite() }
+    }
+    if (unbounded) recomputeBoundingBoxes()
 }
