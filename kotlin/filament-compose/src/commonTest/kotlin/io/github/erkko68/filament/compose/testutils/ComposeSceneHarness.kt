@@ -4,10 +4,12 @@ import androidx.compose.runtime.AbstractApplier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -20,6 +22,7 @@ import io.github.erkko68.filament.compose.FilamentSceneScopeInstance
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import kotlinx.coroutines.Dispatchers
+import kotlin.test.assertNull
 
 /**
  * Sets scene [content] as the active composition, wrapping it in the three composition locals that
@@ -55,6 +58,7 @@ fun withFilamentScene(
     // whereas tests mount, mutate, and unmount repeatedly. Routing every (re)mount through this
     // `mutableState` keeps us to one `setContent` call, so the same harness runs on jvm/js/ios/android.
     var slot by mutableStateOf<@Composable FilamentSceneScope.() -> Unit>({})
+    val integrity = SceneIntegrity(engine, scene)
     setContent {
         CompositionLocalProvider(
             LocalFilamentEngine provides engine,
@@ -62,8 +66,10 @@ fun withFilamentScene(
         ) {
             FilamentSceneScopeInstance.slot()
         }
+        integrity.Watch()
     }
     val setSceneContent: SetSceneContent = { content ->
+        integrity.assertIntact()
         slot = content
         // With autoAdvance off, a state-driven recomposition only runs when the frame clock ticks
         // (unlike the old harness, where the real one-shot setContent composed synchronously). Pump a
@@ -82,7 +88,9 @@ fun withFilamentScene(
     // ones, so *which* tests hang varies run to run). Disposing here cancels every OnFrame
     // loop; re-enabling auto-advance lets teardown drain and resolve. (js/jvm tear down
     // without leaning on the clock, so this was wasm-only.)
+    integrity.assertIntact()
     slot = {}
+    integrity.watching = false
     waitForIdle()
     mainClock.autoAdvance = true
 }
@@ -126,6 +134,7 @@ fun withUiThreadFilamentScene(
 
     created?.let { (engine, scene) ->
         var slot by mutableStateOf<@Composable FilamentSceneScope.() -> Unit>({})
+        val integrity = SceneIntegrity(engine, scene)
         setContent {
             CompositionLocalProvider(
                 LocalFilamentEngine provides engine,
@@ -133,15 +142,19 @@ fun withUiThreadFilamentScene(
             ) {
                 FilamentSceneScopeInstance.slot()
             }
+            integrity.Watch()
         }
         val setSceneContent: SetSceneContent = { content ->
+            integrity.assertIntact()
             slot = content
             mainClock.advanceTimeByFrame()
         }
         body(setSceneContent, engine, scene)
 
         // Same wasmJs teardown ordering as withFilamentScene — dispose before restoring the clock.
+        integrity.assertIntact()
         slot = {}
+        integrity.watching = false
         waitForIdle()
     }
     mainClock.autoAdvance = true
@@ -154,6 +167,29 @@ fun withUiThreadFilamentScene(
             Engine.destroy(engine)
         }
     }
+}
+
+/**
+ * Catches teardown-order bugs in whatever a harness test composes: at the start of every frame, where a view
+ * renders before the frame recomposes, the scene must not draw with anything already destroyed (see
+ * [danglingInScene]). The first violation is kept and fails the test at its next mount or at its end, as an
+ * exception thrown from a frame callback doesn't reach the test on every target.
+ */
+private class SceneIntegrity(private val engine: Engine, private val scene: Scene) {
+    private var violation: String? = null
+
+    /** Cleared with the content: a frame loop outliving it wedges wasmJs teardown (see [withFilamentScene]). */
+    var watching by mutableStateOf(true)
+
+    @Composable
+    fun Watch() {
+        if (!watching) return
+        LaunchedEffect(Unit) {
+            while (true) withFrameNanos { if (violation == null) violation = danglingInScene(engine, scene) }
+        }
+    }
+
+    fun assertIntact() = assertNull(violation, "a frame would have rendered the scene with $violation destroyed")
 }
 
 /**

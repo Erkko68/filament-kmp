@@ -51,3 +51,36 @@ fun assertDestroyed(message: String, isValid: () -> Boolean) {
     }
     assertFalse(stillValid, message)
 }
+
+/**
+ * The first destroyed Filament object [scene] still draws with (its IBL and skybox with their textures, its
+ * renderables' material instances), or null. Rendering the scene in that state is a use-after-free.
+ */
+fun danglingInScene(engine: Engine, scene: Scene): String? {
+    // Android: querying a destroyed wrapper throws instead of answering false.
+    fun valid(isValid: () -> Boolean) = try { isValid() } catch (e: Throwable) { false }
+
+    scene.indirectLight?.let { ibl ->
+        if (!valid { engine.isValid(ibl) }) return "the scene's IndirectLight"
+        ibl.reflectionsTexture?.let { if (!valid { engine.isValid(it) }) return "the IndirectLight's reflections texture" }
+        ibl.irradianceTexture?.let { if (!valid { engine.isValid(it) }) return "the IndirectLight's irradiance texture" }
+    }
+    scene.skybox?.let { skybox ->
+        if (!valid { engine.isValid(skybox) }) return "the scene's Skybox"
+        skybox.texture?.let { if (!valid { engine.isValid(it) }) return "the Skybox's texture" }
+    }
+    val rm = engine.renderableManager
+    var dangling: String? = null
+    scene.forEach { entity ->
+        if (dangling != null || !rm.hasComponent(entity)) return@forEach
+        val renderable = rm.getInstance(entity)
+        for (primitive in 0 until rm.getPrimitiveCount(renderable)) {
+            val instance = rm.getMaterialInstanceAt(renderable, primitive) ?: continue
+            val material = instance.material
+            if (!valid { engine.isValid(material) } || !valid { engine.isValid(material, instance) }) {
+                dangling = "the material instance of entity $entity, primitive $primitive"
+            }
+        }
+    }
+    return dangling
+}
