@@ -177,6 +177,45 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
         }
     }
 
+    /** `castShadows`/`receiveShadows` override what the asset authored, and null gives it back. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun shadowOverridesRevertToTheAuthoredFlags() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val asset = morphCube() ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            var cast: Boolean? by mutableStateOf(null)
+            var receive: Boolean? by mutableStateOf(null)
+            setContent { GltfInstance(asset = asset, castShadows = cast, receiveShadows = receive) }
+            waitForIdle()
+            val rm = engine.renderableManager
+            fun flags() = buildList { scene.forEach(::add) }.filter(rm::hasComponent)
+                .map { rm.getInstance(it) }.map { rm.isShadowCaster(it) to rm.isShadowReceiver(it) }
+            val authored = flags()
+            assertTrue(authored.isNotEmpty())
+
+            for (override in listOf(false, true)) {
+                cast = override
+                receive = override
+                mainClock.advanceTimeByFrame()
+                waitForIdle()
+                assertTrue(flags().all { it == override to override }, "override = $override")
+            }
+
+            cast = null
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(authored.map { it.first to true }, flags(), "castShadows alone goes back")
+
+            receive = null
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(authored, flags(), "null should restore the authored flags")
+        }
+    }
+
     /** Only a hoisted [AnimationState] needs a frame loop: a still model must not keep the window redrawing. */
     @Test
     fun frameLoopRunsOnlyWithAnAnimationState() {

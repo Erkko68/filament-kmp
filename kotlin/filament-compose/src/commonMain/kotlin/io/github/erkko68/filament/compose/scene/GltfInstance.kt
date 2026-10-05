@@ -222,15 +222,18 @@ fun FilamentSceneScope.GltfInstance(
         }
     }
 
-    // Shadow-flag overrides on every renderable. null keeps the asset's authored values.
+    // Shadow-flag overrides on every renderable. null keeps the asset's authored values, remembered at the
+    // first override so that going back to null restores them.
+    val authoredShadows = remember(instance) { HashMap<Int, Pair<Boolean, Boolean>>() }
     DisposableEffect(instance, castShadows, receiveShadows) {
-        if (castShadows != null || receiveShadows != null) {
+        if (castShadows != null || receiveShadows != null || authoredShadows.isNotEmpty()) {
             val rm = engine.renderableManager
             for (entity in instance.entities) {
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
-                if (castShadows != null) rm.setCastShadows(ri, castShadows)
-                if (receiveShadows != null) rm.setReceiveShadows(ri, receiveShadows)
+                val (cast, receive) = authoredShadows.getOrPut(entity) { rm.isShadowCaster(ri) to rm.isShadowReceiver(ri) }
+                rm.setCastShadows(ri, castShadows ?: cast)
+                rm.setReceiveShadows(ri, receiveShadows ?: receive)
             }
         }
         onDispose { }
