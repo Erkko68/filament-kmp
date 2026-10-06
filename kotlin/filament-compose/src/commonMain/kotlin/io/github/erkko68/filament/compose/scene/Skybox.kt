@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.Skybox as FilamentSkybox
 
 /**
@@ -79,8 +80,8 @@ fun rememberSkyboxState(
 }
 
 /**
- * Internal: applies [SkyboxState] to the scene. Builds a fresh Filament [FilamentSkybox]
- * whenever any field of the state changes, and tears down the old one.
+ * Internal: applies [SkyboxState] to the scene. A color is set on the live Filament [FilamentSkybox]; anything
+ * else has no setter and builds a new one.
  */
 @Composable
 internal fun ApplySkybox(state: SkyboxState, engine: Engine, scene: Scene) {
@@ -88,27 +89,30 @@ internal fun ApplySkybox(state: SkyboxState, engine: Engine, scene: Scene) {
     val showSun   = state.showSun
     val intensity = state.intensity
     val priority  = state.priority
+    val texture   = (source as? SkyboxSource.Cubemap)?.texture
 
-    DisposableEffect(scene, source, showSun, intensity, priority) {
-        val skybox: FilamentSkybox? = if (source == null) {
-            scene.skybox = null
-            null
-        } else {
+    // A state change gets here a frame late, so a texture we loaded (dependsOn) stays alive until this lets go.
+    val skybox = rememberOwned(engine, scene, source == null, texture, showSun, intensity, priority,
+                               dependsOn = listOf(texture), create = {
+        if (source == null) null else {
             val builder = FilamentSkybox.Builder()
                 .showSun(showSun)
                 .intensity(intensity)
                 .priority(priority)
-            when (source) {
-                is SkyboxSource.Color   -> builder.color(source.color.r, source.color.g, source.color.b, source.alpha)
-                is SkyboxSource.Cubemap -> builder.environment(source.texture)
-            }
-            builder.build(engine).also { scene.skybox = it }
+            if (texture != null) builder.environment(texture)
+            builder.build(engine)
         }
-        onDispose {
-            if (skybox != null) {
-                scene.skybox = null
-                engine.destroy(skybox)
-            }
+    }) { engine.destroy(it) }
+
+    DisposableEffect(scene, skybox) {
+        scene.skybox = skybox
+        onDispose { scene.skybox = null }
+    }
+
+    DisposableEffect(skybox, source) {
+        if (skybox != null && source is SkyboxSource.Color) {
+            skybox.setColor(source.color.r, source.color.g, source.color.b, source.alpha)
         }
+        onDispose { }
     }
 }

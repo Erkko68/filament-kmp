@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.IndirectLight as FilamentIndirectLight
 
 /**
@@ -101,20 +102,28 @@ internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene
     val intensity         = state.intensity
     val rotation          = state.rotation
 
-    DisposableEffect(scene, reflections, irradianceCubemap, irradianceSh, intensity, rotation) {
-        val builder = FilamentIndirectLight.Builder().intensity(intensity)
+    // Rebuilt only for new textures or harmonics; intensity and rotation are set on the live object below, so
+    // animating them costs no IndirectLight per frame. A state change gets here a frame late, so textures we
+    // loaded (dependsOn) stay alive until this lets go of them.
+    val ibl = rememberOwned(engine, scene, reflections, irradianceCubemap, irradianceSh,
+                            dependsOn = listOf(reflections, irradianceCubemap), create = {
+        val builder = FilamentIndirectLight.Builder()
         reflections?.let { builder.reflections(it) }
         when {
             irradianceCubemap != null -> builder.irradiance(irradianceCubemap)
             irradianceSh      != null -> builder.irradiance(irradianceSh.bands, irradianceSh.coefficients)
         }
-        rotation?.let { builder.rotation(it.toRotationMatrix()) }
+        builder.build(engine)
+    }) { engine.destroy(it) }
 
-        val ibl = builder.build(engine)
+    DisposableEffect(scene, ibl) {
         scene.indirectLight = ibl
-        onDispose {
-            scene.indirectLight = null
-            engine.destroy(ibl)
-        }
+        onDispose { scene.indirectLight = null }
+    }
+
+    DisposableEffect(ibl, intensity, rotation) {
+        ibl.intensity = intensity
+        ibl.rotation = (rotation ?: Rotation.Identity).toRotationMatrix()
+        onDispose { }
     }
 }

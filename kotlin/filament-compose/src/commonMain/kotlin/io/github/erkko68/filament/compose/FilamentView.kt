@@ -5,12 +5,14 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.BlendMode
 import io.github.erkko68.filament.compose.internal.FilamentSurface
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Shadows
+import io.github.erkko68.filament.compose.scene.ApplyPostProcessing
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.internal.rememberOwned
@@ -47,8 +49,9 @@ import io.github.erkko68.filament.compose.internal.rememberOwned
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
  * @param transparent Enable alpha transparency blending for the view surface.
  * @param renderingEnabled Render a frame on every display refresh. `false` stops rendering — no
- *   GPU or CPU work per frame — and keeps the last frame on screen (it is not re-rendered on resize
- *   either); set it back to `true` to resume. Use it to pause a static or off-screen view.
+ *   GPU or CPU work per frame — once the current scene is on screen, and keeps it there (a resize
+ *   renders it once more at the new size); set it back to `true` to resume. Use it to pause a
+ *   static or off-screen view.
  */
 @Composable
 fun FilamentView(
@@ -69,7 +72,8 @@ fun FilamentView(
 
     // The scene is owned by the FilamentScene handle, not the view.
     val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroy(it) }
-    val view     = rememberOwned(engine, dependsOn = listOf(filamentScene), create = { engine.createView() }) { engine.destroy(it) }
+    // Keyed on the scene: the view keeps the scene it was created for alive, so it can't move to another.
+    val view     = rememberOwned(engine, filamentScene, dependsOn = listOf(filamentScene), create = { engine.createView() }) { engine.destroy(it) }
     val camera   = rememberOwned(engine, create = { engine.createCamera(engine.entityManager.create()) }) {
         engine.destroyCameraComponent(it.entity)
         engine.entityManager.destroy(it.entity)
@@ -100,12 +104,7 @@ fun FilamentView(
         onDispose {}
     }
 
-    // Apply post-processing as a value. Re-applies whenever the config changes; the allocated
-    // ColorGrading (if any) is destroyed on dispose / before re-apply.
-    DisposableEffect(view, postProcessing, engine) {
-        val colorGrading = postProcessing.applyTo(view, engine)
-        onDispose { colorGrading?.let { engine.destroy(it) } }
-    }
+    ApplyPostProcessing(postProcessing, view, engine)
 
     // Expose the live View/Renderer through the hoisted handle.
     DisposableEffect(viewState, view, renderer) {
@@ -135,12 +134,13 @@ fun FilamentView(
     }
 
     FilamentSurface(
-        modifier = modifier,
+        modifier = modifier.onSizeChanged { viewState.layoutSize = it },
         engine   = engine,
         renderer = renderer,
         view     = view,
         transparent = transparent,
-        renderingEnabled = renderingEnabled,
+        // Filament answers a picking query by rendering.
+        renderingEnabled = renderingEnabled || viewState.pendingPicks > 0,
         onResize = onResize,
     )
 }

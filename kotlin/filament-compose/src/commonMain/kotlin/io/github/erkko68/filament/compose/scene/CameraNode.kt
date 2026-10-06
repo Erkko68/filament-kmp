@@ -46,8 +46,9 @@ fun FilamentSceneScope.CameraNode(
     val parent = LocalParentEntity.current
     val world = remember { FloatArray(16) }
 
+    // No parent, nothing to follow: no frame loop, which keeps the window rendering every vsync.
+    if (parent == null) return
     OnFrame {
-        if (parent == null) return@OnFrame
         val tm = engine.transformManager
         if (tm.hasComponent(parent)) {
             tm.getWorldTransform(tm.getInstance(parent), world)

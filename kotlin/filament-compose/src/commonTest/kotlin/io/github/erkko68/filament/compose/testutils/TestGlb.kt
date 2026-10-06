@@ -17,4 +17,7 @@ object TestGlb {
 
     /** Skinned, with three clips (Survey, Walk, Run): for cross-fades and blend trees. */
     fun getFoxGlbBytes(): ByteArray = EmbeddedGlb.Fox
+
+    /** One triangle whose POSITION accessor has no min/max, so gltfio computes no bounds for it. */
+    fun getUnboundedTriangleGlbBytes(): ByteArray = EmbeddedGlb.UnboundedTriangle
 }

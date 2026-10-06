@@ -7,8 +7,10 @@ import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.Viewport
 import io.github.erkko68.filament.compose.internal.FilamentRenderLoop
+import io.github.erkko68.filament.compose.internal.rememberPausedFrameGate
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
+import io.github.erkko68.filament.compose.scene.ApplyPostProcessing
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.internal.rememberOwned
@@ -44,6 +46,8 @@ import io.github.erkko68.filament.compose.internal.rememberOwned
  * @param height Texture height in pixels.
  * @param postProcessing Post-processing configuration for the off-screen view. Defaults to
  *   `PostProcessing(enabled = false)`, which skips the pass entirely — see the note above.
+ * @param renderingEnabled Redraw the texture on every display refresh. `false` stops once the current
+ *   scene is in it and keeps that frame, as on [FilamentView]: for a thumbnail, or a monitor nobody sees.
  * @return The color texture being rendered into, or null for a non-positive size.
  */
 @Composable
@@ -53,6 +57,7 @@ fun rememberRenderTargetTexture(
     width: Int = 512,
     height: Int = 512,
     postProcessing: PostProcessing = PostProcessing(enabled = false),
+    renderingEnabled: Boolean = true,
 ): Texture? {
     val engine = scene.engine
     if (width <= 0 || height <= 0) return null
@@ -92,7 +97,7 @@ fun rememberRenderTargetTexture(
         }.getOrNull()
     }) { engine.destroy(it) } ?: return null
 
-    val view     = rememberOwned(engine, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroy(it) }
+    val view     = rememberOwned(engine, scene.scene, dependsOn = listOf(scene.scene), create = { engine.createView() }) { engine.destroy(it) }
     val camera   = rememberOwned(engine, create = { engine.createCamera(engine.entityManager.create()) }) {
         engine.destroyCameraComponent(it.entity)
         engine.entityManager.destroy(it.entity)
@@ -108,12 +113,8 @@ fun rememberRenderTargetTexture(
         onDispose {}
     }
 
-    // Same value semantics as FilamentView: the allocated ColorGrading (if any) is destroyed on
-    // dispose / before re-apply. `enabled = false` skips the post-processing pass entirely.
-    DisposableEffect(view, postProcessing, engine) {
-        val colorGrading = postProcessing.applyTo(view, engine)
-        onDispose { colorGrading?.let { engine.destroy(it) } }
-    }
+    // Same value semantics as FilamentView. `enabled = false` skips the post-processing pass entirely.
+    ApplyPostProcessing(postProcessing, view, engine)
 
     // Push the camera state every time it changes; reads register recomposition subscriptions.
     val aspect = width.toDouble() / height.toDouble()
@@ -128,7 +129,11 @@ fun rememberRenderTargetTexture(
         onDispose { cameraState.detach(camera) }
     }
 
-    FilamentRenderLoop { renderer.renderStandaloneView(view) }
+    val gate = rememberPausedFrameGate(renderingEnabled, 1, target)
+    FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) {
+        renderer.renderStandaloneView(view)
+        gate.delivered(paused = !renderingEnabled)
+    }
 
     return color
 }

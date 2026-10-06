@@ -5,7 +5,6 @@ package io.github.erkko68.filament.compose.internal
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -16,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.viewinterop.HtmlElementView
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
@@ -52,21 +53,19 @@ internal actual fun FilamentSurface(
     renderingEnabled: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
-    val compositor = remember(engine) { WebViewCompositor.of(engine) }
     val target = remember { document.createElement("canvas") as HTMLCanvasElement }
-    val entry = remember(compositor, view, target) { compositor.register(view, target) }
+    // Owned, so a discarded composition unregisters too: the compositor must never draw a destroyed view.
+    val entry = rememberOwned(engine, view, target, dependsOn = listOf(view), create = {
+        WebViewCompositor.of(engine).register(view, target)
+    }) { WebViewCompositor.of(engine).unregister(it) }
 
     // Keep a mutable ref so the size callback always dispatches to the latest lambda.
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
-    SideEffect { entry.paused = !renderingEnabled }
-
-    DisposableEffect(compositor, entry) {
-        onDispose {
-            entry.disposed = true
-            compositor.unregister(entry)
-        }
+    SideEffect {
+        entry.paused = !renderingEnabled
+        if (renderingEnabled) entry.shownPaused = false
     }
 
     var lastSize by remember { mutableStateOf(IntSize.Zero) }
@@ -78,9 +77,11 @@ internal actual fun FilamentSurface(
             val left = pos.x.roundToInt()
             val top = pos.y.roundToInt()
             entry.rect = IntRect(left, top, left + size.width, top + size.height)
+            entry.visible = coords.boundsInWindow().roundToIntRect()
 
             if (size != lastSize) {
                 lastSize = size
+                entry.shownPaused = false // a resized view shows its scene at the new size
                 if (size.width > 0 && size.height > 0) {
                     onResizeRef.value?.invoke(size.width.toDouble() / size.height.toDouble())
                 }

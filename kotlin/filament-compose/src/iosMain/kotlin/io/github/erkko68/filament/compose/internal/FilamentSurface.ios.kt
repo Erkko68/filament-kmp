@@ -48,9 +48,11 @@ internal actual fun FilamentSurface(
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
-    // factory runs once, so layer opacity and swapchain flags are fixed at creation —
-    // key() rebuilds both when transparency is toggled.
-    key(transparent) {
+    val gate = rememberPausedFrameGate(renderingEnabled)
+
+    // factory runs once, so layer opacity, swapchain flags, and the engine and view it captures are fixed
+    // at creation — key() rebuilds it when any of them changes.
+    key(engine, view, transparent) {
         UIKitView(
             factory = {
                 object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
@@ -92,6 +94,7 @@ internal actual fun FilamentSurface(
                             }
                             metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
                             view.viewport = Viewport(0, 0, width, height)
+                            gate.reset() // a new or resized layer has shown nothing yet
                             onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
                         }
                     }
@@ -113,11 +116,12 @@ internal actual fun FilamentSurface(
         }
     }
 
-    FilamentRenderLoop(renderingEnabled) { frameTime ->
+    FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) { frameTime ->
         val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)
             renderer.endFrame()
+            gate.delivered(paused = !renderingEnabled)
         }
     }
 }

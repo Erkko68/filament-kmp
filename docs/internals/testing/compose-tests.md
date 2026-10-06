@@ -62,12 +62,17 @@ to drive them — only those locals. Two test utils in
   convenience: mounts `content`, runs `whileComposed` after effects apply, advances `frames` to drive
   `OnFrame`, then leaves the composition so every `onDispose` fires.
 
+Both harnesses also watch the scene for teardown-order bugs: at the start of every frame, where a view
+renders before the frame recomposes, the scene must not draw with anything already destroyed
+(`danglingInScene`: its IBL and skybox with their textures, its renderables' material instances). A
+violation fails the test at its next mount or at its end, so any test composing scene content catches one.
+
 ```kotlin
 @OptIn(ExperimentalTestApi::class)
 fun withFilamentScene(engine: Engine, scene: Scene, body: ComposeUiTest.(SetSceneContent) -> Unit) =
   runComposeUiTest {
-    // OnFrame runs an unbounded withFrameNanos loop (every light registers one for
-    // followGroupRotation). With the default auto-advancing clock the composition is never idle and
+    // OnFrame runs an unbounded withFrameNanos loop (a CameraNode in a Group
+    // registers one). With the default auto-advancing clock the composition is never idle and
     // waitForIdle() hangs forever — so drive the clock manually.
     mainClock.autoAdvance = false
     // One real setContent hosts a swappable, state-driven slot. Android's setContent is one-shot

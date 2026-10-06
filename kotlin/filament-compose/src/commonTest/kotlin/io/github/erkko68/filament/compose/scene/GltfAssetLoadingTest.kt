@@ -9,6 +9,7 @@ import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -185,5 +186,88 @@ class GltfAssetLoadingTest {
         setContent {}
         waitForIdle()
         assertSceneEmpty(scene, "reloaded asset leaked after disposal")
+    }
+
+    /**
+     * gltfio leaves an infinite box on renderables it has no bounds for, which culling turns to NaNs (the model
+     * blinks as it rotates). `GltfInstance` rebuilds those boxes from the vertices before the instance enters the
+     * scene. Here rather than in [GltfInstanceLifecycleTest]: recomputing runs jobs, so it needs the engine's thread.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun unboundedRenderablesGetFiniteBounds() = withUiThreadFilamentScene { setContent, engine, scene ->
+        val rm = engine.renderableManager
+        fun halfExtents(entities: IntArray) = entities.filter { rm.hasComponent(it) }
+            .map { rm.getAxisAlignedBoundingBox(rm.getInstance(it)).halfExtent }
+        var untouched = emptyList<FloatArray>()
+        var composed = emptyList<FloatArray>()
+        setContent {
+            val asset = rememberGltfAsset { TestGlb.getUnboundedTriangleGlbBytes() }
+            GltfInstance(asset = asset, onCreate = {
+                // The asset's own instance, which GltfInstance doesn't touch, keeps gltfio's box.
+                untouched = halfExtents(this.asset.instance.entities)
+                composed = halfExtents(instance.entities)
+            })
+        }
+
+        assertTrue(pumpUntil { scene.renderableCount > 0 }, "the triangle should reach the scene")
+        // Guards the fixture: without an unbounded asset the check below would be vacuous.
+        assertTrue(untouched.isNotEmpty() && untouched.all { h -> h.any { !it.isFinite() } }, "fixture should be unbounded")
+        // The triangle spans (0,0,0)..(1,1,0).
+        assertEquals(1, composed.size)
+        assertContentEquals(floatArrayOf(0.5f, 0.5f, 0f), composed.single())
+
+        setContent {}
+        waitForIdle()
+        assertSceneEmpty(scene, "asset + instance leaked after disposal")
+    }
+
+    /**
+     * A .gltf whose buffer lives in another file: the bytes parse, but the loader has nothing to resolve the URI
+     * with, so the resources can't be loaded. That is a failure like any other: one [onError], no asset.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun unresolvedExternalBufferIsReported() = withUiThreadFilamentScene { setContent, _, scene ->
+        val gltf = """{"asset":{"version":"2.0"},"scene":0,"scenes":[{"nodes":[0]}],"nodes":[{"mesh":0}],
+            "meshes":[{"primitives":[{"attributes":{"POSITION":0}}]}],
+            "accessors":[{"bufferView":0,"componentType":5126,"count":3,"type":"VEC3","min":[0,0,0],"max":[1,1,0]}],
+            "bufferViews":[{"buffer":0,"byteLength":36}],
+            "buffers":[{"uri":"missing.bin","byteLength":36}]}""".encodeToByteArray()
+        var asset: GltfAsset? = null
+        var errors = 0
+        setContent {
+            val a = rememberGltfAsset(onError = { errors++ }) { gltf }
+            asset = a
+            GltfInstance(asset = a)
+        }
+        repeat(30) { mainClock.advanceTimeByFrame(); waitForIdle() }
+
+        assertEquals(1, errors, "onError should fire exactly once when the resources can't be loaded")
+        assertNull(asset, "a failed load should leave the asset null")
+        assertEquals(0, scene.entityCount, "nothing should reach the scene when the load fails")
+
+        setContent {}
+        waitForIdle()
+    }
+
+    /** The counterpart: a .gltf with its buffer embedded as a data URI is self-contained, and loads. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun embeddedBufferLoads() = withUiThreadFilamentScene { setContent, _, scene ->
+        val gltf = """{"asset":{"version":"2.0"},"scene":0,"scenes":[{"nodes":[0]}],"nodes":[{"mesh":0}],
+            "meshes":[{"primitives":[{"attributes":{"POSITION":0}}]}],
+            "accessors":[{"bufferView":0,"componentType":5126,"count":3,"type":"VEC3","min":[0,0,0],"max":[1,1,0]}],
+            "bufferViews":[{"buffer":0,"byteLength":36}],
+            "buffers":[{"uri":"data:application/octet-stream;base64,AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAAAA","byteLength":36}]}""".encodeToByteArray()
+        var errors = 0
+        setContent { GltfInstance(asset = rememberGltfAsset(onError = { errors++ }) { gltf }) }
+
+        assertTrue(pumpUntil { scene.renderableCount > 0 }, "a .gltf with embedded data should load")
+        assertEquals(0, errors)
+
+        setContent {}
+        waitForIdle()
+        assertSceneEmpty(scene, "asset + instance leaked after disposal")
     }
 }

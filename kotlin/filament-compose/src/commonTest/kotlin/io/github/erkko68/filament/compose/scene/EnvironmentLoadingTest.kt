@@ -1,5 +1,8 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.Texture
@@ -66,6 +69,41 @@ class EnvironmentLoadingTest {
         waitForIdle()
         assertNull(env.indirectLightState.reflections, "disposal clears the reflections")
         assertNull(env.skyboxState?.source)
+    }
+
+    /**
+     * A reloaded environment reaches the scene a frame after its states change, and that frame is rendered first:
+     * the textures the scene still draws with must outlive it.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun reloadedEnvironmentKeepsTheTexturesTheSceneStillDraws() = withUiThreadFilamentScene { setContent, engine, scene ->
+        var key by mutableStateOf(0)
+        setContent {
+            val environment = rememberKTXEnvironment(engine, key = key, skybox = { TestKtx.skybox.copyOf() }, ibl = { TestKtx.ibl.copyOf() })
+            ApplyIndirectLight(environment.indirectLightState, engine, scene)
+            environment.skyboxState?.let { ApplySkybox(it, engine, scene) }
+        }
+        frameUntil { scene.indirectLight?.reflectionsTexture != null && scene.skybox?.texture != null }
+        val reflections = assertNotNull(scene.indirectLight?.reflectionsTexture)
+        val sky = assertNotNull(scene.skybox?.texture)
+
+        key = 1
+        var reloaded = false
+        repeat(50) {
+            if (reloaded) return@repeat
+            mainClock.advanceTimeByFrame()
+            scene.indirectLight?.reflectionsTexture?.let { assertTrue(engine.isValid(it), "the scene's IBL lost its reflections") }
+            scene.skybox?.texture?.let { assertTrue(engine.isValid(it), "the scene's skybox lost its texture") }
+            reloaded = !engine.isValid(reflections) && !engine.isValid(sky)
+        }
+        assertTrue(reloaded, "the replaced textures are destroyed once the scene has let go")
+        val reloadedReflections = assertNotNull(scene.indirectLight?.reflectionsTexture)
+        val reloadedSky = assertNotNull(scene.skybox?.texture)
+
+        setContent {}
+        waitForIdle()
+        assertTrue(!engine.isValid(reloadedReflections) && !engine.isValid(reloadedSky), "disposal destroys the textures")
     }
 
     @OptIn(ExperimentalTestApi::class)

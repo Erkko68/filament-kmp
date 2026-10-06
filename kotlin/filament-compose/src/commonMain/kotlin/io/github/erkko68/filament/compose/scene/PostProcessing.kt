@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import io.github.erkko68.filament.ColorGrading
 import io.github.erkko68.filament.DepthOfFieldOptions
@@ -7,6 +9,7 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.QualityLevel
 import io.github.erkko68.filament.ToneMapper
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.AntiAliasing as FilamentAntiAliasing
 import io.github.erkko68.filament.Dithering as FilamentDithering
 
@@ -223,11 +226,37 @@ data class Dithering(val mode: FilamentDithering = FilamentDithering.TEMPORAL)
 data class RenderQuality(val hdrColorBuffer: QualityLevel = QualityLevel.HIGH)
 
 /**
- * Applies this configuration to [view], allocating a [ColorGrading] if [colorGrade] is set.
- * Returns the allocated grading (or null) so the caller can destroy it. Sets every option so
- * that re-applying a changed config also clears effects that became null.
+ * Applies [postProcessing] to [view] as a value, re-applying whenever it changes. The [ColorGrading] of its
+ * [ColorGrade] is owned here and rebuilt for a new grade alone: baking its LUT is expensive, and the other
+ * options change far more often.
  */
-internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
+@Composable
+internal fun ApplyPostProcessing(postProcessing: PostProcessing, view: View, engine: Engine) {
+    val colorGrade = postProcessing.colorGrade
+    val colorGrading = rememberOwned(engine, colorGrade, create = { colorGrade?.build(engine) }) { engine.destroy(it) }
+    DisposableEffect(view, postProcessing, colorGrading) {
+        postProcessing.applyTo(view, colorGrading)
+        onDispose { view.colorGrading = null }
+    }
+}
+
+internal fun ColorGrade.build(engine: Engine): ColorGrading =
+    toneMapping.toToneMapper().use { toneMapper ->
+        ColorGrading.Builder()
+            .exposure(exposure)
+            .contrast(contrast)
+            .vibrance(vibrance)
+            .saturation(saturation)
+            .whiteBalance(whiteBalanceTemperature, whiteBalanceTint)
+            .toneMapper(toneMapper)
+            .build(engine)
+    }
+
+/**
+ * Applies this configuration to [view], with [colorGrading] the one built from [colorGrade] (null for none).
+ * Sets every option so that re-applying a changed config also clears effects that became null.
+ */
+internal fun PostProcessing.applyTo(view: View, colorGrading: ColorGrading?) {
     view.isPostProcessingEnabled = enabled
 
     view.bloomOptions = view.bloomOptions.apply {
@@ -322,19 +351,5 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
         this.hdrColorBuffer = renderQuality?.hdrColorBuffer ?: QualityLevel.HIGH
     }
 
-    return colorGrade?.let { c ->
-        c.toneMapping.toToneMapper().use { toneMapper ->
-            ColorGrading.Builder()
-                .exposure(c.exposure)
-                .contrast(c.contrast)
-                .vibrance(c.vibrance)
-                .saturation(c.saturation)
-                .whiteBalance(c.whiteBalanceTemperature, c.whiteBalanceTint)
-                .toneMapper(toneMapper)
-                .build(engine)
-        }.also { view.colorGrading = it }
-    } ?: run {
-        view.colorGrading = null
-        null
-    }
+    view.colorGrading = colorGrading
 }

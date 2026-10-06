@@ -8,6 +8,7 @@ import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.internal.logWarn
+import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.compose.OnFrame
@@ -146,6 +147,7 @@ fun FilamentSceneScope.GltfInstance(
     val createdFired = remember(instance) { booleanArrayOf(false) }
     DisposableEffect(instance, effectiveVisible) {
         if (effectiveVisible) {
+            if (!createdFired[0]) instance.boundUnboundedRenderables(engine)
             scene.addEntities(instance.entities)
             if (!createdFired[0]) {
                 createdFired[0] = true
@@ -172,13 +174,7 @@ fun FilamentSceneScope.GltfInstance(
     // Reparent the asset root to the surrounding Group, if any. gltfio always creates a
     // transform component on the root, so no need to create one here.
     DisposableEffect(instance, parent) {
-        if (parent != null) {
-            val tm = engine.transformManager
-            val root = instance.root
-            if (tm.hasComponent(root)) {
-                tm.setParent(tm.getInstance(root), tm.getInstance(parent))
-            }
-        }
+        engine.setParent(instance.root, parent)
         onDispose { }
     }
 
@@ -194,9 +190,10 @@ fun FilamentSceneScope.GltfInstance(
         onDispose { }
     }
 
-    // Auto-advancing, cross-fading playback driven by the hoisted AnimationState.
-    OnFrame { frame ->
-        animationState?.apply(instance.animator, frame.deltaSeconds)
+    // Auto-advancing, cross-fading playback driven by the hoisted AnimationState. Only with one: a frame loop keeps
+    // the window rendering every vsync.
+    if (animationState != null) {
+        OnFrame { frame -> animationState.apply(instance.animator, frame.deltaSeconds) }
     }
 
     // Vertex morph-target weights, applied to every renderable that has morph targets.
@@ -220,15 +217,18 @@ fun FilamentSceneScope.GltfInstance(
         }
     }
 
-    // Shadow-flag overrides on every renderable. null keeps the asset's authored values.
+    // Shadow-flag overrides on every renderable. null keeps the asset's authored values, remembered at the
+    // first override so that going back to null restores them.
+    val authoredShadows = remember(instance) { HashMap<Int, Pair<Boolean, Boolean>>() }
     DisposableEffect(instance, castShadows, receiveShadows) {
-        if (castShadows != null || receiveShadows != null) {
+        if (castShadows != null || receiveShadows != null || authoredShadows.isNotEmpty()) {
             val rm = engine.renderableManager
             for (entity in instance.entities) {
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
-                if (castShadows != null) rm.setCastShadows(ri, castShadows)
-                if (receiveShadows != null) rm.setReceiveShadows(ri, receiveShadows)
+                val (cast, receive) = authoredShadows.getOrPut(entity) { rm.isShadowCaster(ri) to rm.isShadowReceiver(ri) }
+                rm.setCastShadows(ri, castShadows ?: cast)
+                rm.setReceiveShadows(ri, receiveShadows ?: receive)
             }
         }
         onDispose { }
@@ -237,4 +237,18 @@ fun FilamentSceneScope.GltfInstance(
     SideEffect {
         GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onUpdate()
     }
+}
+
+/**
+ * gltfio gives the renderables of an instance it computed no bounds for an infinite box ("Missing bounding box in
+ * ..."). Culled through the instance's transform, that box turns to NaNs, so the renderable is drawn or dropped
+ * depending on its rotation: a turning model blinks. Such boxes are rebuilt from the vertices, which needs the
+ * resources loaded and the source data still there.
+ */
+private fun FilamentInstance.boundUnboundedRenderables(engine: Engine) {
+    val rm = engine.renderableManager
+    val unbounded = entities.any { entity ->
+        rm.hasComponent(entity) && rm.getAxisAlignedBoundingBox(rm.getInstance(entity)).halfExtent.any { !it.isFinite() }
+    }
+    if (unbounded) recomputeBoundingBoxes()
 }

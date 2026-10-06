@@ -93,6 +93,26 @@ class AnimationTest : ComposeTestFixture() {
         assertEquals(0f, state.time)
     }
 
+    /** A fade cut short while paused divides zero by zero: the pose must not turn to NaN. */
+    @Test
+    fun aCrossFadeCutToZeroWhilePausedKeepsThePoseFinite() = withFox { asset, animator ->
+        val state = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0.5f, initialLoop = true)
+        state.apply(animator, 0.2f)
+        state.animationIndex = 1
+        state.apply(animator, 0.1f)
+        assertTrue(state.isTransitioning)
+
+        state.isPaused = true
+        state.crossFadeDuration = 0f
+        state.apply(animator, 0.1f)
+        assertFalse(state.isTransitioning, "no duration left: the fade is over")
+        val tm = engine.transformManager
+        for (entity in asset.filamentAsset.entities) {
+            if (!tm.hasComponent(entity)) continue
+            assertTrue(tm.getTransform(tm.getInstance(entity)).all { it.isFinite() }, "entity $entity has a NaN transform")
+        }
+    }
+
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun rememberedTrackJoinsAndLeavesTheMixer() = withFilamentScene(engine, scene) { setContent ->

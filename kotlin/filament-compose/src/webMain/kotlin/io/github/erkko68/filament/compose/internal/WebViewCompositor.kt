@@ -11,7 +11,6 @@ import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.max
-import kotlin.math.roundToInt
 import io.github.erkko68.filament.canvas
 
 /**
@@ -19,7 +18,7 @@ import io.github.erkko68.filament.canvas
  * canvas and `readPixels` isn't bound — so each `FilamentView` cannot own its own GL surface.
  *
  * So every view of one engine shares this compositor. It renders each registered view into its own
- * region of the engine's (offscreen) canvas in a single frame, then `drawImage`-blits each region
+ * region of the engine's (offscreen) canvas (in one frame, unless views overlap), then `drawImage`-blits each region
  * onto that view's own 2D canvas. Blitting straight from the WebGL canvas needs no readback API and
  * stays on the GPU. The blit clears first, so a translucent view keeps its alpha. Each view's 2D
  * canvas is displayed through the normal Compose HTML-interop path (see `FilamentSurface`).
@@ -29,6 +28,8 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     /** A view, its destination 2D canvas, and its current window-space bounds (Compose px). */
     class Entry(val view: View, val target: HTMLCanvasElement) {
         var rect: IntRect = IntRect(0, 0, 0, 0)
+        /** The part of [rect] on screen, clipped by the window and by scrolling parents; empty when none is. */
+        var visible: IntRect = IntRect(0, 0, 0, 0)
         val ctx: CanvasRenderingContext2D? = target.getContext("2d") as? CanvasRenderingContext2D
         /**
          * Defensive guard skipped over in [renderFrame]. Teardown is synchronous — [unregister]
@@ -39,6 +40,10 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         var disposed: Boolean = false
         /** Rendering disabled by the owning view: skipped, so its 2D canvas keeps the last frame. */
         var paused: Boolean = false
+        // Whether a frame rendered while paused is on the canvas; until then a paused view keeps rendering.
+        var shownPaused: Boolean = false
+        /** Nothing to render: scrolled or clipped out of sight, or paused with its frame shown. */
+        val idle: Boolean get() = visible.isEmpty || (paused && shownPaused)
     }
 
     private val canvas: HTMLCanvasElement = engine.canvas
@@ -102,20 +107,19 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         instances.remove(engine)
     }
 
-    private fun renderFrame() {
-        if (entries.none { !it.paused }) return
+    internal fun renderFrame() {
+        if (entries.none { !it.idle }) return
 
-        val dpr = window.devicePixelRatio.coerceAtLeast(1.0)
-
+        // Entry rects are Compose layout pixels, which on web are already device pixels (the density is
+        // devicePixelRatio): scaling them again would render devicePixelRatio² too many.
         // The offscreen canvas must span every view's window rect so each can be rendered into its
-        // own slice in one frame; views sit at distinct screen positions so they don't overlap.
+        // own slice in one frame.
+        // Only what is on screen: a view scrolled far away would otherwise grow the canvas to reach it.
         var unionW = 0
         var unionH = 0
         for (e in entries) {
-            val physRight = (e.rect.right * dpr).roundToInt()
-            val physBottom = (e.rect.bottom * dpr).roundToInt()
-            unionW = max(unionW, physRight)
-            unionH = max(unionH, physBottom)
+            unionW = max(unionW, e.visible.right)
+            unionH = max(unionH, e.visible.bottom)
         }
         if (unionW <= 0 || unionH <= 0) return
         if (canvas.width != unionW || canvas.height != unionH) {
@@ -124,51 +128,41 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         }
 
         val sc = swapChain ?: engine.createSwapChain(NativeSurface(canvas)).also { swapChain = it }
-        if (renderer.beginFrame(sc, Engine.steadyClockTimeNano)) {
-            for (e in entries) {
-                if (e.disposed || e.paused) continue
-                val r = e.rect
-                if (r.width <= 0 || r.height <= 0) continue
-                val physLeft = (r.left * dpr).roundToInt()
-                val physTop = (r.top * dpr).roundToInt()
-                val physRight = (r.right * dpr).roundToInt()
-                val physBottom = (r.bottom * dpr).roundToInt()
-                val physWidth = physRight - physLeft
-                val physHeight = physBottom - physTop
-                if (physWidth <= 0 || physHeight <= 0) continue
 
+        // Views that overlap can't be in the one canvas together: each pass renders those overlapping none
+        // already in it, and copies them out before the next pass draws over them. Usually a single pass.
+        var pending = entries.filter { !it.disposed && !it.idle && it.rect.width > 0 && it.rect.height > 0 }
+        while (pending.isNotEmpty()) {
+            val pass = ArrayList<Entry>()
+            val later = ArrayList<Entry>()
+            for (e in pending) (if (pass.none { it.rect.overlaps(e.rect) }) pass else later) += e
+            pending = later
+
+            // A skipped frame leaves the canvas with another pass's pixels: nothing to copy out.
+            if (!renderer.beginFrame(sc, Engine.steadyClockTimeNano)) continue
+            for (e in pass) {
+                val r = e.rect
                 // Compose rect is top-left origin; Filament viewport origin is bottom-left.
-                e.view.viewport = Viewport(physLeft, unionH - (physTop + physHeight), physWidth, physHeight)
+                e.view.viewport = Viewport(r.left, unionH - r.bottom, r.width, r.height)
                 renderer.render(e.view)
             }
             renderer.endFrame()
-        }
 
-        // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
-        // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == physTop.
-        for (e in entries) {
-            if (e.disposed || e.paused) continue
-            val r = e.rect
-            val ctx = e.ctx ?: continue
-            if (r.width <= 0 || r.height <= 0) continue
-            val physLeft = (r.left * dpr).roundToInt()
-            val physTop = (r.top * dpr).roundToInt()
-            val physRight = (r.right * dpr).roundToInt()
-            val physBottom = (r.bottom * dpr).roundToInt()
-            val physWidth = physRight - physLeft
-            val physHeight = physBottom - physTop
-            if (physWidth <= 0 || physHeight <= 0) continue
-
-            if (e.target.width != physWidth || e.target.height != physHeight) {
-                e.target.width = physWidth
-                e.target.height = physHeight
+            // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
+            // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == r.top.
+            for (e in pass) {
+                val r = e.rect
+                val ctx = e.ctx ?: continue
+                if (e.target.width != r.width || e.target.height != r.height) {
+                    e.target.width = r.width
+                    e.target.height = r.height
+                }
+                val width = r.width.toDouble()
+                val height = r.height.toDouble()
+                ctx.clearRect(0.0, 0.0, width, height)
+                ctx.drawImage(canvas, r.left.toDouble(), r.top.toDouble(), width, height, 0.0, 0.0, width, height)
+                if (e.paused) e.shownPaused = true
             }
-            ctx.clearRect(0.0, 0.0, physWidth.toDouble(), physHeight.toDouble())
-            ctx.drawImage(
-                canvas,
-                physLeft.toDouble(), physTop.toDouble(), physWidth.toDouble(), physHeight.toDouble(),
-                0.0, 0.0, physWidth.toDouble(), physHeight.toDouble(),
-            )
         }
     }
 

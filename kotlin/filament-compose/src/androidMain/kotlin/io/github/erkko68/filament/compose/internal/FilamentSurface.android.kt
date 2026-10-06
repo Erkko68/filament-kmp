@@ -31,15 +31,26 @@ internal actual fun FilamentSurface(
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
+    val gate = rememberPausedFrameGate(renderingEnabled)
+
     fun updateViewport(width: Int, height: Int) {
         if (width <= 0 || height <= 0) return
+        gate.reset() // a new or resized surface has shown nothing yet
         view.viewport = Viewport(0, 0, width, height)
         onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
     }
 
-    // factory runs once, so the surface type and its swapchain flags are fixed at creation —
-    // key() rebuilds both when transparency is toggled.
-    key(transparent) {
+    fun destroySwapChain() {
+        val swapChain = swapChainRef.value ?: return
+        swapChainRef.value = null
+        engine.destroy(swapChain)
+        // Android frees the Surface as soon as its callback returns: the backend must be done with it by then.
+        engine.flushAndWait()
+    }
+
+    // factory runs once, so the surface type, its swapchain flags, and the engine and view it captures are
+    // fixed at creation — key() rebuilds it when any of them changes.
+    key(engine, view, transparent) {
         AndroidView(
             modifier = modifier,
             factory = { context ->
@@ -56,8 +67,7 @@ internal actual fun FilamentSurface(
                             },
                             onResized = ::updateViewport,
                             onDestroyed = {
-                                swapChainRef.value?.let { engine.destroy(it) }
-                                swapChainRef.value = null
+                                destroySwapChain()
                             },
                         )
                     }
@@ -72,8 +82,7 @@ internal actual fun FilamentSurface(
                                 updateViewport(width, height)
                             }
                             override fun surfaceDestroyed(holder: SurfaceHolder) {
-                                swapChainRef.value?.let { engine.destroy(it) }
-                                swapChainRef.value = null
+                                destroySwapChain()
                             }
                         })
                     }
@@ -84,17 +93,17 @@ internal actual fun FilamentSurface(
 
         DisposableEffect(Unit) {
             onDispose {
-                swapChainRef.value?.let { engine.destroy(it) }
-                swapChainRef.value = null
+                destroySwapChain()
             }
         }
     }
 
-    FilamentRenderLoop(renderingEnabled) { frameTime ->
+    FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) { frameTime ->
         val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)
             renderer.endFrame()
+            gate.delivered(paused = !renderingEnabled)
         }
     }
 }
