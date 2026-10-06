@@ -13,6 +13,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.7.2] — 2026-10-06
+
 ### Added
 - **`rememberRenderTargetTexture(renderingEnabled = …)`** (`filament-compose`): `false` stops redrawing the texture once the current scene is in it, as on `FilamentView`.
 
@@ -531,7 +533,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.1...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.2...HEAD
+[0.7.2]: https://github.com/Erkko68/filament-kmp/compare/0.7.1...0.7.2
 [0.7.1]: https://github.com/Erkko68/filament-kmp/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/Erkko68/filament-kmp/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/Erkko68/filament-kmp/compare/0.5.0...0.6.0
