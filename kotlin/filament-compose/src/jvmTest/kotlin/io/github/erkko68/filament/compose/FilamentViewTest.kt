@@ -270,11 +270,11 @@ class FilamentViewTest {
                 )
             }
         }
-        repeat(30) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 30)
         val view = assertNotNull(viewState.view)
         // Settled: a change is not rendered.
         visible = false
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         assertEquals(1, view.visibleRenderableCount, "a settled paused view should not render")
 
         var result: View.PickingQueryResult? = null
@@ -289,9 +289,9 @@ class FilamentViewTest {
         assertEquals(0, viewState.pendingPicks)
 
         // Answered: it settles again.
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         visible = true
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         assertEquals(0, view.visibleRenderableCount, "the view should settle again once the pick is answered")
     }
 
