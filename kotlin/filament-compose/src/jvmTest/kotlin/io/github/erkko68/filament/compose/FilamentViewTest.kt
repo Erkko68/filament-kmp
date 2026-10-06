@@ -45,6 +45,13 @@ import kotlin.test.assertTrue
  */
 class FilamentViewTest {
 
+    /** Advances [frames] frames, waiting for the GPU before each: a readback still in flight holds back the next render. */
+    @OptIn(ExperimentalTestApi::class)
+    private fun ComposeUiTest.renderFrames(engine: Engine, frames: Int) = repeat(frames) {
+        runOnUiThread { engine.flushAndWait() }
+        mainClock.advanceTimeByFrame()
+    }
+
     /**
      * Runs [body] with a DEFAULT engine created and destroyed on the UI thread, like rememberFilamentEngine.
      * Content goes through the handed `setContent`, which is cleared before the engine is destroyed.
@@ -215,7 +222,7 @@ class FilamentViewTest {
                 Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
             }
         }
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         // -1 until the view has been rendered.
         assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount, "a view that starts paused should render its scene")
 
@@ -230,22 +237,22 @@ class FilamentViewTest {
                 )
             }
         }
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount)
 
         // Paused together with a change: that change still gets on screen.
         enabled = false
         visible = false
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         assertEquals(0, assertNotNull(viewState.view).visibleRenderableCount, "the change made with the pause should be rendered")
 
         // A later change, well after the pause, is not.
         visible = true
-        repeat(10) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 10)
         assertEquals(0, assertNotNull(viewState.view).visibleRenderableCount, "a settled paused view should not render")
 
         enabled = true
-        repeat(5) { mainClock.advanceTimeByFrame() }
+        renderFrames(engine, 5)
         assertEquals(1, assertNotNull(viewState.view).visibleRenderableCount, "resuming renders again")
     }
 
