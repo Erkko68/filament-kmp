@@ -100,9 +100,14 @@ jobs:
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" \
             build/previousDocs || mkdir -p build/previousDocs
           rm -rf build/previousDocs/.git
-          # Never let the archive hold the version we're about to render — a re-run or a
-          # manual dispatch would otherwise list the same version twice.
-          rm -rf "build/previousDocs/$(grep '^libVersion=' gradle.properties | cut -d= -f2)"
+          # One docs set per minor line, its newest patch: patches don't change the API, and
+          # a version is ~60-80 MB against GitHub Pages' 1 GB site cap. The line being
+          # rendered is this version's, so its archived patches go; of the other lines, the
+          # seven newest stay (eight with this one). Older releases stay reachable through their git tags.
+          version=$(grep '^libVersion=' gradle.properties | cut -d= -f2)
+          cd build/previousDocs
+          rm -rf "${version%.*}".*
+          ls -1 | sort -Vr | awk -F. 'seen[$1"."$2]++ || ++lines > 7' | while read -r stale; do rm -rf "$stale"; done
 
       - name: Generate API docs
         # Aggregates :kotlin:filament, :kotlin:filamat, :kotlin:filament-utils,
@@ -119,13 +124,9 @@ jobs:
         if: github.event_name == 'release' || inputs.archive
         run: |
           version=$(grep '^libVersion=' gradle.properties | cut -d= -f2)
-          rm -rf "build/previousDocs/$version"
           cp -R build/dokka/html "build/previousDocs/$version"
           rm -rf "build/previousDocs/$version/older"  # don't archive the nested copies
-          # One version is ~90 MB and GitHub Pages caps a site at 1 GB, so keep only
-          # the newest few; older releases stay reachable through their git tags.
           cd build/previousDocs
-          ls -1 | sort -Vr | tail -n +5 | while read -r stale; do rm -rf "$stale"; done
           git init -q -b docs-archive
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
