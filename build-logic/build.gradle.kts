@@ -18,11 +18,4 @@ dependencies {
     implementation(libs.kover.gradlePlugin)
     // tar.gz extraction for the Filament prebuilt/header download tasks
     implementation(libs.commons.compress)
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-    inputs.dir("src/test/fixture")
-    providers.gradleProperty("apigen.update").orNull?.let { systemProperty("apigen.update", it) }
 }

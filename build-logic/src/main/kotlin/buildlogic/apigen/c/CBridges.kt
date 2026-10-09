@@ -1,6 +1,7 @@
 package buildlogic.apigen.c
 
 import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.RefCounting
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
 import buildlogic.apigen.cpp.CppMethod
@@ -36,6 +37,7 @@ class Unsupported(reason: String) : Exception(reason)
 /** Maps the model's types onto C, recording the math types the module's mirror structs must cover. */
 internal class CBridges(private val api: CppApi, private val config: ApiGenConfig, private val names: CNames) {
     private val h = config.helpers
+    private val refs = config.refs
     val mathTypes = sortedSetOf<String>()
     /** Function pointer typedefs the forwarders use, by C name. */
     val callbackTypes = sortedMapOf<String, String>()
@@ -53,6 +55,9 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     fun isValue(record: String): Boolean = api.records.getValue(record).let { r ->
         r.fields.any { it.isPublic } || (r.fields.isNotEmpty() && creatable(r) && r.copyable) || twins(r).any { isValue(it.name) }
     }
+
+    /** A record whose instances count their references (a RefTarget): C adds and releases them, never deletes. */
+    fun refCounted(record: CppRecord): Boolean = record.bases.any { refs?.targets?.contains(it) == true || api.records[it]?.let(::refCounted) == true }
 
     /** Bases with [record]'s C name: C sees one type, so it gets theirs. */
     fun twins(record: CppRecord) = record.bases.mapNotNull { api.records[it] }.filter { names.type(it.name) == names.type(record.name) }
@@ -81,7 +86,7 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
         }
     }
 
-    /** A template argument as the model would resolve it; math types are external, as the dump skips them. */
+    /** A template argument as the model would resolve it. */
     private fun argumentType(spelling: String) = when {
         CAbi.isBuiltin(spelling) -> CppType(spelling, null, Kind.BUILTIN)
         spelling in api.records || spelling in api.enums -> CppType(spelling, spelling, Kind.DECLARED)
@@ -120,26 +125,32 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
         val shape = shape(type.spelling)
         if (shape.indirection == listOf("*", "*")) return pointers(type, shape, result)
         if (shape.indirection.size > 1) throw Unsupported("${type.spelling}: pointer to pointer")
-        val indirection = shape.indirection.firstOrNull()
+        var indirection = shape.indirection.firstOrNull()
+        var const = shape.const
         var target = type
         var alias: String? = null
         var lastAlias: String? = null
+        // An alias brings its own const and indirection: Vec3Arg is a `const Vec3`, Mat44Arg a `const Mat44 &`.
         while (!isArray(target) && target.decl in api.aliases) {
             alias = alias ?: target.decl
             lastAlias = target.decl
             target = api.aliases.getValue(target.decl!!)
-            if (shape(target.spelling).indirection.isNotEmpty()) throw Unsupported("${type.spelling}: alias of a pointer")
+            val aliased = shape(target.spelling)
+            const = const || aliased.const
+            if (aliased.indirection.isEmpty()) continue
+            if (indirection != null || aliased.indirection.size > 1) throw Unsupported("${type.spelling}: alias of a pointer")
+            indirection = aliased.indirection.single()
         }
-        if (isArray(target)) return sequence(target, DirectBridges(config, names, shape.const, indirection, result, lvalue))
-        var decl = target.decl
+        val bridge = DirectBridges(config, names, const, indirection, result, lvalue)
+        if (isArray(target)) return sequence(target, bridge)
         if (target.kind == Kind.TEMPLATE_PARAMETER) {
+            val decl = target.decl
             val argument = config.instantiations[decl!!.substringBeforeLast("::")]?.get(decl.substringAfterLast("::"))
                 ?: throw Unsupported("${type.spelling}: template parameter")
-            return DirectBridges(config, names, shape.const, indirection, result, lvalue).builtin(argument)
+            return bridge.builtin(argument)
         }
-        decl = decl?.let { config.custom.canonical(it, target) { spelling -> substitute(spelling, lastAlias.orEmpty()) } }
-        val bridge = DirectBridges(config, names, shape.const, indirection, result, lvalue)
         if (target.kind == Kind.FUNCTION && lastAlias != null && indirection != "&") return functionPointer(lastAlias, target, indirection == "*")
+        val decl = target.decl?.let { config.custom.canonical(it, target) { spelling -> substitute(spelling, lastAlias.orEmpty()) } }
         decl?.let { config.custom.bridge(it, target, alias, bridge) }?.let { custom ->
             custom.typedef?.let { callbackTypes += it }
             return custom
@@ -148,18 +159,57 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
             decl in config.allSequences -> sequence(target, bridge)
             decl == "std::optional" -> optional(target, bridge)
             decl == "std::function" && lastAlias != null -> function(lastAlias, target.args.single(), bridge)
+            refs != null && decl in refs.pointers -> ref(target, bridge)
+            decl in config.results -> fallible(target, bridge)
             indirection == "&&" -> throw Unsupported("${type.spelling}: rvalue reference")
             target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
             target.kind == Kind.FUNCTION -> throw Unsupported("${type.spelling}: function type")
             decl == null -> throw Unsupported("${type.spelling}: ${target.kind.name.lowercase()}")
-            decl in api.enums -> bridge.enum(cpp(decl!!), wideEnumType(api.enums.getValue(decl)))
-            decl in config.scalars -> bridge.scalar(decl!!, config.scalars.getValue(decl))
-            decl in config.allStrings -> bridge.string(decl!!)
-            decl in config.mirrors -> bridge.math(decl!!).also { mathTypes += decl }
-            decl in api.records && !api.records.getValue(decl).accessible -> throw Unsupported("${type.spelling}: not accessible")
-            decl in api.records -> api.records.getValue(decl!!).let { bridge.record(cpp(decl), isValue(decl), creatable(it) && it.defaultConstructible) }
+            decl in api.enums -> bridge.enum(cpp(decl), wideEnumType(api.enums.getValue(decl)))
+            decl in config.scalars -> bridge.scalar(decl, config.scalars.getValue(decl))
+            decl in config.allStrings -> bridge.string(decl)
+            decl in config.mirrors -> bridge.math(decl).also { mathTypes += decl }
+            decl in api.records -> bridge.record(cpp(handle(target).name), isValue(decl), api.records.getValue(decl).let { creatable(it) && it.defaultConstructible && it.copyable })
             else -> throw Unsupported("${type.spelling}: $decl")
         }
+    }
+
+    /** The record [type] names, when C has a handle for it. */
+    private fun handle(type: CppType): CppRecord {
+        val record = type.decl?.let(api.records::get) ?: throw Unsupported("${type.spelling}: ${type.kind.name.lowercase()}")
+        if (!record.accessible) throw Unsupported("${type.spelling}: not accessible")
+        if (uninstantiated(record)) throw Unsupported("${type.spelling}: class template")
+        return record
+    }
+
+    /**
+     * A reference-counting pointer ([RefCounting.pointers]) crosses as the pointer it holds. C++ takes its own reference to a parameter. A result by value
+     * hands C a reference to release (`_release`); one that outlives the call (a field, a `const Ref&`) is borrowed.
+     */
+    private fun ref(type: CppType, bridge: DirectBridges): CBridge {
+        if (!bridge.byValue) throw Unsupported("${type.spelling}: by pointer or non-const reference")
+        val const = if (refs!!.pointers.getValue(type.decl!!)) "const " else ""
+        val c = "$const${names.type(handle(type.args.single()).name)}*"
+        return when {
+            !bridge.result -> CBridge(c, { "$h::cpp($it)" })
+            bridge.indirection == null && !bridge.lvalue -> CBridge(c, { "$h::c($h::retain($it))" })
+            else -> CBridge(c, { "$h::c(($it).${refs.get}())" })
+        }
+    }
+
+    /**
+     * A result type ([ApiGenConfig.results]) is its value, or NULL (false, for a value C copies out) when it holds an error, whose message is
+     * then copied into `outError` up to its capacity, NUL-terminated.
+     */
+    private fun fallible(type: CppType, bridge: DirectBridges): CBridge {
+        if (!bridge.result || bridge.indirection != null) throw Unsupported("${type.spelling}: only as a result by value")
+        val value = result(type.args.single())
+        if (value.extra.isNotEmpty()) throw Unsupported("${type.spelling}: C takes its value in pieces")
+        val error = listOf("char*" to "outError", "uint32_t" to "outErrorCapacity")
+        if (value.out) return CBridge("bool", { call -> "$h::result($call, outError, outErrorCapacity, [&](auto& v) { ${value.store("v", "out")} return true; })" },
+            extra = listOf("${value.c}*" to "out") + error)
+        if (!value.c.endsWith("*")) throw Unsupported("${type.spelling}: no value says it failed")
+        return CBridge(value.c, { call -> "$h::result($call, outError, outErrorCapacity, [&](auto& v) { return ${value.convert("v")}; })" }, extra = error)
     }
 
     /**
@@ -172,7 +222,8 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
         // std::array's second argument is its size.
         val element = type.args.first()
-        val mirror = generateSequence(element) { t -> t.decl?.let(api.aliases::get) }.last().decl in config.mirrors &&
+        val resolved = generateSequence(element) { t -> t.decl?.let(api.aliases::get) }.last().decl
+        val mirror = resolved in config.mirrors &&
             shape(element.spelling).indirection.isEmpty()
         // A view's elements outlive it, as an lvalue's do.
         val lvalue = bridge.lvalue || bridge.indirection == "&" || type.decl in config.views
@@ -185,7 +236,7 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
             return CBridge(items, convert, extra = listOf("uint32_t" to "Count"),
                 assign = { field, v -> if (isArray(type)) "$h::assign($field, ${convert(v)});" else "$field = ${convert(v)};" })
         }
-        val handles = e.out && element.decl in api.records
+        val handles = e.out && !mirror && resolved in api.records
         val store = if (handles) e.store("x", "out[i]") else "out[i] = ${e.convert("x")};"
         return CBridge(
             "uint32_t",

@@ -13,19 +13,19 @@ void FilaRenderableManagerBone_destroy(FilaRenderableManagerBone* self) {
 }
 
 void FilaRenderableManagerBone_getUnitQuaternion(const FilaRenderableManagerBone* self, FilaQuatf* out) {
-    *out = std::bit_cast<FilaQuatf>(fila::cpp(self)->unitQuaternion);
+    *out = fila::mirror<FilaQuatf>(fila::cpp(self)->unitQuaternion);
 }
 
 void FilaRenderableManagerBone_setUnitQuaternion(FilaRenderableManagerBone* self, const FilaQuatf* value) {
-    fila::cpp(self)->unitQuaternion = std::bit_cast<filament::math::quatf>(*value);
+    fila::cpp(self)->unitQuaternion = fila::math<filament::math::quatf>(*value);
 }
 
 void FilaRenderableManagerBone_getTranslation(const FilaRenderableManagerBone* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->translation);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->translation);
 }
 
 void FilaRenderableManagerBone_setTranslation(FilaRenderableManagerBone* self, const FilaFloat3* value) {
-    fila::cpp(self)->translation = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->translation = fila::math<filament::math::float3>(*value);
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count) {

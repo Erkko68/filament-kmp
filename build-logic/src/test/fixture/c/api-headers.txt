@@ -1,5 +1,0 @@
-# The fixture's API headers: a glob, less a header that isn't API.
-
-[geo]
-geo/*.h
-!geo/internal.h

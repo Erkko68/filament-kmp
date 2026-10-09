@@ -5,12 +5,7 @@ import buildlogic.apigen.cpp.ApiModelTask
 import buildlogic.apigen.externals.GenerateBindingsTask
 import buildlogic.apigen.gaps.ApiCoverageTask
 import buildlogic.apigen.kotlin.GenerateKotlinExternalsTask
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.kotlin.dsl.register
 
 /**
@@ -85,12 +80,4 @@ fun Project.registerApiGenTasks(config: ApiGenConfig, packages: Map<String, Stri
         // Reads what they write, and tasks run in parallel under the configuration cache.
         mustRunAfter("generateCApi", "generateKotlinExternals")
     }
-}
-
-/** A task driving [ApiGen] for the library [config] describes, under [projectDir]. */
-abstract class ApiGenTask : DefaultTask() {
-    @get:Input abstract val config: Property<ApiGenConfig>
-    @get:Internal abstract val projectDir: DirectoryProperty
-
-    internal fun apiGen() = ApiGen(config.get(), projectDir.get().asFile, temporaryDir)
 }

@@ -10,7 +10,7 @@ import java.io.Serializable
  * touch when a version bump adds a scalar, template or string type.
  */
 data class ApiGenConfig(
-    /** The library as prose and file names spell it: `Filament`. */
+    /** The library as prose and file names spell it: `Jolt`. */
     val name: String,
     /** The dir the library's headers are included from, relative to the project. */
     val includeDir: String,
@@ -23,14 +23,14 @@ data class ApiGenConfig(
     /** Headers every translation unit includes first, relative to [includeDir]. */
     val prelude: List<String> = emptyList(),
     /**
-     * clang `-ast-dump-filter`s covering the API, dependencies first (names resolve as they're declared): `ns::` dumps
-     * a namespace whole, `ns::Prefix` the declarations in it whose names start so.
+     * clang `-ast-dump-filter`s covering the API: `ns::` dumps a namespace whole, `ns::Prefix` the declarations in it
+     * whose names start so.
      */
     val astFilters: List<String>,
     /** Namespaces nested in a filter's that are left unparsed (huge, and not API). */
     val skippedNamespaces: Set<String> = emptySet(),
 
-    /** What every C name starts with: `Fila`. */
+    /** What every C name starts with: `Jph`. */
     val prefix: String,
     /** Namespaces C names leave out, as every name would repeat them. */
     val droppedNamespaces: Set<String> = emptySet(),
@@ -44,13 +44,13 @@ data class ApiGenConfig(
     val helpers: String,
     /**
      * A hand-written header the forwarders include in place of `Bridge.hpp` (which it includes), relative to the first
-     * module's `generated/`: the helpers only the library can write.
+     * module's `generated/`: the helpers only the library can write, see [refs], [results] and `Bridge.hpp`'s hooks.
      */
     val bridgeHeader: String? = null,
     /** C declarations the first module's `Types.h` opens with: what [scalars] and [custom] bridges name. */
     val typedefs: List<String> = emptyList(),
 
-    /** Types C holds as a scalar (IDs, durations), by qualified name. */
+    /** Types C holds as a scalar (IDs, layers), by qualified name. */
     val scalars: Map<String, Scalar> = emptyMap(),
     /** Math types C mirrors as a struct of their storage, by qualified name. */
     val mirrors: Map<String, Mirror> = emptyMap(),
@@ -60,6 +60,9 @@ data class ApiGenConfig(
     val views: Set<String> = emptySet(),
     /** The library's string types, each with the spelling that constructs one from a `const char*`. */
     val strings: Map<String, String> = emptyMap(),
+    val refs: RefCounting? = null,
+    /** Value-or-error types: [bridgeHeader] declares `result(r, error, capacity, convert)` for them. */
+    val results: Set<String> = emptySet(),
     /** String types only literals convert to; overloads taking `const char*` cover them. */
     val literalOnly: Set<String> = emptySet(),
     /** The class templates' instantiations C binds, by template, named without the arguments: parameter → argument. */
@@ -90,8 +93,24 @@ data class Scalar(val c: String, val toCpp: String, val toC: String, val layout:
     internal fun toC(value: String) = toC.replace("{}", value)
 }
 
-/** A math type's storage: [count] of [element], which C mirrors as a struct layout-compatible with it. */
-data class Mirror(val element: String, val count: Int) : Serializable
+/**
+ * A math type's storage: [count] of [element]. [aligned]: C++ aligns it as a SIMD register, which C's mirror isn't,
+ * so C++ can't use C's storage in place.
+ */
+data class Mirror(val element: String, val count: Int, val aligned: Boolean = false) : Serializable
+
+/**
+ * Reference counting. [pointers]: the smart pointers C holds as the pointer inside, each with whether it points to
+ * const; [get] reads that pointer. [targets]: what a class derives from to be counted, by [addRef] and [release].
+ * [ApiGenConfig.bridgeHeader] declares `retain(p)`, which adds a reference to a pointer or a smart pointer's.
+ */
+data class RefCounting(
+    val pointers: Map<String, Boolean>,
+    val targets: Set<String>,
+    val get: String,
+    val addRef: String,
+    val release: String,
+) : Serializable
 
 /**
  * The bridges only one library has, which no table of [ApiGenConfig] expresses: the generator asks before its own. An

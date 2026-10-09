@@ -9,7 +9,7 @@ void FilaToneMapper_destroy(FilaToneMapper* self) {
 }
 
 void FilaToneMapper_invoke(const FilaToneMapper* self, const FilaFloat3* c, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->operator()(std::bit_cast<filament::math::float3>(*c)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->operator()(fila::math<filament::math::float3>(*c)));
 }
 
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self) {

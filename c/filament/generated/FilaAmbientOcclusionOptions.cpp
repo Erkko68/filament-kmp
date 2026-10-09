@@ -45,11 +45,11 @@ void FilaAmbientOcclusionOptionsSsct_setIntensity(FilaAmbientOcclusionOptionsSsc
 }
 
 void FilaAmbientOcclusionOptionsSsct_getLightDirection(const FilaAmbientOcclusionOptionsSsct* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->lightDirection);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->lightDirection);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setLightDirection(FilaAmbientOcclusionOptionsSsct* self, const FilaFloat3* value) {
-    fila::cpp(self)->lightDirection = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->lightDirection = fila::math<filament::math::float3>(*value);
 }
 
 float FilaAmbientOcclusionOptionsSsct_getDepthBias(const FilaAmbientOcclusionOptionsSsct* self) {

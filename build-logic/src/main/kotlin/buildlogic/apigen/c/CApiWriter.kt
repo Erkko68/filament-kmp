@@ -22,7 +22,7 @@ internal class CApiWriter(
     private val h = config.helpers
     private val names = CNames(config)
     private val bridges = CBridges(api, config, names)
-    private val rules = BindingRules(api, config, bridges)
+    private val rules = BindingRules(api, config, bridges, api.apiRecords(headers).mapTo(HashSet()) { it.name })
     private val surface = api.surface(headers)
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
@@ -74,6 +74,7 @@ internal class CApiWriter(
         val section = Section(file.module)
         val self = names.type(record.name)
         val cpp = bridges.cpp(record.name)
+        val counted = bridges.refCounted(record)
         if (rules.creates(record)) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
             skipped.forEach {
@@ -84,9 +85,15 @@ internal class CApiWriter(
                 val name = names.function(record.name, "create", suffix)
                 emit(name, "$cpp(${spelled(params)})", section) {
                     val bridged = bridge(params)
-                    "$self* $name(${cParams(null, bridged)})" to "return $h::c(new $cpp(${args(bridged)}));"
+                    val made = "new $cpp(${args(bridged)})"
+                    "$self* $name(${cParams(null, bridged)})" to "return $h::c(${if (counted) "$h::retain($made)" else made});"
                 }
             }
+        }
+        // What `_create` and results by value hand C: a reference to give back, in place of `_destroy`.
+        if (counted && !bridges.uninstantiated(record)) {
+            emit("${self}_addRef", "${record.name}::${config.refs!!.addRef}()", section) { "void ${self}_addRef(const $self* self)" to "$h::cpp(self)->${config.refs!!.addRef}();" }
+            emit("${self}_release", "${record.name}::${config.refs!!.release}()", section) { "void ${self}_release(const $self* self)" to "$h::cpp(self)->${config.refs!!.release}();" }
         }
         if (rules.destroys(record)) {
             emit("${self}_destroy", "~${record.name}()", section) {
@@ -255,15 +262,18 @@ internal class CApiWriter(
         else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
         if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
-        moduleRecords(module).filter { it.accessible && !bridges.uninstantiated(it) }
+        moduleRecords(module).filter { it.accessible }
             .forEach { text.appendLine("$typeMacro(${names.type(it.name)}, ${bridges.cpp(it.name)})") }
         return text.append("\n} // namespace $h\n").toString()
     }
 
-    private fun moduleRecords(module: String) = surface.mapNotNull { api.records[it] }.filter { handled(it) && moduleOf(it.header) == module }.sortedBy { it.name }
+    private fun moduleRecords(module: String) = surface.mapNotNull { api.records[it] }.filter { handled(it) && it !in twinBases && moduleOf(it.header) == module }.sortedBy { it.name }
 
-    /** A record C holds by a handle: not what crosses as a mirror or a scalar. */
-    private fun handled(record: CppRecord) = record.name !in config.mirrors && record.name !in config.scalars
+    /** Bases sharing a derived record's C name: the name is the derived record's handle, which converts to them. */
+    private val twinBases by lazy { surface.mapNotNull { api.records[it] }.flatMapTo(HashSet()) { bridges.twins(it) } }
+
+    /** A record C holds by a handle: not a class template, nor what crosses as a mirror or a scalar. */
+    private fun handled(record: CppRecord) = !bridges.uninstantiated(record) && record.name !in config.mirrors && record.name !in config.scalars
 
     private fun enum(enum: CppEnum): String {
         val name = names.type(enum.name)
@@ -295,7 +305,7 @@ internal class CApiWriter(
     private fun signature(m: CppMethod) = (if (m.isStatic) "static " else "") + "${m.returns.spelling} ${m.owner}::${m.name}(" +
         spelled(m.params) + ")" + if (m.isConst) " const" else ""
 
-    /** The C struct layout-compatible with a math type. */
+    /** The C struct with the storage of a math type; C++ sees the same bytes through the `math` and `mirror` helpers. */
     private fun mirror(decl: String) = config.mirrors.getValue(decl).let { m ->
         names.type(decl).let { "typedef struct $it { ${m.element} v[${m.count}]; } $it;" }
     }

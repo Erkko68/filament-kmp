@@ -18,7 +18,7 @@ class DirectBridges internal constructor(
 
     fun scalar(decl: String, scalar: Scalar): CBridge {
         if (byValue) return CBridge(scalar.c, if (result) scalar::toC else scalar::toCpp, out = result && CAbi.returnsThroughPointer(scalar.c))
-        if (!scalar.layout) throw Unsupported("$decl by pointer")
+        if (!scalar.layout || indirection == "&&") throw Unsupported("$decl by pointer")
         return pointer(scalar.c, decl)
     }
 
@@ -39,7 +39,8 @@ class DirectBridges internal constructor(
         }
     }
 
-    fun builtin(base: String): CBridge {
+    fun builtin(spelled: String): CBridge {
+        val base = spelled.removePrefix("std::")
         if (byValue) {
             val cType = CAbi.byValue(base)
             return CBridge(cType, if (cType == base) { v -> v } else cast(cType, base), out = result && CAbi.returnsThroughPointer(cType))
@@ -58,13 +59,18 @@ class DirectBridges internal constructor(
         return CBridge(name, cast(name, decl), out = result && wideType != null && CAbi.returnsThroughPointer(wideType))
     }
 
-    /** Structs never cross by value: parameters come by `const` pointer, results go out through one. */
+    /**
+     * Structs never cross by value: parameters come by `const` pointer, results go out through one. C++ can't use
+     * C's storage of a SIMD type in place ([alignedMirror]): one it writes through a reference is copied in and back.
+     */
     fun math(decl: String): CBridge {
         val name = names.type(decl)
         return when {
-            !byValue -> handle(name)
-            result -> CBridge(name, { "std::bit_cast<$name>($it)" }, out = true)
-            else -> CBridge("const $name*", { "std::bit_cast<$decl>(*$it)" })
+            byValue && result -> CBridge(name, { "$h::mirror<$name>($it)" }, out = true)
+            byValue -> CBridge("const $name*", { "$h::math<$decl>(*$it)" })
+            result || !config.mirrors.getValue(decl).aligned -> handle(name)
+            indirection == "&" -> CBridge("$name*", { "$h::InOut<$decl, $name>($it)" })
+            else -> throw Unsupported("$decl by pointer: C's mirror isn't aligned as the SIMD type is")
         }
     }
 

@@ -2,6 +2,13 @@
 package io.github.erkko68.filament.filamat.capi
 
 import io.github.erkko68.filament.interop.ExternalSymbolName
+import io.github.erkko68.filament.interop.NativePointer
+
+@ExternalSymbolName("FilaFilamatMaterialBuilderBase_create")
+internal external fun FilaFilamatMaterialBuilderBase_create(): NativePointer
+
+@ExternalSymbolName("FilaFilamatMaterialBuilderBase_destroy")
+internal external fun FilaFilamatMaterialBuilderBase_destroy(self: NativePointer)
 
 @ExternalSymbolName("FilaFilamatMaterialBuilderBase_init")
 internal external fun FilaFilamatMaterialBuilderBase_init()

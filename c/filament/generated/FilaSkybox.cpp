@@ -25,7 +25,7 @@ FilaSkyboxBuilder* FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* self, float en
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, const FilaFloat4* color) {
-    return fila::c(&fila::cpp(self)->color(std::bit_cast<filament::math::float4>(*color)));
+    return fila::c(&fila::cpp(self)->color(fila::math<filament::math::float4>(*color)));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t priority) {
@@ -37,7 +37,7 @@ FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* self, FilaEngine* engine)
 }
 
 void FilaSkybox_setColor(FilaSkybox* self, const FilaFloat4* color) {
-    fila::cpp(self)->setColor(std::bit_cast<filament::math::float4>(*color));
+    fila::cpp(self)->setColor(fila::math<filament::math::float4>(*color));
 }
 
 void FilaSkybox_setLayerMask(FilaSkybox* self, uint32_t select, uint32_t values) {

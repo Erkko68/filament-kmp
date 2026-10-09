@@ -173,11 +173,11 @@ void FilaLightManagerShadowOptions_setShadowBulbRadius(FilaLightManagerShadowOpt
 }
 
 void FilaLightManagerShadowOptions_getTransform(const FilaLightManagerShadowOptions* self, FilaQuatf* out) {
-    *out = std::bit_cast<FilaQuatf>(fila::cpp(self)->transform);
+    *out = fila::mirror<FilaQuatf>(fila::cpp(self)->transform);
 }
 
 void FilaLightManagerShadowOptions_setTransform(FilaLightManagerShadowOptions* self, const FilaQuatf* value) {
-    fila::cpp(self)->transform = std::bit_cast<filament::math::quatf>(*value);
+    fila::cpp(self)->transform = fila::math<filament::math::quatf>(*value);
 }
 
 float FilaLightManagerShadowOptions_getPenumbraScale(const FilaLightManagerShadowOptions* self) {
@@ -249,15 +249,15 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuild
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, const FilaFloat3* position) {
-    return fila::c(&fila::cpp(self)->position(std::bit_cast<filament::math::float3>(*position)));
+    return fila::c(&fila::cpp(self)->position(fila::math<filament::math::float3>(*position)));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, const FilaFloat3* direction) {
-    return fila::c(&fila::cpp(self)->direction(std::bit_cast<filament::math::float3>(*direction)));
+    return fila::c(&fila::cpp(self)->direction(fila::math<filament::math::float3>(*direction)));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, const FilaFloat3* color) {
-    return fila::c(&fila::cpp(self)->color(std::bit_cast<filament::math::float3>(*color)));
+    return fila::c(&fila::cpp(self)->color(fila::math<filament::math::float3>(*color)));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* self, float intensity) {
@@ -349,27 +349,27 @@ bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, 
 }
 
 void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, const FilaFloat3* position) {
-    fila::cpp(self)->setPosition(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(*position));
+    fila::cpp(self)->setPosition(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*position));
 }
 
 void FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getPosition(filament::LightManager::Instance(i)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getPosition(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, const FilaFloat3* direction) {
-    fila::cpp(self)->setDirection(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(*direction));
+    fila::cpp(self)->setDirection(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*direction));
 }
 
 void FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getDirection(filament::LightManager::Instance(i)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getDirection(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, const FilaFloat3* color) {
-    fila::cpp(self)->setColor(filament::LightManager::Instance(i), std::bit_cast<filament::math::float3>(*color));
+    fila::cpp(self)->setColor(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*color));
 }
 
 void FilaLightManager_getColor(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getColor(filament::LightManager::Instance(i)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getColor(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setIntensity(FilaLightManager* self, uint32_t i, float intensity) {

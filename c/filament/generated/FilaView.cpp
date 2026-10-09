@@ -29,11 +29,11 @@ void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float
 }
 
 void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->fragCoords);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->fragCoords);
 }
 
 void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, const FilaFloat3* value) {
-    fila::cpp(self)->fragCoords = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->fragCoords = fila::math<filament::math::float3>(*value);
 }
 
 FilaViewPickingQuery* FilaViewPickingQuery_create(void) {
@@ -237,7 +237,7 @@ void FilaView_getDynamicResolutionOptions(const FilaView* self, FilaDynamicResol
 }
 
 void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getLastDynamicResolutionScale());
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->getLastDynamicResolutionScale());
 }
 
 void FilaView_setRenderQuality(FilaView* self, const FilaRenderQuality* renderQuality) {
@@ -337,11 +337,11 @@ bool FilaView_isFrustumCullingEnabled(const FilaView* self) {
 }
 
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value) {
-    fila::cpp(self)->setMaterialGlobal(index, std::bit_cast<filament::math::float4>(*value));
+    fila::cpp(self)->setMaterialGlobal(index, fila::math<filament::math::float4>(*value));
 }
 
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getMaterialGlobal(index));
+    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->getMaterialGlobal(index));
 }
 
 FilaEntity FilaView_getFogEntity(const FilaView* self) {

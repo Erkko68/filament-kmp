@@ -3,7 +3,7 @@ package buildlogic.apigen.cpp
 import java.math.BigInteger
 
 /**
- * Filament's public headers as clang sees them: every record, enum, alias and constant in the dumped namespaces,
+ * A library's headers as clang sees them: every record, enum, alias and constant in the dumped namespaces,
  * keyed by qualified name. [surface] narrows it to the API: the exported classes and every type their public
  * members reach.
  */
@@ -86,7 +86,7 @@ class CppApi(
         (names + aliases.filterValues { it.decl in names }.keys).takeIf { it.size > names.size }
     }.last()
 
-    /** [apiRecords] and [apiFunctions], plus every type their public members reach. */
+    /** [apiRecords] and [apiFunctions], plus their bases and every type their public members reach. */
     fun surface(headers: Set<String>): Set<String> {
         val seen = LinkedHashSet<String>()
         val queue = ArrayDeque(apiRecords(headers).map { it.name })
@@ -99,6 +99,8 @@ class CppApi(
                 val fields = record.fields.filter { it.isPublic && skipReason(it, name) == null }
                 (methods.flatMap { m -> m.params.map { it.type } + m.returns } + fields.map { it.type })
                     .flatMap { it.withArgs() }.mapNotNullTo(queue) { it.decl }
+                // C upcasts to the bases.
+                queue += record.bases
             }
             aliases[name]?.withArgs()?.mapNotNullTo(queue) { it.decl }
         }
@@ -125,13 +127,12 @@ class CppType(val spelling: String, val decl: String?, val kind: Kind, val args:
 }
 
 /**
- * [header]: relative to the include dir, null outside it. [exported]: `*_PUBLIC`, or publicly nested in an exported
+ * [header]: relative to the include dir, null outside it. [exported]: marked with an export macro, or publicly nested in an exported
  * class. [accessible]: nameable from outside the class. [template]: a class template or nested in one, named without the arguments.
  * [constructors]: the public ones' parameters, copies and moves aside. [destructible]: publicly. [allocatable]: no
- * base deletes `operator new` (Filament's handle classes do: only the Engine creates them). [copyable]: no copy
- * constructor is deleted or hidden, nor implicitly deleted by a declared move (deletion by members goes unseen).
- * [declaredDestructor]: declares a public one, so factory-made instances are deleted through it (MaterialProvider,
- * SurfaceOrientation).
+ * base deletes `operator new`. [copyable]: no copy
+ * constructor is deleted or hidden, nor implicitly deleted by a declared move or a base (deletion by members goes unseen).
+ * [declaredDestructor]: declares a public one, so factory-made instances are deleted through it.
  */
 class CppRecord(
     val name: String,
