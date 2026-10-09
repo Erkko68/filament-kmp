@@ -197,7 +197,7 @@ class SwapChain @InternalFilamentApi constructor(
      *
      * @return TRUE or FALSE once known, INDETERMINATE until then
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns FALSE — display frame rate switching is not supported on web; pacing is browser-managed.")
+    @PlatformGap(platforms = [FilamentPlatform.IOS, FilamentPlatform.JVM, FilamentPlatform.WEB], behavior = "returns FALSE — only Android surfaces can switch the display frame rate.")
     val isFrameRateChangeSupported: Engine.FeatureState get() = Engine.FeatureState.entries[FilaSwapChain_isFrameRateChangeSupported(nativeHandle)]
 
     /**
@@ -207,6 +207,7 @@ class SwapChain @InternalFilamentApi constructor(
      *
      * @param frameRate The intended frame rate in frames per second. 0.0f clears/resets the rate.
      */
+    @PlatformGap(platforms = [FilamentPlatform.IOS, FilamentPlatform.JVM, FilamentPlatform.WEB], behavior = "no effect — only Android surfaces can switch the display frame rate.")
     fun setFrameRate(frameRate: Float) =
         setFrameRate(frameRate, FrameRateCompatibility.DEFAULT, ChangeFrameRateStrategy.ONLY_IF_SEAMLESS)
 
@@ -217,6 +218,7 @@ class SwapChain @InternalFilamentApi constructor(
      * @param compatibility Frame rate compatibility mode.
      * @param strategy      Change strategy for non-seamless transitions.
      */
+    @PlatformGap(platforms = [FilamentPlatform.IOS, FilamentPlatform.JVM, FilamentPlatform.WEB], behavior = "no effect — only Android surfaces can switch the display frame rate.")
     fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy) {
         FilaSwapChain_setFrameRate(nativeHandle, frameRate, compatibility.ordinal, strategy.ordinal)
     }
