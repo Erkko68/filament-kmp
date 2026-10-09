@@ -3,7 +3,7 @@ package buildlogic.apigen.externals
 import java.io.File
 
 /**
- * One common `@ExternalSymbolName("FilaX") external fun`: the C [symbol] it binds, its Kotlin [name],
+ * One common `@ExternalSymbolName("…") external fun`: the C [symbol] it binds, its Kotlin [name],
  * parameters and [returnType] as written in Kotlin (`NativePointer`, `Int`, `Long`, `Float`, `Double`,
  * `Boolean`, `Unit`).
  */

@@ -2,6 +2,7 @@ package buildlogic.filament
 
 import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.CustomBridges
+import buildlogic.apigen.KotlinBindings
 import buildlogic.apigen.Mirror
 import buildlogic.apigen.Scalar
 import buildlogic.apigen.c.CBridge
@@ -44,6 +45,14 @@ private val MIRRORS: Map<String, Mirror> =
     VECTOR_ELEMENTS.flatMap { (name, element) -> (2..4).map { "$MATH::$name$it" to Mirror(element, it) } }.toMap() +
         (2..4).flatMap { n -> listOf("$MATH::mat$n" to Mirror("double", n * n), "$MATH::mat${n}f" to Mirror("float", n * n)) } +
         mapOf("$MATH::quatf" to Mirror("float", 4), "$MATH::quat" to Mirror("double", 4), "$MATH::quath" to Mirror("uint16_t", 4))
+
+/** The Kotlin package of each C module's generated externals. */
+private val PACKAGES = mapOf(
+    "filament" to "io.github.erkko68.filament.capi",
+    "filamat" to "io.github.erkko68.filament.filamat.capi",
+    "filament-utils" to "io.github.erkko68.filament.utils.capi",
+    "gltfio" to "io.github.erkko68.filament.gltfio.capi",
+)
 
 internal val FILAMENT_API = ApiGenConfig(
     name = "Filament",
@@ -106,6 +115,13 @@ internal val FILAMENT_API = ApiGenConfig(
         "filament::Color::toSRGB" to listOf(emptyMap()),
     ),
     custom = FilamentBridges,
+    kotlin = KotlinBindings(
+        packages = PACKAGES,
+        interop = "io.github.erkko68.filament.interop",
+        wasmRuntime = "filament-kmp",
+        wasmPackage = "io.github.erkko68.filament.wasm",
+        wasmRuntimes = mapOf("filamat" to "filamat-kmp"),
+    ),
 )
 
 /** Buffers C lends Filament, callbacks with user data, and component instances. */
@@ -176,17 +192,9 @@ internal data object FilamentBridges : CustomBridges {
 
 private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "camutils", "geometry", "filament-iblprefilter", "utils")
 
-/** The Kotlin package of each C module's generated externals. */
-private val PACKAGES = mapOf(
-    "filament" to "io.github.erkko68.filament.capi",
-    "filamat" to "io.github.erkko68.filament.filamat.capi",
-    "filament-utils" to "io.github.erkko68.filament.utils.capi",
-    "gltfio" to "io.github.erkko68.filament.gltfio.capi",
-)
-
 /** The generator's tasks for Filament, and `apiGaps`, which reads Filament's libraries. */
 fun Project.registerFilamentApiGen() {
-    registerApiGenTasks(FILAMENT_API, PACKAGES, wasmRuntimes = mapOf("filamat" to "filamat-kmp"))
+    registerApiGenTasks(FILAMENT_API)
 
     if (hostPlatform() == "windows") return // nm can't read MSVC objects
     val target = FilamentTarget.host()

@@ -22,10 +22,9 @@ import org.gradle.kotlin.dsl.register
  *               C++ API the C API's objects don't call                 apiGaps  (report; the library's build registers it)
  * ```
  *
- * [packages]: the Kotlin package of each C module's generated externals; the modules are `api-headers.txt`'s sections.
- * [wasmRuntimes]: the C modules whose wasm exports go to a runtime of their own.
+ * The Kotlin stages are registered when the config has [ApiGenConfig.kotlin].
  */
-fun Project.registerApiGenTasks(config: ApiGenConfig, packages: Map<String, String>, wasmRuntimes: Map<String, String> = emptyMap()) {
+fun Project.registerApiGenTasks(config: ApiGenConfig) {
     val root = layout.projectDirectory
     val apiGen = ApiGen(config, projectDir, layout.buildDirectory.dir("tmp/apiGen").get().asFile)
     fun ApiGenTask.configure() {
@@ -48,15 +47,23 @@ fun Project.registerApiGenTasks(config: ApiGenConfig, packages: Map<String, Stri
         // Its TODOs note the functions the manual headers already write; the forwarders it compiles include the bridge header.
         inputs.files(provider { apiGen.headerFiles() + apiGen.apiHeadersFile + apiGen.manualHeaders() + apiGen.bridgeHeaders() })
         outputs.dirs(provider { apiGen.generatedDirs() })
-        doFirst { check(packages.keys == apiGen.apiHeaders.modules.keys) { "packages must list the api-headers.txt modules ${apiGen.apiHeaders.modules.keys}" } }
     }
+
+    tasks.register<ApiCoverageTask>("apiCoverage") {
+        group = "verification"
+        description = "Writes ${config.cDir}/api-coverage.txt: what of the C++ API the C and Kotlin APIs bind; warns on stale generated code."
+        configure()
+        // Reads what they write, and tasks run in parallel under the configuration cache.
+        mustRunAfter("generateCApi")
+        if (config.kotlin != null) mustRunAfter("generateKotlinExternals")
+    }
+
+    val kotlin = config.kotlin ?: return
 
     tasks.register<GenerateKotlinExternalsTask>("generateKotlinExternals") {
         group = "build setup"
         description = "Generates the common Kotlin externals of the generated and manual ${config.prefix}* C headers."
-        cDir.set(root.dir(config.cDir))
-        kotlinDir.set(root.dir("kotlin"))
-        this.packages.set(packages)
+        configure()
         // Reads the headers generateCApi writes.
         mustRunAfter("generateCApi")
     }
@@ -64,20 +71,11 @@ fun Project.registerApiGenTasks(config: ApiGenConfig, packages: Map<String, Stri
     tasks.register<GenerateBindingsTask>("generateBindings") {
         group = "build setup"
         description = "Generates the JNI forwarders and wasm export tables from the common externals."
-        sources.from(root.dir("kotlin").asFileTree.matching { include("*/src/commonMain/**/*.kt") })
-        headers.from(root.dir(config.cDir).asFileTree.matching { include("*/generated/*.h", "*/manual/*.h") })
-        cDir.set(root.dir(config.cDir))
-        this.wasmRuntimes.putAll(wasmRuntimes)
-        outputDir.set(layout.buildDirectory.dir("generated/bindings"))
-    }
-
-    tasks.register<ApiCoverageTask>("apiCoverage") {
-        group = "verification"
-        description = "Writes ${config.cDir}/api-coverage.txt: what of the C++ API the C and Kotlin APIs bind; warns on stale generated code."
         configure()
-        kotlinDir.set(root.dir("kotlin"))
-        this.packages.set(packages)
-        // Reads what they write, and tasks run in parallel under the configuration cache.
-        mustRunAfter("generateCApi", "generateKotlinExternals")
+        sources.from(root.dir(kotlin.dir).asFileTree.matching { include("*/src/commonMain/**/*.kt") })
+        headers.from(root.dir(config.cDir).asFileTree.matching { include("*/generated/*.h", "*/manual/*.h") })
+        // Reads the externals it rewrites.
+        mustRunAfter("generateKotlinExternals")
+        outputDir.set(layout.buildDirectory.dir("generated/bindings"))
     }
 }

@@ -16,7 +16,13 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     val includeDir: File = projectDir.absoluteFile.resolve(config.includeDir)
     val cDir: File = projectDir.absoluteFile.resolve(config.cDir)
     val apiHeadersFile: File = cDir.resolve("api-headers.txt")
-    val apiHeaders by lazy { ApiHeaders.parse(apiHeadersFile.readText()) }
+    /** The Kotlin modules' dir, or null for a C API alone. */
+    val kotlinDir: File? = config.kotlin?.let { projectDir.absoluteFile.resolve(it.dir) }
+    val apiHeaders by lazy {
+        ApiHeaders.parse(apiHeadersFile.readText()).also { headers ->
+            config.kotlin?.let { check(it.packages.keys == headers.modules.keys) { "packages must list the api-headers.txt modules ${headers.modules.keys}" } }
+        }
+    }
     val headers by lazy { apiHeaders.headers(includeDir) }
 
     fun headerFiles() = headers.map(includeDir::resolve)

@@ -6,7 +6,7 @@ import buildlogic.apigen.externals.ExternalSource
 /**
  * Writes the C side of the JNI bindings: for each external, the `Java_<class>_<name>` function the JVM
  * links it to, forwarding to the C symbol. Only the Kotlin types are known: pointers cross as `jlong` and
- * go through `void*`, which C converts to the declared pointer type; the included Fila* prototypes let
+ * go through `void*`, which C converts to the declared pointer type; the included C API prototypes let
  * the C compiler check everything else.
  */
 object JniForwarderWriter {

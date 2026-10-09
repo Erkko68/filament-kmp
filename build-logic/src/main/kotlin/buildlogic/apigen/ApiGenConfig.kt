@@ -74,6 +74,8 @@ data class ApiGenConfig(
     val functionInstantiations: Map<String, List<Map<String, String>>> = emptyMap(),
     /** The bridges no table expresses. */
     val custom: CustomBridges = NoCustomBridges,
+    /** The Kotlin stages, or null for a C API alone. */
+    val kotlin: KotlinBindings? = null,
 ) : Serializable {
     internal val allSequences get() = sequences + STD_SEQUENCES
     internal val allStrings get() = STD_STRINGS + strings
@@ -83,6 +85,23 @@ data class ApiGenConfig(
         val STD_STRINGS = mapOf("std::string_view" to "std::string_view", "std::string" to "std::string")
     }
 }
+
+/**
+ * The Kotlin externals of the C API, and the JNI and wasm glue made from them. [dir] holds a Kotlin module per C module,
+ * named as it is, relative to the project.
+ */
+data class KotlinBindings(
+    /** The package of each C module's generated externals; the modules are `api-headers.txt`'s sections. */
+    val packages: Map<String, String>,
+    /** The package declaring `ExternalSymbolName` and `NativePointer`. */
+    val interop: String,
+    /** The wasm runtime the exports go to, and the package of its `WASM_ARITIES` parity table. */
+    val wasmRuntime: String,
+    val wasmPackage: String,
+    /** The Kotlin modules whose wasm exports go to a runtime of their own. */
+    val wasmRuntimes: Map<String, String> = emptyMap(),
+    val dir: String = "kotlin",
+) : Serializable
 
 /**
  * A C++ type C holds as the scalar [c]: [toCpp] builds it from a C value, [toC] reads one back, each an expression
