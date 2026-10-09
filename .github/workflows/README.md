@@ -91,7 +91,7 @@ docs added (a store, not a history, otherwise the repo would gain a full copy of
 build). Each version is archived once, built from its tag.
 
 A generated site is ~60-80 MB and GitHub Pages caps one site at 1 GB, so the archive keeps one
-version per minor line (its newest patch, as patches don't change the API) for the eight newest
+version per minor line (its newest patch, as patches don't change the API) for the ten newest
 lines; the tags stay, so anything else can be rebuilt.
 
 The archive starts empty, so the first release after this landed shows no dropdown — it appears
