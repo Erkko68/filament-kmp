@@ -5,6 +5,7 @@ import buildlogic.apigen.cpp.ApiModelTask
 import buildlogic.apigen.externals.GenerateBindingsTask
 import buildlogic.apigen.gaps.ApiCoverageTask
 import buildlogic.apigen.kotlin.GenerateKotlinExternalsTask
+import buildlogic.apigen.verify.ApiVerifyTask
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
@@ -21,6 +22,7 @@ import org.gradle.kotlin.dsl.register
  * externals/    api-manifest.json → JNI forwarders, wasm tables     generateBindings (build/)
  * gaps/         what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
  *               C++ API the C API's objects don't call                 apiGaps  (report; the library's build registers it)
+ * verify/       hand-written Kotlin enums send C the C++ values        apiVerify (fails)
  * ```
  *
  * The Kotlin stages are registered when the config has [ApiGenConfig.kotlin].
@@ -67,6 +69,12 @@ fun Project.registerApiGenTasks(config: ApiGenConfig) {
         configure()
         // Reads the manifest generateCApi writes.
         mustRunAfter("generateCApi")
+    }
+
+    tasks.register<ApiVerifyTask>("apiVerify") {
+        group = "verification"
+        description = "Checks the hand-written Kotlin enums send C the values of ${config.name}'s."
+        configure()
     }
 
     tasks.register<GenerateBindingsTask>("generateBindings") {

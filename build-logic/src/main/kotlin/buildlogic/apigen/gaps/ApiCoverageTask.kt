@@ -1,6 +1,8 @@
 package buildlogic.apigen.gaps
 
 import buildlogic.apigen.ApiGenTask
+import buildlogic.apigen.kotlin.KotlinDeclarations
+import buildlogic.apigen.kotlin.kotlinApiSources
 import buildlogic.apigen.kotlin.kotlinExternals
 import buildlogic.apigen.kotlin.packageDir
 import buildlogic.apigen.stale
@@ -44,9 +46,7 @@ abstract class ApiCoverageTask : ApiGenTask() {
         warnStale("Kotlin externals", "generateKotlinExternals",
             stale(kotlin, kotlinExternals(manifest, config.get()), packages.map { (m, p) -> kotlin.resolve(packageDir(m, p)) }))
 
-        // The wrappers: main sources outside capi, comments aside (tests call externals directly).
-        val sources = kotlin.walkTopDown().filter { f -> f.extension == "kt" && f.invariantSeparatorsPath.let { MAIN.containsMatchIn(it) && "/capi/" !in it } }
-            .sortedBy { it.path }.joinToString("\n") { COMMENT.replace(it.readText(), "") }
+        val sources = kotlinApiSources(kotlin)
         val called = Regex("""\b${Regex.escape(config.get().prefix)}\w+""").findAll(sources).mapTo(HashSet()) { it.value }
         val lines = lines { if (it in called) "wrapped" else "unwrapped" }
         val summary = summary(lines, STATUSES)
@@ -78,8 +78,6 @@ abstract class ApiCoverageTask : ApiGenTask() {
     }
 
     private companion object {
-        val MAIN = Regex("""/src/\w*Main/""")
-        val COMMENT = Regex("""//[^\n]*|/\*[\s\S]*?\*/""")
         val STATUSES = listOf("wrapped", "unwrapped", "todo", "skipped")
         val C_STATUSES = listOf("bound", "todo", "skipped")
         val VALUE_STATUSES = listOf("declared", "undeclared", "untyped")

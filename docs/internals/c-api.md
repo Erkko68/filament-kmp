@@ -27,6 +27,7 @@ clang JSON AST ──► C++ API model ───────────► apiM
                         │    generateBindings ◄───────┘  JNI forwarders, wasm export lists  (build/, not committed)
                         │
                         ├──► apiCoverage ──► c/api-coverage.txt: bound in C, called by Kotlin? (committed)
+                        ├──► apiVerify ──► fails when a Kotlin enum's values aren't the C++ ones
                         └──► apiGaps ──► C++ API the C layer doesn't call               (report)
 ```
 
@@ -37,6 +38,7 @@ clang JSON AST ──► C++ API model ───────────► apiM
 | `./gradlew generateKotlinExternals` | `c/api-manifest.json` | each Kotlin module's `capi` package |
 | `./gradlew generateBindings` | `c/api-manifest.json` | `build/generated/bindings/` (runs as part of every native build) |
 | `./gradlew apiCoverage` | the headers + `c/` + the Kotlin sources | `c/api-coverage.txt`; warns when `c/` or `capi` is stale |
+| `./gradlew apiVerify` | the headers + the Kotlin sources | nothing; fails when a hand-written Kotlin enum's ordinal (or explicit `value`) isn't the C++ constant's |
 | `./gradlew apiGaps` | Filament's libraries + the `c/` objects | `build/reports/api-gaps.txt` (macOS and Linux hosts) |
 
 The generated C and Kotlin files are committed. A diff in them is the review surface for an upgrade
