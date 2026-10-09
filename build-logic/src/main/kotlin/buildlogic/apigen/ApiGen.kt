@@ -1,6 +1,7 @@
 package buildlogic.apigen
 
 import buildlogic.apigen.c.CApiWriter
+import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppApiReader
 import buildlogic.apigen.cpp.clang
@@ -16,6 +17,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     val includeDir: File = projectDir.absoluteFile.resolve(config.includeDir)
     val cDir: File = projectDir.absoluteFile.resolve(config.cDir)
     val apiHeadersFile: File = cDir.resolve("api-headers.txt")
+    val manifestFile: File = cDir.resolve("api-manifest.json")
     /** The Kotlin modules' dir, or null for a C API alone. */
     val kotlinDir: File? = config.kotlin?.let { projectDir.absoluteFile.resolve(it.dir) }
     val apiHeaders by lazy {
@@ -31,6 +33,9 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
 
     /** Hand-written headers: what they declare, the generator leaves alone. */
     fun manualHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
+
+    /** The functions the C headers on disk declare, generated and hand-written. */
+    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.prefix, workDir)
 
     /** The hand-written C++ headers the forwarders are compiled against. */
     fun bridgeHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "hpp" }.orEmpty().toList() }

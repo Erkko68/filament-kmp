@@ -6,7 +6,7 @@ import org.gradle.work.DisableCachingByDefault
 
 /**
  * Generates the C API from the library's headers into `<module>/generated` ([CApiWriter]), then checks the headers
- * parse as C and the forwarders compile against the library's headers.
+ * parse as C and the forwarders compile against the library's headers, and writes `api-manifest.json` ([CManifest]).
  */
 @DisableCachingByDefault(because = "Writes committed sources")
 abstract class GenerateCApiTask : ApiGenTask() {
@@ -16,6 +16,7 @@ abstract class GenerateCApiTask : ApiGenTask() {
         val files = apiGen.writer().write()
         apiGen.write(files)
         apiGen.checkCompiles(files.keys.map(apiGen.cDir::resolve))
+        apiGen.manifestFile.writeText(apiGen.manifest().json())
         val text = files.values.joinToString("")
         logger.lifecycle("${FUNCTION.findAll(text).count()} functions generated, ${text.split("TODO(handwritten)").size - 1} left for hand-written code")
     }

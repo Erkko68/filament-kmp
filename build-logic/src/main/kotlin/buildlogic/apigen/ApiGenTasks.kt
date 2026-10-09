@@ -15,9 +15,10 @@ import org.gradle.kotlin.dsl.register
  * ApiGenConfig  what the generator is told about the library; ApiGen runs the cpp and c stages, without Gradle
  * ApiHeaders    api-headers.txt: which headers are API, and the C module each goes to
  * cpp/          clang's AST of those headers → CppApi model         apiModel        (report)
- * c/            CppApi → c/<module>/generated                       generateCApi    (committed)
- * kotlin/       c/<module>/{generated,manual} → Kotlin externals     generateKotlinExternals (committed)
- * externals/    common Kotlin externals → JNI forwarders, wasm tables  generateBindings (build/)
+ * c/            CppApi → c/<module>/generated; the functions those and
+ *               c/<module>/manual declare → c/api-manifest.json     generateCApi    (committed)
+ * kotlin/       api-manifest.json → Kotlin externals                generateKotlinExternals (committed)
+ * externals/    api-manifest.json → JNI forwarders, wasm tables     generateBindings (build/)
  * gaps/         what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
  *               C++ API the C API's objects don't call                 apiGaps  (report; the library's build registers it)
  * ```
@@ -58,24 +59,23 @@ fun Project.registerApiGenTasks(config: ApiGenConfig) {
         if (config.kotlin != null) mustRunAfter("generateKotlinExternals")
     }
 
-    val kotlin = config.kotlin ?: return
+    if (config.kotlin == null) return
 
     tasks.register<GenerateKotlinExternalsTask>("generateKotlinExternals") {
         group = "build setup"
-        description = "Generates the common Kotlin externals of the generated and manual ${config.prefix}* C headers."
+        description = "Generates the common Kotlin externals of the ${config.prefix}* C functions in api-manifest.json."
         configure()
-        // Reads the headers generateCApi writes.
+        // Reads the manifest generateCApi writes.
         mustRunAfter("generateCApi")
     }
 
     tasks.register<GenerateBindingsTask>("generateBindings") {
         group = "build setup"
-        description = "Generates the JNI forwarders and wasm export tables from the common externals."
+        description = "Generates the JNI forwarders and wasm export tables of the functions in api-manifest.json."
         configure()
-        sources.from(root.dir(kotlin.dir).asFileTree.matching { include("*/src/commonMain/**/*.kt") })
-        headers.from(root.dir(config.cDir).asFileTree.matching { include("*/generated/*.h", "*/manual/*.h") })
-        // Reads the externals it rewrites.
-        mustRunAfter("generateKotlinExternals")
+        manifest.set(apiGen.manifestFile)
+        // Reads the manifest it writes.
+        mustRunAfter("generateCApi")
         outputDir.set(layout.buildDirectory.dir("generated/bindings"))
     }
 }

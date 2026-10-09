@@ -46,7 +46,7 @@ kotlin {
             api("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
         }
         webTest {
-            // The export parity test's arities, generated from the common externals.
+            // The export parity test's arities, generated from c/api-manifest.json.
             kotlin.srcDir(files(rootProject.layout.buildDirectory.dir("generated/bindings/webTest")).builtBy(":generateBindings"))
             resources.srcDir(stageFilamentWasm)
             dependencies {

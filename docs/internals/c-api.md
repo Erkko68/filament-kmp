@@ -19,11 +19,12 @@ clang JSON AST ──► C++ API model ───────────► apiM
                         │
                         ├──► generateCApi ──► c/<module>/generated/Fila*.{h,cpp}     (committed)
                         │                       + c/<module>/manual/ (hand-written leftovers)
+                        │                       └──► c/api-manifest.json: every C function, by header (committed)
                         │                             │
-                        │    generateKotlinExternals ◄┘
+                        │    generateKotlinExternals ◄┤
                         │         └──► kotlin/<module>/src/commonMain/.../capi/*.kt  (committed)
-                        │                    │
-                        │    generateBindings ◄┘  JNI forwarders, wasm export lists  (build/, not committed)
+                        │                             │
+                        │    generateBindings ◄───────┘  JNI forwarders, wasm export lists  (build/, not committed)
                         │
                         ├──► apiCoverage ──► c/api-coverage.txt: bound in C, called by Kotlin? (committed)
                         └──► apiGaps ──► C++ API the C layer doesn't call               (report)
@@ -32,9 +33,9 @@ clang JSON AST ──► C++ API model ───────────► apiM
 | Task | Reads | Writes |
 | :--- | :--- | :--- |
 | `./gradlew apiModel` | the headers `c/api-headers.txt` lists | `build/reports/api-model.txt`: the C++ surface clang sees |
-| `./gradlew generateCApi` | the same headers + `c/api-headers.txt` | `c/<module>/generated/` and each module's `Types.h` |
-| `./gradlew generateKotlinExternals` | `c/<module>/{generated,manual}/*.h` | each Kotlin module's `capi` package |
-| `./gradlew generateBindings` | the common `external fun`s | `build/generated/bindings/` (runs as part of every native build) |
+| `./gradlew generateCApi` | the same headers + `c/api-headers.txt` + `c/<module>/manual/*.h` | `c/<module>/generated/`, each module's `Types.h`, and `c/api-manifest.json` |
+| `./gradlew generateKotlinExternals` | `c/api-manifest.json` | each Kotlin module's `capi` package |
+| `./gradlew generateBindings` | `c/api-manifest.json` | `build/generated/bindings/` (runs as part of every native build) |
 | `./gradlew apiCoverage` | the headers + `c/` + the Kotlin sources | `c/api-coverage.txt`; warns when `c/` or `capi` is stale |
 | `./gradlew apiGaps` | Filament's libraries + the `c/` objects | `build/reports/api-gaps.txt` (macOS and Linux hosts) |
 

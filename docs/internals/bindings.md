@@ -7,7 +7,7 @@ Where the C API itself comes from (generated from Filament's C++ headers) is cov
 ## The idea
 
 Each API class (`Scene`, `View`, `Engine`…) is written **once, in `commonMain`**, and calls our
-C API (`c/`, the `Fila*` functions) through `external fun` declarations generated from the C headers
+C API (`c/`, the `Fila*` functions) through `external fun` declarations generated from the C API's manifest
 into the module's `capi` package (`./gradlew generateKotlinExternals`). There
 are no per-platform `actual`s for API logic. Only the way an `external fun` reaches its C symbol
 differs by platform, and nobody writes that part by hand. This is the model

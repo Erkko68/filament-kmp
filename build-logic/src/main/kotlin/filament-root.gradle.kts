@@ -3,7 +3,7 @@
 //   prebuilts          every downloadable target + headers (source-built ones stay on demand: they're slow)
 //   downloadIncludes   Filament's public headers (include/)
 //   setupEmsdk         the Emscripten SDK (.emsdk/) for the wasm builds
-//   generateBindings   JNI forwarders + wasm export tables from the common externals
+//   generateBindings   JNI forwarders + wasm export tables from c/api-manifest.json
 //   generateCApi       the Fila* C API's forwarders from Filament's public headers, into c/<module>/generated
 //   cmakeBuild_<id>    the C API's static libraries for an iOS target (packed into the klibs)
 //   apiGaps           the Filament API nothing binds yet (build/reports/api-gaps.txt)

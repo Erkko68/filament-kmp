@@ -14,7 +14,7 @@ data class ApiGenConfig(
     val name: String,
     /** The dir the library's headers are included from, relative to the project. */
     val includeDir: String,
-    /** Holds `api-headers.txt`, `api-coverage.txt` and, per module, `<module>/generated` and `<module>/manual`. */
+    /** Holds `api-headers.txt`, `api-manifest.json`, `api-coverage.txt` and, per module, `<module>/generated` and `<module>/manual`. */
     val cDir: String = "c",
 
     val std: String = "c++20",

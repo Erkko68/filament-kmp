@@ -25,6 +25,8 @@ abstract class ApiCoverageTask : ApiGenTask() {
         val headers = apiGen.headers
         val writer = apiGen.writer()
         warnStale("C API", "generateCApi", apiGen.stale(writer.write()))
+        val manifest = apiGen.manifest()
+        if (!apiGen.manifestFile.isFile || apiGen.manifestFile.readText() != manifest.json()) warnStale("C API", "generateCApi", setOf(apiGen.manifestFile.name))
         val report = c.resolve("api-coverage.txt")
         fun lines(status: (String) -> String) = writer.bindings.distinctBy { it.c to it.cpp }.sortedWith(compareBy({ it.c }, { it.cpp })).map { b ->
             "${(b.gap?.substringBefore(':') ?: status(b.c)).padEnd(9)} ${b.c} = ${b.cpp}" + (b.gap?.substringAfter(": ")?.let { "  -- $it" } ?: "")
@@ -40,7 +42,7 @@ abstract class ApiCoverageTask : ApiGenTask() {
         }
         val packages = config.get().kotlin!!.packages
         warnStale("Kotlin externals", "generateKotlinExternals",
-            stale(kotlin, kotlinExternals(c, config.get()), packages.map { (m, p) -> kotlin.resolve(packageDir(m, p)) }))
+            stale(kotlin, kotlinExternals(manifest, config.get()), packages.map { (m, p) -> kotlin.resolve(packageDir(m, p)) }))
 
         // The wrappers: main sources outside capi, comments aside (tests call externals directly).
         val sources = kotlin.walkTopDown().filter { f -> f.extension == "kt" && f.invariantSeparatorsPath.let { MAIN.containsMatchIn(it) && "/capi/" !in it } }
