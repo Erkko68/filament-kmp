@@ -1,20 +1,21 @@
 package buildlogic.apigen.c
 
+import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppField
 import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppRecord
 
 /** What C binds of a record: `_create`/`_destroy`, upcasts, methods and field accessors. [CApiWriter] writes them. */
-internal class BindingRules(private val api: CppApi, private val bridges: CBridges) {
-    /** Records the API's functions and constructors take (IBLPrefilterContext, only passed to its filters). */
+internal class BindingRules(private val api: CppApi, private val config: ApiGenConfig, private val bridges: CBridges) {
+    /** Records the API's functions and constructors take (a context only passed to its filters). */
     private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
         .plus(api.records.values.flatMap { it.constructors })
         .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
 
     /**
      * Records the API reads: taken by value, `const&`, `const*` or `&&`, and the records their fields hold. The others
-     * are only results (Engine::FeatureFlag).
+     * are only results.
      */
     private val inputRecords = run {
         val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
@@ -24,7 +25,7 @@ internal class BindingRules(private val api: CppApi, private val bridges: CBridg
         generateSequence(taken) { seen -> (seen + seen.flatMap { api.records[it]?.fields.orEmpty().mapNotNull { f -> f.type.decl } }).toHashSet().takeIf { it.size > seen.size } }.last()
     }
 
-    /** `_create` per public constructor: worth it for something to call or something taking it, not Color's static helpers. */
+    /** `_create` per public constructor: worth it for something to call or something taking it, not a holder of static helpers. */
     fun creates(record: CppRecord) = !bridges.uninstantiated(record) && record.allocatable &&
         (record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated } || bridges.isValue(record.name) || record.name in parameterTypes)
 
@@ -44,7 +45,7 @@ internal class BindingRules(private val api: CppApi, private val bridges: CBridg
      */
     fun methods(record: CppRecord): List<CppMethod> {
         val all = (record.methods + bridges.twins(record).flatMap { it.methods })
-            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
+            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in config.literalOnly } }
         val bases = upcasts(record)
         val signatures = all.mapTo(HashSet()) { m -> m.name to m.params.map { passed(it.type.spelling) } }
         return all.filterNot { m -> m.isOverride && bases.any { b -> b.methods.any { it.name == m.name } } || lengthOverload(m, signatures) }

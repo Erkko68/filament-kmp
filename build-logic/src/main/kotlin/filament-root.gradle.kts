@@ -8,7 +8,7 @@
 //   cmakeBuild_<id>    the C API's static libraries for an iOS target (packed into the klibs)
 //   apiGaps           the Filament API nothing binds yet (build/reports/api-gaps.txt)
 
-import buildlogic.apigen.registerApiGenTasks
+import buildlogic.filament.registerFilamentApiGen
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.hostPlatform
@@ -77,4 +77,4 @@ if (hostPlatform() == "macos") {
     }
 }
 
-registerApiGenTasks()
+registerFilamentApiGen()

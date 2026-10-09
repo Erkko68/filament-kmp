@@ -1,12 +1,12 @@
 package buildlogic.apigen.cpp
 
-import org.gradle.process.ExecOperations
+import buildlogic.apigen.ApiGenConfig
 import java.io.File
 import java.math.BigInteger
 
 /** Builds a [CppApi] from clang's AST of [headers]; nothing here parses C++ itself. */
-internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
-    private val ast = ClangAstDump(exec, workDir)
+internal class CppApiReader(private val config: ApiGenConfig, private val workDir: File) {
+    private val ast = ClangAstDump(config, workDir)
     private val scopes = CppScopes()
     private val records = LinkedHashMap<String, CppRecord>()
     private val enums = LinkedHashMap<String, CppEnum>()
@@ -23,24 +23,24 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
     fun read(includeDir: File, headers: Collection<String>): CppApi {
         guards = PreprocessorGuards(includeDir)
         val unit = workDir.resolve("headers.cpp")
-        unit.writeText(headers.sorted().joinToString("") { "#include <$it>\n" })
+        unit.writeText((config.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
-        // Every filter's namespace up front: image's bundles name filament::math before the filament:: dump runs.
-        FILTERS.forEach { filter ->
+        // Every filter's namespace up front: a later dump's names may be spelled before it runs.
+        config.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             if (filter.endsWith("::")) scopes.namespace(namespace) else if (namespace.isNotEmpty()) scopes.partialNamespace(namespace)
-            SKIPPED.forEach { scopes.partialNamespace(qualify(namespace, it)) }
+            config.skippedNamespaces.forEach { scopes.partialNamespace(qualify(namespace, it)) }
         }
         // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
-        FILTERS.forEach { filter ->
+        config.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
-            ast.forEachDeclaration(unit, includeDir, filter, SKIPPED) { document ->
+            ast.forEachDeclaration(unit, includeDir, filter, config.skippedNamespaces) { document ->
                 locationOf = DeclarationFiles.of(document, includeDir)
                 visit(document, namespace, exported = false, accessible = true)
             }
         }
         val missed = headers.filterNot { it in seenHeaders }
-        check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to CppApiReader.FILTERS" }
+        check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to the config's astFilters" }
         return CppApi(records, enums, aliases, constants, publicConstants, functions)
     }
 
@@ -210,11 +210,6 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
     private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
 
     private companion object {
-        // Dependencies first (names resolve as they're declared): filament uses utils::EntityManager, ktxreader uses
-        // image's bundles and filament.
-        val FILTERS = listOf("utils::EntityManager", "image::Ktx", "filament::", "filamat::", "ktxreader::", "IBLPrefilterContext")
-        // Math templates are huge and declare no API of their own.
-        val SKIPPED = setOf("math")
         val TEMPLATE_PARAMETERS = setOf("TemplateTypeParmDecl", "NonTypeTemplateParmDecl", "TemplateTemplateParmDecl")
         val NOT_EXPRESSIONS = listOf("Comment", "Attr", "Decl")
         val NOEXCEPT_EXPR = Regex("""noexcept\([^()]*\)\s*$""")

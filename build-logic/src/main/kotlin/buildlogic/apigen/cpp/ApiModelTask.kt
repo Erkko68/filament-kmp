@@ -1,35 +1,21 @@
 package buildlogic.apigen.cpp
 
-import buildlogic.apigen.relativeHeaders
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
+import buildlogic.apigen.ApiGenTask
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import javax.inject.Inject
 
 /** Writes the [CppApi] surface to [report], then the types it couldn't resolve and the defaults it couldn't fold. */
 @DisableCachingByDefault(because = "A local report")
-abstract class ApiModelTask @Inject constructor(private val exec: ExecOperations) : DefaultTask() {
-    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val publicHeaders: ConfigurableFileCollection
-
-    @get:Internal abstract val includeDir: DirectoryProperty
-
+abstract class ApiModelTask : ApiGenTask() {
     @get:OutputFile abstract val report: RegularFileProperty
 
     @TaskAction
     fun run() {
-        val include = includeDir.get().asFile
-        val headers = relativeHeaders(publicHeaders.files, include)
-        val api = CppApiReader(exec, temporaryDir).read(include, headers)
+        val apiGen = apiGen()
+        val headers = apiGen.headers
+        val api = apiGen.read()
         val surface = api.surface(headers)
         val unresolved = sortedSetOf<String>()
         val unsupported = sortedSetOf<String>()
