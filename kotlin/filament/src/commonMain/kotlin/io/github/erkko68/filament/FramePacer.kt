@@ -21,22 +21,22 @@ class FramePacer @InternalFilamentApi constructor(internal var nativeHandle: Nat
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
-    enum class FrameStatus {
+    enum class FrameStatus(internal val value: Int) {
         /** Skipped to keep the target frame rate cadence (e.g. 30 FPS on a 60Hz display). */
-        SKIPPED_SPURIOUS,
+        SKIPPED_SPURIOUS(-2),
         /** Skipped to prevent out-of-order presentation. */
-        SKIPPED_STALE,
+        SKIPPED_STALE(-1),
         /** The frame is approved for rendering. */
-        ACCEPTED,
+        ACCEPTED(0),
     }
 
-    enum class PacingStatus {
+    enum class PacingStatus(internal val value: Int) {
         /** Operating at or near the configured latency. */
-        STEADY,
+        STEADY(0),
         /** Latency has shrunk: the display is starving for buffers. */
-        DISPLAY_STARVING,
+        DISPLAY_STARVING(-1),
         /** Latency has bloated: the display queue is stuffed. */
-        DISPLAY_STUFFED,
+        DISPLAY_STUFFED(1),
     }
 
     /** One expected hardware presentation timeline. */
@@ -111,7 +111,7 @@ class FramePacer @InternalFilamentApi constructor(internal var nativeHandle: Nat
                 FilaFramePacer_setupFrame(nativeHandle, t)
             }
         }
-        return FrameStatus.entries[status + 2] // SKIPPED_SPURIOUS is -2
+        return FrameStatus.entries.first { it.value == status }
     }
 
     /**
@@ -140,11 +140,7 @@ class FramePacer @InternalFilamentApi constructor(internal var nativeHandle: Nat
     val effectiveLatency: Long get() = longs { FilaFramePacer_getEffectiveLatency(nativeHandle, it) }
 
     /** The pipeline's flow control status. */
-    val pacingStatus: PacingStatus get() = when (FilaFramePacer_getPacingStatus(nativeHandle)) {
-        -1 -> PacingStatus.DISPLAY_STARVING
-        1 -> PacingStatus.DISPLAY_STUFFED
-        else -> PacingStatus.STEADY
-    }
+    val pacingStatus: PacingStatus get() = FilaFramePacer_getPacingStatus(nativeHandle).let { status -> PacingStatus.entries.first { it.value == status } }
 
     /** Drops the relative pacing state and re-anchors to the target latency on the next frame. */
     fun resetPacing() = FilaFramePacer_resetPacing(nativeHandle)

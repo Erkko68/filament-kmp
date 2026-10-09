@@ -24,13 +24,13 @@ class Fence @InternalFilamentApi constructor(
         DONT_FLUSH
     }
     /** Error codes for Fence.wait() */
-    enum class FenceStatus {
+    enum class FenceStatus(internal val value: Int) {
         /** An error occurred. The Fence condition is not satisfied. */
-        ERROR,
+        ERROR(-1),
         /** The Fence condition is satisfied. */
-        CONDITION_SATISFIED,
+        CONDITION_SATISFIED(0),
         /** wait()'s timeout expired. The Fence condition is not satisfied. */
-        TIMEOUT_EXPIRED
+        TIMEOUT_EXPIRED(1)
     }
 
     /**
@@ -49,7 +49,7 @@ class Fence @InternalFilamentApi constructor(
     fun wait(mode: Mode = Mode.FLUSH, timeout: Long = FENCE_WAIT_FOR_EVER): FenceStatus {
         // Single-threaded wasm rejects a non-zero timeout; a FLUSH has already run every command there.
         val result = FilaFence_wait(nativeHandle, mode.ordinal, if (singleThreaded) 0L else timeout)
-        return FenceStatus.entries[result + 1] // ERROR is -1, ordinal 0
+        return FenceStatus.entries.first { it.value == result }
     }
 
     val nativeObject: NativePointer get() = nativeHandle
@@ -76,7 +76,7 @@ class Fence @InternalFilamentApi constructor(
             }
             val result = FilaFence_waitAndDestroy(fence.nativeHandle, mode.ordinal)
             fence.nativeHandle = NullPointer
-            return FenceStatus.entries[result + 1]
+            return FenceStatus.entries.first { it.value == result }
         }
     }
 }

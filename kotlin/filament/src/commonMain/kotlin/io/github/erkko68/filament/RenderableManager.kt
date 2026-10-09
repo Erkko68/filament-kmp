@@ -44,8 +44,8 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
-    /** Primitive topology types. */
-    enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
+    /** Primitive topology types; upstream's unused LINE_LOOP (2) is left out. */
+    enum class PrimitiveType(internal val value: Int) { POINTS(0), LINES(1), LINE_STRIP(3), TRIANGLES(4), TRIANGLE_STRIP(5) }
 
     /**
      * A bone transform as a unit quaternion and a translation, the compact alternative to a 4x4 matrix.
@@ -92,7 +92,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
         private val scope = InteropScope()
 
         /** Outcome of [build]. */
-        enum class Result { Error, Success }
+        enum class Result(internal val value: Int) { Error(-1), Success(0) }
 
         /** Type of geometry for a Renderable. */
         enum class GeometryType {
@@ -123,7 +123,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(nativeBuilder, index, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, minIndex, maxIndex, count)
+            FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(nativeBuilder, index, type.value, vertices.nativeHandle, indices.nativeHandle, offset, minIndex, maxIndex, count)
         }
         /**
          * Specifies the geometry data for a primitive with offset and count.
@@ -133,7 +133,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(nativeBuilder, index, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, count)
+            FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(nativeBuilder, index, type.value, vertices.nativeHandle, indices.nativeHandle, offset, count)
         }
         /**
          * Specifies the geometry data for a primitive, using the whole index buffer.
@@ -144,7 +144,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_geometry_IndexBuffer(nativeBuilder, index, type.toNative(), vertices.nativeHandle, indices.nativeHandle)
+            FilaRenderableManagerBuilder_geometry_IndexBuffer(nativeBuilder, index, type.value, vertices.nativeHandle, indices.nativeHandle)
         }
         /**
          * Specifies the geometry data for a non-indexed primitive: offset / count refer to vertices.
@@ -158,7 +158,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, offset: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometry_size_t_size_t(nativeBuilder, index, type.toNative(), vertices.nativeHandle, offset, count)
+            FilaRenderableManagerBuilder_geometry_size_t_size_t(nativeBuilder, index, type.value, vertices.nativeHandle, offset, count)
         }
         /**
          * Specifies the geometry data for a non-indexed primitive using all vertices.
@@ -166,7 +166,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_geometry(nativeBuilder, index, type.toNative(), vertices.nativeHandle)
+            FilaRenderableManagerBuilder_geometry(nativeBuilder, index, type.value, vertices.nativeHandle)
         }
 
         /**
@@ -462,7 +462,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
             val result = FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
             FilaRenderableManagerBuilder_destroy(nativeBuilder)
             scope.release()
-            return if (result == 0) Result.Success else Result.Error
+            return Result.entries.first { it.value == result }
         }
     }
 
@@ -672,13 +672,13 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param count number of indices to render
      */
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int) =
-        FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, indices.nativeHandle, offset, count)
+        FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(nativeHandle, instance, primitiveIndex, type.value, vertices.nativeHandle, indices.nativeHandle, offset, count)
     /** Changes the geometry for the given primitive, drawing all of [indices]. */
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer) =
-        FilaRenderableManager_setGeometryAt_IndexBuffer(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, indices.nativeHandle)
+        FilaRenderableManager_setGeometryAt_IndexBuffer(nativeHandle, instance, primitiveIndex, type.value, vertices.nativeHandle, indices.nativeHandle)
     /** Changes the geometry for a non-indexed primitive, drawing all of [vertices]. */
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer) =
-        FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle)
+        FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex, type.value, vertices.nativeHandle)
     /**
      * Changes the geometry for a non-indexed primitive.
      *
@@ -686,7 +686,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param count number of vertices to render
      */
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, offset: Int, count: Int) =
-        FilaRenderableManager_setGeometryAt_size_t_size_t(nativeHandle, instance, primitiveIndex, type.toNative(), vertices.nativeHandle, offset, count)
+        FilaRenderableManager_setGeometryAt_size_t_size_t(nativeHandle, instance, primitiveIndex, type.value, vertices.nativeHandle, offset, count)
 
     /**
      * Sets the drawing order for blended primitives.
@@ -706,15 +706,6 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     /** Retrieves the set of enabled attribute slots in the given primitive's VertexBuffer. */
     fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute> =
         attributeBitsetToSet(FilaRenderableManager_getEnabledAttributesAt(nativeHandle, instance, primitiveIndex))
-}
-
-// PrimitiveType skips upstream's unused LINE_LOOP (2).
-private fun RenderableManager.PrimitiveType.toNative(): Int = when (this) {
-    RenderableManager.PrimitiveType.POINTS -> 0
-    RenderableManager.PrimitiveType.LINES -> 1
-    RenderableManager.PrimitiveType.LINE_STRIP -> 3
-    RenderableManager.PrimitiveType.TRIANGLES -> 4
-    RenderableManager.PrimitiveType.TRIANGLE_STRIP -> 5
 }
 
 // filament::Box's layout: center then halfExtent.
