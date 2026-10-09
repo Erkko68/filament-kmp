@@ -39,6 +39,10 @@ jobs:
       - name: Build libfilament-c
         shell: bash
         run: ./gradlew :desktop:cmakeBuild --no-configuration-cache
+      - name: Check libfilament-c needs no LLVM runtime (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          ! readelf -d desktop/build/filament-c/*/libfilament-c.so | grep -E 'NEEDED.*(libc\+\+|libunwind)'
       - uses: actions/upload-artifact@v7
         with:
           name: c-${{ matrix.target }}

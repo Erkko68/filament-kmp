@@ -66,6 +66,7 @@ else()
     target_sources(filament-c-jni PRIVATE src/main/cpp/GlxHelper.cpp)
     target_link_libraries(filament-c-jni PRIVATE GL ${CMAKE_DL_LIBS})
     target_link_options(filament-c-jni PRIVATE
+        -static-libstdc++ # links libc++ in: stock distributions don't install it
         "LINKER:--version-script=${seal}"
         "LINKER:--gc-sections"
         "LINKER:-z,noexecstack" # one prebuilt .S object lacks the .note.GNU-stack marker
