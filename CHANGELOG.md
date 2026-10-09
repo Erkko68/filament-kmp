@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **Filament 1.77.3** upstream; no API changes, and `MATERIAL_VERSION` is unchanged, so `.filamat` files keep working.
+
 ## [0.7.2] — 2026-10-06
 
 ### Added
