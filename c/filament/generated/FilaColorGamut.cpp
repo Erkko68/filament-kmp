@@ -9,7 +9,11 @@ FilaColorGamut* FilaColorGamut_create_Primaries(const FilaColorPrimaries* primar
 }
 
 FilaColorGamut* FilaColorGamut_create_float2_float2_float2(const FilaFloat2* r, const FilaFloat2* g, const FilaFloat2* b) {
-    return fila::c(new filament::color::Gamut(std::bit_cast<filament::math::float2>(*r), std::bit_cast<filament::math::float2>(*g), std::bit_cast<filament::math::float2>(*b)));
+    return fila::c(new filament::color::Gamut(fila::math<filament::math::float2>(*r), fila::math<filament::math::float2>(*g), fila::math<filament::math::float2>(*b)));
+}
+
+void FilaColorGamut_destroy(FilaColorGamut* self) {
+    delete fila::cpp(self);
 }
 
 void FilaColorGamut_getPrimaries(const FilaColorGamut* self, FilaColorPrimaries* out) {

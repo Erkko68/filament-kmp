@@ -325,7 +325,7 @@ class MaterialBuilder() {
     }
 
     /** Shader quality: lower trades accuracy for speed. [DEFAULT] picks per platform. */
-    enum class ShaderQuality { DEFAULT, LOW, NORMAL, HIGH }
+    enum class ShaderQuality(internal val value: Int) { DEFAULT(-1), LOW(0), NORMAL(1), HIGH(2) }
 
     /** A blend factor, for [customBlendFunctions]. */
     enum class BlendFunction {
@@ -461,7 +461,7 @@ class MaterialBuilder() {
     fun materialVertex(code: String, line: Int = 0): MaterialBuilder = string(code) { b, p -> FilaFilamatMaterialBuilder_materialVertex(b, p, line) }
 
     /** Sets the shader quality ([ShaderQuality.DEFAULT] by default). */
-    fun quality(quality: ShaderQuality): MaterialBuilder = op { FilaFilamatMaterialBuilder_quality(it, quality.ordinal - 1) }
+    fun quality(quality: ShaderQuality): MaterialBuilder = op { FilaFilamatMaterialBuilder_quality(it, quality.value) }
 
     /** Sets the minimum feature level the material needs. */
     fun featureLevel(featureLevel: Engine.FeatureLevel): MaterialBuilder = op { FilaFilamatMaterialBuilder_featureLevel(it, featureLevel.ordinal) }

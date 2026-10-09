@@ -1,7 +1,7 @@
 package buildlogic.apigen.c
 
 /**
- * The C types a Fila* signature takes and returns by value (docs/internals/bindings.md, "Declaring a binding"). Kotlin binds
+ * The C types a generated signature takes and returns by value. Kotlin binds
  * each export with one type on every target and nothing adapts widths in between, so:
  * - widths are fixed: `size_t` is 64-bit on the JVM and iOS but 32-bit on wasm32; sizes and counts cross as `uint32_t`;
  * - 8- and 16-bit integers widen to 32: Apple arm64 packs stack arguments by natural size, Kotlin passes an `Int`;
@@ -10,17 +10,17 @@ package buildlogic.apigen.c
 internal object CAbi {
     /** The C type standing in for the builtin [cpp] by value. */
     fun byValue(cpp: String): String {
-        val fixed = FIXED[cpp] ?: throw Unsupported("$cpp: no fixed-width C type")
+        val fixed = FIXED[cpp.removePrefix("std::")] ?: throw Unsupported("$cpp: no fixed-width C type")
         return WIDENED[fixed] ?: fixed
     }
 
     /** Pointers keep the C++ spelling, so its width must be the same on every target. */
     fun checkPointee(cpp: String) {
-        if (cpp !in FIXED) throw Unsupported("$cpp*: no C type")
+        if (cpp.removePrefix("std::") !in FIXED) throw Unsupported("$cpp*: no C type")
         if (cpp in TARGET_WIDTH) throw Unsupported("$cpp*: its width differs across targets")
     }
 
-    fun isBuiltin(cpp: String) = cpp in FIXED
+    fun isBuiltin(cpp: String) = cpp.removePrefix("std::") in FIXED
 
     fun returnsThroughPointer(c: String) = c == "int64_t" || c == "uint64_t"
 
@@ -41,8 +41,7 @@ internal object CAbi {
         "unsigned long" to "uint64_t", "unsigned long int" to "uint64_t", "unsigned long long" to "uint64_t",
         "unsigned long long int" to "uint64_t", "uint64_t" to "uint64_t",
         // Sizes and counts fit 32 bits; a pointer-sized integer holds a native handle, 64-bit where one can be.
-        "size_t" to "uint32_t", "std::size_t" to "uint32_t", "ssize_t" to "int32_t", "ptrdiff_t" to "int32_t",
-        "std::ptrdiff_t" to "int32_t", "intptr_t" to "int64_t", "uintptr_t" to "uint64_t",
+        "size_t" to "uint32_t", "ssize_t" to "int32_t", "ptrdiff_t" to "int32_t", "intptr_t" to "int64_t", "uintptr_t" to "uint64_t",
     )
 
     private val WIDENED = mapOf("int8_t" to "int32_t", "int16_t" to "int32_t", "uint8_t" to "uint32_t", "uint16_t" to "uint32_t")

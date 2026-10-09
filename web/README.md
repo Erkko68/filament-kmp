@@ -18,7 +18,7 @@ GitHub release (see [getting started](../docs/guide/getting-started.md)).
   Emscripten SDK's toolchain file. Its inputs: `:setupEmsdk` (emsdk into `.emsdk/`, `emsdkVersion` in
   `gradle.properties`), `:prebuilts_wasm` (Filament's wasm libraries, built from source once per
   `filaVersion` since upstream ships none), and `:generateBindings` (each runtime's export list and type tables,
-  from the common externals).
+  from `c/api-manifest.json`).
 - **`stageFilamentWasm` / `stageFilamatWasm`** copy the outputs to `build/filamentWasm` and `build/filamatWasm`
   for the tests, the samples and the release assets. `FILA_WASM_PREBUILT=<dir>` stages an already built
   runtime instead (CI's js/wasm jobs).

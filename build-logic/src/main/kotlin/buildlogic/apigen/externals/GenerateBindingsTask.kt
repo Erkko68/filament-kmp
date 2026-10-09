@@ -1,17 +1,15 @@
 package buildlogic.apigen.externals
 
+import buildlogic.apigen.ApiGenTask
+import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.externals.jni.JniForwarderWriter
 import buildlogic.apigen.externals.wasm.WasmArityTableWriter
 import buildlogic.apigen.externals.wasm.WasmExportListWriter
 import buildlogic.apigen.externals.wasm.WasmTypeTableWriter
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.MapProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -19,51 +17,44 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 /**
- * Generates each platform's glue from the common externals, the single source of truth for the Fila*
- * surface Kotlin binds (Native needs none: `@SymbolName` links directly). Into [outputDir]:
+ * Generates each platform's glue for the functions in [manifest], the ones the common externals bind (Native needs
+ * none: `@SymbolName` links directly). Into [outputDir]:
  *
  * ```
- * jni/<SourceFile>.c                 JNI forwarders, compiled into the desktop and Android images
+ * jni/<Header>.c                     JNI forwarders, compiled into the desktop and Android images
  * wasm/<runtime>-exports.txt         -sEXPORTED_FUNCTIONS of each wasm runtime
- * wasm/<runtime>-types.js            bool/float/int64 tables for fila-globals.js
- * webTest/WasmArities.kt             filament-kmp's export arities, for :web's parity test
+ * wasm/<runtime>-types.js            bool/float/int64 tables for the runtime's `--post-js`
+ * webTest/WasmArities.kt             the default runtime's export arities, for the web parity test
  * ```
  */
 @CacheableTask
-abstract class GenerateBindingsTask : DefaultTask() {
-    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val sources: ConfigurableFileCollection
-
-    /** Kotlin module → the wasm runtime its C module links into; others go to [DEFAULT_WASM_RUNTIME]. */
-    @get:Input abstract val wasmRuntimes: MapProperty<String, String>
-
-    /** Fila* headers under [cDir] the JNI forwarders include for the prototypes. */
-    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val headers: ConfigurableFileCollection
-
-    @get:Internal abstract val cDir: DirectoryProperty
+abstract class GenerateBindingsTask : ApiGenTask() {
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
+    abstract val manifest: RegularFileProperty
 
     @get:OutputDirectory abstract val outputDir: DirectoryProperty
 
     @TaskAction
     fun generate() {
         val out = outputDir.get().asFile.apply { deleteRecursively() }
-        val sources = sources.files.sortedBy { it.path }.mapNotNull(ExternalFunctionParser::parse)
-        val headerPaths = headers.files.map { it.relativeTo(cDir.get().asFile).invariantSeparatorsPath }.sorted()
-        sources.forEach { source -> out.write("jni/${source.file.nameWithoutExtension}.c", JniForwarderWriter.write(source, headerPaths)) }
+        val bindings = config.get().kotlin!!
+        val headers = CManifest.parse(manifest.get().asFile.readText()).headers
+        headers.forEach { (header, functions) ->
+            // The externals' file, and the facade class its functions compile to on the JVM.
+            val name = File(header).nameWithoutExtension
+            val jvmClass = "${bindings.packages.getValue(header.substringBefore('/'))}.${name.replaceFirstChar { it.uppercase() }}Kt"
+            out.write("jni/$name.c", JniForwarderWriter.write("$name.kt", jvmClass, functions, headers.keys))
+        }
 
-        val byRuntime = sources.groupBy { wasmRuntimes.get()[it.kotlinModule] ?: DEFAULT_WASM_RUNTIME }
-            .mapValues { (_, files) -> files.flatMap { it.functions }.distinctBy { it.symbol }.sortedBy { it.symbol } }
+        // A Kotlin module is named as its C module.
+        val byRuntime = headers.entries.groupBy({ bindings.wasmRuntimes[it.key.substringBefore('/')] ?: bindings.wasmRuntime }) { it.value }
+            .mapValues { (_, functions) -> functions.flatten().distinctBy { it.name }.sortedBy { it.name } }
         byRuntime.forEach { (runtime, functions) ->
             out.write("wasm/$runtime-exports.txt", WasmExportListWriter.write(functions))
-            out.write("wasm/$runtime-types.js", WasmTypeTableWriter.write(functions))
+            out.write("wasm/$runtime-types.js", WasmTypeTableWriter.write(functions, config.get().prefix))
         }
-        out.write("webTest/WasmArities.kt", WasmArityTableWriter.write(byRuntime[DEFAULT_WASM_RUNTIME].orEmpty()))
+        out.write("webTest/WasmArities.kt", WasmArityTableWriter.write(byRuntime[bindings.wasmRuntime].orEmpty(), bindings.wasmPackage))
     }
 
     private fun File.write(path: String, text: String) = resolve(path).apply { parentFile.mkdirs() }.writeText(text)
-
-    companion object {
-        const val DEFAULT_WASM_RUNTIME = "filament-kmp"
-    }
 }

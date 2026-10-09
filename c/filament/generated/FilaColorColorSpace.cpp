@@ -5,7 +5,7 @@
 extern "C" {
 
 FilaColorColorSpace* FilaColorColorSpace_create(const FilaColorPrimaries* primaries, const FilaColorTransferFunction* transferFunction, const FilaFloat2* whitePoint) {
-    return fila::c(new filament::color::ColorSpace(*fila::cpp(primaries), *fila::cpp(transferFunction), std::bit_cast<filament::math::float2>(*whitePoint)));
+    return fila::c(new filament::color::ColorSpace(*fila::cpp(primaries), *fila::cpp(transferFunction), fila::math<filament::math::float2>(*whitePoint)));
 }
 
 void FilaColorColorSpace_destroy(FilaColorColorSpace* self) {
@@ -21,7 +21,7 @@ const FilaColorTransferFunction* FilaColorColorSpace_getTransferFunction(const F
 }
 
 void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getWhitePoint());
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->getWhitePoint());
 }
 
 } // extern "C"

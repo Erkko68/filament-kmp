@@ -37,11 +37,11 @@ void FilaVignetteOptions_setFeather(FilaVignetteOptions* self, float value) {
 }
 
 void FilaVignetteOptions_getColor(const FilaVignetteOptions* self, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->color);
+    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->color);
 }
 
 void FilaVignetteOptions_setColor(FilaVignetteOptions* self, const FilaFloat4* value) {
-    fila::cpp(self)->color = std::bit_cast<filament::math::float4>(*value);
+    fila::cpp(self)->color = fila::math<filament::math::float4>(*value);
 }
 
 bool FilaVignetteOptions_getEnabled(const FilaVignetteOptions* self) {

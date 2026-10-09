@@ -333,7 +333,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useLegacyMorphing(FilaFil
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, const FilaUint3* groupSize) {
-    return fila::c(&fila::cpp(self)->groupSize(std::bit_cast<filament::math::uint3>(*groupSize)));
+    return fila::c(&fila::cpp(self)->groupSize(fila::math<filament::math::uint3>(*groupSize)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self) {

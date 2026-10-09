@@ -33,7 +33,7 @@ void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaM
 }
 
 void FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getLocalTransform(static_cast<size_t>(index)));
+    *out = fila::mirror<FilaMat4f>(fila::cpp(self)->getLocalTransform(static_cast<size_t>(index)));
 }
 
 } // extern "C"

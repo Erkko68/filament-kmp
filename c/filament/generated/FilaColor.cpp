@@ -5,39 +5,39 @@
 extern "C" {
 
 void FilaColor_toLinear_RgbType_float3(FilaRgbType type, const FilaFloat3* color, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::Color::toLinear(static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color)));
+    *out = fila::mirror<FilaFloat3>(filament::Color::toLinear(static_cast<filament::RgbType>(type), fila::math<filament::math::float3>(*color)));
 }
 
 void FilaColor_toLinear_RgbaType_float4(FilaRgbaType type, const FilaFloat4* color, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(filament::Color::toLinear(static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color)));
+    *out = fila::mirror<FilaFloat4>(filament::Color::toLinear(static_cast<filament::RgbaType>(type), fila::math<filament::math::float4>(*color)));
 }
 
 void FilaColor_toLinear_sRGBColor(const FilaFloat3* color, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::Color::toLinear(std::bit_cast<filament::math::float3>(*color)));
+    *out = fila::mirror<FilaFloat3>(filament::Color::toLinear(fila::math<filament::math::float3>(*color)));
 }
 
 void FilaColor_toLinear_sRGBColorA(const FilaFloat4* color, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(filament::Color::toLinear(std::bit_cast<filament::math::float4>(*color)));
+    *out = fila::mirror<FilaFloat4>(filament::Color::toLinear(fila::math<filament::math::float4>(*color)));
 }
 
 void FilaColor_toSRGB_LinearColor(const FilaFloat3* color, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::Color::toSRGB(std::bit_cast<filament::math::float3>(*color)));
+    *out = fila::mirror<FilaFloat3>(filament::Color::toSRGB(fila::math<filament::math::float3>(*color)));
 }
 
 void FilaColor_toSRGB_LinearColorA(const FilaFloat4* color, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(filament::Color::toSRGB(std::bit_cast<filament::math::float4>(*color)));
+    *out = fila::mirror<FilaFloat4>(filament::Color::toSRGB(fila::math<filament::math::float4>(*color)));
 }
 
 void FilaColor_cct(float K, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::Color::cct(K));
+    *out = fila::mirror<FilaFloat3>(filament::Color::cct(K));
 }
 
 void FilaColor_illuminantD(float K, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::Color::illuminantD(K));
+    *out = fila::mirror<FilaFloat3>(filament::Color::illuminantD(K));
 }
 
 void FilaColor_absorptionAtDistance(const FilaFloat3* color, float distance, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::Color::absorptionAtDistance(std::bit_cast<filament::math::float3>(*color), distance));
+    *out = fila::mirror<FilaFloat3>(filament::Color::absorptionAtDistance(fila::math<filament::math::float3>(*color), distance));
 }
 
 } // extern "C"

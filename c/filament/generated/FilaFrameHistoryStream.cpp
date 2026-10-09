@@ -8,6 +8,10 @@ FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_creat
     return fila::c(new filament::FrameHistoryStream::NewFramesRange(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(history[i]); }), pLastProcessedFrameId));
 }
 
+void FilaFrameHistoryStreamNewFramesRange_destroy(FilaFrameHistoryStreamNewFramesRange* self) {
+    delete fila::cpp(self);
+}
+
 FilaFrameHistoryStream* FilaFrameHistoryStream_create(FilaRenderer* renderer) {
     return fila::c(new filament::FrameHistoryStream(fila::cpp(renderer)));
 }

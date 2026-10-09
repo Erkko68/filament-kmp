@@ -96,7 +96,7 @@ internal class CppScopes {
         val TEMPLATE_ARGS = Regex("<[^<>]*>")
         val ELABORATED = Regex("""^(const\s+)?(class|struct)\s""")
         val BUILTIN_WORDS = setOf("void", "bool", "char", "short", "int", "long", "float", "double", "signed", "unsigned")
-        val BUILTIN_TYPEDEFS = Regex("""u?int(8|16|32|64|ptr)_t|s?size_t|ptrdiff_t|nullptr_t|std::(size_t|nullptr_t|ptrdiff_t)""")
+        val BUILTIN_TYPEDEFS = Regex("""(std::)?u?int(8|16|32|64|ptr)_t|s?size_t|ptrdiff_t|nullptr_t|std::(size_t|nullptr_t|ptrdiff_t)""")
 
         /** The name a type spelling is built on, or null for a function type. */
         fun baseName(spelling: String): String? {

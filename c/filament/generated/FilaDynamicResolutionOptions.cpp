@@ -13,19 +13,19 @@ void FilaDynamicResolutionOptions_destroy(FilaDynamicResolutionOptions* self) {
 }
 
 void FilaDynamicResolutionOptions_getMinScale(const FilaDynamicResolutionOptions* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->minScale);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->minScale);
 }
 
 void FilaDynamicResolutionOptions_setMinScale(FilaDynamicResolutionOptions* self, const FilaFloat2* value) {
-    fila::cpp(self)->minScale = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->minScale = fila::math<filament::math::float2>(*value);
 }
 
 void FilaDynamicResolutionOptions_getMaxScale(const FilaDynamicResolutionOptions* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->maxScale);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->maxScale);
 }
 
 void FilaDynamicResolutionOptions_setMaxScale(FilaDynamicResolutionOptions* self, const FilaFloat2* value) {
-    fila::cpp(self)->maxScale = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->maxScale = fila::math<filament::math::float2>(*value);
 }
 
 float FilaDynamicResolutionOptions_getSharpness(const FilaDynamicResolutionOptions* self) {

@@ -1,4 +1,6 @@
-package buildlogic.apigen.gaps
+package buildlogic.apigen.kotlin
+
+import java.io.File
 
 /** The hand-written Kotlin API ([sources], comments aside), searched for what it declares of the C++ one. */
 internal class KotlinDeclarations(private val sources: String) {
@@ -51,3 +53,11 @@ internal class KotlinDeclarations(private val sources: String) {
         val NEXT_DECLARATION = Regex("""\b(?:class|object|interface|fun|val|var|typealias)\b""")
     }
 }
+
+private val MAIN = Regex("""/src/\w*Main/""")
+private val COMMENT = Regex("""//[^\n]*|/\*[\s\S]*?\*/""")
+
+/** The hand-written Kotlin API under [kotlin]: main sources outside capi, comments aside (tests call externals directly). */
+internal fun kotlinApiSources(kotlin: File) =
+    kotlin.walkTopDown().filter { f -> f.extension == "kt" && f.invariantSeparatorsPath.let { MAIN.containsMatchIn(it) && "/capi/" !in it } }
+        .sortedBy { it.path }.joinToString("\n") { COMMENT.replace(it.readText(), "") }

@@ -4,6 +4,14 @@
 
 extern "C" {
 
+FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilderBase_create(void) {
+    return fila::c(new filamat::MaterialBuilderBase());
+}
+
+void FilaFilamatMaterialBuilderBase_destroy(FilaFilamatMaterialBuilderBase* self) {
+    delete fila::cpp(self);
+}
+
 void FilaFilamatMaterialBuilderBase_init(void) {
     filamat::MaterialBuilderBase::init();
 }

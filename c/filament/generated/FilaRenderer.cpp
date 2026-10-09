@@ -197,11 +197,11 @@ void FilaRendererClearOptions_destroy(FilaRendererClearOptions* self) {
 }
 
 void FilaRendererClearOptions_getClearColor(const FilaRendererClearOptions* self, FilaDouble4* out) {
-    *out = std::bit_cast<FilaDouble4>(fila::cpp(self)->clearColor);
+    *out = fila::mirror<FilaDouble4>(fila::cpp(self)->clearColor);
 }
 
 void FilaRendererClearOptions_setClearColor(FilaRendererClearOptions* self, const FilaDouble4* value) {
-    fila::cpp(self)->clearColor = std::bit_cast<filament::math::double4>(*value);
+    fila::cpp(self)->clearColor = fila::math<filament::math::double4>(*value);
 }
 
 uint32_t FilaRendererClearOptions_getClearStencil(const FilaRendererClearOptions* self) {

@@ -1,20 +1,24 @@
 package buildlogic.apigen.c
 
+import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppField
 import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppRecord
 
-/** What C binds of a record: `_create`/`_destroy`, upcasts, methods and field accessors. [CApiWriter] writes them. */
-internal class BindingRules(private val api: CppApi, private val bridges: CBridges) {
-    /** Records the API's functions and constructors take (IBLPrefilterContext, only passed to its filters). */
+/**
+ * What C binds of a record: `_create`/`_destroy`, upcasts, methods and field accessors. [CApiWriter] writes them.
+ * [bound]: the records it writes them for, the API headers'.
+ */
+internal class BindingRules(private val api: CppApi, private val config: ApiGenConfig, private val bridges: CBridges, private val bound: Set<String>) {
+    /** Records the API's functions and constructors take. */
     private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
         .plus(api.records.values.flatMap { it.constructors })
         .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
 
     /**
      * Records the API reads: taken by value, `const&`, `const*` or `&&`, and the records their fields hold. The others
-     * are only results (Engine::FeatureFlag).
+     * are only results.
      */
     private val inputRecords = run {
         val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
@@ -24,28 +28,36 @@ internal class BindingRules(private val api: CppApi, private val bridges: CBridg
         generateSequence(taken) { seen -> (seen + seen.flatMap { api.records[it]?.fields.orEmpty().mapNotNull { f -> f.type.decl } }).toHashSet().takeIf { it.size > seen.size } }.last()
     }
 
-    /** `_create` per public constructor: worth it for something to call or something taking it, not Color's static helpers. */
+    /** `_create` per public constructor: worth it for something to call or something taking it, not a holder of static helpers. */
     fun creates(record: CppRecord) = !bridges.uninstantiated(record) && record.allocatable &&
         (record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated } || bridges.isValue(record.name) || record.name in parameterTypes)
 
-    /** `_destroy`: for what C creates, and factory-made instances deleted through a declared destructor. */
-    fun destroys(record: CppRecord) = creates(record) && (record.constructors.isNotEmpty() || record.declaredDestructor) && record.destructible
+    /**
+     * `_destroy`: for what C creates, and factory-made instances deleted through a declared destructor. Not what
+     * counts its references: C releases the one it holds.
+     */
+    fun destroys(record: CppRecord) = creates(record) && !bridges.refCounted(record) && (record.constructors.isNotEmpty() || record.declaredDestructor) && record.destructible
 
-    /** The bases C gets an `_as<Base>` upcast to: C can't upcast, and a base's functions take the base's handle. */
+    /**
+     * The bases C gets an `_as<Base>` upcast to, however far up (JobSystemThreadPool as a JobSystem): C can't upcast,
+     * and a base's functions take the base's handle.
+     */
     fun upcasts(record: CppRecord): List<CppRecord> = if (bridges.uninstantiated(record)) emptyList() else
-        record.bases.mapNotNull { api.records[it] }.filter { base ->
+        ancestors(record).distinct().filter { base ->
             base !in bridges.twins(record) && !bridges.uninstantiated(base) && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
         }
 
+    private fun ancestors(record: CppRecord): List<CppRecord> = record.bases.mapNotNull { api.records[it] }.flatMap { listOf(it) + ancestors(it) }
+
     /**
      * The methods C binds, its twins' too. Not deprecated ones, nor overloads only literals call; a const overload's
-     * non-const twin takes the same C arguments and covers both. Nor overrides of an upcast base's methods, nor a
+     * non-const twin takes the same C arguments and covers both. Nor overrides of a [bound] upcast base's methods, nor a
      * `(name, nameLength, …)` overload of a `(name, …)` one: C calls those through the base and the C string.
      */
     fun methods(record: CppRecord): List<CppMethod> {
         val all = (record.methods + bridges.twins(record).flatMap { it.methods })
-            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
-        val bases = upcasts(record)
+            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in config.literalOnly } }
+        val bases = upcasts(record).filter { it.name in bound }
         val signatures = all.mapTo(HashSet()) { m -> m.name to m.params.map { passed(it.type.spelling) } }
         return all.filterNot { m -> m.isOverride && bases.any { b -> b.methods.any { it.name == m.name } } || lengthOverload(m, signatures) }
             .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }

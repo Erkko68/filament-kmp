@@ -33,11 +33,11 @@ FilaStreamType FilaStream_getStreamType(const FilaStream* self) {
 }
 
 void FilaStream_setAcquiredImage_Callback_void_mat3f(FilaStream* self, void* image, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform) {
-    fila::cpp(self)->setAcquiredImage(image, callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
+    fila::cpp(self)->setAcquiredImage(image, callback, userdata, fila::math<filament::math::mat3f>(*transform));
 }
 
 void FilaStream_setAcquiredImage_CallbackHandler_Callback_void_mat3f(FilaStream* self, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform) {
-    fila::cpp(self)->setAcquiredImage(image, fila::cpp(handler), callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
+    fila::cpp(self)->setAcquiredImage(image, fila::cpp(handler), callback, userdata, fila::math<filament::math::mat3f>(*transform));
 }
 
 void FilaStream_setDimensions(FilaStream* self, uint32_t width, uint32_t height) {

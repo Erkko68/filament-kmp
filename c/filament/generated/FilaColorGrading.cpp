@@ -49,15 +49,15 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_whiteBalance(FilaColorGradingBu
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_channelMixer(FilaColorGradingBuilder* self, const FilaFloat3* outRed, const FilaFloat3* outGreen, const FilaFloat3* outBlue) {
-    return fila::c(&fila::cpp(self)->channelMixer(std::bit_cast<filament::math::float3>(*outRed), std::bit_cast<filament::math::float3>(*outGreen), std::bit_cast<filament::math::float3>(*outBlue)));
+    return fila::c(&fila::cpp(self)->channelMixer(fila::math<filament::math::float3>(*outRed), fila::math<filament::math::float3>(*outGreen), fila::math<filament::math::float3>(*outBlue)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_shadowsMidtonesHighlights(FilaColorGradingBuilder* self, const FilaFloat4* shadows, const FilaFloat4* midtones, const FilaFloat4* highlights, const FilaFloat4* ranges) {
-    return fila::c(&fila::cpp(self)->shadowsMidtonesHighlights(std::bit_cast<filament::math::float4>(*shadows), std::bit_cast<filament::math::float4>(*midtones), std::bit_cast<filament::math::float4>(*highlights), std::bit_cast<filament::math::float4>(*ranges)));
+    return fila::c(&fila::cpp(self)->shadowsMidtonesHighlights(fila::math<filament::math::float4>(*shadows), fila::math<filament::math::float4>(*midtones), fila::math<filament::math::float4>(*highlights), fila::math<filament::math::float4>(*ranges)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_slopeOffsetPower(FilaColorGradingBuilder* self, const FilaFloat3* slope, const FilaFloat3* offset, const FilaFloat3* power) {
-    return fila::c(&fila::cpp(self)->slopeOffsetPower(std::bit_cast<filament::math::float3>(*slope), std::bit_cast<filament::math::float3>(*offset), std::bit_cast<filament::math::float3>(*power)));
+    return fila::c(&fila::cpp(self)->slopeOffsetPower(fila::math<filament::math::float3>(*slope), fila::math<filament::math::float3>(*offset), fila::math<filament::math::float3>(*power)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* self, float contrast) {
@@ -73,11 +73,11 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_saturation(FilaColorGradingBuil
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, const FilaFloat3* shadowGamma, const FilaFloat3* midPoint, const FilaFloat3* highlightScale) {
-    return fila::c(&fila::cpp(self)->curves(std::bit_cast<filament::math::float3>(*shadowGamma), std::bit_cast<filament::math::float3>(*midPoint), std::bit_cast<filament::math::float3>(*highlightScale)));
+    return fila::c(&fila::cpp(self)->curves(fila::math<filament::math::float3>(*shadowGamma), fila::math<filament::math::float3>(*midPoint), fila::math<filament::math::float3>(*highlightScale)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* self, const FilaFloat3* data, uint32_t dataCount, uint32_t dimension) {
-    return fila::c(&fila::cpp(self)->customLut(fila::items(dataCount, [&](uint32_t i) { return std::bit_cast<filament::math::float3>(*(data + i)); }), static_cast<uint8_t>(dimension)));
+    return fila::c(&fila::cpp(self)->customLut(fila::items(dataCount, [&](uint32_t i) { return fila::math<filament::math::float3>(*(data + i)); }), static_cast<uint8_t>(dimension)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace) {

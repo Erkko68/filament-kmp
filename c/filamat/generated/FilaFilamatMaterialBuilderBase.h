@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 // filamat::MaterialBuilderBase
+FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilderBase_create(void);
+void FilaFilamatMaterialBuilderBase_destroy(FilaFilamatMaterialBuilderBase* self);
 void FilaFilamatMaterialBuilderBase_init(void);
 void FilaFilamatMaterialBuilderBase_shutdown(void);
 

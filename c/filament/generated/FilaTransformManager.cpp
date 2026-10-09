@@ -37,11 +37,11 @@ bool FilaTransformManager_isAccurateTranslationsEnabled(const FilaTransformManag
 }
 
 void FilaTransformManager_create_mat4f(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4f* localTransform) {
-    fila::cpp(self)->create(utils::Entity::import(entity), filament::TransformManager::Instance(parent), std::bit_cast<filament::math::mat4f>(*localTransform));
+    fila::cpp(self)->create(utils::Entity::import(entity), filament::TransformManager::Instance(parent), fila::math<filament::math::mat4f>(*localTransform));
 }
 
 void FilaTransformManager_create_mat4(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4* localTransform) {
-    fila::cpp(self)->create(utils::Entity::import(entity), filament::TransformManager::Instance(parent), std::bit_cast<filament::math::mat4>(*localTransform));
+    fila::cpp(self)->create(utils::Entity::import(entity), filament::TransformManager::Instance(parent), fila::math<filament::math::mat4>(*localTransform));
 }
 
 void FilaTransformManager_create(FilaTransformManager* self, FilaEntity entity, uint32_t parent) {
@@ -69,27 +69,27 @@ uint32_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint
 }
 
 void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, const FilaMat4f* localTransform) {
-    fila::cpp(self)->setTransform(filament::TransformManager::Instance(ci), std::bit_cast<filament::math::mat4f>(*localTransform));
+    fila::cpp(self)->setTransform(filament::TransformManager::Instance(ci), fila::math<filament::math::mat4f>(*localTransform));
 }
 
 void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, const FilaMat4* localTransform) {
-    fila::cpp(self)->setTransform(filament::TransformManager::Instance(ci), std::bit_cast<filament::math::mat4>(*localTransform));
+    fila::cpp(self)->setTransform(filament::TransformManager::Instance(ci), fila::math<filament::math::mat4>(*localTransform));
 }
 
 void FilaTransformManager_getTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getTransform(filament::TransformManager::Instance(ci)));
+    *out = fila::mirror<FilaMat4f>(fila::cpp(self)->getTransform(filament::TransformManager::Instance(ci)));
 }
 
 void FilaTransformManager_getTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out) {
-    *out = std::bit_cast<FilaMat4>(fila::cpp(self)->getTransformAccurate(filament::TransformManager::Instance(ci)));
+    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getTransformAccurate(filament::TransformManager::Instance(ci)));
 }
 
 void FilaTransformManager_getWorldTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getWorldTransform(filament::TransformManager::Instance(ci)));
+    *out = fila::mirror<FilaMat4f>(fila::cpp(self)->getWorldTransform(filament::TransformManager::Instance(ci)));
 }
 
 void FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out) {
-    *out = std::bit_cast<FilaMat4>(fila::cpp(self)->getWorldTransformAccurate(filament::TransformManager::Instance(ci)));
+    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getWorldTransformAccurate(filament::TransformManager::Instance(ci)));
 }
 
 void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* self) {

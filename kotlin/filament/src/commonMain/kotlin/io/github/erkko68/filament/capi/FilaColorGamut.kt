@@ -10,5 +10,8 @@ internal external fun FilaColorGamut_create_Primaries(primaries: NativePointer):
 @ExternalSymbolName("FilaColorGamut_create_float2_float2_float2")
 internal external fun FilaColorGamut_create_float2_float2_float2(r: NativePointer, g: NativePointer, b: NativePointer): NativePointer
 
+@ExternalSymbolName("FilaColorGamut_destroy")
+internal external fun FilaColorGamut_destroy(self: NativePointer)
+
 @ExternalSymbolName("FilaColorGamut_getPrimaries")
 internal external fun FilaColorGamut_getPrimaries(self: NativePointer, out: NativePointer)

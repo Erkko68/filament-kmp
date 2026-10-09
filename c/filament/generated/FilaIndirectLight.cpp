@@ -33,7 +33,7 @@ FilaIndirectLightBuilder* FilaIndirectLightBuilder_intensity(FilaIndirectLightBu
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBuilder* self, const FilaMat3f* rotation) {
-    return fila::c(&fila::cpp(self)->rotation(std::bit_cast<filament::math::mat3f>(*rotation)));
+    return fila::c(&fila::cpp(self)->rotation(fila::math<filament::math::mat3f>(*rotation)));
 }
 
 FilaIndirectLight* FilaIndirectLightBuilder_build(FilaIndirectLightBuilder* self, FilaEngine* engine) {
@@ -49,11 +49,11 @@ float FilaIndirectLight_getIntensity(const FilaIndirectLight* self) {
 }
 
 void FilaIndirectLight_setRotation(FilaIndirectLight* self, const FilaMat3f* rotation) {
-    fila::cpp(self)->setRotation(std::bit_cast<filament::math::mat3f>(*rotation));
+    fila::cpp(self)->setRotation(fila::math<filament::math::mat3f>(*rotation));
 }
 
 void FilaIndirectLight_getRotation(const FilaIndirectLight* self, FilaMat3f* out) {
-    *out = std::bit_cast<FilaMat3f>(fila::cpp(self)->getRotation());
+    *out = fila::mirror<FilaMat3f>(fila::cpp(self)->getRotation());
 }
 
 const FilaTexture* FilaIndirectLight_getReflectionsTexture(const FilaIndirectLight* self) {
@@ -65,19 +65,19 @@ const FilaTexture* FilaIndirectLight_getIrradianceTexture(const FilaIndirectLigh
 }
 
 void FilaIndirectLight_getDirectionEstimate_float3(const FilaFloat3* sh, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::IndirectLight::getDirectionEstimate(fila::cpp(sh)));
+    *out = fila::mirror<FilaFloat3>(filament::IndirectLight::getDirectionEstimate(fila::cpp(sh)));
 }
 
 void FilaIndirectLight_getDirectionEstimate(const FilaIndirectLight* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getDirectionEstimate());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getDirectionEstimate());
 }
 
 void FilaIndirectLight_getColorEstimate_float3(const FilaFloat3* sh, const FilaFloat3* direction, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(filament::IndirectLight::getColorEstimate(fila::cpp(sh), std::bit_cast<filament::math::float3>(*direction)));
+    *out = fila::mirror<FilaFloat4>(filament::IndirectLight::getColorEstimate(fila::cpp(sh), fila::math<filament::math::float3>(*direction)));
 }
 
 void FilaIndirectLight_getColorEstimate(const FilaIndirectLight* self, const FilaFloat3* direction, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getColorEstimate(std::bit_cast<filament::math::float3>(*direction)));
+    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->getColorEstimate(fila::math<filament::math::float3>(*direction)));
 }
 
 } // extern "C"

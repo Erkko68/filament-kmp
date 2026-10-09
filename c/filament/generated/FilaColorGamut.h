@@ -11,6 +11,7 @@ extern "C" {
 // filament::color::Gamut
 FilaColorGamut* FilaColorGamut_create_Primaries(const FilaColorPrimaries* primaries);
 FilaColorGamut* FilaColorGamut_create_float2_float2_float2(const FilaFloat2* r, const FilaFloat2* g, const FilaFloat2* b);
+void FilaColorGamut_destroy(FilaColorGamut* self);
 void FilaColorGamut_getPrimaries(const FilaColorGamut* self, FilaColorPrimaries* out);
 
 

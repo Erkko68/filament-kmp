@@ -7,6 +7,9 @@ import io.github.erkko68.filament.interop.NativePointer
 @ExternalSymbolName("FilaFrameHistoryStreamNewFramesRange_create")
 internal external fun FilaFrameHistoryStreamNewFramesRange_create(history: NativePointer, historyCount: Int, pLastProcessedFrameId: NativePointer): NativePointer
 
+@ExternalSymbolName("FilaFrameHistoryStreamNewFramesRange_destroy")
+internal external fun FilaFrameHistoryStreamNewFramesRange_destroy(self: NativePointer)
+
 @ExternalSymbolName("FilaFrameHistoryStream_create")
 internal external fun FilaFrameHistoryStream_create(renderer: NativePointer): NativePointer
 

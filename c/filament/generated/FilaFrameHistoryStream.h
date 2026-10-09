@@ -10,6 +10,7 @@ extern "C" {
 
 // filament::FrameHistoryStream::NewFramesRange
 FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_create(const FilaRendererFrameInfo* const* history, uint32_t historyCount, uint32_t* pLastProcessedFrameId);
+void FilaFrameHistoryStreamNewFramesRange_destroy(FilaFrameHistoryStreamNewFramesRange* self);
 // skipped iterator filament::FrameHistoryStream::NewFramesRange::begin() const: filament::FrameHistoryStream::NewFramesRange::.*
 // skipped iterator filament::FrameHistoryStream::NewFramesRange::end() const: filament::FrameHistoryStream::NewFramesRange::.*
 
@@ -17,7 +18,7 @@ FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_creat
 FilaFrameHistoryStream* FilaFrameHistoryStream_create(FilaRenderer* renderer);
 void FilaFrameHistoryStream_destroy(FilaFrameHistoryStream* self);
 // handwritten in manual/ FilaFrameHistoryStream_getNewFrames: NewFramesRange filament::FrameHistoryStream::getNewFrames()
-//     filament::FrameHistoryStream::NewFramesRange by value
+//     filament::FrameHistoryStream::NewFramesRange result: C can't create one to copy it into
 
 
 #ifdef __cplusplus

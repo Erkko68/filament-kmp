@@ -1,12 +1,12 @@
 package buildlogic.apigen.cpp
 
-import org.gradle.process.ExecOperations
+import buildlogic.apigen.ApiGenConfig
 import java.io.File
 import java.math.BigInteger
 
 /** Builds a [CppApi] from clang's AST of [headers]; nothing here parses C++ itself. */
-internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
-    private val ast = ClangAstDump(exec, workDir)
+internal class CppApiReader(private val config: ApiGenConfig, private val workDir: File) {
+    private val ast = ClangAstDump(config, workDir)
     private val scopes = CppScopes()
     private val records = LinkedHashMap<String, CppRecord>()
     private val enums = LinkedHashMap<String, CppEnum>()
@@ -23,29 +23,30 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
     fun read(includeDir: File, headers: Collection<String>): CppApi {
         guards = PreprocessorGuards(includeDir)
         val unit = workDir.resolve("headers.cpp")
-        unit.writeText(headers.sorted().joinToString("") { "#include <$it>\n" })
+        unit.writeText((config.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
-        // Every filter's namespace up front: image's bundles name filament::math before the filament:: dump runs.
-        FILTERS.forEach { filter ->
+        // Every filter's namespace up front, before any dump runs.
+        config.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             if (filter.endsWith("::")) scopes.namespace(namespace) else if (namespace.isNotEmpty()) scopes.partialNamespace(namespace)
-            SKIPPED.forEach { scopes.partialNamespace(qualify(namespace, it)) }
+            config.skippedNamespaces.forEach { scopes.partialNamespace(qualify(namespace, it)) }
         }
         // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
-        FILTERS.forEach { filter ->
+        config.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
-            ast.forEachDeclaration(unit, includeDir, filter, SKIPPED) { document ->
+            ast.forEachDeclaration(unit, includeDir, filter, config.skippedNamespaces) { document ->
                 locationOf = DeclarationFiles.of(document, includeDir)
                 visit(document, namespace, exported = false, accessible = true)
             }
         }
         val missed = headers.filterNot { it in seenHeaders }
-        check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to CppApiReader.FILTERS" }
+        check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to the config's astFilters" }
         return CppApi(records, enums, aliases, constants, publicConstants, functions)
     }
 
     /**
-     * [exported]: `*_PUBLIC` or publicly nested in an exported class, what the libraries' symbols follow.
+     * [exported]: marked with a visibility attribute (an export macro) or publicly nested in an exported class, what
+     * the libraries' symbols follow.
      * [accessible]: nameable from outside, at namespace scope or publicly nested.
      */
     private fun visit(node: Map<*, *>, scope: String, exported: Boolean, accessible: Boolean, template: Boolean = false) {
@@ -97,16 +98,19 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
         val dd = node["definitionData"] as? Map<*, *>
         val abstract = dd?.get("isAbstract") == true
         val constructors = ArrayList<List<CppParam>>()
-        if (!abstract && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true) constructors += emptyList<CppParam>()
+        // A base with constructors but no default one deletes the implicit default (ShapeCast, which inherits ShapeCastT's).
+        val implicitDefault = publicBases.none { base -> records[base]?.let { it.constructors.isNotEmpty() && !it.defaultConstructible } == true }
+        if (!abstract && implicitDefault && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true) constructors += emptyList<CppParam>()
         var destructible = true
         var declaredDestructor = false
-        // A declared move constructor deletes the implicit copy.
-        var copyable = !abstract && ((dd?.get("moveCtor") as? Map<*, *>)?.get("userDeclared") != true ||
-            (dd?.get("copyCtor") as? Map<*, *>)?.get("userDeclared") == true)
+        // A declared move constructor deletes the implicit copy, as a base that can't be copied does (NonCopyable).
+        var copyable = !abstract && publicBases.all { records[it]?.copyable != false } &&
+            ((dd?.get("moveCtor") as? Map<*, *>)?.get("userDeclared") != true || (dd?.get("copyCtor") as? Map<*, *>)?.get("userDeclared") == true)
         var allocatable = publicBases.all { records[it]?.allocatable != false }
         var access = if (node["tagUsed"] == "class") "private" else "public"
         for (child in children) {
-            val isPublic = access == "public"
+            // Implicit members are public, wherever clang lists them.
+            val isPublic = access == "public" || child["isImplicit"] == true
             when (child["kind"]) {
                 "AccessSpecDecl" -> access = child["access"] as String
                 "CXXMethodDecl" -> {
@@ -120,7 +124,8 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
                     if (self != null && "&&" !in self.spelling && !usable) copyable = false
                     // Copies and moves take the record itself; C holds handles, never copies. Implicit ones count: an
                     // aggregate's default constructor is declared once a header uses it.
-                    if (!abstract && usable && self == null) constructors += params
+                    val deleted = child["isImplicit"] == true && params.isEmpty() && !implicitDefault
+                    if (!abstract && usable && self == null && !deleted) constructors += params
                 }
                 "FunctionTemplateDecl" -> template(child, qualified, isPublic, free = false)?.let { methods += it }
                 "CXXDestructorDecl" -> {
@@ -210,11 +215,6 @@ internal class CppApiReader(exec: ExecOperations, private val workDir: File) {
     private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
 
     private companion object {
-        // Dependencies first (names resolve as they're declared): filament uses utils::EntityManager, ktxreader uses
-        // image's bundles and filament.
-        val FILTERS = listOf("utils::EntityManager", "image::Ktx", "filament::", "filamat::", "ktxreader::", "IBLPrefilterContext")
-        // Math templates are huge and declare no API of their own.
-        val SKIPPED = setOf("math")
         val TEMPLATE_PARAMETERS = setOf("TemplateTypeParmDecl", "NonTypeTemplateParmDecl", "TemplateTemplateParmDecl")
         val NOT_EXPRESSIONS = listOf("Comment", "Attr", "Decl")
         val NOEXCEPT_EXPR = Regex("""noexcept\([^()]*\)\s*$""")

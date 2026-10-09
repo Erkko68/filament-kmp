@@ -21,11 +21,11 @@ void FilaMaterialInstance_setParameter_Texture_TextureSampler(FilaMaterialInstan
 }
 
 void FilaMaterialInstance_setParameter_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
-    fila::cpp(self)->setParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
+    fila::cpp(self)->setParameter(name, static_cast<filament::RgbType>(type), fila::math<filament::math::float3>(*color));
 }
 
 void FilaMaterialInstance_setParameter_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
-    fila::cpp(self)->setParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
+    fila::cpp(self)->setParameter(name, static_cast<filament::RgbaType>(type), fila::math<filament::math::float4>(*color));
 }
 
 void FilaMaterialInstance_setParameter_float(FilaMaterialInstance* self, const char* name, float value) {
@@ -41,47 +41,47 @@ void FilaMaterialInstance_setParameter_uint32_t(FilaMaterialInstance* self, cons
 }
 
 void FilaMaterialInstance_setParameter_int2(FilaMaterialInstance* self, const char* name, const FilaInt2* value) {
-    fila::cpp(self)->setParameter<filament::math::int2>(name, std::bit_cast<filament::math::int2>(*value));
+    fila::cpp(self)->setParameter<filament::math::int2>(name, fila::math<filament::math::int2>(*value));
 }
 
 void FilaMaterialInstance_setParameter_int3(FilaMaterialInstance* self, const char* name, const FilaInt3* value) {
-    fila::cpp(self)->setParameter<filament::math::int3>(name, std::bit_cast<filament::math::int3>(*value));
+    fila::cpp(self)->setParameter<filament::math::int3>(name, fila::math<filament::math::int3>(*value));
 }
 
 void FilaMaterialInstance_setParameter_int4(FilaMaterialInstance* self, const char* name, const FilaInt4* value) {
-    fila::cpp(self)->setParameter<filament::math::int4>(name, std::bit_cast<filament::math::int4>(*value));
+    fila::cpp(self)->setParameter<filament::math::int4>(name, fila::math<filament::math::int4>(*value));
 }
 
 void FilaMaterialInstance_setParameter_uint2(FilaMaterialInstance* self, const char* name, const FilaUint2* value) {
-    fila::cpp(self)->setParameter<filament::math::uint2>(name, std::bit_cast<filament::math::uint2>(*value));
+    fila::cpp(self)->setParameter<filament::math::uint2>(name, fila::math<filament::math::uint2>(*value));
 }
 
 void FilaMaterialInstance_setParameter_uint3(FilaMaterialInstance* self, const char* name, const FilaUint3* value) {
-    fila::cpp(self)->setParameter<filament::math::uint3>(name, std::bit_cast<filament::math::uint3>(*value));
+    fila::cpp(self)->setParameter<filament::math::uint3>(name, fila::math<filament::math::uint3>(*value));
 }
 
 void FilaMaterialInstance_setParameter_uint4(FilaMaterialInstance* self, const char* name, const FilaUint4* value) {
-    fila::cpp(self)->setParameter<filament::math::uint4>(name, std::bit_cast<filament::math::uint4>(*value));
+    fila::cpp(self)->setParameter<filament::math::uint4>(name, fila::math<filament::math::uint4>(*value));
 }
 
 void FilaMaterialInstance_setParameter_float2(FilaMaterialInstance* self, const char* name, const FilaFloat2* value) {
-    fila::cpp(self)->setParameter<filament::math::float2>(name, std::bit_cast<filament::math::float2>(*value));
+    fila::cpp(self)->setParameter<filament::math::float2>(name, fila::math<filament::math::float2>(*value));
 }
 
 void FilaMaterialInstance_setParameter_float3(FilaMaterialInstance* self, const char* name, const FilaFloat3* value) {
-    fila::cpp(self)->setParameter<filament::math::float3>(name, std::bit_cast<filament::math::float3>(*value));
+    fila::cpp(self)->setParameter<filament::math::float3>(name, fila::math<filament::math::float3>(*value));
 }
 
 void FilaMaterialInstance_setParameter_float4(FilaMaterialInstance* self, const char* name, const FilaFloat4* value) {
-    fila::cpp(self)->setParameter<filament::math::float4>(name, std::bit_cast<filament::math::float4>(*value));
+    fila::cpp(self)->setParameter<filament::math::float4>(name, fila::math<filament::math::float4>(*value));
 }
 
 void FilaMaterialInstance_setParameter_mat3f(FilaMaterialInstance* self, const char* name, const FilaMat3f* value) {
-    fila::cpp(self)->setParameter<filament::math::mat3f>(name, std::bit_cast<filament::math::mat3f>(*value));
+    fila::cpp(self)->setParameter<filament::math::mat3f>(name, fila::math<filament::math::mat3f>(*value));
 }
 
 void FilaMaterialInstance_setParameter_mat4f(FilaMaterialInstance* self, const char* name, const FilaMat4f* value) {
-    fila::cpp(self)->setParameter<filament::math::mat4f>(name, std::bit_cast<filament::math::mat4f>(*value));
+    fila::cpp(self)->setParameter<filament::math::mat4f>(name, fila::math<filament::math::mat4f>(*value));
 }
 
 void FilaMaterialInstance_setParameter_bool(FilaMaterialInstance* self, const char* name, bool value) {
@@ -89,15 +89,15 @@ void FilaMaterialInstance_setParameter_bool(FilaMaterialInstance* self, const ch
 }
 
 void FilaMaterialInstance_setParameter_bool2(FilaMaterialInstance* self, const char* name, const FilaBool2* value) {
-    fila::cpp(self)->setParameter<filament::math::bool2>(name, std::bit_cast<filament::math::bool2>(*value));
+    fila::cpp(self)->setParameter<filament::math::bool2>(name, fila::math<filament::math::bool2>(*value));
 }
 
 void FilaMaterialInstance_setParameter_bool3(FilaMaterialInstance* self, const char* name, const FilaBool3* value) {
-    fila::cpp(self)->setParameter<filament::math::bool3>(name, std::bit_cast<filament::math::bool3>(*value));
+    fila::cpp(self)->setParameter<filament::math::bool3>(name, fila::math<filament::math::bool3>(*value));
 }
 
 void FilaMaterialInstance_setParameter_bool4(FilaMaterialInstance* self, const char* name, const FilaBool4* value) {
-    fila::cpp(self)->setParameter<filament::math::bool4>(name, std::bit_cast<filament::math::bool4>(*value));
+    fila::cpp(self)->setParameter<filament::math::bool4>(name, fila::math<filament::math::bool4>(*value));
 }
 
 void FilaMaterialInstance_setParameter_float_size_t(FilaMaterialInstance* self, const char* name, const float* values, uint32_t count) {
@@ -185,47 +185,47 @@ uint32_t FilaMaterialInstance_getParameter_uint32_t(const FilaMaterialInstance* 
 }
 
 void FilaMaterialInstance_getParameter_int2(const FilaMaterialInstance* self, const char* name, FilaInt2* out) {
-    *out = std::bit_cast<FilaInt2>(fila::cpp(self)->getParameter<filament::math::int2>(name));
+    *out = fila::mirror<FilaInt2>(fila::cpp(self)->getParameter<filament::math::int2>(name));
 }
 
 void FilaMaterialInstance_getParameter_int3(const FilaMaterialInstance* self, const char* name, FilaInt3* out) {
-    *out = std::bit_cast<FilaInt3>(fila::cpp(self)->getParameter<filament::math::int3>(name));
+    *out = fila::mirror<FilaInt3>(fila::cpp(self)->getParameter<filament::math::int3>(name));
 }
 
 void FilaMaterialInstance_getParameter_int4(const FilaMaterialInstance* self, const char* name, FilaInt4* out) {
-    *out = std::bit_cast<FilaInt4>(fila::cpp(self)->getParameter<filament::math::int4>(name));
+    *out = fila::mirror<FilaInt4>(fila::cpp(self)->getParameter<filament::math::int4>(name));
 }
 
 void FilaMaterialInstance_getParameter_uint2(const FilaMaterialInstance* self, const char* name, FilaUint2* out) {
-    *out = std::bit_cast<FilaUint2>(fila::cpp(self)->getParameter<filament::math::uint2>(name));
+    *out = fila::mirror<FilaUint2>(fila::cpp(self)->getParameter<filament::math::uint2>(name));
 }
 
 void FilaMaterialInstance_getParameter_uint3(const FilaMaterialInstance* self, const char* name, FilaUint3* out) {
-    *out = std::bit_cast<FilaUint3>(fila::cpp(self)->getParameter<filament::math::uint3>(name));
+    *out = fila::mirror<FilaUint3>(fila::cpp(self)->getParameter<filament::math::uint3>(name));
 }
 
 void FilaMaterialInstance_getParameter_uint4(const FilaMaterialInstance* self, const char* name, FilaUint4* out) {
-    *out = std::bit_cast<FilaUint4>(fila::cpp(self)->getParameter<filament::math::uint4>(name));
+    *out = fila::mirror<FilaUint4>(fila::cpp(self)->getParameter<filament::math::uint4>(name));
 }
 
 void FilaMaterialInstance_getParameter_float2(const FilaMaterialInstance* self, const char* name, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getParameter<filament::math::float2>(name));
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->getParameter<filament::math::float2>(name));
 }
 
 void FilaMaterialInstance_getParameter_float3(const FilaMaterialInstance* self, const char* name, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getParameter<filament::math::float3>(name));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getParameter<filament::math::float3>(name));
 }
 
 void FilaMaterialInstance_getParameter_float4(const FilaMaterialInstance* self, const char* name, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getParameter<filament::math::float4>(name));
+    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->getParameter<filament::math::float4>(name));
 }
 
 void FilaMaterialInstance_getParameter_mat3f(const FilaMaterialInstance* self, const char* name, FilaMat3f* out) {
-    *out = std::bit_cast<FilaMat3f>(fila::cpp(self)->getParameter<filament::math::mat3f>(name));
+    *out = fila::mirror<FilaMat3f>(fila::cpp(self)->getParameter<filament::math::mat3f>(name));
 }
 
 void FilaMaterialInstance_getParameter_mat4f(const FilaMaterialInstance* self, const char* name, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getParameter<filament::math::mat4f>(name));
+    *out = fila::mirror<FilaMat4f>(fila::cpp(self)->getParameter<filament::math::mat4f>(name));
 }
 
 void FilaMaterialInstance_setConstant_int32_t(FilaMaterialInstance* self, const char* name, int32_t value) {

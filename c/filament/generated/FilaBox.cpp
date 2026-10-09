@@ -17,15 +17,15 @@ bool FilaBox_isEmpty(const FilaBox* self) {
 }
 
 void FilaBox_getMin(const FilaBox* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getMin());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getMin());
 }
 
 void FilaBox_getMax(const FilaBox* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getMax());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getMax());
 }
 
 FilaBox* FilaBox_set(FilaBox* self, const FilaFloat3* min, const FilaFloat3* max) {
-    return fila::c(&fila::cpp(self)->set(std::bit_cast<filament::math::float3>(*min), std::bit_cast<filament::math::float3>(*max)));
+    return fila::c(&fila::cpp(self)->set(fila::math<filament::math::float3>(*min), fila::math<filament::math::float3>(*max)));
 }
 
 FilaBox* FilaBox_unionSelf(FilaBox* self, const FilaBox* box) {
@@ -33,31 +33,31 @@ FilaBox* FilaBox_unionSelf(FilaBox* self, const FilaBox* box) {
 }
 
 void FilaBox_translateTo(const FilaBox* self, const FilaFloat3* tr, FilaBox* out) {
-    *fila::cpp(out) = fila::cpp(self)->translateTo(std::bit_cast<filament::math::float3>(*tr));
+    *fila::cpp(out) = fila::cpp(self)->translateTo(fila::math<filament::math::float3>(*tr));
 }
 
 void FilaBox_getBoundingSphere(const FilaBox* self, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getBoundingSphere());
+    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->getBoundingSphere());
 }
 
 void FilaBox_transform(const FilaMat3f* m, const FilaFloat3* t, const FilaBox* box, FilaBox* out) {
-    *fila::cpp(out) = filament::Box::transform(std::bit_cast<filament::math::mat3f>(*m), std::bit_cast<filament::math::float3>(*t), *fila::cpp(box));
+    *fila::cpp(out) = filament::Box::transform(fila::math<filament::math::mat3f>(*m), fila::math<filament::math::float3>(*t), *fila::cpp(box));
 }
 
 void FilaBox_getCenter(const FilaBox* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->center);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->center);
 }
 
 void FilaBox_setCenter(FilaBox* self, const FilaFloat3* value) {
-    fila::cpp(self)->center = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->center = fila::math<filament::math::float3>(*value);
 }
 
 void FilaBox_getHalfExtent(const FilaBox* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->halfExtent);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->halfExtent);
 }
 
 void FilaBox_setHalfExtent(FilaBox* self, const FilaFloat3* value) {
-    fila::cpp(self)->halfExtent = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->halfExtent = fila::math<filament::math::float3>(*value);
 }
 
 } // extern "C"

@@ -253,11 +253,11 @@ void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self,
 }
 
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
-    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
+    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), fila::math<filament::math::float3>(*color));
 }
 
 void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
-    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
+    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), fila::math<filament::math::float4>(*color));
 }
 
 void FilaMaterial_setDefaultParameter_float(FilaMaterial* self, const char* name, float value) {
@@ -273,47 +273,47 @@ void FilaMaterial_setDefaultParameter_uint32_t(FilaMaterial* self, const char* n
 }
 
 void FilaMaterial_setDefaultParameter_int2(FilaMaterial* self, const char* name, const FilaInt2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int2>(name, std::bit_cast<filament::math::int2>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::int2>(name, fila::math<filament::math::int2>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_int3(FilaMaterial* self, const char* name, const FilaInt3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int3>(name, std::bit_cast<filament::math::int3>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::int3>(name, fila::math<filament::math::int3>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_int4(FilaMaterial* self, const char* name, const FilaInt4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int4>(name, std::bit_cast<filament::math::int4>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::int4>(name, fila::math<filament::math::int4>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_uint2(FilaMaterial* self, const char* name, const FilaUint2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint2>(name, std::bit_cast<filament::math::uint2>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::uint2>(name, fila::math<filament::math::uint2>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_uint3(FilaMaterial* self, const char* name, const FilaUint3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint3>(name, std::bit_cast<filament::math::uint3>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::uint3>(name, fila::math<filament::math::uint3>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_uint4(FilaMaterial* self, const char* name, const FilaUint4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint4>(name, std::bit_cast<filament::math::uint4>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::uint4>(name, fila::math<filament::math::uint4>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_float2(FilaMaterial* self, const char* name, const FilaFloat2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float2>(name, std::bit_cast<filament::math::float2>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::float2>(name, fila::math<filament::math::float2>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_float3(FilaMaterial* self, const char* name, const FilaFloat3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float3>(name, std::bit_cast<filament::math::float3>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::float3>(name, fila::math<filament::math::float3>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_float4(FilaMaterial* self, const char* name, const FilaFloat4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float4>(name, std::bit_cast<filament::math::float4>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::float4>(name, fila::math<filament::math::float4>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_mat3f(FilaMaterial* self, const char* name, const FilaMat3f* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::mat3f>(name, std::bit_cast<filament::math::mat3f>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::mat3f>(name, fila::math<filament::math::mat3f>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_mat4f(FilaMaterial* self, const char* name, const FilaMat4f* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::mat4f>(name, std::bit_cast<filament::math::mat4f>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::mat4f>(name, fila::math<filament::math::mat4f>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_bool(FilaMaterial* self, const char* name, bool value) {
@@ -321,15 +321,15 @@ void FilaMaterial_setDefaultParameter_bool(FilaMaterial* self, const char* name,
 }
 
 void FilaMaterial_setDefaultParameter_bool2(FilaMaterial* self, const char* name, const FilaBool2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool2>(name, std::bit_cast<filament::math::bool2>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::bool2>(name, fila::math<filament::math::bool2>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_bool3(FilaMaterial* self, const char* name, const FilaBool3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool3>(name, std::bit_cast<filament::math::bool3>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::bool3>(name, fila::math<filament::math::bool3>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_bool4(FilaMaterial* self, const char* name, const FilaBool4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool4>(name, std::bit_cast<filament::math::bool4>(*value));
+    fila::cpp(self)->setDefaultParameter<filament::math::bool4>(name, fila::math<filament::math::bool4>(*value));
 }
 
 void FilaMaterial_setDefaultParameter_float_size_t(FilaMaterial* self, const char* name, const float* values, uint32_t count) {

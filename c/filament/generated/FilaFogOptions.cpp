@@ -53,11 +53,11 @@ void FilaFogOptions_setHeightFalloff(FilaFogOptions* self, float value) {
 }
 
 void FilaFogOptions_getColor(const FilaFogOptions* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->color);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->color);
 }
 
 void FilaFogOptions_setColor(FilaFogOptions* self, const FilaFloat3* value) {
-    fila::cpp(self)->color = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->color = fila::math<filament::math::float3>(*value);
 }
 
 float FilaFogOptions_getDensity(const FilaFogOptions* self) {

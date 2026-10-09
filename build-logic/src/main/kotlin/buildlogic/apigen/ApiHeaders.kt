@@ -1,26 +1,28 @@
 package buildlogic.apigen
 
-import org.gradle.api.Project
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.RegularFile
+import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Paths
 
 /**
- * `c/api-headers.txt`: globs under Filament's include dir, grouped by the C module their API is generated into, and
+ * `api-headers.txt`: globs under the library's include dir, grouped by the C module their API is generated into, and
  * the `-regex` declarations left out of it ([skipped]).
  */
 internal class ApiHeaders(val modules: Map<String, List<String>>, val skipped: Set<String> = emptySet()) {
-    val globs get() = modules.values.flatten().filterNot { it.startsWith("!") }
-
-    /** `!glob` lines: headers a section's globs match that declare no API. */
-    val excludes get() = modules.values.flatten().filter { it.startsWith("!") }.map { it.drop(1) }
-
     /** The module whose globs match [header] (relative to the include dir), or null for a non-API header. */
-    fun moduleOf(header: String): String? {
-        val path = Paths.get(header)
-        return modules.entries.firstOrNull { (_, globs) -> globs.any { !it.startsWith("!") && FileSystems.getDefault().getPathMatcher("glob:$it").matches(path) } }?.key
+    fun moduleOf(header: String): String? = modules.entries.firstOrNull { (_, globs) -> globs.any { !it.startsWith("!") && matches(it, header) } }?.key
+
+    /** The headers under [includeDir] the globs select, less the `!glob` ones, as paths relative to it. */
+    fun headers(includeDir: File): Set<String> {
+        val (excludes, globs) = modules.values.flatten().partition { it.startsWith("!") }
+        // A plain path needs no walk of the library's sources.
+        val (patterns, paths) = globs.partition { g -> g.any { it in "*?[{" } }
+        val walked = if (patterns.isEmpty()) emptySequence() else
+            includeDir.walkTopDown().filter { it.isFile }.map { it.relativeTo(includeDir).invariantSeparatorsPath }.filter { h -> patterns.any { matches(it, h) } }
+        return (paths.filter { includeDir.resolve(it).isFile } + walked).filterNot { h -> excludes.any { matches(it.drop(1), h) } }.toSortedSet()
     }
+
+    private fun matches(glob: String, header: String) = FileSystems.getDefault().getPathMatcher("glob:$glob").matches(Paths.get(header))
 
     companion object {
         private val SECTION = Regex("""\[(.+)]""")
@@ -38,17 +40,3 @@ internal class ApiHeaders(val modules: Map<String, List<String>>, val skipped: S
         }
     }
 }
-
-/** `c/api-headers.txt`, parsed at configuration time. */
-internal fun Project.apiHeaders(): ApiHeaders =
-    ApiHeaders.parse(providers.fileContents(apiHeadersFile()).asText.get())
-
-internal fun Project.apiHeadersFile(): RegularFile = layout.projectDirectory.file("c/api-headers.txt")
-
-/** The headers [apiHeaders] selects under `include/`. */
-internal fun Project.apiHeaderFiles(): FileTree =
-    layout.projectDirectory.dir("include").asFileTree.matching { apiHeaders().let { include(it.globs); exclude(it.excludes) } }
-
-/** [files] as paths relative to [includeDir], the form [buildlogic.apigen.cpp.CppApiReader] and [ApiHeaders] take. */
-internal fun relativeHeaders(files: Collection<java.io.File>, includeDir: java.io.File) =
-    files.map { it.relativeTo(includeDir).invariantSeparatorsPath }.toSortedSet()

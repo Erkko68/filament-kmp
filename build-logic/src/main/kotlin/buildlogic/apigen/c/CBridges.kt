@@ -1,5 +1,7 @@
 package buildlogic.apigen.c
 
+import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.RefCounting
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
 import buildlogic.apigen.cpp.CppMethod
@@ -11,7 +13,7 @@ import buildlogic.apigen.cpp.CppType.Kind
  * How a C++ value crosses into C: its C spelling, and the expression converting it to the other side. [out]: a
  * result C returns through a trailing `out` pointer ([CAbi]), which [store] writes given the value and the pointer.
  */
-internal class CBridge(
+class CBridge(
     val c: String,
     val convert: (String) -> String,
     val out: Boolean = false,
@@ -23,17 +25,19 @@ internal class CBridge(
      * result's trailing parameters, as (type, name).
      */
     val extra: List<Pair<String, String>> = emptyList(),
+    /** A typedef its C spelling needs, by C name: a callback's function pointer type. */
+    val typedef: Pair<String, String>? = null,
 )
-
-private val MATH_VECTOR = Regex("filament::math::vec([234])")
 
 private fun isArray(type: CppType) = type.spelling.trim().endsWith("]")
 
 /** Why a declaration stays hand-written; the generator leaves a comment saying so instead of code. */
-internal class Unsupported(reason: String) : Exception(reason)
+class Unsupported(reason: String) : Exception(reason)
 
 /** Maps the model's types onto C, recording the math types the module's mirror structs must cover. */
-internal class CBridges(private val api: CppApi) {
+internal class CBridges(private val api: CppApi, private val config: ApiGenConfig, private val names: CNames) {
+    private val h = config.helpers
+    private val refs = config.refs
     val mathTypes = sortedSetOf<String>()
     /** Function pointer typedefs the forwarders use, by C name. */
     val callbackTypes = sortedMapOf<String, String>()
@@ -52,8 +56,11 @@ internal class CBridges(private val api: CppApi) {
         r.fields.any { it.isPublic } || (r.fields.isNotEmpty() && creatable(r) && r.copyable) || twins(r).any { isValue(it.name) }
     }
 
-    /** Bases with [record]'s C name (backend::Viewport under filament::Viewport): C sees one type, so it gets theirs. */
-    fun twins(record: CppRecord) = record.bases.mapNotNull { api.records[it] }.filter { CNames.type(it.name) == CNames.type(record.name) }
+    /** A record whose instances count their references ([RefCounting.targets]): C adds and releases them, never deletes. */
+    fun refCounted(record: CppRecord): Boolean = record.bases.any { refs?.targets?.contains(it) == true || api.records[it]?.let(::refCounted) == true }
+
+    /** Bases with [record]'s C name: C sees one type, so it gets theirs. */
+    fun twins(record: CppRecord) = record.bases.mapNotNull { api.records[it] }.filter { names.type(it.name) == names.type(record.name) }
 
     /** A class template C binds, or a record nested in one: C binds the instantiation the library exports. */
     fun instantiated(name: String) = instantiations(name).isNotEmpty()
@@ -61,8 +68,8 @@ internal class CBridges(private val api: CppApi) {
     /** A template [record] C doesn't bind. */
     fun uninstantiated(record: CppRecord) = record.template && !instantiated(record.name)
 
-    /** [FUNCTION_INSTANTIATIONS] entries no template matched: stale after an upstream rename. */
-    val unusedFunctionInstantiations = FUNCTION_INSTANTIATIONS.keys.toMutableSet()
+    /** [ApiGenConfig.functionInstantiations] entries no template matched: stale after an upstream rename. */
+    val unusedFunctionInstantiations = config.functionInstantiations.keys.toMutableSet()
 
     /**
      * The instantiations of the function template [method] C binds, each with the template arguments its call spells;
@@ -70,7 +77,7 @@ internal class CBridges(private val api: CppApi) {
      */
     fun functionInstantiations(method: CppMethod): List<Pair<CppMethod, List<String>>>? {
         val key = "${method.owner}::${method.name}"
-        val instantiations = FUNCTION_INSTANTIATIONS[key] ?: return null
+        val instantiations = config.functionInstantiations[key] ?: return null
         unusedFunctionInstantiations -= key
         val parameters = method.templateParameters!!
         return instantiations.map { arguments ->
@@ -79,7 +86,7 @@ internal class CBridges(private val api: CppApi) {
         }
     }
 
-    /** A template argument as the model would resolve it; math types are external, as the dump skips them. */
+    /** A template argument as the model would resolve it. */
     private fun argumentType(spelling: String) = when {
         CAbi.isBuiltin(spelling) -> CppType(spelling, null, Kind.BUILTIN)
         spelling in api.records || spelling in api.enums -> CppType(spelling, spelling, Kind.DECLARED)
@@ -91,15 +98,15 @@ internal class CBridges(private val api: CppApi) {
         var qualified = ""
         return decl.split("::").joinToString("::") { segment ->
             qualified = if (qualified.isEmpty()) segment else "$qualified::$segment"
-            INSTANTIATIONS[qualified]?.let { "$segment<${it.values.joinToString()}>" } ?: segment
+            config.instantiations[qualified]?.let { "$segment<${it.values.joinToString()}>" } ?: segment
         }
     }
 
     /** [spelling], written in [scope], with the template parameters of the instantiations around it replaced. */
-    private fun substitute(spelling: String, scope: String) = instantiations(scope).flatMap { INSTANTIATIONS.getValue(it).entries }
+    private fun substitute(spelling: String, scope: String) = instantiations(scope).flatMap { config.instantiations.getValue(it).entries }
         .fold(spelling) { s, (parameter, argument) -> s.replace(Regex("\\b$parameter\\b"), argument) }
 
-    private fun instantiations(name: String) = name.split("::").runningReduce { a, b -> "$a::$b" }.filter { it in INSTANTIATIONS }
+    private fun instantiations(name: String) = name.split("::").runningReduce { a, b -> "$a::$b" }.filter { it in config.instantiations }
 
     /** A record C can create, so it has one to copy a result into. */
     fun creatable(record: CppRecord) = !uninstantiated(record) && record.allocatable && record.destructible && record.constructors.isNotEmpty()
@@ -108,7 +115,7 @@ internal class CBridges(private val api: CppApi) {
     fun borrowsPointer(type: CppType): Boolean = when {
         isArray(type) -> borrowsPointer(type.args.single())
         type.decl in api.aliases -> borrowsPointer(api.aliases.getValue(type.decl!!))
-        else -> (type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()) || type.decl == "std::string_view" || type.decl == SLICE
+        else -> (type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()) || type.decl == "std::string_view" || type.decl in config.views
     }
 
     /** The integer typedef of an enum too wide for a C enum (whose enumerators are ints), or null. */
@@ -118,80 +125,123 @@ internal class CBridges(private val api: CppApi) {
         val shape = shape(type.spelling)
         if (shape.indirection == listOf("*", "*")) return pointers(type, shape, result)
         if (shape.indirection.size > 1) throw Unsupported("${type.spelling}: pointer to pointer")
-        val indirection = shape.indirection.firstOrNull()
+        var indirection = shape.indirection.firstOrNull()
+        var const = shape.const
         var target = type
         var alias: String? = null
         var lastAlias: String? = null
+        // An alias brings its own const and indirection: Vec3Arg is a `const Vec3`, Mat44Arg a `const Mat44 &`.
         while (!isArray(target) && target.decl in api.aliases) {
             alias = alias ?: target.decl
             lastAlias = target.decl
             target = api.aliases.getValue(target.decl!!)
-            if (shape(target.spelling).indirection.isNotEmpty()) throw Unsupported("${type.spelling}: alias of a pointer")
+            val aliased = shape(target.spelling)
+            const = const || aliased.const
+            if (aliased.indirection.isEmpty()) continue
+            if (indirection != null || aliased.indirection.size > 1) throw Unsupported("${type.spelling}: alias of a pointer")
+            indirection = aliased.indirection.single()
         }
-        if (isArray(target)) return sequence(target, DirectBridges(shape.const, indirection, result, lvalue))
-        var decl = target.decl
+        val bridge = DirectBridges(config, names, const, indirection, result, lvalue)
+        if (isArray(target)) return sequence(target, bridge)
         if (target.kind == Kind.TEMPLATE_PARAMETER) {
-            val argument = INSTANTIATIONS[decl!!.substringBeforeLast("::")]?.get(decl.substringAfterLast("::"))
+            val decl = target.decl
+            val argument = config.instantiations[decl!!.substringBeforeLast("::")]?.get(decl.substringAfterLast("::"))
                 ?: throw Unsupported("${type.spelling}: template parameter")
-            return DirectBridges(shape.const, indirection, result, lvalue).builtin(argument)
+            return bridge.builtin(argument)
         }
-        // A math template's instantiation is one of the mirrored typedefs: vec3<float> is float3.
-        MATH_VECTOR.matchEntire(decl.orEmpty())?.let { vector ->
-            val element = substitute(target.args.single().spelling, lastAlias.orEmpty())
-            decl = "filament::math::$element${vector.groupValues[1]}"
+        if (target.kind == Kind.FUNCTION && lastAlias != null && indirection != "&") return functionPointer(lastAlias, target, indirection == "*")
+        val decl = target.decl?.let { config.custom.canonical(it, target) { spelling -> substitute(spelling, lastAlias.orEmpty()) } }
+        decl?.let { config.custom.bridge(it, target, alias, bridge) }?.let { custom ->
+            custom.typedef?.let { callbackTypes += it }
+            return custom
         }
-        val bridge = DirectBridges(shape.const, indirection, result, lvalue)
         return when {
-            target.kind == Kind.FUNCTION && lastAlias != null && indirection != "&" -> functionPointer(lastAlias, target, indirection == "*")
-            decl in UPLOADS -> bridge.upload(decl!!, pixels = decl == PIXEL_BUFFER).also { callbackTypes += BUFFER_CALLBACK }
-            decl in SEQUENCES -> sequence(target, bridge)
+            decl in config.allSequences -> sequence(target, bridge)
             decl == "std::optional" -> optional(target, bridge)
             decl == "std::function" && lastAlias != null -> function(lastAlias, target.args.single(), bridge)
-            decl == "utils::Invocable" -> bridge.invocable(target).let { (b, typedef) -> callbackTypes += typedef; b }
+            refs != null && decl in refs.pointers -> ref(target, bridge)
+            decl in config.results -> fallible(target, bridge)
             indirection == "&&" -> throw Unsupported("${type.spelling}: rvalue reference")
             target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
             target.kind == Kind.FUNCTION -> throw Unsupported("${type.spelling}: function type")
             decl == null -> throw Unsupported("${type.spelling}: ${target.kind.name.lowercase()}")
-            decl in api.enums -> bridge.enum(cpp(decl!!), wideEnumType(api.enums.getValue(decl)))
-            decl in SCALARS -> bridge.scalar(decl, SCALARS.getValue(decl))
-            decl in STRINGS -> bridge.string(decl)
-            decl == "utils::Entity" -> bridge.entity()
-            decl == "utils::EntityInstance" && alias != null -> bridge.instance(alias)
-            decl!!.startsWith("filament::math::") && mathMirror(decl) != null -> bridge.math(decl).also { mathTypes += decl }
-            decl in api.records && !api.records.getValue(decl).accessible -> throw Unsupported("${type.spelling}: not accessible")
-            decl in api.records -> api.records.getValue(decl).let { bridge.record(cpp(decl), isValue(decl), creatable(it) && it.defaultConstructible) }
+            decl in api.enums -> bridge.enum(cpp(decl), wideEnumType(api.enums.getValue(decl)))
+            decl in config.scalars -> bridge.scalar(decl, config.scalars.getValue(decl))
+            decl in config.allStrings -> bridge.string(decl)
+            decl in config.mirrors -> bridge.math(decl).also { mathTypes += decl }
+            decl in api.records -> bridge.record(cpp(handle(target).name), isValue(decl), api.records.getValue(decl).let { creatable(it) && it.defaultConstructible && it.copyable })
             else -> throw Unsupported("${type.spelling}: $decl")
         }
     }
 
+    /** The record [type] names, when C has a handle for it. */
+    private fun handle(type: CppType): CppRecord {
+        val record = type.decl?.let(api.records::get) ?: throw Unsupported("${type.spelling}: ${type.kind.name.lowercase()}")
+        if (!record.accessible) throw Unsupported("${type.spelling}: not accessible")
+        if (uninstantiated(record)) throw Unsupported("${type.spelling}: class template")
+        return record
+    }
+
     /**
-     * A FixedCapacityVector, Slice, std::array or array. C passes an array and its count; `fila::items` converts it to whichever
-     * the callee takes. A result fills C's array up to its capacity and returns how many there are. Math elements are
-     * contiguous mirrors; value records, the handles C created to copy into.
+     * A reference-counting pointer ([RefCounting.pointers]) crosses as the pointer it holds. C++ takes its own
+     * reference to a parameter. A result by value hands C a reference to release (`_release`); one that outlives the
+     * call (a field, a `const Ref&`) is borrowed.
+     */
+    private fun ref(type: CppType, bridge: DirectBridges): CBridge {
+        if (!bridge.byValue) throw Unsupported("${type.spelling}: by pointer or non-const reference")
+        val const = if (refs!!.pointers.getValue(type.decl!!)) "const " else ""
+        val c = "$const${names.type(handle(type.args.single()).name)}*"
+        return when {
+            !bridge.result -> CBridge(c, { "$h::cpp($it)" })
+            bridge.indirection == null && !bridge.lvalue -> CBridge(c, { "$h::c($h::retain($it))" })
+            else -> CBridge(c, { "$h::c(($it).${refs.get}())" })
+        }
+    }
+
+    /**
+     * A result type ([ApiGenConfig.results]) is its value, or NULL (false, for a value C copies out) when it holds an
+     * error, whose message is then copied into `outError` up to its capacity, NUL-terminated.
+     */
+    private fun fallible(type: CppType, bridge: DirectBridges): CBridge {
+        if (!bridge.result || bridge.indirection != null) throw Unsupported("${type.spelling}: only as a result by value")
+        val value = result(type.args.single())
+        if (value.extra.isNotEmpty()) throw Unsupported("${type.spelling}: C takes its value in pieces")
+        val error = listOf("char*" to "outError", "uint32_t" to "outErrorCapacity")
+        if (value.out) return CBridge("bool", { call -> "$h::result($call, outError, outErrorCapacity, [&](auto& v) { ${value.store("v", "out")} return true; })" },
+            extra = listOf("${value.c}*" to "out") + error)
+        if (!value.c.endsWith("*")) throw Unsupported("${type.spelling}: no value says it failed")
+        return CBridge(value.c, { call -> "$h::result($call, outError, outErrorCapacity, [&](auto& v) { return ${value.convert("v")}; })" }, extra = error)
+    }
+
+    /**
+     * A sequence ([ApiGenConfig.sequences], std::vector, std::array) or array. C passes an array and its count;
+     * `items` converts it to whichever the callee takes. A result fills C's array up to its capacity and returns how
+     * many there are. Math elements are contiguous mirrors; value records, the handles C created to copy into.
      */
     private fun sequence(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.byValue && !bridge.result && !bridge.const && type.decl == "std::array") return updated(type)
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
         // std::array's second argument is its size.
         val element = type.args.first()
-        val mirror = generateSequence(element) { t -> t.decl?.let(api.aliases::get) }.last().decl.orEmpty().startsWith("filament::math::") &&
+        val resolved = generateSequence(element) { t -> t.decl?.let(api.aliases::get) }.last().decl
+        val mirror = resolved in config.mirrors &&
             shape(element.spelling).indirection.isEmpty()
-        // A Slice views elements that outlive it, as an lvalue's do.
-        val lvalue = bridge.lvalue || bridge.indirection == "&" || type.decl == SLICE
+        // A view's elements outlive it, as an lvalue's do.
+        val lvalue = bridge.lvalue || bridge.indirection == "&" || type.decl in config.views
         val e = if (bridge.result) result(element, lvalue) else param(element)
         if (e.extra.isNotEmpty()) throw Unsupported("${type.spelling}: elements C passes in pieces")
         if (!bridge.result) {
             val items = if (mirror || e.c.endsWith("*")) "${e.c}${if (mirror) "" else " const*"}" else "const ${e.c}*"
             val item = { n: String -> if (mirror) "($n + i)" else "$n[i]" }
-            val convert = { n: String -> "fila::items(${n}Count, [&](uint32_t i) { return ${e.convert(item(n))}; })" }
+            val convert = { n: String -> "$h::items(${n}Count, [&](uint32_t i) { return ${e.convert(item(n))}; })" }
             return CBridge(items, convert, extra = listOf("uint32_t" to "Count"),
-                assign = { field, v -> if (isArray(type)) "fila::assign($field, ${convert(v)});" else "$field = ${convert(v)};" })
+                assign = { field, v -> if (isArray(type)) "$h::assign($field, ${convert(v)});" else "$field = ${convert(v)};" })
         }
-        val handles = e.out && element.decl in api.records
+        val handles = e.out && !mirror && resolved in api.records
         val store = if (handles) e.store("x", "out[i]") else "out[i] = ${e.convert("x")};"
         return CBridge(
             "uint32_t",
-            { call -> "fila::copy($call, outCapacity, [&](auto& x, uint32_t i) { $store })" },
+            { call -> "$h::copy($call, outCapacity, [&](auto& x, uint32_t i) { $store })" },
             extra = listOf((if (handles) "${e.c}* const*" else "${e.c}*") to "out", "uint32_t" to "outCapacity"),
         )
     }
@@ -202,7 +252,7 @@ internal class CBridges(private val api: CppApi) {
         val (p, r) = param(element) to result(element)
         if (listOf(p, r).any { it.out || it.extra.isNotEmpty() || it.c.endsWith("*") }) throw Unsupported("${type.spelling}: elements C passes by pointer")
         return CBridge("${p.c}*", { n ->
-            "fila::updated(${n}Count, [&](uint32_t i) { return ${p.convert("$n[i]")}; }, [&](auto x, uint32_t i) { $n[i] = ${r.convert("x")}; })"
+            "$h::updated(${n}Count, [&](uint32_t i) { return ${p.convert("$n[i]")}; }, [&](auto x, uint32_t i) { $n[i] = ${r.convert("x")}; })"
         }, extra = listOf("uint32_t" to "Count"))
     }
 
@@ -219,7 +269,7 @@ internal class CBridges(private val api: CppApi) {
         val record = type.decl?.let(api.records::get)?.takeIf { it.accessible && !uninstantiated(it) }
             ?: throw Unsupported("${type.spelling}: pointer to pointer")
         val base = Regex("""(?<![\w:])${Regex.escape(shape.base)}(?![\w:])""")
-        val c = base.replaceFirst(spelling, CNames.type(record.name))
+        val c = base.replaceFirst(spelling, names.type(record.name))
         val cpp = base.replaceFirst(spelling, cpp(record.name))
         return CBridge(c, { "reinterpret_cast<${if (result) c else cpp}>($it)" })
     }
@@ -232,13 +282,13 @@ internal class CBridges(private val api: CppApi) {
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
         val value = if (bridge.result) result(type.args.single(), bridge.lvalue) else param(type.args.single())
         if (value.extra.isNotEmpty() || value.c.endsWith("*")) throw Unsupported("${type.spelling}: C passes its value by pointer")
-        if (!bridge.result) return CBridge("const ${value.c}*", { n -> "fila::optional($n, [&](auto v) { return ${value.convert("v")}; })" })
-        return CBridge("bool", { call -> "fila::present($call, [&](auto& v) { ${value.store("v", "out")} })" }, extra = listOf("${value.c}*" to "out"))
+        if (!bridge.result) return CBridge("const ${value.c}*", { n -> "$h::optional($n, [&](auto v) { return ${value.convert("v")}; })" })
+        return CBridge("bool", { call -> "$h::present($call, [&](auto& v) { ${value.store("v", "out")} })" }, extra = listOf("${value.c}*" to "out"))
     }
 
     /**
      * A `std::function` alias C passes as a function pointer of the same shape, declared under the alias's name: its
-     * arguments cross as results do. NULL is an empty function. Filament's take their user data as an argument.
+     * arguments cross as results do. NULL is an empty function.
      */
     private fun function(alias: String, signature: CppType, bridge: DirectBridges): CBridge {
         if (bridge.result || !bridge.byValue) throw Unsupported("$alias by reference or as a result")
@@ -246,7 +296,7 @@ internal class CBridges(private val api: CppApi) {
         if (returns.spelling != "void") throw Unsupported("$alias: returns a value")
         val args = signature.args.drop(1).map { result(it) }
         if (args.any { it.out || it.extra.isNotEmpty() }) throw Unsupported("$alias: arguments C takes in pieces")
-        val name = CNames.type(alias)
+        val name = names.type(alias)
         callbackTypes[name] = "typedef void (*$name)(${args.joinToString { it.c }.ifEmpty { "void" }});"
         val params = args.indices.joinToString { "auto a$it" }
         return CBridge(name, { n ->
@@ -261,7 +311,7 @@ internal class CBridges(private val api: CppApi) {
     private fun functionPointer(alias: String, type: CppType, pointer: Boolean): CBridge {
         if (!pointer && "(*" !in NULLABILITY.replace(type.spelling, "").replace(" ", "")) throw Unsupported("${type.spelling}: function type")
         if (type.args.any { !CAbi.isBuiltin(shape(it.spelling).base) }) throw Unsupported("${type.spelling}: takes C++ types")
-        val name = CNames.type(alias)
+        val name = names.type(alias)
         val params = type.args.drop(1).joinToString { cSpelling(it.spelling) }.ifEmpty { "void" }
         callbackTypes[name] = "typedef ${cSpelling(type.args.first().spelling)} (*$name)($params);"
         return CBridge(name, { it })

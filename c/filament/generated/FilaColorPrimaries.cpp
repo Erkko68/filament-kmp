@@ -13,27 +13,27 @@ void FilaColorPrimaries_destroy(FilaColorPrimaries* self) {
 }
 
 void FilaColorPrimaries_getR(const FilaColorPrimaries* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->r);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->r);
 }
 
 void FilaColorPrimaries_setR(FilaColorPrimaries* self, const FilaFloat2* value) {
-    fila::cpp(self)->r = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->r = fila::math<filament::math::float2>(*value);
 }
 
 void FilaColorPrimaries_getG(const FilaColorPrimaries* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->g);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->g);
 }
 
 void FilaColorPrimaries_setG(FilaColorPrimaries* self, const FilaFloat2* value) {
-    fila::cpp(self)->g = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->g = fila::math<filament::math::float2>(*value);
 }
 
 void FilaColorPrimaries_getB(const FilaColorPrimaries* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->b);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->b);
 }
 
 void FilaColorPrimaries_setB(FilaColorPrimaries* self, const FilaFloat2* value) {
-    fila::cpp(self)->b = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->b = fila::math<filament::math::float2>(*value);
 }
 
 } // extern "C"

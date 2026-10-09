@@ -400,11 +400,11 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
         fun build(engine: Engine, entity: Entity): Result {
             val result = FilaLightManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
             FilaLightManagerBuilder_destroy(nativeBuilder)
-            return if (result == 0) Result.Success else Result.Error
+            return Result.entries.first { it.value == result }
         }
 
         /** Outcome of [build]. */
-        enum class Result { Error, Success }
+        enum class Result(internal val value: Int) { Error(-1), Success(0) }
     }
 
     companion object {
