@@ -113,6 +113,10 @@ jobs:
             :kotlin:gltfio:jvmTest \
             :kotlin:filament-compose:jvmTest \
             --no-configuration-cache
+      - name: Check libfilament-c needs no LLVM runtime (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          ! readelf -d desktop/build/filament-c/*/libfilament-c.so | grep -E 'NEEDED.*(libc\+\+|libunwind)'
       # Aggregate JVM test coverage once, on the macOS runner where the real-backend (Metal)
       # tests also run, for the highest-coverage snapshot. Report-only (non-blocking) — no
       # threshold is enforced. js/native actuals run on runtimes Kover can't instrument.
