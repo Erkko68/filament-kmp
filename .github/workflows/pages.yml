@@ -103,11 +103,11 @@ jobs:
           # One docs set per minor line, its newest patch: patches don't change the API, and
           # a version is ~60-80 MB against GitHub Pages' 1 GB site cap. The line being
           # rendered is this version's, so its archived patches go; of the other lines, the
-          # nine newest stay (ten with this one). Older releases stay reachable through their git tags.
+          # seven newest stay (eight with this one). Older releases stay reachable through their git tags.
           version=$(grep '^libVersion=' gradle.properties | cut -d= -f2)
           cd build/previousDocs
           rm -rf "${version%.*}".*
-          ls -1 | sort -Vr | awk -F. 'seen[$1"."$2]++ || ++lines > 9' | while read -r stale; do rm -rf "$stale"; done
+          ls -1 | sort -Vr | awk -F. 'seen[$1"."$2]++ || ++lines > 7' | while read -r stale; do rm -rf "$stale"; done
 
       - name: Generate API docs
         # Aggregates :kotlin:filament, :kotlin:filamat, :kotlin:filament-utils,
