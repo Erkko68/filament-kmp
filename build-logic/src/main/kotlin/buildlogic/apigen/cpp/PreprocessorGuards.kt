@@ -3,7 +3,7 @@ package buildlogic.apigen.cpp
 import java.io.File
 
 /**
- * The `#if` conditions a header declares things under, e.g. `#ifdef JPH_ENABLE_ASSERTS` validation. The AST
+ * The `#if` conditions a header declares things under, e.g. `#ifndef NDEBUG` validation. The AST
  * sees what they hide in other configurations; the C API guards those forwarders with the same condition.
  */
 internal class PreprocessorGuards(private val includeDir: File) {

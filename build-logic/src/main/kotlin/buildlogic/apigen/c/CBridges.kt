@@ -56,7 +56,7 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
         r.fields.any { it.isPublic } || (r.fields.isNotEmpty() && creatable(r) && r.copyable) || twins(r).any { isValue(it.name) }
     }
 
-    /** A record whose instances count their references (a RefTarget): C adds and releases them, never deletes. */
+    /** A record whose instances count their references ([RefCounting.targets]): C adds and releases them, never deletes. */
     fun refCounted(record: CppRecord): Boolean = record.bases.any { refs?.targets?.contains(it) == true || api.records[it]?.let(::refCounted) == true }
 
     /** Bases with [record]'s C name: C sees one type, so it gets theirs. */

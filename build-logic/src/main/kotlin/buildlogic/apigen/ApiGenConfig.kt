@@ -10,7 +10,7 @@ import java.io.Serializable
  * touch when a version bump adds a scalar, template or string type.
  */
 data class ApiGenConfig(
-    /** The library as prose and file names spell it: `Jolt`. */
+    /** The library as prose and file names spell it: `Filament`. */
     val name: String,
     /** The dir the library's headers are included from, relative to the project. */
     val includeDir: String,
@@ -30,7 +30,7 @@ data class ApiGenConfig(
     /** Namespaces nested in a filter's that are left unparsed (huge, and not API). */
     val skippedNamespaces: Set<String> = emptySet(),
 
-    /** What every C name starts with: `Jph`. */
+    /** What every C name starts with: `Fila`. */
     val prefix: String,
     /** Namespaces C names leave out, as every name would repeat them. */
     val droppedNamespaces: Set<String> = emptySet(),
