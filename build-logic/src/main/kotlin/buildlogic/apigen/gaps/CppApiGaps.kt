@@ -1,7 +1,7 @@
 package buildlogic.apigen.gaps
 
 /**
- * Methods of Filament's public classes the C API's objects never mention: the headers' public methods, inline
+ * Methods of the library's public classes the C API's objects never mention: the headers' public methods, inline
  * ones included, plus whatever the libraries define that the headers don't declare (template instances), so a
  * header-walk miss can't hide a gap.
  */

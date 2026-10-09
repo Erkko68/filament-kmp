@@ -12,8 +12,9 @@ import buildlogic.apigen.cpp.CppType
 
 /**
  * Writes the C API for what [headers] declare: per module a `Types.h` (handles, enums, math mirrors) and an
- * `Includes.hpp` of [headers], the helpers the forwarders call (`Bridge.hpp`), and per top-level class or namespace a header and its C++ forwarders. What can't be
- * bridged becomes a `TODO(handwritten)` comment where its declaration would be; for one [manual] writes by hand, a note it's done.
+ * `Includes.hpp` of [headers], the helpers the forwarders call (`Bridge.hpp`), and per top-level class or namespace a
+ * header and its C++ forwarders. What can't be bridged becomes a `TODO(handwritten)` comment where its declaration
+ * would be; for one [manual] writes by hand, a note it's done.
  */
 internal class CApiWriter(
     val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val headers: Set<String>,

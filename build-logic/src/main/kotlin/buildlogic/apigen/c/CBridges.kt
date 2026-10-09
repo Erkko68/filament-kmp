@@ -183,8 +183,9 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     }
 
     /**
-     * A reference-counting pointer ([RefCounting.pointers]) crosses as the pointer it holds. C++ takes its own reference to a parameter. A result by value
-     * hands C a reference to release (`_release`); one that outlives the call (a field, a `const Ref&`) is borrowed.
+     * A reference-counting pointer ([RefCounting.pointers]) crosses as the pointer it holds. C++ takes its own
+     * reference to a parameter. A result by value hands C a reference to release (`_release`); one that outlives the
+     * call (a field, a `const Ref&`) is borrowed.
      */
     private fun ref(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by pointer or non-const reference")
@@ -198,8 +199,8 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     }
 
     /**
-     * A result type ([ApiGenConfig.results]) is its value, or NULL (false, for a value C copies out) when it holds an error, whose message is
-     * then copied into `outError` up to its capacity, NUL-terminated.
+     * A result type ([ApiGenConfig.results]) is its value, or NULL (false, for a value C copies out) when it holds an
+     * error, whose message is then copied into `outError` up to its capacity, NUL-terminated.
      */
     private fun fallible(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.result || bridge.indirection != null) throw Unsupported("${type.spelling}: only as a result by value")
@@ -213,9 +214,9 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     }
 
     /**
-     * A sequence ([ApiGenConfig.sequences], std::vector, std::array) or array. C passes an array and its count; `items` converts it to whichever
-     * the callee takes. A result fills C's array up to its capacity and returns how many there are. Math elements are
-     * contiguous mirrors; value records, the handles C created to copy into.
+     * A sequence ([ApiGenConfig.sequences], std::vector, std::array) or array. C passes an array and its count;
+     * `items` converts it to whichever the callee takes. A result fills C's array up to its capacity and returns how
+     * many there are. Math elements are contiguous mirrors; value records, the handles C created to copy into.
      */
     private fun sequence(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.byValue && !bridge.result && !bridge.const && type.decl == "std::array") return updated(type)

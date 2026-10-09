@@ -205,7 +205,7 @@ fun Project.registerFilamentApiGen() {
         description = "Reports the Filament C++ API the Fila* C API doesn't call."
         config.set(FILAMENT_API)
         projectDir.set(layout.projectDirectory)
-        filamentLibraries.from(filamentLibDir(target).map { dir -> FILAMENT_LIBRARIES.map { dir.file("lib$it.a") } })
+        libraries.from(filamentLibDir(target).map { dir -> FILAMENT_LIBRARIES.map { dir.file("lib$it.a") } })
         cApiObjects.from(cBuild.flatMap { it.buildDir }.map { it.asFileTree.matching { include("CMakeFiles/fila-*.dir/**/*.o") } })
         report.set(layout.buildDirectory.file("reports/api-gaps.txt"))
         dependsOn(cBuild)

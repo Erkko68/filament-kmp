@@ -41,8 +41,7 @@ internal object CAbi {
         "unsigned long" to "uint64_t", "unsigned long int" to "uint64_t", "unsigned long long" to "uint64_t",
         "unsigned long long int" to "uint64_t", "uint64_t" to "uint64_t",
         // Sizes and counts fit 32 bits; a pointer-sized integer holds a native handle, 64-bit where one can be.
-        "size_t" to "uint32_t", "std::size_t" to "uint32_t", "ssize_t" to "int32_t", "ptrdiff_t" to "int32_t",
-        "std::ptrdiff_t" to "int32_t", "intptr_t" to "int64_t", "uintptr_t" to "uint64_t",
+        "size_t" to "uint32_t", "ssize_t" to "int32_t", "ptrdiff_t" to "int32_t", "intptr_t" to "int64_t", "uintptr_t" to "uint64_t",
     )
 
     private val WIDENED = mapOf("int8_t" to "int32_t", "int16_t" to "int32_t", "uint8_t" to "uint32_t", "uint16_t" to "uint32_t")

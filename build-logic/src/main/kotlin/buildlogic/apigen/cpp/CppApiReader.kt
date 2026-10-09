@@ -45,7 +45,8 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
     }
 
     /**
-     * [exported]: marked with a visibility attribute (an export macro) or publicly nested in an exported class, what the libraries' symbols follow.
+     * [exported]: marked with a visibility attribute (an export macro) or publicly nested in an exported class, what
+     * the libraries' symbols follow.
      * [accessible]: nameable from outside, at namespace scope or publicly nested.
      */
     private fun visit(node: Map<*, *>, scope: String, exported: Boolean, accessible: Boolean, template: Boolean = false) {

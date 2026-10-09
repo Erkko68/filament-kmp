@@ -8,7 +8,7 @@ import java.io.File
 
 /**
  * The generator for one library, laid out as [ApiGenConfig] says under [projectDir]. Nothing here is Gradle's: the
- * tasks and the tests both drive it. [workDir] holds scratch files.
+ * tasks drive it. [workDir] holds scratch files.
  */
 internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File) {
     // Absolute: clang reports a declaration's file as the include path spells it.

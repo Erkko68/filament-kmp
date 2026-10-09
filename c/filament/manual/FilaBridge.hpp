@@ -1,6 +1,7 @@
 // The helpers only Filament can write, on top of the generated Bridge.hpp; filament's generated Includes.hpp includes this.
 #pragma once
 
+#include <bit>
 #include <string_view>
 
 #include <utils/FixedCapacityVector.h>

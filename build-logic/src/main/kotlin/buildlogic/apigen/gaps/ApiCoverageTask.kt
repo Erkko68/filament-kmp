@@ -12,11 +12,11 @@ import org.gradle.api.tasks.UntrackedTask
 import java.io.File
 
 /**
- * Writes `api-coverage.txt`: each C function the C++ API calls for: bound, and a public Kotlin wrapper calls it (`wrapped`) or none
- * does yet (`unwrapped`); or why it isn't bound (`todo`, `skipped`). Then each enum value and class constant of that API,
- * which no function carries: the Kotlin API declares it (`declared`) or doesn't (`undeclared`; `untyped` when it has no
- * declaration of the enum's name). Committed, so a library bump's diff shows what changed and how far it got. Warns when
- * the committed C API or Kotlin externals aren't what the generators would write.
+ * Writes `api-coverage.txt`: each C function the C++ API calls for: bound, and a public Kotlin wrapper calls it
+ * (`wrapped`) or none does yet (`unwrapped`); or why it isn't bound (`todo`, `skipped`). Then each enum value and class
+ * constant of that API, which no function carries: the Kotlin API declares it (`declared`) or doesn't (`undeclared`;
+ * `untyped` when it has no declaration of the enum's name). Committed, so a library bump's diff shows what changed and
+ * how far it got. Warns when the committed C API or Kotlin externals aren't what the generators would write.
  */
 @UntrackedTask(because = "A report to diff, cheap next to reading the AST")
 abstract class ApiCoverageTask : ApiGenTask() {
