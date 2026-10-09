@@ -212,6 +212,8 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      * This is set as the duration in nanoseconds since epoch of std::chrono::steady_clock.
      * Must be called between beginFrame() and endFrame().
      *
+     * Silently ignored where the backend or platform can't schedule presentation.
+     *
      * @param monotonicClockNanos Time in nanoseconds.
      */
     fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime_int64_t(nativeHandle, monotonicClockNanos)

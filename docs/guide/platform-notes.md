@@ -137,7 +137,7 @@ single-threaded wasm, marked in source with **`@PlatformGap`** so they show up i
 | `Engine.isPaused`, `Engine.Builder.paused` | Tracked locally only; pausing needs threads | Stop your own frame loop instead |
 | `Fence.wait`, `Engine.flushAndWait` | The timeout is clamped to 0 (a non-blocking poll); a `FLUSH` has already executed every command | Poll across frames until `CONDITION_SATISFIED` |
 | `SwapChain.setFrameCompletedCallback` | Never fires: the OpenGL/WebGL backend implements it as a no-op (same on Android and GL desktop) | — |
-| `SwapChain.isFrameRateChangeSupported` | Returns false; pacing is managed by the browser | — |
+| `SwapChain.isFrameRateChangeSupported`, `SwapChain.setFrameRate` | Returns `FALSE` and has no effect: only Android surfaces can switch the display frame rate (same on iOS and desktop) | — |
 
 Engine-level WebGL issues (for example the spot-light shadow context loss on some GPUs) are
 upstream bugs in Filament's WebGL backend, not binding gaps.
