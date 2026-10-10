@@ -229,4 +229,157 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
             "an animated instance should run a frame loop",
         )
     }
+
+    /** Two instances of one asset are separate entity trees: each has its own transform, and one can leave alone. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun instancesOfOneAssetAreIndependent() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val asset = morphCube() ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            var both by mutableStateOf(true)
+            var left = 0
+            var right = 0
+            setContent {
+                GltfInstance(asset = asset, position = Position(-1f, 0f, 0f), onCreate = { left = instance.root })
+                if (both) GltfInstance(asset = asset, position = Position(1f, 0f, 0f), onCreate = { right = instance.root })
+            }
+            waitForIdle()
+            val tm = engine.transformManager
+            fun x(root: Int) = tm.getTransform(tm.getInstance(root))[12]
+            assertTrue(left != 0 && right != 0 && left != right, "each instance should have its own root")
+            assertEquals(listOf(-1f, 1f), listOf(x(left), x(right)))
+            val two = scene.entityCount
+
+            both = false
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(two / 2, scene.entityCount, "one instance leaving should take only its own entities")
+            assertEquals(-1f, x(left), "the remaining instance keeps its transform")
+
+            setContent {}
+            waitForIdle()
+            assertSceneEmpty(scene, "GltfInstance leaked after one of two was removed first")
+        }
+    }
+
+    /** The transform follows its inputs in place, and the root hangs off the enclosing Group. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun transformAndParentFollowTheInputs() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val asset = morphCube() ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            var position by mutableStateOf(Position(1f, 2f, 3f))
+            var created = 0
+            var root = 0
+            var group = 0
+            setContent {
+                Group(onCreate = { group = entity }) {
+                    GltfInstance(asset = asset, position = position, onCreate = { created++; root = instance.root })
+                }
+            }
+            waitForIdle()
+            val tm = engine.transformManager
+            fun translation() = tm.getTransform(tm.getInstance(root)).slice(12..14)
+            assertEquals(group, tm.getParent(tm.getInstance(root)), "the root should be parented to the Group")
+            assertEquals(listOf(1f, 2f, 3f), translation())
+
+            position = Position(4f, 5f, 6f)
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(listOf(4f, 5f, 6f), translation())
+            assertEquals(1, created, "moving the instance should not rebuild it")
+
+            setContent {}
+            waitForIdle()
+            assertSceneEmpty(scene)
+        }
+    }
+
+    /** `animationIndex`/`animationTime` pose the model without a frame loop; an index the asset lacks is ignored. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun manualAnimationPosesTheModel() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val asset = gltfAsset(TestGlb.getFoxGlbBytes()) ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            var index: Int? by mutableStateOf(0)
+            var time by mutableStateOf(0f)
+            var entities = IntArray(0)
+            setContent {
+                GltfInstance(asset = asset, animationIndex = index, animationTime = time, onCreate = { entities = instance.entities })
+            }
+            waitForIdle()
+            val tm = engine.transformManager
+            fun pose() = entities.filter(tm::hasComponent).flatMap { tm.getTransform(tm.getInstance(it)).toList() }
+            fun recompose() { mainClock.advanceTimeByFrame(); waitForIdle() }
+            val atStart = pose()
+            assertTrue(atStart.isNotEmpty())
+
+            time = 0.3f
+            recompose()
+            val later = pose()
+            assertTrue(atStart != later, "a later animation time should move the joints")
+
+            for (missing in listOf(99, -1, null)) {
+                index = missing
+                time += 0.1f
+                recompose()
+                assertEquals(later, pose(), "animationIndex = $missing should leave the pose alone")
+            }
+
+            setContent {}
+            waitForIdle()
+            assertSceneEmpty(scene)
+        }
+    }
+
+    /**
+     * Where no further instance can be created (here: the source data was released), the first GltfInstance takes
+     * the asset's own instance and any other renders nothing. Leaving composition gives it back.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun theAssetsOwnInstanceIsHandedOutOnceAtATime() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val asset = morphCube() ?: return@run skippedComposeTest()
+        asset.filamentAsset.releaseSourceData()
+        val own = asset.filamentAsset.instance.entities.size
+
+        withFilamentScene(engine, scene) { setContent ->
+            var shown by mutableStateOf(true)
+            var created = 0
+            setContent {
+                if (shown) {
+                    GltfInstance(asset = asset, onCreate = { created++ })
+                    GltfInstance(asset = asset, onCreate = { created++ })
+                }
+            }
+            waitForIdle()
+            assertEquals(own, scene.entityCount, "only one GltfInstance can show the asset's own instance")
+            assertEquals(1, created)
+
+            shown = false
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertSceneEmpty(scene)
+
+            shown = true
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(own, scene.entityCount, "the instance should be available again once its GltfInstance left")
+
+            setContent {}
+            waitForIdle()
+            assertSceneEmpty(scene)
+        }
+    }
 }
