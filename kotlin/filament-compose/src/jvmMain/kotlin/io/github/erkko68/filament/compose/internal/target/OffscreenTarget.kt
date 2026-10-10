@@ -42,7 +42,7 @@ internal fun OffscreenTarget(engine: Engine, window: Window?, width: Int, height
  * Renders with [current] (a GPU-to-GPU target) until it throws, then reports it and reads back instead;
  * also reads back once GPU sharing is off for the session, e.g. after another view failed.
  */
-private class FallbackOffscreenTarget(
+internal class FallbackOffscreenTarget(
     private var current: OffscreenTarget,
     private val window: Window?,
     private val engine: Engine,
