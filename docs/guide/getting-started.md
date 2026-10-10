@@ -80,6 +80,17 @@ class MainActivity : ComponentActivity() {
 }
 ```
 
+Recommended: keep the `Activity`, and with it the engine and every loaded asset, alive across rotation and other configuration changes. Otherwise each one tears the scene down and loads it again.
+
+```xml
+<!-- androidApp/src/androidMain/AndroidManifest.xml -->
+<activity
+    android:name=".MainActivity"
+    android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode|keyboard|keyboardHidden|navigation">
+```
+
+Compose still reacts to the new configuration; see [Screen rotation and configuration changes](platform-notes.md#screen-rotation-and-configuration-changes) for what this changes.
+
 ### iOS
 
 The native Filament libraries ship in the Kotlin/Native klib, so there's nothing to download manually. Just declare the framework in your `iosMain` source set as usual:
