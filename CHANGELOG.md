@@ -13,6 +13,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.7.3] — 2026-10-10
+
 ### Changed
 - **Filament 1.77.3** upstream; no API changes, and `MATERIAL_VERSION` is unchanged, so `.filamat` files keep working.
 - **`SwapChain.setFrameRate` and `isFrameRateChangeSupported` are marked `@PlatformGap` off Android**: only Android surfaces can switch the display frame rate.
@@ -542,7 +544,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.2...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.3...HEAD
+[0.7.3]: https://github.com/Erkko68/filament-kmp/compare/0.7.2...0.7.3
 [0.7.2]: https://github.com/Erkko68/filament-kmp/compare/0.7.1...0.7.2
 [0.7.1]: https://github.com/Erkko68/filament-kmp/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/Erkko68/filament-kmp/compare/0.6.0...0.7.0

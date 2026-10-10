@@ -19,7 +19,7 @@ body:
     id: version
     attributes:
       label: filament-kmp version
-      placeholder: "0.7.2"
+      placeholder: "0.7.3"
     validations: { required: true }
   - type: textarea
     id: what-happened
