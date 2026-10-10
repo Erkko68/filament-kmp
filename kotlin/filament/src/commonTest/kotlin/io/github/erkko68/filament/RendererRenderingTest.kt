@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.interop.InteropScope
 import io.github.erkko68.filament.interop.readInts
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.testutils.ReadbackFlag
@@ -123,6 +124,7 @@ class RendererRenderingTest : RenderingTestFixture() {
     }
 
     // The zero-copy overload must deliver the same frame as the ByteArray one.
+    @IgnoreJs // a web readback only lands once the browser gets a frame, which a synchronous test never yields
     @Test
     fun testReadPixelsIntoNativeMemory() {
         val engine = engine ?: return
