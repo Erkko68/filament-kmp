@@ -62,6 +62,7 @@ class RendererTest : FilamentTestFixture() {
 
         assertTrue(renderer.maxFrameHistorySize > 0)
         assertTrue(renderer.getFrameInfoHistory(renderer.maxFrameHistorySize).size <= renderer.maxFrameHistorySize)
+        assertTrue(renderer.getFrameInfoHistory().size <= 1)
 
         // Timing
         renderer.setPresentationTime(1000000L)

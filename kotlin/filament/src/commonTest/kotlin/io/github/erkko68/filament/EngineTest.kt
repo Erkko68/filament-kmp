@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.capi.FilaEngineConfig_create
 import io.github.erkko68.filament.capi.FilaEngineConfig_destroy
+import io.github.erkko68.filament.interop.NullPointer
 import io.github.erkko68.filament.interop.withHandle
 import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.concurrent.Volatile
@@ -262,6 +263,25 @@ class EngineTest {
             assertTrue(isValid(il) && isValid(scene) && isValid(sky) && isValid(cg) && isValid(swap) && isValid(stream))
             assertTrue(isValid(tex) && isValid(rt))
         }
+
+        // Each wrapper hands out the native object it holds: all set, none shared.
+        val renderer = engine.createRenderer()
+        val view = engine.createView()
+        val cameraEntity = EntityManager.get().create()
+        val camera = engine.createCamera(cameraEntity)
+        val handles = listOf(
+            engine.nativeObject, bo.nativeObject, vb.nativeObject, ib.nativeObject, sb.nativeObject, mtb.nativeObject,
+            inb.nativeObject, il.nativeObject, scene.nativeObject, sky.nativeObject, cg.nativeObject, swap.nativeObject,
+            stream.nativeObject, tex.nativeObject, rt.nativeObject, renderer.nativeObject, view.nativeObject,
+            camera.nativeObject, engine.lightManager.nativeObject, engine.transformManager.nativeObject,
+            engine.renderableManager.nativeObject, EntityManager.get().nativeObject,
+        )
+        assertFalse(NullPointer in handles)
+        assertEquals(handles.size, handles.distinct().size)
+        engine.destroyCameraComponent(cameraEntity)
+        EntityManager.get().destroy(cameraEntity)
+        engine.destroy(view)
+        engine.destroy(renderer)
 
         with(engine) {
             destroy(rt); destroy(tex); destroy(stream); destroy(swap); destroy(cg); destroy(sky); destroy(scene)

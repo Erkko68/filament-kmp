@@ -1,11 +1,13 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.NullPointer
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -49,6 +51,7 @@ class DefaultArgumentsTest : FilamentTestFixture() {
             .triangles(intArrayOf(0, 1, 2, 2, 1, 3))
             .build()
         assertNotNull(orientation).use {
+            assertNotEquals(NullPointer, it.nativeObject)
             val quats = FloatArray(16)
             it.getQuats(quats, 4)
             // Normal +Z with tangent +X is the identity frame.

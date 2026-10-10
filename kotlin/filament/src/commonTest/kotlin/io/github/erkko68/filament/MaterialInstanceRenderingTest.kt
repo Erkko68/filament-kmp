@@ -166,4 +166,54 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         engine.destroy(mat)
         engine.destroy(texture)
     }
+
+    // Each element type's array form: one element, read from an offset into the source.
+    @Test
+    fun testArrayParameterForms() {
+        val engine = engine ?: return
+        val mat = Material.Builder().payload(TestMaterials.getParamsMaterialBytes()).build(engine)!!
+        val inst = mat.createInstance()
+        val ints = intArrayOf(0, 1, -2, 3, 0x40000000)
+        inst.setParameter("i1", MaterialInstance.IntElement.INT, ints, 1, 1)
+        assertContentEquals(intArrayOf(1), inst.getParameter("i1", MaterialInstance.IntElement.INT))
+        inst.setParameter("i2", MaterialInstance.IntElement.INT2, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2), inst.getParameter("i2", MaterialInstance.IntElement.INT2))
+        inst.setParameter("i4", MaterialInstance.IntElement.INT4, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2, 3, 0x40000000), inst.getParameter("i4", MaterialInstance.IntElement.INT4))
+        inst.setParameter("u2", MaterialInstance.UIntElement.UINT2, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2), inst.getParameter("u2", MaterialInstance.UIntElement.UINT2))
+        inst.setParameter("u4", MaterialInstance.UIntElement.UINT4, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2, 3, 0x40000000), inst.getParameter("u4", MaterialInstance.UIntElement.UINT4))
+        val floats = floatArrayOf(0f, 0.5f, 0.25f, 0.125f, 1f)
+        inst.setParameter("f2", MaterialInstance.FloatElement.FLOAT2, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f), inst.getParameter("f2", MaterialInstance.FloatElement.FLOAT2))
+        inst.setParameter("f4", MaterialInstance.FloatElement.FLOAT4, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f, 0.125f, 1f), inst.getParameter("f4", MaterialInstance.FloatElement.FLOAT4))
+        // Booleans have no getter.
+        val bools = booleanArrayOf(false, true, false, true, true)
+        inst.setParameter("b1", MaterialInstance.BooleanElement.BOOL, bools, 1, 1)
+        inst.setParameter("b3", MaterialInstance.BooleanElement.BOOL3, bools, 1, 1)
+        inst.setParameter("b4", MaterialInstance.BooleanElement.BOOL4, bools, 1, 1)
+        // A sampler can be left without a texture, and a duplicate keeps the name unless given one.
+        inst.setParameter("tex", null, TextureSampler())
+        val dup = MaterialInstance.duplicate(inst)
+        assertEquals(inst.name, dup.name)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f), dup.getParameter("f2", MaterialInstance.FloatElement.FLOAT2))
+        engine.destroy(dup)
+        engine.destroy(inst)
+        engine.destroy(mat)
+
+        val emissive = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)!!
+        val scalars = emissive.createInstance()
+        scalars.setParameter("flags", MaterialInstance.UIntElement.UINT, ints, 2, 1)
+        assertContentEquals(intArrayOf(-2), scalars.getParameter("flags", MaterialInstance.UIntElement.UINT))
+        scalars.setParameter("ids", MaterialInstance.UIntElement.UINT3, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2, 3), scalars.getParameter("ids", MaterialInstance.UIntElement.UINT3))
+        scalars.setParameter("intensity", MaterialInstance.FloatElement.FLOAT, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f), scalars.getParameter("intensity", MaterialInstance.FloatElement.FLOAT))
+        scalars.setParameter("color", MaterialInstance.FloatElement.FLOAT3, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f, 0.125f), scalars.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
+        engine.destroy(scalars)
+        engine.destroy(emissive)
+    }
 }
