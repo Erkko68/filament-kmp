@@ -26,6 +26,12 @@ class SceneUnitsTest : ComposeTestFixture() {
     private val facingZ = floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f)
     private val uvs = floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f)
 
+    // Values that went through a native float: on web the Kotlin side is a double.
+    private fun assertNear(expected: FloatArray, actual: FloatArray) {
+        assertEquals(expected.size, actual.size)
+        for (i in expected.indices) assertEquals(expected[i], actual[i], 1e-6f, "[$i] of ${actual.toList()}")
+    }
+
     /** Bad geometry is refused in composition, where the message can name the argument, not by a native abort. */
     @Test
     fun malformedGeometryIsRefused() {
@@ -86,14 +92,14 @@ class SceneUnitsTest : ComposeTestFixture() {
         // Unset splits are spread evenly; set ones are taken as given.
         val uniform = ShadowConfig(cascades = 3).toShadowOptions()
         assertEquals(3, uniform.shadowCascades)
-        assertContentEquals(floatArrayOf(1f / 3f, 2f / 3f), uniform.cascadeSplitPositions.copyOf(2))
+        assertNear(floatArrayOf(1f / 3f, 2f / 3f), uniform.cascadeSplitPositions.copyOf(2))
         val explicit = ShadowConfig(cascades = 3, cascadeSplits = listOf(0.1f, 0.4f)).toShadowOptions()
-        assertContentEquals(floatArrayOf(0.1f, 0.4f), explicit.cascadeSplitPositions.copyOf(2))
+        assertNear(floatArrayOf(0.1f, 0.4f), explicit.cascadeSplitPositions.copyOf(2))
         // Filament supports 1 to 4.
         assertEquals(listOf(1, 4), listOf(ShadowConfig(cascades = 0), ShadowConfig(cascades = 9)).map { it.toShadowOptions().shadowCascades })
 
         val rotated = ShadowConfig(transform = Rotation(0f, 0.6f, 0f, 0.8f)).toShadowOptions()
-        assertContentEquals(floatArrayOf(0f, 0.6f, 0f, 0.8f), rotated.transform)
+        assertNear(floatArrayOf(0f, 0.6f, 0f, 0.8f), rotated.transform)
     }
 
     /** The local direction that a parent transform turns back into the wanted world direction. */
