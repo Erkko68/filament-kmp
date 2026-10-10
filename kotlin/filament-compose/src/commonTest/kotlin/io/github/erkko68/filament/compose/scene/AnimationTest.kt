@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.TestGlb
+import io.github.erkko68.filament.compose.testutils.compositionFailure
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import io.github.erkko68.filament.gltfio.Animator
 import io.github.erkko68.filament.gltfio.AssetConfiguration
@@ -18,6 +19,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -142,5 +144,79 @@ class AnimationTest : ComposeTestFixture() {
             waitForIdle()
             assertTrue(state!!.mixer.tracks.isEmpty(), "the track leaves the mixer with its composition")
         }
+    }
+
+    /** A clip the asset doesn't have, or none at all, plays nothing instead of reaching the animator. */
+    @Test
+    fun missingClipsPlayNothing() = withFox { _, animator ->
+        for (index in listOf(null, -1, animator.animationCount)) {
+            val state = AnimationState(index, initialSpeed = 1f, initialCrossFadeDuration = 0.3f, initialLoop = true)
+            state.apply(animator, 0.2f)
+            assertEquals(0f, state.time, "index $index")
+            assertEquals(0f, state.progress, "index $index")
+        }
+
+        // Fading in from a missing clip plays only the incoming one, and the fade still ends.
+        val state = AnimationState(99, initialSpeed = 1f, initialCrossFadeDuration = 0.5f, initialLoop = true)
+        state.apply(animator, 0.1f)
+        state.animationIndex = 1
+        state.apply(animator, 0.1f)
+        assertEquals(0.1f, state.time, 1e-5f)
+        state.apply(animator, 1f)
+        assertFalse(state.isTransitioning)
+
+        // Starting from no clip there is nothing to fade from.
+        val fromNothing = AnimationState(null, initialSpeed = 1f, initialCrossFadeDuration = 0.5f, initialLoop = true)
+        fromNothing.apply(animator, 0.1f)
+        fromNothing.animationIndex = 0
+        fromNothing.apply(animator, 0.1f)
+        assertFalse(fromNothing.isTransitioning)
+        assertEquals(0.1f, fromNothing.time, 1e-5f)
+
+        // In the mixer a missing track stands still; a silent one keeps time without being applied.
+        val mixer = AnimationMixer()
+        val missing = mixer.addTrack(99)
+        val silent = mixer.addTrack(1, weight = 0f)
+        mixer.apply(animator, 0.25f)
+        assertEquals(0f, missing.time)
+        assertEquals(0f, missing.progress)
+        assertEquals(0.25f, silent.time, 1e-5f)
+    }
+
+    /** Without looping the clip holds its last frame; a state driving its mixer leaves the single clip alone. */
+    @Test
+    fun oneShotHoldsItsEndAndTheMixerTakesOver() = withFox { _, animator ->
+        val once = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0f, initialLoop = false)
+        once.apply(animator, 1000f)
+        assertEquals(animator.getAnimationDuration(0), once.time, 1e-4f)
+        assertEquals(1f, once.progress)
+
+        // No cross-fade duration: a new clip cuts in at once.
+        once.animationIndex = 1
+        once.apply(animator, 0.1f)
+        assertFalse(once.isTransitioning)
+
+        val mixed = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0.3f, initialLoop = true)
+        val track = mixed.mixer.addTrack(2)
+        mixed.apply(animator, 0.2f)
+        assertEquals(0.2f, track.time, 1e-5f)
+        assertEquals(0f, mixed.time, "the single clip is not advanced while tracks are mixing")
+        mixed.isPaused = true
+        mixed.apply(animator, 0.2f)
+        assertEquals(0.2f, track.time, 1e-5f)
+    }
+
+    /** Names are only readable from a loaded asset. */
+    @Test
+    fun animationNamesNeedAReadyAsset() = withFox { asset, _ ->
+        var names: List<String?>? = null
+        assertNull(compositionFailure(engine, scene) { names = rememberAnimationNames(null) })
+        assertEquals(emptyList(), names)
+        asset.isReady = false
+        assertNull(compositionFailure(engine, scene) { names = rememberAnimationNames(asset) })
+        assertEquals(emptyList(), names)
+        asset.isReady = true
+        assertNull(compositionFailure(engine, scene) { names = rememberAnimationNames(asset) })
+        assertEquals(listOf<String?>("Survey", "Walk", "Run"), names)
     }
 }
