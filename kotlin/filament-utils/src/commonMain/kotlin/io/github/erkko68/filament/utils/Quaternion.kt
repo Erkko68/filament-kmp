@@ -557,7 +557,7 @@ inline fun greaterThan(a: Quaternion, b: Float) = Bool4(
  * Returns a [Bool4] indicating if each component of [a] is greater than the corresponding component of [b].
  */
 inline fun greaterThan(a: Quaternion, b: Quaternion) = Bool4(
-    a.x > b.y,
+    a.x > b.x,
     a.y > b.y,
     a.z > b.z,
     a.w > b.w
