@@ -1,0 +1,407 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ShadowConfig</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.compose.scene/-shadow-config/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.6.0"><span class="versions-dropdown-button-text">0.6.0</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.6.0</span></a><a href="../../../../older/0.5.0/kotlin/filament-compose/io.github.erkko68.filament.compose.scene/-shadow-config/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.5.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.5.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-compose/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-compose/commonMain" data-filter=":kotlin:filament-compose/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament-compose::io.github.erkko68.filament.compose.scene/ShadowConfig///PointingToDeclaration//-552819475">
+  <div class="breadcrumbs"><a href="../../index.html">filament-compose</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament.compose.scene</a><span class="delimiter">/</span><span class="current">ShadowConfig</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Shadow</span><wbr><span><span>Config</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ShadowConfig</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>mapSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1024</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>constantBias<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.001f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>normalBias<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>shadowFar<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>shadowNearHint<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>shadowFarHint<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">100.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>stable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>lispsm<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>cascades<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>cascadeSplits<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>contactShadows<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>contactShadowDistance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.3f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>contactShadowSteps<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">8</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>bulbRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>-1f<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>blurWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>elvsm<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>transform<span class="token operator">: </span><a href="../-rotation/index.html">Rotation</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><p class="paragraph">Per-light shadow-map quality, mapping onto the core <a href="../../../../kotlin/filament/io.github.erkko68.filament/-light-manager/-shadow-options/index.html">LightManager.ShadowOptions</a>. Pass a non-null <code class="lang-kotlin">shadow</code> to a <a href="../-directional-light.html">DirectionalLight</a>/<a href="../-sun-light.html">SunLight</a>/<a href="../-spot-light.html">SpotLight</a>/<a href="../-focused-spot-light.html">FocusedSpotLight</a> to make it cast shadows; <code class="lang-kotlin">null</code> disables them. (Point lights cannot cast shadows.)</p><p class="paragraph">Many fields apply only under a specific view <a href="../-shadows/index.html">Shadows</a> technique (noted per property). Defaults mirror Filament's, except <a href="../../../../kotlin/filament-compose/io.github.erkko68.filament.compose.scene/-shadow-config/--root--.html">lispsm</a> (defaults <code class="lang-kotlin">false</code> here for cleaner soft shadows). Filament's <code class="lang-kotlin">polygonOffset*</code> depth-bias fields are not exposed here; use <a href="../../../../kotlin/filament-compose/io.github.erkko68.filament.compose.scene/-shadow-config/--root--.html">constantBias</a>/<a href="../../../../kotlin/filament-compose/io.github.erkko68.filament.compose.scene/-shadow-config/--root--.html">normalBias</a> for acne instead, or the core <a href="../../../../kotlin/filament/io.github.erkko68.filament/-light-manager/-shadow-options/index.html">LightManager.ShadowOptions</a> for the raw pair.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="255164480%2FConstructors%2F-552819475" anchor-label="ShadowConfig" id="255164480%2FConstructors%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-shadow-config.html"><span>Shadow</span><wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="255164480%2FConstructors%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mapSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1024</span><span class="token punctuation">, </span></span><span class="parameter ">constantBias<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.001f</span><span class="token punctuation">, </span></span><span class="parameter ">normalBias<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter ">shadowFar<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">shadowNearHint<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter ">shadowFarHint<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">100.0f</span><span class="token punctuation">, </span></span><span class="parameter ">stable<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">lispsm<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">cascades<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span><span class="token punctuation">, </span></span><span class="parameter ">cascadeSplits<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">contactShadows<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">contactShadowDistance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.3f</span><span class="token punctuation">, </span></span><span class="parameter ">contactShadowSteps<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">8</span><span class="token punctuation">, </span></span><span class="parameter ">bulbRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>-1f<span class="token punctuation">, </span></span><span class="parameter ">blurWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">elvsm<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transform<span class="token operator">: </span><a href="../-rotation/index.html">Rotation</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1856624159%2FProperties%2F-552819475" anchor-label="blurWidth" id="-1856624159%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="blur-width.html"><span>blur</span><wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1856624159%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="blur-width.html">blurWidth</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Blur width; only under the <a href="../-shadows/-vsm/index.html">Shadows.Vsm</a> technique. 0 disables.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1333773983%2FProperties%2F-552819475" anchor-label="bulbRadius" id="1333773983%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bulb-radius.html"><span>bulb</span><wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1333773983%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="bulb-radius.html">bulbRadius</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Light-bulb radius driving soft-shadow penumbra size, world units. Only under <a href="../-shadows/-pcss/index.html">Shadows.Pcss</a>. Negative (the default) lets Filament pick per light type: 1.0 for directional, 0.06 (an A19 bulb) for spot, and sun angular radius × halo size for <a href="../-sun-light.html">SunLight</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="936731931%2FProperties%2F-552819475" anchor-label="cascades" id="936731931%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cascades.html"><span><span>cascades</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="936731931%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="cascades.html">cascades</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Directional-only: number of CSM cascades (1–4). &gt;1 sharpens large scenes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1760589139%2FProperties%2F-552819475" anchor-label="cascadeSplits" id="1760589139%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cascade-splits.html"><span>cascade</span><wbr><span><span>Splits</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1760589139%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="cascade-splits.html">cascadeSplits</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Optional explicit cascade split positions (size <code class="lang-kotlin">cascades - 1</code>, camera-Z 0..1). Null auto-computes uniform splits.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="896116765%2FProperties%2F-552819475" anchor-label="constantBias" id="896116765%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="constant-bias.html"><span>constant</span><wbr><span><span>Bias</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="896116765%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="constant-bias.html">constantBias</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">World-space depth bias pushing shadows off surfaces (reduces acne). Ignored for VSM.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-912228789%2FProperties%2F-552819475" anchor-label="contactShadowDistance" id="-912228789%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="contact-shadow-distance.html"><span>contact</span><wbr><span>Shadow</span><wbr><span><span>Distance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-912228789%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="contact-shadow-distance.html">contactShadowDistance</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">SSCS max occluder distance, world units.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1856254201%2FProperties%2F-552819475" anchor-label="contactShadows" id="-1856254201%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="contact-shadows.html"><span>contact</span><wbr><span><span>Shadows</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1856254201%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="contact-shadows.html">contactShadows</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enable screen-space contact shadows (SSCS) for fine, close-up contact detail.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="512672883%2FProperties%2F-552819475" anchor-label="contactShadowSteps" id="512672883%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="contact-shadow-steps.html"><span>contact</span><wbr><span>Shadow</span><wbr><span><span>Steps</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="512672883%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="contact-shadow-steps.html">contactShadowSteps</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">SSCS ray-march step count (directional lights only); higher = better, costlier.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-380406537%2FProperties%2F-552819475" anchor-label="elvsm" id="-380406537%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="elvsm.html"><span><span>elvsm</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-380406537%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="elvsm.html">elvsm</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Exponential Layered VSM — better light-leak reduction at 2× shadow memory. Only under <a href="../-shadows/-vsm/index.html">Shadows.Vsm</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="758740422%2FProperties%2F-552819475" anchor-label="lispsm" id="758740422%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="lispsm.html"><span><span>lispsm</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="758740422%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="lispsm.html">lispsm</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Light-space perspective shadow maps — boosts effective resolution near the camera, but can worsen DPCF/PCSS/VSM penumbra artifacts. Default <code class="lang-kotlin">false</code>; ignored when <a href="../../../../kotlin/filament-compose/io.github.erkko68.filament.compose.scene/-shadow-config/--root--.html">stable</a> is true.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1865975427%2FProperties%2F-552819475" anchor-label="mapSize" id="1865975427%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="map-size.html"><span>map</span><wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1865975427%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="map-size.html">mapSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Shadow-map resolution in texels; power-of-two ≥ 8. Higher = sharper but costlier.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-903297798%2FProperties%2F-552819475" anchor-label="normalBias" id="-903297798%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="normal-bias.html"><span>normal</span><wbr><span><span>Bias</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-903297798%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="normal-bias.html">normalBias</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Normal-scaled bias; typically 1.0. Ignored for VSM.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-870578007%2FProperties%2F-552819475" anchor-label="shadowFar" id="-870578007%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-far.html"><span>shadow</span><wbr><span><span>Far</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-870578007%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="shadow-far.html">shadowFar</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Directional-only: distance after which shadows are clipped. 0 = camera far.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1942673890%2FProperties%2F-552819475" anchor-label="shadowFarHint" id="1942673890%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-far-hint.html"><span>shadow</span><wbr><span>Far</span><wbr><span><span>Hint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1942673890%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="shadow-far-hint.html">shadowFarHint</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Concentrate shadow resolution up to this camera distance (world units).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-841311861%2FProperties%2F-552819475" anchor-label="shadowNearHint" id="-841311861%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-near-hint.html"><span>shadow</span><wbr><span>Near</span><wbr><span><span>Hint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-841311861%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="shadow-near-hint.html">shadowNearHint</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Concentrate shadow resolution from this camera distance onward (world units).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="334743775%2FProperties%2F-552819475" anchor-label="stable" id="334743775%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stable.html"><span><span>stable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="334743775%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="stable.html">stable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Trade resolution for temporal stability (also forces <a href="../../../../kotlin/filament-compose/io.github.erkko68.filament.compose.scene/-shadow-config/--root--.html">lispsm</a> off). Good for slow pans.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1606624436%2FProperties%2F-552819475" anchor-label="transform" id="1606624436%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transform.html"><span><span>transform</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1606624436%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="transform.html">transform</a><span class="token operator">: </span><a href="../-rotation/index.html">Rotation</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Optional rotation <code class="lang-kotlin">(Rotation)</code> rotating the shadow's direction (directional-only, artistic). Null = identity (no rotation).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

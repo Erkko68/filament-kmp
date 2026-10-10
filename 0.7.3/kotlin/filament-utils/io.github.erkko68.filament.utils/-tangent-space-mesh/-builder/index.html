@@ -1,0 +1,302 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Builder</title>
+<link href="../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.utils/-tangent-space-mesh/-builder/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.7.3"><span class="versions-dropdown-button-text">0.7.3</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.3"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.7.3</span></a><a href="../../../../../not-found-version.html?v=0.6.0" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.6.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-utils/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-utils/commonMain" data-filter=":kotlin:filament-utils/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament-utils::io.github.erkko68.filament.utils/TangentSpaceMesh.Builder///PointingToDeclaration//-853202996">
+  <div class="breadcrumbs"><a href="../../../index.html">filament-utils</a><span class="delimiter">/</span><a href="../../index.html">io.github.erkko68.filament.utils</a><span class="delimiter">/</span><a href="../index.html">TangentSpaceMesh</a><span class="delimiter">/</span><span class="current">Builder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Builder</a></div><p class="paragraph">Collects the input mesh. Strides are in bytes; 0 means tightly packed.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1968666445%2FConstructors%2F-853202996" anchor-label="Builder" id="1968666445%2FConstructors%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1968666445%2FConstructors%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1792828590%2FFunctions%2F-853202996" anchor-label="algorithm" id="-1792828590%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="algorithm.html"><span><span>algorithm</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1792828590%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="algorithm.html"><span class="token function">algorithm</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">algorithm<span class="token operator">: </span><a href="../-algorithm/index.html">TangentSpaceMesh.Algorithm</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The algorithm to use; the one built with may differ if the input doesn't suit it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2124171118%2FFunctions%2F-853202996" anchor-label="aux" id="2124171118%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="--aux--.html"><span><span>aux</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2124171118%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="--aux--.html"><span class="token function">aux</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">attribute<span class="token operator">: </span><a href="../-aux-attribute/index.html">TangentSpaceMesh.AuxAttribute</a><span class="token punctuation">, </span></span><span class="parameter ">data<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">components<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">stride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">Auxiliary input, mapped along when the mesh is remeshed: float2, float3 or float4 per vertex (<a href="--aux--.html">components</a> 2–4). Read it back with <a href="../get-aux.html">TangentSpaceMesh.getAux</a> and the same <a href="--aux--.html">components</a>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="--aux--.html"><span class="token function">aux</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">attribute<span class="token operator">: </span><a href="../-aux-attribute/index.html">TangentSpaceMesh.AuxAttribute</a><span class="token punctuation">, </span></span><span class="parameter ">data<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-short-array/index.html">ShortArray</a><span class="token punctuation">, </span></span><span class="parameter ">components<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">stride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">Auxiliary input as unsigned shorts (e.g. joint indices): ushort3 or ushort4 per vertex (<a href="--aux--.html">components</a> 3–4).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1926459782%2FFunctions%2F-853202996" anchor-label="build" id="-1926459782%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1926459782%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">TangentSpaceMesh</a></div><div class="brief "><p class="paragraph">Computes the tangent space. The builder can't be used afterwards.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1951254433%2FFunctions%2F-853202996" anchor-label="normals" id="1951254433%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="normals.html"><span><span>normals</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1951254433%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="normals.html"><span class="token function">normals</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">normals<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">stride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The input normals, 3 floats each.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1891647395%2FFunctions%2F-853202996" anchor-label="positions" id="1891647395%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="positions.html"><span><span>positions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1891647395%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="positions.html"><span class="token function">positions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">positions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">stride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The input positions, 3 floats each.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-545183863%2FFunctions%2F-853202996" anchor-label="tangents" id="-545183863%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="tangents.html"><span><span>tangents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-545183863%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="tangents.html"><span class="token function">tangents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tangents<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">stride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The input tangents, 4 floats each; w is the handedness (-1 or +1) for the bitangent.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1434497921%2FFunctions%2F-853202996" anchor-label="triangleCount" id="-1434497921%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="triangle-count.html"><span>triangle</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1434497921%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="triangle-count.html"><span class="token function">triangleCount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">triangleCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The number of input triangles.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1222845799%2FFunctions%2F-853202996" anchor-label="triangles" id="-1222845799%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="triangles.html"><span><span>triangles</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1222845799%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="triangles.html"><span class="token function">triangles</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">triangles<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The triangles in 32-bit indices, 3 per triangle.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="triangles.html"><span class="token function">triangles</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">triangles<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-short-array/index.html">ShortArray</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The triangles in 16-bit indices, 3 per triangle.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1786701989%2FFunctions%2F-853202996" anchor-label="uvs" id="-1786701989%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="uvs.html"><span><span>uvs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1786701989%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="uvs.html"><span class="token function">uvs</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uvs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">stride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The input UVs, 2 floats each.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1200335141%2FFunctions%2F-853202996" anchor-label="vertexCount" id="-1200335141%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vertex-count.html"><span>vertex</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1200335141%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="vertex-count.html"><span class="token function">vertexCount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vertexCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">TangentSpaceMesh.Builder</a></div><div class="brief "><p class="paragraph">The number of input vertices.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
