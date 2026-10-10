@@ -56,6 +56,8 @@ class RenderableManagerTest : FilamentTestFixture() {
         rm.setBones(inst, Array(2) { RenderableManager.Bone() })
         val identity = floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f)
         rm.setBones(inst, identity, boneCount = 1, offset = 1)
+        // The default count is the whole array: 2 bones fit, a miscounted 32 would panic.
+        rm.setBones(inst, identity + identity)
 
         assertEquals(2, rm.getMorphTargetCount(inst))
         assertEquals(mtb.count, rm.getMorphTargetBuffer(inst)?.count)
