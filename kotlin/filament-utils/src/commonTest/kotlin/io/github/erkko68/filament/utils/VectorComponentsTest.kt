@@ -72,26 +72,20 @@ class VectorComponentsTest {
         check(4, { Bool4(true, false, true, false) }, { listOf(it.x, it.y, it.z, it.w) }, true to false, { v, c -> v[c] }, { v, c, x -> v[c] = x }, { v, i -> v[i] }, { v, i, x -> v[i] = x })
     }
 
-    // One component deciding the result, at each position.
+    // Exhaustive: inline short-circuits only count as covered when one call sees every combination.
     @Test
     fun anyAndAll() {
-        assertFalse(any(Bool2())); assertTrue(all(Bool2(true, true)))
-        for (i in 0 until 2) {
-            val one = Bool2().also { it[i] = true }
-            val allButOne = Bool2(true, true).also { it[i] = false }
-            assertTrue(any(one)); assertFalse(all(one)); assertTrue(any(allButOne)); assertFalse(all(allButOne))
+        for (bits in 0 until 4) {
+            val v = Bool2(bits and 1 != 0, bits and 2 != 0)
+            assertEquals(bits != 0, any(v), "$v"); assertEquals(bits == 3, all(v), "$v")
         }
-        assertFalse(any(Bool3())); assertTrue(all(Bool3(true, true, true)))
-        for (i in 0 until 3) {
-            val one = Bool3().also { it[i] = true }
-            val allButOne = Bool3(true, true, true).also { it[i] = false }
-            assertTrue(any(one)); assertFalse(all(one)); assertTrue(any(allButOne)); assertFalse(all(allButOne))
+        for (bits in 0 until 8) {
+            val v = Bool3(bits and 1 != 0, bits and 2 != 0, bits and 4 != 0)
+            assertEquals(bits != 0, any(v), "$v"); assertEquals(bits == 7, all(v), "$v")
         }
-        assertFalse(any(Bool4())); assertTrue(all(Bool4(true, true, true, true)))
-        for (i in 0 until 4) {
-            val one = Bool4().also { it[i] = true }
-            val allButOne = Bool4(true, true, true, true).also { it[i] = false }
-            assertTrue(any(one)); assertFalse(all(one)); assertTrue(any(allButOne)); assertFalse(all(allButOne))
+        for (bits in 0 until 16) {
+            val v = Bool4(bits and 1 != 0, bits and 2 != 0, bits and 4 != 0, bits and 8 != 0)
+            assertEquals(bits != 0, any(v), "$v"); assertEquals(bits == 15, all(v), "$v")
         }
     }
 
@@ -99,42 +93,44 @@ class VectorComponentsTest {
     @Test
     fun equalsWithinDelta() {
         val a2 = Float2(1f, 2f)
-        assertTrue(a2.equals(Float2(1.05f, 2.05f), 0.1f)); assertFalse(a2.equals(Float2(1.05f, 2.05f)))
-        assertTrue(Float2(2f).equals(2.05f, 0.1f)); assertFalse(Float2(2f).equals(2.05f))
-        for (i in 0 until 2) {
-            assertFalse(a2.equals(Float2(a2).also { it[i] += 1f }, 0.1f), "component $i")
-            assertFalse(Float2(2f).also { it[i] = 3f }.equals(2f, 0.1f), "component $i")
-        }
+        val near2 = listOf(Float2(1.05f, 2.05f) to true) + (0 until 2).map { i -> Float2(a2).also { it[i] += 1f } to false }
+        for ((other, expected) in near2) assertEquals(expected, a2.equals(other, 0.1f), "$other")
+        val uniform2 = listOf(Float2(2.05f) to true) + (0 until 2).map { i -> Float2(2f).also { it[i] = 3f } to false }
+        for ((v, expected) in uniform2) assertEquals(expected, v.equals(2f, 0.1f), "$v")
+
         val a3 = Float3(1f, 2f, 3f)
-        assertTrue(a3.equals(Float3(1.05f, 2.05f, 3.05f), 0.1f)); assertFalse(a3.equals(Float3(1.05f, 2.05f, 3.05f)))
-        assertTrue(Float3(2f).equals(2.05f, 0.1f)); assertFalse(Float3(2f).equals(2.05f))
-        for (i in 0 until 3) {
-            assertFalse(a3.equals(Float3(a3).also { it[i] += 1f }, 0.1f), "component $i")
-            assertFalse(Float3(2f).also { it[i] = 3f }.equals(2f, 0.1f), "component $i")
-        }
+        val near3 = listOf(Float3(1.05f, 2.05f, 3.05f) to true) + (0 until 3).map { i -> Float3(a3).also { it[i] += 1f } to false }
+        for ((other, expected) in near3) assertEquals(expected, a3.equals(other, 0.1f), "$other")
+        val uniform3 = listOf(Float3(2.05f) to true) + (0 until 3).map { i -> Float3(2f).also { it[i] = 3f } to false }
+        for ((v, expected) in uniform3) assertEquals(expected, v.equals(2f, 0.1f), "$v")
+
         val a4 = Float4(1f, 2f, 3f, 4f)
-        assertTrue(a4.equals(Float4(1.05f, 2.05f, 3.05f, 4.05f), 0.1f)); assertFalse(a4.equals(Float4(1.05f, 2.05f, 3.05f, 4.05f)))
-        assertTrue(Float4(2f).equals(2.05f, 0.1f)); assertFalse(Float4(2f).equals(2.05f))
-        for (i in 0 until 4) {
-            assertFalse(a4.equals(Float4(a4).also { it[i] += 1f }, 0.1f), "component $i")
-            assertFalse(Float4(2f).also { it[i] = 3f }.equals(2f, 0.1f), "component $i")
-        }
+        val near4 = listOf(Float4(1.05f, 2.05f, 3.05f, 4.05f) to true) + (0 until 4).map { i -> Float4(a4).also { it[i] += 1f } to false }
+        for ((other, expected) in near4) assertEquals(expected, a4.equals(other, 0.1f), "$other")
+        val uniform4 = listOf(Float4(2.05f) to true) + (0 until 4).map { i -> Float4(2f).also { it[i] = 3f } to false }
+        for ((v, expected) in uniform4) assertEquals(expected, v.equals(2f, 0.1f), "$v")
+
+        // Without a delta the match has to be exact.
+        assertFalse(a2.equals(near2[0].first)); assertFalse(a3.equals(near3[0].first)); assertFalse(a4.equals(near4[0].first))
+        assertTrue(a2.equals(Float2(a2))); assertTrue(a3.equals(Float3(a3))); assertTrue(a4.equals(Float4(a4)))
     }
 
     // -1, 0 or 1 per component, with anything within delta counting as equal.
     @Test
     fun compareToWithinDelta() {
-        assertEquals(Float2(0f, -1f), Float2(1f, 2f).compareTo(Float2(1.05f, 5f), 0.1f))
-        assertEquals(Float2(1f, 0f), Float2(1f, 2f).compareTo(Float2(0f, 2.05f), 0.1f))
-        assertEquals(Float2(0f, 1f), Float2(1f, 2f).compareTo(1.05f, 0.1f))
-        assertEquals(Float2(-1f, 0f), Float2(1f, 2f).compareTo(2.05f, 0.1f))
-        assertEquals(Float3(0f, -1f, 1f), Float3(1f, 2f, 3f).compareTo(Float3(1.05f, 5f, 0f), 0.1f))
-        assertEquals(Float3(1f, 0f, 0f), Float3(1f, 2f, 3f).compareTo(Float3(0f, 2.05f, 3.05f), 0.1f))
-        assertEquals(Float3(0f, 1f, 1f), Float3(1f, 2f, 3f).compareTo(1.05f, 0.1f))
-        assertEquals(Float3(-1f, 0f, 0f), Float3(1f, 2f, 2f).compareTo(2.05f, 0.1f))
-        assertEquals(Float4(0f, -1f, 1f, 0f), Float4(1f, 2f, 3f, 4f).compareTo(Float4(1.05f, 5f, 0f, 4.05f), 0.1f))
-        assertEquals(Float4(1f, 0f, 0f, -1f), Float4(1f, 2f, 3f, 4f).compareTo(Float4(0f, 2.05f, 3.05f, 9f), 0.1f))
-        assertEquals(Float4(0f, 1f, 1f, 1f), Float4(1f, 2f, 3f, 4f).compareTo(1.05f, 0.1f))
-        assertEquals(Float4(-1f, 0f, 0f, 0f), Float4(1f, 2f, 2f, 2f).compareTo(2.05f, 0.1f))
+        val pairs2 = listOf(Float2(1.05f, 5f) to Float2(0f, -1f), Float2(0f, 2.05f) to Float2(1f, 0f))
+        for ((other, expected) in pairs2) assertEquals(expected, Float2(1f, 2f).compareTo(other, 0.1f))
+        for ((v, expected) in listOf(1.05f to Float2(0f, 1f), 2.05f to Float2(-1f, 0f))) assertEquals(expected, Float2(1f, 2f).compareTo(v, 0.1f))
+
+        val pairs3 = listOf(Float3(1.05f, 5f, 0f) to Float3(0f, -1f, 1f), Float3(0f, 2.05f, 3.05f) to Float3(1f, 0f, 0f))
+        for ((other, expected) in pairs3) assertEquals(expected, Float3(1f, 2f, 3f).compareTo(other, 0.1f))
+        for ((v, expected) in listOf(1.05f to Float3(0f, 1f, 1f), 3.05f to Float3(-1f, -1f, 0f), 2.05f to Float3(-1f, 0f, 1f))) {
+            assertEquals(expected, Float3(1f, 2f, 3f).compareTo(v, 0.1f))
+        }
+
+        val pairs4 = listOf(Float4(1.05f, 5f, 0f, 4.05f) to Float4(0f, -1f, 1f, 0f), Float4(0f, 2.05f, 3.05f, 9f) to Float4(1f, 0f, 0f, -1f))
+        for ((other, expected) in pairs4) assertEquals(expected, Float4(1f, 2f, 3f, 4f).compareTo(other, 0.1f))
+        val scalars4 = listOf(1.05f to Float4(0f, 1f, 1f, 1f), 2.05f to Float4(-1f, 0f, 1f, 1f), 3.05f to Float4(-1f, -1f, 0f, 1f), 4.05f to Float4(-1f, -1f, -1f, 0f))
+        for ((v, expected) in scalars4) assertEquals(expected, Float4(1f, 2f, 3f, 4f).compareTo(v, 0.1f))
     }
 }
