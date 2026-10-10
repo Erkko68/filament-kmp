@@ -135,5 +135,24 @@ class DefaultArgumentsTest : FilamentTestFixture() {
     fun destroyingNoEngineIsANoOp() {
         Engine.destroy(null)
         assertTrue(engine.isValid)
+        // Nor is destroying one twice a double free.
+        val other = Engine.create(Engine.Backend.NOOP)!!
+        Engine.destroy(other)
+        Engine.destroy(other)
+        assertFalse(other.isValid)
+    }
+
+    @Test
+    fun renderTargetAttachmentsCanBeLeftEmpty() {
+        val color = Texture.Builder().width(4).height(4).format(Texture.InternalFormat.RGBA8)
+            .usage(Texture.Usage.COLOR_ATTACHMENT).build(engine)
+        val target = RenderTarget.Builder()
+            .texture(RenderTarget.AttachmentPoint.COLOR, color)
+            .texture(RenderTarget.AttachmentPoint.DEPTH, null)
+            .build(engine)
+        assertNotNull(target.getTexture(RenderTarget.AttachmentPoint.COLOR))
+        assertNull(target.getTexture(RenderTarget.AttachmentPoint.DEPTH))
+        engine.destroy(target)
+        engine.destroy(color)
     }
 }

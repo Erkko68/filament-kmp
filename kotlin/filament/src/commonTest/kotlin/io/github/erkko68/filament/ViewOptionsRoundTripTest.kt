@@ -57,6 +57,17 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     }
 
     @Test
+    fun fogSkyColorRoundTrip() {
+        setUpView()
+        val sky = Texture.Builder().width(4).height(4).sampler(Texture.Sampler.SAMPLER_CUBEMAP).build(engine)
+        view.fogOptions = FogOptions().apply { skyColor = sky }
+        assertSame(sky, view.fogOptions.skyColor)
+        view.fogOptions = FogOptions()
+        assertNull(view.fogOptions.skyColor)
+        engine.destroy(sky)
+    }
+
+    @Test
     fun fogOptionsRoundTrip() {
         setUpView()
         view.fogOptions = FogOptions().apply {

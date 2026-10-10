@@ -88,6 +88,7 @@ class IndirectLightTest : FilamentTestFixture() {
 
         assertNotNull(light)
         assertNotNull(light.reflectionsTexture)
+        assertNotNull(light.irradianceTexture)
 
         engine.destroy(light)
         engine.destroy(cubemap)
