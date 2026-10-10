@@ -7,7 +7,10 @@ import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.utils.Float4
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 /**
  * Verifies [CameraSnapshot.applyTo] pushes eye/target/up, each [Projection] variant, exposure,
@@ -109,5 +112,29 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
 
         state.detach(camera)
         assertNull(state.viewMatrix)
+    }
+
+    /** One state per view: a second camera is refused, and only the camera it holds can detach it. */
+    @Test
+    fun aStateAttachesToOneCameraAtATime() {
+        val state = CameraState(
+            Position(3f, 4f, 5f), Position(0f), Direction(0f, 1f, 0f), Projection.Perspective(), Exposure(),
+            10f, LensShift.None, LensScaling.Identity,
+        )
+        val first = newCamera()
+        val second = newCamera()
+        state.attach(first)
+        state.attach(first) // a view re-attaching its own camera is fine
+        val failure = assertFailsWith<IllegalStateException> { state.attach(second) }
+        assertTrue("its own CameraState" in failure.message.orEmpty(), "was: ${failure.message}")
+
+        // The refused view going away must not blank the state for the one that holds it.
+        state.detach(second)
+        assertNotNull(state.viewMatrix)
+
+        state.detach(first)
+        assertNull(state.viewMatrix)
+        state.attach(second)
+        assertNotNull(state.viewMatrix)
     }
 }

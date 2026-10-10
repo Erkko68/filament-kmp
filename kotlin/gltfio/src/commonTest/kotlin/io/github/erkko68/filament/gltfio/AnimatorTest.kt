@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
+import io.github.erkko68.filament.interop.NullPointer
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -23,6 +24,7 @@ class AnimatorTest : GltfioTestFixture() {
         val animator = asset.instance.animator
         // Fox ships with multiple animation tracks (Survey / Walk / Run).
         assertTrue(animator.animationCount > 1)
+        assertTrue(animator.nativeObject != NullPointer)
 
         animator.applyAnimation(0, 0.1f)
         animator.applyCrossFade(1, 0.1f, 0.5f)

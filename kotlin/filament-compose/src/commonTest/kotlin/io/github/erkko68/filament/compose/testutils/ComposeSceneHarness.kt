@@ -270,6 +270,31 @@ fun requestsFrames(engine: Engine, scene: Scene, frames: Int = 0, content: @Comp
     }
 }
 
+/**
+ * The exception [content] throws when first composed with [engine] and [scene] as the scene locals (either may be
+ * missing), or null if it composes. Composed on the calling thread in a composition of its own.
+ */
+fun compositionFailure(engine: Engine?, scene: Scene?, content: @Composable FilamentSceneScope.() -> Unit): Throwable? {
+    val recomposer = Recomposer(Dispatchers.Unconfined + BroadcastFrameClock())
+    val composition = Composition(NoNodes, recomposer)
+    return try {
+        composition.setContent {
+            CompositionLocalProvider(
+                LocalFilamentEngine provides engine,
+                LocalFilamentScene provides scene,
+            ) {
+                FilamentSceneScopeInstance.content()
+            }
+        }
+        null
+    } catch (t: Throwable) {
+        t
+    } finally {
+        composition.dispose()
+        recomposer.cancel()
+    }
+}
+
 /** Scene composables emit no nodes. */
 private object NoNodes : AbstractApplier<Unit>(Unit) {
     override fun insertTopDown(index: Int, instance: Unit) {}

@@ -103,4 +103,34 @@ class AsyncCallTest {
             }
         }
     }
+
+    // With no completion callback there's nothing to wait on; the queue runs in order, so a later command marks them done.
+    @Test
+    fun testAsyncCallsWithoutCallbacks() {
+        val engine = engine ?: return
+        val ib = IndexBuffer.Builder().indexCount(3).bufferType(IndexBuffer.IndexType.USHORT).build(engine)
+        // Only the first 6 bytes are indices.
+        ib.setBufferAsync(engine, byteArrayOf(0, 0, 1, 0, 2, 0, 9, 9), count = 6)
+        val vb = VertexBuffer.Builder().vertexCount(3).bufferCount(1)
+            .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.AttributeType.FLOAT3, 0, 12)
+            .build(engine)
+        vb.setBufferAtAsync(engine, 0, ByteArray(40), count = 36)
+        val texture = Texture.Builder().width(2).height(2).format(Texture.InternalFormat.RGBA8).build(engine)
+        val pixels = { Texture.PixelBufferDescriptor(ByteArray(16), 16, Texture.Format.RGBA, Texture.Type.UBYTE) }
+        texture.setImageAsync(engine, 0, pixels())
+        texture.setImageAsync(engine, 0, 0, 0, 2, 2, pixels())
+        texture.setImageAsync(engine, 0, 0, 0, 0, 2, 2, 1, pixels())
+
+        var ran = false
+        engine.runCommandAsync({ ran = true })
+        var status: AsyncCallStatus? = null
+        engine.runCommandAsync({}) { status = it }
+        engine.pumpUntil { status != null }
+        assertTrue(ran)
+        assertEquals(AsyncCallStatus.COMPLETED, status)
+
+        engine.destroy(ib)
+        engine.destroy(vb)
+        engine.destroy(texture)
+    }
 }

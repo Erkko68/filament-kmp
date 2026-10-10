@@ -2,8 +2,10 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
+import io.github.erkko68.filament.interop.NullPointer
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -14,7 +16,11 @@ class ResourceLoaderTest : GltfioTestFixture() {
         loader.addResourceData("http://example.com/texture.png", byteArrayOf(1, 2, 3))
         assertTrue(loader.hasResourceData("http://example.com/texture.png"))
         loader.evictResourceData()
+        assertNotEquals(NullPointer, loader.nativeObject)
         loader.destroy()
+        // A second destroy has nothing left to free.
+        loader.destroy()
+        assertEquals(NullPointer, loader.nativeObject)
     }
 
     @Test

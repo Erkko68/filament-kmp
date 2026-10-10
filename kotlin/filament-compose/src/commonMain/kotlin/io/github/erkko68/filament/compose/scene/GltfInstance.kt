@@ -4,14 +4,15 @@ import androidx.compose.runtime.*
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
-import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
-import io.github.erkko68.filament.compose.noFilamentScene
+import io.github.erkko68.filament.compose.OnFrame
 import io.github.erkko68.filament.compose.internal.logWarn
+import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.internal.transformMatrix
+import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.gltfio.FilamentAsset
-import io.github.erkko68.filament.compose.OnFrame
 import io.github.erkko68.filament.gltfio.FilamentInstance
 
 /**
@@ -122,12 +123,12 @@ fun FilamentSceneScope.GltfInstance(
     // A hidden enclosing Group hides its whole subtree.
     val effectiveVisible = visible && LocalGroupVisible.current
 
-    val instance = remember(asset) {
-        asset.assetLoader.createInstance(asset.filamentAsset)
-            ?: if (!asset.primaryInstanceClaimed) {
-                // createInstance failed (platform limitation): fall back to the asset's built-in
-                // primary instance, but only for one GltfInstance — aliasing it under several
-                // composables would leave them fighting over one transform/animator.
+    val instance = remember(asset) { asset.assetLoader.createInstance(asset.filamentAsset) }
+        // createInstance failed (platform limitation): fall back to the asset's built-in primary instance, but
+        // only for one GltfInstance at a time — aliasing it under several composables would leave them fighting
+        // over one transform/animator. The claim is given back when this GltfInstance leaves the composition.
+        ?: rememberOwned(engine, asset, create = {
+            if (!asset.primaryInstanceClaimed) {
                 asset.primaryInstanceClaimed = true
                 asset.filamentAsset.instance
             } else {
@@ -138,7 +139,8 @@ fun FilamentSceneScope.GltfInstance(
                 )
                 null
             }
-    } ?: return
+        }) { asset.primaryInstanceClaimed = false }
+        ?: return
 
     if (!asset.isReady) return
 

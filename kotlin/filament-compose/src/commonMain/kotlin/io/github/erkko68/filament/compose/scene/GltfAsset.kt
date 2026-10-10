@@ -48,10 +48,10 @@ class GltfAsset internal constructor(
         internal set
 
     /**
-     * Whether the asset's built-in primary instance has been handed to a [GltfInstance].
-     * `createInstance` can fail on some platforms; the first failing instance may fall back to
-     * the primary, but only once — silently aliasing one instance under two composables would
-     * make them fight over the same transform.
+     * Whether the asset's built-in primary instance is currently held by a [GltfInstance].
+     * `createInstance` can fail on some platforms; a failing instance may fall back to the
+     * primary, but only one at a time — silently aliasing one instance under two composables
+     * would make them fight over the same transform.
      */
     internal var primaryInstanceClaimed = false
 

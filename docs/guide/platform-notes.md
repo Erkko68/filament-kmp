@@ -23,14 +23,14 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 ## Android
 
 - Binds Filament through JNI over the same `c/` wrapper as JVM, iOS and web (`:jni` bindings + `:android` runtime, published as `filament-jni` + `filament-jni-android`), not the upstream `filament-android` AAR.
-- `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](../compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
+- `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](../compose/integration-strategies.md)). `transparent = true` switches the view to a `TextureView`.
 - Minimum `compileSdk`: **37**. Minimum `minSdk`: **24**.
 
 ### Screen rotation and configuration changes
 
 By default Android destroys and recreates the `Activity` on rotation, which tears down the Compose composition and reloads all Filament assets. This behavior predates Compose — it existed to reload XML layouts and resource qualifiers (`layout-land/`, `values-night/`) automatically.
 
-In a pure Compose app none of that applies: layouts are code, theming reacts to system broadcasts, and Filament's `SurfaceView` already handles the viewport update via `surfaceChanged`. To keep the composition alive across rotation, add `android:configChanges` to your `<activity>` in `AndroidManifest.xml`:
+In a pure Compose app none of that applies: layouts are code, theming reacts to system broadcasts, and the view's surface already handles the viewport update when it is resized. To keep the composition alive across rotation, add `android:configChanges` to your `<activity>` in `AndroidManifest.xml`:
 
 ```xml
 <activity
@@ -39,7 +39,9 @@ In a pure Compose app none of that applies: layouts are code, theming reacts to 
     ...>
 ```
 
-This is standard practice for graphics, video, and game apps on Android. The `SurfaceView` still receives `surfaceChanged` on resize, so the viewport and aspect ratio update correctly without any extra code.
+This is standard practice for graphics, video, and game apps on Android. The surface is still resized, so the viewport and aspect ratio update correctly without any extra code.
+
+What changes for your app: the `Activity` is no longer recreated for the listed changes, so `remember`ed state survives them and `onConfigurationChanged` is called instead. Compose still recomposes with the new `LocalConfiguration`, so `stringResource`, `dimensionResource`, dark theme and window size classes keep following the device. Only code outside Compose that reads resources once in `onCreate` (XML layouts, `layout-land/` qualifiers) stops updating by itself. Changes you leave out of the list, and process death, still recreate the `Activity`: keep what must survive those in `rememberSaveable` or a `ViewModel`.
 
 ## iOS (Kotlin/Native)
 

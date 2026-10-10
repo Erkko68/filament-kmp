@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.NullPointer
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
 import io.github.erkko68.filament.testutils.pumpUntil
@@ -7,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -100,6 +102,12 @@ class MaterialRenderingTest : RenderingTestFixture() {
         assertTrue(mat.source.isEmpty() || "Params" in mat.source)
         assertEquals("extTransform", mat.getParameterTransformName("ext"))
         assertNull(mat.getParameterTransformName("tex"))
+        assertTrue(mat.hasParameter("tex"))
+        assertFalse(mat.hasParameter("missing"))
+        val sampler = mat.parameters.single { it.name == "tex" }
+        assertTrue(sampler.isSampler)
+        assertNull(sampler.type)
+        assertEquals(Material.SamplerType.SAMPLER_2D, sampler.samplerType)
 
         mat.setDefaultParameter("b1", true)
         mat.setDefaultParameter("b2", true, false)
@@ -154,6 +162,27 @@ class MaterialRenderingTest : RenderingTestFixture() {
         assertEquals(false, inst.getConstantBoolean("testBool"))
         assertEquals(9, inst.getConstantInt("testInt"))
         assertEquals(0.75f, inst.getConstantFloat("testFloat"))
+        engine.destroy(mat)
+    }
+
+    // Without a callback there's nothing to wait on: a later compile with one must still come through.
+    @Test
+    fun testCompileWithoutCallback() {
+        val engine = engine ?: return
+        val mat = Material.Builder().payload(TestMaterials.getParamsMaterialBytes()).build(engine)!!
+        val inst = mat.createInstance()
+        assertFalse(NullPointer in listOf(mat.nativeObject, inst.nativeObject))
+        assertNotEquals(mat.nativeObject, inst.nativeObject)
+        val view = engine.createView()
+        mat.compile(Material.CompilerPriorityQueue.HIGH)
+        inst.compile(Material.CompilerPriorityQueue.HIGH)
+        engine.compile(Material.CompilerPriorityQueue.HIGH, mat, view, Engine.FeatureState.FALSE, Engine.FeatureState.FALSE)
+        var compiled: Material? = null
+        mat.compile(Material.CompilerPriorityQueue.LOW) { compiled = it }
+        engine.pumpUntil { compiled != null }
+        assertEquals(mat, compiled)
+        engine.destroy(view)
+        engine.destroy(inst)
         engine.destroy(mat)
     }
 }

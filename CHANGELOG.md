@@ -19,6 +19,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Fixed
 - **Linux desktop no longer needs `libc++` installed**: `libfilament-c.so` links it statically, so it loads on stock distributions.
+- **`Quaternion` `greaterThan` compared `x` against `y`** (`filament-utils`): it now compares component by component.
+- **A `GltfInstance` on the asset's own instance gives it back when it leaves** (`filament-compose`): the next `GltfInstance` can take it where `createInstance` is unavailable.
 
 ## [0.7.2] — 2026-10-06
 

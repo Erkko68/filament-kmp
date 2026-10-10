@@ -239,7 +239,6 @@ jobs:
     needs: changes
     if: needs.changes.outputs.ios == 'true'
     runs-on: macos-26
-    timeout-minutes: 60 # a wedged simulator otherwise hangs until GitHub's 6 h limit
     steps:
       - uses: actions/checkout@v7
       # Real-backend (Metal) tests need a booted simulator with a graphics context (K/N's

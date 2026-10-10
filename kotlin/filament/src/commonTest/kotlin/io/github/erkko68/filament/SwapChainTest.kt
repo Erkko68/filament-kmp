@@ -44,6 +44,11 @@ class SwapChainTest : FilamentTestFixture() {
         swap.setFrameRate(60.0f)
         swap.setFrameRate(0.0f, SwapChain.FrameRateCompatibility.FIXED_SOURCE, SwapChain.ChangeFrameRateStrategy.ALWAYS)
 
+        // No argument detaches, like null.
+        swap.setFrameScheduledCallback()
+        swap.setFrameCompletedCallback()
+        assertFalse(swap.isFrameScheduledCallbackSet)
+
         engine.destroy(swap)
     }
 

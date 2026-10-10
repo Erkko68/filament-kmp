@@ -45,44 +45,6 @@ import kotlin.test.assertTrue
  */
 class FilamentViewTest {
 
-    /** Advances [frames] frames, waiting for the GPU before each: a readback still in flight holds back the next render. */
-    @OptIn(ExperimentalTestApi::class)
-    private fun ComposeUiTest.renderFrames(engine: Engine, frames: Int) = repeat(frames) {
-        runOnUiThread { engine.flushAndWait() }
-        mainClock.advanceTimeByFrame()
-    }
-
-    /**
-     * Runs [body] with a DEFAULT engine created and destroyed on the UI thread, like rememberFilamentEngine.
-     * Content goes through the handed `setContent`, which is cleared before the engine is destroyed.
-     */
-    @OptIn(ExperimentalTestApi::class)
-    private fun withEngine(body: ComposeUiTest.(Engine, setContent: (@Composable () -> Unit) -> Unit) -> Unit) =
-        runComposeUiTest {
-            if (!TestEnv.gpuBackendAvailable) return@runComposeUiTest
-            // The render loop's frame callbacks never let the clock go idle: drive frames by hand.
-            mainClock.autoAdvance = false
-            var engine: Engine? = null
-            runOnUiThread {
-                Filament.init()
-                engine = Engine.create(Engine.Backend.DEFAULT)
-            }
-            val e = engine ?: return@runComposeUiTest
-            var slot by mutableStateOf<@Composable () -> Unit>({})
-            setContent { slot() }
-            try {
-                body(e) { slot = it }
-            } finally {
-                slot = {}
-                mainClock.advanceTimeByFrame()
-                mainClock.autoAdvance = true
-                runOnUiThread {
-                    e.flushAndWait()
-                    Engine.destroy(e)
-                }
-            }
-        }
-
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun viewAttachesWhileComposedAndPicksOnTap() = withEngine { engine, setContent ->
@@ -378,3 +340,41 @@ class FilamentViewTest {
         assertFalse(engine.isValid(regraded))
     }
 }
+
+/** Advances [frames] frames, waiting for the GPU before each: a readback still in flight holds back the next render. */
+@OptIn(ExperimentalTestApi::class)
+internal fun ComposeUiTest.renderFrames(engine: Engine, frames: Int) = repeat(frames) {
+    runOnUiThread { engine.flushAndWait() }
+    mainClock.advanceTimeByFrame()
+}
+
+/**
+ * Runs [body] with a DEFAULT engine created and destroyed on the UI thread, like rememberFilamentEngine.
+ * Content goes through the handed `setContent`, which is cleared before the engine is destroyed.
+ */
+@OptIn(ExperimentalTestApi::class)
+internal fun withEngine(body: ComposeUiTest.(Engine, setContent: (@Composable () -> Unit) -> Unit) -> Unit) =
+    runComposeUiTest {
+        if (!TestEnv.gpuBackendAvailable) return@runComposeUiTest
+        // The render loop's frame callbacks never let the clock go idle: drive frames by hand.
+        mainClock.autoAdvance = false
+        var engine: Engine? = null
+        runOnUiThread {
+            Filament.init()
+            engine = Engine.create(Engine.Backend.DEFAULT)
+        }
+        val e = engine ?: return@runComposeUiTest
+        var slot by mutableStateOf<@Composable () -> Unit>({})
+        setContent { slot() }
+        try {
+            body(e) { slot = it }
+        } finally {
+            slot = {}
+            mainClock.advanceTimeByFrame()
+            mainClock.autoAdvance = true
+            runOnUiThread {
+                e.flushAndWait()
+                Engine.destroy(e)
+            }
+        }
+    }
