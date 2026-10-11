@@ -15,6 +15,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Fixed
 - **iOS crash when a `FilamentView`/`FilamentSceneView` leaves the composition** (`filament-compose`): the surface's `UIView` could lay out after its `View` was destroyed and set the viewport on a null handle (`EXC_BAD_ACCESS`); it now stops touching Filament once it is disposed.
+- **Web crash with more than one engine on a page** (`filament`): a second `Engine` — two views with their own engines, or one screen replacing another — rendered on the wrong WebGL context and aborted with "OpenGL program … failed to link or compile".
 - **iOS crash when `GltfInstance` logs a warning** (`filament-compose`): a second `GltfInstance` of an asset that can create no more instances crashed the app instead of rendering nothing.
 
 ## [0.7.3] — 2026-10-10

@@ -1,12 +1,16 @@
 package io.github.erkko68.filament.compose
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.scene.DirectionalLight
+import io.github.erkko68.filament.compose.scene.SkyboxSource
+import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.compose.testutils.surfaceTest
 import kotlin.test.Test
 
@@ -65,6 +69,28 @@ class SurfaceLifecycleTest {
         val second = rememberFilamentScene(engine) {}
         FilamentView(if (frame / 5 % 2 == 0) first else second, Modifier.fillMaxSize())
     }
+
+    // ── Several engines ─────────────────────────────────────────────────────────────────────────
+
+    // The skybox gives each engine a program to compile: on web that fails on another engine's GL context.
+    @Test
+    fun anEngineReplacedInPlace() = surfaceTest { frame ->
+        key(frame / 10) { Sky(Modifier.fillMaxSize()) }
+    }
+
+    @Test
+    fun enginesSideBySide() = surfaceTest { frame ->
+        Column {
+            Sky(Modifier.weight(1f))
+            if (frame % 20 < 10) Sky(Modifier.weight(1f))
+        }
+    }
+
+    @Composable
+    private fun Sky(modifier: Modifier) = FilamentSceneView(
+        modifier,
+        skyboxState = rememberSkyboxState(initialSource = SkyboxSource.Color()),
+    ) { DirectionalLight() }
 
     @Composable
     private fun Scene(

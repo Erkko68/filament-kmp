@@ -145,6 +145,8 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     }
 
     private lateinit var _engine: Engine
+    // Web runs the frame's GL calls on whichever context is current, and another engine may have been driven since.
+    private fun makeCurrent() { if (::_engine.isInitialized) _engine.platform.makeCurrent() }
     internal fun setEngine(engine: Engine): Renderer {
         this._engine = engine
         return this
@@ -250,7 +252,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param vsyncSteadyClockTimeNano VSYNC time in steady_clock nanoseconds.
      */
-    fun skipFrame(vsyncSteadyClockTimeNano: Long = 0) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano)
+    fun skipFrame(vsyncSteadyClockTimeNano: Long = 0) { makeCurrent(); FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano) }
     /**
      * Check if the current frame should be rendered.
      *
@@ -273,14 +275,17 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      * @param frameTimeNanos VSYNC time in steady_clock nanoseconds, or 0 to use setVsyncTime().
      * @return true if frame should be rendered, false if behind schedule.
      */
-    fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long = 0): Boolean = FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos)
+    fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long = 0): Boolean {
+        makeCurrent()
+        return FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos)
+    }
     /**
      * Finish the current frame and schedule it for display.
      *
      * Must be called after beginFrame(true) returned true. This commits the frame and
      * schedules it for presentation.
      */
-    fun endFrame() = FilaRenderer_endFrame(nativeHandle)
+    fun endFrame() { makeCurrent(); FilaRenderer_endFrame(nativeHandle) }
     /**
      * Render a View into this Renderer's target.
      *
@@ -291,7 +296,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param view The View to render.
      */
-    fun render(view: View) = FilaRenderer_render(nativeHandle, view.nativeHandle)
+    fun render(view: View) { makeCurrent(); FilaRenderer_render(nativeHandle, view.nativeHandle) }
     /**
      * Render a View without frame pacing.
      *
@@ -299,7 +304,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
      *
      * @param view The View to render.
      */
-    fun renderStandaloneView(view: View) = FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
+    fun renderStandaloneView(view: View) { makeCurrent(); FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle) }
     /**
      * Copy the rendered frame to another SwapChain at a specified viewport.
      *
