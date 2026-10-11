@@ -21,14 +21,11 @@ import io.github.erkko68.filament.compose.scene.Bloom
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.ColorGrade
 import io.github.erkko68.filament.compose.scene.DirectionalLight
-import io.github.erkko68.filament.compose.scene.Environment
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.rememberCameraState
-import io.github.erkko68.filament.compose.scene.rememberIndirectLightState
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
 import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.Test
@@ -81,21 +78,6 @@ class FilamentViewTest {
         mainClock.advanceTimeByFrame()
         assertNull(viewState.view, "the view detaches with its composition")
         assertNull(cam?.viewMatrix)
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun environmentOverloadsWireItsStates() = withEngine { engine, setContent ->
-        var viewState: FilamentViewState? = null
-        var scene: FilamentScene? = null
-        setContent {
-            val environment = Environment(rememberIndirectLightState(), rememberSkyboxState())
-            scene = rememberFilamentScene(engine, environment) {}
-            FilamentSceneView(engine, environment, Modifier.size(32.dp), viewState = rememberFilamentViewState().also { viewState = it }) {}
-        }
-        repeat(3) { mainClock.advanceTimeByFrame() }
-        assertNotNull(scene)
-        assertTrue(viewState?.view?.scene != null, "the scene renders through the environment overload")
     }
 
     /** Compose rows run top-down, Filament's bottom-up: the top and bottom rows are both inside the viewport. */

@@ -34,12 +34,11 @@ import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.rememberAnimationNames
 import io.github.erkko68.filament.compose.scene.rememberAnimationState
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
@@ -57,8 +56,6 @@ fun AnimationScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
-
     // Hoist the engine so the asset (and its clip names) can be loaded outside the scene content.
     val engine = rememberFilamentEngine()
     val fox = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Fox.glb") }
@@ -76,8 +73,8 @@ fun AnimationScene(onBack: () -> Unit) {
                 .orbitGestures(orbit),
             engine = engine,
             cameraState = cameraState,
-            skyboxState = skybox,
         ) {
+            Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),

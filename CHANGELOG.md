@@ -13,7 +13,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+Upgrading from 0.7? See the [migration guide](docs/migration/from-0.7.md).
+
 ### Changed
+- **The skybox and environment are scene content** (`filament-compose`): `Skybox`, `IndirectLight` and `Environment` composables replace the `skyboxState`/`indirectLightState` parameters, `SkyboxState`, `IndirectLightState` and `SkyboxSource`.
+- **Environment loaders take the engine from the scene** (`filament-compose`): `rememberKTXEnvironment`/`rememberHDREnvironment` no longer need a hoisted engine, and intensity moved to `Environment(…, intensity = )`.
 - **`GltfInstance` takes one animation input** (`filament-compose`): `animationIndex`/`animationTime` are gone; pass an `AnimationState`, paused plus `seek` to hold a pose, or drive the `Animator` from `onUpdate`.
 
 ### Fixed

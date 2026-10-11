@@ -221,23 +221,22 @@ import io.github.erkko68.filament.compose.scene.*
 @Composable
 fun App() {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 1f, 4f),
-        target     = Position(0f, 0.5f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 1f, 4f),
+        initialTarget     = Position(0f, 0.5f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val skybox = rememberSkyboxState(SkyboxSource.Color(LinearColor(0.1f, 0.12f, 0.15f)))
 
     MaterialTheme {
         // The content lambda declares the world; the viewport is configured by value.
         FilamentSceneView(
             modifier       = Modifier.fillMaxSize(),
             cameraState    = cameraState,
-            skyboxState    = skybox,
             postProcessing = PostProcessing(
                 bloom        = Bloom(strength = 0.2f),
                 antiAliasing = AntiAliasing(fxaaEnabled = true),
             ),
         ) {
+            Skybox(color = LinearColor(0.1f, 0.12f, 0.15f))
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),   // lux

@@ -16,7 +16,8 @@ The API separates *what* you render from *where* you render it, mirroring Filame
 - **`FilamentView(scene = …)`** is a leaf composable: one viewport (camera + post-processing + platform surface) onto a scene. Its look is configured *by value* (`cameraState`, `postProcessing`). Place several `FilamentView`s to render one scene through different cameras.
 
 ```kotlin
-val scene = rememberFilamentScene(skyboxState = sky) {
+val scene = rememberFilamentScene {
+    Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))
     SunLight(direction = Direction(0.3f, -1f, -0.5f))
     GltfInstance(asset = duck)
 }
@@ -34,9 +35,9 @@ For the common single-view case, **`FilamentSceneView`** collapses the two into 
 FilamentSceneView(
     modifier = Modifier.fillMaxSize(),
     cameraState = cam,
-    skyboxState = sky,
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
+    Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))
     SunLight(direction = Direction(0.3f, -1f, -0.5f))
     GltfInstance(asset = duck)
 }
@@ -131,13 +132,12 @@ val asRotation = someQuaternion.toRotation()   // or Rotation(someQuaternion)
 
 The API changes things in two deliberate ways, split by **who writes the value**:
 
-- **Value parameters** (recompose to change) — used when *only your app* writes: lights,
-  `PostProcessing`, transforms, shadow config. Declare the value; change it by recomposing with a
+- **Value parameters** (recompose to change) — used when *only your app* writes: lights, the
+  skybox and environment, `PostProcessing`, transforms, shadow config. Declare the value; change it by recomposing with a
   new one.
 - **Mutable state holders** (`remember*State` / controllers, mutate to change) — used when *the
   framework also writes back*: `CameraState` (gesture controllers push the pose into it every
-  interaction), `SkyboxState`/`IndirectLightState` (environment loaders populate them
-  asynchronously), `AnimationState`/`AnimationTrack` (the frame loop advances them). These must be
+  interaction), `AnimationState`/`AnimationTrack` (the frame loop advances them). These must be
   objects you and the runtime can both mutate, so their creators seed with `initial*` params and
   later changes go through the returned object.
 
@@ -463,22 +463,38 @@ geometry arrays are compared by content, so re-creating identical arrays doesn't
 
 ### Environment
 
-`rememberKTXEnvironment` is the one-call path when you have a KTX IBL/skybox pair (e.g. from Filament's `cmgen`):
+The background and the image-based lighting are scene content, declared next to the lights. A scene
+has one skybox and one indirect light, so declare each once:
 
 ```kotlin
-val engine = rememberFilamentEngine()          // shared, so the IBL and scene agree
-val env = rememberKTXEnvironment(
-    engine = engine,
-    ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
-    skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
-)
-val scene = rememberFilamentScene(
-    engine = engine,
-    skyboxState = env.skyboxState,
-    indirectLightState = env.indirectLightState,
-) {
+rememberFilamentScene {
+    Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))   // a flat background
+}
+```
+
+`Environment` with `rememberKTXEnvironment` is the one-call path when you have a KTX IBL/skybox pair
+(e.g. from Filament's `cmgen`); `rememberHDREnvironment` does the same from a raw `.hdr`:
+
+```kotlin
+rememberFilamentScene {
+    Environment(
+        rememberKTXEnvironment(
+            ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
+            skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
+        ),
+        intensity = 30_000f,                    // a value: recompose to change it
+    )
     GltfInstance(asset = duck)                  // lit by the environment — no Light needed
 }
+```
+
+`Environment` is shorthand for an `IndirectLight` plus a `Skybox`. Declare those two yourself to bring
+your own textures or harmonics, or to set the skybox's own options:
+
+```kotlin
+val env = rememberKTXEnvironment(ibl = { … }, skybox = { … })
+IndirectLight(env.reflections, env.irradiance, rotation = Rotation.euler(yaw = 90f))
+Skybox(env.skybox, showSun = true)
 ```
 
 ### Materials & Textures

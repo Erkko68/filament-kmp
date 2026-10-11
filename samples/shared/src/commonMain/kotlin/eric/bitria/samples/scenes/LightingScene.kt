@@ -41,11 +41,10 @@ import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.SpotCone
 import io.github.erkko68.filament.compose.scene.SpotLight
 import io.github.erkko68.filament.compose.scene.primitives.Plane
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.math.cos
 import kotlin.math.sin
@@ -67,8 +66,6 @@ fun LightingScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.03f, 0.03f, 0.05f)))
-
     var kind by remember { mutableStateOf(LightKind.Directional) }
     var intensity by remember { mutableFloatStateOf(0.6f) }  // 0..1, mapped per type
     var azimuth by remember { mutableFloatStateOf(0.6f) }    // radians, around Y
@@ -85,11 +82,11 @@ fun LightingScene(onBack: () -> Unit) {
                 .fillMaxSize()
                 .orbitGestures(orbit),
             cameraState = cameraState,
-            skyboxState = skybox,
             shadows = if (!shadows) null
                       else if (soft) Shadows.Pcss()
                       else Shadows.Pcf,
         ) {
+            Skybox(color = LinearColor(0.03f, 0.03f, 0.05f))
             when (kind) {
                 LightKind.Directional -> DirectionalLight(
                     direction = dir,

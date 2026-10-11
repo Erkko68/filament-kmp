@@ -28,12 +28,11 @@ import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.Vignette
 import io.github.erkko68.filament.compose.scene.rememberAnimationState
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
@@ -61,10 +60,9 @@ fun SplitViewScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
 
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
-
     // Declared once, rendered by both views below.
-    val scene = rememberFilamentScene(skyboxState = skybox) {
+    val scene = rememberFilamentScene {
+        Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
         DirectionalLight(
             direction = Direction(0.3f, -1f, -0.5f),
             intensity = LightIntensity.LuminousPower(100_000f),

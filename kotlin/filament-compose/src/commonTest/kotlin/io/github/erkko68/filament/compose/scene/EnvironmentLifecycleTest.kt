@@ -1,5 +1,8 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.composeScene
@@ -13,8 +16,8 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
- * Tier-B (real-backend) lifecycle coverage for the environment apply paths: `ApplySkybox` and
- * `ApplyIndirectLight` build GPU resources (a `Skybox` / `IndirectLight`) the NOOP driver panics on,
+ * Tier-B (real-backend) lifecycle coverage for the environment composables: `Skybox` and
+ * `IndirectLight` build GPU resources (a `Skybox` / `IndirectLight`) the NOOP driver panics on,
  * so this gates on a DEFAULT backend via [TierBSceneFixture]. Both apply *synchronously* on the
  * composition thread (no async loader), so unlike glTF they fit the headless harness.
  *
@@ -39,8 +42,7 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
             whileComposed = { assertNotNull(scene.skybox, "color skybox should be attached while composed") },
             afterDispose = { assertNull(scene.skybox, "skybox should be cleared after disposal") },
         ) {
-            val state = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)))
-            ApplySkybox(state, engine, scene)
+            Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))
         }
     }
 
@@ -52,27 +54,56 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
         val scene = scene ?: return@run skippedComposeTest()
 
         withFilamentScene(engine, scene) { setContent ->
-            val state = SkyboxState(SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)), false, 1f, 0)
-            setContent { ApplySkybox(state, engine, scene) }
+            var color by mutableStateOf(LinearColor(0.05f, 0.05f, 0.08f))
+            var intensity by mutableStateOf(1f)
+            var shown by mutableStateOf(true)
+            setContent { if (shown) Skybox(color = color, intensity = intensity) }
             waitForIdle()
             val skybox = assertNotNull(scene.skybox)
 
-            state.source = SkyboxSource.Color(LinearColor(1f, 0f, 0f), alpha = 0.5f)
+            color = LinearColor(1f, 0f, 0f)
             mainClock.advanceTimeByFrame()
             waitForIdle()
             assertSame(skybox, scene.skybox, "a new color should not rebuild the Skybox")
 
             // Intensity has no setter: that does need a new one.
-            state.intensity = 2f
+            intensity = 2f
             mainClock.advanceTimeByFrame()
             waitForIdle()
             assertEquals(2f, assertNotNull(scene.skybox).intensity)
             assertTrue(!engine.isValid(skybox), "the replaced Skybox is destroyed")
 
-            state.source = null
+            shown = false
             mainClock.advanceTimeByFrame()
             waitForIdle()
-            assertNull(scene.skybox, "a null source removes the skybox")
+            assertNull(scene.skybox, "leaving the composition removes the skybox")
+        }
+    }
+
+    /** A scene has one skybox: a second one replaces the first, and the first leaving doesn't clear it. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun aReplacedSkyboxLeavingKeepsTheOneThatReplacedIt() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+
+        withFilamentScene(engine, scene) { setContent ->
+            var first by mutableStateOf(true)
+            setContent {
+                if (first) Skybox(color = LinearColor(1f, 0f, 0f))
+                Skybox(color = LinearColor(0f, 0f, 1f), intensity = 2f)
+            }
+            waitForIdle()
+            assertEquals(2f, assertNotNull(scene.skybox).intensity, "the later Skybox wins")
+
+            first = false
+            mainClock.advanceTimeByFrame()
+            waitForIdle()
+            assertEquals(2f, assertNotNull(scene.skybox).intensity, "the replaced Skybox leaving clears nothing")
+
+            setContent {}
+            waitForIdle()
+            assertNull(scene.skybox)
         }
     }
 
@@ -89,11 +120,10 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
             afterDispose = { assertNull(scene.indirectLight, "IBL should be cleared after disposal") },
         ) {
             // bands = 1 → a single constant-ambient SH term (1²×3 = 3 coefficients); no cubemap needed.
-            val state = rememberIndirectLightState(
-                initialIrradianceSh = SphericalHarmonics(bands = 1, coefficients = floatArrayOf(0.5f, 0.5f, 0.5f)),
-                initialIntensity = 30_000f,
+            IndirectLight(
+                reflections = null,
+                irradiance = SphericalHarmonics(bands = 1, coefficients = floatArrayOf(0.5f, 0.5f, 0.5f)),
             )
-            ApplyIndirectLight(state, engine, scene)
         }
     }
 
@@ -105,15 +135,15 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
         val scene = scene ?: return@run skippedComposeTest()
 
         withFilamentScene(engine, scene) { setContent ->
-            val state = IndirectLightState(
-                null, null, SphericalHarmonics(bands = 1, coefficients = floatArrayOf(0.5f, 0.5f, 0.5f)), 30_000f, null,
-            )
-            setContent { ApplyIndirectLight(state, engine, scene) }
+            var irradiance by mutableStateOf(SphericalHarmonics(bands = 1, coefficients = floatArrayOf(0.5f, 0.5f, 0.5f)))
+            var intensity by mutableStateOf(30_000f)
+            var rotation by mutableStateOf(Rotation.Identity)
+            setContent { IndirectLight(reflections = null, irradiance = irradiance, intensity = intensity, rotation = rotation) }
             waitForIdle()
             val ibl = assertNotNull(scene.indirectLight)
 
-            state.intensity = 10_000f
-            state.rotation = Rotation.euler(yaw = 90f)
+            intensity = 10_000f
+            rotation = Rotation.euler(yaw = 90f)
             mainClock.advanceTimeByFrame()
             waitForIdle()
             assertSame(ibl, scene.indirectLight, "a new intensity/rotation should not rebuild the IndirectLight")
@@ -121,13 +151,13 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
             assertEquals(Rotation.euler(yaw = 90f).toRotationMatrix().toList(), ibl.rotation.toList())
 
             // Back to no rotation: the identity, as a freshly built one has.
-            state.rotation = null
+            rotation = Rotation.Identity
             mainClock.advanceTimeByFrame()
             waitForIdle()
             assertEquals(Rotation.Identity.toRotationMatrix().toList(), ibl.rotation.toList())
 
             // New irradiance does need a new one.
-            state.irradianceSh = SphericalHarmonics(bands = 1, coefficients = floatArrayOf(1f, 1f, 1f))
+            irradiance = SphericalHarmonics(bands = 1, coefficients = floatArrayOf(1f, 1f, 1f))
             mainClock.advanceTimeByFrame()
             waitForIdle()
             assertEquals(10_000f, assertNotNull(scene.indirectLight).intensity)

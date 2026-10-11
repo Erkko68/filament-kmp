@@ -85,8 +85,8 @@ private fun UnsupportedNotice(onBack: () -> Unit, message: String) {
 
 /**
  * Shared renderer for both environment samples: the Duck is lit *entirely* by [environment] (no
- * `Light` in the scene), the environment cubemap is the skybox, and the slider drives the IBL
- * intensity to show the state stays mutable after load.
+ * `Light` in the scene), the environment cubemap is the skybox, and the slider drives the
+ * environment's intensity.
  */
 @Composable
 private fun EnvironmentSceneContent(
@@ -96,7 +96,6 @@ private fun EnvironmentSceneContent(
     source: String,
 ) {
     var intensity by remember { mutableStateOf(30_000f) }
-    environment.indirectLightState.intensity = intensity
 
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 1.5f, 4f),
@@ -105,11 +104,8 @@ private fun EnvironmentSceneContent(
     )
     val orbit = rememberOrbitCameraController(cameraState)
 
-    val scene = rememberFilamentScene(
-        engine = engine,
-        skyboxState = environment.skyboxState,
-        indirectLightState = environment.indirectLightState,
-    ) {
+    val scene = rememberFilamentScene(engine = engine) {
+        Environment(environment, intensity = intensity)
         GltfInstance(asset = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Duck.glb") })
     }
 
