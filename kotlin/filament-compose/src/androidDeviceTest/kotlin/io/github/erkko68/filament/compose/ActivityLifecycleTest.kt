@@ -23,7 +23,7 @@ import io.github.erkko68.filament.compose.testutils.TestGlb
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * What the activity does to a view on its own: stopping takes the surface away, a rotation rebuilds the whole
@@ -66,20 +66,17 @@ class ActivityLifecycleTest {
 
     private fun settle(ms: Long = 700) = Thread.sleep(ms)
 
+    // Polls: a first frame can take seconds on a software-GPU emulator, but a view stuck blank stays blank.
     private fun assertShowing(what: String) {
         var pixel = 0
-        val start = System.currentTimeMillis()
-        // A view stuck blank stays blank; a slow first frame doesn't.
-        while (System.currentTimeMillis() - start < 6000) {
-            settle(350)
+        val deadline = System.currentTimeMillis() + 15_000
+        while (System.currentTimeMillis() < deadline) {
+            settle(300)
             val shot = instrumentation.uiAutomation.takeScreenshot()
             pixel = shot.getPixel(shot.width / 2, shot.height / 4)
-            if (Color.green(pixel) > 100 && Color.green(pixel) > Color.red(pixel) + 40) {
-                android.util.Log.i("LifecycleProbe", "$what: showing after ${System.currentTimeMillis() - start} ms")
-                return
-            }
+            if (Color.green(pixel) > 100 && Color.green(pixel) > Color.red(pixel) + 40) return
         }
-        kotlin.test.fail("$what: the view should show its green skybox, shows #${Integer.toHexString(pixel)}")
+        fail("$what: the view should show its green skybox, shows #${Integer.toHexString(pixel)}")
     }
 
     private fun bothSurfaces(renderingEnabled: Boolean = true, body: (ActivityScenario<ComponentActivity>, String) -> Unit) {
