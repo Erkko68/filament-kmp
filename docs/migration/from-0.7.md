@@ -49,8 +49,8 @@ val scene = rememberFilamentScene {
 - `rememberHDREnvironment(showSkybox = false)` became `Environment(…, skyboxEnabled = false)`.
 - `Environment` exposes `reflections`, `irradiance` and `skybox` instead of two state objects.
 
-A scene has one skybox and one indirect light. A second `Skybox`, `IndirectLight` or `Environment` in
-the same scene replaces the first and logs a warning.
+A scene has one skybox and one indirect light, so declare each once. With two in the same scene the one
+built last wins, which changes whenever either is rebuilt, and a warning is logged.
 
 ## 2. `GltfInstance` takes one animation input
 
