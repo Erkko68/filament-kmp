@@ -368,8 +368,9 @@ val scene  = rememberFilamentScene { /* world */ }
 val mapCam = rememberCameraState(initialEye = Position(0f, 40f, 0f), initialTarget = Position(0f))
 val mapTex = rememberRenderTargetTexture(scene, mapCam, width = 256, height = 256)
 
-val screen = rememberMaterialInstance(screenMaterial)
-mapTex?.let { screen.setParameter("screen", it, TextureSampler()) }
+val screen = rememberMaterialInstance(screenMaterial, mapTex) {
+    mapTex?.let { setParameter("screen", it, TextureSampler()) }
+}
 Plane(material = screen)   // a surface displaying the off-screen render
 ```
 
@@ -502,8 +503,8 @@ scenes, or loading before rendering starts):
 
 ```kotlin
 val engine = rememberFilamentEngine()
-val mat    = rememberMaterial(engine) { Res.readBytes("files/materials/lit_color.filamat") }
-val duck   = rememberGltfAsset(engine) { Res.readBytes("files/models/Duck.glb") }
+val mat    = rememberMaterial(engine = engine) { Res.readBytes("files/materials/lit_color.filamat") }
+val duck   = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Duck.glb") }
 
 val scene = rememberFilamentScene(engine = engine) {
     GltfInstance(asset = duck, ...)
