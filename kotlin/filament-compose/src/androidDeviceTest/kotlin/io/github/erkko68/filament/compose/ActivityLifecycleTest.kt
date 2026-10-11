@@ -16,6 +16,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.LinearColor
+import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
@@ -28,7 +29,7 @@ import kotlin.test.fail
 
 /**
  * What the activity does to a view on its own: stopping takes the surface away, a rotation rebuilds the whole
- * composition. A crash kills the run; a view that comes back blank fails the screenshot, on a real GPU.
+ * composition. A crash kills the run; a view that comes back blank fails the screenshot.
  */
 class ActivityLifecycleTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
@@ -60,6 +61,8 @@ class ActivityLifecycleTest {
         skyboxState = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0f, 1f, 0f))),
         transparent = transparent,
         renderingEnabled = renderingEnabled,
+        // A shadow pass crashes the whole emulator on its software GPU.
+        shadows = if (TestEnv.emulatedGpu) null else Shadows.Pcf,
     ) {
         DirectionalLight()
         GltfInstance(rememberGltfAsset { TestGlb.getDuckGlbBytes() })
@@ -69,8 +72,6 @@ class ActivityLifecycleTest {
 
     // Polls: a first frame can take seconds on a software-GPU emulator, but a view stuck blank stays blank.
     private fun assertShowing(what: String) {
-        // Reading a Filament frame back segfaults CI's software-GPU emulator, so there it only has to survive.
-        if (TestEnv.emulatedGpu) return settle(3_000)
         var pixel = 0
         val deadline = System.currentTimeMillis() + 15_000
         while (System.currentTimeMillis() < deadline) {
