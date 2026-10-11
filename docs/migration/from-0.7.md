@@ -23,7 +23,7 @@ FilamentSceneView {
 | 0.7 | 0.8 |
 | :--- | :--- |
 | `rememberSkyboxState(SkyboxSource.Color(c))` + `skyboxState =` | `Skybox(color = c)` in the scene |
-| `SkyboxSource.Cubemap(texture)` | `Skybox(environment = texture)` |
+| `SkyboxSource.Cubemap(texture)` | `Skybox(texture = texture)` |
 | `rememberIndirectLightState(…)` + `indirectLightState =` | `IndirectLight(reflections, irradiance, intensity, rotation)` in the scene |
 | `state.intensity = x`, `state.rotation = r` | pass `intensity = x`, `rotation = r`; hold them in your own state to change them |
 | `rememberFilamentScene(engine, environment) { }` | `rememberFilamentScene { Environment(environment) }` |
@@ -39,14 +39,16 @@ val scene = rememberFilamentScene(engine, env) { GltfInstance(asset = duck) }
 
 // 0.8
 val scene = rememberFilamentScene {
-    Environment(rememberKTXEnvironment(ibl = { … }, skybox = { … }))
+    Environment(rememberKtxEnvironment(ibl = { … }, skybox = { … }))
     GltfInstance(asset = duck)
 }
 ```
 
-- `engine` is no longer the first, required parameter: pass `engine = engine` to load outside a scene.
+- `rememberKTXEnvironment`/`rememberHDREnvironment` are now `rememberKtxEnvironment`/`rememberHdrEnvironment`, cased like `rememberGltfAsset`.
+- `engine` is no longer the first, required parameter: pass `engine = engine` to load outside a scene. A leftover
+  positional `engine` still compiles, as the reload `key`.
 - `initialIntensity` moved to `Environment(…, intensity = )`.
-- `rememberHDREnvironment(showSkybox = false)` became `Environment(…, skyboxEnabled = false)`.
+- `rememberHdrEnvironment(showSkybox = false)` became `Environment(…, skyboxEnabled = false)`.
 - `Environment` exposes `reflections`, `irradiance` and `skybox` instead of two state objects.
 
 A scene has one skybox and one indirect light, so declare each once. With two in the same scene the one

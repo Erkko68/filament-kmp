@@ -192,7 +192,7 @@ resource, other targets return empty, so the suite skips off-JVM exactly like th
 - **`EnvironmentLifecycleTest`** ✅ — `Skybox` (a **color** skybox → `scene.skybox` set/cleared) and
   `IndirectLight` (an IBL built from **spherical-harmonics** coefficients → `scene.indirectLight`
   set/cleared). Both apply synchronously on the composition thread, and neither needs a bundled asset.
-  The texture-backed paths (cubemap skybox, cubemap IBL, `rememberKTXEnvironment`/`rememberHDREnvironment`)
+  The texture-backed paths (cubemap skybox, cubemap IBL, `rememberKtxEnvironment`/`rememberHdrEnvironment`)
   are left for when a small KTX/HDR asset is bundled — `samples/shared/.../environment/` has candidates.
 - **`GltfLifecycleTest`** ⬜ **deferred — same reason `FilamentView` is out of headless scope.**
   `rememberGltfAsset` loads via gltfio's **async** `ResourceLoader` (`asyncBeginLoad` → `asyncUpdateLoad`

@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.awaitCancellation
 
 /**
- * The async loaders ([rememberHDREnvironment], [rememberTexture]): bytes arrive from an effect, then
+ * The async loaders ([rememberHdrEnvironment], [rememberTexture]): bytes arrive from an effect, then
  * the GPU work runs in composition, so everything stays on the UI thread ([withUiThreadFilamentScene]).
  */
 class EnvironmentLoadingTest {
@@ -45,7 +45,7 @@ class EnvironmentLoadingTest {
         // A flat 1×1 Radiance image: header, blank line, resolution, one RGBE pixel.
         val hdr = "#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y 1 +X 1\n".encodeToByteArray() + byteArrayOf(-128, 64, 32, -127)
         var environment: Environment? = null
-        setContent { environment = rememberHDREnvironment(engine = engine, hdr = { hdr }) }
+        setContent { environment = rememberHdrEnvironment(engine = engine, hdr = { hdr }) }
         frameUntil { environment?.reflections != null }
 
         val reflections = assertNotNull(environment?.reflections)
@@ -60,7 +60,7 @@ class EnvironmentLoadingTest {
     fun ktxEnvironmentLoadsReflectionsHarmonicsAndSkybox() = withUiThreadFilamentScene { setContent, engine, _ ->
         var environment: Environment? = null
         setContent {
-            environment = rememberKTXEnvironment(engine = engine, skybox = { TestKtx.skybox }, ibl = { TestKtx.ibl })
+            environment = rememberKtxEnvironment(engine = engine, skybox = { TestKtx.skybox }, ibl = { TestKtx.ibl })
         }
         frameUntil { environment?.reflections != null && environment?.skybox != null }
 
@@ -82,7 +82,7 @@ class EnvironmentLoadingTest {
     fun reloadedEnvironmentKeepsTheTexturesTheSceneStillDraws() = withUiThreadFilamentScene { setContent, engine, scene ->
         var key by mutableStateOf(0)
         setContent {
-            Environment(rememberKTXEnvironment(key = key, engine = engine, skybox = { TestKtx.skybox.copyOf() }, ibl = { TestKtx.ibl.copyOf() }))
+            Environment(rememberKtxEnvironment(key = key, engine = engine, skybox = { TestKtx.skybox.copyOf() }, ibl = { TestKtx.ibl.copyOf() }))
         }
         frameUntil { scene.indirectLight?.reflectionsTexture != null && scene.skybox?.texture != null }
         val reflections = assertNotNull(scene.indirectLight?.reflectionsTexture)
@@ -136,8 +136,8 @@ class EnvironmentLoadingTest {
                 rememberTexture(onError = { errors += "texture" to it }, engine = engine) { throw boom },
                 rememberGltfAsset(onError = { errors += "gltf" to it }, engine = engine) { throw boom },
             )
-            ktx = rememberKTXEnvironment(onError = { errors += "ktx" to it }, engine = engine, skybox = { throw boom }, ibl = { throw boom })
-            hdr = rememberHDREnvironment(onError = { errors += "hdr" to it }, engine = engine) { throw boom }
+            ktx = rememberKtxEnvironment(onError = { errors += "ktx" to it }, engine = engine, skybox = { throw boom }, ibl = { throw boom })
+            hdr = rememberHdrEnvironment(onError = { errors += "hdr" to it }, engine = engine) { throw boom }
         }
         frameUntil { errors.size >= 6 }
         assertEquals(listOf("gltf", "hdr", "ktx", "ktx", "material", "texture"), errors.map { it.first }.sorted())
@@ -159,8 +159,8 @@ class EnvironmentLoadingTest {
             rememberMaterial(onError = { errors += it }, engine = engine, load = never)
             rememberTexture(onError = { errors += it }, engine = engine, load = never)
             rememberGltfAsset(onError = { errors += it }, engine = engine, load = never)
-            rememberKTXEnvironment(onError = { errors += it }, engine = engine, skybox = never, ibl = never)
-            rememberHDREnvironment(onError = { errors += it }, engine = engine, hdr = never)
+            rememberKtxEnvironment(onError = { errors += it }, engine = engine, skybox = never, ibl = never)
+            rememberHdrEnvironment(onError = { errors += it }, engine = engine, hdr = never)
         }
         frameUntil { started == 6 }
         setContent {}
@@ -180,7 +180,7 @@ class EnvironmentLoadingTest {
         var environment: Environment? = null
         setContent {
             material = rememberMaterial(engine = engine) { bytes }
-            environment = rememberKTXEnvironment(engine = engine, ibl = { TestKtx.ibl })
+            environment = rememberKtxEnvironment(engine = engine, ibl = { TestKtx.ibl })
         }
         frameUntil { material != null && environment?.reflections != null }
         val built = assertNotNull(material)

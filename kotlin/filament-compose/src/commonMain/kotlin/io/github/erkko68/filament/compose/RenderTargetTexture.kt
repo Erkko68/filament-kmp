@@ -10,6 +10,7 @@ import io.github.erkko68.filament.compose.internal.FilamentRenderLoop
 import io.github.erkko68.filament.compose.internal.rememberPausedFrameGate
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
+import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.ApplyPostProcessing
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
@@ -46,6 +47,7 @@ import io.github.erkko68.filament.compose.internal.rememberOwned
  * @param height Texture height in pixels.
  * @param postProcessing Post-processing configuration for the off-screen view. Defaults to
  *   `PostProcessing(enabled = false)`, which skips the pass entirely — see the note above.
+ * @param shadows Shadow technique for the off-screen view, or `null` for none, as on [FilamentView].
  * @param renderingEnabled Redraw the texture on every display refresh. `false` stops once the current
  *   scene is in it and keeps that frame, as on [FilamentView]: for a thumbnail, or a monitor nobody sees.
  * @return The color texture being rendered into, or null for a non-positive size.
@@ -57,6 +59,7 @@ fun rememberRenderTargetTexture(
     width: Int = 512,
     height: Int = 512,
     postProcessing: PostProcessing = PostProcessing(enabled = false),
+    shadows: Shadows? = Shadows.Pcf,
     renderingEnabled: Boolean = true,
 ): Texture? {
     val engine = scene.engine
@@ -105,11 +108,12 @@ fun rememberRenderTargetTexture(
     val renderer = rememberOwned(engine, create = { engine.createRenderer() }) { engine.destroy(it) }
 
     // Wire the off-screen view. Keyed effect rather than a `remember` block — see FilamentView.
-    DisposableEffect(view, scene.scene, camera, target, width, height) {
+    DisposableEffect(view, scene.scene, camera, target, width, height, shadows) {
         view.scene = scene.scene
         view.camera = camera
         view.viewport = Viewport(0, 0, width, height)
         view.renderTarget = target
+        shadows.applyTo(view)
         onDispose {}
     }
 

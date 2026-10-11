@@ -222,14 +222,14 @@ checked. Move the read into its own small scene composable and only that functio
 ```kotlin
 // The clock is read here, so only this function re-runs each frame.
 @Composable
-fun FilamentSceneScope.SpinningEnvironment(environment: Environment) {
+fun FilamentSceneScope.SpinningDuck(duck: GltfAsset?) {
     val time by rememberSceneClock()
-    Environment(environment, rotation = Rotation.euler(yaw = time * 10f))
+    GltfInstance(asset = duck, rotation = Rotation.euler(yaw = time * 10f))
 }
 
 FilamentSceneView(cameraState = cam) {
-    SpinningEnvironment(env)      // nothing in this block reads the clock
-    GltfInstance(asset = duck)
+    Environment(env)
+    SpinningDuck(duck)            // nothing in this block reads the clock
 }
 ```
 
@@ -267,7 +267,7 @@ GltfInstance(asset = character, animationState = animation)
 
 You can read it back during composition — `animation.time`, `animation.progress` and
 `animation.isTransitioning` are snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration`
-live. Set `animation.isPaused = true` to freeze playback and `animation.seek(seconds)` to scrub: a
+live. Pass the same state to several instances of one asset and they play in step. Set `animation.isPaused = true` to freeze playback and `animation.seek(seconds)` to scrub: a
 paused state holds the pose at the time you seek to.
 
 ### 2. Cross-fading between clips
@@ -390,8 +390,9 @@ val scene  = rememberFilamentScene { /* world */ }
 val mapCam = rememberCameraState(initialEye = Position(0f, 40f, 0f), initialTarget = Position(0f))
 val mapTex = rememberRenderTargetTexture(scene, mapCam, width = 256, height = 256)
 
-val screen = rememberMaterialInstance(screenMaterial)
-mapTex?.let { screen.setParameter("screen", it, TextureSampler()) }
+val screen = rememberMaterialInstance(screenMaterial, mapTex) {
+    mapTex?.let { setParameter("screen", it, TextureSampler()) }
+}
 Plane(material = screen)   // a surface displaying the off-screen render
 ```
 
@@ -495,13 +496,13 @@ rememberFilamentScene {
 }
 ```
 
-`Environment` with `rememberKTXEnvironment` is the one-call path when you have a KTX IBL/skybox pair
-(e.g. from Filament's `cmgen`); `rememberHDREnvironment` does the same from a raw `.hdr`:
+`Environment` with `rememberKtxEnvironment` is the one-call path when you have a KTX IBL/skybox pair
+(e.g. from Filament's `cmgen`); `rememberHdrEnvironment` does the same from a raw `.hdr`:
 
 ```kotlin
 rememberFilamentScene {
     Environment(
-        rememberKTXEnvironment(
+        rememberKtxEnvironment(
             ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
             skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
         ),
@@ -515,7 +516,7 @@ rememberFilamentScene {
 your own textures or harmonics, or to set the skybox's own options:
 
 ```kotlin
-val env = rememberKTXEnvironment(ibl = { … }, skybox = { … })
+val env = rememberKtxEnvironment(ibl = { … }, skybox = { … })
 IndirectLight(env.reflections, env.irradiance, rotation = Rotation.euler(yaw = 90f))
 Skybox(env.skybox, showSun = true)
 ```
@@ -540,8 +541,8 @@ scenes, or loading before rendering starts):
 
 ```kotlin
 val engine = rememberFilamentEngine()
-val mat    = rememberMaterial(engine) { Res.readBytes("files/materials/lit_color.filamat") }
-val duck   = rememberGltfAsset(engine) { Res.readBytes("files/models/Duck.glb") }
+val mat    = rememberMaterial(engine = engine) { Res.readBytes("files/materials/lit_color.filamat") }
+val duck   = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Duck.glb") }
 
 val scene = rememberFilamentScene(engine = engine) {
     GltfInstance(asset = duck, ...)

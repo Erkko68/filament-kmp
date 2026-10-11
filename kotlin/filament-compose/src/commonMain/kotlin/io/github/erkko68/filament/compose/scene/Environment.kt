@@ -19,8 +19,8 @@ import io.github.erkko68.filament.utils.Ktx1Reader
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * A loaded image-based-lighting environment, from [rememberKTXEnvironment] (pre-baked KTX) or
- * [rememberHDREnvironment] (raw `.hdr`). Place it in a scene with the [Environment] composable, or
+ * A loaded image-based-lighting environment, from [rememberKtxEnvironment] (pre-baked KTX) or
+ * [rememberHdrEnvironment] (raw `.hdr`). Place it in a scene with the [Environment] composable, or
  * hand its parts to [IndirectLight] and [Skybox] yourself.
  *
  * Every part is null until its data has loaded, and stays null if the load failed.
@@ -41,7 +41,7 @@ class Environment internal constructor(
  *
  * ```kotlin
  * FilamentSceneView(cameraState = cam) {
- *     Environment(rememberKTXEnvironment(
+ *     Environment(rememberKtxEnvironment(
  *         ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
  *         skybox = { Res.readBytes("files/environment/env_skybox.ktx") },
  *     ))
@@ -76,7 +76,7 @@ fun FilamentSceneScope.Environment(
  * Like the other loaders, call it inside `rememberFilamentScene { }`, or outside with a hoisted [engine]
  * to share one environment between scenes.
  *
- * For raw equirectangular `.hdr` images (no offline bake) use [rememberHDREnvironment].
+ * For raw equirectangular `.hdr` images (no offline bake) use [rememberHdrEnvironment].
  *
  * @param key     Reloads when this changes. Defaults to [Unit] for static assets.
  * @param onError Invoked once per failure (load threw, or the KTX failed to decode).
@@ -86,14 +86,14 @@ fun FilamentSceneScope.Environment(
  * @param ibl     Loader for the IBL KTX (prefiltered reflection cubemap + irradiance harmonics).
  */
 @Composable
-fun rememberKTXEnvironment(
+fun rememberKtxEnvironment(
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     skybox: (suspend () -> ByteArray)? = null,
     ibl: suspend () -> ByteArray,
 ): Environment {
-    val iblBytes by produceState<ByteArray?>(null, engine, key) {
+    val iblBytes by produceState<ByteArray?>(null, key) {
         value = loadOrReport(onError, ibl)
     }
     val reflections = iblBytes?.let { rememberKtxCubemap(engine, it, "IBL", onError) }
@@ -106,7 +106,7 @@ fun rememberKTXEnvironment(
     }
 
     val skyTexture = if (skybox != null) {
-        val skyBytes by produceState<ByteArray?>(null, engine, key) {
+        val skyBytes by produceState<ByteArray?>(null, key) {
             value = loadOrReport(onError, skybox)
         }
         skyBytes?.let { rememberKtxCubemap(engine, it, "skybox", onError) }
@@ -135,12 +135,12 @@ private fun rememberKtxCubemap(engine: Engine, bytes: ByteArray, what: String, o
  *
  * ```kotlin
  * rememberFilamentScene {
- *     Environment(rememberHDREnvironment { Res.readBytes("env/lobby.hdr") })
+ *     Environment(rememberHdrEnvironment { Res.readBytes("env/lobby.hdr") })
  *     GltfInstance(asset = duck)
  * }
  * ```
  *
- * **Tradeoff vs. [rememberKTXEnvironment]:** there's no baked diffuse irradiance (cmgen's spherical
+ * **Tradeoff vs. [rememberKtxEnvironment]:** there's no baked diffuse irradiance (cmgen's spherical
  * harmonics). Filament approximates diffuse from the reflection's lowest mip — visibly lower quality.
  * Prefer KTX when you can bake offline; use this for raw `.hdr` workflows. The prefilter runs on the GPU
  * at load, so the first frames render before it lands.
@@ -153,14 +153,14 @@ private fun rememberKtxCubemap(engine: Engine, bytes: ByteArray, what: String, o
  * @param hdr     Loader for the equirectangular HDR bytes (2:1 aspect).
  */
 @Composable
-fun rememberHDREnvironment(
+fun rememberHdrEnvironment(
     format: Texture.InternalFormat = Texture.InternalFormat.R11F_G11F_B10F,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     hdr: suspend () -> ByteArray,
 ): Environment {
-    val hdrBytes by produceState<ByteArray?>(null, engine, key) {
+    val hdrBytes by produceState<ByteArray?>(null, key) {
         value = loadOrReport(onError, hdr)
     }
     val prefiltered = hdrBytes?.let { bytes ->

@@ -40,7 +40,7 @@ data class SphericalHarmonics(
  * ambient light. Renders nothing while both are null (still loading). [intensity] and [rotation] are set on
  * the live light, so animating them is cheap.
  *
- * For a KTX or HDR file, [Environment] with [rememberKTXEnvironment]/[rememberHDREnvironment] does this in
+ * For a KTX or HDR file, [Environment] with [rememberKtxEnvironment]/[rememberHdrEnvironment] does this in
  * one call; use this for textures or harmonics of your own.
  *
  * ```kotlin

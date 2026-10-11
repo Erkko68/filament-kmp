@@ -40,21 +40,21 @@ fun FilamentSceneScope.Skybox(
 
 /**
  * A cubemap background for the scene, e.g. the [Environment.skybox] of a loaded environment or a
- * cubemap of your own. Renders nothing while [environment] is null (still loading).
+ * cubemap of your own. Renders nothing while [texture] is null (still loading).
  *
- * @param environment The cubemap to draw, or null while it loads.
+ * @param texture The cubemap to draw, or null while it loads.
  * @param showSun Draw the sun disk of the scene's `SunLight`.
  * @param intensity Skybox intensity, used only while the scene has no [IndirectLight].
  * @param priority Draw-order priority of the skybox.
  */
 @Composable
 fun FilamentSceneScope.Skybox(
-    environment: Texture?,
+    texture: Texture?,
     showSun: Boolean = false,
     intensity: Float = 1f,
     priority: Int = 0,
 ) {
-    if (environment != null) SkyboxNode(environment, null, 1f, showSun, intensity, priority)
+    if (texture != null) SkyboxNode(texture, null, 1f, showSun, intensity, priority)
 }
 
 @Composable

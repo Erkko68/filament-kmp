@@ -28,8 +28,8 @@ import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberHDREnvironment
-import io.github.erkko68.filament.compose.scene.rememberKTXEnvironment
+import io.github.erkko68.filament.compose.scene.rememberHdrEnvironment
+import io.github.erkko68.filament.compose.scene.rememberKtxEnvironment
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @Composable
 fun KTXEnvironmentScene(onBack: () -> Unit) {
     val engine = rememberFilamentEngine()
-    val environment = rememberKTXEnvironment(
+    val environment = rememberKtxEnvironment(
         engine = engine,
         ibl    = { Res.readBytes("files/environment/lightroom_ibl.ktx") },
         skybox = { Res.readBytes("files/environment/lightroom_skybox.ktx") },
@@ -58,7 +58,7 @@ fun HDREnvironmentScene(onBack: () -> Unit) {
     val engine = rememberFilamentEngine()
     // Surface a failed decode via onError and show a notice instead of an empty scene.
     var failed by remember { mutableStateOf(false) }
-    val environment = rememberHDREnvironment(
+    val environment = rememberHdrEnvironment(
         engine = engine,
         onError = { failed = true },
     ) { Res.readBytes("files/environment/lightroom.hdr") }

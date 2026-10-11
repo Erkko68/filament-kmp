@@ -4,7 +4,7 @@ import kotlin.io.encoding.Base64
 
 /**
  * A tiny KTX1 IBL and skybox, made by Filament 1.77.1's `cmgen --format=ktx --size=8` from an 8×4
- * flat-color HDR: small enough to inline, real enough for `rememberKTXEnvironment`.
+ * flat-color HDR: small enough to inline, real enough for `rememberKtxEnvironment`.
  */
 object TestKtx {
     val ibl: ByteArray by lazy {
