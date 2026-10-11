@@ -21,32 +21,40 @@ import kotlin.time.Duration.Companion.seconds
 private var run by mutableIntStateOf(0)
 private var slot by mutableStateOf<@Composable () -> Unit>({})
 
-// One viewport for every test: a viewport is never disposed, and each holds a WebGL context.
-@OptIn(ExperimentalComposeUiApi::class)
-private val viewport by lazy {
+/** The element the tests' one viewport lives in. */
+internal val pageContainer: HTMLElement by lazy {
     val container = document.createElement("div") as HTMLElement
     container.style.width = "400px"
     container.style.height = "600px"
     document.body!!.appendChild(container)
-    ComposeViewport(container) { key(run) { slot() } }
+    container
+}
+
+// One viewport for every test: a viewport is never disposed, and each holds a WebGL context.
+@OptIn(ExperimentalComposeUiApi::class)
+private val viewport by lazy { ComposeViewport(pageContainer) { key(run) { slot() } } }
+
+/** Shows [content] in the page's viewport while [body] runs. */
+internal suspend fun onPage(content: @Composable () -> Unit, body: suspend () -> Unit) {
+    viewport
+    run++
+    slot = content
+    try {
+        body()
+    } finally {
+        slot = {}
+    }
 }
 
 // A real viewport on the page: Compose's test host has no DOM container, so an HtmlElementView cannot be
 // composed in it.
 actual fun surfaceTest(frames: Int, content: @Composable (frame: Int) -> Unit): TestResult = runTest(timeout = 30.seconds) {
-    viewport
     val done = CompletableDeferred<Unit>()
-    run++
-    slot = {
+    onPage({
         var frame by remember { mutableIntStateOf(0) }
         LaunchedEffect(Unit) {
             while (true) withFrameNanos { if (++frame > frames + 2) done.complete(Unit) }
         }
         if (frame <= frames) content(frame)
-    }
-    try {
-        done.await()
-    } finally {
-        slot = {}
-    }
+    }) { done.await() }
 }
