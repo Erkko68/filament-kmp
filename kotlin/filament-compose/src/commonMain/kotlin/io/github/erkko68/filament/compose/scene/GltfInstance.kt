@@ -79,7 +79,7 @@ private class GltfInstanceScopeImpl(
  *   origin at one corner.
  * @param animationState Optional hoisted, auto-advancing playback state from
  *   [rememberAnimationState]. When non-null it drives the animator every frame (with cross-fade
- *   blending); pause it and call [AnimationState.seek] to hold a pose. Null leaves the animator
+ *   blending); pause it and call [AnimationState.seek] to hold a pose. Instances sharing one state play in step. Null leaves the animator
  *   alone, for [onUpdate] to drive by hand.
  * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
  *   instance that has morph targets. Pass null to leave morph weights untouched.
@@ -178,7 +178,7 @@ fun FilamentSceneScope.GltfInstance(
     // Auto-advancing, cross-fading playback driven by the hoisted AnimationState. Only with one: a frame loop keeps
     // the window rendering every vsync.
     if (animationState != null) {
-        OnFrame { frame -> animationState.apply(instance.animator, frame.deltaSeconds) }
+        OnFrame { frame -> animationState.apply(instance.animator, frame.deltaSeconds, frame.frameTimeNanos) }
     }
 
     // Vertex morph-target weights, applied to every renderable that has morph targets.
