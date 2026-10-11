@@ -1,12 +1,35 @@
 # Migrating from 0.7
 
-0.8.0 changes two parts of the `filament-compose` API. The other modules are unaffected.
+0.8.0 changes two parts of the `filament-compose` API: how a scene gets its background and environment
+lighting, and how a `GltfInstance` is animated. The other modules are unaffected, and so is the Filament
+version, so your `.filamat` files keep working.
 
-## 1. The skybox and environment are scene content
+The compiler finds almost every change. The two it does not find are marked **silent** below.
 
-`rememberFilamentScene` and `FilamentSceneView` no longer take `skyboxState` / `indirectLightState`, and
-`SkyboxState`, `IndirectLightState`, `SkyboxSource` and their `remember*` functions are gone. Declare the
-background and the lighting inside the scene, like a light:
+## Why
+
+**The skybox and the environment lighting were the odd ones out.** The API has one rule for how you
+change something: a value parameter when only your app writes it, a `remember*State` holder when the
+framework writes it back (the camera, an animation). Nothing in the framework ever wrote to
+`SkyboxState` or `IndirectLightState`, yet you had to create them, hoist them, and pass them to the scene
+as parameters, while every light sat inside the scene as a composable. In 0.8 the background and the
+lighting are scene content too: you declare them next to the lights and change them by recomposing.
+
+**The environment loaders needed an engine no other loader needed.** They ran outside the scene, so you
+had to hoist a `rememberFilamentEngine()` only to hand it to them. Now that an environment is declared
+inside the scene, its loader takes the engine from the scene like `rememberGltfAsset` and
+`rememberMaterial` do. The loaders are also renamed to the casing the rest of the module uses.
+
+**`GltfInstance` had two animation inputs, and one silently lost.** `animationIndex`/`animationTime` were
+ignored whenever `animationState` was set. There is now one input, `animationState`, and it covers what
+the other two did.
+
+## How
+
+### 1. Move the skybox and lighting into the scene
+
+Remove `skyboxState` / `indirectLightState` from `rememberFilamentScene` and `FilamentSceneView`, delete
+the `remember*State` calls, and declare the same thing inside the scene:
 
 ```kotlin
 // 0.7
@@ -28,8 +51,12 @@ FilamentSceneView {
 | `state.intensity = x`, `state.rotation = r` | pass `intensity = x`, `rotation = r`; hold them in your own state to change them |
 | `rememberFilamentScene(engine, environment) { }` | `rememberFilamentScene { Environment(environment) }` |
 
-The environment loaders now have the shape of every other loader: the engine comes from the scene, so
-there is no engine to hoist.
+A scene has one skybox and one indirect light, so declare each once. With two in the same scene the one
+built last wins and a warning is logged.
+
+### 2. Update the environment loaders
+
+Rename them, move the call into the scene, and drop the hoisted engine:
 
 ```kotlin
 // 0.7
@@ -44,19 +71,22 @@ val scene = rememberFilamentScene {
 }
 ```
 
-- `rememberKTXEnvironment`/`rememberHDREnvironment` are now `rememberKtxEnvironment`/`rememberHdrEnvironment`, cased like `rememberGltfAsset`.
-- `engine` is no longer the first, required parameter: pass `engine = engine` to load outside a scene. A leftover
-  positional `engine` still compiles, as the reload `key`.
-- `initialIntensity` moved to `Environment(…, intensity = )`.
-- `rememberHdrEnvironment(showSkybox = false)` became `Environment(…, skyboxEnabled = false)`.
-- `Environment` exposes `reflections`, `irradiance` and `skybox` instead of two state objects.
+| 0.7 | 0.8 |
+| :--- | :--- |
+| `rememberKTXEnvironment` / `rememberHDREnvironment` | `rememberKtxEnvironment` / `rememberHdrEnvironment` |
+| `rememberKTXEnvironment(engine, …)` | no engine inside a scene; `engine = engine` to load outside one |
+| `initialIntensity = x` | `Environment(…, intensity = x)` |
+| `rememberHDREnvironment(showSkybox = false)` | `Environment(…, skyboxEnabled = false)` |
+| `environment.skyboxState` / `environment.indirectLightState` | `environment.skybox`, `environment.reflections`, `environment.irradiance` |
 
-A scene has one skybox and one indirect light, so declare each once. With two in the same scene the one
-built last wins, which changes whenever either is rebuilt, and a warning is logged.
+> [!WARNING]
+> **Silent:** a leftover positional engine, `rememberKtxEnvironment(engine, ibl = { … })`, still compiles.
+> The first parameter is now the reload `key`, so the engine is taken as the key. Pass it as
+> `engine = engine`, or remove it inside a scene.
 
-## 2. `GltfInstance` takes one animation input
+### 3. Give `GltfInstance` an `AnimationState`
 
-`animationIndex` and `animationTime` are gone; they were ignored whenever `animationState` was set.
+`animationIndex` and `animationTime` are gone:
 
 | 0.7 | 0.8 |
 | :--- | :--- |
@@ -64,4 +94,15 @@ built last wins, which changes whenever either is rebuilt, and a warning is logg
 | A fixed pose at time `t` | an `AnimationState` with `isPaused = true`, then `seek(t)` |
 | Anything else | leave `animationState` null and drive `instance.animator` from `onUpdate` |
 
-`AnimationState.seek` now moves the playback clock; in 0.7 the next frame put it back.
+> [!WARNING]
+> **Silent:** two behaviours of `AnimationState` changed without a signature change.
+> - `seek` now moves the playback clock. In 0.7 the next frame put it back, so remove any workaround
+>   that re-seeks every frame.
+> - One state passed to several `GltfInstance`s of the same asset now plays them in step at normal
+>   speed. In 0.7 each instance advanced the clock, so two played at double speed; if you halved `speed`
+>   to compensate, restore it.
+
+## New in 0.8, nothing to change
+
+- `rememberRenderTargetTexture(shadows = …)` sets the shadow technique of an off-screen view, as
+  `FilamentView` does. The default is unchanged.
