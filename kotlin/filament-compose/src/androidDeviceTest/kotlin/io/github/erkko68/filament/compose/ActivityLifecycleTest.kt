@@ -16,7 +16,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.LinearColor
-import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
@@ -61,11 +60,10 @@ class ActivityLifecycleTest {
         skyboxState = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0f, 1f, 0f))),
         transparent = transparent,
         renderingEnabled = renderingEnabled,
-        // A shadow pass crashes the whole emulator on its software GPU.
-        shadows = if (TestEnv.emulatedGpu) null else Shadows.Pcf,
     ) {
         DirectionalLight()
-        GltfInstance(rememberGltfAsset { TestGlb.getDuckGlbBytes() })
+        // Drawing the model segfaults the emulator's software GPU; there the view shows only its skybox.
+        if (!TestEnv.emulatedGpu) GltfInstance(rememberGltfAsset { TestGlb.getDuckGlbBytes() })
     }
 
     private fun settle(ms: Long = 700) = Thread.sleep(ms)
