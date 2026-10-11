@@ -91,8 +91,10 @@ class AnimationTest : ComposeTestFixture() {
         state.apply(animator, 0.5f)
         assertFalse(state.isTransitioning)
 
-        state.seek(0f)
-        assertEquals(0f, state.time)
+        state.seek(0.4f)
+        assertEquals(0.4f, state.time)
+        state.apply(animator, 0.1f)
+        assertEquals(0.5f, state.time, 1e-5f) // playback carries on from the seek
     }
 
     /** A fade cut short while paused divides zero by zero: the pose must not turn to NaN. */

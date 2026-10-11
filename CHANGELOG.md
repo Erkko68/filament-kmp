@@ -13,7 +13,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **`GltfInstance` takes one animation input** (`filament-compose`): `animationIndex`/`animationTime` are gone; pass an `AnimationState`, paused plus `seek` to hold a pose, or drive the `Animator` from `onUpdate`.
+
 ### Fixed
+- **`AnimationState.seek` moves the clock** (`filament-compose`): the next frame used to put it back where it was.
 - **iOS crash when a `FilamentView`/`FilamentSceneView` leaves the composition** (`filament-compose`): the surface's `UIView` could lay out after its `View` was destroyed and set the viewport on a null handle (`EXC_BAD_ACCESS`); it now stops touching Filament once it is disposed.
 
 ## [0.7.3] — 2026-10-10

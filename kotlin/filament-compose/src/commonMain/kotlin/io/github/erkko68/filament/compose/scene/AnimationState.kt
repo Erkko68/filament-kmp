@@ -31,8 +31,8 @@ import io.github.erkko68.filament.gltfio.Animator
  * directly instead of this hoisted state — see [rememberAnimationMixer].
  *
  * Per-bone masks and additive layers are *not* expressible — the native animator blends the whole
- * skeleton. For that, or any fully manual control, use [GltfInstance]'s `onUpdate` and call the
- * [Animator] directly.
+ * skeleton. For that, or any fully manual control, leave `animationState` null and call the
+ * [Animator] directly from [GltfInstance]'s `onUpdate`.
  *
  * ```kotlin
  * // Single-track with auto cross-fade:
@@ -88,10 +88,13 @@ class AnimationState internal constructor(
      *  while it has tracks it drives playback and [animationIndex] is inert. */
     val mixer: AnimationMixer = AnimationMixer()
 
-    /** Resets the single-track clock to [time] seconds. */
-    fun seek(time: Float) { _time.floatValue = time }
+    /** Moves the single-track clock to [time] seconds; playback carries on from there, or holds it while paused. */
+    fun seek(time: Float) {
+        _time.floatValue = time
+        currentTime = time
+    }
 
-    // Single-track bookkeeping — mutated only from the frame callback, never read during
+    // Single-track bookkeeping — mutated only from the frame callback and seek, never read during
     // composition, so plain fields (not snapshot state) are correct and cheaper.
     private var currentIndex: Int? = initialIndex
     private var currentTime = 0f

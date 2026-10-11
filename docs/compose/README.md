@@ -230,13 +230,12 @@ FilamentSceneView(
 
 ## Animating glTF models
 
-`GltfInstance` offers four layers of animation control, from declarative to fully manual.
+`GltfInstance` takes one animation input, `animationState`; from there the control goes from declarative to fully manual.
 
 ### 1. Hoisted playback with `rememberAnimationState` (recommended)
 
 `rememberAnimationState` returns an observable, **auto-advancing** clock for one glTF `Animator`.
-Pass it as `animationState` and it plays every frame and loops at the clip length — no scene clock
-or `animationTime` plumbing:
+Pass it as `animationState` and it plays every frame and loops at the clip length:
 
 ```kotlin
 val animation = rememberAnimationState(initialAnimationIndex = 0)
@@ -245,7 +244,8 @@ GltfInstance(asset = character, animationState = animation)
 
 You can read it back during composition — `animation.time`, `animation.progress` and
 `animation.isTransitioning` are snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration`
-live. Set `animation.isPaused = true` to freeze playback, or `animation.seek(seconds)` to scrub.
+live. Set `animation.isPaused = true` to freeze playback and `animation.seek(seconds)` to scrub: a
+paused state holds the pose at the time you seek to.
 
 ### 2. Cross-fading between clips
 
@@ -319,10 +319,9 @@ for the raw `Animator` in layer 4 if you need them.
 
 ### 4. Manual control and morph targets
 
-For full control, drive the clip yourself with `animationIndex` + `animationTime` (e.g. fed from
-`rememberSceneClock`), or reach the raw `Animator` through `GltfInstance`'s `onUpdate` escape hatch
-and call `applyAnimation`/`applyCrossFade`/`updateBoneMatrices` directly — useful for custom
-N-clip blending, event-driven scrubbing, or syncing playback to gameplay.
+For full control, pass no `animationState` and reach the raw `Animator` through `GltfInstance`'s
+`onUpdate` escape hatch, calling `applyAnimation`/`applyCrossFade`/`updateBoneMatrices` directly —
+useful for custom N-clip blending or syncing playback to gameplay.
 
 Vertex **morph targets** (blend shapes — facial expressions, etc.) are driven declaratively via
 the `morphWeights` parameter, which is applied to every renderable in the instance that has morph

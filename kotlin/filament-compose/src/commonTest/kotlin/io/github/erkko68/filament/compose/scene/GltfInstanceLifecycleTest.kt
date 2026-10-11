@@ -301,37 +301,38 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
         }
     }
 
-    /** `animationIndex`/`animationTime` pose the model without a frame loop; an index the asset lacks is ignored. */
+    /** A paused `AnimationState` holds the pose `seek` puts it at; an index the asset lacks is ignored. */
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun manualAnimationPosesTheModel() = run {
+    fun aPausedAnimationStatePosesTheModel() = run {
         val engine = engine ?: return@run skippedComposeTest()
         val scene = scene ?: return@run skippedComposeTest()
         val asset = gltfAsset(TestGlb.getFoxGlbBytes()) ?: return@run skippedComposeTest()
 
         withFilamentScene(engine, scene) { setContent ->
-            var index: Int? by mutableStateOf(0)
-            var time by mutableStateOf(0f)
+            val state = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0f, initialLoop = true)
+            state.isPaused = true
             var entities = IntArray(0)
             setContent {
-                GltfInstance(asset = asset, animationIndex = index, animationTime = time, onCreate = { entities = instance.entities })
+                GltfInstance(asset = asset, animationState = state, onCreate = { entities = instance.entities })
             }
             waitForIdle()
             val tm = engine.transformManager
             fun pose() = entities.filter(tm::hasComponent).flatMap { tm.getTransform(tm.getInstance(it)).toList() }
-            fun recompose() { mainClock.advanceTimeByFrame(); waitForIdle() }
+            fun frame() { mainClock.advanceTimeByFrame(); waitForIdle() }
+            frame()
             val atStart = pose()
             assertTrue(atStart.isNotEmpty())
 
-            time = 0.3f
-            recompose()
+            state.seek(0.3f)
+            frame()
             val later = pose()
             assertTrue(atStart != later, "a later animation time should move the joints")
 
             for (missing in listOf(99, -1, null)) {
-                index = missing
-                time += 0.1f
-                recompose()
+                state.animationIndex = missing
+                state.seek(state.time + 0.1f)
+                frame()
                 assertEquals(later, pose(), "animationIndex = $missing should leave the pose alone")
             }
 
