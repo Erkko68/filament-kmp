@@ -53,6 +53,8 @@ internal actual fun FilamentSurface(
     // factory runs once, so layer opacity, swapchain flags, and the engine and view it captures are fixed
     // at creation — key() rebuilds it when any of them changes.
     key(engine, view, transparent) {
+        // UIKit can still lay the UIView out after this leaves the composition, by which time the View is destroyed.
+        val alive = remember { BooleanArray(1) { true } }
         UIKitView(
             factory = {
                 object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
@@ -84,7 +86,7 @@ internal actual fun FilamentSurface(
                         val width = (bounds.useContents { size.width } * scale).toInt()
                         val height = (bounds.useContents { size.height } * scale).toInt()
 
-                        if (width > 0 && height > 0) {
+                        if (alive[0] && width > 0 && height > 0) {
                             if (!surfaceAttached) {
                                 swapChainRef.value = engine.createSwapChain(
                                     NativeSurface(interpretCPointer(metalLayer.objcPtr())),
@@ -110,6 +112,7 @@ internal actual fun FilamentSurface(
 
         DisposableEffect(Unit) {
             onDispose {
+                alive[0] = false
                 swapChainRef.value?.let { engine.destroy(it) }
                 swapChainRef.value = null
             }
