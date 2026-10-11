@@ -213,6 +213,29 @@ composition → `rememberSceneClock`; any other per-frame side effect → `OnFra
 `FilamentEffect`'s `onFrame` inside a scene); reacting to *state* changes rather than the clock →
 `onUpdate`.
 
+### Where to read a per-frame value
+
+A composable re-runs when a state it reads changes. Read `rememberSceneClock()` directly in the scene
+block and the whole block re-runs every frame: unchanged children are skipped, but each one is still
+checked. Move the read into its own small scene composable and only that function re-runs:
+
+```kotlin
+// The clock is read here, so only this function re-runs each frame.
+@Composable
+fun FilamentSceneScope.SpinningEnvironment(environment: Environment) {
+    val time by rememberSceneClock()
+    Environment(environment, rotation = Rotation.euler(yaw = time * 10f))
+}
+
+FilamentSceneView(cameraState = cam) {
+    SpinningEnvironment(env)      // nothing in this block reads the clock
+    GltfInstance(asset = duck)
+}
+```
+
+Declaring it as an extension on `FilamentSceneScope` is what lets it call scene composables. The same
+goes for anything driven per frame by a value: an orbiting `Group`, a pulsing light.
+
 ### Pausing a view: `renderingEnabled`
 
 A `FilamentView` (or `FilamentSceneView`) renders on every display refresh by default. Pass
