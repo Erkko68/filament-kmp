@@ -11,7 +11,10 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
+import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.surfaceTest
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 
 /**
@@ -56,11 +59,13 @@ class SurfaceLifecycleTest {
         if (frame / 5 % 2 == 0) FilamentView(scene, Modifier.fillMaxSize()) else Scene(engine)
     }
 
+    // The Android emulator's shader compiler rejects Filament's translucent FXAA program, which aborts the process.
     @Test
-    fun aSurfaceTogglingTransparency() = surfaceTest { frame ->
-        val engine = rememberFilamentEngine()
-        Scene(engine, transparent = frame / 4 % 2 == 0)
-    }
+    fun aSurfaceTogglingTransparency() =
+        if (TestEnv.target == TestTarget.ANDROID && TestEnv.emulatedGpu) skippedComposeTest() else surfaceTest { frame ->
+            val engine = rememberFilamentEngine()
+            Scene(engine, transparent = frame / 4 % 2 == 0)
+        }
 
     @Test
     fun aViewMovingBetweenScenes() = surfaceTest { frame ->
