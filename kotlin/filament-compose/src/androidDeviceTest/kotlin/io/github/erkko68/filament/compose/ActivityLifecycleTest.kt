@@ -25,10 +25,13 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.fail
+import org.junit.Assume.assumeFalse
 
 /**
  * What the activity does to a view on its own: stopping takes the surface away, a rotation rebuilds the whole
  * composition. A crash kills the run; a view that comes back blank fails the screenshot.
+ *
+ * Real devices only: drawing the model on screen segfaults the emulator's software GPU.
  */
 class ActivityLifecycleTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
@@ -49,7 +52,10 @@ class ActivityLifecycleTest {
     }
 
     @BeforeTest
-    fun register() = app.registerActivityLifecycleCallbacks(callbacks)
+    fun register() {
+        assumeFalse(TestEnv.emulatedGpu)
+        app.registerActivityLifecycleCallbacks(callbacks)
+    }
 
     @AfterTest
     fun unregister() = app.unregisterActivityLifecycleCallbacks(callbacks)
@@ -62,8 +68,7 @@ class ActivityLifecycleTest {
         renderingEnabled = renderingEnabled,
     ) {
         DirectionalLight()
-        // Drawing the model segfaults the emulator's software GPU; there the view shows only its skybox.
-        if (!TestEnv.emulatedGpu) GltfInstance(rememberGltfAsset { TestGlb.getDuckGlbBytes() })
+        GltfInstance(rememberGltfAsset { TestGlb.getDuckGlbBytes() })
     }
 
     private fun settle(ms: Long = 700) = Thread.sleep(ms)
