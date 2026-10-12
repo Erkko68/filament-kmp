@@ -646,7 +646,7 @@ class Engine internal constructor(
     /** The default Material: 80% white, lit. Owned by the Engine. */
     val defaultMaterial: Material get() = Material(FilaEngine_getDefaultMaterial(nativeHandle))
     /** Runs the engine's pending work on this thread, for platforms without a render thread. */
-    fun execute() = FilaEngine_execute(nativeHandle)
+    fun execute() { platform.makeCurrent(); FilaEngine_execute(nativeHandle) }
 
     /** The feature flags this Engine knows. */
     fun getFeatureFlags(): List<FeatureFlag> {

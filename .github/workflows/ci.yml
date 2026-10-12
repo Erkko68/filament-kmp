@@ -375,7 +375,13 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
+          script: |
+            adb logcat -v threadtime > logcat.txt &
+            ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
+      # An emulator that dies takes its own output with it; the kernel log says whether it was killed.
+      - name: Emulator post-mortem
+        if: failure()
+        run: sudo dmesg | grep -iE 'out of memory|oom|killed process|segfault|qemu' | tail -40 || true
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples
@@ -384,7 +390,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: android-test-reports
-          path: kotlin/*/build/reports/androidTests/
+          path: |
+            kotlin/*/build/reports/androidTests/
+            logcat.txt
 
   # Single required status check for branch protection. Jobs the path filter skipped count as
   # passing; a failed or cancelled job (or a failed filter) fails it.
