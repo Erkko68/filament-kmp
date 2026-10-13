@@ -48,9 +48,12 @@ endif()
 foreach(target filament-c-jni fila-jni-forwarders)
     target_include_directories(${target} PRIVATE "${JNI_HOME}/include" "${JNI_HOME}/include/${jni_os}")
 endforeach()
+target_sources(filament-c-jni PRIVATE src/main/cpp/AwtHelper.cpp)
 
 if (APPLE)
     target_sources(filament-c-jni PRIVATE src/main/cpp/MetalHelper.mm)
+    # AWT's macOS drawing surface is an Objective-C protocol.
+    set_source_files_properties(src/main/cpp/AwtHelper.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
     target_link_libraries(filament-c-jni PRIVATE
         "-framework Cocoa" "-framework Metal" "-framework QuartzCore" "-framework CoreVideo" "-framework OpenGL")
     target_link_options(filament-c-jni PRIVATE

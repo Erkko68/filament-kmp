@@ -74,13 +74,26 @@ scene.addEntity(sun)
 | :--- | :--- | :--- |
 | Android | `Surface` | `SurfaceView`'s `SurfaceHolder.surface`, or a `TextureView`'s `SurfaceTexture` |
 | iOS (Kotlin/Native) | `COpaquePointer?` | a `CAMetalLayer` you added to your `UIView` |
-| JVM / Desktop | `Long` (or `Int`) — a raw `HWND`, X11 `Window`, `NSView*` or `CAMetalLayer*` | LWJGL: `glfwGetWin32Window` / `glfwGetX11Window` / `glfwGetCocoaWindow` |
+| JVM / Desktop | a `java.awt.Canvas`, or a `Long` (or `Int`) — a raw `HWND`, X11 `Window`, `NSView*` or `CAMetalLayer*` | an AWT/Swing window; LWJGL: `glfwGetWin32Window` / `glfwGetX11Window` / `glfwGetCocoaWindow` |
 | Web (JS / Wasm) | `HTMLCanvasElement` | `document.getElementById("canvas")` |
 
 Android, iOS and web hand you a first-class surface object, so those are straightforward.
-On the **JVM there is no window toolkit in this library** — you bring your own window and
-pass its native handle. If you'd rather not, use the headless path below, or let
-`filament-compose` own the window.
+On the **JVM you bring your own window**: a `java.awt.Canvas` in an AWT or Swing window (or a
+Compose `SwingPanel`), or any other toolkit's native handle. If you'd rather not, use the
+headless path below, or let `filament-compose` own the window.
+
+```kotlin
+val canvas = Canvas()
+frame.add(canvas)
+frame.isVisible = true // the canvas needs its native window before it can be a surface
+
+val swapChain = engine.createSwapChain(NativeSurface(canvas))
+val scale = canvas.graphicsConfiguration.defaultTransform.scaleX
+view.viewport = Viewport(0, 0, (canvas.width * scale).toInt(), (canvas.height * scale).toInt())
+```
+
+Set the viewport again when the canvas is resized, and destroy the swap chain before the canvas
+leaves its window. On macOS the canvas takes the Metal backend (the default).
 
 > [!TIP]
 > Every rule in [Threading model](platform-notes.md#threading-model) applies here and is

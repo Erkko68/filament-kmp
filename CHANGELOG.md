@@ -17,6 +17,7 @@ Upgrading from 0.7? See the [migration guide](docs/migration/from-0.7.md).
 
 ### Added
 - **`rememberRenderTargetTexture(shadows = …)`** (`filament-compose`): the off-screen view takes a shadow technique, as `FilamentView` does.
+- **`NativeSurface(canvas)` on the JVM** (`filament`): render straight into a `java.awt.Canvas` in an AWT or Swing window on macOS, Linux and Windows, without `filament-compose`.
 
 ### Changed
 - **The skybox and environment are scene content** (`filament-compose`): `Skybox`, `IndirectLight` and `Environment` composables replace the `skyboxState`/`indirectLightState` parameters, `SkyboxState`, `IndirectLightState` and `SkyboxSource`.

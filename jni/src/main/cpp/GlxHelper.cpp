@@ -1,29 +1,13 @@
 #include <jni.h>
 
 #if defined(__linux__) && !defined(__ANDROID__)
-#include <dlfcn.h>
-#include <jawt_md.h>
+#include "Jawt.h"
 #include <GL/glx.h>
 #include <GL/glext.h>
 
 #define GLX_JNI(ret, name) extern "C" JNIEXPORT ret JNICALL Java_io_github_erkko68_filament_jni_GlxHelper_##name
 
 namespace {
-
-// skiko has already loaded libjawt (GlxHelper.kt loads it too), so look it up rather than link it:
-// a DT_NEEDED on libjawt.so wouldn't resolve, the JDK's lib dir isn't on the loader's path.
-JAWT* awt(JNIEnv* env) {
-    static JAWT instance{};
-    static bool ready = false;
-    if (!ready) {
-        void* lib = dlopen("libjawt.so", RTLD_LAZY | RTLD_NOLOAD);
-        auto getAwt = lib ? (jboolean (JNICALL*)(JNIEnv*, JAWT*)) dlsym(lib, "JAWT_GetAWT") : nullptr;
-        if (!getAwt) return nullptr;
-        instance.version = JAWT_VERSION_1_4;
-        ready = getAwt(env, &instance) == JNI_TRUE;
-    }
-    return ready ? &instance : nullptr;
-}
 
 // Locked drawing surface and skiko's framebuffer bindings, kept between nBegin and nEnd.
 struct Session {
@@ -84,7 +68,7 @@ GLX_JNI(void, nDestroyBridgeContext)(JNIEnv*, jclass, jlong context) {
 // It doesn't rebind its framebuffer, though: on a resize it wraps whatever is bound as the window
 // surface, so nEnd restores the bindings Skia's work in between moves.
 GLX_JNI(jlong, nBegin)(JNIEnv* env, jclass, jobject component, jlong context) {
-    JAWT* jawt = awt(env);
+    JAWT* jawt = filaJawt(env);
     if (!jawt) return 0;
     JAWT_DrawingSurface* ds = jawt->GetDrawingSurface(env, component);
     if (!ds) return 0;
