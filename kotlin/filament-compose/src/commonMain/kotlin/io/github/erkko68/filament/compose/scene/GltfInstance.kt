@@ -77,13 +77,10 @@ private class GltfInstanceScopeImpl(
  *   ends up at [position] in world space. Defaults to `(0,0,0)` — the glTF's own root origin.
  *   Use this to e.g. rotate a model around its centre when the glTF was authored with the
  *   origin at one corner.
- * @param animationIndex Index of the skeletal animation to play. Null to disable. Ignored when
- *   [animationState] is supplied.
- * @param animationTime Current time in seconds for the animation. Ignored when [animationState]
- *   is supplied.
  * @param animationState Optional hoisted, auto-advancing playback state from
  *   [rememberAnimationState]. When non-null it drives the animator every frame (with cross-fade
- *   blending) and takes precedence over [animationIndex]/[animationTime].
+ *   blending); pause it and call [AnimationState.seek] to hold a pose. Instances sharing one state play in step. Null leaves the animator
+ *   alone, for [onUpdate] to drive by hand.
  * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
  *   instance that has morph targets. Pass null to leave morph weights untouched.
  * @param visible Whether the instance's entities are in the scene. False removes them (cheaply,
@@ -105,8 +102,6 @@ fun FilamentSceneScope.GltfInstance(
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    animationIndex: Int? = null,
-    animationTime: Float = 0f,
     animationState: AnimationState? = null,
     morphWeights: FloatArray? = null,
     visible: Boolean = true,
@@ -180,22 +175,10 @@ fun FilamentSceneScope.GltfInstance(
         onDispose { }
     }
 
-    // Manual single-shot animation. Skipped when a hoisted AnimationState is driving playback.
-    DisposableEffect(instance, animationIndex, animationTime, animationState) {
-        if (animationState == null && animationIndex != null) {
-            val animator = instance.animator
-            if (animationIndex >= 0 && animationIndex < animator.animationCount) {
-                animator.applyAnimation(animationIndex, animationTime)
-                animator.updateBoneMatrices()
-            }
-        }
-        onDispose { }
-    }
-
     // Auto-advancing, cross-fading playback driven by the hoisted AnimationState. Only with one: a frame loop keeps
     // the window rendering every vsync.
     if (animationState != null) {
-        OnFrame { frame -> animationState.apply(instance.animator, frame.deltaSeconds) }
+        OnFrame { frame -> animationState.apply(instance.animator, frame.deltaSeconds, frame.frameTimeNanos) }
     }
 
     // Vertex morph-target weights, applied to every renderable that has morph targets.

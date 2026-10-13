@@ -14,14 +14,13 @@ import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.primitives.Cylinder
 import io.github.erkko68.filament.compose.scene.primitives.Plane
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 
 @Composable
 fun PrimitivesScene(onBack: () -> Unit) {
@@ -31,16 +30,14 @@ fun PrimitivesScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
-
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
                 .orbitGestures(orbit),
             cameraState = cameraState,
-            skyboxState = skybox,
         ) {
+            Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),

@@ -93,7 +93,7 @@ Compose Multiplatform UI integration. Pulls in `filament` transitively.
 implementation("io.github.erkko68.filament:filament-compose:0.7.3")
 ```
 
-Provides `rememberFilamentScene` / `FilamentView` (and the `FilamentSceneView` single-view shortcut), the declarative scene DSL (`Light`, `GltfInstance`, …), value-based `PostProcessing`, hoisted state (`rememberCameraState`, `rememberFilamentViewState`, `rememberSkyboxState`, …), and gesture modifiers (`orbitGestures`, `mapGestures`, `flightGestures`, `pickOnTap`).
+Provides `rememberFilamentScene` / `FilamentView` (and the `FilamentSceneView` single-view shortcut), the declarative scene DSL (`Light`, `GltfInstance`, …), value-based `PostProcessing`, hoisted state (`rememberCameraState`, `rememberFilamentViewState`, `rememberAnimationState`, …), and gesture modifiers (`orbitGestures`, `mapGestures`, `flightGestures`, `pickOnTap`).
 
 See **[Compose Integration](../compose/README.md)** for the full component reference.
 

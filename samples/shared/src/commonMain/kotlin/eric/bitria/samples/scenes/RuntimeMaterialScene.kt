@@ -30,12 +30,11 @@ import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberMaterial
 import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.filamat.MaterialBuilder
 import kotlin.time.TimeSource
 
@@ -85,7 +84,6 @@ fun RuntimeMaterialScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
     var selected by remember { mutableStateOf(0) }
     var status by remember { mutableStateOf("Compiling…") }
 
@@ -93,8 +91,8 @@ fun RuntimeMaterialScene(onBack: () -> Unit) {
         FilamentSceneView(
             modifier = Modifier.fillMaxSize().orbitGestures(orbit),
             cameraState = cameraState,
-            skyboxState = skybox,
         ) {
+            Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             val engine = LocalFilamentEngine.current!!
             val material = rememberMaterial(key = selected, onError = { status = "Error: ${it.message}" }) {
                 val (bytes, ms) = compile(engine, PATTERNS[selected].second)

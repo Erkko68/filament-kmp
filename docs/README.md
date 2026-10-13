@@ -24,6 +24,7 @@ docs/
 
 ## Migration
 
+- **[Migrating from 0.7](migration/from-0.7.md)** — `filament-compose` only: the skybox and environment become scene content, and `GltfInstance` takes one animation input.
 - **[Migrating from 0.6.0](migration/from-0.6.0.md)** — the move to one generated C API and the C++-shaped Kotlin API: setup changes per platform, old → new API tables, behavior changes.
 
 ## Compose Multiplatform

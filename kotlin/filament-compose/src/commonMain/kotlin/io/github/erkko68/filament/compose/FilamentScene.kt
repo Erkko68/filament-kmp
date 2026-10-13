@@ -5,19 +5,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
-import io.github.erkko68.filament.compose.scene.ApplyIndirectLight
-import io.github.erkko68.filament.compose.scene.ApplySkybox
-import io.github.erkko68.filament.compose.scene.Environment
-import io.github.erkko68.filament.compose.scene.IndirectLightState
 import io.github.erkko68.filament.compose.scene.LocalStandardMaterials
-import io.github.erkko68.filament.compose.scene.SkyboxState
 import io.github.erkko68.filament.compose.scene.StandardMaterialCache
 import io.github.erkko68.filament.compose.internal.rememberOwned
 
 /**
  * A handle to a Filament [Scene] and its [Engine], produced by [rememberFilamentScene] and
  * consumed by one or more [FilamentView]s. The scene is the *world* — entities, lights,
- * skybox, IBL — and knows nothing about cameras or viewports.
+ * skybox, environment — and knows nothing about cameras or viewports.
  *
  * Pass the same handle to several [FilamentView]s to render one world through multiple
  * cameras and post-processing setups.
@@ -34,7 +29,8 @@ class FilamentScene internal constructor(
  * call site regardless of how many [FilamentView]s later render the scene.
  *
  * ```kotlin
- * val scene = rememberFilamentScene(skyboxState = sky) {
+ * val scene = rememberFilamentScene {
+ *     Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))
  *     DirectionalLight(intensity = LightIntensity.LuminousPower(100_000f))
  *     GltfInstance(asset = duck)
  * }
@@ -44,16 +40,12 @@ class FilamentScene internal constructor(
  *
  * @param engine Engine backing the scene. Defaults to a dedicated engine created and destroyed
  *   with this composable. Pass a [rememberFilamentEngine] value to share an engine.
- * @param skyboxState Optional hoisted skybox state. Null = no skybox (the default).
- * @param indirectLightState Optional hoisted IBL state. Null = no IBL (the default).
  * @param content Scene composables ([io.github.erkko68.filament.compose.scene.Light],
- *   `GltfInstance`, `Group`, primitives, …). They are extensions on [FilamentSceneScope].
+ *   `GltfInstance`, `Group`, primitives, `Skybox`, `Environment`, …). They are extensions on [FilamentSceneScope].
  */
 @Composable
 fun rememberFilamentScene(
     engine: Engine = rememberFilamentEngine(),
-    skyboxState: SkyboxState? = null,
-    indirectLightState: IndirectLightState? = null,
     content: @Composable FilamentSceneScope.() -> Unit,
 ): FilamentScene {
     // Remembered before the content so it's destroyed *after* it — entities leave the scene first.
@@ -70,37 +62,8 @@ fun rememberFilamentScene(
         LocalFilamentScene     provides scene,
         LocalStandardMaterials provides standardMaterials,
     ) {
-        if (skyboxState != null)         ApplySkybox(skyboxState, engine, scene)
-        if (indirectLightState != null) ApplyIndirectLight(indirectLightState, engine, scene)
         FilamentSceneScopeInstance.content()
     }
 
     return handle
 }
-
-/**
- * Overload wiring a loaded [Environment] (from `rememberKTXEnvironment` / `rememberHDREnvironment`)
- * into the scene in one argument, instead of threading its two states by hand:
- *
- * ```kotlin
- * val engine = rememberFilamentEngine()
- * val env    = rememberKTXEnvironment(engine = engine, ibl = { … })
- * val scene  = rememberFilamentScene(engine, env) { GltfInstance(asset = duck) }
- * ```
- *
- * @param engine Required here (no default): it must be the same engine the environment's textures
- *   were loaded on — a fresh default engine would mix resources across engines.
- * @param environment Loaded environment supplying both the skybox and IBL states.
- * @param content Scene composables, as in the primary overload.
- */
-@Composable
-fun rememberFilamentScene(
-    engine: Engine,
-    environment: Environment,
-    content: @Composable FilamentSceneScope.() -> Unit,
-): FilamentScene = rememberFilamentScene(
-    engine = engine,
-    skyboxState = environment.skyboxState,
-    indirectLightState = environment.indirectLightState,
-    content = content,
-)

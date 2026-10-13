@@ -33,10 +33,9 @@ import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.compose.scene.SkyboxSource
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 private val DUCK_POSITIONS = listOf(
@@ -54,7 +53,6 @@ fun PickingScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 40.0),
     )
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
     val viewState = rememberFilamentViewState()
 
     val entityToIndex = remember { mutableStateMapOf<Int, Int>() }
@@ -84,8 +82,8 @@ fun PickingScene(onBack: () -> Unit) {
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
             viewState = viewState,
-            skyboxState = skybox,
         ) {
+            Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),

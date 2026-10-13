@@ -17,10 +17,9 @@ import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.compose.scene.SkyboxSource
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -32,8 +31,6 @@ fun DuckScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
-
     Box(Modifier.fillMaxSize()) {
         // Single-view convenience: scene declaration + one viewport in one call.
         FilamentSceneView(
@@ -41,8 +38,8 @@ fun DuckScene(onBack: () -> Unit) {
                 .fillMaxSize()
                 .orbitGestures(orbit),
             cameraState = cameraState,
-            skyboxState = skybox,
         ) {
+            Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),

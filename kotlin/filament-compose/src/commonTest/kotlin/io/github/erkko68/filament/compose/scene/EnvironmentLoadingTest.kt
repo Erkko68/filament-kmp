@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.awaitCancellation
 
 /**
- * The async loaders ([rememberHDREnvironment], [rememberTexture]): bytes arrive from an effect, then
+ * The async loaders ([rememberHdrEnvironment], [rememberTexture]): bytes arrive from an effect, then
  * the GPU work runs in composition, so everything stays on the UI thread ([withUiThreadFilamentScene]).
  */
 class EnvironmentLoadingTest {
@@ -45,15 +45,14 @@ class EnvironmentLoadingTest {
         // A flat 1×1 Radiance image: header, blank line, resolution, one RGBE pixel.
         val hdr = "#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y 1 +X 1\n".encodeToByteArray() + byteArrayOf(-128, 64, 32, -127)
         var environment: Environment? = null
-        setContent { environment = rememberHDREnvironment(engine, hdr = { hdr }) }
-        frameUntil { environment?.indirectLightState?.reflections != null }
+        setContent { environment = rememberHdrEnvironment(engine = engine, hdr = { hdr }) }
+        frameUntil { environment?.reflections != null }
 
-        val env = assertNotNull(environment)
-        assertTrue(env.skyboxState?.source is SkyboxSource.Cubemap)
+        val reflections = assertNotNull(environment?.reflections)
+        val sky = assertNotNull(environment?.skybox)
         setContent {}
         waitForIdle()
-        assertNull(env.indirectLightState.reflections, "disposal clears the reflections")
-        assertNull(env.skyboxState?.source)
+        assertTrue(!engine.isValid(reflections) && !engine.isValid(sky), "disposal destroys the textures")
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -61,31 +60,29 @@ class EnvironmentLoadingTest {
     fun ktxEnvironmentLoadsReflectionsHarmonicsAndSkybox() = withUiThreadFilamentScene { setContent, engine, _ ->
         var environment: Environment? = null
         setContent {
-            environment = rememberKTXEnvironment(engine, skybox = { TestKtx.skybox }, ibl = { TestKtx.ibl })
+            environment = rememberKtxEnvironment(engine = engine, skybox = { TestKtx.skybox }, ibl = { TestKtx.ibl })
         }
-        frameUntil { environment?.indirectLightState?.reflections != null && environment?.skyboxState?.source != null }
+        frameUntil { environment?.reflections != null && environment?.skybox != null }
 
         val env = assertNotNull(environment)
-        assertNotNull(env.indirectLightState.irradianceSh, "cmgen writes spherical harmonics into the IBL")
-        assertTrue(env.skyboxState?.source is SkyboxSource.Cubemap)
+        assertNotNull(env.irradiance, "cmgen writes spherical harmonics into the IBL")
+        val reflections = assertNotNull(env.reflections)
+        val sky = assertNotNull(env.skybox)
         setContent {}
         waitForIdle()
-        assertNull(env.indirectLightState.reflections, "disposal clears the reflections")
-        assertNull(env.skyboxState?.source)
+        assertTrue(!engine.isValid(reflections) && !engine.isValid(sky), "disposal destroys the textures")
     }
 
     /**
-     * A reloaded environment reaches the scene a frame after its states change, and that frame is rendered first:
-     * the textures the scene still draws with must outlive it.
+     * A reloaded environment replaces the scene's IBL and skybox: the textures the scene still draws with must
+     * outlive them.
      */
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun reloadedEnvironmentKeepsTheTexturesTheSceneStillDraws() = withUiThreadFilamentScene { setContent, engine, scene ->
         var key by mutableStateOf(0)
         setContent {
-            val environment = rememberKTXEnvironment(engine, key = key, skybox = { TestKtx.skybox.copyOf() }, ibl = { TestKtx.ibl.copyOf() })
-            ApplyIndirectLight(environment.indirectLightState, engine, scene)
-            environment.skyboxState?.let { ApplySkybox(it, engine, scene) }
+            Environment(rememberKtxEnvironment(key = key, engine = engine, skybox = { TestKtx.skybox.copyOf() }, ibl = { TestKtx.ibl.copyOf() }))
         }
         frameUntil { scene.indirectLight?.reflectionsTexture != null && scene.skybox?.texture != null }
         val reflections = assertNotNull(scene.indirectLight?.reflectionsTexture)
@@ -139,17 +136,16 @@ class EnvironmentLoadingTest {
                 rememberTexture(onError = { errors += "texture" to it }, engine = engine) { throw boom },
                 rememberGltfAsset(onError = { errors += "gltf" to it }, engine = engine) { throw boom },
             )
-            ktx = rememberKTXEnvironment(engine, onError = { errors += "ktx" to it }, skybox = { throw boom }, ibl = { throw boom })
-            hdr = rememberHDREnvironment(engine, showSkybox = false, onError = { errors += "hdr" to it }) { throw boom }
+            ktx = rememberKtxEnvironment(onError = { errors += "ktx" to it }, engine = engine, skybox = { throw boom }, ibl = { throw boom })
+            hdr = rememberHdrEnvironment(onError = { errors += "hdr" to it }, engine = engine) { throw boom }
         }
         frameUntil { errors.size >= 6 }
         assertEquals(listOf("gltf", "hdr", "ktx", "ktx", "material", "texture"), errors.map { it.first }.sorted())
         assertTrue(errors.all { it.second === boom }, "onError should receive the loader's own exception")
         assertEquals(listOf<Any?>(null, null, null), results)
-        assertNull(assertNotNull(ktx).indirectLightState.reflections)
-        assertNull(assertNotNull(ktx).skyboxState?.source)
-        assertNull(assertNotNull(hdr).indirectLightState.reflections)
-        assertNull(assertNotNull(hdr).skyboxState, "showSkybox = false makes no skybox state")
+        assertNull(assertNotNull(ktx).reflections)
+        assertNull(assertNotNull(ktx).skybox)
+        assertNull(assertNotNull(hdr).reflections)
     }
 
     /** Leaving the composition while a load is still running cancels it; that is not an error to report. */
@@ -163,8 +159,8 @@ class EnvironmentLoadingTest {
             rememberMaterial(onError = { errors += it }, engine = engine, load = never)
             rememberTexture(onError = { errors += it }, engine = engine, load = never)
             rememberGltfAsset(onError = { errors += it }, engine = engine, load = never)
-            rememberKTXEnvironment(engine, onError = { errors += it }, skybox = never, ibl = never)
-            rememberHDREnvironment(engine, onError = { errors += it }, hdr = never)
+            rememberKtxEnvironment(onError = { errors += it }, engine = engine, skybox = never, ibl = never)
+            rememberHdrEnvironment(onError = { errors += it }, engine = engine, hdr = never)
         }
         frameUntil { started == 6 }
         setContent {}
@@ -174,7 +170,7 @@ class EnvironmentLoadingTest {
         assertEquals(emptyList(), errors)
     }
 
-    /** A KTX environment without a skybox loader has no skybox state, and a material arriving late is still owned. */
+    /** A KTX environment without a skybox loader has no skybox, and a material arriving late is still owned. */
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun asyncMaterialIsBuiltAndFreed() = withUiThreadFilamentScene { setContent, engine, _ ->
@@ -184,12 +180,12 @@ class EnvironmentLoadingTest {
         var environment: Environment? = null
         setContent {
             material = rememberMaterial(engine = engine) { bytes }
-            environment = rememberKTXEnvironment(engine, ibl = { TestKtx.ibl })
+            environment = rememberKtxEnvironment(engine = engine, ibl = { TestKtx.ibl })
         }
-        frameUntil { material != null && environment?.indirectLightState?.reflections != null }
+        frameUntil { material != null && environment?.reflections != null }
         val built = assertNotNull(material)
         assertTrue(engine.isValid(built))
-        assertNull(assertNotNull(environment).skyboxState)
+        assertNull(assertNotNull(environment).skybox)
 
         setContent {}
         waitForIdle()

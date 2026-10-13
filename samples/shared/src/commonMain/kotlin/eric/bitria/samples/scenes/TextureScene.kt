@@ -21,12 +21,11 @@ import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberMaterial
 import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.utils.TextureLoader
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
@@ -45,8 +44,6 @@ fun TextureScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
-
     // Decode the PNG into a Filament texture once the bytes arrive; tear it down on dispose.
     val pngBytes by produceState<ByteArray?>(null) { value = Res.readBytes("files/textures/uv_grid.png") }
     val texture = remember(engine, pngBytes) {
@@ -63,8 +60,8 @@ fun TextureScene(onBack: () -> Unit) {
                 .fillMaxSize()
                 .orbitGestures(orbit),
             cameraState = cameraState,
-            skyboxState = skybox,
         ) {
+            Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),

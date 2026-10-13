@@ -27,12 +27,15 @@ import io.github.erkko68.filament.gltfio.Animator
  * clips per call, but weighted cross-fades chain, so an arbitrary number of weighted clips compose into
  * one pose.
  *
+ * Pass one state to several [GltfInstance]s of the same asset to play them in step: the clock advances
+ * once per frame, whatever the number of instances. Give each its own state to play them independently.
+ *
  * For an imperative game loop (an animation state machine outside composition), use [AnimationMixer]
  * directly instead of this hoisted state — see [rememberAnimationMixer].
  *
  * Per-bone masks and additive layers are *not* expressible — the native animator blends the whole
- * skeleton. For that, or any fully manual control, use [GltfInstance]'s `onUpdate` and call the
- * [Animator] directly.
+ * skeleton. For that, or any fully manual control, leave `animationState` null and call the
+ * [Animator] directly from [GltfInstance]'s `onUpdate`.
  *
  * ```kotlin
  * // Single-track with auto cross-fade:
@@ -88,10 +91,13 @@ class AnimationState internal constructor(
      *  while it has tracks it drives playback and [animationIndex] is inert. */
     val mixer: AnimationMixer = AnimationMixer()
 
-    /** Resets the single-track clock to [time] seconds. */
-    fun seek(time: Float) { _time.floatValue = time }
+    /** Moves the single-track clock to [time] seconds; playback carries on from there, or holds it while paused. */
+    fun seek(time: Float) {
+        _time.floatValue = time
+        currentTime = time
+    }
 
-    // Single-track bookkeeping — mutated only from the frame callback, never read during
+    // Single-track bookkeeping — mutated only from the frame callback and seek, never read during
     // composition, so plain fields (not snapshot state) are correct and cheaper.
     private var currentIndex: Int? = initialIndex
     private var currentTime = 0f
@@ -99,9 +105,16 @@ class AnimationState internal constructor(
     private var previousTime = 0f
     private var blend = 1f  // 1 = fully on the current clip
 
-    /** Advances playback by [dtSeconds] and pushes the result onto [animator]. Frame-thread only. */
-    internal fun apply(animator: Animator, dtSeconds: Float) {
-        val dt = if (isPaused) 0f else dtSeconds
+    private var lastFrameNanos: Long? = null
+
+    /**
+     * Advances playback by [dtSeconds] and pushes the result onto [animator]. Frame-thread only.
+     * Shared between instances, it advances once per [frameTimeNanos]; the others get the same pose.
+     */
+    internal fun apply(animator: Animator, dtSeconds: Float, frameTimeNanos: Long? = null) {
+        val sameFrame = frameTimeNanos != null && frameTimeNanos == lastFrameNanos
+        lastFrameNanos = frameTimeNanos
+        val dt = if (isPaused || sameFrame) 0f else dtSeconds
         if (mixer.tracks.isNotEmpty()) mixer.apply(animator, dt)
         else applySingle(animator, animator.animationCount, dt)
     }
@@ -227,6 +240,7 @@ class AnimationMixer {
  * [rememberAnimationTrack]). Mutate [weight] to blend it in or out, [index] to swap the clip, or
  * [speed]/[loop] for playback. The read-only [time], [progress] and [isFinished] update every frame.
  */
+@Stable
 class AnimationTrack internal constructor(
     index: Int,
     weight: Float,

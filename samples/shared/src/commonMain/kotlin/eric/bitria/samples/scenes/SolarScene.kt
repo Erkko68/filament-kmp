@@ -23,12 +23,11 @@ import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Projection
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberEmissiveMaterialInstance
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -61,8 +60,6 @@ fun SolarScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 50.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.02f, 0.03f, 0.06f)))
-
     val time by rememberSceneClock()
 
     // RenderQuality(HIGH) forces an FP16 HDR color buffer so emissive values above 1.0 survive
@@ -82,9 +79,9 @@ fun SolarScene(onBack: () -> Unit) {
                 .fillMaxSize()
                 .orbitGestures(orbit),
             cameraState = cameraState,
-            skyboxState = skybox,
             postProcessing = postProcessing,
         ) {
+            Skybox(color = LinearColor(0.02f, 0.03f, 0.06f))
             // Sun assembly — the Group's transform moves the emissive sphere *and* the point
             // light together. The built-in UNLIT emissive material makes the sphere appear
             // self-illuminated regardless of scene lighting; bloom turns the emissive output

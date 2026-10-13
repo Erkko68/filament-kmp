@@ -16,7 +16,8 @@ The API separates *what* you render from *where* you render it, mirroring Filame
 - **`FilamentView(scene = …)`** is a leaf composable: one viewport (camera + post-processing + platform surface) onto a scene. Its look is configured *by value* (`cameraState`, `postProcessing`). Place several `FilamentView`s to render one scene through different cameras.
 
 ```kotlin
-val scene = rememberFilamentScene(skyboxState = sky) {
+val scene = rememberFilamentScene {
+    Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))
     SunLight(direction = Direction(0.3f, -1f, -0.5f))
     GltfInstance(asset = duck)
 }
@@ -34,9 +35,9 @@ For the common single-view case, **`FilamentSceneView`** collapses the two into 
 FilamentSceneView(
     modifier = Modifier.fillMaxSize(),
     cameraState = cam,
-    skyboxState = sky,
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
+    Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))
     SunLight(direction = Direction(0.3f, -1f, -0.5f))
     GltfInstance(asset = duck)
 }
@@ -131,13 +132,12 @@ val asRotation = someQuaternion.toRotation()   // or Rotation(someQuaternion)
 
 The API changes things in two deliberate ways, split by **who writes the value**:
 
-- **Value parameters** (recompose to change) — used when *only your app* writes: lights,
-  `PostProcessing`, transforms, shadow config. Declare the value; change it by recomposing with a
+- **Value parameters** (recompose to change) — used when *only your app* writes: lights, the
+  skybox and environment, `PostProcessing`, transforms, shadow config. Declare the value; change it by recomposing with a
   new one.
 - **Mutable state holders** (`remember*State` / controllers, mutate to change) — used when *the
   framework also writes back*: `CameraState` (gesture controllers push the pose into it every
-  interaction), `SkyboxState`/`IndirectLightState` (environment loaders populate them
-  asynchronously), `AnimationState`/`AnimationTrack` (the frame loop advances them). These must be
+  interaction), `AnimationState`/`AnimationTrack` (the frame loop advances them). These must be
   objects you and the runtime can both mutate, so their creators seed with `initial*` params and
   later changes go through the returned object.
 
@@ -213,6 +213,29 @@ composition → `rememberSceneClock`; any other per-frame side effect → `OnFra
 `FilamentEffect`'s `onFrame` inside a scene); reacting to *state* changes rather than the clock →
 `onUpdate`.
 
+### Where to read a per-frame value
+
+A composable re-runs when a state it reads changes. Read `rememberSceneClock()` directly in the scene
+block and the whole block re-runs every frame: unchanged children are skipped, but each one is still
+checked. Move the read into its own small scene composable and only that function re-runs:
+
+```kotlin
+// The clock is read here, so only this function re-runs each frame.
+@Composable
+fun FilamentSceneScope.SpinningDuck(duck: GltfAsset?) {
+    val time by rememberSceneClock()
+    GltfInstance(asset = duck, rotation = Rotation.euler(yaw = time * 10f))
+}
+
+FilamentSceneView(cameraState = cam) {
+    Environment(env)
+    SpinningDuck(duck)            // nothing in this block reads the clock
+}
+```
+
+Declaring it as an extension on `FilamentSceneScope` is what lets it call scene composables. The same
+goes for anything driven per frame by a value: an orbiting `Group`, a pulsing light.
+
 ### Pausing a view: `renderingEnabled`
 
 A `FilamentView` (or `FilamentSceneView`) renders on every display refresh by default. Pass
@@ -230,13 +253,12 @@ FilamentSceneView(
 
 ## Animating glTF models
 
-`GltfInstance` offers four layers of animation control, from declarative to fully manual.
+`GltfInstance` takes one animation input, `animationState`; from there the control goes from declarative to fully manual.
 
 ### 1. Hoisted playback with `rememberAnimationState` (recommended)
 
 `rememberAnimationState` returns an observable, **auto-advancing** clock for one glTF `Animator`.
-Pass it as `animationState` and it plays every frame and loops at the clip length — no scene clock
-or `animationTime` plumbing:
+Pass it as `animationState` and it plays every frame and loops at the clip length:
 
 ```kotlin
 val animation = rememberAnimationState(initialAnimationIndex = 0)
@@ -245,7 +267,8 @@ GltfInstance(asset = character, animationState = animation)
 
 You can read it back during composition — `animation.time`, `animation.progress` and
 `animation.isTransitioning` are snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration`
-live. Set `animation.isPaused = true` to freeze playback, or `animation.seek(seconds)` to scrub.
+live. Pass the same state to several instances of one asset and they play in step. Set `animation.isPaused = true` to freeze playback and `animation.seek(seconds)` to scrub: a
+paused state holds the pose at the time you seek to.
 
 ### 2. Cross-fading between clips
 
@@ -319,10 +342,9 @@ for the raw `Animator` in layer 4 if you need them.
 
 ### 4. Manual control and morph targets
 
-For full control, drive the clip yourself with `animationIndex` + `animationTime` (e.g. fed from
-`rememberSceneClock`), or reach the raw `Animator` through `GltfInstance`'s `onUpdate` escape hatch
-and call `applyAnimation`/`applyCrossFade`/`updateBoneMatrices` directly — useful for custom
-N-clip blending, event-driven scrubbing, or syncing playback to gameplay.
+For full control, pass no `animationState` and reach the raw `Animator` through `GltfInstance`'s
+`onUpdate` escape hatch, calling `applyAnimation`/`applyCrossFade`/`updateBoneMatrices` directly —
+useful for custom N-clip blending or syncing playback to gameplay.
 
 Vertex **morph targets** (blend shapes — facial expressions, etc.) are driven declaratively via
 the `morphWeights` parameter, which is applied to every renderable in the instance that has morph
@@ -465,22 +487,38 @@ geometry arrays are compared by content, so re-creating identical arrays doesn't
 
 ### Environment
 
-`rememberKTXEnvironment` is the one-call path when you have a KTX IBL/skybox pair (e.g. from Filament's `cmgen`):
+The background and the image-based lighting are scene content, declared next to the lights. A scene
+has one skybox and one indirect light, so declare each once:
 
 ```kotlin
-val engine = rememberFilamentEngine()          // shared, so the IBL and scene agree
-val env = rememberKTXEnvironment(
-    engine = engine,
-    ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
-    skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
-)
-val scene = rememberFilamentScene(
-    engine = engine,
-    skyboxState = env.skyboxState,
-    indirectLightState = env.indirectLightState,
-) {
+rememberFilamentScene {
+    Skybox(color = LinearColor(0.05f, 0.05f, 0.08f))   // a flat background
+}
+```
+
+`Environment` with `rememberKtxEnvironment` is the one-call path when you have a KTX IBL/skybox pair
+(e.g. from Filament's `cmgen`); `rememberHdrEnvironment` does the same from a raw `.hdr`:
+
+```kotlin
+rememberFilamentScene {
+    Environment(
+        rememberKtxEnvironment(
+            ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
+            skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
+        ),
+        intensity = 30_000f,                    // a value: recompose to change it
+    )
     GltfInstance(asset = duck)                  // lit by the environment — no Light needed
 }
+```
+
+`Environment` is shorthand for an `IndirectLight` plus a `Skybox`. Declare those two yourself to bring
+your own textures or harmonics, or to set the skybox's own options:
+
+```kotlin
+val env = rememberKtxEnvironment(ibl = { … }, skybox = { … })
+IndirectLight(env.reflections, env.irradiance, rotation = Rotation.euler(yaw = 90f))
+Skybox(env.skybox, showSun = true)
 ```
 
 ### Materials & Textures

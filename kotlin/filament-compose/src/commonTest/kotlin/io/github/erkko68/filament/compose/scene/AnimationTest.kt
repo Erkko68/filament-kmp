@@ -91,8 +91,21 @@ class AnimationTest : ComposeTestFixture() {
         state.apply(animator, 0.5f)
         assertFalse(state.isTransitioning)
 
-        state.seek(0f)
-        assertEquals(0f, state.time)
+        state.seek(0.4f)
+        assertEquals(0.4f, state.time)
+        state.apply(animator, 0.1f)
+        assertEquals(0.5f, state.time, 1e-5f) // playback carries on from the seek
+    }
+
+    /** Two instances sharing a state each apply it every frame: the clock must advance once, not twice. */
+    @Test
+    fun aStateSharedBetweenInstancesAdvancesOncePerFrame() = withFox { _, animator ->
+        val state = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0.5f, initialLoop = true)
+        state.apply(animator, 0.1f, frameTimeNanos = 1L)
+        state.apply(animator, 0.1f, frameTimeNanos = 1L)
+        assertEquals(0.1f, state.time, 1e-5f)
+        state.apply(animator, 0.1f, frameTimeNanos = 2L)
+        assertEquals(0.2f, state.time, 1e-5f)
     }
 
     /** A fade cut short while paused divides zero by zero: the pose must not turn to NaN. */

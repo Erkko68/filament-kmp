@@ -9,7 +9,7 @@ import io.github.erkko68.filament.compose.internal.rememberPlatformEngine
  *
  * Each call creates its own engine — hoist one call and pass the value around to share an
  * engine across scenes, views, and loaders ([rememberFilamentScene], `rememberGltfAsset`,
- * `rememberKTXEnvironment`, …). If you don't pass an engine, [rememberFilamentScene] and
+ * `rememberKtxEnvironment`, …). If you don't pass an engine, [rememberFilamentScene] and
  * [FilamentSceneView] create a dedicated one scoped to that call site.
  */
 @Composable

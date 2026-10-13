@@ -13,7 +13,19 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+Upgrading from 0.7? See the [migration guide](docs/migration/from-0.7.md).
+
+### Added
+- **`rememberRenderTargetTexture(shadows = …)`** (`filament-compose`): the off-screen view takes a shadow technique, as `FilamentView` does.
+
+### Changed
+- **The skybox and environment are scene content** (`filament-compose`): `Skybox`, `IndirectLight` and `Environment` composables replace the `skyboxState`/`indirectLightState` parameters, `SkyboxState`, `IndirectLightState` and `SkyboxSource`.
+- **Environment loaders take the engine from the scene** (`filament-compose`): `rememberKTXEnvironment`/`rememberHDREnvironment`, renamed `rememberKtxEnvironment`/`rememberHdrEnvironment`, no longer need a hoisted engine, and intensity moved to `Environment(…, intensity = )`.
+- **`GltfInstance` takes one animation input** (`filament-compose`): `animationIndex`/`animationTime` are gone; pass an `AnimationState`, paused plus `seek` to hold a pose, or drive the `Animator` from `onUpdate`.
+
 ### Fixed
+- **An `AnimationState` shared between `GltfInstance`s plays at normal speed** (`filament-compose`): each instance used to advance the clock, so two played at double speed; they now play in step.
+- **`AnimationState.seek` moves the clock** (`filament-compose`): the next frame used to put it back where it was.
 - **iOS crash when a `FilamentView`/`FilamentSceneView` leaves the composition** (`filament-compose`): the surface's `UIView` could lay out after its `View` was destroyed and set the viewport on a null handle (`EXC_BAD_ACCESS`); it now stops touching Filament once it is disposed.
 - **Web crash with more than one engine on a page** (`filament`): a second `Engine` — two views with their own engines, or one screen replacing another — rendered on the wrong WebGL context and aborted with "OpenGL program … failed to link or compile".
 - **iOS crash when `GltfInstance` logs a warning** (`filament-compose`): a second `GltfInstance` of an asset that can create no more instances crashed the app instead of rendering nothing.

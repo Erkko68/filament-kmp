@@ -1,208 +1,184 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.compose.FilamentSceneScope
+import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.internal.rememberOwned
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.utils.HDRLoader
 import io.github.erkko68.filament.utils.IBLPrefilterContext
 import io.github.erkko68.filament.utils.Ktx1Bundle
 import io.github.erkko68.filament.utils.Ktx1Reader
 import kotlin.coroutines.cancellation.CancellationException
-import io.github.erkko68.filament.compose.internal.rememberOwned
 
 /**
- * A loaded image-based-lighting environment: the [indirectLightState] that lights the scene and
- * an optional [skyboxState] background. Obtain via [rememberKTXEnvironment] (pre-baked KTX) or
- * [rememberHDREnvironment] (raw `.hdr`) and feed the two states straight into
- * [io.github.erkko68.filament.compose.rememberFilamentScene]:
+ * A loaded image-based-lighting environment, from [rememberKtxEnvironment] (pre-baked KTX) or
+ * [rememberHdrEnvironment] (raw `.hdr`). Place it in a scene with the [Environment] composable, or
+ * hand its parts to [IndirectLight] and [Skybox] yourself.
  *
- * ```kotlin
- * val engine = rememberFilamentEngine()
- * val env = rememberKTXEnvironment(
- *     engine = engine,
- *     ibl    = { Res.readBytes("environment/env_ibl.ktx") },
- *     skybox = { Res.readBytes("environment/env_skybox.ktx") },
- * )
- * val scene = rememberFilamentScene(
- *     engine = engine,
- *     skyboxState = env.skyboxState,
- *     indirectLightState = env.indirectLightState,
- * ) { ... }
- * ```
+ * Every part is null until its data has loaded, and stays null if the load failed.
  *
- * The states are returned immediately and populate asynchronously as the KTX data decodes — the
- * scene simply renders without IBL/skybox until then. Both remain mutable afterward (e.g.
- * `env.indirectLightState.intensity = …`, `env.indirectLightState.rotation = …`).
+ * @property reflections Prefiltered reflection cubemap.
+ * @property irradiance Diffuse irradiance harmonics, where the source carries them (KTX does, HDR doesn't).
+ * @property skybox Background cubemap, where one was asked for.
  */
-@Stable
+@Immutable
 class Environment internal constructor(
-    val indirectLightState: IndirectLightState,
-    val skyboxState: SkyboxState?,
+    val reflections: Texture?,
+    val irradiance: SphericalHarmonics?,
+    val skybox: Texture?,
 )
 
 /**
- * Loads an IBL environment (and optional skybox) from KTX1 data and wires it into the scene's
- * indirect-light/skybox state. This is the convenience path over hand-wiring [Ktx1Reader],
- * texture lifetimes, and [IndirectLightState]/[SkyboxState].
+ * Lights the scene with a loaded [environment] and draws its skybox, if it has one:
  *
- * Call it **outside** `rememberFilamentScene { }` (its result feeds the scene's parameters), so
- * the [engine] is hoisted via [io.github.erkko68.filament.compose.rememberFilamentEngine] and shared
- * with the scene — which is why it is required here rather than defaulted from the composition
- * local: outside a scene there is no engine in scope to default to.
+ * ```kotlin
+ * FilamentSceneView(cameraState = cam) {
+ *     Environment(rememberKtxEnvironment(
+ *         ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
+ *         skybox = { Res.readBytes("files/environment/env_skybox.ktx") },
+ *     ))
+ *     GltfInstance(asset = duck)   // lit by the environment, no light needed
+ * }
+ * ```
  *
- * The returned [Environment] is non-null and stable; its states fill in once the KTX bytes
- * load. Failures (load lambda throwing, or undecodable KTX) are reported once via [onError] and
- * leave the corresponding state empty.
+ * Shorthand for an [IndirectLight] plus a [Skybox]; declare those two yourself to set the skybox's own
+ * options. A scene has one of each, so declare one `Environment` per scene.
  *
- * For raw equirectangular `.hdr` images (no offline `cmgen` bake) use [rememberHDREnvironment].
- *
- * @param engine    Engine the environment's textures are allocated on. Leads the parameter list
- *   because it is required — the result feeds a scene built on this same engine, and this is
- *   called outside `rememberFilamentScene { }`, so there is never an engine in scope to default to.
- * @param initialIntensity IBL intensity scale, applied to the state on first composition only —
- *   mutate `environment.indirectLightState.intensity` to change it afterwards.
- * @param key       Reloads when this changes. Defaults to [Unit] for static assets.
- * @param onError   Invoked once per failure (load threw, or the KTX failed to decode).
- * @param skybox    Optional loader for the skybox cubemap KTX. Null = IBL only, no background.
- * @param ibl       Loader for the IBL KTX (prefiltered reflection cubemap + irradiance SH).
+ * @param environment The loaded environment. The scene renders without it until its data arrives.
+ * @param intensity Environment intensity in lux.
+ * @param rotation Rotation of the lighting around the scene. Filament's skybox does not rotate with it.
+ * @param skyboxEnabled Draw the environment's skybox as the background. False lights the scene only.
  */
 @Composable
-fun rememberKTXEnvironment(
-    engine: Engine,
-    initialIntensity: Float = 30_000f,
-    key: Any = Unit,
-    onError: ((Throwable) -> Unit)? = null,
-    skybox: (suspend () -> ByteArray)? = null,
-    ibl: suspend () -> ByteArray,
-): Environment {
-    val indirectLightState = rememberIndirectLightState(initialIntensity = initialIntensity)
-    val skyboxState = if (skybox != null) rememberSkyboxState() else null
-
-    // IBL: prefiltered reflection cubemap + diffuse irradiance spherical harmonics.
-    val iblBytes by produceState<ByteArray?>(null, engine, key) {
-        value = loadOrReport(onError, ibl)
-    }
-    iblBytes?.let { bytes ->
-        val reflections = rememberOwned(engine, bytes, create = {
-            Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
-        }) { engine.destroy(it) }
-        val sh = remember(bytes) { Ktx1Bundle(bytes).use { bundle -> FloatArray(9 * 3).takeIf { bundle.getSphericalHarmonics(it) } } }
-        DisposableEffect(reflections, sh) {
-            if (reflections != null) {
-                indirectLightState.reflections = reflections
-                if (sh != null) indirectLightState.irradianceSh = SphericalHarmonics(bands = 3, coefficients = sh)
-            } else {
-                onError?.invoke(IllegalArgumentException("Failed to decode IBL — not valid KTX1 data"))
-            }
-            onDispose {
-                indirectLightState.reflections = null
-                indirectLightState.irradianceSh = null
-            }
-        }
-    }
-
-    // Skybox: the environment cubemap rendered as the background.
-    if (skybox != null && skyboxState != null) {
-        val skyBytes by produceState<ByteArray?>(null, engine, key) {
-            value = loadOrReport(onError, skybox)
-        }
-        skyBytes?.let { bytes ->
-            val texture = rememberOwned(engine, bytes, create = {
-                Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
-            }) { engine.destroy(it) }
-            DisposableEffect(texture) {
-                if (texture != null) {
-                    skyboxState.source = SkyboxSource.Cubemap(texture)
-                } else {
-                    onError?.invoke(IllegalArgumentException("Failed to decode skybox — not valid KTX1 data"))
-                }
-                onDispose {
-                    skyboxState.source = null
-                }
-            }
-        }
-    }
-
-    return remember(indirectLightState, skyboxState) { Environment(indirectLightState, skyboxState) }
+fun FilamentSceneScope.Environment(
+    environment: Environment,
+    intensity: Float = 30_000f,
+    rotation: Rotation = Rotation.Identity,
+    skyboxEnabled: Boolean = true,
+) {
+    IndirectLight(environment.reflections, environment.irradiance, intensity, rotation)
+    if (skyboxEnabled) Skybox(environment.skybox)
 }
 
 /**
- * Builds an [Environment] from an equirectangular **HDR** image instead of pre-baked KTX —
- * no `cmgen` step, just ship the `.hdr`. The reflection cubemap and skybox are prefiltered on
- * the GPU at load via [IBLPrefilterContext]'s EquirectangularToCubemap and SpecularFilter.
+ * Loads an IBL environment (and optional skybox) from KTX1 data, e.g. the pair Filament's `cmgen` bakes.
+ * Returns at once; the [Environment]'s parts fill in as the data decodes. Failures (a loader throwing, or
+ * undecodable KTX) are reported once via [onError] and leave that part null.
  *
- * The sibling of [rememberKTXEnvironment] (which loads pre-baked KTX) — same returned type, same
- * scene wiring:
+ * Like the other loaders, call it inside `rememberFilamentScene { }`, or outside with a hoisted [engine]
+ * to share one environment between scenes.
  *
- * ```kotlin
- * val engine = rememberFilamentEngine()
- * val env = rememberHDREnvironment(engine = engine) { Res.readBytes("env/lobby.hdr") }
- * val scene = rememberFilamentScene(
- *     engine = engine,
- *     skyboxState = env.skyboxState,
- *     indirectLightState = env.indirectLightState,
- * ) { GltfInstance(asset = duck) }
- * ```
+ * For raw equirectangular `.hdr` images (no offline bake) use [rememberHdrEnvironment].
  *
- * **Tradeoff vs. [rememberKTXEnvironment]:** there's no baked diffuse irradiance (cmgen's
- * spherical harmonics). Filament approximates diffuse from the reflection's lowest mip — visibly
- * lower quality. Prefer KTX when you can bake offline; use this for raw `.hdr` workflows. The
- * prefilter runs on the GPU at load, so the first frames render before it lands.
- *
- * @param engine     Engine the environment's textures are allocated on. Required and first — see
- *   [rememberKTXEnvironment].
- * @param initialIntensity IBL intensity scale, applied to the state on first composition only —
- *   mutate `environment.indirectLightState.intensity` to change it afterwards.
- * @param showSkybox Render the environment cubemap as the skybox. False = IBL only.
- * @param format     Internal format for the decoded HDR equirect texture.
- * @param key        Reloads when this changes. Defaults to [Unit] for static assets.
- * @param onError    Invoked once if [hdr] throws or the bytes can't be decoded as HDR.
- * @param hdr        Loader for the equirectangular HDR bytes (2:1 aspect).
+ * @param key     Reloads when this changes. Defaults to [Unit] for static assets.
+ * @param onError Invoked once per failure (load threw, or the KTX failed to decode).
+ * @param engine  Engine the textures are allocated on. Defaults to the engine in the current
+ *   composition scope, which only exists inside `rememberFilamentScene { }`.
+ * @param skybox  Optional loader for the skybox cubemap KTX. Null = lighting only, no background.
+ * @param ibl     Loader for the IBL KTX (prefiltered reflection cubemap + irradiance harmonics).
  */
 @Composable
-fun rememberHDREnvironment(
-    engine: Engine,
-    initialIntensity: Float = 30_000f,
-    showSkybox: Boolean = true,
+fun rememberKtxEnvironment(
+    key: Any = Unit,
+    onError: ((Throwable) -> Unit)? = null,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
+    skybox: (suspend () -> ByteArray)? = null,
+    ibl: suspend () -> ByteArray,
+): Environment {
+    val iblBytes by produceState<ByteArray?>(null, key) {
+        value = loadOrReport(onError, ibl)
+    }
+    val reflections = iblBytes?.let { rememberKtxCubemap(engine, it, "IBL", onError) }
+    // The harmonics are only worth having with the reflections they were baked alongside.
+    val irradiance = remember(iblBytes, reflections) {
+        iblBytes?.takeIf { reflections != null }?.let { bytes ->
+            val sh = FloatArray(9 * 3)
+            if (Ktx1Bundle(bytes).use { it.getSphericalHarmonics(sh) }) SphericalHarmonics(bands = 3, coefficients = sh) else null
+        }
+    }
+
+    val skyTexture = if (skybox != null) {
+        val skyBytes by produceState<ByteArray?>(null, key) {
+            value = loadOrReport(onError, skybox)
+        }
+        skyBytes?.let { rememberKtxCubemap(engine, it, "skybox", onError) }
+    } else null
+
+    return remember(reflections, irradiance, skyTexture) { Environment(reflections, irradiance, skyTexture) }
+}
+
+@Composable
+private fun rememberKtxCubemap(engine: Engine, bytes: ByteArray, what: String, onError: ((Throwable) -> Unit)?): Texture? {
+    val texture = rememberOwned(engine, bytes, create = {
+        Ktx1Reader.createTexture(engine, Ktx1Bundle(bytes), srgb = false)
+    }) { engine.destroy(it) }
+    if (texture == null) {
+        LaunchedEffect(bytes) {
+            onError?.invoke(IllegalArgumentException("Failed to decode $what — not valid KTX1 data"))
+        }
+    }
+    return texture
+}
+
+/**
+ * Builds an [Environment] from an equirectangular **HDR** image instead of pre-baked KTX — no `cmgen`
+ * step, just ship the `.hdr`. The reflection cubemap and skybox are prefiltered on the GPU at load via
+ * [IBLPrefilterContext]'s EquirectangularToCubemap and SpecularFilter.
+ *
+ * ```kotlin
+ * rememberFilamentScene {
+ *     Environment(rememberHdrEnvironment { Res.readBytes("env/lobby.hdr") })
+ *     GltfInstance(asset = duck)
+ * }
+ * ```
+ *
+ * **Tradeoff vs. [rememberKtxEnvironment]:** there's no baked diffuse irradiance (cmgen's spherical
+ * harmonics). Filament approximates diffuse from the reflection's lowest mip — visibly lower quality.
+ * Prefer KTX when you can bake offline; use this for raw `.hdr` workflows. The prefilter runs on the GPU
+ * at load, so the first frames render before it lands.
+ *
+ * @param format  Internal format for the decoded HDR equirect texture.
+ * @param key     Reloads when this changes. Defaults to [Unit] for static assets.
+ * @param onError Invoked once if [hdr] throws or the bytes can't be decoded as HDR.
+ * @param engine  Engine the textures are allocated on. Defaults to the engine in the current
+ *   composition scope, which only exists inside `rememberFilamentScene { }`.
+ * @param hdr     Loader for the equirectangular HDR bytes (2:1 aspect).
+ */
+@Composable
+fun rememberHdrEnvironment(
     format: Texture.InternalFormat = Texture.InternalFormat.R11F_G11F_B10F,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     hdr: suspend () -> ByteArray,
 ): Environment {
-    val indirectLightState = rememberIndirectLightState(initialIntensity = initialIntensity)
-    val skyboxState = if (showSkybox) rememberSkyboxState() else null
-
-    val hdrBytes by produceState<ByteArray?>(null, engine, key) {
+    val hdrBytes by produceState<ByteArray?>(null, key) {
         value = loadOrReport(onError, hdr)
     }
-    hdrBytes?.let { bytes ->
+    val prefiltered = hdrBytes?.let { bytes ->
         // Decode the HDR and run the GPU prefilter once per (engine, bytes, format). The work is
         // enqueued on the command stream, not blocking, so composition stays responsive.
-        val prefiltered = rememberOwned(engine, bytes, format, create = { prefilterHdr(engine, bytes, format) }) {
+        val textures = rememberOwned(engine, bytes, format, create = { prefilterHdr(engine, bytes, format) }) {
             engine.destroy(it.reflections)
             engine.destroy(it.skybox)
         }
-
-        DisposableEffect(prefiltered) {
-            if (prefiltered != null) {
-                indirectLightState.reflections = prefiltered.reflections
-                skyboxState?.source = SkyboxSource.Cubemap(prefiltered.skybox)
-            } else {
+        if (textures == null) {
+            LaunchedEffect(bytes) {
                 onError?.invoke(IllegalArgumentException("Failed to decode HDR — not a valid equirectangular HDR image"))
             }
-            onDispose {
-                indirectLightState.reflections = null
-                skyboxState?.source = null
-            }
         }
+        textures
     }
 
-    return remember(indirectLightState, skyboxState) { Environment(indirectLightState, skyboxState) }
+    return remember(prefiltered) { Environment(prefiltered?.reflections, null, prefiltered?.skybox) }
 }
 
 /** Prefiltered output of [prefilterHdr]: the [skybox] environment cubemap and IBL [reflections]. */

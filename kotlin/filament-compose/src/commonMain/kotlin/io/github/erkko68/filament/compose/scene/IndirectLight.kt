@@ -3,15 +3,14 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.compose.FilamentSceneScope
+import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.LocalFilamentScene
+import io.github.erkko68.filament.compose.internal.logWarn
 import io.github.erkko68.filament.compose.internal.rememberOwned
+import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.IndirectLight as FilamentIndirectLight
 
 /**
@@ -37,75 +36,59 @@ data class SphericalHarmonics(
 }
 
 /**
- * Hoisted, observable Image-Based Lighting (IBL) state. Pass to
- * [io.github.erkko68.filament.compose.rememberFilamentScene] via `indirectLightState = ...`.
+ * Image-based lighting for the scene: [reflections] drives specular highlights and [irradiance] the diffuse
+ * ambient light. Renders nothing while both are null (still loading). [intensity] and [rotation] are set on
+ * the live light, so animating them is cheap.
  *
- * Provide at most one of [irradianceCubemap] or [irradianceSh]. If both are set,
- * [irradianceCubemap] takes precedence. [reflections] is independent and controls
- * specular highlights.
+ * For a KTX or HDR file, [Environment] with [rememberKtxEnvironment]/[rememberHdrEnvironment] does this in
+ * one call; use this for textures or harmonics of your own.
  *
  * ```kotlin
- * val ibl = rememberIndirectLightState(
- *     reflections  = envCubemap,
- *     irradianceSh = SphericalHarmonics(bands = 3, coefficients = shCoeffs),
- *     intensity    = 50_000f,
- * )
- * val scene = rememberFilamentScene(indirectLightState = ibl) { ... }
+ * rememberFilamentScene {
+ *     IndirectLight(reflections = envCubemap, irradiance = SphericalHarmonics(bands = 3, coefficients = sh))
+ * }
  * ```
- */
-@Stable
-class IndirectLightState internal constructor(
-    initialReflections: Texture?,
-    initialIrradianceCubemap: Texture?,
-    initialIrradianceSh: SphericalHarmonics?,
-    initialIntensity: Float,
-    initialRotation: Rotation?,
-) {
-    var reflections: Texture?            by mutableStateOf(initialReflections)
-    var irradianceCubemap: Texture?      by mutableStateOf(initialIrradianceCubemap)
-    var irradianceSh: SphericalHarmonics? by mutableStateOf(initialIrradianceSh)
-    var intensity: Float                  by mutableStateOf(initialIntensity)
-    var rotation: Rotation?               by mutableStateOf(initialRotation)
-}
-
-/**
- * Creates and remembers an [IndirectLightState]. The `initial*` values seed the state on first
- * composition only; mutate the returned state's fields to change the IBL afterwards.
  *
- * @param initialReflections       Specular reflection cubemap texture.
- * @param initialIrradianceCubemap Diffuse irradiance cubemap texture.
- * @param initialIrradianceSh      Diffuse irradiance via spherical harmonics (alternative to cubemap).
- * @param initialIntensity         IBL intensity scale.
- * @param initialRotation          Optional rotation of the environment. Null = identity.
+ * A scene has one indirect light: declare one `IndirectLight` (or one [Environment]) per scene.
+ *
+ * @param reflections Prefiltered reflection cubemap, or null for none.
+ * @param irradiance Diffuse irradiance as spherical harmonics. Null lets Filament approximate it from
+ *   [reflections].
+ * @param intensity Environment intensity in lux.
+ * @param rotation Rotation of the environment around the scene.
  */
 @Composable
-fun rememberIndirectLightState(
-    initialReflections: Texture? = null,
-    initialIrradianceCubemap: Texture? = null,
-    initialIrradianceSh: SphericalHarmonics? = null,
-    initialIntensity: Float = 30_000f,
-    initialRotation: Rotation? = null,
-): IndirectLightState = remember {
-    IndirectLightState(initialReflections, initialIrradianceCubemap, initialIrradianceSh,
-        initialIntensity, initialRotation)
-}
+fun FilamentSceneScope.IndirectLight(
+    reflections: Texture?,
+    irradiance: SphericalHarmonics? = null,
+    intensity: Float = 30_000f,
+    rotation: Rotation = Rotation.Identity,
+) = IndirectLightNode(reflections, irradiance, null, intensity, rotation)
 
-/**
- * Internal: applies [IndirectLightState] to the scene. Rebuilds the Filament
- * [FilamentIndirectLight] whenever any field changes.
- */
+/** [IndirectLight] with the diffuse irradiance as a cubemap instead of spherical harmonics. */
 @Composable
-internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene: Scene) {
-    val reflections       = state.reflections
-    val irradianceCubemap = state.irradianceCubemap
-    val irradianceSh      = state.irradianceSh
-    val intensity         = state.intensity
-    val rotation          = state.rotation
+fun FilamentSceneScope.IndirectLight(
+    reflections: Texture?,
+    irradiance: Texture,
+    intensity: Float = 30_000f,
+    rotation: Rotation = Rotation.Identity,
+) = IndirectLightNode(reflections, null, irradiance, intensity, rotation)
 
-    // Rebuilt only for new textures or harmonics; intensity and rotation are set on the live object below, so
-    // animating them costs no IndirectLight per frame. A state change gets here a frame late, so textures we
-    // loaded (dependsOn) stay alive until this lets go of them.
-    val ibl = rememberOwned(engine, scene, reflections, irradianceCubemap, irradianceSh,
+@Composable
+private fun IndirectLightNode(
+    reflections: Texture?,
+    irradianceSh: SphericalHarmonics?,
+    irradianceCubemap: Texture?,
+    intensity: Float,
+    rotation: Rotation,
+) {
+    if (reflections == null && irradianceSh == null && irradianceCubemap == null) return
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
+    val scene = LocalFilamentScene.current ?: noFilamentScene()
+
+    // Rebuilt only for new textures or harmonics; intensity and rotation are set on the live object below.
+    // Textures we loaded (dependsOn) outlive it.
+    val ibl = rememberOwned(engine, scene, reflections, irradianceSh, irradianceCubemap,
                             dependsOn = listOf(reflections, irradianceCubemap), create = {
         val builder = FilamentIndirectLight.Builder()
         reflections?.let { builder.reflections(it) }
@@ -117,13 +100,15 @@ internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene
     }) { engine.destroy(it) }
 
     DisposableEffect(scene, ibl) {
+        if (scene.indirectLight != null) logWarn("A scene has one indirect light: this IndirectLight replaces the one already declared.")
         scene.indirectLight = ibl
-        onDispose { scene.indirectLight = null }
+        // Not ours any more if another IndirectLight replaced it.
+        onDispose { if (scene.indirectLight === ibl) scene.indirectLight = null }
     }
 
     DisposableEffect(ibl, intensity, rotation) {
         ibl.intensity = intensity
-        ibl.rotation = (rotation ?: Rotation.Identity).toRotationMatrix()
+        ibl.rotation = rotation.toRotationMatrix()
         onDispose { }
     }
 }

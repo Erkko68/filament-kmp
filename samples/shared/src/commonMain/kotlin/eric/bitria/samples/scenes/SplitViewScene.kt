@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +19,6 @@ import io.github.erkko68.filament.compose.FilamentView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentScene
 import io.github.erkko68.filament.compose.rememberOrbitCameraController
-import io.github.erkko68.filament.compose.rememberSceneClock
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
@@ -30,11 +28,11 @@ import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.Vignette
+import io.github.erkko68.filament.compose.scene.rememberAnimationState
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
@@ -62,12 +60,9 @@ fun SplitViewScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
 
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
-
-    val time by rememberSceneClock()
-
     // Declared once, rendered by both views below.
-    val scene = rememberFilamentScene(skyboxState = skybox) {
+    val scene = rememberFilamentScene {
+        Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
         DirectionalLight(
             direction = Direction(0.3f, -1f, -0.5f),
             intensity = LightIntensity.LuminousPower(100_000f),
@@ -76,8 +71,7 @@ fun SplitViewScene(onBack: () -> Unit) {
             asset          = rememberGltfAsset { Res.readBytes("files/models/BoxAnimated.glb") },
             position       = Position(0f, 0f, 0f),
             scale          = Scale(1f),
-            animationIndex = 0,
-            animationTime  = time,
+            animationState = rememberAnimationState(),
         )
     }
 

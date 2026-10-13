@@ -189,10 +189,10 @@ resource, other targets return empty, so the suite skips off-JVM exactly like th
   blob without calling Filament. `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
   bytes (an uncatchable upstream crash, *not* a null-return) and the repo bundles no decodable test image
   for the happy path — that waits on an image asset.
-- **`EnvironmentLifecycleTest`** ✅ — `ApplySkybox` (a **color** skybox → `scene.skybox` set/cleared) and
-  `ApplyIndirectLight` (an IBL built from **spherical-harmonics** coefficients → `scene.indirectLight`
+- **`EnvironmentLifecycleTest`** ✅ — `Skybox` (a **color** skybox → `scene.skybox` set/cleared) and
+  `IndirectLight` (an IBL built from **spherical-harmonics** coefficients → `scene.indirectLight`
   set/cleared). Both apply synchronously on the composition thread, and neither needs a bundled asset.
-  The texture-backed paths (cubemap skybox, cubemap IBL, `rememberKTXEnvironment`/`rememberHDREnvironment`)
+  The texture-backed paths (cubemap skybox, cubemap IBL, `rememberKtxEnvironment`/`rememberHdrEnvironment`)
   are left for when a small KTX/HDR asset is bundled — `samples/shared/.../environment/` has candidates.
 - **`GltfLifecycleTest`** ⬜ **deferred — same reason `FilamentView` is out of headless scope.**
   `rememberGltfAsset` loads via gltfio's **async** `ResourceLoader` (`asyncBeginLoad` → `asyncUpdateLoad`
