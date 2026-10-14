@@ -28,6 +28,9 @@ namespace {
 jlong attachMetalLayer(id<JAWT_SurfaceLayers> slot, jint x, jint y, JAWT_Rectangle bounds) {
     if ([slot.layer isKindOfClass:CAMetalLayer.class]) return (jlong) (void*) slot.layer;
     CAMetalLayer* layer = [[FilaAwtMetalLayer alloc] init];
+    // Creating it opened an implicit transaction on this thread, which AWT never commits (no run loop):
+    // left open, the layer's frames never reach the screen.
+    [CATransaction flush];
     void (^attach)() = ^{
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
