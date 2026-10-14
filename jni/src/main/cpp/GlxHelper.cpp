@@ -1,7 +1,7 @@
 #include <jni.h>
 
 #if defined(__linux__) && !defined(__ANDROID__)
-#include "Jawt.h"
+#include "FilaJawt.h"
 #include <GL/glx.h>
 #include <GL/glext.h>
 

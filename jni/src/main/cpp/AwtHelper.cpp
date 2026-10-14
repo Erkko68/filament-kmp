@@ -1,7 +1,7 @@
 #include <jni.h>
 
 #ifndef __ANDROID__
-#include "Jawt.h"
+#include "FilaJawt.h"
 
 #ifdef __APPLE__
 #import <AppKit/AppKit.h>
