@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.scene.DirectionalLight
-import io.github.erkko68.filament.compose.scene.SkyboxSource
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
+import io.github.erkko68.filament.compose.scene.LinearColor
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.surfaceTest
 import io.github.erkko68.filament.testsupport.TestEnv
@@ -92,10 +92,10 @@ class SurfaceLifecycleTest {
     }
 
     @Composable
-    private fun Sky(modifier: Modifier) = FilamentSceneView(
-        modifier,
-        skyboxState = rememberSkyboxState(initialSource = SkyboxSource.Color()),
-    ) { DirectionalLight() }
+    private fun Sky(modifier: Modifier) = FilamentSceneView(modifier) {
+        Skybox(LinearColor(0.1f, 0.125f, 0.15f))
+        DirectionalLight()
+    }
 
     @Composable
     private fun Scene(
