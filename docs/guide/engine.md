@@ -18,9 +18,9 @@ Use this path when you are:
 ```kotlin
 // build.gradle.kts — no Compose plugin required
 commonMain.dependencies {
-    implementation("io.github.erkko68.filament:filament:0.7.3")
-    implementation("io.github.erkko68.filament:gltfio:0.7.3")        // optional
-    implementation("io.github.erkko68.filament:filament-utils:0.7.3") // optional
+    implementation("io.github.erkko68.filament:filament:0.8.0")
+    implementation("io.github.erkko68.filament:gltfio:0.8.0")        // optional
+    implementation("io.github.erkko68.filament:filament-utils:0.8.0") // optional
 }
 ```
 
