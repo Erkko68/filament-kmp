@@ -1690,6 +1690,7 @@ public final class io/github/erkko68/filament/MultiSampleAntiAliasingOptions {
 }
 
 public final class io/github/erkko68/filament/NativeSurface {
+	public fun <init> (Ljava/awt/Canvas;)V
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun getNativeWindow ()Ljava/lang/Object;
 }

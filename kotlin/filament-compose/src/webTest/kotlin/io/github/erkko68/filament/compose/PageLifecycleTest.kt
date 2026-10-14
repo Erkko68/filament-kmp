@@ -10,9 +10,8 @@ import io.github.erkko68.filament.canvas
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.LinearColor
-import io.github.erkko68.filament.compose.scene.SkyboxSource
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.onPage
 import io.github.erkko68.filament.compose.testutils.pageContainer
@@ -56,10 +55,10 @@ class PageLifecycleTest {
         FilamentSceneView(
             Modifier.fillMaxSize(),
             engine = engine,
-            skyboxState = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0f, 1f, 0f))),
             transparent = transparent,
             renderingEnabled = renderingEnabled,
         ) {
+            Skybox(LinearColor(0f, 1f, 0f))
             DirectionalLight()
             GltfInstance(rememberGltfAsset { TestGlb.getDuckGlbBytes() })
         }
