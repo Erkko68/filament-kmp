@@ -13,6 +13,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-10-14
+
 Upgrading from 0.7? See the [migration guide](docs/migration/from-0.7.md).
 
 ### Added
@@ -29,7 +31,7 @@ Upgrading from 0.7? See the [migration guide](docs/migration/from-0.7.md).
 ### Fixed
 - **An `AnimationState` shared between `GltfInstance`s plays at normal speed** (`filament-compose`): each instance used to advance the clock, so two played at double speed; they now play in step.
 - **`AnimationState.seek` moves the clock** (`filament-compose`): the next frame used to put it back where it was.
-- **iOS crash when a `FilamentView`/`FilamentSceneView` leaves the composition** (`filament-compose`): the surface's `UIView` could lay out after its `View` was destroyed and set the viewport on a null handle (`EXC_BAD_ACCESS`); it now stops touching Filament once it is disposed.
+- **iOS crash when a `FilamentView`/`FilamentSceneView` leaves the composition** (`filament-compose`): the surface's `UIView` could lay out after its `View` was destroyed and set the viewport on a null handle (`EXC_BAD_ACCESS`); it now stops touching Filament once it is disposed. Reported ([#197](https://github.com/Erkko68/filament-kmp/issues/197)) and fixed ([#198](https://github.com/Erkko68/filament-kmp/pull/198)) by [@mikepenz](https://github.com/mikepenz).
 - **Web crash with more than one engine on a page** (`filament`): a second `Engine` — two views with their own engines, or one screen replacing another — rendered on the wrong WebGL context and aborted with "OpenGL program … failed to link or compile".
 - **iOS crash when `GltfInstance` logs a warning** (`filament-compose`): a second `GltfInstance` of an asset that can create no more instances crashed the app instead of rendering nothing.
 
@@ -564,7 +566,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.7.3...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.8.0...HEAD
+[0.8.0]: https://github.com/Erkko68/filament-kmp/compare/0.7.3...0.8.0
 [0.7.3]: https://github.com/Erkko68/filament-kmp/compare/0.7.2...0.7.3
 [0.7.2]: https://github.com/Erkko68/filament-kmp/compare/0.7.1...0.7.2
 [0.7.1]: https://github.com/Erkko68/filament-kmp/compare/0.7.0...0.7.1
