@@ -16,7 +16,7 @@ FilaSkyboxBuilder* FilaSkyboxBuilder_showSun(FilaSkyboxBuilder* self, bool show)
 FilaSkyboxBuilder* FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* self, float envIntensity);
 FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, const FilaFloat4* color);
 FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t priority);
-FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* self, FilaEngine* engine);
+FilaSkybox* FilaSkyboxBuilder_build(const FilaSkyboxBuilder* self, FilaEngine* engine);
 
 // filament::Skybox
 void FilaSkybox_setColor(FilaSkybox* self, const FilaFloat4* color);

@@ -474,10 +474,11 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      */
     fun hasComponent(e: Entity): Boolean = FilaRenderableManager_hasComponent(nativeHandle, e)
     /**
-     * Gets a temporary handle that can be used to access the renderable state.
+     * Gets an Instance representing the renderable component associated with the given Entity.
      *
      * @param e the entity to get the instance for
-     * @return Non-zero handle if the entity has a renderable component, 0 otherwise
+     * @return Non-zero handle if the entity has a renderable component, 0 otherwise. Transient: keep the Entity, not
+     *   the Instance, across frames.
      */
     fun getInstance(e: Entity): EntityInstance = FilaRenderableManager_getInstance(nativeHandle, e)
     /** The number of renderable components. */
@@ -637,6 +638,13 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     fun getPrimitiveCount(instance: EntityInstance): Int = FilaRenderableManager_getPrimitiveCount(nativeHandle, instance)
     /** Get the number of instances in the given entity. */
     fun getInstanceCount(instance: EntityInstance): Int = FilaRenderableManager_getInstanceCount(nativeHandle, instance)
+    /**
+     * Changes the number of draw instances; 0 skips the renderable in every pass. Manual instancing clamps it to
+     * 0..32767; with an [InstanceBuffer] it must not exceed the buffer's count nor [Engine.maxAutomaticInstances].
+     */
+    fun setInstanceCount(instance: EntityInstance, instanceCount: Int) {
+        FilaRenderableManager_setInstanceCount(nativeHandle, instance, instanceCount)
+    }
 
     /**
      * Changes a material instance on a primitive.

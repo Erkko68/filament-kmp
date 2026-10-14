@@ -60,7 +60,7 @@ FilaTextureBuilder* FilaTextureBuilder_async(FilaTextureBuilder* self, FilaCallb
     return fila::c(&fila::cpp(self)->async(fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
 }
 
-FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* self, FilaEngine* engine) {
+FilaTexture* FilaTextureBuilder_build(const FilaTextureBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
@@ -68,11 +68,11 @@ FilaTextureBuilder* FilaTextureBuilder_import(FilaTextureBuilder* self, int64_t 
     return fila::c(&fila::cpp(self)->import(static_cast<intptr_t>(id)));
 }
 
-bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureFormat format) {
+bool FilaTexture_isTextureFormatSupported(const FilaEngine* engine, FilaTextureFormat format) {
     return filament::Texture::isTextureFormatSupported(*fila::cpp(engine), static_cast<filament::backend::TextureFormat>(format));
 }
 
-bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureFormat format) {
+bool FilaTexture_isTextureFormatMipmappable(const FilaEngine* engine, FilaTextureFormat format) {
     return filament::Texture::isTextureFormatMipmappable(*fila::cpp(engine), static_cast<filament::backend::TextureFormat>(format));
 }
 
@@ -80,11 +80,11 @@ bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format) {
     return filament::Texture::isTextureFormatCompressed(static_cast<filament::backend::TextureFormat>(format));
 }
 
-bool FilaTexture_isProtectedTexturesSupported(FilaEngine* engine) {
+bool FilaTexture_isProtectedTexturesSupported(const FilaEngine* engine) {
     return filament::Texture::isProtectedTexturesSupported(*fila::cpp(engine));
 }
 
-bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine) {
+bool FilaTexture_isTextureSwizzleSupported(const FilaEngine* engine) {
     return filament::Texture::isTextureSwizzleSupported(*fila::cpp(engine));
 }
 
@@ -96,11 +96,11 @@ bool FilaTexture_validatePixelFormatAndType(FilaTextureFormat internalFormat, Fi
     return filament::Texture::validatePixelFormatAndType(static_cast<filament::backend::TextureFormat>(internalFormat), static_cast<filament::backend::PixelDataFormat>(format), static_cast<filament::backend::PixelDataType>(type));
 }
 
-uint32_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaSamplerType type) {
+uint32_t FilaTexture_getMaxTextureSize(const FilaEngine* engine, FilaSamplerType type) {
     return static_cast<uint32_t>(filament::Texture::getMaxTextureSize(*fila::cpp(engine), static_cast<filament::backend::SamplerType>(type)));
 }
 
-uint32_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
+uint32_t FilaTexture_getMaxArrayTextureLayers(const FilaEngine* engine) {
     return static_cast<uint32_t>(filament::Texture::getMaxArrayTextureLayers(*fila::cpp(engine)));
 }
 
@@ -128,27 +128,27 @@ FilaTextureFormat FilaTexture_getFormat(const FilaTexture* self) {
     return static_cast<FilaTextureFormat>(fila::cpp(self)->getFormat());
 }
 
-void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
+void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
     fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, zoffset, width, height, depth, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
-void FilaTexture_setImage_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
+void FilaTexture_setImage_PixelBufferDescriptor(FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
     fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
-void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
+void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
     fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
-uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
     return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, zoffset, width, height, depth, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
-uint32_t FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+uint32_t FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
     return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
-uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
+uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user) {
     return fila::cpp(self)->setImageAsync(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser), fila::cpp(handler), callback ? filament::Texture::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
@@ -156,7 +156,7 @@ void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaSt
     fila::cpp(self)->setExternalStream(*fila::cpp(engine), fila::cpp(stream));
 }
 
-void FilaTexture_generateMipmaps(const FilaTexture* self, FilaEngine* engine) {
+void FilaTexture_generateMipmaps(FilaTexture* self, FilaEngine* engine) {
     fila::cpp(self)->generateMipmaps(*fila::cpp(engine));
 }
 

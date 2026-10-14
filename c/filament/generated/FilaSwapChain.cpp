@@ -4,15 +4,15 @@
 
 extern "C" {
 
-bool FilaSwapChain_isProtectedContentSupported(FilaEngine* engine) {
+bool FilaSwapChain_isProtectedContentSupported(const FilaEngine* engine) {
     return filament::SwapChain::isProtectedContentSupported(*fila::cpp(engine));
 }
 
-bool FilaSwapChain_isSRGBSwapChainSupported(FilaEngine* engine) {
+bool FilaSwapChain_isSRGBSwapChainSupported(const FilaEngine* engine) {
     return filament::SwapChain::isSRGBSwapChainSupported(*fila::cpp(engine));
 }
 
-bool FilaSwapChain_isMSAASwapChainSupported(FilaEngine* engine, uint32_t samples) {
+bool FilaSwapChain_isMSAASwapChainSupported(const FilaEngine* engine, uint32_t samples) {
     return filament::SwapChain::isMSAASwapChainSupported(*fila::cpp(engine), samples);
 }
 

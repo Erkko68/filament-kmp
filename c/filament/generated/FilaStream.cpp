@@ -24,7 +24,7 @@ FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* n
     return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
-FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine) {
+FilaStream* FilaStreamBuilder_build(const FilaStreamBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

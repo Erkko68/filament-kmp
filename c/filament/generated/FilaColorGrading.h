@@ -32,7 +32,7 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradi
 // TODO(handwritten) FilaColorGradingBuilder_exportLut: Builder & filament::ColorGrading::Builder::exportLut(ExportCallback _Nullable callback, void * _Nullable user)
 //     void (*)(const void * _Nonnull, size_t, backend::PixelDataFormat, backend::PixelDataType, uint32_t, uint32_t, uint32_t, void * _Nullable): takes C++ types
 FilaColorGradingBuilder* FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* self, bool fastMath);
-FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* self, FilaEngine* engine);
+FilaColorGrading* FilaColorGradingBuilder_build(const FilaColorGradingBuilder* self, FilaEngine* engine);
 
 
 #ifdef __cplusplus

@@ -428,7 +428,7 @@ uint32_t FilaEngine_getMaxStereoscopicEyes(void) {
     return static_cast<uint32_t>(filament::Engine::getMaxStereoscopicEyes());
 }
 
-FilaUtilsEntityManager* FilaEngine_getEntityManager(FilaEngine* self) {
+FilaUtilsEntityManager* FilaEngine_getEntityManager(const FilaEngine* self) {
     return fila::c(&fila::cpp(self)->getEntityManager());
 }
 
@@ -688,7 +688,7 @@ void FilaEngine_getSteadyClockTimeNano(uint64_t* out) {
     *out = filament::Engine::getSteadyClockTimeNano();
 }
 
-bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name) {
+bool FilaEngine_hasFeatureFlag(const FilaEngine* self, const char* name) {
     return fila::cpp(self)->hasFeatureFlag(name);
 }
 

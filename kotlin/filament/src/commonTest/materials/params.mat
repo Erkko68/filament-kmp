@@ -9,7 +9,7 @@ material {
     blending : masked,
     doubleSided : true,
     specularAntiAliasing : true,
-    variantFilter : [ directionalLighting, shadowReceiver, skinning, vsm, fog, ssr, stereo ],
+    variantFilter : [ shadowReceiver, skinning, vsm, fog, ssr, stereo ],
     parameters : [
         { type : bool,  name : b1 },
         { type : bool2, name : b2 },

@@ -439,7 +439,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
     /**
      * Get the light component instance for an entity.
      * @param entity Entity with a light component
-     * @return EntityInstance representing the light
+     * @return EntityInstance representing the light. Transient: keep the Entity, not the Instance, across frames.
      */
     fun getInstance(entity: Entity): EntityInstance = FilaLightManager_getInstance(nativeHandle, entity)
     /**

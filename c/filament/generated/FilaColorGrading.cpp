@@ -88,7 +88,7 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_fastMath(FilaColorGradingBuilde
     return fila::c(&fila::cpp(self)->fastMath(fastMath));
 }
 
-FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* self, FilaEngine* engine) {
+FilaColorGrading* FilaColorGradingBuilder_build(const FilaColorGradingBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

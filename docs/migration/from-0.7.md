@@ -1,10 +1,10 @@
 # Migrating from 0.7
 
-0.8.0 changes two parts of the `filament-compose` API: how a scene gets its background and environment
-lighting, and how a `GltfInstance` is animated. The other modules are unaffected, and so is the Filament
-version, so your `.filamat` files keep working.
+0.8.0 moves to Filament 1.78.0 and changes two parts of the `filament-compose` API: how a scene gets its
+background and environment lighting, and how a `GltfInstance` is animated. Filament 1.78.0 bumps the material
+version, so every `.filamat` must be recompiled.
 
-The compiler finds almost every change. The two it does not find are marked **silent** below.
+The compiler finds almost every change. The ones it does not find are marked **silent** below.
 
 ## Why
 
@@ -101,6 +101,19 @@ val scene = rememberFilamentScene {
 > - One state passed to several `GltfInstance`s of the same asset now plays them in step at normal
 >   speed. In 0.7 each instance advanced the clock, so two played at double speed; if you halved `speed`
 >   to compensate, restore it.
+
+### 4. Recompile your materials for Filament 1.78.0
+
+Filament 1.78.0 raises `MATERIAL_VERSION` to 78, and the engine rejects materials compiled for 77. Rebuild each
+`.mat` with the `matc` from the [1.78.0 release](https://github.com/google/filament/releases/tag/v1.78.0). matc
+now ignores the `directionalLighting` variant filter (and warns about it) and no longer accepts
+`dynamicLighting`, so remove them from `variantFilter`.
+
+> [!WARNING]
+> **Silent:** a `TransformManager` instance is only valid until the next `create`, `destroy`, `setParent`,
+> `commitLocalTransformTransaction`, or `Renderer.endFrame`/`skipFrame`, which now reorder the components. A
+> stale one doesn't crash; it changes another entity's transform. Keep the `Entity` and call `getInstance` each
+> time. `RenderableManager` and `LightManager` instances shouldn't be kept across frames either.
 
 ## New in 0.8, nothing to change
 

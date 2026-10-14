@@ -18,7 +18,7 @@ FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_name(FilaMorphTargetB
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withTangents(FilaMorphTargetBufferBuilder* self, bool enable);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(FilaMorphTargetBufferBuilder* self, bool enable);
-FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferBuilder* self, FilaEngine* engine);
+FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(const FilaMorphTargetBufferBuilder* self, FilaEngine* engine);
 
 // filament::MorphTargetBuffer
 void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat3* positions, uint32_t count, uint32_t offset);

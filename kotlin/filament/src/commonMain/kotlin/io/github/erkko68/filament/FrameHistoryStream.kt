@@ -16,20 +16,19 @@ class FrameHistoryStream(private val renderer: Renderer) : AutoCloseable {
     /** The frames new since the last call, oldest first; frames still awaiting presentation timing come later. */
     fun getNewFrames(): List<Result> {
         val capacity = renderer.maxFrameHistorySize
-        val results = mutableListOf<Result>()
         val handles = List(capacity) { FilaRendererFrameInfo_create() }
         try {
-            val missing = ByteArray(capacity)
-            do {
-                val n = interopScope {
-                    missing.usePinned { FilaFrameHistoryStream_getNewFrames(nativeHandle, toInterop(handles), it, capacity) }
-                }
+            val missingBefore = IntArray(capacity)
+            val n = interopScope {
+                missingBefore.usePinned { FilaFrameHistoryStream_getNewFrames(nativeHandle, toInterop(handles), it, capacity) }
+            }
+            return buildList {
                 for (i in 0 until n) {
                     val info = frameInfoOf(handles[i])
-                    results += Result(info.frameId, info.takeIf { missing[i].toInt() == 0 })
+                    for (id in info.frameId - missingBefore[i] until info.frameId) add(Result(id, null))
+                    add(Result(info.frameId, info))
                 }
-            } while (n == capacity) // more past the buffer: a gap of missing frames, or a full history
-            return results
+            }
         } finally {
             handles.forEach { FilaRendererFrameInfo_destroy(it) }
         }

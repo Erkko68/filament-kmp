@@ -8,9 +8,9 @@
 extern "C" {
 #endif
 
-// FrameHistoryStream::getNewFrames, oldest first, into up to outCapacity (> 0) FrameInfo handles; a missing
-// frame sets missing[i] and only out[i]'s frameId. Frames past outCapacity stay new for the next call.
-uint32_t FilaFrameHistoryStream_getNewFrames(FilaFrameHistoryStream* self, FilaRendererFrameInfo* const* out, bool* missing, uint32_t outCapacity);
+// FrameHistoryStream::getNewFrames' frames, oldest first, into up to outCapacity (the renderer's max frame history size)
+// FrameInfo handles; missingBefore[i] counts the missing frame IDs just before out[i].
+uint32_t FilaFrameHistoryStream_getNewFrames(FilaFrameHistoryStream* self, FilaRendererFrameInfo* const* out, uint32_t* missingBefore, uint32_t outCapacity);
 
 #ifdef __cplusplus
 }

@@ -229,6 +229,9 @@ internal external fun FilaRenderableManager_getPrimitiveCount(self: NativePointe
 @ExternalSymbolName("FilaRenderableManager_getInstanceCount")
 internal external fun FilaRenderableManager_getInstanceCount(self: NativePointer, instance: Int): Int
 
+@ExternalSymbolName("FilaRenderableManager_setInstanceCount")
+internal external fun FilaRenderableManager_setInstanceCount(self: NativePointer, instance: Int, instanceCount: Int)
+
 @ExternalSymbolName("FilaRenderableManager_setMaterialInstanceAt")
 internal external fun FilaRenderableManager_setMaterialInstanceAt(self: NativePointer, instance: Int, primitiveIndex: Int, materialInstance: NativePointer)
 

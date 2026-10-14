@@ -4,14 +4,15 @@
 extern "C" {
 
 uint32_t FilaFrameHistoryStream_getNewFrames(FilaFrameHistoryStream* self, FilaRendererFrameInfo* const* out,
-        bool* missing, uint32_t outCapacity) {
-    auto const range = fila::cpp(self)->getNewFrames();
-    uint32_t count = 0;
-    // Advancing marks the next frame processed, so stop on the last one that fits rather than step past it.
-    for (auto it = range.begin(); it != range.end(); ++it) {
-        missing[count] = !*it;
-        *fila::cpp(out[count]) = **it;
-        if (++count == outCapacity) break;
+        uint32_t* missingBefore, uint32_t outCapacity) {
+    // The range is consumed when getNewFrames returns, so drain it all; it holds at most outCapacity frames.
+    uint32_t count = 0, missing = 0;
+    for (auto const& result : fila::cpp(self)->getNewFrames()) {
+        if (!result) { ++missing; continue; }
+        if (count == outCapacity) break;
+        missingBefore[count] = missing;
+        *fila::cpp(out[count++]) = *result;
+        missing = 0;
     }
     return count;
 }

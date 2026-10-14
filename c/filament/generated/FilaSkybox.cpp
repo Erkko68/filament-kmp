@@ -32,7 +32,7 @@ FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t 
     return fila::c(&fila::cpp(self)->priority(static_cast<uint8_t>(priority)));
 }
 
-FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* self, FilaEngine* engine) {
+FilaSkybox* FilaSkyboxBuilder_build(const FilaSkyboxBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

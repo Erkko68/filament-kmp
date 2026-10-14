@@ -15,7 +15,7 @@ void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* self, const char* name);
-FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine);
+FilaBufferObject* FilaBufferObjectBuilder_build(const FilaBufferObjectBuilder* self, FilaEngine* engine);
 
 // filament::BufferObject
 void FilaBufferObject_setBuffer(FilaBufferObject* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);

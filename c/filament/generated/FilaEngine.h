@@ -92,7 +92,7 @@ FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 // skipped bool filament::Engine::isValid(const Sync * _Nullable p) const: uses filament::Sync
 // skipped Platform * _Nullable filament::Engine::getPlatform() const
 // skipped void * _Nullable filament::Engine::streamAlloc(size_t size, size_t alignment)
-// skipped utils::JobSystem & filament::Engine::getJobSystem()
+// skipped utils::JobSystem & filament::Engine::getJobSystem() const
 // skipped DebugRegistry & filament::Engine::getDebugRegistry(): uses filament::DebugRegistry
 // skipped bool * _Nullable filament::Engine::getFeatureFlagPtr(const char * _Nonnull name) const
 // skipped void filament::Engine::compile(backend::CompilerPriorityQueue priority, const Material * _Nonnull material, const View * _Nonnull view, FeatureState shadowReceiver, FeatureState skinning, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback): filament::Engine::compile\(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable\)
@@ -132,7 +132,7 @@ bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* self);
 bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self);
 void FilaEngine_getConfig(const FilaEngine* self, FilaEngineConfig* out);
 uint32_t FilaEngine_getMaxStereoscopicEyes(void);
-FilaUtilsEntityManager* FilaEngine_getEntityManager(FilaEngine* self);
+FilaUtilsEntityManager* FilaEngine_getEntityManager(const FilaEngine* self);
 FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* self);
 FilaLightManager* FilaEngine_getLightManager(FilaEngine* self);
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* self);
@@ -197,7 +197,7 @@ const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* self);
 FilaBackend FilaEngine_getBackend(const FilaEngine* self);
 void FilaEngine_execute(FilaEngine* self);
 void FilaEngine_getSteadyClockTimeNano(uint64_t* out);
-bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name);
+bool FilaEngine_hasFeatureFlag(const FilaEngine* self, const char* name);
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);
 bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* out);
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);

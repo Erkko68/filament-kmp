@@ -32,7 +32,8 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * Gets an Instance representing the transform component associated with the given Entity.
      *
      * @param e An Entity.
-     * @return The component's Instance, or 0 if it has none.
+     * @return The component's Instance, or 0 if it has none. Valid only until the next create, destroy, setParent,
+     *   commitLocalTransformTransaction, or Renderer.endFrame/skipFrame: keep the Entity, not the Instance.
      */
     fun getInstance(e: Entity): EntityInstance = FilaTransformManager_getInstance(nativeHandle, e)
 

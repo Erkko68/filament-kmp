@@ -292,7 +292,7 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloFalloff(FilaLightManager
     return fila::c(&fila::cpp(self)->sunHaloFalloff(haloFalloff));
 }
 
-FilaLightManagerBuilderResult FilaLightManagerBuilder_build(FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity) {
+FilaLightManagerBuilderResult FilaLightManagerBuilder_build(const FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity) {
     return static_cast<FilaLightManagerBuilderResult>(fila::cpp(self)->build(*fila::cpp(engine), utils::Entity::import(entity)));
 }
 

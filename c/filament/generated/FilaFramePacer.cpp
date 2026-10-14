@@ -132,7 +132,7 @@ bool FilaFramePacer_hasGpuFallenBehind(FilaFramePacer* self, FilaRenderer* rende
     return fila::cpp(self)->hasGpuFallenBehind(fila::cpp(renderer));
 }
 
-void FilaFramePacer_applyPresentationTime(FilaFramePacer* self, FilaRenderer* renderer) {
+void FilaFramePacer_applyPresentationTime(const FilaFramePacer* self, FilaRenderer* renderer) {
     fila::cpp(self)->applyPresentationTime(fila::cpp(renderer));
 }
 

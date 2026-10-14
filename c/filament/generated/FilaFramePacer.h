@@ -51,7 +51,7 @@ void FilaFramePacer_getConfiguration(const FilaFramePacer* self, FilaFramePacerC
 FilaFramePacerFrameStatus FilaFramePacer_setupFrame(FilaFramePacer* self, const FilaFramePacerVsyncTick* tick);
 bool FilaFramePacer_setupExtraFrame(FilaFramePacer* self);
 bool FilaFramePacer_hasGpuFallenBehind(FilaFramePacer* self, FilaRenderer* renderer);
-void FilaFramePacer_applyPresentationTime(FilaFramePacer* self, FilaRenderer* renderer);
+void FilaFramePacer_applyPresentationTime(const FilaFramePacer* self, FilaRenderer* renderer);
 void FilaFramePacer_getExpectedPresentationTime(const FilaFramePacer* self, int64_t* out);
 void FilaFramePacer_getRenderingDeadline(const FilaFramePacer* self, int64_t* out);
 void FilaFramePacer_getEffectiveLatency(const FilaFramePacer* self, int64_t* out);

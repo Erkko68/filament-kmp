@@ -1481,6 +1481,7 @@
 {"name":"FilaRenderableManager_getMorphTargetCount","returns":"i32","params":[["self","ptr"],["instance","i32"]]},
 {"name":"FilaRenderableManager_getPrimitiveCount","returns":"i32","params":[["self","ptr"],["instance","i32"]]},
 {"name":"FilaRenderableManager_getInstanceCount","returns":"i32","params":[["self","ptr"],["instance","i32"]]},
+{"name":"FilaRenderableManager_setInstanceCount","returns":"void","params":[["self","ptr"],["instance","i32"],["instanceCount","i32"]]},
 {"name":"FilaRenderableManager_setMaterialInstanceAt","returns":"void","params":[["self","ptr"],["instance","i32"],["primitiveIndex","i32"],["materialInstance","ptr"]]},
 {"name":"FilaRenderableManager_clearMaterialInstanceAt","returns":"void","params":[["self","ptr"],["instance","i32"],["primitiveIndex","i32"]]},
 {"name":"FilaRenderableManager_getMaterialInstanceAt","returns":"ptr","params":[["self","ptr"],["instance","i32"],["primitiveIndex","i32"]]},
@@ -1994,7 +1995,7 @@
 {"name":"FilaVsmShadowOptions_setLightBleedReduction","returns":"void","params":[["self","ptr"],["value","f32"]]}
 ],
 "filament/manual/FilaFrameHistoryStreamManual.h": [
-{"name":"FilaFrameHistoryStream_getNewFrames","returns":"i32","params":[["self","ptr"],["out","ptr"],["missing","ptr"],["outCapacity","i32"]]}
+{"name":"FilaFrameHistoryStream_getNewFrames","returns":"i32","params":[["self","ptr"],["out","ptr"],["missingBefore","ptr"],["outCapacity","i32"]]}
 ],
 "filament/manual/FilaFramePacerManual.h": [
 {"name":"FilaFramePacerVsyncTick_setTimelines","returns":"void","params":[["self","ptr"],["times","ptr"],["count","i32"]]}

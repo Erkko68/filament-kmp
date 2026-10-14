@@ -96,6 +96,7 @@ FilaMorphTargetBuffer* FilaRenderableManager_getMorphTargetBuffer(const FilaRend
 uint32_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* self, uint32_t instance);
 uint32_t FilaRenderableManager_getPrimitiveCount(const FilaRenderableManager* self, uint32_t instance);
 uint32_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* self, uint32_t instance);
+void FilaRenderableManager_setInstanceCount(FilaRenderableManager* self, uint32_t instance, uint32_t instanceCount);
 void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, const FilaMaterialInstance* materialInstance);
 void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
 FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);

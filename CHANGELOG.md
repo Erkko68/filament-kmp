@@ -18,8 +18,10 @@ Upgrading from 0.7? See the [migration guide](docs/migration/from-0.7.md).
 ### Added
 - **`rememberRenderTargetTexture(shadows = …)`** (`filament-compose`): the off-screen view takes a shadow technique, as `FilamentView` does.
 - **`NativeSurface(canvas)` on the JVM** (`filament`): render straight into a `java.awt.Canvas` in an AWT or Swing window on macOS, Linux and Windows, without `filament-compose`.
+- **`RenderableManager.setInstanceCount`** (`filament`): change how many instances a renderable draws; 0 skips it in every pass.
 
 ### Changed
+- **Filament 1.78.0** upstream; `MATERIAL_VERSION` is now 78, so recompile every `.filamat` with matc 1.78.0, and `TransformManager` instances no longer survive a frame.
 - **The skybox and environment are scene content** (`filament-compose`): `Skybox`, `IndirectLight` and `Environment` composables replace the `skyboxState`/`indirectLightState` parameters, `SkyboxState`, `IndirectLightState` and `SkyboxSource`.
 - **Environment loaders take the engine from the scene** (`filament-compose`): `rememberKTXEnvironment`/`rememberHDREnvironment`, renamed `rememberKtxEnvironment`/`rememberHdrEnvironment`, no longer need a hoisted engine, and intensity moved to `Environment(…, intensity = )`.
 - **`GltfInstance` takes one animation input** (`filament-compose`): `animationIndex`/`animationTime` are gone; pass an `AnimationState`, paused plus `seek` to hold a pose, or drive the `Animator` from `onUpdate`.
