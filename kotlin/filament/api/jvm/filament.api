@@ -1842,6 +1842,7 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;Lio/github/erkko68/filament/IndexBuffer;)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;Lio/github/erkko68/filament/IndexBuffer;II)V
 	public final fun setGlobalBlendOrderEnabledAt (IIZ)V
+	public final fun setInstanceCount (II)V
 	public final fun setLayerMask (III)V
 	public final fun setLightChannel (IIZ)V
 	public final fun setMaterialInstanceAt (IILio/github/erkko68/filament/MaterialInstance;)V

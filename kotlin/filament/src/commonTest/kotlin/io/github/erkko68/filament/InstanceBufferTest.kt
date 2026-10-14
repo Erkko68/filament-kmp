@@ -51,6 +51,11 @@ class InstanceBufferTest : FilamentTestFixture() {
             .build(engine, entity)
         val rm = engine.renderableManager
         assertEquals(3, rm.getInstanceCount(rm.getInstance(entity)))
+        // Fewer than the buffer holds, then none (drawn nowhere).
+        rm.setInstanceCount(rm.getInstance(entity), 2)
+        assertEquals(2, rm.getInstanceCount(rm.getInstance(entity)))
+        rm.setInstanceCount(rm.getInstance(entity), 0)
+        assertEquals(0, rm.getInstanceCount(rm.getInstance(entity)))
 
         engine.destroy(entity)
         EntityManager.get().destroy(entity)

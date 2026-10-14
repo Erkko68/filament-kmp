@@ -17,7 +17,7 @@ FilaRenderTargetBuilder* FilaRenderTargetBuilder_face(FilaRenderTargetBuilder* s
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layer);
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layerCount, uint32_t baseLayer);
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* self, uint32_t samples);
-FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* self, FilaEngine* engine);
+FilaRenderTarget* FilaRenderTargetBuilder_build(const FilaRenderTargetBuilder* self, FilaEngine* engine);
 
 // filament::RenderTarget
 FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);

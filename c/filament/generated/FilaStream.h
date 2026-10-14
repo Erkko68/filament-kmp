@@ -15,7 +15,7 @@ void FilaStreamBuilder_destroy(FilaStreamBuilder* self);
 FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width);
 FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height);
 FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* name);
-FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine);
+FilaStream* FilaStreamBuilder_build(const FilaStreamBuilder* self, FilaEngine* engine);
 
 // filament::Stream
 FilaStreamType FilaStream_getStreamType(const FilaStream* self);

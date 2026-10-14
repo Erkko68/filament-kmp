@@ -9,9 +9,9 @@ extern "C" {
 #endif
 
 // filament::SwapChain
-bool FilaSwapChain_isProtectedContentSupported(FilaEngine* engine);
-bool FilaSwapChain_isSRGBSwapChainSupported(FilaEngine* engine);
-bool FilaSwapChain_isMSAASwapChainSupported(FilaEngine* engine, uint32_t samples);
+bool FilaSwapChain_isProtectedContentSupported(const FilaEngine* engine);
+bool FilaSwapChain_isSRGBSwapChainSupported(const FilaEngine* engine);
+bool FilaSwapChain_isMSAASwapChainSupported(const FilaEngine* engine, uint32_t samples);
 int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self);
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy);
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* self);

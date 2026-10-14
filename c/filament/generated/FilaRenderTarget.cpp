@@ -36,7 +36,7 @@ FilaRenderTargetBuilder* FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder
     return fila::c(&fila::cpp(self)->samples(static_cast<uint8_t>(samples)));
 }
 
-FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* self, FilaEngine* engine) {
+FilaRenderTarget* FilaRenderTargetBuilder_build(const FilaRenderTargetBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

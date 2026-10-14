@@ -36,7 +36,7 @@ FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(
     return fila::c(&fila::cpp(self)->enableCustomMorphing(enable));
 }
 
-FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferBuilder* self, FilaEngine* engine) {
+FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(const FilaMorphTargetBufferBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

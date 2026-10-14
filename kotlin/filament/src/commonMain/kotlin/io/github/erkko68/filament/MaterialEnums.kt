@@ -39,9 +39,9 @@ enum class ReflectionMode { DEFAULT, SCREEN_SPACE }
  * [MaterialInstance.compile].
  */
 object UserVariantFilterBit {
-    /** Directional lighting */
+    /** Directional lighting; a specialization constant now, so filtering it only prunes runtime pipelines. */
     const val DIRECTIONAL_LIGHTING: Int = 0x01
-    /** Dynamic lighting */
+    /** Dynamic lighting; a specialization constant now, so filtering it only prunes runtime pipelines. */
     const val DYNAMIC_LIGHTING: Int = 0x02
     /** Shadow receiver */
     const val SHADOW_RECEIVER: Int = 0x04

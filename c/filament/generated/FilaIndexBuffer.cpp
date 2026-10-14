@@ -28,7 +28,7 @@ FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* sel
     return fila::c(&fila::cpp(self)->async(fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
 }
 
-FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine) {
+FilaIndexBuffer* FilaIndexBufferBuilder_build(const FilaIndexBufferBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

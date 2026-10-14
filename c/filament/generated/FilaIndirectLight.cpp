@@ -36,7 +36,7 @@ FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBui
     return fila::c(&fila::cpp(self)->rotation(fila::math<filament::math::mat3f>(*rotation)));
 }
 
-FilaIndirectLight* FilaIndirectLightBuilder_build(FilaIndirectLightBuilder* self, FilaEngine* engine) {
+FilaIndirectLight* FilaIndirectLightBuilder_build(const FilaIndirectLightBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

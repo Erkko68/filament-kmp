@@ -32,7 +32,7 @@ void FilaIBLPrefilterContextEquirectangularToCubemap_destroy(FilaIBLPrefilterCon
     delete fila::cpp(self);
 }
 
-FilaTexture* FilaIBLPrefilterContextEquirectangularToCubemap_invoke(FilaIBLPrefilterContextEquirectangularToCubemap* self, const FilaTexture* equirectangular, FilaTexture* outCubemap) {
+FilaTexture* FilaIBLPrefilterContextEquirectangularToCubemap_invoke(FilaIBLPrefilterContextEquirectangularToCubemap* self, FilaTexture* equirectangular, FilaTexture* outCubemap) {
     return fila::c(fila::cpp(self)->operator()(fila::cpp(equirectangular), fila::cpp(outCubemap)));
 }
 
@@ -112,11 +112,11 @@ void FilaIBLPrefilterContextIrradianceFilter_destroy(FilaIBLPrefilterContextIrra
     delete fila::cpp(self);
 }
 
-FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, const FilaIBLPrefilterContextIrradianceFilterOptions* options, const FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture) {
+FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, const FilaIBLPrefilterContextIrradianceFilterOptions* options, FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture) {
     return fila::c(fila::cpp(self)->operator()(*fila::cpp(options), fila::cpp(environmentCubemap), fila::cpp(outIrradianceTexture)));
 }
 
-FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, const FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture) {
+FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture) {
     return fila::c(fila::cpp(self)->operator()(fila::cpp(environmentCubemap), fila::cpp(outIrradianceTexture)));
 }
 
@@ -204,11 +204,11 @@ void FilaIBLPrefilterContextSpecularFilter_destroy(FilaIBLPrefilterContextSpecul
     delete fila::cpp(self);
 }
 
-FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, const FilaIBLPrefilterContextSpecularFilterOptions* options, const FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture) {
+FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, const FilaIBLPrefilterContextSpecularFilterOptions* options, FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture) {
     return fila::c(fila::cpp(self)->operator()(*fila::cpp(options), fila::cpp(environmentCubemap), fila::cpp(outReflectionsTexture)));
 }
 
-FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, const FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture) {
+FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture) {
     return fila::c(fila::cpp(self)->operator()(fila::cpp(environmentCubemap), fila::cpp(outReflectionsTexture)));
 }
 

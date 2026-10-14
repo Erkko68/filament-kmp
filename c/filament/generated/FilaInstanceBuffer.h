@@ -19,7 +19,7 @@ FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuil
 // filament::InstanceBuffer
 uint32_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self);
 void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, uint32_t count, uint32_t offset);
-void FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out);
+void FilaInstanceBuffer_getLocalTransform(const FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out);
 
 
 #ifdef __cplusplus

@@ -304,6 +304,10 @@ uint32_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* sel
     return static_cast<uint32_t>(fila::cpp(self)->getInstanceCount(filament::RenderableManager::Instance(instance)));
 }
 
+void FilaRenderableManager_setInstanceCount(FilaRenderableManager* self, uint32_t instance, uint32_t instanceCount) {
+    fila::cpp(self)->setInstanceCount(filament::RenderableManager::Instance(instance), static_cast<size_t>(instanceCount));
+}
+
 void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, const FilaMaterialInstance* materialInstance) {
     fila::cpp(self)->setMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), fila::cpp(materialInstance));
 }

@@ -16,7 +16,7 @@ FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* self, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user);
-FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine);
+FilaIndexBuffer* FilaIndexBufferBuilder_build(const FilaIndexBufferBuilder* self, FilaEngine* engine);
 
 // filament::IndexBuffer
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);

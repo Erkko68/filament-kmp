@@ -5,4 +5,4 @@ import io.github.erkko68.filament.interop.ExternalSymbolName
 import io.github.erkko68.filament.interop.NativePointer
 
 @ExternalSymbolName("FilaFrameHistoryStream_getNewFrames")
-internal external fun FilaFrameHistoryStream_getNewFrames(self: NativePointer, out: NativePointer, missing: NativePointer, outCapacity: Int): Int
+internal external fun FilaFrameHistoryStream_getNewFrames(self: NativePointer, out: NativePointer, missingBefore: NativePointer, outCapacity: Int): Int

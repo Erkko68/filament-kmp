@@ -1,6 +1,6 @@
 // Test-only LIT material for Tier C semantic frame assertions.
 // Solid base colour, receives + casts shadows. Variants trimmed hard, but
-// shadowReceiver/directionalLighting/vsm must stay: the tests assert shadow
+// shadowReceiver/vsm must stay: the tests assert shadow
 // presence and the PCF→VSM technique switch (the #64 soft-shadow panic class).
 //
 // Compile (all platforms, all backends) — must match the bundled Filament version:

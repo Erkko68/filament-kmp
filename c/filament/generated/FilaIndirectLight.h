@@ -17,7 +17,7 @@ FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_Texture(FilaIndire
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh);
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_intensity(FilaIndirectLightBuilder* self, float envIntensity);
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBuilder* self, const FilaMat3f* rotation);
-FilaIndirectLight* FilaIndirectLightBuilder_build(FilaIndirectLightBuilder* self, FilaEngine* engine);
+FilaIndirectLight* FilaIndirectLightBuilder_build(const FilaIndirectLightBuilder* self, FilaEngine* engine);
 
 // filament::IndirectLight
 void FilaIndirectLight_setIntensity(FilaIndirectLight* self, float intensity);

@@ -87,7 +87,7 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_spotLightCone(FilaLightManagerB
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunAngularRadius(FilaLightManagerBuilder* self, float angularRadiusDeg);
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloSize(FilaLightManagerBuilder* self, float haloSize);
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloFalloff(FilaLightManagerBuilder* self, float haloFalloff);
-FilaLightManagerBuilderResult FilaLightManagerBuilder_build(FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity);
+FilaLightManagerBuilderResult FilaLightManagerBuilder_build(const FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity);
 
 // filament::LightManager
 uint32_t FilaLightManager_getComponentCount(const FilaLightManager* self);

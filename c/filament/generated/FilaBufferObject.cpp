@@ -24,7 +24,7 @@ FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* s
     return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
 }
 
-FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine) {
+FilaBufferObject* FilaBufferObjectBuilder_build(const FilaBufferObjectBuilder* self, FilaEngine* engine) {
     return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 

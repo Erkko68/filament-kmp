@@ -15,7 +15,7 @@ void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self);
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_boneCount(FilaSkinningBufferBuilder* self, uint32_t boneCount);
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* self, bool initialize);
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_name(FilaSkinningBufferBuilder* self, const char* name);
-FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* self, FilaEngine* engine);
+FilaSkinningBuffer* FilaSkinningBufferBuilder_build(const FilaSkinningBufferBuilder* self, FilaEngine* engine);
 
 // filament::SkinningBuffer
 // skipped void filament::SkinningBuffer::setBones(Engine & engine, utils::Slice<const RenderableManager::Bone> transforms, size_t offset): .*\(.*utils::Slice.*\)
