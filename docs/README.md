@@ -20,6 +20,7 @@ docs/
 - **[Getting Started](guide/getting-started.md)** — add the dependency, configure each platform, render your first scene.
 - **[Modules](guide/modules.md)** — what each published artifact does, which dependency each target needs, and what Gradle actually downloads.
 - **[Using the Engine Without Compose](guide/engine.md)** — own the render loop: `Engine` / `View` / `Renderer` / `SwapChain`, your own surface on each platform, headless rendering and readback, glTF loading, lifecycle and threading.
+- **[Rendering into an AWT Window](guide/awt.md)** — JVM only: the raw engine in an AWT/Swing `Canvas`, threading, DPI, teardown, per-OS status.
 - **[Platform Notes](guide/platform-notes.md)** — backend selection, per-platform gotchas, web limits, desktop GPU frame sharing, error handling.
 
 ## Migration

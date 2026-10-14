@@ -93,7 +93,8 @@ view.viewport = Viewport(0, 0, (canvas.width * scale).toInt(), (canvas.height * 
 ```
 
 Set the viewport again when the canvas is resized, and destroy the swap chain before the canvas
-leaves its window. On macOS the canvas takes the Metal backend (the default).
+leaves its window. On macOS the canvas takes the Metal backend (the default). The full walkthrough,
+with threading, teardown and per-OS status, is [Rendering into an AWT Window](awt.md).
 
 > [!TIP]
 > Every rule in [Threading model](platform-notes.md#threading-model) applies here and is

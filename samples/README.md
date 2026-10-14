@@ -9,9 +9,10 @@ This directory contains multiplatform example applications demonstrating `filame
 | `androidApp/` | Android | Standard Android Compose app on the JNI Filament bindings (`libfilament-c.so`) |
 | `iosApp/` | iOS | Xcode project with a SwiftUI entry point embedding the Kotlin Multiplatform framework |
 | `desktopApp/` | JVM / Desktop | Compose Desktop app on the JNI Filament bindings |
+| `awtApp/` | JVM / Desktop | The raw engine in a plain AWT `Canvas`: no Compose, only the `filament` artifact ([guide](../docs/guide/awt.md)) |
 | `webApp/` | Browser / WASM | Compose for Web app on `filament-kmp.wasm` (+ `filamat-kmp.wasm` for the runtime material scene) |
 
-All apps share a common scene implementation in `shared/`:
+All Compose apps share a common scene implementation in `shared/`:
 
 - `commonMain` — Shared Compose scene code (models, lights, camera, post-processing).
 - `androidMain`, `iosMain`, `desktopMain`, `webMain` — Platform-specific entry points and resource loading.
@@ -26,6 +27,12 @@ All apps share a common scene implementation in `shared/`:
 **Desktop (JVM)**
 ```shell
 ./gradlew :samples:desktopApp:run
+```
+
+**AWT (JVM, no Compose)**
+```shell
+cd samples
+./gradlew :awtApp:run                  # or --args=opengl|vulkan|metal
 ```
 
 **iOS** — Open `samples/iosApp/iosApp.xcodeproj` in Xcode and run the scheme.

@@ -18,7 +18,8 @@ Filament KMP follows Filament's default backend — you typically don't need to 
 Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engine.create(Engine.Backend.OPENGL)`.
 
 > [!TIP]
-> If you see GPU crashes or rendering artifacts on a specific machine, **try the OpenGL backend** first — driver-level Vulkan bugs are far more common than OpenGL ones on consumer hardware.
+> If you see GPU crashes or rendering artifacts on a specific machine, **try the OpenGL backend** first
+> (except on Windows, where [OpenGL currently hangs](#opengl-on-windows-hangs-open-problem)) — driver-level Vulkan bugs are far more common than OpenGL ones on consumer hardware.
 
 ## Android
 
@@ -54,6 +55,12 @@ What changes for your app: the `Activity` is no longer recreated for the listed 
 On the **iOS Simulator**, enabling shadows (directional/spot) produces a fully black scene — the simulator's Metal implementation lacks the depth-texture features Filament's shadow pass needs, so the pass fails to black rather than erroring (basic unshadowed rendering still works). This is a simulator limitation, not a bindings bug: the identical code path renders shadows correctly on macOS (JVM, Metal) where the marshalling was validated. **Test shadows on a real iOS device**, where the full Metal feature set is available.
 
 ## JVM / Desktop
+
+### OpenGL on Windows hangs (open problem)
+
+With `Engine.Backend.OPENGL` on Windows, Filament's driver thread blocks after the first frame,
+with a window surface or a headless one. Use Vulkan, Filament's default there. Details in
+[Rendering into an AWT Window](awt.md#known-issue-opengl-on-windows).
 
 ### GPU-to-GPU frame sharing (experimental)
 
