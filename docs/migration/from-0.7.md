@@ -8,6 +8,9 @@ The compiler finds almost every change. The ones it does not find are marked **s
 
 ## Why
 
+Every API change aims to remove the paths that hurt and to keep one set of rules across the module. Each change
+below fixes a place that broke those rules.
+
 **The skybox and the environment lighting were the odd ones out.** The API has one rule for how you
 change something: a value parameter when only your app writes it, a `remember*State` holder when the
 framework writes it back (the camera, an animation). Nothing in the framework ever wrote to
@@ -23,6 +26,10 @@ inside the scene, its loader takes the engine from the scene like `rememberGltfA
 **`GltfInstance` had two animation inputs, and one silently lost.** `animationIndex`/`animationTime` were
 ignored whenever `animationState` was set. There is now one input, `animationState`, and it covers what
 the other two did.
+
+**Tell us what you think.** Almost no feedback on the API has come in so far, so every comment helps:
+suggestions, things that got in your way, or just a note that it works for you. Post in the
+[API feedback discussion](https://github.com/Erkko68/filament-kmp/discussions/204).
 
 ## How
 
