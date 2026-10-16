@@ -1,9 +1,12 @@
+import buildlogic.jvm.BytecodeLevelTask
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SourcesJar
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
     id("com.vanniktech.maven.publish")
@@ -66,3 +69,29 @@ mavenPublishing {
         signAllPublications()
     }
 }
+
+// A published JVM jar and everything it pulls at runtime must load on the floor we declare
+// (a dependency shipping newer bytecode would silently raise consumers' required JDK).
+val checkJvmBytecode = tasks.register<BytecodeLevelTask>("checkJvmBytecode") {
+    report.set(layout.buildDirectory.file("reports/jvmBytecode.txt"))
+}
+pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+    val kotlin = the<KotlinMultiplatformExtension>()
+    checkJvmBytecode.configure {
+        val jvm = kotlin.targets.withType<KotlinJvmTarget>().singleOrNull()
+        enabled = jvm != null // :android has no jvm() target
+        if (jvm != null) {
+            classpath.from(configurations.named("jvmRuntimeClasspath"), tasks.named("jvmJar"))
+            release.set(jvm.compilerOptions.jvmTarget.map { it.target.toInt() })
+        }
+    }
+}
+pluginManager.withPlugin("java") {
+    val java = the<JavaPluginExtension>()
+    checkJvmBytecode.configure {
+        classpath.from(configurations.named("runtimeClasspath"), tasks.named("jar"))
+        release.set(provider { java.targetCompatibility.majorVersion.toInt() })
+    }
+}
+tasks.matching { it.name == "check" }.configureEach { dependsOn(checkJvmBytecode) }
+tasks.withType<AbstractPublishToMaven>().configureEach { dependsOn(checkJvmBytecode) }
