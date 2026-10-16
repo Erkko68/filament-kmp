@@ -42,8 +42,8 @@ kotlin {
         compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
         minSdk     = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
 
-        // Android must NOT inherit the desktop JVM 22 floor: inline functions
-        // (math utils etc.) compiled at 22 can't inline into consumers building
+        // Android must NOT inherit the desktop JVM 17 floor: inline functions
+        // (math utils etc.) compiled at 17 can't inline into consumers building
         // at the conventional Android target (issue #1).
         compilerOptions {
             jvmTarget.set(catalogJvmTarget("android-jvmTarget"))
