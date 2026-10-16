@@ -57,7 +57,9 @@ kotlin {
             api(libs.compose.foundation)
             api(libs.compose.ui)
         }
-        jvmMain.dependencies {
+        // Skiko's native runtime is the app's pick (compose.desktop.currentOs); here only for our own tests,
+        // since in jvmMain it would publish the build host's runtime to every consumer.
+        jvmTest.dependencies {
             implementation(compose.desktop.currentOs)
         }
         commonTest.dependencies {

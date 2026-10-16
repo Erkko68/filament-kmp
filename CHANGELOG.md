@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Fixed
+- **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
+
 ## [0.8.0] — 2026-10-14
 
 The skybox and environment were the only parts of the Compose API that needed hoisted state nothing ever wrote back, so they now follow the same rules as everything else. Feedback on the API is very welcome, even a short "this works for me", in the [API feedback discussion](https://github.com/Erkko68/filament-kmp/discussions/204).
