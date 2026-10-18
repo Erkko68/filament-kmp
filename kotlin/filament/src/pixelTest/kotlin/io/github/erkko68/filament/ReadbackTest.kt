@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.toInterop
 import io.github.erkko68.filament.interop.InteropScope
 import io.github.erkko68.filament.interop.readInts
 import io.github.erkko68.filament.testsupport.IgnoreJs
@@ -34,7 +35,7 @@ class ReadbackTest : RealBackendFixture() {
 
         // The memory has to outlive the readback, so the scope is only released once it landed.
         val memory = InteropScope()
-        val address = memory.toInterop(IntArray(w * h))
+        val address = memory.toInterop(IntArray(w * h), w * h)
         val nativeDone = ReadbackFlag()
         val bytes = ByteArray(w * h * 4)
         val bytesDone = ReadbackFlag()

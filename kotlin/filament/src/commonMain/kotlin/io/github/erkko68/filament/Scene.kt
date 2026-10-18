@@ -1,6 +1,7 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.capi.*
+import io.github.erkko68.filament.interop.toInterop
 import io.github.erkko68.filament.interop.NativePointer
 import io.github.erkko68.filament.interop.NullPointer
 import io.github.erkko68.filament.interop.interopScope
@@ -61,7 +62,7 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
      * @param entities Array of entity IDs to add
      */
     fun addEntities(entities: IntArray) = interopScope {
-        FilaScene_addEntities(nativeHandle, toInterop(entities), entities.size)
+        FilaScene_addEntities(nativeHandle, toInterop(entities, entities.size), entities.size)
     }
 
     /**
@@ -77,7 +78,7 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
      * @param entities Array of entity IDs to remove
      */
     fun removeEntities(entities: IntArray) = interopScope {
-        FilaScene_removeEntities(nativeHandle, toInterop(entities), entities.size)
+        FilaScene_removeEntities(nativeHandle, toInterop(entities, entities.size), entities.size)
     }
 
     /** Removes all Renderables and Lights from this scene. */
@@ -119,6 +120,6 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
      */
     fun forEach(functor: (Entity) -> Unit) {
         val count = FilaScene_forEach(nativeHandle, NullPointer, 0)
-        IntArray(count).also { out -> out.usePinned { FilaScene_forEach(nativeHandle, it, count) } }.forEach(functor)
+        IntArray(count).also { out -> out.usePinned(count) { FilaScene_forEach(nativeHandle, it, count) } }.forEach(functor)
     }
 }

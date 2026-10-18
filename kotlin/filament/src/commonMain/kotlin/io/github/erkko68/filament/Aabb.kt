@@ -39,10 +39,10 @@ class Aabb(
     }
 
     /** The maximum signed distance from [p] to the box: negative if the box contains [p]. */
-    fun contains(p: FloatArray): Float = useNative { a -> p.usePinned { FilaAabb_contains(a, it) } }
+    fun contains(p: FloatArray): Float = useNative { a -> p.usePinned(3) { FilaAabb_contains(a, it) } }
 
     /** The bounding box of this box transformed by the affine transform [m] (`mat4f`). */
-    fun transform(m: FloatArray): Aabb = useNative { a -> aabb { out -> m.usePinned { FilaAabb_transform_mat4f(a, it, out) } } }
+    fun transform(m: FloatArray): Aabb = useNative { a -> aabb { out -> m.usePinned(16) { FilaAabb_transform_mat4f(a, it, out) } } }
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is Aabb && min.contentEquals(other.min) && max.contentEquals(other.max))
@@ -54,8 +54,8 @@ class Aabb(
     /** A native copy of this box for the duration of [block]. */
     internal fun <T> useNative(block: (NativePointer) -> T): T = withHandle({ FilaAabb_create() }, { FilaAabb_destroy(it) }) { a ->
         interopScope {
-            FilaAabb_setMin(a, toInterop(min))
-            FilaAabb_setMax(a, toInterop(max))
+            FilaAabb_setMin(a, toInterop(min, 3))
+            FilaAabb_setMax(a, toInterop(max, 3))
         }
         block(a)
     }
@@ -63,7 +63,7 @@ class Aabb(
     companion object {
         /** The bounding box of [box] transformed by the linear transform [m] (`mat3f`) and the translation [t]. */
         fun transform(m: FloatArray, t: FloatArray, box: Aabb): Aabb =
-            box.useNative { a -> aabb { out -> interopScope { FilaAabb_transform_mat3f_float3_Aabb(toInterop(m), toInterop(t), a, out) } } }
+            box.useNative { a -> aabb { out -> interopScope { FilaAabb_transform_mat3f_float3_Aabb(toInterop(m, 9), toInterop(t, 3), a, out) } } }
     }
 }
 

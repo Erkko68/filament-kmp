@@ -67,6 +67,12 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * - MAT3/MAT4: 3x3 or 4x4 floating-point matrices
      */
     enum class FloatElement { FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4 }
+
+    // Values per element, for the length an array of `count` elements must have.
+    private val BooleanElement.width get() = ordinal + 1
+    private val IntElement.width get() = ordinal + 1
+    private val UIntElement.width get() = ordinal + 1
+    private val FloatElement.width get() = when (this) { FloatElement.MAT3 -> 9; FloatElement.MAT4 -> 16; else -> ordinal + 1 }
     
     /**
      * Stencil test operation determines how the stencil buffer is modified.
@@ -186,7 +192,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     fun setParameter(name: String, element: BooleanElement, v: BooleanArray, offset: Int, count: Int) {
         // C bool is one byte.
         val bools = ByteArray(v.size - offset) { if (v[offset + it]) 1 else 0 }
-        bools.usePinned { p ->
+        bools.usePinned(count * element.width) { p ->
             name.useCString {
                 when (element) {
                     BooleanElement.BOOL -> FilaMaterialInstance_setParameter_bool_size_t(nativeHandle, it, p, count)
@@ -207,7 +213,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param count Number of elements to copy
      */
     fun setParameter(name: String, element: IntElement, v: IntArray, offset: Int, count: Int) {
-        v.copyOfRange(offset, v.size).usePinned { p ->
+        v.copyOfRange(offset, v.size).usePinned(count * element.width) { p ->
             name.useCString {
                 when (element) {
                     IntElement.INT -> FilaMaterialInstance_setParameter_int32_t_size_t(nativeHandle, it, p, count)
@@ -228,7 +234,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param count Number of elements to copy
      */
     fun setParameter(name: String, element: UIntElement, v: IntArray, offset: Int, count: Int) {
-        v.copyOfRange(offset, v.size).usePinned { p ->
+        v.copyOfRange(offset, v.size).usePinned(count * element.width) { p ->
             name.useCString {
                 when (element) {
                     UIntElement.UINT -> FilaMaterialInstance_setParameter_uint32_t_size_t(nativeHandle, it, p, count)
@@ -249,7 +255,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param count Number of elements to copy
      */
     fun setParameter(name: String, element: FloatElement, v: FloatArray, offset: Int, count: Int) {
-        v.copyOfRange(offset, v.size).usePinned { p ->
+        v.copyOfRange(offset, v.size).usePinned(count * element.width) { p ->
             name.useCString {
                 when (element) {
                     FloatElement.FLOAT -> FilaMaterialInstance_setParameter_float_size_t(nativeHandle, it, p, count)
@@ -273,7 +279,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param b Blue channel [0, 1]
      */
     fun setParameter(name: String, type: RgbType, r: Float, g: Float, b: Float) {
-        floatArrayOf(r, g, b).usePinned { c -> name.useCString { FilaMaterialInstance_setParameter_RgbType_float3(nativeHandle, it, type.ordinal, c) } }
+        floatArrayOf(r, g, b).usePinned(3) { c -> name.useCString { FilaMaterialInstance_setParameter_RgbType_float3(nativeHandle, it, type.ordinal, c) } }
     }
     /**
      * Sets an RGBA color parameter, converted to linear from [type]'s space.
@@ -286,7 +292,7 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param a Alpha channel [0, 1]
      */
     fun setParameter(name: String, type: RgbaType, r: Float, g: Float, b: Float, a: Float) {
-        floatArrayOf(r, g, b, a).usePinned { c -> name.useCString { FilaMaterialInstance_setParameter_RgbaType_float4(nativeHandle, it, type.ordinal, c) } }
+        floatArrayOf(r, g, b, a).usePinned(4) { c -> name.useCString { FilaMaterialInstance_setParameter_RgbaType_float4(nativeHandle, it, type.ordinal, c) } }
     }
 
     /**
@@ -299,11 +305,11 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     fun getParameter(name: String, element: FloatElement): FloatArray = name.useCString {
         when (element) {
             FloatElement.FLOAT -> floatArrayOf(FilaMaterialInstance_getParameter_float(nativeHandle, it))
-            FloatElement.FLOAT2 -> FloatArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_float2(nativeHandle, it, o) } }
-            FloatElement.FLOAT3 -> FloatArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_float3(nativeHandle, it, o) } }
-            FloatElement.FLOAT4 -> FloatArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_float4(nativeHandle, it, o) } }
-            FloatElement.MAT3 -> FloatArray(9).apply { usePinned { o -> FilaMaterialInstance_getParameter_mat3f(nativeHandle, it, o) } }
-            FloatElement.MAT4 -> FloatArray(16).apply { usePinned { o -> FilaMaterialInstance_getParameter_mat4f(nativeHandle, it, o) } }
+            FloatElement.FLOAT2 -> FloatArray(2).apply { usePinned(2) { o -> FilaMaterialInstance_getParameter_float2(nativeHandle, it, o) } }
+            FloatElement.FLOAT3 -> FloatArray(3).apply { usePinned(3) { o -> FilaMaterialInstance_getParameter_float3(nativeHandle, it, o) } }
+            FloatElement.FLOAT4 -> FloatArray(4).apply { usePinned(4) { o -> FilaMaterialInstance_getParameter_float4(nativeHandle, it, o) } }
+            FloatElement.MAT3 -> FloatArray(9).apply { usePinned(9) { o -> FilaMaterialInstance_getParameter_mat3f(nativeHandle, it, o) } }
+            FloatElement.MAT4 -> FloatArray(16).apply { usePinned(16) { o -> FilaMaterialInstance_getParameter_mat4f(nativeHandle, it, o) } }
         }
     }
     /**
@@ -316,9 +322,9 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     fun getParameter(name: String, element: IntElement): IntArray = name.useCString {
         when (element) {
             IntElement.INT -> intArrayOf(FilaMaterialInstance_getParameter_int32_t(nativeHandle, it))
-            IntElement.INT2 -> IntArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_int2(nativeHandle, it, o) } }
-            IntElement.INT3 -> IntArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_int3(nativeHandle, it, o) } }
-            IntElement.INT4 -> IntArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_int4(nativeHandle, it, o) } }
+            IntElement.INT2 -> IntArray(2).apply { usePinned(2) { o -> FilaMaterialInstance_getParameter_int2(nativeHandle, it, o) } }
+            IntElement.INT3 -> IntArray(3).apply { usePinned(3) { o -> FilaMaterialInstance_getParameter_int3(nativeHandle, it, o) } }
+            IntElement.INT4 -> IntArray(4).apply { usePinned(4) { o -> FilaMaterialInstance_getParameter_int4(nativeHandle, it, o) } }
         }
     }
     /**
@@ -331,9 +337,9 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
     fun getParameter(name: String, element: UIntElement): IntArray = name.useCString {
         when (element) {
             UIntElement.UINT -> intArrayOf(FilaMaterialInstance_getParameter_uint32_t(nativeHandle, it))
-            UIntElement.UINT2 -> IntArray(2).apply { usePinned { o -> FilaMaterialInstance_getParameter_uint2(nativeHandle, it, o) } }
-            UIntElement.UINT3 -> IntArray(3).apply { usePinned { o -> FilaMaterialInstance_getParameter_uint3(nativeHandle, it, o) } }
-            UIntElement.UINT4 -> IntArray(4).apply { usePinned { o -> FilaMaterialInstance_getParameter_uint4(nativeHandle, it, o) } }
+            UIntElement.UINT2 -> IntArray(2).apply { usePinned(2) { o -> FilaMaterialInstance_getParameter_uint2(nativeHandle, it, o) } }
+            UIntElement.UINT3 -> IntArray(3).apply { usePinned(3) { o -> FilaMaterialInstance_getParameter_uint3(nativeHandle, it, o) } }
+            UIntElement.UINT4 -> IntArray(4).apply { usePinned(4) { o -> FilaMaterialInstance_getParameter_uint4(nativeHandle, it, o) } }
         }
     }
 

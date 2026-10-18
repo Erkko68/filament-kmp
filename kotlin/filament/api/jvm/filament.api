@@ -3087,18 +3087,32 @@ public final class io/github/erkko68/filament/interop/Callbacks {
 
 public final class io/github/erkko68/filament/interop/InteropKt {
 	public static final fun interopScope (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun requireElements (II)V
 	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;Ljava/lang/String;)J
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;[BI)J
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;[DI)J
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;[FI)J
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;[II)J
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;[JI)J
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;[SI)J
+	public static final fun upload ([BILkotlin/jvm/functions/Function0;)Lio/github/erkko68/filament/interop/Upload;
 	public static final fun useCString (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun usePinned ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun usePinned ([DLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun usePinned ([FLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun usePinned ([ILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun usePinned ([JLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun usePinned ([SLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun usePinned ([BILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun usePinned ([DILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun usePinned ([FILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun usePinned ([IILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun usePinned ([JILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun usePinned ([SILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
 public final class io/github/erkko68/filament/interop/InteropScope {
 	public fun <init> ()V
+	public final fun copyToInterop ([B)J
+	public final fun copyToInterop ([D)J
+	public final fun copyToInterop ([F)J
+	public final fun copyToInterop ([I)J
+	public final fun copyToInterop ([J)J
+	public final fun copyToInterop ([S)J
 	public final fun fromInterop (J[B)V
 	public final fun fromInterop (J[D)V
 	public final fun fromInterop (J[F)V
@@ -3107,12 +3121,6 @@ public final class io/github/erkko68/filament/interop/InteropScope {
 	public final fun fromInterop (J[S)V
 	public final fun release ()V
 	public final fun toInterop (Ljava/util/List;)J
-	public final fun toInterop ([B)J
-	public final fun toInterop ([D)J
-	public final fun toInterop ([F)J
-	public final fun toInterop ([I)J
-	public final fun toInterop ([J)J
-	public final fun toInterop ([S)J
 }
 
 public final class io/github/erkko68/filament/interop/Interop_jniKt {
@@ -3123,7 +3131,22 @@ public final class io/github/erkko68/filament/interop/Interop_jniKt {
 	public static final fun readInts (JI)[I
 	public static final fun readPointers (JI)Ljava/util/List;
 	public static final fun stringFromInterop (J)Ljava/lang/String;
-	public static final fun upload ([BILkotlin/jvm/functions/Function0;)Lio/github/erkko68/filament/interop/Upload;
+}
+
+public final class io/github/erkko68/filament/interop/MeshInputs {
+	public fun <init> ()V
+	public final fun getTriangles ()I
+	public final fun getVertices ()I
+	public final fun setTriangles (I)V
+	public final fun setVertices (I)V
+	public final fun shortfall ()Ljava/lang/String;
+	public final fun triangleArray (I)V
+	public final fun vertexArray (Ljava/lang/String;IIII)V
+	public static synthetic fun vertexArray$default (Lio/github/erkko68/filament/interop/MeshInputs;Ljava/lang/String;IIIIILjava/lang/Object;)V
+}
+
+public final class io/github/erkko68/filament/interop/MeshInputsKt {
+	public static final fun strided (IIII)I
 }
 
 public final class io/github/erkko68/filament/interop/Upload {

@@ -14,7 +14,7 @@ class InstanceBuffer @InternalFilamentApi constructor(internal var nativeHandle:
     val nativeObject: NativePointer get() = nativeHandle
 
     /** Builds an InstanceBuffer of [instanceCount] instances, 1 to [Engine.maxAutomaticInstances]. */
-    class Builder(instanceCount: Int) {
+    class Builder(private val instanceCount: Int) {
         private val nativeBuilder = FilaInstanceBufferBuilder_create(instanceCount)
         private var localTransforms: FloatArray? = null
 
@@ -28,7 +28,7 @@ class InstanceBuffer @InternalFilamentApi constructor(internal var nativeHandle:
         fun build(engine: Engine): InstanceBuffer {
             // C++ reads the transforms in build(), so they're only handed over here.
             val handle = interopScope {
-                FilaInstanceBufferBuilder_localTransforms(nativeBuilder, localTransforms?.let { toInterop(it) } ?: NullPointer)
+                FilaInstanceBufferBuilder_localTransforms(nativeBuilder, localTransforms?.let { toInterop(it, instanceCount * 16) } ?: NullPointer)
                 FilaInstanceBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             }
             FilaInstanceBufferBuilder_destroy(nativeBuilder)
@@ -42,7 +42,7 @@ class InstanceBuffer @InternalFilamentApi constructor(internal var nativeHandle:
     /** Sets [count] local transforms (`mat4f`s in [localTransforms]), starting at instance [offset]. */
     fun setLocalTransforms(localTransforms: FloatArray, count: Int = localTransforms.size / 16, offset: Int = 0) {
         require(localTransforms.size >= count * 16) { "$count transforms need ${count * 16} floats, not ${localTransforms.size}" }
-        localTransforms.usePinned { FilaInstanceBuffer_setLocalTransforms(nativeHandle, it, count, offset) }
+        localTransforms.usePinned(count * 16) { FilaInstanceBuffer_setLocalTransforms(nativeHandle, it, count, offset) }
     }
 
     /** The local transform of instance [index], a `mat4f`. */

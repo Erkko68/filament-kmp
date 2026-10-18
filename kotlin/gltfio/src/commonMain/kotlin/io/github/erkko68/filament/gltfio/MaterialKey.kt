@@ -154,7 +154,7 @@ internal inline fun <R> MaterialKey.useNative(block: (NativePointer) -> R): R {
 /** A native copy of this map (C enums, one int each) for [block]; what C changed in it is copied back. */
 internal inline fun <R> UvMap.useNative(block: (NativePointer, Int) -> R): R {
     val sets = IntArray(size) { this[it].ordinal }
-    return sets.usePinned { block(it, size) }.also { sets.forEachIndexed { i, v -> this[i] = UvSet.entries[v] } }
+    return sets.usePinned(size) { block(it, size) }.also { sets.forEachIndexed { i, v -> this[i] = UvSet.entries[v] } }
 }
 
 @PublishedApi

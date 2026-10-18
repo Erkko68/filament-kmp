@@ -141,7 +141,7 @@ class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativeP
      */
     fun setAcquiredImage(image: NativePointer, transform: FloatArray = IDENTITY, release: (image: NativePointer) -> Unit) {
         val userData = Callbacks.register(once = true, release)
-        transform.usePinned { FilaStream_setAcquiredImage_Callback_void_mat3f(nativeHandle, image, Callbacks.argUser, userData, it) }
+        transform.usePinned(9) { FilaStream_setAcquiredImage_Callback_void_mat3f(nativeHandle, image, Callbacks.argUser, userData, it) }
     }
 
     /**
@@ -165,7 +165,7 @@ class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativeP
      *
      * @return Timestamp in nanoseconds (monotonically increasing).
      */
-    val timestamp: Long get() = LongArray(1).also { t -> t.usePinned { FilaStream_getTimestamp(nativeHandle, it) } }[0]
+    val timestamp: Long get() = LongArray(1).also { t -> t.usePinned(1) { FilaStream_getTimestamp(nativeHandle, it) } }[0]
 
     private companion object {
         val IDENTITY = floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)

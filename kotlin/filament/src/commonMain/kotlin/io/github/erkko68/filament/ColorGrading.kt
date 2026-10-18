@@ -189,7 +189,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          */
         fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder {
             interopScope {
-                FilaColorGradingBuilder_channelMixer(nativeHandle, toInterop(outRed), toInterop(outGreen), toInterop(outBlue))
+                FilaColorGradingBuilder_channelMixer(nativeHandle, toInterop(outRed, 3), toInterop(outGreen, 3), toInterop(outBlue, 3))
             }
             return this
         }
@@ -207,7 +207,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          */
         fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder {
             interopScope {
-                FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, toInterop(shadows), toInterop(midtones), toInterop(highlights), toInterop(ranges))
+                FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, toInterop(shadows, 4), toInterop(midtones, 4), toInterop(highlights, 4), toInterop(ranges, 4))
             }
             return this
         }
@@ -224,7 +224,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          */
         fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder {
             interopScope {
-                FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, toInterop(slope), toInterop(offset), toInterop(power))
+                FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, toInterop(slope, 3), toInterop(offset, 3), toInterop(power, 3))
             }
             return this
         }
@@ -272,7 +272,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          */
         fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
             interopScope {
-                FilaColorGradingBuilder_curves(nativeHandle, toInterop(shadowGamma), toInterop(midPoint), toInterop(highlightScale))
+                FilaColorGradingBuilder_curves(nativeHandle, toInterop(shadowGamma, 3), toInterop(midPoint, 3), toInterop(highlightScale, 3))
             }
             return this
         }
@@ -287,7 +287,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return This Builder, for chaining calls
          */
         fun customLut(data: FloatArray, dimension: Int): Builder {
-            data.usePinned { pinned ->
+            data.usePinned(dimension * dimension * dimension * 3) { pinned ->
                 FilaColorGradingBuilder_customLut(nativeHandle, pinned, data.size / 3, dimension)
             }
             return this
@@ -314,14 +314,14 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
             val p = colorSpace.primaries
             withHandle({ FilaColorPrimaries_create() }, { FilaColorPrimaries_destroy(it) }) { primaries ->
                 interopScope {
-                    FilaColorPrimaries_setR(primaries, toInterop(p.r))
-                    FilaColorPrimaries_setG(primaries, toInterop(p.g))
-                    FilaColorPrimaries_setB(primaries, toInterop(p.b))
+                    FilaColorPrimaries_setR(primaries, toInterop(p.r, 2))
+                    FilaColorPrimaries_setG(primaries, toInterop(p.g, 2))
+                    FilaColorPrimaries_setB(primaries, toInterop(p.b, 2))
                 }
                 val t = colorSpace.transferFunction
                 withHandle({ FilaColorTransferFunction_create_double_double(t.a, t.b, t.c, t.d, t.e, t.f, t.g) },
                     { FilaColorTransferFunction_destroy(it) }) { tf ->
-                    withHandle({ interopScope { FilaColorColorSpace_create(primaries, tf, toInterop(colorSpace.whitePoint)) } },
+                    withHandle({ interopScope { FilaColorColorSpace_create(primaries, tf, toInterop(colorSpace.whitePoint, 2)) } },
                         { FilaColorColorSpace_destroy(it) }) { FilaColorGradingBuilder_outputColorSpace(nativeHandle, it) }
                 }
             }

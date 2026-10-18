@@ -47,7 +47,7 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
     fun getEntity(i: EntityInstance): Entity = FilaTransformManager_getEntity(nativeHandle, i)
 
     /** All the entities managed by this manager, in no particular order. */
-    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned { FilaTransformManager_getAllEntities(nativeHandle, it, a.size) } }
+    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned(a.size) { FilaTransformManager_getAllEntities(nativeHandle, it, a.size) } }
 
     /**
      * Enables or disables the accurate translation mode (disabled by default).
@@ -76,11 +76,11 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * @param localTransform The transform to initialize the transform component with.
      */
     fun create(entity: Entity, parent: EntityInstance, localTransform: FloatArray) =
-        localTransform.usePinned { FilaTransformManager_create_mat4f(nativeHandle, entity, parent, it) }
+        localTransform.usePinned(16) { FilaTransformManager_create_mat4f(nativeHandle, entity, parent, it) }
 
     /** Double-precision [create]. */
     fun create(entity: Entity, parent: EntityInstance, localTransform: DoubleArray) =
-        localTransform.usePinned { FilaTransformManager_create_mat4(nativeHandle, entity, parent, it) }
+        localTransform.usePinned(16) { FilaTransformManager_create_mat4(nativeHandle, entity, parent, it) }
 
     /**
      * Destroys this component from the given entity; its children are orphaned.
@@ -119,7 +119,7 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * @return The number of children written.
      */
     fun getChildren(i: EntityInstance, children: IntArray): Int =
-        children.usePinned { FilaTransformManager_getChildren(nativeHandle, i, it, children.size) }
+        children.usePinned(children.size) { FilaTransformManager_getChildren(nativeHandle, i, it, children.size) }
 
     /**
      * Sets a local transform of a transform component (relative to the parent).
@@ -128,11 +128,11 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * @param localTransform The local transform.
      */
     fun setTransform(ci: EntityInstance, localTransform: FloatArray) =
-        localTransform.usePinned { FilaTransformManager_setTransform_mat4f(nativeHandle, ci, it) }
+        localTransform.usePinned(16) { FilaTransformManager_setTransform_mat4f(nativeHandle, ci, it) }
 
     /** Double-precision [setTransform]. */
     fun setTransform(ci: EntityInstance, localTransform: DoubleArray) =
-        localTransform.usePinned { FilaTransformManager_setTransform_mat4(nativeHandle, ci, it) }
+        localTransform.usePinned(16) { FilaTransformManager_setTransform_mat4(nativeHandle, ci, it) }
 
     /**
      * Returns the local transform of a transform component (relative to the parent).
@@ -141,11 +141,11 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * @param out Receives the transform; a new array by default.
      */
     fun getTransform(ci: EntityInstance, out: FloatArray = FloatArray(16)): FloatArray =
-        out.also { o -> o.usePinned { FilaTransformManager_getTransform(nativeHandle, ci, it) } }
+        out.also { o -> o.usePinned(16) { FilaTransformManager_getTransform(nativeHandle, ci, it) } }
 
     /** Double-precision [getTransform]. */
     fun getTransformAccurate(ci: EntityInstance, out: DoubleArray = DoubleArray(16)): DoubleArray =
-        out.also { o -> o.usePinned { FilaTransformManager_getTransformAccurate(nativeHandle, ci, it) } }
+        out.also { o -> o.usePinned(16) { FilaTransformManager_getTransformAccurate(nativeHandle, ci, it) } }
 
     /**
      * Returns the world transform of a transform component.
@@ -154,11 +154,11 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * @param out Receives the transform; a new array by default.
      */
     fun getWorldTransform(ci: EntityInstance, out: FloatArray = FloatArray(16)): FloatArray =
-        out.also { o -> o.usePinned { FilaTransformManager_getWorldTransform(nativeHandle, ci, it) } }
+        out.also { o -> o.usePinned(16) { FilaTransformManager_getWorldTransform(nativeHandle, ci, it) } }
 
     /** Double-precision [getWorldTransform]. */
     fun getWorldTransformAccurate(ci: EntityInstance, out: DoubleArray = DoubleArray(16)): DoubleArray =
-        out.also { o -> o.usePinned { FilaTransformManager_getWorldTransformAccurate(nativeHandle, ci, it) } }
+        out.also { o -> o.usePinned(16) { FilaTransformManager_getWorldTransformAccurate(nativeHandle, ci, it) } }
 
     /**
      * Opens a local transform transaction: [setTransform] then doesn't update world transforms

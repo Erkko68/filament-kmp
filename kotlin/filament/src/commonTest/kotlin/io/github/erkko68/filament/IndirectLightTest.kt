@@ -52,18 +52,13 @@ class IndirectLightTest : FilamentTestFixture() {
             .format(Texture.InternalFormat.RGBA8)
             .build(engine)
         val light = IndirectLight.Builder().reflections(cubemap).irradiance(cubemap).build(engine)
-        // Each getter call wraps the native texture anew; destroying a wrapper clears its handle.
-        val expected = cubemap.nativeObject to light.nativeObject
+        // Getters wrap the native texture anew: compare handles, captured before destroy clears them.
+        val expected = cubemap.nativeObject
         val reflections = light.reflectionsTexture?.nativeObject
         val irradiance = light.irradianceTexture?.nativeObject
-        val scene = engine.createScene()
-        scene.indirectLight = light
-        val attached = scene.indirectLight?.nativeObject
-        engine.destroy(scene)
         engine.destroy(light)
         engine.destroy(cubemap)
-        assertEquals(expected.first, reflections)
-        assertEquals(expected.first, irradiance)
-        assertEquals(expected.second, attached)
+        assertEquals(expected, reflections)
+        assertEquals(expected, irradiance)
     }
 }

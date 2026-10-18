@@ -2,6 +2,8 @@ package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.interop.toInterop
+import io.github.erkko68.filament.interop.strided
 import io.github.erkko68.filament.interop.*
 import io.github.erkko68.filament.utils.capi.*
 
@@ -18,7 +20,9 @@ enum class ComponentType {
     /** 1 sign bit, 5 exponent bits, and 5 mantissa bits. */
     HALF,
     /** Standard 32-bit float. */
-    FLOAT,
+    FLOAT;
+
+    internal val bytes: Int get() = when (this) { BYTE, UBYTE -> 1; SHORT, USHORT, HALF -> 2; FLOAT -> 4 }
 }
 
 /**
@@ -34,6 +38,10 @@ enum class ComponentType {
  */
 class Transcoder(config: Config) : AutoCloseable {
     internal val nativeHandle: NativePointer = config.useNative { FilaGeometryTranscoder_create(it) }
+    // The layout C reads [invoke]'s source with, kept to check its length.
+    private val itemBytes = config.componentCount * config.componentType.bytes
+    private val strideBytes = config.inputStrideBytes
+    private val componentCount = config.componentCount
 
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
@@ -64,8 +72,9 @@ class Transcoder(config: Config) : AutoCloseable {
      * @return the number of bytes [count] items take as packed floats
      */
     operator fun invoke(target: FloatArray?, source: ByteArray, count: Int): Int = interopScope {
-        val t = toInterop(target)
-        FilaGeometryTranscoder_invoke(nativeHandle, t, toInterop(source), count).also { if (target != null) t.fromInterop(target) }
+        val t = toInterop(target, count * componentCount)
+        val s = toInterop(source, strided(count, itemBytes, strideBytes, 1))
+        FilaGeometryTranscoder_invoke(nativeHandle, t, s, count).also { if (target != null) t.fromInterop(target) }
     }
 }
 

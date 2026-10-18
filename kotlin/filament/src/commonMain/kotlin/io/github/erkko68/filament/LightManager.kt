@@ -219,7 +219,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
          * @param cascades Number of cascades (1-4)
          */
         fun computeUniformSplits(splitPositions: FloatArray, cascades: Int) {
-            splitPositions.usePinned { pinned ->
+            splitPositions.usePinned(cascades - 1) { pinned ->
                 FilaLightManagerShadowCascades_computeUniformSplits(pinned, cascades)
             }
         }
@@ -232,7 +232,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
          * @param far Camera far plane distance
          */
         fun computeLogSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float) {
-            splitPositions.usePinned { pinned ->
+            splitPositions.usePinned(cascades - 1) { pinned ->
                 FilaLightManagerShadowCascades_computeLogSplits(pinned, cascades, near, far)
             }
         }
@@ -247,7 +247,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
          * @param lambda Interpolation factor [0, 1]: 0 = logarithmic, 1 = uniform. Start with 0.5
          */
         fun computePracticalSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float, lambda: Float) {
-            splitPositions.usePinned { pinned ->
+            splitPositions.usePinned(cascades - 1) { pinned ->
                 FilaLightManagerShadowCascades_computePracticalSplits(pinned, cascades, near, far, lambda)
             }
         }
@@ -299,7 +299,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
          * @param z World Z position
          * @return This Builder
          */
-        fun position(x: Float, y: Float, z: Float): Builder = apply { floatArrayOf(x, y, z).usePinned { FilaLightManagerBuilder_position(nativeBuilder, it) } }
+        fun position(x: Float, y: Float, z: Float): Builder = apply { floatArrayOf(x, y, z).usePinned(3) { FilaLightManagerBuilder_position(nativeBuilder, it) } }
         /**
          * Set the light's initial direction in world space (should be a unit vector).
          * Ignored for point lights. Default: (0, -1, 0) (downward).
@@ -308,7 +308,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
          * @param z World direction Z
          * @return This Builder
          */
-        fun direction(x: Float, y: Float, z: Float): Builder = apply { floatArrayOf(x, y, z).usePinned { FilaLightManagerBuilder_direction(nativeBuilder, it) } }
+        fun direction(x: Float, y: Float, z: Float): Builder = apply { floatArrayOf(x, y, z).usePinned(3) { FilaLightManagerBuilder_direction(nativeBuilder, it) } }
         /**
          * Set the light's color in linear sRGB. Default: white (1, 1, 1).
          * @param linearR Linear red channel [0, ∞)
@@ -316,7 +316,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
          * @param linearB Linear blue channel [0, ∞)
          * @return This Builder
          */
-        fun color(linearR: Float, linearG: Float, linearB: Float): Builder = apply { floatArrayOf(linearR, linearG, linearB).usePinned { FilaLightManagerBuilder_color(nativeBuilder, it) } }
+        fun color(linearR: Float, linearG: Float, linearB: Float): Builder = apply { floatArrayOf(linearR, linearG, linearB).usePinned(3) { FilaLightManagerBuilder_color(nativeBuilder, it) } }
         /**
          * Set the light's intensity. Meaning depends on light type:
          * - Directional: illuminance in lux (lumen/m²)
@@ -435,7 +435,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
     /** Returns the Entity of the component from its Instance. */
     fun getEntity(i: EntityInstance): Entity = FilaLightManager_getEntity(nativeHandle, i)
     /** All entities with a light component, in no particular order. */
-    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned { FilaLightManager_getAllEntities(nativeHandle, it, a.size) } }
+    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned(a.size) { FilaLightManager_getAllEntities(nativeHandle, it, a.size) } }
     /**
      * Get the light component instance for an entity.
      * @param entity Entity with a light component
@@ -468,7 +468,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
      * @param y World direction Y
      * @param z World direction Z
      */
-    fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { floatArrayOf(x, y, z).usePinned { FilaLightManager_setDirection(nativeHandle, instance, it) } }
+    fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { floatArrayOf(x, y, z).usePinned(3) { FilaLightManager_setDirection(nativeHandle, instance, it) } }
     /**
      * Get the light's direction in world space.
      * @param instance Light instance
@@ -477,7 +477,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
      */
     fun getDirection(instance: EntityInstance, out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaLightManager_getDirection(nativeHandle, instance, pinned)
         }
         return result
@@ -490,7 +490,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
      * @param y World Y position
      * @param z World Z position
      */
-    fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { floatArrayOf(x, y, z).usePinned { FilaLightManager_setPosition(nativeHandle, instance, it) } }
+    fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { floatArrayOf(x, y, z).usePinned(3) { FilaLightManager_setPosition(nativeHandle, instance, it) } }
     /**
      * Get the light's position in world space.
      * @param instance Light instance
@@ -499,7 +499,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
      */
     fun getPosition(instance: EntityInstance, out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaLightManager_getPosition(nativeHandle, instance, pinned)
         }
         return result
@@ -511,7 +511,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
      * @param g Linear green channel
      * @param b Linear blue channel
      */
-    fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { floatArrayOf(r, g, b).usePinned { FilaLightManager_setColor(nativeHandle, instance, it) } }
+    fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { floatArrayOf(r, g, b).usePinned(3) { FilaLightManager_setColor(nativeHandle, instance, it) } }
     /**
      * Get the light's color in linear sRGB.
      * @param instance Light instance
@@ -520,7 +520,7 @@ class LightManager @InternalFilamentApi constructor(internal val nativeHandle: N
      */
     fun getColor(instance: EntityInstance, out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaLightManager_getColor(nativeHandle, instance, pinned)
         }
         return result
@@ -688,7 +688,7 @@ private inline fun <T> LightManager.ShadowOptions.useNative(block: (NativePointe
     try {
         FilaLightManagerShadowOptions_setMapSize(o, mapSize)
         FilaLightManagerShadowOptions_setShadowCascades(o, shadowCascades)
-        cascadeSplitPositions.usePinned { FilaLightManagerShadowOptions_setCascadeSplitPositions(o, it, cascadeSplitPositions.size) }
+        cascadeSplitPositions.usePinned(cascadeSplitPositions.size) { FilaLightManagerShadowOptions_setCascadeSplitPositions(o, it, cascadeSplitPositions.size) }
         FilaLightManagerShadowOptions_setConstantBias(o, constantBias)
         FilaLightManagerShadowOptions_setNormalBias(o, normalBias)
         FilaLightManagerShadowOptions_setShadowFar(o, shadowFar)
@@ -705,7 +705,7 @@ private inline fun <T> LightManager.ShadowOptions.useNative(block: (NativePointe
         FilaLightManagerShadowOptionsVsm_setBlurWidth(v, vsm.blurWidth)
         FilaLightManagerShadowOptions_setVsm(o, v)
         FilaLightManagerShadowOptions_setShadowBulbRadius(o, shadowBulbRadius)
-        transform.usePinned { FilaLightManagerShadowOptions_setTransform(o, it) }
+        transform.usePinned(4) { FilaLightManagerShadowOptions_setTransform(o, it) }
         FilaLightManagerShadowOptions_setPenumbraScale(o, penumbraScale)
         FilaLightManagerShadowOptions_setPenumbraRatioScale(o, penumbraRatioScale)
         FilaLightManagerShadowOptions_setMaxPenumbraRatio(o, maxPenumbraRatio)
@@ -720,7 +720,7 @@ private inline fun <T> LightManager.ShadowOptions.useNative(block: (NativePointe
 private fun shadowOptionsOf(o: NativePointer) = LightManager.ShadowOptions().apply {
     mapSize = FilaLightManagerShadowOptions_getMapSize(o)
     shadowCascades = FilaLightManagerShadowOptions_getShadowCascades(o)
-    cascadeSplitPositions.usePinned { FilaLightManagerShadowOptions_getCascadeSplitPositions(o, it, cascadeSplitPositions.size) }
+    cascadeSplitPositions.usePinned(cascadeSplitPositions.size) { FilaLightManagerShadowOptions_getCascadeSplitPositions(o, it, cascadeSplitPositions.size) }
     constantBias = FilaLightManagerShadowOptions_getConstantBias(o)
     normalBias = FilaLightManagerShadowOptions_getNormalBias(o)
     shadowFar = FilaLightManagerShadowOptions_getShadowFar(o)
@@ -742,7 +742,7 @@ private fun shadowOptionsOf(o: NativePointer) = LightManager.ShadowOptions().app
         FilaLightManagerShadowOptionsVsm_destroy(v)
     }
     shadowBulbRadius = FilaLightManagerShadowOptions_getShadowBulbRadius(o)
-    transform.usePinned { FilaLightManagerShadowOptions_getTransform(o, it) }
+    transform.usePinned(4) { FilaLightManagerShadowOptions_getTransform(o, it) }
     penumbraScale = FilaLightManagerShadowOptions_getPenumbraScale(o)
     penumbraRatioScale = FilaLightManagerShadowOptions_getPenumbraRatioScale(o)
     maxPenumbraRatio = FilaLightManagerShadowOptions_getMaxPenumbraRatio(o)

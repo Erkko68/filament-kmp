@@ -106,7 +106,7 @@ class FramePacer @InternalFilamentApi constructor(internal var nativeHandle: Nat
             FilaFramePacerVsyncTick_setBaseTime(t, tick.baseTime)
             FilaFramePacerVsyncTick_setVsyncPeriod(t, tick.vsyncPeriod)
             tick.frameScheduleTime?.let { FilaFramePacerVsyncTick_setFrameScheduleTime(t, it) }
-            times.usePinned { // the tick borrows the timelines until setupFrame returns
+            times.usePinned(times.size) { // the tick borrows the timelines until setupFrame returns
                 FilaFramePacerVsyncTick_setTimelines(t, it, tick.timelines.size)
                 FilaFramePacer_setupFrame(nativeHandle, t)
             }
@@ -151,5 +151,5 @@ class FramePacer @InternalFilamentApi constructor(internal var nativeHandle: Nat
     /** Whether [selectedFrameRate] is an exact integer fraction of the display refresh rate (false for 45 FPS on 60Hz). */
     val isExactFrameRateAchieved: Boolean get() = FilaFramePacer_isExactFrameRateAchieved(nativeHandle)
 
-    private inline fun longs(fill: (NativePointer) -> Unit): Long = LongArray(1).also { it.usePinned(fill) }[0]
+    private inline fun longs(fill: (NativePointer) -> Unit): Long = LongArray(1).also { it.usePinned(1, fill) }[0]
 }

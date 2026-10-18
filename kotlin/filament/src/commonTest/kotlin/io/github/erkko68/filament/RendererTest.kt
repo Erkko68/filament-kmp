@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.toInterop
 import io.github.erkko68.filament.interop.InteropScope
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.testutils.ReadbackFlag
@@ -69,7 +70,7 @@ class RendererTest : FilamentTestFixture() {
         val target = RenderTarget.Builder().texture(RenderTarget.AttachmentPoint.COLOR, color).build(engine)
 
         val memory = InteropScope()
-        val address = memory.toInterop(IntArray(w * h))
+        val address = memory.toInterop(IntArray(w * h), w * h)
         val onScreen = ReadbackFlag()
         val native = ReadbackFlag()
         val offScreen = ReadbackFlag()

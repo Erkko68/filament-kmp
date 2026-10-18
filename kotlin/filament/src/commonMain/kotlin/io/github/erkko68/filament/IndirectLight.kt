@@ -70,7 +70,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @see Material.Builder.sphericalHarmonicsBandCount
          */
         fun irradiance(bands: Int, sh: FloatArray): Builder = apply {
-            sh.usePinned { pinned ->
+            sh.usePinned(bands * bands * 3) { pinned ->
                 FilaIndirectLightBuilder_irradiance_uint8_t_float3(nativeBuilder, bands, pinned)
             }
         }
@@ -85,7 +85,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @return This Builder, for chaining calls
          */
         fun radiance(bands: Int, sh: FloatArray): Builder = apply {
-            sh.usePinned { pinned ->
+            sh.usePinned(bands * bands * 3) { pinned ->
                 FilaIndirectLightBuilder_radiance(nativeBuilder, bands, pinned)
             }
         }
@@ -117,7 +117,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @return This Builder, for chaining calls
          */
         fun rotation(rotation: FloatArray): Builder = apply {
-            rotation.usePinned { pinned ->
+            rotation.usePinned(9) { pinned ->
                 FilaIndirectLightBuilder_rotation(nativeBuilder, pinned)
             }
         }
@@ -149,8 +149,8 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
      * Allows dynamic repositioning without re-processing cubemaps.
      */
     var rotation: FloatArray
-        get() = FloatArray(9).also { result -> result.usePinned { FilaIndirectLight_getRotation(nativeHandle, it) } }
-        set(value) { value.usePinned { FilaIndirectLight_setRotation(nativeHandle, it) } }
+        get() = FloatArray(9).also { result -> result.usePinned(9) { FilaIndirectLight_getRotation(nativeHandle, it) } }
+        set(value) { value.usePinned(9) { FilaIndirectLight_setRotation(nativeHandle, it) } }
 
     /**
      * Gets the reflections cubemap texture (if set).
@@ -183,7 +183,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
      * @see getColorEstimate
      */
     fun getDirectionEstimate(out: FloatArray? = null): FloatArray =
-        (out ?: FloatArray(3)).also { result -> result.usePinned { FilaIndirectLight_getDirectionEstimate(nativeHandle, it) } }
+        (out ?: FloatArray(3)).also { result -> result.usePinned(3) { FilaIndirectLight_getDirectionEstimate(nativeHandle, it) } }
 
     /**
      * Helper to estimate the color and relative intensity of the environment in a given direction.
@@ -201,8 +201,8 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
      */
     fun getColorEstimate(x: Float, y: Float, z: Float, out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(4)
-        floatArrayOf(x, y, z).usePinned { pDir ->
-            result.usePinned { pOut -> FilaIndirectLight_getColorEstimate(nativeHandle, pDir, pOut) }
+        floatArrayOf(x, y, z).usePinned(3) { pDir ->
+            result.usePinned(4) { pOut -> FilaIndirectLight_getColorEstimate(nativeHandle, pDir, pOut) }
         }
         return result
     }
@@ -231,8 +231,8 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          */
         fun getDirectionEstimate(sh: FloatArray, out: FloatArray? = null): FloatArray {
             val result = out ?: FloatArray(3)
-            sh.usePinned { pSh ->
-                result.usePinned { pOut ->
+            sh.usePinned(27) { pSh ->
+                result.usePinned(3) { pOut ->
                     FilaIndirectLight_getDirectionEstimate_float3(pSh, pOut)
                 }
             }
@@ -259,9 +259,9 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          */
         fun getColorEstimate(sh: FloatArray, x: Float, y: Float, z: Float, out: FloatArray? = null): FloatArray {
             val result = out ?: FloatArray(4)
-            sh.usePinned { pSh ->
-                floatArrayOf(x, y, z).usePinned { pDir ->
-                    result.usePinned { pOut -> FilaIndirectLight_getColorEstimate_float3(pSh, pDir, pOut) }
+            sh.usePinned(27) { pSh ->
+                floatArrayOf(x, y, z).usePinned(3) { pDir ->
+                    result.usePinned(4) { pOut -> FilaIndirectLight_getColorEstimate_float3(pSh, pDir, pOut) }
                 }
             }
             return result

@@ -25,12 +25,12 @@ actual class InteropScope actual constructor() {
         return ptr
     }
 
-    actual fun toInterop(array: ByteArray?): NativePointer = copyIn(array?.size ?: 0, 1) { it.put(array!!) }
-    actual fun toInterop(array: ShortArray?): NativePointer = copyIn(array?.size ?: 0, 2) { it.asShortBuffer().put(array!!) }
-    actual fun toInterop(array: IntArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asIntBuffer().put(array!!) }
-    actual fun toInterop(array: LongArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asLongBuffer().put(array!!) }
-    actual fun toInterop(array: FloatArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asFloatBuffer().put(array!!) }
-    actual fun toInterop(array: DoubleArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asDoubleBuffer().put(array!!) }
+    actual fun copyToInterop(array: ByteArray?): NativePointer = copyIn(array?.size ?: 0, 1) { it.put(array!!) }
+    actual fun copyToInterop(array: ShortArray?): NativePointer = copyIn(array?.size ?: 0, 2) { it.asShortBuffer().put(array!!) }
+    actual fun copyToInterop(array: IntArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asIntBuffer().put(array!!) }
+    actual fun copyToInterop(array: LongArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asLongBuffer().put(array!!) }
+    actual fun copyToInterop(array: FloatArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asFloatBuffer().put(array!!) }
+    actual fun copyToInterop(array: DoubleArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asDoubleBuffer().put(array!!) }
     actual fun toInterop(pointers: List<NativePointer>): NativePointer = copyIn(pointers.size, FilaJni.pointerSize) { b ->
         if (FilaJni.pointerSize == 8) b.asLongBuffer().put(pointers.toLongArray()) else b.asIntBuffer().put(IntArray(pointers.size) { pointers[it].toInt() })
     }
@@ -52,7 +52,7 @@ actual class InteropScope actual constructor() {
     }
 }
 
-actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload =
+internal actual fun platformUpload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload =
     jniUpload(data, size, onRelease).let { Upload(it.ptr, it.size, it.callback, it.userData) }
 
 actual fun stringFromInterop(ptr: NativePointer): String? = FilaJni.readString(ptr)

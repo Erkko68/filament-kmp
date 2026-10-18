@@ -32,25 +32,25 @@ object Color {
 
     /** Converts an RGB color to linear space; the conversion depends on [type]. */
     fun toLinear(type: RgbType, color: FloatArray): FloatArray =
-        call(3) { out -> interopScope { FilaColor_toLinear_RgbType_float3(type.ordinal, toInterop(color), out) } }
+        call(3) { out -> interopScope { FilaColor_toLinear_RgbType_float3(type.ordinal, toInterop(color, 3), out) } }
 
     /** Converts an RGBA color to linear space; the conversion depends on [type]. */
     fun toLinear(type: RgbaType, color: FloatArray): FloatArray =
-        call(4) { out -> interopScope { FilaColor_toLinear_RgbaType_float4(type.ordinal, toInterop(color), out) } }
+        call(4) { out -> interopScope { FilaColor_toLinear_RgbaType_float4(type.ordinal, toInterop(color, 4), out) } }
 
     /** Converts an sRGB color, RGB or RGBA (alpha left unmodified), to linear space. */
     fun toLinear(color: FloatArray): FloatArray = call(color.size) { out ->
         interopScope {
-            if (color.size == 3) FilaColor_toLinear_sRGBColor(toInterop(color), out)
-            else FilaColor_toLinear_sRGBColorA(toInterop(color), out)
+            if (color.size == 3) FilaColor_toLinear_sRGBColor(toInterop(color, color.size), out)
+            else FilaColor_toLinear_sRGBColorA(toInterop(color, color.size), out)
         }
     }
 
     /** Converts a linear color, RGB or RGBA (alpha left unmodified), to sRGB space. */
     fun toSRGB(color: FloatArray): FloatArray = call(color.size) { out ->
         interopScope {
-            if (color.size == 3) FilaColor_toSRGB_LinearColor(toInterop(color), out)
-            else FilaColor_toSRGB_LinearColorA(toInterop(color), out)
+            if (color.size == 3) FilaColor_toSRGB_LinearColor(toInterop(color, color.size), out)
+            else FilaColor_toSRGB_LinearColorA(toInterop(color, color.size), out)
         }
     }
 
@@ -65,10 +65,10 @@ object Color {
      * for the absorption parameter of materials that use refraction.
      */
     fun absorptionAtDistance(color: FloatArray, distance: Float): FloatArray =
-        call(3) { out -> interopScope { FilaColor_absorptionAtDistance(toInterop(color), distance, out) } }
+        call(3) { out -> interopScope { FilaColor_absorptionAtDistance(toInterop(color, 3), distance, out) } }
 
     private inline fun call(size: Int, block: (NativePointer) -> Unit): FloatArray {
         require(size == 3 || size == 4) { "a color has 3 or 4 components, not $size" }
-        return FloatArray(size).also { out -> out.usePinned(block) }
+        return FloatArray(size).also { out -> out.usePinned(size, block) }
     }
 }

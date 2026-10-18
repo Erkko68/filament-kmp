@@ -35,14 +35,14 @@ actual class InteropScope actual constructor() {
 
     private fun <T : Any> keep(p: Pinned<T>): Pinned<T> = p.also { pinned += it }
 
-    actual fun toInterop(array: ByteArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
-    actual fun toInterop(array: ShortArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
-    actual fun toInterop(array: IntArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
-    actual fun toInterop(array: LongArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
-    actual fun toInterop(array: FloatArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
-    actual fun toInterop(array: DoubleArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
+    actual fun copyToInterop(array: ByteArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
+    actual fun copyToInterop(array: ShortArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
+    actual fun copyToInterop(array: IntArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
+    actual fun copyToInterop(array: LongArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
+    actual fun copyToInterop(array: FloatArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
+    actual fun copyToInterop(array: DoubleArray?): NativePointer = if (array == null || array.isEmpty()) NullPointer else keep(array.pin()).addressOf(0).toLong()
     // Apple's targets are all 64-bit.
-    actual fun toInterop(pointers: List<NativePointer>): NativePointer = toInterop(pointers.toLongArray())
+    actual fun toInterop(pointers: List<NativePointer>): NativePointer = copyToInterop(pointers.toLongArray())
 
     // C wrote straight into the pinned array.
     actual fun NativePointer.fromInterop(result: ByteArray) {}
@@ -69,7 +69,7 @@ private val unpinUpload = staticCFunction { _: COpaquePointer?, _: ULong, userDa
     upcall { upload.onRelease?.invoke() }
 }
 
-actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload {
+internal actual fun platformUpload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload {
     val pinned = data.pin()
     val ref = StableRef.create(PinnedUpload(pinned, onRelease))
     return Upload(pinned.addressOf(0).toLong(), size, unpinUpload.toLong(), ref.asCPointer().toLong())

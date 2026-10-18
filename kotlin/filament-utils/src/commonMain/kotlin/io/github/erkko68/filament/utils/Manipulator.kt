@@ -153,7 +153,7 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
      * (size ≥ 3) receives a world-space position or direction.
      */
     fun getLookAt(eyePosition: FloatArray, targetPosition: FloatArray, upward: FloatArray) {
-        eyePosition.usePinned { e -> targetPosition.usePinned { t -> upward.usePinned { u -> FilaCamutilsManipulator_getLookAt(nativeHandle, e, t, u) } } }
+        eyePosition.usePinned(3) { e -> targetPosition.usePinned(3) { t -> upward.usePinned(3) { u -> FilaCamutilsManipulator_getLookAt(nativeHandle, e, t, u) } } }
     }
 
     /**
@@ -161,11 +161,11 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
      *
      * @return whether the ray hit the ground plane
      */
-    fun raycast(x: Int, y: Int, result: FloatArray): Boolean = result.usePinned { FilaCamutilsManipulator_raycast(nativeHandle, x, y, it) }
+    fun raycast(x: Int, y: Int, result: FloatArray): Boolean = result.usePinned(3) { FilaCamutilsManipulator_raycast(nativeHandle, x, y, it) }
 
     /** Given a viewport coordinate, computes a picking ray: its [origin] and direction [dir] (each size ≥ 3). */
     fun getRay(x: Int, y: Int, origin: FloatArray, dir: FloatArray) {
-        origin.usePinned { o -> dir.usePinned { d -> FilaCamutilsManipulator_getRay(nativeHandle, x, y, o, d) } }
+        origin.usePinned(3) { o -> dir.usePinned(3) { d -> FilaCamutilsManipulator_getRay(nativeHandle, x, y, o, d) } }
     }
 
     /**
