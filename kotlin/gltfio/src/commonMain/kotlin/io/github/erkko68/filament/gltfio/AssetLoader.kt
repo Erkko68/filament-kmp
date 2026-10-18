@@ -147,7 +147,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
 
     /** The materials this loader's assets use, across all its assets. */
     val materials: List<Material>
-        get() = readPointers(FilaGltfioAssetLoader_getMaterials(nativeHandle), materialsCount).map { Material(it) }
+        get() = readPointers(FilaGltfioAssetLoader_getMaterials(nativeHandle), materialsCount).filter { it != NullPointer }.map { Material(it) }
 
     val materialsCount: Int get() = FilaGltfioAssetLoader_getMaterialsCount(nativeHandle)
 

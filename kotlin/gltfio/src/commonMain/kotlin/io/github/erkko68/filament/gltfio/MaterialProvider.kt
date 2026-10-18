@@ -40,9 +40,9 @@ class MaterialProvider @InternalFilamentApi constructor(internal var nativeHandl
             uvmap.useNative { u, n -> label.useCString { l -> FilaGltfioMaterialProvider_getMaterial(nativeHandle, k, u, n, l) } }
         }.takeIf { it != NullPointer }?.let { Material(it) }
 
-    /** The provider's cache of compiled materials (weak references). */
+    /** The materials compiled so far (weak references). [materialsCount] counts the cache's slots, which fill as they're used. */
     val materials: List<Material>
-        get() = readPointers(FilaGltfioMaterialProvider_getMaterials(nativeHandle), materialsCount).map { Material(it) }
+        get() = readPointers(FilaGltfioMaterialProvider_getMaterials(nativeHandle), materialsCount).filter { it != NullPointer }.map { Material(it) }
 
     val materialsCount: Int get() = FilaGltfioMaterialProvider_getMaterialsCount(nativeHandle)
 
