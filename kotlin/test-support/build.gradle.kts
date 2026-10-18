@@ -26,5 +26,8 @@ kotlin {
         commonMain.dependencies {
             implementation(kotlin("test"))
         }
+        jvmMain.dependencies {
+            implementation(kotlin("test-junit"))
+        }
     }
 }

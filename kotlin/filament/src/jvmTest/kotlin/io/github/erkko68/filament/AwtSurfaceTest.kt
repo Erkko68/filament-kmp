@@ -1,18 +1,18 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testutils.RenderingTestFixture
+import io.github.erkko68.filament.testutils.RealBackendFixture
 import java.awt.Canvas
 import java.awt.Frame
 import java.awt.GraphicsEnvironment
+import org.junit.Assume
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /** The one test that hands Filament a live desktop window: an AWT canvas, cleared to red and read back. */
-class AwtSurfaceTest : RenderingTestFixture() {
+class AwtSurfaceTest : RealBackendFixture() {
     @Test
     fun rendersIntoAnAwtCanvas() {
-        val engine = engine ?: return
-        if (GraphicsEnvironment.isHeadless()) return
+        Assume.assumeFalse("no display", GraphicsEnvironment.isHeadless())
 
         val canvas = Canvas()
         val frame = Frame().apply {

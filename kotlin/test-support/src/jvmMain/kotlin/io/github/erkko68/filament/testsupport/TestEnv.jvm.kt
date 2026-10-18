@@ -8,3 +8,5 @@ actual object TestEnv {
 }
 
 actual annotation class IgnoreJs
+
+actual fun assumeRealBackend() = org.junit.Assume.assumeTrue("no rasterizer on this host (FILAMENT_TEST_GPU)", TestEnv.gpuBackendAvailable)

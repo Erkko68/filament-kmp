@@ -26,3 +26,9 @@ expect object TestEnv {
 
 /** Skips the annotated test on JS only (web-wrapper feature gaps); runs elsewhere. */
 expect annotation class IgnoreJs()
+
+/**
+ * Entry check for pixelTest (real-backend) tests: skips the test, reported as skipped, where this host
+ * has no rasterizer. pixelTest only compiles for jvm and web.
+ */
+expect fun assumeRealBackend()

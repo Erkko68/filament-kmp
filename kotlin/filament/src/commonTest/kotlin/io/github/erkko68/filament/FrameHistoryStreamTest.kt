@@ -1,13 +1,12 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testutils.RenderingTestFixture
+import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class FrameHistoryStreamTest : RenderingTestFixture() {
+class FrameHistoryStreamTest : FilamentTestFixture() {
     @Test
     fun testYieldsEachFrameOnce() {
-        val engine = engine ?: return
         val swapChain = engine.createSwapChain(16, 16, 0L)
         val renderer = engine.createRenderer()
         val scene = engine.createScene()

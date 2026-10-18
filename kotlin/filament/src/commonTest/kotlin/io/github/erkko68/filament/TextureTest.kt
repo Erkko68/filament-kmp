@@ -58,7 +58,6 @@ class TextureTest : FilamentTestFixture() {
         assertEquals(Texture.Sampler.SAMPLER_2D, tex.target)
         assertEquals(Texture.InternalFormat.RGBA8, tex.format)
 
-        // setImage / generateMipmaps panic under NOOP; TextureRenderingTest covers them.
         engine.destroy(tex)
     }
 
@@ -90,5 +89,37 @@ class TextureTest : FilamentTestFixture() {
         engine.destroy(named)
         engine.destroy(imported)
         engine.destroy(external)
+    }
+
+    @Test
+    fun testTextureSetImageAndMipmaps() {
+        val tex = Texture.Builder()
+            .width(64)
+            .height(64)
+            .depth(1)
+            .samples(1)
+            .sampler(Texture.Sampler.SAMPLER_2D)
+            .levels(4)
+            .format(Texture.InternalFormat.RGBA8)
+            .usage(Texture.Usage.DEFAULT or Texture.Usage.GEN_MIPMAPPABLE)
+            .build(engine)
+        assertNotNull(tex)
+        assertTrue(engine.isValid(tex))
+
+        val full = Texture.PixelBufferDescriptor(ByteArray(64 * 64 * 4), 64 * 64 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
+        tex.setImage(engine, 0, full)
+
+        // Sub-region uploads need an explicit row stride (= region width); Android's
+        // SDK reads per-row and overflows a stride-0 buffer.
+        val region = Texture.PixelBufferDescriptor(ByteArray(32 * 32 * 4), 32 * 32 * 4, Texture.Format.RGBA, Texture.Type.UBYTE, 1, 0, 0, 32)
+        tex.setImage(engine, 0, 0, 0, 32, 32, region)
+
+        val region3d = Texture.PixelBufferDescriptor(ByteArray(32 * 32 * 4), 32 * 32 * 4, Texture.Format.RGBA, Texture.Type.UBYTE, 1, 0, 0, 32)
+        tex.setImage(engine, 0, 0, 0, 0, 32, 32, 1, region3d)
+
+        tex.generateMipmaps(engine)
+
+        engine.flushAndWait()
+        engine.destroy(tex)
     }
 }

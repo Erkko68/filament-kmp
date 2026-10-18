@@ -1,36 +1,23 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testutils.RealBackendFixture
 import io.github.erkko68.filament.testutils.pumpUntil
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/** Async calls need a real backend (Noop has none) and the `backend.enable_asynchronous_operation` feature. */
-class AsyncCallTest {
-    private var engine: Engine? = null
-
-    @BeforeTest
-    fun setUp() {
-        Filament.init()
-        if (!TestEnv.gpuBackendAvailable) return
+/** Async calls need a real backend (NOOP aborts) and the `backend.enable_asynchronous_operation` feature. */
+class AsyncCallTest : RealBackendFixture() {
+    override fun createEngine(): Engine? {
         val config = Engine.Config().apply { asynchronousMode = Engine.AsynchronousMode.THREAD_PREFERRED }
-        val created = Engine.Builder().backend(Engine.Backend.DEFAULT).config(config)
+        return Engine.Builder().backend(Engine.Backend.DEFAULT).config(config)
             .feature("backend.enable_asynchronous_operation", true)
-            .build() ?: return
-        if (created.isAsynchronousModeEnabled) engine = created else Engine.destroy(created)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        engine?.let { it.flushAndWait(); Engine.destroy(it) }
+            .build()
+            ?.also { assertTrue(it.isAsynchronousModeEnabled, "asynchronous mode not enabled") }
     }
 
     @Test
     fun testRunCommandAsync() {
-        val engine = engine ?: return
         var ran = false
         var status: AsyncCallStatus? = null
         engine.runCommandAsync({ ran = true }) { status = it }
@@ -41,7 +28,6 @@ class AsyncCallTest {
 
     @Test
     fun testCancelReportsCanceled() {
-        val engine = engine ?: return
         // Canceled right after queueing it usually hasn't started; either way the outcome must match the call's.
         var ran = false
         var status: AsyncCallStatus? = null
@@ -55,7 +41,6 @@ class AsyncCallTest {
 
     @Test
     fun testAsyncResources() {
-        val engine = engine ?: return
         val statuses = mutableListOf<Pair<String, AsyncCallStatus>>()
         val ib = IndexBuffer.Builder().indexCount(3).bufferType(IndexBuffer.IndexType.USHORT)
             .async { b, s -> statuses += "ib" to s; check(b.isCreationComplete == (s == AsyncCallStatus.COMPLETED)) }
@@ -107,7 +92,6 @@ class AsyncCallTest {
     // With no completion callback there's nothing to wait on; the queue runs in order, so a later command marks them done.
     @Test
     fun testAsyncCallsWithoutCallbacks() {
-        val engine = engine ?: return
         val ib = IndexBuffer.Builder().indexCount(3).bufferType(IndexBuffer.IndexType.USHORT).build(engine)
         // Only the first 6 bytes are indices.
         ib.setBufferAsync(engine, byteArrayOf(0, 0, 1, 0, 2, 0, 9, 9), count = 6)

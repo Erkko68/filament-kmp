@@ -1,12 +1,11 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FrameProbe
-import io.github.erkko68.filament.testutils.RenderingTestFixture
+import io.github.erkko68.filament.testutils.RealBackendFixture
 import io.github.erkko68.filament.testutils.TestMaterials
 import io.github.erkko68.filament.testutils.meanAbsoluteDifference
 import io.github.erkko68.filament.testutils.regionStats
 import io.github.erkko68.filament.testsupport.IgnoreJs
-import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -29,7 +28,7 @@ import kotlin.test.assertTrue
 // readPixels is bound on web and its callback does fire — but only after the browser runs
 // more frames, which this synchronous harness never lets it do (a probe needed ~12 rAF ticks).
 @IgnoreJs
-class FrameSemanticsTest : RenderingTestFixture() {
+class FrameSemanticsTest : RealBackendFixture() {
 
     private fun litScene(engine: Engine, probe: FrameProbe, shadows: Boolean = true, casterCz: Float = 0f): Entity {
         val mat = probe.material(TestMaterials.getLitMaterialBytes())
@@ -61,11 +60,6 @@ class FrameSemanticsTest : RenderingTestFixture() {
     }
 
     private fun withProbe(block: (Engine, FrameProbe) -> Unit) {
-        val engine = engine ?: return
-        // Emulated Android GPUs advertise FL1 but render lit content black and can
-        // crash the emulator on shadow passes; FL0 can't do lit materials at all.
-        if (TestEnv.emulatedGpu) return
-        if (engine.supportedFeatureLevel == Engine.FeatureLevel.FEATURE_LEVEL_0) return
         val probe = FrameProbe(engine)
         try {
             block(engine, probe)

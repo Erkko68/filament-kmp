@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
-import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -105,14 +104,9 @@ class EnumRoundTripTest : FilamentTestFixture() {
         roundTrip<TextureSampler.CompareMode>("TextureSampler.compareMode", { s.setCompareMode(it, s.compareFunc) }, { s.compareMode })
         roundTrip<TextureSampler.CompareFunc>("TextureSampler.compareFunc", { s.setCompareMode(s.compareMode, it) }, { s.compareFunc })
     }
-}
-
-/** GPU-fixture variant for enums that need a real material instance behind them. */
-class MaterialInstanceEnumRoundTripTest : RenderingTestFixture() {
 
     @Test
     fun materialInstanceEnumsRoundTripEveryEntry() {
-        val engine = engine ?: return
         val mat = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)!!
         val inst = mat.createInstance()
 
