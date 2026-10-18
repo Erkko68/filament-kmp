@@ -9,7 +9,6 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.testutils.GraphicsReady
 import io.github.erkko68.filament.compose.testutils.TestKtx
-import io.github.erkko68.filament.compose.testutils.TestMaterials
 import io.github.erkko68.filament.compose.testutils.awaitGraphicsReady
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
 import kotlin.test.BeforeTest
@@ -174,8 +173,7 @@ class EnvironmentLoadingTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun asyncMaterialIsBuiltAndFreed() = withUiThreadFilamentScene { setContent, engine, _ ->
-        val bytes = TestMaterials.getEmissiveMaterialBytes()
-        if (bytes.isEmpty()) return@withUiThreadFilamentScene // not bundled on this target
+        val bytes = StandardMaterial.Emissive.payload()
         var material: Material? = null
         var environment: Environment? = null
         setContent {

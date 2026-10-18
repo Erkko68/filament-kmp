@@ -50,7 +50,7 @@ kotlin {
         }
 
         // Instrumented (on-device) tests inherit from `commonTest` (sourceSetTree
-        // "test") so the shared `expect`s (createTestSurface, TestMaterials) line up
+        // "test") so the shared `expect`s (GraphicsReady, surfaceTest) line up
         // with the per-Android `actual`s in `androidDeviceTest`.
         withDeviceTestBuilder {
             sourceSetTreeName = "test"

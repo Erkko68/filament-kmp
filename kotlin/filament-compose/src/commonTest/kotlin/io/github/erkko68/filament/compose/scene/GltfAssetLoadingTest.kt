@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
  * Coverage for [rememberGltfAsset] — the asynchronous loading path that apps actually use, as
  * opposed to the pre-loaded assets [GltfInstanceLifecycleTest] hands to `GltfInstance` directly.
  *
- * Runs on [withUiThreadFilamentScene] rather than `TierBSceneFixture`: `rememberGltfAsset` uploads
+ * Runs on [withUiThreadFilamentScene] rather than `ComposeTestFixture`: `rememberGltfAsset` uploads
  * GPU resources from a `LaunchedEffect`, and gltfio's `ResourceLoader` is thread-affine, so the
  * engine has to be created on the same dispatcher the effects resume on. See that harness for the
  * full rationale.
