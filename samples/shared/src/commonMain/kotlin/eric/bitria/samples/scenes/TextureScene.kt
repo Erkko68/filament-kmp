@@ -3,9 +3,6 @@ package eric.bitria.samples.scenes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,11 +23,11 @@ import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberMaterial
 import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
-import io.github.erkko68.filament.utils.TextureLoader
+import io.github.erkko68.filament.compose.scene.rememberTexture
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
- * Loads a **PNG** with [TextureLoader] and binds it as the `albedo` of a lit material on a
+ * Loads a **PNG** with [rememberTexture] and binds it as the `albedo` of a lit material on a
  * sphere (the UV grid makes the mapping legible as you orbit). The texture loads asynchronously
  * and is destroyed with the composable.
  */
@@ -44,14 +41,6 @@ fun TextureScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    // Decode the PNG into a Filament texture once the bytes arrive; tear it down on dispose.
-    val pngBytes by produceState<ByteArray?>(null) { value = Res.readBytes("files/textures/uv_grid.png") }
-    val texture = remember(engine, pngBytes) {
-        pngBytes?.let { TextureLoader.loadTexture(engine, it, TextureLoader.TextureType.COLOR) }
-    }
-    DisposableEffect(texture) {
-        onDispose { texture?.let { engine.destroy(it) } }
-    }
 
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
@@ -69,6 +58,7 @@ fun TextureScene(onBack: () -> Unit) {
             // Escape hatch: load a hand-authored .filamat and bind its `albedo` sampler
             // reactively with rememberMaterialInstance. (For the common case the built-in
             // rememberTexturedMaterialInstance does this with no .mat to author or ship.)
+            val texture = rememberTexture { Res.readBytes("files/textures/uv_grid.png") }
             val material = rememberMaterial { Res.readBytes("files/materials/textured.filamat") }
             val sampler = remember {
                 TextureSampler(

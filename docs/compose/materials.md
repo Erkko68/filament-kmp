@@ -27,8 +27,9 @@ Cube(material = rememberColorMaterialInstance(LinearColor(0.9f, 0.25f, 0.3f)))
 Plane(material = rememberUnlitColorMaterialInstance(LinearColor(0.1f, 0.1f, 0.12f)))
 
 // LIT textured base colour (geometry needs uv0 — all built-in primitives supply it)
+// (null until the texture loads; the sphere appears once it does)
 val tex = rememberTexture { Res.readBytes("files/textures/wood.png") }
-tex?.let { Sphere(material = rememberTexturedMaterialInstance(it)) }
+Sphere(material = rememberTexturedMaterialInstance(tex))
 
 // UNLIT emissive — glows through bloom when intensity > 1
 Sphere(material = rememberEmissiveMaterialInstance(LinearColor(1f, 0.85f, 0.4f), intensity = 4f))
@@ -205,8 +206,10 @@ For per-frame updates that aren't state-driven, use `FilamentEffect { onFrame { 
 val tex = rememberTexture(type = TextureLoader.TextureType.COLOR) {
     Res.readBytes("files/textures/wood_albedo.png")
 }
-val instance = rememberMaterialInstance(template, tex) {
-    tex?.let { setParameter("albedo", it, TextureSampler()) }
+if (tex != null) {
+    // Bind before the first frame: an instance with an unbound sampler would render meanwhile.
+    val instance = rememberMaterialInstance(template, tex) { setParameter("albedo", tex, TextureSampler()) }
+    Sphere(material = instance)
 }
 ```
 

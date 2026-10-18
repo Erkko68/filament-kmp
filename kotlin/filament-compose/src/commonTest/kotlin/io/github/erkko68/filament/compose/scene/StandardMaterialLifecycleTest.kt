@@ -109,7 +109,7 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
         val red = LinearColor(1f, 0f, 0f)
         val float = MaterialInstance.FloatElement.FLOAT
         // Each helper, and a scalar it must have set (name to value).
-        val helpers: List<Triple<String, @Composable () -> MaterialInstance, Pair<String, Float>>> = listOf(
+        val helpers: List<Triple<String, @Composable () -> MaterialInstance?, Pair<String, Float>>> = listOf(
             Triple("Color", { rememberColorMaterialInstance(red, roughness = 0.25f) }, "roughness" to 0.25f),
             Triple("UnlitColor", { rememberUnlitColorMaterialInstance(red) }, "" to 0f),
             Triple("Textured", { rememberTexturedMaterialInstance(texture, metallic = 0.75f) }, "metallic" to 0.75f),
