@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
+
 ### Fixed
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
 

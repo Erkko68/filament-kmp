@@ -166,13 +166,13 @@ fun rememberUnlitColorMaterialInstance(
 /**
  * A LIT [MaterialInstance] whose base colour is sampled from [texture]. Pair with a primitive (all
  * built-ins supply uv0) or a [io.github.erkko68.filament.compose.scene.primitives.Mesh] with UVs.
+ * Returns null while [texture] is null, so it chains straight off [rememberTexture]:
  *
  * ```kotlin
- * val tex = rememberTexture { Res.readBytes("files/textures/wood.png") }
- * tex?.let { Sphere(material = rememberTexturedMaterialInstance(it)) }
+ * Sphere(material = rememberTexturedMaterialInstance(rememberTexture { Res.readBytes("files/textures/wood.png") }))
  * ```
  *
- * @param texture Base-colour texture bound to the `albedo` sampler.
+ * @param texture Base-colour texture bound to the `albedo` sampler, or null while it is still loading.
  * @param metallic 0 = dielectric, 1 = metal.
  * @param roughness 0 = mirror, 1 = fully rough.
  * @param sampler How the texture is filtered and wrapped. Defaults to trilinear + repeat.
@@ -180,7 +180,7 @@ fun rememberUnlitColorMaterialInstance(
  */
 @Composable
 fun rememberTexturedMaterialInstance(
-    texture: Texture,
+    texture: Texture?,
     metallic: Float = 0f,
     roughness: Float = 0.5f,
     sampler: TextureSampler = TextureSampler(
@@ -189,7 +189,8 @@ fun rememberTexturedMaterialInstance(
         TextureSampler.WrapMode.REPEAT,
     ),
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
-): MaterialInstance {
+): MaterialInstance? {
+    if (texture == null) return null
     val material = rememberStandardMaterial(StandardMaterial.Textured, engine)
     // `sampler` is captured (not keyed): it's almost always the constant default, and a new value
     // typically arrives with a new texture, which is keyed.
