@@ -2,134 +2,79 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
-import io.github.erkko68.filament.interop.NullPointer
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class AssetLoaderTest : GltfioTestFixture() {
+    /** Duck.glb: three nodes, one mesh, one camera, no lights. */
     @Test
-    fun testAssetLoaderLifecycle() {
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        assertNotNull(loader)
+    fun anAssetHasAnEntityPerNode() {
+        val asset = load(TestGlb.getDuckGlbBytes(), resources = false)
+        assertEquals(3, asset.entityCount)
+        assertEquals(1, asset.renderableEntityCount)
+        assertEquals(1, asset.cameraEntityCount)
+        assertEquals(0, asset.lightEntityCount)
+        assertEquals(engine.nativeObject, asset.engine.nativeObject)
+        val entities = asset.entities + asset.root
+        assertTrue(entities.all(engine.entityManager::isAlive))
+        assertTrue(engine.renderableManager.hasComponent(asset.renderableEntities.single()))
 
-        loader.enableDiagnostics(true)
-        loader.enableDiagnostics(false)
-
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        destroy(asset)
+        assertTrue(entities.none(engine.entityManager::isAlive), "destroyAsset destroys its entities")
     }
 
     @Test
-    fun testCreateWithDefaultEntityManager() {
-        // Omitting the EntityManager exercises the null/default branch.
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider))
-        assertNotNull(loader)
-
-        AssetLoader.destroy(loader)
-        provider.destroy()
+    fun theDefaultEntityManagerIsTheEngines() {
+        val defaultLoader = AssetLoader.create(AssetConfiguration(engine, provider))
+        val asset = defaultLoader.createAsset(TestGlb.getDuckGlbBytes())!!
+        val alive = engine.entityManager.isAlive(asset.root)
+        defaultLoader.destroyAsset(asset)
+        AssetLoader.destroy(defaultLoader)
+        assertTrue(alive)
     }
 
+    /** Each instance is its own entity tree with the same shape; one more can join until the source data goes. */
     @Test
-    fun testCreateAssetWithValidGlb() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-        assertTrue(asset.entityCount > 0)
-        assertTrue(asset.root != 0)
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testCreateInstancedAsset() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-
-        val instances = arrayOf(FilamentInstance(), FilamentInstance())
-        val asset = loader.createInstancedAsset(bytes, instances)
-        assertNotNull(asset)
-        assertTrue(asset.assetInstanceCount >= 1)
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testCreateInstance() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-
-        val instances = arrayOf(FilamentInstance())
-        val asset = loader.createInstancedAsset(bytes, instances)
-        assertNotNull(asset)
-
-        val newInstance = loader.createInstance(asset)
-        assertNotNull(newInstance)
-        assertTrue(newInstance.entityCount > 0)
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testMaterialsAndGc() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        createUbershaderProvider(engine).use { provider ->
-            val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-            val asset = assertNotNull(loader.createAsset(bytes))
-            assertEquals(loader.materialsCount, loader.materials.size)
-            assertEquals(provider.materialsCount, loader.materialProvider.materialsCount)
-            assertEquals(provider.materialsCount, provider.materials.size)
-            loader.destroyAsset(asset)
-            loader.gc()
-            AssetLoader.destroy(loader)
-        }
-    }
-
-    // A parse failure is a null asset rather than a crash, and a frozen asset can't grow instances.
-    @Test
-    fun testFailuresBuildNothing() {
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val garbage = "not a glTF".encodeToByteArray()
-        val parsed = loader.createAsset(garbage)
-        val parsedInstanced = loader.createInstancedAsset(garbage, arrayOf(FilamentInstance()))
-
-        val asset = assertNotNull(loader.createInstancedAsset(TestGlb.getDuckGlbBytes(), arrayOf(FilamentInstance())))
-        val handles = listOf(loader.nativeObject, asset.nativeObject, asset.instance.nativeObject)
+    fun instancesAreSeparateCopiesOfTheAsset() {
+        val asset = checkNotNull(loader.createInstancedAsset(TestGlb.getDuckGlbBytes(), arrayOf(FilamentInstance(), FilamentInstance())))
+        val added = loader.createInstance(asset)
+        val instances = asset.assetInstances
+        val counts = instances.map { it.entityCount }
+        val roots = instances.map { it.root }
+        val owners = instances.map { it.asset.nativeObject }
         asset.releaseSourceData()
         val late = loader.createInstance(asset)
+        val entities = instances.flatMap { it.entities.toList() }
+        val instanceCount = asset.assetInstanceCount
+        val handle = asset.nativeObject
         loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-        // Checked after the teardown: a failure that skipped it would abort on the live material instances.
-        assertNull(parsed)
-        assertNull(parsedInstanced)
-        assertFalse(NullPointer in handles)
-        assertEquals(handles.size, handles.distinct().size)
-        assertNull(late)
+
+        assertEquals(3, instanceCount)
+        assertEquals(added?.nativeObject, instances.last().nativeObject)
+        assertEquals(listOf(3, 3, 3), counts)
+        assertEquals(3, roots.distinct().size)
+        assertEquals(List(3) { handle }, owners)
+        assertEquals(entities.size, entities.distinct().size, "instances share no entities")
+        assertNull(late, "no instances once the source data is released")
+    }
+
+    /** Assets share the loader's materials: a second duck compiles nothing new. */
+    @Test
+    fun assetsShareCompiledMaterials() {
+        load(TestGlb.getDuckGlbBytes())
+        val compiled = loader.materials.map { it.name }
+        load(TestGlb.getDuckGlbBytes())
+        assertEquals(listOf("base_lit_opaque"), compiled)
+        assertEquals(compiled, loader.materials.map { it.name })
+        assertEquals(provider.materials.map { it.nativeObject }, loader.materials.map { it.nativeObject })
+    }
+
+    @Test
+    fun garbageParsesToNothing() {
+        val garbage = "not a glTF".encodeToByteArray()
+        assertNull(loader.createAsset(garbage))
+        assertNull(loader.createInstancedAsset(garbage, arrayOf(FilamentInstance())))
     }
 }

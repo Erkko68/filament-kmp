@@ -1,7 +1,6 @@
 # Real-backend rendering tests
 
-Status: **implemented** — macOS/Metal, iOS sim, Android emulator; skips gracefully
-where no backend exists.
+Status: **implemented** for `filament` (`pixelTest`); `filament-utils` still uses its gated fixture.
 Scope: tests for the `filament` / `gltfio` / `filament-utils` wrappers.
 
 > Environment gating (`TestEnv.gpuBackendAvailable`, `@IgnoreJs`) lives in
@@ -9,21 +8,16 @@ Scope: tests for the `filament` / `gltfio` / `filament-utils` wrappers.
 
 ## What we built
 
-[`RenderingTestFixture`](../../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/RenderingTestFixture.kt)
-(+ `UtilsRenderingTestFixture`, `GltfioRenderingTestFixture`) create
-`Engine.Backend.DEFAULT` and leave `engine == null` when no backend is available,
-so tests early-return (`val engine = engine ?: return`) instead of failing. This
-closed the coverage gap where the `NOOP` driver panics on GPU-resource creation.
+Most tests now run on `NOOP` (see the [strategy](README.md)): it builds materials, geometry, textures, IBL
+and glTF and renders frames on every target. Only pixels and async calls need a real backend:
 
-Real-backend clusters added, all green on Metal:
+- `filament`: the `pixelTest` source set (jvm + web), on
+  [`RealBackendFixture`](../../../kotlin/filament/src/pixelTest/kotlin/io/github/erkko68/filament/testutils/RealBackendFixture.kt),
+  which `assumeRealBackend()` reports as skipped on a host without a rasterizer.
+- `filament-utils`: still on `UtilsRenderingTestFixture` (`DEFAULT`, `engine == null` without a backend)
+  until that module migrates.
 
-- `MaterialRenderingTest`, `MaterialInstanceRenderingTest`, `TextureRenderingTest`,
-  `RenderableManagerRenderingTest`, `RendererRenderingTest` (full frame + `readPixels`
-  round-trip), `IBLPrefilterRenderingTest` (`run()` via a synthetic in-memory texture).
-
-Assertions stay **binding-level**: handles are non-null, getters round-trip the
-values they were built with, `readPixels` fills a buffer of the correct size —
-never a golden image.
+Assertions relate values or image regions, never a golden image.
 
 ## Tier C: semantic frame assertions
 
@@ -67,8 +61,8 @@ capability.
 - `MaterialProvider.createMaterialInstance` / `Material.createInstance` aborts on the
   `base_unlit_opaque` ubershader (ordinary materials work; `getMaterial`/`getDefaultInstance`
   work). The abort is inside prebuilt filament's `noexcept` `createInstance`; the release
-  build strips the message and SIP blocks lldb here. Documented in
-  `MaterialProviderRenderingTest`; needs a debug filament build to chase further.
+  build strips the message and SIP blocks lldb here. Not exercised by any test; needs a
+  debug filament build to chase further.
 - HDR/KTX loader paths still need real bundled assets.
 
 ## Why no visual-regression testing

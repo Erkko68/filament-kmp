@@ -2,142 +2,70 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
-import io.github.erkko68.filament.interop.NullPointer
+import kotlin.math.abs
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class AnimatorTest : GltfioTestFixture() {
+    /** Every node's local transform, in entity order. */
+    private fun FilamentAsset.pose(): List<Float> {
+        val tm = engine.transformManager
+        return entities.filter(tm::hasComponent).flatMap { tm.getTransform(tm.getInstance(it)).toList() }
+    }
+
+    private fun assertPose(expected: List<Float>, actual: List<Float>, message: String) =
+        assertTrue(expected.zip(actual).all { (e, a) -> abs(e - a) < 1e-4f }, message)
+
     @Test
-    fun testCrossFadeBetweenAnimations() {
-        val bytes = TestGlb.getFoxGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.loadResources(asset)
-
-        val animator = asset.instance.animator
-        // Fox ships with multiple animation tracks (Survey / Walk / Run).
-        assertTrue(animator.animationCount > 1)
-        assertTrue(animator.nativeObject != NullPointer)
-
-        animator.applyAnimation(0, 0.1f)
-        animator.applyCrossFade(1, 0.1f, 0.5f)
-        animator.updateBoneMatrices()
-
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+    fun foxHasItsThreeClips() {
+        val animator = load(TestGlb.getFoxGlbBytes()).instance.animator
+        assertEquals(3, animator.animationCount)
+        assertEquals(listOf("Survey", "Walk", "Run"), List(3) { animator.getAnimationName(it) })
+        val durations = List(3) { animator.getAnimationDuration(it) }
+        listOf(3.4166667f, 0.7083333f, 1.1583333f).zip(durations).forEach { (e, a) -> assertEquals(e, a, 1e-4f) }
+        assertEquals(0, load(TestGlb.getDuckGlbBytes()).instance.animator.animationCount)
     }
 
     @Test
-    fun testAnimatedAssetAnimations() {
-        val bytes = TestGlb.getBoxAnimatedGlbBytes()
-        if (bytes.isEmpty()) return
+    fun applyingAnAnimationMovesItsNodes() {
+        val box = load(TestGlb.getBoxAnimatedGlbBytes())
+        val animator = box.instance.animator
+        val half = animator.getAnimationDuration(0) / 2
+        animator.applyAnimation(0, 0f)
+        val start = box.pose()
+        animator.applyAnimation(0, half)
+        val middle = box.pose()
+        animator.applyAnimation(0, 0f)
 
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.loadResources(asset)
-
-        val animator = asset.instance.animator
-        val animCount = animator.animationCount
-        // BoxAnimated ships with at least one animation track.
-        assertTrue(animCount > 0)
-
-        for (i in 0 until animCount) {
-            // getAnimationName is nullable: the JS/web wrapper doesn't expose names.
-            animator.getAnimationName(i)
-            val duration = animator.getAnimationDuration(i)
-            assertTrue(duration >= 0f)
-            animator.applyAnimation(i, 0f)
-            animator.applyAnimation(i, duration / 2f)
-        }
-        animator.updateBoneMatrices()
-        if (animCount > 1) {
-            animator.applyCrossFade(0, 0f, 0.5f)
-        }
-        animator.resetBoneMatrices()
-
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        assertNotEquals(start, middle, "half way through, the boxes have moved")
+        assertPose(start, box.pose(), "the same time gives the same pose")
     }
 
-
+    /** applyAnimation's clip is alpha = 1, applyCrossFade's is alpha = 0 (Animator.h). */
     @Test
-    fun testAnimatorMetadata() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        // Resources must be loaded before accessing the Animator's native methods.
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.loadResources(asset)
-
-        val animator = asset.instance.animator
-        assertNotNull(animator)
-
-        val animCount = animator.animationCount
-        assertTrue(animCount >= 0)
-
-        for (i in 0 until animCount) {
-            animator.getAnimationDuration(i)
-            animator.getAnimationName(i)
+    fun crossFadeBlendsFromThePreviousClip() {
+        val fox = load(TestGlb.getFoxGlbBytes())
+        val animator = fox.instance.animator
+        fun pose(alpha: Float?): List<Float> {
+            animator.applyAnimation(WALK, 0.3f)
+            if (alpha != null) animator.applyCrossFade(SURVEY, 1f, alpha)
+            return fox.pose()
         }
+        val walk = pose(null)
+        animator.applyAnimation(SURVEY, 1f)
+        val survey = fox.pose()
 
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        assertNotEquals(walk, survey)
+        assertPose(walk, pose(1f), "alpha 1 is the current clip")
+        assertPose(survey, pose(0f), "alpha 0 is the previous clip")
+        val blend = pose(0.5f)
+        assertTrue(blend != walk && blend != survey, "half way is neither")
     }
 
-    @Test
-    fun testApplyAnimationAndBoneMatrices() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        // Resources must be loaded before accessing the Animator's native methods.
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.loadResources(asset)
-
-        val animator = asset.instance.animator
-        val animCount = animator.animationCount
-
-        if (animCount > 0) {
-            val duration = animator.getAnimationDuration(0)
-            animator.applyAnimation(0, 0f)
-            animator.applyAnimation(0, duration / 2f)
-            animator.updateBoneMatrices()
-            if (animCount > 1) {
-                animator.applyCrossFade(0, 0f, 0.5f)
-            }
-        }
-
-        animator.resetBoneMatrices()
-
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+    private companion object {
+        const val SURVEY = 0
+        const val WALK = 1
     }
 }
