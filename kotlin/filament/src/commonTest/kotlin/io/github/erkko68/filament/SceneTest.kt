@@ -4,7 +4,6 @@ import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -12,7 +11,6 @@ class SceneTest : FilamentTestFixture() {
     @Test
     fun testSceneLifecycle() {
         val scene = engine.createScene()
-        assertNotNull(scene)
         assertTrue(engine.isValid(scene))
 
         assertNull(scene.skybox)

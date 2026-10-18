@@ -5,7 +5,6 @@ import io.github.erkko68.filament.testutils.TestMaterials
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -162,7 +161,7 @@ class RenderableManagerTest : FilamentTestFixture() {
         assertEquals(1, rm.getPrimitiveCount(inst))
 
         rm.setMaterialInstanceAt(inst, 0, matInst)
-        assertNotNull(rm.getMaterialInstanceAt(inst, 0))
+        assertEquals(matInst.nativeObject, rm.getMaterialInstanceAt(inst, 0)?.nativeObject)
         val attrs = rm.getEnabledAttributesAt(inst, 0)
         assertTrue(VertexBuffer.VertexAttribute.POSITION in attrs)
         assertTrue(VertexBuffer.VertexAttribute.COLOR !in attrs)

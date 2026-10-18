@@ -11,7 +11,6 @@ class EntityManagerTest : FilamentTestFixture() {
     @Test
     fun testEntityManagerLifecycle() {
         val em = EntityManager.get()
-        assertNotNull(em)
 
         val entity = em.create()
         assertTrue(entity != 0)

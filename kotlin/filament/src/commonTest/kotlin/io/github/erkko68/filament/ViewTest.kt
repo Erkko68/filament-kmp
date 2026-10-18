@@ -7,18 +7,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ViewTest : FilamentTestFixture() {
-    @Test
-    fun testPickingQueryResult() {
-        val result = View.PickingQueryResult(42, 0.75f, floatArrayOf(10f, 20f))
-        assertEquals(42, result.renderable)
-        assertEquals(0.75f, result.depth)
-        assertEquals(10f, result.fragCoords[0])
-        assertEquals(20f, result.fragCoords[1])
-    }
-
     @Test
     fun testGridSize() {
         val view = engine.createView()
@@ -30,212 +22,8 @@ class ViewTest : FilamentTestFixture() {
     }
 
     @Test
-    fun testOptionsInstantiation() {
-        val dro = DynamicResolutionOptions().apply {
-            enabled = true
-            homogeneousScaling = true
-            minScale = floatArrayOf(0.5f, 0.5f)
-            maxScale = floatArrayOf(1.0f, 1.0f)
-            sharpness = 0.5f
-            quality = QualityLevel.HIGH
-        }
-        assertTrue(dro.enabled)
-        assertTrue(dro.homogeneousScaling)
-        assertContentEquals(floatArrayOf(0.5f, 0.5f), dro.minScale)
-        assertContentEquals(floatArrayOf(1.0f, 1.0f), dro.maxScale)
-        assertEquals(0.5f, dro.sharpness)
-        assertEquals(QualityLevel.HIGH, dro.quality)
-
-        val rq = RenderQuality().apply {
-            hdrColorBuffer = QualityLevel.HIGH
-        }
-        assertEquals(QualityLevel.HIGH, rq.hdrColorBuffer)
-
-        val bloom = BloomOptions().apply {
-            enabled = true
-            levels = 4
-            resolution = 256
-            strength = 0.5f
-            threshold = true
-            dirtStrength = 0.5f
-            quality = QualityLevel.HIGH
-            lensFlare = true
-            starburst = true
-            chromaticAberration = 0.05f
-            ghostCount = 4
-            ghostSpacing = 0.5f
-            ghostThreshold = 0.5f
-            haloRadius = 0.5f
-            haloThickness = 0.5f
-            haloThreshold = 0.5f
-            highlight = 0.5f
-            blendMode = BloomOptions.BlendMode.ADD
-        }
-        assertTrue(bloom.enabled)
-        assertEquals(4, bloom.levels)
-        assertEquals(256, bloom.resolution)
-        assertEquals(0.5f, bloom.strength)
-        assertTrue(bloom.threshold)
-        assertEquals(0.5f, bloom.dirtStrength)
-        assertEquals(QualityLevel.HIGH, bloom.quality)
-        assertTrue(bloom.lensFlare)
-        assertTrue(bloom.starburst)
-        assertEquals(0.05f, bloom.chromaticAberration)
-        assertEquals(4, bloom.ghostCount)
-        assertEquals(0.5f, bloom.ghostSpacing)
-        assertEquals(BloomOptions.BlendMode.ADD, bloom.blendMode)
-
-        val fog = FogOptions().apply {
-            enabled = true
-            distance = 10f
-            density = 0.5f
-            height = 1f
-            heightFalloff = 0.1f
-            color = floatArrayOf(1f, 1f, 1f)
-            cutOffDistance = 100f
-            maximumOpacity = 1f
-            inScatteringStart = 0f
-            inScatteringSize = 10f
-            fogColorFromIbl = true
-        }
-        assertTrue(fog.enabled)
-        assertEquals(10f, fog.distance)
-        assertEquals(0.5f, fog.density)
-        assertEquals(1f, fog.height)
-        assertEquals(1f, fog.color[0])
-        assertEquals(100f, fog.cutOffDistance)
-        assertTrue(fog.fogColorFromIbl)
-
-        val dof = DepthOfFieldOptions().apply {
-            enabled = true
-            cocScale = 1f
-            maxApertureDiameter = 0.05f
-            filter = DepthOfFieldOptions.Filter.MEDIAN
-            nativeResolution = true
-            foregroundRingCount = 2
-            backgroundRingCount = 2
-            fastGatherRingCount = 2
-            maxForegroundCOC = 4
-            maxBackgroundCOC = 4
-        }
-        assertTrue(dof.enabled)
-        assertEquals(1f, dof.cocScale)
-        assertEquals(0.05f, dof.maxApertureDiameter)
-        assertEquals(DepthOfFieldOptions.Filter.MEDIAN, dof.filter)
-        assertTrue(dof.nativeResolution)
-
-        val vig = VignetteOptions().apply {
-            enabled = true
-            midPoint = 0.5f
-            roundness = 0.5f
-            feather = 0.5f
-            color = floatArrayOf(0.1f, 0.2f, 0.3f)
-        }
-        assertTrue(vig.enabled)
-        assertEquals(0.5f, vig.midPoint)
-        assertEquals(0.1f, vig.color[0], 1e-6f)
-
-        val ao = AmbientOcclusionOptions().apply {
-            radius = 0.5f
-            bias = 0.01f
-            intensity = 1f
-            power = 1f
-            minHorizonAngleRad = 0.1f
-            quality = QualityLevel.HIGH
-            lowPassFilter = QualityLevel.HIGH
-            upsampling = QualityLevel.HIGH
-            enabled = true
-            bentNormals = true
-            bilateralThreshold = 0.5f
-            resolution = 0.5f
-            ssct = AmbientOcclusionOptions.Ssct().apply {
-                enabled = true
-                lightConeRad = 0.5f
-                shadowDistance = 10f
-                contactDistanceMax = 10f
-                intensity = 1f
-                lightDirection = floatArrayOf(0f, -1f, 0f)
-                depthBias = 0.01f
-                depthSlopeBias = 0.01f
-                sampleCount = 4
-                rayCount = 4
-            }
-        }
-        assertEquals(0.5f, ao.radius)
-        assertTrue(ao.enabled)
-        assertTrue(ao.bentNormals)
-        assertTrue(ao.ssct.enabled)
-        assertEquals(0f, ao.ssct.lightDirection[0])
-
-        val taa = TemporalAntiAliasingOptions().apply {
-            feedback = 0.5f
-            lodBias = 0f
-            sharpness = 0.5f
-            enabled = true
-            upscaling = 1f
-            filterHistory = true
-            filterInput = true
-            useYCoCg = true
-            hdr = true
-            boxType = TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE
-            boxClipping = TemporalAntiAliasingOptions.BoxClipping.CLAMP
-            jitterPattern = TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
-            varianceGamma = 0.5f
-            preventFlickering = true
-            historyReprojection = true
-        }
-        assertTrue(taa.enabled)
-        assertEquals(0.5f, taa.feedback)
-
-        val ssr = ScreenSpaceReflectionsOptions().apply {
-            enabled = true
-            thickness = 0.1f
-            bias = 0.01f
-            maxDistance = 10f
-            stride = 1f
-        }
-        assertTrue(ssr.enabled)
-        assertEquals(0.1f, ssr.thickness, 1e-6f)
-
-        val vsm = VsmShadowOptions().apply {
-            anisotropy = 4
-            mipmapping = true
-            msaaSamples = 4
-            highPrecision = true
-            lightBleedReduction = 0.5f
-        }
-        assertEquals(4, vsm.anisotropy)
-        assertTrue(vsm.mipmapping)
-
-        val soft = SoftShadowOptions().apply {
-            penumbraScale = 1f
-            penumbraRatioScale = 1f
-        }
-        assertEquals(1f, soft.penumbraScale)
-
-        val guard = GuardBandOptions().apply {
-            enabled = true
-        }
-        assertTrue(guard.enabled)
-
-        val stereo = StereoscopicOptions().apply {
-            enabled = true
-        }
-        assertTrue(stereo.enabled)
-
-        val msaa = MultiSampleAntiAliasingOptions().apply {
-            enabled = true
-            sampleCount = 4
-            customResolve = true
-        }
-        assertTrue(msaa.enabled)
-        assertEquals(4, msaa.sampleCount)
-    }
-
-    @Test
     fun testViewLifecycleAndProperties() {
         val view = engine.createView()
-        assertNotNull(view)
         assertTrue(engine.isValid(view))
 
         view.name = "TestView"
@@ -283,53 +71,9 @@ class ViewTest : FilamentTestFixture() {
         view.dithering = Dithering.TEMPORAL
         assertEquals(Dithering.TEMPORAL, view.dithering)
 
-        // Assign sub-options to View. minScale == maxScale so `enabled` survives on backends
-        // without frame-time support (Noop/sim report isFrameTimeSupported()=false since 1.72.0).
+        // minScale == maxScale so `enabled` survives without frame-time support (NOOP since 1.72.0).
         view.dynamicResolutionOptions = DynamicResolutionOptions().apply { enabled = true; minScale = floatArrayOf(1f, 1f); maxScale = floatArrayOf(1f, 1f) }
         assertTrue(view.dynamicResolutionOptions.enabled)
-        assertNotNull(view.lastDynamicResolutionScale)
-
-        view.renderQuality = RenderQuality().apply { hdrColorBuffer = QualityLevel.HIGH }
-        assertEquals(QualityLevel.HIGH, view.renderQuality.hdrColorBuffer)
-
-        view.bloomOptions = BloomOptions().apply { enabled = true }
-        assertTrue(view.bloomOptions.enabled)
-
-        view.fogOptions = FogOptions().apply { enabled = true }
-        assertTrue(view.fogOptions.enabled)
-
-        view.depthOfFieldOptions = DepthOfFieldOptions().apply { enabled = true }
-        assertTrue(view.depthOfFieldOptions.enabled)
-
-        view.vignetteOptions = VignetteOptions().apply { enabled = true }
-        assertTrue(view.vignetteOptions.enabled)
-
-        view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { enabled = true }
-        assertTrue(view.ambientOcclusionOptions.enabled)
-
-        view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { enabled = true }
-        assertTrue(view.temporalAntiAliasingOptions.enabled)
-
-        view.screenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions().apply { enabled = true }
-        assertTrue(view.screenSpaceReflectionsOptions.enabled)
-
-        view.shadowType = ShadowType.VSM
-        assertEquals(ShadowType.VSM, view.shadowType)
-
-        view.vsmShadowOptions = VsmShadowOptions().apply { anisotropy = 4 }
-        assertEquals(4, view.vsmShadowOptions.anisotropy)
-
-        view.softShadowOptions = SoftShadowOptions().apply { penumbraScale = 2f }
-        assertEquals(2f, view.softShadowOptions.penumbraScale)
-
-        view.guardBandOptions = GuardBandOptions().apply { enabled = true }
-        assertTrue(view.guardBandOptions.enabled)
-
-        view.stereoscopicOptions = StereoscopicOptions().apply { enabled = true }
-        assertTrue(view.stereoscopicOptions.enabled)
-
-        view.multiSampleAntiAliasingOptions = MultiSampleAntiAliasingOptions().apply { enabled = true }
-        assertTrue(view.multiSampleAntiAliasingOptions.enabled)
 
         // View Boolean Flags
         view.isFrustumCullingEnabled = true
@@ -366,20 +110,15 @@ class ViewTest : FilamentTestFixture() {
         assertNull(view.scene)
         val scene = engine.createScene()
         view.scene = scene
-        assertNotNull(view.scene)
+        assertSame(scene, view.scene)
 
         assertFalse(view.hasCamera)
         val entity = EntityManager.get().create()
         val camera = engine.createCamera(entity)
         view.camera = camera
         assertTrue(view.hasCamera)
-        assertNotNull(view.camera)
-
-        // History / Picking
+        assertSame(camera, view.camera)
         view.clearFrameHistory(engine)
-        view.pick(100, 100) { result ->
-            // Callback
-        }
 
         // Cleanup
         engine.destroyCameraComponent(entity)

@@ -4,14 +4,12 @@ import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class TransformManagerTest : FilamentTestFixture() {
     @Test
     fun testTransformManagerLifecycle() {
         val tm = engine.transformManager
-        assertNotNull(tm)
 
         val entity = EntityManager.get().create()
         assertFalse(tm.hasComponent(entity))
@@ -68,6 +66,11 @@ class TransformManagerTest : FilamentTestFixture() {
         assertEquals(childEntity, children[0])
 
         assertEquals(entity, tm.getParent(childInst))
+        // The child's world transform is its local one composed with the parent's: (5,6,7) + (2,3,4).
+        val childWorld = { tm.getWorldTransform(childInst, FloatArray(16)).copyOfRange(12, 15).toList() }
+        assertEquals(listOf(7f, 9f, 11f), childWorld())
+        tm.setTransform(inst, testFloat)
+        assertEquals(listOf(4f, 6f, 8f), childWorld(), "moving the parent moves the child")
 
         // Reparent under a second root created from a double transform, then detach.
         val otherEntity = EntityManager.get().create()
@@ -77,7 +80,9 @@ class TransformManagerTest : FilamentTestFixture() {
         tm.setParent(childInst, otherInst)
         assertEquals(otherEntity, tm.getParent(childInst))
         assertEquals(0, tm.getChildCount(inst))
+        assertEquals(listOf(7f, 9f, 11f), childWorld(), "reparented under the (5,6,7) root")
         tm.setParent(childInst, 0)
+        assertEquals(listOf(2f, 3f, 4f), childWorld(), "detached: world is local")
         assertEquals(0, tm.getChildCount(otherInst))
 
         // Transactions & Settings

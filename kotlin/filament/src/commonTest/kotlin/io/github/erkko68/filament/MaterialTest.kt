@@ -9,7 +9,6 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -35,26 +34,23 @@ class MaterialTest : FilamentTestFixture() {
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         val mat = Material.Builder()
             .payload(bytes)
-            .build(engine)
-        assertNotNull(mat)
+            .build(engine)!!
         assertTrue(engine.isValid(mat))
 
-        // Getters: just exercise the binding path and round-trip what we can.
-        assertTrue(mat.name.isNotEmpty())
-        assertNotNull(mat.shading)
-        assertNotNull(mat.interpolation)
-        assertNotNull(mat.blendingMode)
-        assertNotNull(mat.transparencyMode)
-        assertNotNull(mat.refractionMode)
-        assertNotNull(mat.refractionType)
-        assertNotNull(mat.reflectionMode)
-        assertNotNull(mat.vertexDomain)
-        assertNotNull(mat.cullingMode)
-        assertNotNull(mat.featureLevel)
-        assertTrue(mat.maskThreshold >= 0f)
-        assertTrue(mat.specularAntiAliasingVariance >= 0f)
-        assertTrue(mat.specularAntiAliasingThreshold >= 0f)
-        assertTrue(mat.parameterCount >= 0)
+        // emissive.mat declares only its name, unlit shading and parameters: the rest are Filament's defaults.
+        assertEquals("Emissive", mat.name)
+        assertEquals(Material.Shading.UNLIT, mat.shading)
+        assertEquals(Material.Interpolation.SMOOTH, mat.interpolation)
+        assertEquals(Material.BlendingMode.OPAQUE, mat.blendingMode)
+        assertEquals(Material.TransparencyMode.DEFAULT, mat.transparencyMode)
+        assertEquals(RefractionMode.NONE, mat.refractionMode)
+        assertEquals(RefractionType.SOLID, mat.refractionType)
+        assertEquals(ReflectionMode.DEFAULT, mat.reflectionMode)
+        assertEquals(Material.VertexDomain.OBJECT, mat.vertexDomain)
+        assertEquals(Material.CullingMode.BACK, mat.cullingMode)
+        assertEquals(Engine.FeatureLevel.FEATURE_LEVEL_1, mat.featureLevel)
+        assertEquals(0.4f, mat.maskThreshold, 1e-6f)
+        assertEquals(4, mat.parameterCount)
         val params = mat.parameters
         assertEquals(mat.parameterCount, params.size)
         assertEquals(Material.ParameterType.FLOAT3, params.single { it.name == "color" }.type)
@@ -64,7 +60,7 @@ class MaterialTest : FilamentTestFixture() {
             assertEquals(1, listOfNotNull(it.type, it.samplerType, it.subpassType).size)
             assertEquals(it.isSampler, mat.isSampler(it.name))
         }
-        assertNotNull(mat.requiredAttributes)
+        assertTrue(VertexBuffer.VertexAttribute.POSITION in mat.requiredAttributes)
 
         mat.setDefaultParameter("intensity", 3f)
         assertContentEquals(floatArrayOf(3f), mat.defaultInstance.getParameter("intensity", MaterialInstance.FloatElement.FLOAT))
@@ -75,11 +71,10 @@ class MaterialTest : FilamentTestFixture() {
 
         // Instances
         val inst1 = mat.createInstance()
-        assertNotNull(inst1)
+        assertEquals(mat.nativeObject, inst1.material.nativeObject)
         val inst2 = mat.createInstance("named_instance")
-        assertNotNull(inst2)
-        val defInst = mat.defaultInstance
-        assertNotNull(defInst)
+        assertEquals("named_instance", inst2.name)
+        assertEquals(mat.nativeObject, mat.defaultInstance.material.nativeObject)
 
         engine.destroy(inst1)
         engine.destroy(inst2)

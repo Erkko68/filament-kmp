@@ -3,7 +3,6 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -16,8 +15,6 @@ class SkyboxTest : FilamentTestFixture() {
             .intensity(1000f)
             .priority(2)
             .build(engine)
-        
-        assertNotNull(sky)
         assertTrue(engine.isValid(sky))
 
         // Getters / Setters
@@ -47,10 +44,10 @@ class SkyboxTest : FilamentTestFixture() {
             .environment(cubemap)
             .build(engine)
 
-        assertNotNull(sky)
-        assertNotNull(sky.texture)
-
+        val expected = cubemap.nativeObject
+        val texture = sky.texture?.nativeObject
         engine.destroy(sky)
         engine.destroy(cubemap)
+        assertEquals(expected, texture)
     }
 }

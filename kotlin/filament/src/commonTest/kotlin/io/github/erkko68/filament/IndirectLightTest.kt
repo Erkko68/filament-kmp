@@ -2,76 +2,47 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class IndirectLightTest : FilamentTestFixture() {
+    // 3 bands, rgb per coefficient. Coefficient 1 is the y term: light arriving from above.
+    private val fromAbove = FloatArray(27).also { sh ->
+        for (c in 0 until 3) { sh[c] = 1f; sh[3 + c] = 1f }
+    }
+
     @Test
-    fun testIndirectLightLifecycle() {
-        // Spherical harmonics for 3 bands: 9 coefficients, 3 floats per coefficient = 27 floats
-        val sh = FloatArray(27)
-        sh[0] = 1f // Ambient band red
-        sh[1] = 1f // Ambient band green
-        sh[2] = 1f // Ambient band blue
-
-        val light = IndirectLight.Builder()
-            .irradiance(3, sh)
-            .intensity(20000f)
-            .rotation(floatArrayOf(
-                1f, 0f, 0f,
-                0f, 1f, 0f,
-                0f, 0f, 1f
-            ))
-            .build(engine)
-
-        assertNotNull(light)
-        assertTrue(engine.isValid(light))
-
+    fun irradianceAndRotationRoundTrip() {
+        val rotation = floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+        val light = IndirectLight.Builder().irradiance(3, fromAbove).intensity(20000f).rotation(rotation).build(engine)
         assertEquals(20000f, light.intensity)
         light.intensity = 15000f
         assertEquals(15000f, light.intensity)
-
-        val rot = light.rotation
-        assertEquals(1f, rot[0])
-        assertEquals(1f, rot[4])
-
-        light.rotation = floatArrayOf(
-            0f, 1f, 0f,
-            -1f, 0f, 0f,
-            0f, 0f, 1f
-        )
-        assertEquals(9, light.rotation.size)
-        assertEquals(1f, light.rotation[8])
-
-        assertEquals(3, light.getDirectionEstimate().size)
-        assertEquals(4, light.getColorEstimate(0f, 1f, 0f).size)
-
+        assertContentEquals(rotation, light.rotation)
+        val quarterTurn = floatArrayOf(0f, 1f, 0f, -1f, 0f, 0f, 0f, 0f, 1f)
+        light.rotation = quarterTurn
+        assertContentEquals(quarterTurn, light.rotation)
         assertNull(light.reflectionsTexture)
         assertNull(light.irradianceTexture)
-
         engine.destroy(light)
     }
 
     @Test
-    fun testIndirectLightCompanionEstimates() {
-        val sh = FloatArray(27)
-        sh[0] = 1f
+    fun theDominantLightComesFromTheBrightestDirection() {
+        val down = IndirectLight.getDirectionEstimate(fromAbove)
+        listOf(0f, -1f, 0f).forEachIndexed { i, v -> assertEquals(v, down[i], 1e-4f, "direction ${down.toList()}") }
+        assertTrue(IndirectLight.getColorEstimate(fromAbove, down[0], down[1], down[2])[3] > 0f)
 
-        val dir = IndirectLight.getDirectionEstimate(sh)
-        assertEquals(3, dir.size)
-
-        val col = IndirectLight.getColorEstimate(sh, 0f, 1f, 0f)
-        assertEquals(4, col.size)
+        val light = IndirectLight.Builder().irradiance(3, fromAbove).build(engine)
+        assertContentEquals(down, light.getDirectionEstimate())
+        engine.destroy(light)
     }
 
     @Test
-    fun testIndirectLightWithTextures() {
-        // Use a slightly larger cubemap with mip-mappable usage: upstream IBL's
-        // builder calls generateMipmaps when IBL_INTEGRATION_IMPORTANCE_SAMPLING
-        // is on (Filament's JS build), which requires both > 1 mip level *and*
-        // the GEN_MIPMAPPABLE | COLOR_ATTACHMENT usage flags.
+    fun cubemapsAreHeldByTheLight() {
+        // Mip-mappable: Filament's wasm build generates mipmaps for importance-sampled IBLs.
         val cubemap = Texture.Builder()
             .width(4)
             .height(4)
@@ -80,17 +51,19 @@ class IndirectLightTest : FilamentTestFixture() {
             .usage(Texture.Usage.SAMPLEABLE or Texture.Usage.COLOR_ATTACHMENT)
             .format(Texture.InternalFormat.RGBA8)
             .build(engine)
-
-        val light = IndirectLight.Builder()
-            .reflections(cubemap)
-            .irradiance(cubemap)
-            .build(engine)
-
-        assertNotNull(light)
-        assertNotNull(light.reflectionsTexture)
-        assertNotNull(light.irradianceTexture)
-
+        val light = IndirectLight.Builder().reflections(cubemap).irradiance(cubemap).build(engine)
+        // Each getter call wraps the native texture anew; destroying a wrapper clears its handle.
+        val expected = cubemap.nativeObject to light.nativeObject
+        val reflections = light.reflectionsTexture?.nativeObject
+        val irradiance = light.irradianceTexture?.nativeObject
+        val scene = engine.createScene()
+        scene.indirectLight = light
+        val attached = scene.indirectLight?.nativeObject
+        engine.destroy(scene)
         engine.destroy(light)
         engine.destroy(cubemap)
+        assertEquals(expected.first, reflections)
+        assertEquals(expected.first, irradiance)
+        assertEquals(expected.second, attached)
     }
 }

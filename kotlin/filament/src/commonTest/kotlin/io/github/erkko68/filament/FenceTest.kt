@@ -1,28 +1,17 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.interop.NullPointer
-
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class FenceTest : FilamentTestFixture() {
     @Test
-    fun testFenceLifecycle() {
+    fun fencesSignalOnceTheQueueIsFlushed() {
         val fence = engine.createFence()
-        assertNotNull(fence)
         assertTrue(engine.isValid(fence))
-
-        assertTrue(fence.nativeObject != NullPointer)
-
-        // Wait on the fence
-        val status = fence.wait(Fence.Mode.FLUSH, 1000000L)
-        assertNotNull(status)
-
-        // Wait and destroy
-        val status2 = Fence.waitAndDestroy(fence, Fence.Mode.FLUSH)
-        assertNotNull(status2)
+        assertEquals(Fence.FenceStatus.CONDITION_SATISFIED, fence.wait(Fence.Mode.FLUSH, Fence.WAIT_FOR_EVER))
+        assertEquals(Fence.FenceStatus.CONDITION_SATISFIED, Fence.waitAndDestroy(engine.createFence(), Fence.Mode.FLUSH))
+        engine.destroy(fence)
     }
 }

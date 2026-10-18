@@ -17,8 +17,6 @@ class MorphTargetBufferTest : FilamentTestFixture() {
             .withTangents(true)
             .enableCustomMorphing(true)
             .build(engine)
-
-        assertNotNull(buffer)
         assertTrue(engine.isValid(buffer))
 
         assertEquals(100, buffer.vertexCount)

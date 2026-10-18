@@ -7,7 +7,6 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class MaterialInstanceTest : FilamentTestFixture() {
@@ -16,9 +15,7 @@ class MaterialInstanceTest : FilamentTestFixture() {
         val bytes = TestMaterials.getEmissiveMaterialBytes()
         val mat = Material.Builder().payload(bytes).build(engine)!!
         val inst = mat.createInstance()
-        assertNotNull(inst)
-        assertEquals(mat.name, inst.material.name)
-        assertNotNull(inst.name)
+        assertEquals(mat.nativeObject, inst.material.nativeObject)
 
         inst.setParameter("color", RgbType.LINEAR, 0.5f, 0.25f, 1f)
         assertContentEquals(floatArrayOf(0.5f, 0.25f, 1f), inst.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
@@ -72,7 +69,6 @@ class MaterialInstanceTest : FilamentTestFixture() {
         inst.setStencilWriteMask(128)
 
         val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
-        assertNotNull(dup)
         assertEquals("duplicated_instance", dup.name)
         engine.destroy(dup)
 
