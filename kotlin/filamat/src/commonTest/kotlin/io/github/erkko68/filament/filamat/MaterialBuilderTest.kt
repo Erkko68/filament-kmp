@@ -1,183 +1,140 @@
 package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Material
+import io.github.erkko68.filament.MaterialDomain
+import io.github.erkko68.filament.RefractionMode
+import io.github.erkko68.filament.RefractionType
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.filamat.testutils.FilamatTestFixture
 import kotlin.test.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/** What the builder is told must be what Filament reads back from the compiled package. */
 class MaterialBuilderTest : FilamatTestFixture() {
-
-    // Ordinal checks verify that the Kotlin enum layout matches the native C++ enum layout.
-    // Wrong ordinals mean silent mismatched arguments across the JNI/WASM boundary.
-
-    @Test
-    fun testShadingEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.Shading.UNLIT.ordinal)
-        assertEquals(1, MaterialBuilder.Shading.LIT.ordinal)
-        assertEquals(2, MaterialBuilder.Shading.SUBSURFACE.ordinal)
-        assertEquals(3, MaterialBuilder.Shading.CLOTH.ordinal)
-        assertEquals(4, MaterialBuilder.Shading.SPECULAR_GLOSSINESS.ordinal)
-    }
-
-    @Test
-    fun testInterpolationEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.Interpolation.SMOOTH.ordinal)
-        assertEquals(1, MaterialBuilder.Interpolation.FLAT.ordinal)
-    }
-
-    @Test
-    fun testBlendingModeEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.BlendingMode.OPAQUE.ordinal)
-        assertEquals(1, MaterialBuilder.BlendingMode.TRANSPARENT.ordinal)
-        assertEquals(2, MaterialBuilder.BlendingMode.ADD.ordinal)
-        assertEquals(3, MaterialBuilder.BlendingMode.MASKED.ordinal)
-        assertEquals(4, MaterialBuilder.BlendingMode.FADE.ordinal)
-        assertEquals(5, MaterialBuilder.BlendingMode.MULTIPLY.ordinal)
-        assertEquals(6, MaterialBuilder.BlendingMode.SCREEN.ordinal)
-        assertEquals(7, MaterialBuilder.BlendingMode.CUSTOM.ordinal)
-    }
-
-    @Test
-    fun testPlatformEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.Platform.DESKTOP.ordinal)
-        assertEquals(1, MaterialBuilder.Platform.MOBILE.ordinal)
-        assertEquals(2, MaterialBuilder.Platform.ALL.ordinal)
-    }
-
-    @Test
-    fun testTargetApiEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.TargetApi.OPENGL.ordinal)
-        assertEquals(1, MaterialBuilder.TargetApi.VULKAN.ordinal)
-        assertEquals(2, MaterialBuilder.TargetApi.METAL.ordinal)
-        assertEquals(3, MaterialBuilder.TargetApi.WEBGPU.ordinal)
-        assertEquals(4, MaterialBuilder.TargetApi.ALL.ordinal)
-    }
-
-    @Test
-    fun testOptimizationEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.Optimization.NONE.ordinal)
-        assertEquals(1, MaterialBuilder.Optimization.PREPROCESSOR.ordinal)
-        assertEquals(2, MaterialBuilder.Optimization.SIZE.ordinal)
-        assertEquals(3, MaterialBuilder.Optimization.PERFORMANCE.ordinal)
-    }
-
-    @Test
-    fun testCullingModeEnumOrdinals() {
-        assertEquals(0, MaterialBuilder.CullingMode.NONE.ordinal)
-        assertEquals(1, MaterialBuilder.CullingMode.FRONT.ordinal)
-        assertEquals(2, MaterialBuilder.CullingMode.BACK.ordinal)
-        assertEquals(3, MaterialBuilder.CullingMode.FRONT_AND_BACK.ordinal)
-    }
-
-    @Test
-    fun testTargetApiBranches() {
-        // Exercise every TargetApi -> native bitmask branch.
-        for (api in MaterialBuilder.TargetApi.entries) {
-            val builder = MaterialBuilder().targetApi(api)
-            assertNotNull(builder)
-        }
-    }
-
-    @Test
-    fun testMaterialBuilderChainingAndBuild() {
-        val pkg = MaterialBuilder()
-                .name("TestMaterial")
-                .materialDomain(MaterialBuilder.MaterialDomain.SURFACE)
-                .shading(MaterialBuilder.Shading.UNLIT)
-                .interpolation(MaterialBuilder.Interpolation.SMOOTH)
-                .parameter("myUniform", MaterialBuilder.UniformType.FLOAT)
-                .parameter("myPrecise", MaterialBuilder.UniformType.FLOAT2, MaterialBuilder.ParameterPrecision.HIGH)
-                .parameter("myArray", 4, MaterialBuilder.UniformType.FLOAT4)
-                .parameter("myPreciseArray", 2, MaterialBuilder.UniformType.FLOAT4, MaterialBuilder.ParameterPrecision.MEDIUM)
-                .parameter("myTex", MaterialBuilder.SamplerType.SAMPLER_2D)
-                .parameter("myFragmentTex", MaterialBuilder.SamplerType.SAMPLER_2D, stages = setOf(MaterialBuilder.ShaderStage.FRAGMENT))
-                .constant("myIntConstant", MaterialBuilder.ConstantType.INT, 3)
-                .constant("myFloatConstant", MaterialBuilder.ConstantType.FLOAT, 0.5f)
-                .constant("myBoolConstant", MaterialBuilder.ConstantType.BOOL, true)
-                .variable(MaterialBuilder.Variable.CUSTOM0, "myVar")
-                .variable(MaterialBuilder.Variable.CUSTOM1, "myPreciseVar", MaterialBuilder.ParameterPrecision.HIGH)
-                .shaderDefine("MY_DEFINE", "1")
-                .quality(MaterialBuilder.ShaderQuality.HIGH)
-                .linearFog(false)
-                .materialSource("material { name : TestMaterial }")
-                .require(VertexAttribute.POSITION)
-                .material("void material(inout MaterialInputs m) { prepareMaterial(m); }")
-                .materialVertex("void materialVertex(inout MaterialVertexInputs m) {}")
-                .blending(MaterialBuilder.BlendingMode.OPAQUE)
-                .postLightingBlending(MaterialBuilder.BlendingMode.OPAQUE)
-                .vertexDomain(MaterialBuilder.VertexDomain.OBJECT)
-                .culling(MaterialBuilder.CullingMode.BACK)
-                .colorWrite(true)
-                .depthWrite(true)
-                .depthCulling(true)
-                .doubleSided(false)
-                .maskThreshold(0.5f)
-                .alphaToCoverage(false)
-                .shadowMultiplier(true)
-                .transparentShadow(true)
-                .coloredPenumbra(true)
-                .specularAntiAliasing(true)
-                .specularAntiAliasingVariance(0.15f)
-                .specularAntiAliasingThreshold(0.2f)
-                .refractionMode(MaterialBuilder.RefractionMode.NONE)
-                .reflectionMode(MaterialBuilder.ReflectionMode.DEFAULT)
-                .refractionType(MaterialBuilder.RefractionType.SOLID)
-                .clearCoatIorChange(true)
-                .flipUV(true)
-                .customSurfaceShading(false)
-                .multiBounceAmbientOcclusion(true)
-                .specularAmbientOcclusion(MaterialBuilder.SpecularAmbientOcclusion.SIMPLE)
-                .transparencyMode(MaterialBuilder.TransparencyMode.DEFAULT)
-                .platform(MaterialBuilder.Platform.ALL)
-                .targetApi(MaterialBuilder.TargetApi.ALL)
-                .optimization(MaterialBuilder.Optimization.NONE)
-                .variantFilter(0)
-                .useLegacyMorphing()
-                .build()
-
-        // Package.invalidPackage() is non-null, so assertNotNull alone passes even when
-        // MaterialBuilder::init() never ran and the compile was skipped.
-        assertNotNull(pkg)
-        assertTrue(pkg.isValid, "material did not compile — was MaterialBuilder.init() called?")
-        assertTrue(pkg.data.isNotEmpty(), "valid package with no data")
-    }
-
-    @Test
-    fun testBrokenShaderBuildsInvalidPackage() {
-        val pkg = MaterialBuilder()
-            .name("Broken")
-            .shading(MaterialBuilder.Shading.UNLIT)
-            .material("void material(inout MaterialInputs m) { this is not glsl }")
-            .build()
-        assertFalse(pkg.isValid, "a shader that doesn't compile must give an invalid package")
-    }
-
-    @Test
-    fun testAttributeDatabase() {
-        val attributes = MaterialBuilder.getAttributeDatabase()
-        val uv0 = attributes.single { it.location == VertexAttribute.UV0 }
-        assertEquals("uv0", uv0.name)
-        assertEquals(MaterialBuilder.UniformType.FLOAT2, uv0.type)
-        assertEquals("mesh_uv0", uv0.attributeName)
-        assertEquals("HAS_ATTRIBUTE_UV0", uv0.defineName)
-    }
-
-    private fun MaterialBuilder.buildValid(): MaterialPackage =
-        build().also { assertTrue(it.isValid, "material did not compile") }
-
     private fun unlit() = MaterialBuilder()
         .shading(MaterialBuilder.Shading.UNLIT)
         .material("void material(inout MaterialInputs m) { prepareMaterial(m); }")
 
     @Test
-    fun testCompilerOptions() {
-        unlit()
-            .name("Options")
+    fun litSettingsReachTheMaterial() {
+        val source = "material { name : Settings }"
+        val material = MaterialBuilder()
+            .name("Settings")
+            .shading(MaterialBuilder.Shading.LIT)
+            .interpolation(MaterialBuilder.Interpolation.FLAT)
+            .blending(MaterialBuilder.BlendingMode.MASKED)
+            .maskThreshold(0.3f)
+            .culling(MaterialBuilder.CullingMode.FRONT)
+            .doubleSided(true)
+            .colorWrite(false)
+            .depthWrite(false)
+            .depthCulling(false)
+            .alphaToCoverage(true)
+            .specularAntiAliasing(true)
+            .specularAntiAliasingVariance(0.15f)
+            .specularAntiAliasingThreshold(0.2f)
+            .refractionMode(MaterialBuilder.RefractionMode.CUBEMAP)
+            .refractionType(MaterialBuilder.RefractionType.THIN)
+            .vertexDomain(MaterialBuilder.VertexDomain.WORLD)
             .featureLevel(Engine.FeatureLevel.FEATURE_LEVEL_1)
+            .require(VertexAttribute.UV0)
+            .materialSource(source)
+            .material("void material(inout MaterialInputs m) { prepareMaterial(m); }")
+            .load()
+
+        assertEquals("Settings", material.name)
+        assertEquals(Material.Shading.LIT, material.shading)
+        assertEquals(Material.Interpolation.FLAT, material.interpolation)
+        assertEquals(Material.BlendingMode.MASKED, material.blendingMode)
+        assertEquals(0.3f, material.maskThreshold, 1e-6f)
+        assertEquals(Material.CullingMode.FRONT, material.cullingMode)
+        assertTrue(material.isDoubleSided)
+        assertFalse(material.isColorWriteEnabled)
+        assertFalse(material.isDepthWriteEnabled)
+        assertFalse(material.isDepthCullingEnabled)
+        assertTrue(material.isAlphaToCoverageEnabled)
+        assertTrue(material.hasSpecularAntiAliasing)
+        assertEquals(0.15f, material.specularAntiAliasingVariance, 1e-6f)
+        assertEquals(0.2f, material.specularAntiAliasingThreshold, 1e-6f)
+        assertEquals(RefractionMode.CUBEMAP, material.refractionMode)
+        assertEquals(RefractionType.THIN, material.refractionType)
+        assertEquals(Material.VertexDomain.WORLD, material.vertexDomain)
+        assertEquals(Engine.FeatureLevel.FEATURE_LEVEL_1, material.featureLevel)
+        assertTrue(VertexAttribute.UV0 in material.requiredAttributes)
+        assertEquals(source, material.source)
+    }
+
+    @Test
+    fun parametersReachTheMaterial() {
+        val material = unlit()
+            .parameter("scalar", MaterialBuilder.UniformType.FLOAT)
+            .parameter("accurate", MaterialBuilder.UniformType.FLOAT2, MaterialBuilder.ParameterPrecision.HIGH)
+            .parameter("array", 4, MaterialBuilder.UniformType.FLOAT4)
+            .parameter("tex", MaterialBuilder.SamplerType.SAMPLER_2D)
+            .parameter("fragmentTex", MaterialBuilder.SamplerType.SAMPLER_CUBEMAP, stages = setOf(MaterialBuilder.ShaderStage.FRAGMENT))
+            .load()
+        val byName = material.parameters.associateBy { it.name }
+
+        assertEquals(setOf("scalar", "accurate", "array", "tex", "fragmentTex"), byName.keys)
+        assertEquals(5, material.parameterCount)
+        assertEquals(Material.ParameterType.FLOAT, byName.getValue("scalar").type)
+        assertEquals(Material.Precision.HIGH, byName.getValue("accurate").precision)
+        assertEquals(4, byName.getValue("array").count)
+        assertEquals(Material.ParameterType.FLOAT4, byName.getValue("array").type)
+        assertTrue(material.isSampler("tex"))
+        assertEquals(Material.SamplerType.SAMPLER_CUBEMAP, byName.getValue("fragmentTex").samplerType)
+        assertFalse(material.hasParameter("missing"))
+    }
+
+    /** Specialization constants can be overridden by name when the material is loaded (Filament rejects unknown names). */
+    @Test
+    fun constantsCanBeSpecialized() {
+        unlit()
+            .constant("count", MaterialBuilder.ConstantType.INT, 3)
+            .constant("scale", MaterialBuilder.ConstantType.FLOAT, 0.5f)
+            .constant("enabled", MaterialBuilder.ConstantType.BOOL, true)
+            .load { constant("count", 7).constant("scale", 2f).constant("enabled", false) }
+    }
+
+    @Test
+    fun customBlendingAndDomainsReachTheMaterial() {
+        val custom = unlit()
+            .blending(MaterialBuilder.BlendingMode.CUSTOM)
+            .customBlendFunctions(
+                MaterialBuilder.BlendFunction.SRC_ALPHA, MaterialBuilder.BlendFunction.ONE,
+                MaterialBuilder.BlendFunction.ONE_MINUS_SRC_ALPHA, MaterialBuilder.BlendFunction.ZERO,
+            )
+            .load()
+        val postProcess = MaterialBuilder()
+            .materialDomain(MaterialBuilder.MaterialDomain.POST_PROCESS)
+            .enableFramebufferFetch()
+            .output(
+                MaterialBuilder.VariableQualifier.OUT, MaterialBuilder.OutputTarget.COLOR,
+                MaterialBuilder.ParameterPrecision.DEFAULT, MaterialBuilder.OutputType.FLOAT4, "color",
+            )
+            .material("void postProcess(inout PostProcessInputs p) { p.color = vec4(1.0); }")
+            .load()
+
+        assertEquals(Material.BlendingMode.CUSTOM, custom.blendingMode)
+        assertEquals(MaterialDomain.POST_PROCESS, postProcess.materialDomain)
+    }
+
+    @Test
+    fun computeMaterialsCompile() {
+        MaterialBuilder()
+            .materialDomain(MaterialBuilder.MaterialDomain.COMPUTE)
+            .groupSize(8, 8, 1)
+            .material("void compute() {}")
+            .compile()
+    }
+
+    /** Compiler options that change how it builds, not what it builds: each still yields a valid package. */
+    @Test
+    fun compilerOptionsStillCompile() {
+        unlit()
             .setApiLevel(1)
             .instanced(true)
             .shadowFarAttenuation(true)
@@ -189,45 +146,39 @@ class MaterialBuilderTest : FilamatTestFixture() {
             .noSamplerValidation(true)
             .includeEssl1(false)
             .compilationParameters("")
-            .printShaders(false)
-            .saveRawVariants(false)
+            .shaderDefine("MY_DEFINE", "1")
+            .optimization(MaterialBuilder.Optimization.NONE)
             .generateDebugInfo(true)
-            .buildValid()
+            .useLegacyMorphing()
+            .compile()
+        val apis = MaterialBuilder.TargetApi.entries.associateWith { unlit().targetApi(it).platform(MaterialBuilder.Platform.ALL).build().isValid }
+        // The prebuilt compiler has no WebGPU (WGSL) output.
+        assertEquals(MaterialBuilder.TargetApi.entries.associateWith { it != MaterialBuilder.TargetApi.WEBGPU }, apis)
     }
 
     @Test
-    fun testCustomBlending() {
-        unlit()
-            .name("CustomBlend")
-            .blending(MaterialBuilder.BlendingMode.CUSTOM)
-            .customBlendFunctions(
-                MaterialBuilder.BlendFunction.SRC_ALPHA, MaterialBuilder.BlendFunction.ONE,
-                MaterialBuilder.BlendFunction.ONE_MINUS_SRC_ALPHA, MaterialBuilder.BlendFunction.ZERO,
-            )
-            .buildValid()
+    fun aBrokenShaderBuildsAnInvalidPackage() {
+        val pkg = unlit().material("void material(inout MaterialInputs m) { this is not glsl }").build()
+        assertFalse(pkg.isValid)
+        assertEquals(0, pkg.size)
+    }
+
+    /** The compiler works again after shutting down and starting up. */
+    @Test
+    fun theCompilerSurvivesInitShutdownCycles() {
+        MaterialBuilder.init()
+        MaterialBuilder.shutdown()
+        MaterialBuilder.shutdown()
+        MaterialBuilder.init()
+        unlit().compile()
     }
 
     @Test
-    fun testPostProcessOutput() {
-        MaterialBuilder()
-            .name("PostProcess")
-            .enableFramebufferFetch() // only meant for post-process materials
-            .materialDomain(MaterialBuilder.MaterialDomain.POST_PROCESS)
-            .output(
-                MaterialBuilder.VariableQualifier.OUT, MaterialBuilder.OutputTarget.COLOR,
-                MaterialBuilder.ParameterPrecision.DEFAULT, MaterialBuilder.OutputType.FLOAT4, "color",
-            )
-            .material("void postProcess(inout PostProcessInputs p) { p.color = vec4(1.0); }")
-            .buildValid()
-    }
-
-    @Test
-    fun testComputeGroupSize() {
-        MaterialBuilder()
-            .name("Compute")
-            .materialDomain(MaterialBuilder.MaterialDomain.COMPUTE)
-            .groupSize(8, 8, 1)
-            .material("void compute() {}")
-            .buildValid()
+    fun theAttributeDatabaseDescribesUv0() {
+        val uv0 = MaterialBuilder.getAttributeDatabase().single { it.location == VertexAttribute.UV0 }
+        assertEquals("uv0", uv0.name)
+        assertEquals(MaterialBuilder.UniformType.FLOAT2, uv0.type)
+        assertEquals("mesh_uv0", uv0.attributeName)
+        assertEquals("HAS_ATTRIBUTE_UV0", uv0.defineName)
     }
 }
