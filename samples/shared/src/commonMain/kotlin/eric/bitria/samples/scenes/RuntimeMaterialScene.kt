@@ -103,7 +103,7 @@ fun RuntimeMaterialScene(onBack: () -> Unit) {
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),
             )
-            rememberMaterialInstance(material)?.let { Sphere(material = it, radius = 1f) }
+            Sphere(material = rememberMaterialInstance(material), radius = 1f)
         }
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
         Column(
