@@ -1,7 +1,7 @@
 package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.utils.testutils.UtilsRenderingTestFixture
+import io.github.erkko68.filament.utils.testutils.UtilsTestFixture
 import io.github.erkko68.filament.utils.testutils.ktx1
 import kotlin.io.encoding.Base64
 import kotlin.test.Test
@@ -10,17 +10,11 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-/** Ktx1Reader, Ktx2Reader and TextureLoader create GPU textures, so they need a real backend. */
-class TextureReadersRenderingTest : UtilsRenderingTestFixture() {
+/** Each reader turns file bytes into a Filament texture of the right size and format. */
+class TextureReadersTest : UtilsTestFixture() {
 
     @Test
     fun ktx1ReaderCreatesTextures() {
-        val engine = engine ?: return
-        Ktx1Bundle(numMipLevels = 1, arrayLength = 1, isCubemap = false).use { empty ->
-            assertEquals(1, empty.numMipLevels)
-            assertFalse(empty.isCubemap)
-        }
-
         val texture = assertNotNull(Ktx1Reader.createTexture(engine, Ktx1Bundle(ktx1()), srgb = false))
         assertEquals(1, texture.getWidth(0))
         assertEquals(Texture.InternalFormat.RGBA8, texture.format)
@@ -46,11 +40,12 @@ class TextureReadersRenderingTest : UtilsRenderingTestFixture() {
 
     @Test
     fun ktx2ReaderLoadsSynchronouslyAndAsynchronously() {
-        val engine = engine ?: return
         Ktx2Reader(engine, quiet = true).use { reader ->
-            reader.requestFormat(Texture.InternalFormat.SRGB8_A8) // basisu tags color input as sRGB
+            assertEquals(Ktx2Reader.Result.SUCCESS, reader.requestFormat(Texture.InternalFormat.SRGB8_A8)) // basisu tags color input as sRGB
+            assertEquals(Ktx2Reader.Result.FORMAT_ALREADY_REQUESTED, reader.requestFormat(Texture.InternalFormat.SRGB8_A8))
             val texture = assertNotNull(reader.load(RED_4X4_UASTC, Ktx2Reader.TransferFunction.sRGB))
             assertEquals(4, texture.getWidth(0))
+            assertEquals(Texture.InternalFormat.SRGB8_A8, texture.format)
             engine.destroy(texture)
 
             val async = assertNotNull(reader.asyncCreate(RED_4X4_UASTC, Ktx2Reader.TransferFunction.sRGB))
@@ -66,11 +61,28 @@ class TextureReadersRenderingTest : UtilsRenderingTestFixture() {
 
     @Test
     fun textureLoaderDecodesAPng() {
-        val engine = engine ?: return
         val texture = assertNotNull(TextureLoader.loadTexture(engine, ONE_PIXEL_PNG, TextureLoader.TextureType.COLOR))
         assertEquals(1, texture.getWidth(0))
         engine.flushAndWait()
         engine.destroy(texture)
+    }
+
+    /** A 1×1 flat (non-RLE) Radiance file: header, blank line, resolution, then one RGBE pixel. */
+    @Test
+    fun hdrLoaderDecodesARadianceImage() {
+        val hdr = "#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y 1 +X 1\n".encodeToByteArray() + byteArrayOf(-128, 64, 32, -127)
+        val texture = assertNotNull(HDRLoader.createTexture(engine, hdr, Texture.InternalFormat.RGB16F))
+        val size = texture.getWidth(0) to texture.getHeight(0)
+        val format = texture.format
+        engine.destroy(texture)
+        assertEquals(1 to 1, size)
+        assertEquals(Texture.InternalFormat.RGB16F, format)
+    }
+
+    @Test
+    fun srgbFormatsAreRecognised() {
+        assertTrue(Ktx1Reader.isSrgbTextureFormat(Texture.InternalFormat.SRGB8_A8))
+        assertFalse(Ktx1Reader.isSrgbTextureFormat(Texture.InternalFormat.RGBA8))
     }
 
     private companion object {

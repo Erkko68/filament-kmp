@@ -1,19 +1,39 @@
 package io.github.erkko68.filament.utils
 
+import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.utils.testutils.UtilsRenderingTestFixture
+import io.github.erkko68.filament.testsupport.assumeRealBackend
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-/**
- * Real-backend coverage for the IBLPrefilter filters, driven by a synthetic
- * in-memory equirectangular texture (no external HDR asset needed).
- */
-class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
+/** The prefilter passes run on the GPU, so they need a real backend; the source is a synthetic equirectangular texture. */
+class IBLPrefilterTest {
+    private lateinit var engine: Engine
+
+    @BeforeTest
+    fun setUp() {
+        assumeRealBackend()
+        Filament.init()
+        engine = assertNotNull(Engine.create(Engine.Backend.DEFAULT), "no engine on a host with a rasterizer")
+        assertNotEquals(Engine.Backend.NOOP, engine.backend, "DEFAULT resolved to NOOP")
+    }
+
+    @AfterTest
+    fun tearDown() {
+        if (::engine.isInitialized) {
+            engine.flushAndWait()
+            Engine.destroy(engine)
+        }
+    }
+
     @Test
-    fun testFiltersInvoke() {
-        val engine = engine ?: return
+    fun filtersTurnAnEquirectangularImageIntoAnIbl() {
 
         // 16x8 (2:1) RGBA16F equirectangular source, filled with mid-grey half-floats.
         // EquirectangularToCubemap requires width == 2*height, SAMPLEABLE, and ALL

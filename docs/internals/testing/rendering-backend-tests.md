@@ -1,6 +1,6 @@
 # Real-backend rendering tests
 
-Status: **implemented** for `filament` (`pixelTest`); `filament-utils` still uses its gated fixture.
+Status: **implemented**: `filament` and `filament-utils` keep their real-backend tests in `pixelTest`.
 Scope: tests for the `filament` / `gltfio` / `filament-utils` wrappers.
 
 > Environment gating (`TestEnv.gpuBackendAvailable`, `@IgnoreJs`) lives in
@@ -14,8 +14,7 @@ and glTF and renders frames on every target. Only pixels and async calls need a 
 - `filament`: the `pixelTest` source set (jvm + web), on
   [`RealBackendFixture`](../../../kotlin/filament/src/pixelTest/kotlin/io/github/erkko68/filament/testutils/RealBackendFixture.kt),
   which `assumeRealBackend()` reports as skipped on a host without a rasterizer.
-- `filament-utils`: still on `UtilsRenderingTestFixture` (`DEFAULT`, `engine == null` without a backend)
-  until that module migrates.
+- `filament-utils`: `IBLPrefilterTest` in `pixelTest`, the one utils test whose output the GPU computes.
 
 Assertions relate values or image regions, never a golden image.
 
