@@ -70,6 +70,15 @@ sealed interface LightIntensity {
      * [efficiency] is required because an idealized 1.0 emitter is rarely what you mean.
      */
     data class Watts(val watts: Float, val efficiency: Float) : LightIntensity
+
+    /** Reference values from Filament's documentation. Match the camera's [Exposure] to them. */
+    companion object {
+        /** Direct sunlight, for a directional light: 100,000 lx. Pairs with [Exposure.Sunny]. */
+        val Sun: LightIntensity = LuminousPower(100_000f)
+
+        /** A household light bulb, for a point or spot light: 800 lm. Pairs with [Exposure.Indoor]. */
+        val HouseholdBulb: LightIntensity = LuminousPower(800f)
+    }
 }
 
 // Per-light shadow config ([ShadowConfig]) and the view-level [Shadows] technique live in Shadows.kt.

@@ -19,6 +19,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`GltfInstance(fitToSize = …)`** (`filament-compose`): scales a model so its largest side is that many units and centres it on `position`, for models of unknown size.
 - **`SphericalHarmonics.NeutralStudio`** (`filament-compose`): a built-in neutral ambient, `IndirectLight(irradiance = …)`, so PBR models have shape without an environment file; `IndirectLight`'s `reflections` now defaults to null.
 - **`CameraState.worldToScreen` and `Modifier.anchorTo`** (`filament-compose`): where a 3D point appears in the view, and Compose UI pinned there (labels, hotspots).
+- **`Exposure.Sunny`/`Overcast`/`Indoor` and `LightIntensity.Sun`/`HouseholdBulb`** (`filament-compose`): reference values for matching lights to the camera exposure.
 
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
