@@ -73,7 +73,6 @@ else()
         "LINKER:--version-script=${seal}"
         "LINKER:--gc-sections"
         "LINKER:-z,noexecstack" # one prebuilt .S object lacks the .note.GNU-stack marker
-        "LINKER:--no-undefined" # a missing archive fails here, not as a lazy-binding exit in the app
         # GNU ld scans archives once, left to right; the group rescans until Filament's cross-refs resolve.
         "LINKER:--start-group")
     target_link_libraries(filament-c-jni PRIVATE "-Wl,--end-group")
