@@ -10,11 +10,17 @@ rebuilding it), and that state reaches Filament (read back through Filament's ow
 | Where | Backend | Covers |
 | :-- | :-- | :-- |
 | `commonTest` | `NOOP`, every target (JVM, JS, Wasm, iOS sim, Android) | every scene composable: lights, groups, cameras, primitives, materials, glTF, environments, loaders, teardown order |
+| `commonTest` via `withEngine` | `NOOP`, JVM and Android | `FilamentViewTest`, `ScreensTest`: `FilamentView` / `FilamentSceneView` themselves (attach and detach, picks answered, engine and scene swaps, paused rendering, screens, lists) |
 | `commonTest` via `surfaceTest` | real surface, gated on `TestEnv.gpuBackendAvailable` | `SurfaceLifecycleTest`: `FilamentView` on the platform's real surface |
-| `jvmTest` / `nativeTest` / `webTest` / `androidDeviceTest` | real backend and window | the view entry points, window/page/activity lifecycle, gestures, the JVM GPU-sharing path |
+| `jvmTest` / `nativeTest` / `webTest` / `androidDeviceTest` | real backend and window | what a pick hits and the view showing its scene (`FilamentViewRealBackendTest`), window/page/activity lifecycle, gestures, the JVM GPU-sharing path |
 
 NOOP runs Filament's whole CPU side, so materials, geometry, textures, IBL and glTF all build on it. Only
-pixels and async calls need a real backend (see the [strategy](README.md)).
+pixels and async calls need a real backend (see the [strategy](strategy.md)).
+
+Compose's `runComposeUiTest` host on web and iOS has no interop container, so a `FilamentView` there fails
+with "LocalInteropContainer not provided" (the view is an HTML canvas or a `UIView`). The `withEngine`
+classes carry `@IgnoreWithoutViewInterop` (skipped on web and iOS); those platforms' views are covered by
+`surfaceTest`'s own hosts and `PageLifecycleTest`.
 
 ## Fixtures
 
@@ -28,6 +34,9 @@ pixels and async calls need a real backend (see the [strategy](README.md)).
   engine on Compose's UI thread. Use it for anything that calls Filament from a `LaunchedEffect`
   (`rememberGltfAsset`, the async loaders): gltfio's `ResourceLoader` is thread-affine, and on JVM effects
   run on `AWT-EventQueue-0`, not the JUnit thread.
+- **`withEngine(backend = NOOP) { engine, setContent -> }`** (`ViewHost.kt`): runs `runComposeUiTest` with an
+  engine created and destroyed on the UI thread, for tests that mount the real `FilamentView`. A real
+  `backend` skips without a GPU. `renderFrames(engine, n)` steps frames, flushing the engine before each.
 - **`requestsFrames` / `compositionFailure`**: compose synchronously in a composition of their own, on
   every target. For "does this keep a frame loop running" and for misuse checks.
 - **`ResourceLedger.kt`**: `assertSceneEmpty`, `assertEntitiesDestroyed`, `assertDestroyed`, `danglingInScene`.
@@ -49,6 +58,8 @@ the test at its next mount or at its end.
   loop with auto-advance off never lets it settle (Mocha's 30 s timeout).
 - **JS needs skiko loaded first.** `ComposeTestFixture`'s `@BeforeTest` returns `awaitGraphicsReady()`
   (skiko's `onWasmReady` promise on JS), which kotlin.test awaits.
+- **Sizes in pixels.** Assert a viewport against `with(density) { 32.dp.roundToPx() }`: the JVM host's
+  density is 1, the Android emulator's is not.
 - **NOOP option edges.** Bloom `levels` is clamped by `resolution`, and dynamic resolution only stays
   enabled with `homogeneousScaling = true`. Match core `ViewOptionsRoundTripTest`'s configs.
 

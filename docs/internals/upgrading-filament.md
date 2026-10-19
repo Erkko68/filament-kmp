@@ -167,10 +167,10 @@ way, list it in the changelog.
 
 ### 6. Update tests
 
-Add the new methods to the existing builder-chain tests in `commonTest`
-(`ColorGradingTest`, `MaterialBuilderTest`, `EngineTest`, …) so all five targets exercise them.
-A builder method just needs to appear in the chain; a method with observable behavior deserves an
-assertion.
+Cover the new methods in the existing `commonTest` scenarios (`ColorGradingTest`, `MaterialBuilderTest`,
+`EngineTest`, …) so all five targets exercise them, and assert what each one changes by reading it back
+from Filament: a call with no assertion only proves the symbol links. See the
+[testing strategy](testing/strategy.md).
 
 ### 6b. Regenerate the embedded standard materials
 
