@@ -9,7 +9,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertTrue
 
-/** The material compiler plus a [Engine.Backend.NOOP] engine to load what it compiles. Materials from [load] are destroyed in [tearDown]. */
+/** The material compiler plus an engine ([Engine.Backend.NOOP] unless [createEngine] says otherwise) to load what it compiles. Materials from [load] are destroyed in [tearDown]. */
 open class FilamatTestFixture {
     protected lateinit var engine: Engine
     private val materials = mutableListOf<Material>()
@@ -18,8 +18,10 @@ open class FilamatTestFixture {
     fun setUp() {
         MaterialBuilder.init()
         Filament.init()
-        engine = Engine.create(Engine.Backend.NOOP)!!
+        engine = createEngine()
     }
+
+    protected open fun createEngine(): Engine = Engine.create(Engine.Backend.NOOP)!!
 
     @AfterTest
     fun tearDown() {
