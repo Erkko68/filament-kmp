@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.*
+import io.github.erkko68.filament.Aabb
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
@@ -78,7 +79,10 @@ private class GltfInstanceScopeImpl(
  * @param pivot The point in mesh space that rotation and scale revolve around, and that
  *   ends up at [position] in world space. Defaults to `(0,0,0)` — the glTF's own root origin.
  *   Use this to e.g. rotate a model around its centre when the glTF was authored with the
- *   origin at one corner.
+ *   origin at one corner. With [fitToSize], it is in the fitted space, where the model is centred on the origin.
+ * @param fitToSize Scales the model so its largest side is this many units and centres it on [position], before
+ *   [rotation] and [scale] apply — for showing a model whose size and origin you don't know. Null (the default)
+ *   keeps the model as authored.
  * @param animationState Optional hoisted, auto-advancing playback state from
  *   [rememberAnimationState]. When non-null it drives the animator every frame (with cross-fade
  *   blending); pause it and call [AnimationState.seek] to hold a pose. Instances sharing one state play in step. Null leaves the animator
@@ -106,6 +110,7 @@ fun FilamentSceneScope.GltfInstance(
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
+    fitToSize: Float? = null,
     animationState: AnimationState? = null,
     morphWeights: FloatArray? = null,
     visible: Boolean = true,
@@ -166,11 +171,17 @@ fun FilamentSceneScope.GltfInstance(
     // Push the transform to Filament only when the inputs actually change. SideEffect
     // would re-run on every recomposition, but the transform math and JNI call are
     // wasted if nothing moved.
-    DisposableEffect(instance, position, rotation, scale, pivot) {
+    val fit = remember(asset, fitToSize) { fitToSize?.let { asset.filamentAsset.boundingBox.fitTo(it) } }
+    DisposableEffect(instance, position, rotation, scale, pivot, fit) {
         val tm = engine.transformManager
         val root = instance.root
         if (tm.hasComponent(root)) {
-            tm.setTransform(tm.getInstance(root), transformMatrix(position, rotation, scale, pivot))
+            val matrix = if (fit == null) transformMatrix(position, rotation, scale, pivot) else {
+                // The fit S(f)·T(-centre) runs first: it folds into the scale, and the pivot moves from fitted to mesh space.
+                val (f, c) = fit
+                transformMatrix(position, rotation, scale * f, Position(c.x + pivot.x / f, c.y + pivot.y / f, c.z + pivot.z / f))
+            }
+            tm.setTransform(tm.getInstance(root), matrix)
         }
         onDispose { }
     }
@@ -229,6 +240,15 @@ fun FilamentSceneScope.GltfInstance(
     SideEffect {
         GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onUpdate()
     }
+}
+
+/** The uniform factor that makes this box's largest side [size], and its centre; null for a box with no finite extent. */
+private fun Aabb.fitTo(size: Float): Pair<Float, Position>? {
+    val h = extent()
+    val side = 2f * maxOf(h[0], h[1], h[2])
+    if (!side.isFinite() || side <= 0f) return null
+    val c = center()
+    return size / side to Position(c[0], c[1], c[2])
 }
 
 /**

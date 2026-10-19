@@ -6,12 +6,6 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform/)
 
-[![JVM](https://github.com/Erkko68/filament-kmp/actions/workflows/status-jvm.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-jvm.yml)
-[![JS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-js.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-js.yml)
-[![Wasm](https://github.com/Erkko68/filament-kmp/actions/workflows/status-wasm.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-wasm.yml)
-[![iOS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml)
-[![Android](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml)
-
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web (JS & Wasm)** — as a plain Kotlin Multiplatform library, with an optional **Compose Multiplatform** layer on top.
 
 > [!NOTE]
@@ -26,6 +20,7 @@ FilamentSceneView(
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
     Skybox(color = LinearColor(0.1f, 0.12f, 0.15f))
+    IndirectLight(irradiance = SphericalHarmonics.NeutralStudio)   // soft ambient, no file to load
     DirectionalLight(direction = Direction(0.3f, -1f, -0.5f), intensity = LightIntensity.LuminousPower(100_000f))
     GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/Duck.glb") })
 }

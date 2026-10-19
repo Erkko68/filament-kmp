@@ -251,6 +251,18 @@ FilamentSceneView(
 ) { /* … */ }
 ```
 
+## Showing a model of unknown size
+
+glTF files come in any unit and with their origin anywhere. `fitToSize` scales the model so its
+largest side is that many units and centres it on `position`, so one camera setup frames any model:
+
+```kotlin
+GltfInstance(asset = model, fitToSize = 2f)   // 2 units across, centred on the origin
+```
+
+`rotation` and `scale` apply after the fit, and `pivot` is in the fitted space. Leave it null to keep
+the model's own size, e.g. when several models must keep their true scale relative to each other.
+
 ## Animating glTF models
 
 `GltfInstance` takes one animation input, `animationState`; from there the control goes from declarative to fully manual.
@@ -399,6 +411,22 @@ FilamentView(scene, cameraState = cam)
 The camera object still belongs to the `FilamentView` you pass `cam` to; `CameraNode` only drives
 the state. The offsets are expressed in the group's local space.
 
+## Labels over 3D points
+
+`Modifier.anchorTo(cameraState, position)` centres a Compose element on where a world-space point
+appears in the view, and hides it while the point is behind the camera. Put it first in the
+modifier chain, on an element in the same `Box` as the view:
+
+```kotlin
+Box(Modifier.fillMaxSize()) {
+    FilamentView(scene, Modifier.fillMaxSize(), cameraState = cam)
+    Text("Engine", Modifier.anchorTo(cam, Position(0f, 1.2f, 0f)).background(Color.Black))
+}
+```
+
+It's placed in the layout phase, so camera motion moves it without recomposing. For the raw
+position (pixels from the view's top-left, or null), use `cam.worldToScreen(position)`.
+
 ## Rendering to a texture
 
 `rememberRenderTargetTexture` renders a scene **off-screen** through its own camera into a sampleable
@@ -463,6 +491,22 @@ FocusedSpotLight(
     intensity     = LightIntensity.Watts(12f, efficiency = 0.087f),  // a 12 W LED bulb
     lightChannels = setOf(0, 2),        // only objects on channel 0 or 2
 )
+```
+
+Physical units only look right with a matching camera exposure: an 800 lm bulb under the default
+daylight exposure renders almost black. Pick an exposure for the scene and lights in its range:
+
+| Scene | `Exposure` | EV100 | Lights in range |
+| :-- | :-- | :-- | :-- |
+| Full sunlight | `Exposure.Sunny` (default) | 15 | `LightIntensity.Sun` (100,000 lx) |
+| Heavy overcast | `Exposure.Overcast` | ≈ 12 | ⅛ of the sun (3 stops), ≈ 12,500 lx |
+| Home interior | `Exposure.Indoor` | 6 | `LightIntensity.HouseholdBulb` (800 lm), a few of them |
+
+```kotlin
+val cam = rememberCameraState(initialExposure = Exposure.Indoor)
+FilamentSceneView(cameraState = cam) {
+    PointLight(position = Position(0f, 2f, 0f), intensity = LightIntensity.HouseholdBulb)
+}
 ```
 
 ## Component Reference
@@ -570,6 +614,9 @@ val scene = rememberFilamentScene(engine = engine) {
     GltfInstance(asset = duck, ...)
 }
 ```
+
+`rememberGltfAsset` returns the asset before its GPU upload finishes, so show a loading state until
+`duck?.isReady == true`; `duck.progress` (0 to 1) drives an indicator.
 
 The keyed `rememberMaterialInstance(material, key) { … }` overload re-applies parameters declaratively
 on change — see [Materials](materials.md#updating-parameters-live).

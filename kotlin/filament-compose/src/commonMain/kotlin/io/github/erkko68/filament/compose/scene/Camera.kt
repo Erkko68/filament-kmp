@@ -4,9 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.IntSize
+import kotlin.math.roundToInt
 import io.github.erkko68.filament.Camera as FilamentCamera
 import io.github.erkko68.filament.utils.Float2
 import io.github.erkko68.filament.utils.Float4
@@ -51,21 +57,34 @@ sealed class Projection {
 /**
  * Photographic exposure (aperture / shutter-speed / ISO triangle).
  *
- * Default values correspond to a typical outdoor daylight exposure (EV ≈ 15).
+ * Default values correspond to a typical outdoor daylight exposure (EV ≈ 15), [Sunny]. Lights must match the exposure:
+ * pair [Sunny] with [LightIntensity.Sun], [Indoor] with lamps like [LightIntensity.HouseholdBulb].
  */
 @Immutable
 data class Exposure(
     val aperture: Float = 16f,
     val shutterSpeed: Float = 1f / 125f,
     val sensitivity: Float = 100f,
-)
+) {
+    /** Typical scenes, at the EV100 photographers meter them at. */
+    companion object {
+        /** Full sunlight, distinct shadows: f/16, 1/125 s, ISO 100 (EV100 15, "sunny 16"). The default. */
+        val Sunny = Exposure(16f, 1f / 125f, 100f)
+
+        /** Heavy overcast: f/8, 1/60 s, ISO 100 (EV100 ≈ 12). */
+        val Overcast = Exposure(8f, 1f / 60f, 100f)
+
+        /** Home interiors under lamps: f/2, 1/16 s, ISO 100 (EV100 6). */
+        val Indoor = Exposure(2f, 1f / 16f, 100f)
+    }
+}
 
 // ── Public: lens shift and scaling ───────────────────────────────────────────
 
 /**
- * Lens shift — moves the projection off-axis without rotating the camera, in units of half the
- * viewport (`1` shifts by a full half-width/height). Used for tilt-shift looks, and for keeping
- * verticals parallel in architectural shots.
+ * Lens shift — moves the projection off-axis without rotating the camera, as a fraction of the
+ * viewport (`1` shifts the image by its full width/height; for pixels, divide by the viewport size).
+ * Used for tilt-shift looks, and for keeping verticals parallel in architectural shots.
  *
  * Distinct from [LensScaling] for the same reason [Position] is distinct from [Direction]: both
  * are float pairs on the projection and trivially swapped by accident.
@@ -127,8 +146,8 @@ data class LensScaling(val x: Float, val y: Float) {
  * }
  * ```
  */
-// @Stable: every property composition can observe is snapshot-backed; `attachedCamera` and
-// `aspect` are internal bookkeeping written by the view, never read during composition.
+// @Stable: every property composition can observe is snapshot-backed; `attachedCamera` is internal
+// bookkeeping written by the view, never read during composition.
 @Stable
 class CameraState internal constructor(
     initialEye: Position,
@@ -158,7 +177,10 @@ class CameraState internal constructor(
     var scaling:    LensScaling by mutableStateOf(initialScaling)
 
     internal var attachedCamera: FilamentCamera? = null
-    internal var aspect: Double = 1.0
+
+    // Snapshot state, so worldToScreen's callers follow a resize. Written by the view, outside composition.
+    internal var aspect by mutableDoubleStateOf(1.0)
+    internal var layoutSize by mutableStateOf(IntSize.Zero)
 
     internal fun attach(camera: FilamentCamera) {
         check(attachedCamera == null || attachedCamera == camera) {
@@ -198,6 +220,36 @@ class CameraState internal constructor(
      */
     val projectionMatrix: Mat4?
         get() = attachedCamera?.getProjectionMatrix(out = tmpProjArray)?.toMat4()
+
+    /**
+     * Where [position] (world space) appears in the attached view, in pixels from its top-left corner, or null when
+     * it is behind the camera or this state isn't attached to a view yet. Reads the camera's state, so a caller in
+     * composition, layout or drawing re-runs when the camera moves or the view resizes. To pin an element there,
+     * use [anchorTo].
+     */
+    fun worldToScreen(position: Position): Offset? {
+        val lens = snapshot()
+        val size = layoutSize
+        val camera = attachedCamera ?: return null
+        if (size.width <= 0 || size.height <= 0 || aspect <= 0.0) return null
+        val v = camera.getViewMatrix(tmpViewArray)
+        val p = camera.getProjectionMatrix(out = tmpProjArray)
+        val x = position.x.toDouble(); val y = position.y.toDouble(); val z = position.z.toDouble()
+        // Column-major: view space, then clip space.
+        val ex = v[0] * x + v[4] * y + v[8] * z + v[12]
+        val ey = v[1] * x + v[5] * y + v[9] * z + v[13]
+        val ez = v[2] * x + v[6] * y + v[10] * z + v[14]
+        val cx = p[0] * ex + p[4] * ey + p[8] * ez + p[12]
+        val cy = p[1] * ex + p[5] * ey + p[9] * ez + p[13]
+        val cw = p[3] * ex + p[7] * ey + p[11] * ez + p[15]
+        if (cw <= 0.0) return null
+        // getProjectionMatrix is the user projection: Filament adds the lens scaling and shift (2 × shift in NDC) at
+        // render time (FCamera::getProjectionMatrix), so they are applied here.
+        val nx = lens.scaling.x * cx / cw + 2.0 * lens.shift.x
+        val ny = lens.scaling.y * cy / cw + 2.0 * lens.shift.y
+        // NDC to pixels; Compose's y runs down.
+        return Offset(((nx + 1.0) * 0.5 * size.width).toFloat(), ((1.0 - ny) * 0.5 * size.height).toFloat())
+    }
 
     internal fun snapshot(): CameraSnapshot =
         CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
@@ -271,3 +323,25 @@ private fun DoubleArray.toMat4() = Mat4(
     Float4(this[8].toFloat(), this[9].toFloat(), this[10].toFloat(), this[11].toFloat()),
     Float4(this[12].toFloat(), this[13].toFloat(), this[14].toFloat(), this[15].toFloat()),
 )
+
+/**
+ * Centres this element on [position] (world space) as seen through [cameraState]'s view, and hides it while the
+ * point is behind the camera: labels, hotspots and annotations on a model. Place the element in the same `Box` as the
+ * `FilamentView`, filling it, and put `anchorTo` first in its modifier chain (what comes before it doesn't move).
+ * Camera motion re-places it without recomposing.
+ *
+ * ```kotlin
+ * Box(Modifier.fillMaxSize()) {
+ *     FilamentView(scene, Modifier.fillMaxSize(), cameraState = cam)
+ *     Text("Engine", Modifier.anchorTo(cam, Position(0f, 1.2f, 0f)))
+ * }
+ * ```
+ */
+fun Modifier.anchorTo(cameraState: CameraState, position: Position): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(placeable.width, placeable.height) {
+        // Read in placement, so a camera change re-places without measuring again.
+        val point = cameraState.worldToScreen(position) ?: return@layout
+        placeable.place((point.x - placeable.width / 2f).roundToInt(), (point.y - placeable.height / 2f).roundToInt())
+    }
+}

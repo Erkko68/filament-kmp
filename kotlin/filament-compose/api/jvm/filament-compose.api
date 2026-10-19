@@ -255,6 +255,7 @@ public final class io/github/erkko68/filament/compose/scene/Bloom {
 }
 
 public final class io/github/erkko68/filament/compose/scene/CameraKt {
+	public static final fun anchorTo (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/scene/Position;)Landroidx/compose/ui/Modifier;
 	public static final fun rememberCameraState (Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Projection;Lio/github/erkko68/filament/compose/scene/Exposure;FLio/github/erkko68/filament/compose/scene/LensShift;Lio/github/erkko68/filament/compose/scene/LensScaling;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/CameraState;
 }
 
@@ -282,6 +283,7 @@ public final class io/github/erkko68/filament/compose/scene/CameraState {
 	public final fun setShift (Lio/github/erkko68/filament/compose/scene/LensShift;)V
 	public final fun setTarget (Lio/github/erkko68/filament/compose/scene/Position;)V
 	public final fun setUp (Lio/github/erkko68/filament/compose/scene/Direction;)V
+	public final fun worldToScreen-x-9fifI (Lio/github/erkko68/filament/compose/scene/Position;)Landroidx/compose/ui/geometry/Offset;
 }
 
 public final class io/github/erkko68/filament/compose/scene/ColorGrade {
@@ -418,6 +420,7 @@ public final class io/github/erkko68/filament/compose/scene/EnvironmentKt {
 
 public final class io/github/erkko68/filament/compose/scene/Exposure {
 	public static final field $stable I
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/Exposure$Companion;
 	public fun <init> ()V
 	public fun <init> (FFF)V
 	public synthetic fun <init> (FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -432,6 +435,12 @@ public final class io/github/erkko68/filament/compose/scene/Exposure {
 	public final fun getShutterSpeed ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/Exposure$Companion {
+	public final fun getIndoor ()Lio/github/erkko68/filament/compose/scene/Exposure;
+	public final fun getOvercast ()Lio/github/erkko68/filament/compose/scene/Exposure;
+	public final fun getSunny ()Lio/github/erkko68/filament/compose/scene/Exposure;
 }
 
 public final class io/github/erkko68/filament/compose/scene/Fog {
@@ -458,6 +467,7 @@ public final class io/github/erkko68/filament/compose/scene/Fog {
 
 public final class io/github/erkko68/filament/compose/scene/GltfAsset {
 	public static final field $stable I
+	public final fun getProgress ()F
 	public final fun isReady ()Z
 }
 
@@ -466,7 +476,7 @@ public final class io/github/erkko68/filament/compose/scene/GltfAssetKt {
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfInstanceKt {
-	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/AnimationState;[FZLjava/lang/Boolean;Ljava/lang/Boolean;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
+	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Float;Lio/github/erkko68/filament/compose/scene/AnimationState;[FZLjava/lang/Boolean;Ljava/lang/Boolean;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/GltfInstanceScope {
@@ -528,6 +538,7 @@ public final class io/github/erkko68/filament/compose/scene/LensShift$Companion 
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/LightIntensity {
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/LightIntensity$Companion;
 }
 
 public final class io/github/erkko68/filament/compose/scene/LightIntensity$Candela : io/github/erkko68/filament/compose/scene/LightIntensity {
@@ -540,6 +551,11 @@ public final class io/github/erkko68/filament/compose/scene/LightIntensity$Cande
 	public final fun getValue ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/LightIntensity$Companion {
+	public final fun getHouseholdBulb ()Lio/github/erkko68/filament/compose/scene/LightIntensity;
+	public final fun getSun ()Lio/github/erkko68/filament/compose/scene/LightIntensity;
 }
 
 public final class io/github/erkko68/filament/compose/scene/LightIntensity$LuminousPower : io/github/erkko68/filament/compose/scene/LightIntensity {
@@ -955,6 +971,7 @@ public final class io/github/erkko68/filament/compose/scene/SkyboxKt {
 
 public final class io/github/erkko68/filament/compose/scene/SphericalHarmonics {
 	public static final field $stable I
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/SphericalHarmonics$Companion;
 	public fun <init> (I[F)V
 	public final fun component1 ()I
 	public final fun component2 ()[F
@@ -965,6 +982,14 @@ public final class io/github/erkko68/filament/compose/scene/SphericalHarmonics {
 	public final fun getCoefficients ()[F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/SphericalHarmonics$Companion {
+	public final fun getCoolStudio ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getDaylight ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getNeutralStudio ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getSunset ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getWarm ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
 }
 
 public final class io/github/erkko68/filament/compose/scene/SpotCone {
