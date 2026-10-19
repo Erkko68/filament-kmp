@@ -6,6 +6,8 @@ import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.OnFrame
+import io.github.erkko68.filament.compose.TapTarget
+import io.github.erkko68.filament.compose.rememberTapHandler
 import io.github.erkko68.filament.compose.internal.logWarn
 import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.internal.setParent
@@ -94,6 +96,8 @@ private class GltfInstanceScopeImpl(
  * @param onUpdate Called on every **recomposition** (not every frame — a static scene never
  *   recomposes). Use it to react to Compose state changes with low-level calls; for genuinely
  *   per-frame work use [OnFrame] or `rememberFilamentScene`'s `FilamentEffect`.
+ * @param onTap Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits any part of this
+ *   instance. Null answers with the enclosing [Group]'s `onTap`, if any.
  */
 @Composable
 fun FilamentSceneScope.GltfInstance(
@@ -109,6 +113,7 @@ fun FilamentSceneScope.GltfInstance(
     receiveShadows: Boolean? = null,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
+    onTap: (() -> Unit)? = null,
 ) {
     if (asset == null) return
 
@@ -155,6 +160,8 @@ fun FilamentSceneScope.GltfInstance(
             if (effectiveVisible) scene.removeEntities(instance.entities)
         }
     }
+
+    TapTarget(remember(instance) { instance.entities }, rememberTapHandler(onTap))
 
     // Push the transform to Filament only when the inputs actually change. SideEffect
     // would re-run on every recomposition, but the transform math and JNI call are

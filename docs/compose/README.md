@@ -354,6 +354,28 @@ targets:
 GltfInstance(asset = face, morphWeights = floatArrayOf(smile, blink, /* … */))
 ```
 
+## Tapping scene objects
+
+`GltfInstance`, the primitives and `Group` take an `onTap`, called when a tap on a `FilamentView`
+hits the object. A tap that turns into a drag doesn't count, so it works alongside the camera
+gestures:
+
+```kotlin
+FilamentSceneView(modifier = Modifier.orbitGestures(orbit), cameraState = cam) {
+    ducks.forEach { duck ->
+        key(duck.id) { GltfInstance(duckAsset, position = duck.position, onTap = { selected = duck.id }) }
+    }
+    Group(onTap = { selected = "car" }) {   // one handler for the whole assembly
+        Cube(body)
+        Cylinder(wheel, position = Position(0.6f, -0.4f, 0f))
+    }
+}
+```
+
+A child without its own `onTap` answers with the nearest enclosing `Group`'s. A view only listens
+for taps while some object in its scene has a handler. For the raw query (depth, fragment
+coordinates), use `Modifier.pickOnTap(viewState) { result -> … }`.
+
 ## Cameras that follow the scene graph
 
 `CameraState` is normally hoisted state you set imperatively. To make a camera **follow an

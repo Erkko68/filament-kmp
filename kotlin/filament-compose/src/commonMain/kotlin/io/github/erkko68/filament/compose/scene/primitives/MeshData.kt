@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.IndexBuffer
@@ -18,6 +19,8 @@ import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.noFilamentScene
+import io.github.erkko68.filament.compose.TapTarget
+import io.github.erkko68.filament.compose.rememberTapHandler
 import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.internal.setParent
 import io.github.erkko68.filament.compose.internal.transformMatrix
@@ -109,8 +112,8 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
  * A null [material] renders nothing — it means the material is still loading (the
  * [rememberMaterial]/[rememberMaterialInstance] chain returns null until ready).
  *
- * [onCreate] fires once when the renderable entity is added to the scene — pass the entity
- * to e.g. an `entityToIndex` map so `view.pick` callbacks can identify the primitive.
+ * [onCreate] fires once per renderable entity (a new material rebuilds it); [onTap] registers
+ * that entity with the scene's tap handlers.
  *
  * Internal — all public primitive composables (Cube, Sphere, Plane, Cylinder) call this.
  */
@@ -126,6 +129,7 @@ internal fun Mesh(
     castShadows: Boolean,
     receiveShadows: Boolean,
     onCreate: EntityScope.() -> Unit,
+    onTap: (() -> Unit)?,
 ) {
     if (material == null) return
 
@@ -160,6 +164,8 @@ internal fun Mesh(
         EntityScopeImpl(entity, engine).onCreate()
         onDispose { }
     }
+
+    TapTarget(remember(entity) { intArrayOf(entity) }, rememberTapHandler(onTap))
 
     DisposableEffect(entity, castShadows, receiveShadows) {
         val rm = engine.renderableManager

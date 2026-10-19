@@ -25,7 +25,7 @@ internal object FilamentSceneScopeInstance : FilamentSceneScope
  * Receiver for the `onCreate` callback of entity-producing scene composables —
  * [Group][io.github.erkko68.filament.compose.scene.Group] and the primitives (`Cube`, `Sphere`,
  * `Plane`, `Cylinder`, `Mesh`). Exposes the created [entity] together with the [engine], so
- * one-time setup (manager operations, pick registries) needs no extra plumbing — the same
+ * one-time setup (manager operations, entity-keyed maps) needs no extra plumbing — the same
  * scope-receiver shape as `GltfInstance`'s richer
  * [GltfInstanceScope][io.github.erkko68.filament.compose.scene.GltfInstanceScope].
  */

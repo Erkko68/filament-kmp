@@ -9,6 +9,8 @@ import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.LocalTapHandler
+import io.github.erkko68.filament.compose.rememberTapHandler
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.internal.setParent
@@ -59,6 +61,8 @@ internal val LocalGroupVisible = compositionLocalOf { true }
  *   renderable (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
  * @param onCreate  Runs once when the group's transform entity is created, with the entity and
  *   engine in scope ([EntityScope]).
+ * @param onTap     Called when a tap hits anything inside [content] that has no `onTap` of its own —
+ *   one handler for a whole assembly.
  * @param content   Scene composables placed under this group's transform.
  */
 @Composable
@@ -69,6 +73,7 @@ fun FilamentSceneScope.Group(
     pivot: Position = Position(0f),
     visible: Boolean = true,
     onCreate: EntityScope.() -> Unit = {},
+    onTap: (() -> Unit)? = null,
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val engine = LocalFilamentEngine.current ?: noFilamentEngine()
@@ -98,6 +103,7 @@ fun FilamentSceneScope.Group(
     CompositionLocalProvider(
         LocalParentEntity provides groupEntity,
         LocalGroupVisible provides (LocalGroupVisible.current && visible),
+        LocalTapHandler provides rememberTapHandler(onTap),
     ) {
         content()
     }

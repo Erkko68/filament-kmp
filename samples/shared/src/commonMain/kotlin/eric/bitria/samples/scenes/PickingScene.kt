@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -19,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
-import io.github.erkko68.filament.compose.pickOnTap
-import io.github.erkko68.filament.compose.rememberFilamentViewState
+import io.github.erkko68.filament.compose.orbitGestures
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
@@ -49,18 +48,14 @@ fun PickingScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 40.0),
     )
-    val viewState = rememberFilamentViewState()
-
-    val entityToIndex = remember { mutableStateMapOf<Int, Int>() }
+    val orbit = rememberOrbitCameraController(cameraState)
     var lastTapped by remember { mutableIntStateOf(-1) }
 
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
-            modifier = Modifier
-                .fillMaxSize()
-                .pickOnTap(viewState) { result -> lastTapped = entityToIndex[result.renderable] ?: -1 },
+            // Drags orbit; a tap that hits a duck reaches its onTap.
+            modifier = Modifier.fillMaxSize().orbitGestures(orbit),
             cameraState = cameraState,
-            viewState = viewState,
         ) {
             Skybox(color = LinearColor(0.08f, 0.10f, 0.14f))
             DirectionalLight(
@@ -73,11 +68,7 @@ fun PickingScene(onBack: () -> Unit) {
                     asset    = duckAsset,
                     position = pos,
                     scale    = Scale(1f),
-                    onCreate = {
-                        for (entity in instance.entities) {
-                            entityToIndex[entity] = idx
-                        }
-                    },
+                    onTap    = { lastTapped = idx },
                 )
             }
         }

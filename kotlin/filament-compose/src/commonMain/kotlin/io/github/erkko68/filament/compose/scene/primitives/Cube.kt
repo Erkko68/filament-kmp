@@ -29,6 +29,8 @@ import io.github.erkko68.filament.compose.scene.Scale
  * @param castShadows     Whether the cube casts shadows onto other renderables. On by default.
  * @param receiveShadows  Whether the cube receives shadows cast by others. On by default.
  * @param onCreate  Runs once when the cube enters the scene, with the renderable entity and engine in scope ([EntityScope]).
+ * @param onTap     Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits this object. Null
+ *   answers with the enclosing [io.github.erkko68.filament.compose.scene.Group]'s `onTap`, if any.
  *   Use it to register the cube with `view.pick` callbacks or other entity-keyed maps.
  */
 @Composable
@@ -43,9 +45,10 @@ fun FilamentSceneScope.Cube(
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: EntityScope.() -> Unit = {},
+    onTap: (() -> Unit)? = null,
 ) {
     val mesh = remember(size) { cubeMesh(size) }
-    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate, onTap)
 }
 
 private fun cubeMesh(size: Float): MeshData {

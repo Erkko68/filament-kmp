@@ -31,6 +31,8 @@ import kotlin.math.sin
  * @param castShadows     Whether the sphere casts shadows onto other renderables. On by default.
  * @param receiveShadows  Whether the sphere receives shadows cast by others. On by default.
  * @param onCreate  Runs once when the sphere enters the scene, with the renderable entity and engine in scope ([EntityScope]).
+ * @param onTap     Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits this object. Null
+ *   answers with the enclosing [io.github.erkko68.filament.compose.scene.Group]'s `onTap`, if any.
  */
 @Composable
 fun FilamentSceneScope.Sphere(
@@ -46,9 +48,10 @@ fun FilamentSceneScope.Sphere(
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: EntityScope.() -> Unit = {},
+    onTap: (() -> Unit)? = null,
 ) {
     val mesh = remember(radius, rings, segments) { sphereMesh(radius, rings, segments) }
-    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate, onTap)
 }
 
 private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {

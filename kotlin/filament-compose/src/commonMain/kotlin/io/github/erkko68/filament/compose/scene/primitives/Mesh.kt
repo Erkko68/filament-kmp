@@ -51,8 +51,9 @@ import io.github.erkko68.filament.compose.scene.Scale
  * @param castShadows    Whether the mesh casts shadows onto other renderables. On by default.
  * @param receiveShadows Whether the mesh receives shadows cast by others. On by default.
  * @param onCreate    Runs once when the mesh enters the scene, with the renderable entity and
- *   engine in scope ([EntityScope]) — use it to register the mesh with `view.pick` callbacks or
- *   other entity-keyed maps.
+ *   engine in scope ([EntityScope]), for entity-keyed setup. For taps, use [onTap].
+ * @param onTap     Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits this object. Null
+ *   answers with the enclosing [io.github.erkko68.filament.compose.scene.Group]'s `onTap`, if any.
  */
 @Composable
 fun FilamentSceneScope.Mesh(
@@ -70,6 +71,7 @@ fun FilamentSceneScope.Mesh(
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: EntityScope.() -> Unit = {},
+    onTap: (() -> Unit)? = null,
 ) {
     require(positions.isNotEmpty() && positions.size % 3 == 0) {
         "positions must be a non-empty multiple of 3 (xyz triples), was ${positions.size}"
@@ -88,7 +90,7 @@ fun FilamentSceneScope.Mesh(
     val mesh = remember(positions, normals, uvs, indices, boundingBox) {
         MeshData(positions, normals, uvs, indices, boundingBox ?: positions.toBoundingBox())
     }
-    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate, onTap)
 }
 
 /** Axis-aligned bounding box (center + half-extent) enclosing every xyz triple in this array. */

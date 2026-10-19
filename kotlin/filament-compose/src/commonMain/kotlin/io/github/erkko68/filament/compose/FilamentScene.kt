@@ -21,6 +21,7 @@ class FilamentScene internal constructor(
     /** The engine backing this scene. Shared with every [FilamentView] that renders it. */
     val engine: Engine,
     internal val scene: Scene,
+    internal val tapTargets: TapTargets = TapTargets(),
 )
 
 /**
@@ -61,6 +62,7 @@ fun rememberFilamentScene(
         LocalFilamentEngine    provides engine,
         LocalFilamentScene     provides scene,
         LocalStandardMaterials provides standardMaterials,
+        LocalTapTargets        provides handle.tapTargets,
     ) {
         FilamentSceneScopeInstance.content()
     }
