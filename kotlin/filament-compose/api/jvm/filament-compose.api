@@ -956,6 +956,7 @@ public final class io/github/erkko68/filament/compose/scene/SkyboxKt {
 
 public final class io/github/erkko68/filament/compose/scene/SphericalHarmonics {
 	public static final field $stable I
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/SphericalHarmonics$Companion;
 	public fun <init> (I[F)V
 	public final fun component1 ()I
 	public final fun component2 ()[F
@@ -966,6 +967,14 @@ public final class io/github/erkko68/filament/compose/scene/SphericalHarmonics {
 	public final fun getCoefficients ()[F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/SphericalHarmonics$Companion {
+	public final fun getCoolStudio ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getDaylight ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getNeutralStudio ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getSunset ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
+	public final fun getWarm ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
 }
 
 public final class io/github/erkko68/filament/compose/scene/SpotCone {
