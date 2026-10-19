@@ -549,6 +549,9 @@ val scene = rememberFilamentScene(engine = engine) {
 }
 ```
 
+`rememberGltfAsset` returns the asset before its GPU upload finishes, so show a loading state until
+`duck?.isReady == true`; `duck.progress` (0 to 1) drives an indicator.
+
 The keyed `rememberMaterialInstance(material, key) { … }` overload re-applies parameters declaratively
 on change — see [Materials](materials.md#updating-parameters-live).
 

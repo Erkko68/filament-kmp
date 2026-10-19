@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -118,6 +119,14 @@ fun AnimationScene(onBack: () -> Unit) {
                     valueRange = 0f..1.5f,
                 )
             }
+        }
+
+        // The asset arrives before its GPU upload finishes: wait for isReady, not just non-null.
+        if (fox?.isReady != true) {
+            LinearProgressIndicator(
+                progress = { fox?.progress ?: 0f },
+                modifier = Modifier.align(Alignment.Center).padding(horizontal = 64.dp).fillMaxWidth(),
+            )
         }
 
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))

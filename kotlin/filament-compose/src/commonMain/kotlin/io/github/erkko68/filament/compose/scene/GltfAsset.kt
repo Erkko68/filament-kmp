@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.setValue
@@ -45,6 +46,13 @@ class GltfAsset internal constructor(
      * [GltfInstance] uses this to avoid rendering incomplete models.
      */
     var isReady by mutableStateOf(false)
+        internal set
+
+    /**
+     * Fraction of the GPU resources uploaded so far, 0 to 1; reaches 1 with [isReady]. Covers the upload only:
+     * reading the bytes happens in your `load` lambda, before the asset exists.
+     */
+    var progress by mutableFloatStateOf(0f)
         internal set
 
     /**
@@ -138,8 +146,10 @@ internal fun rememberGltfAsset(
         }
         while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
             resourceLoader.asyncUpdateLoad()
+            gltfAsset.progress = resourceLoader.asyncGetLoadProgress()
             withFrameNanos { }
         }
+        gltfAsset.progress = 1f
         gltfAsset.isReady = true
         gltfAsset.releaseResourceLoader()
     }
@@ -176,7 +186,7 @@ internal fun rememberGltfAsset(
  * FilamentSceneView(engine = engine) { GltfInstance(asset = model) }
  * when {
  *     error != null           -> ErrorPlaceholder()   // failed
- *     model?.isReady != true  -> LoadingSpinner()     // reading, parsing or uploading
+ *     model?.isReady != true  -> LoadingIndicator(model?.progress)   // reading, parsing or uploading
  * }
  * ```
  *
