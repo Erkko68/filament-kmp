@@ -99,10 +99,10 @@ private fun Modifier.manipulatorDragGestures(
         awaitEachGesture {
             val down = awaitFirstDownAnyButton()
             val strafe = secondaryStrafes && currentEvent.buttons.isSecondaryPressed
+            // The grab starts past the touch slop, from the press: a finger's jitter stays a tap (onTap) and the camera stays still.
+            var grabbing = false
             var pinchMode = false
             var prevPinchDistance = 0f
-
-            manipulator.grabBegin(down.position.x.toInt(), viewportY(down.position.y), strafe)
 
             while (true) {
                 val event = awaitPointerEvent()
@@ -113,7 +113,7 @@ private fun Modifier.manipulatorDragGestures(
                     pressed.size >= 2 -> {
                         if (!pinchMode) {
                             pinchMode = true
-                            manipulator.grabEnd()
+                            if (grabbing) manipulator.grabEnd()
                             prevPinchDistance =
                                 (pressed[0].position - pressed[1].position).getDistance()
                         } else {
@@ -131,7 +131,11 @@ private fun Modifier.manipulatorDragGestures(
                     }
                     pressed.size == 1 && !pinchMode -> {
                         val change = pressed.first()
-                        if (change.positionChanged()) {
+                        if (!grabbing && (change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
+                            grabbing = true
+                            manipulator.grabBegin(down.position.x.toInt(), viewportY(down.position.y), strafe)
+                        }
+                        if (grabbing && change.positionChanged()) {
                             manipulator.grabUpdate(change.position.x.toInt(), viewportY(change.position.y))
                             onSync()
                             change.consume()
@@ -140,7 +144,7 @@ private fun Modifier.manipulatorDragGestures(
                 }
             }
 
-            if (!pinchMode) {
+            if (grabbing && !pinchMode) {
                 manipulator.grabEnd()
                 onSync()
             }
@@ -492,17 +496,22 @@ fun Modifier.flightGestures(controller: FlightCameraController): Modifier =
             // Mouse look
             awaitEachGesture {
                 val down = awaitFirstDownAnyButton()
-                controller.manipulator.grabBegin(down.position.x.toInt(), viewportY(down.position.y), false)
+                // Past the touch slop only, as in manipulatorDragGestures: a tap stays a tap.
+                var grabbing = false
                 while (true) {
                     val event = awaitPointerEvent()
                     if (event.changes.none { it.pressed }) break
                     val change = event.changes.firstOrNull { it.pressed } ?: break
-                    if (change.positionChanged()) {
+                    if (!grabbing && (change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
+                        grabbing = true
+                        controller.manipulator.grabBegin(down.position.x.toInt(), viewportY(down.position.y), false)
+                    }
+                    if (grabbing && change.positionChanged()) {
                         controller.manipulator.grabUpdate(change.position.x.toInt(), viewportY(change.position.y))
                         change.consume()
                     }
                 }
-                controller.manipulator.grabEnd()
+                if (grabbing) controller.manipulator.grabEnd()
             }
         }
         .pointerInput(controller) {

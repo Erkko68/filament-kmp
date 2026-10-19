@@ -11,12 +11,14 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.performMouseInput
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.unit.dp
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.scene.LinearColor
+import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.primitives.Cube
@@ -150,5 +152,31 @@ class FilamentViewRealBackendTest {
         }
         settle()
         assertEquals(1, tapped, "a drag should orbit, not tap")
+    }
+
+    /** A finger moves a pixel or two during a tap: under the touch slop it stays a tap, and the camera stays put. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun touchTapThatJittersReachesOnTap() = withEngine(Engine.Backend.DEFAULT) { engine, setContent ->
+        var tapped = 0
+        var cam: CameraState? = null
+        setContent {
+            val state = rememberCameraState().also { cam = it }
+            FilamentSceneView(Modifier.testTag("view").size(64.dp).orbitGestures(rememberOrbitCameraController(state)),
+                engine = engine, cameraState = state) {
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f),
+                    onTap = { tapped++ })
+            }
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        val eye = assertNotNull(cam).eye
+
+        onNodeWithTag("view").performTouchInput { down(center); moveBy(Offset(2f, 1f)); up() }
+        repeat(30) {
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        assertEquals(1, tapped, "a tap that moves under the touch slop should reach onTap")
+        assertEquals(eye, assertNotNull(cam).eye, "a tap shouldn't move the camera")
     }
 }

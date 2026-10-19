@@ -20,6 +20,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
 ### Fixed
+- **Orbit, map and flight camera gestures start past the touch slop** (`filament-compose`): a finger tap no longer nudges the camera or swallows the tap.
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
 - **Arrays shorter than Filament reads or writes now throw `IllegalArgumentException`** instead of an out-of-bounds native access (matrices, vectors, `out` arrays, counted uploads, mesh builders, custom LUTs).
 - **`TargetApi.WEBGPU` no longer ends the JVM on Linux** (`filamat`): the desktop library now links Dawn, whose Tint upstream's Linux filamat calls for WGSL.
