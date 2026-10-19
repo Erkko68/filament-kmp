@@ -85,7 +85,7 @@ class TextureReadersTest : UtilsTestFixture() {
         assertFalse(Ktx1Reader.isSrgbTextureFormat(Texture.InternalFormat.RGBA8))
     }
 
-    private companion object {
+    internal companion object {
         /** 4×4 red, UASTC, sRGB-tagged; from Filament 1.77.1's `basisu -ktx2 -uastc`. */
         val RED_4X4_UASTC = Base64.decode(
             "q0tUWCAyMLsNChoKAAAAAAEAAAAEAAAABAAAAAAAAAAAAAAAAQAAAAEAAAACAAAAaAAAACwAAACUAAAAJAAAAAAAAAAAAAAAAAAAAAAAAAC4" +
