@@ -1,6 +1,5 @@
 package eric.bitria.samples.scenes
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,17 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
+import io.github.erkko68.filament.compose.pickOnTap
 import io.github.erkko68.filament.compose.rememberFilamentViewState
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Direction
@@ -57,29 +53,12 @@ fun PickingScene(onBack: () -> Unit) {
 
     val entityToIndex = remember { mutableStateMapOf<Int, Int>() }
     var lastTapped by remember { mutableIntStateOf(-1) }
-    var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .onSizeChanged { boxSize = it }
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val v = viewState.view ?: return@detectTapGestures
-                    // pick() takes Compose (top-left) coordinates; only scale layout px to
-                    // viewport px, no Y flip needed.
-                    val vw = v.viewport.width; val vh = v.viewport.height
-                    val lw = boxSize.width.coerceAtLeast(1); val lh = boxSize.height.coerceAtLeast(1)
-                    val px = (offset.x * vw / lw).toInt()
-                    val py = (offset.y * vh / lh).toInt()
-                    viewState.pick(px, py) { result ->
-                        lastTapped = entityToIndex[result.renderable] ?: -1
-                    }
-                }
-            },
-    ) {
+    Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .pickOnTap(viewState) { result -> lastTapped = entityToIndex[result.renderable] ?: -1 },
             cameraState = cameraState,
             viewState = viewState,
         ) {

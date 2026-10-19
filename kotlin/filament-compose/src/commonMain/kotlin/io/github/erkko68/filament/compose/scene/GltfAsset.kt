@@ -151,7 +151,8 @@ internal fun rememberGltfAsset(
  * Asynchronously loads a glTF/glb asset and keeps it alive as long as the calling composable
  * is in the composition.
  *
- * Returns null while loading **and** on failure — it never throws inside composition, so a
+ * Returns null while the bytes load **and** on failure; the asset it returns then keeps uploading
+ * to the GPU until [GltfAsset.isReady]. It never throws inside composition, so a
  * bad model can't crash the app. Pass [onError] to react to failures (show a placeholder,
  * log, retry). Every failure mode is reported: the [load] lambda throwing (missing file,
  * network error), the bytes failing to parse as glb/glTF, and a resource they reference being
@@ -169,13 +170,13 @@ internal fun rememberGltfAsset(
  * val duck   = rememberGltfAsset(engine = engine) { Res.readBytes("Duck.glb") }
  * val scene  = rememberFilamentScene(engine = engine) { GltfInstance(asset = duck, ...) }
  *
- * // Distinguishing loading from failure: null + a captured error
+ * // Telling loading from failure: a captured error, and isReady (the GPU upload runs after parsing)
  * var error by remember { mutableStateOf<Throwable?>(null) }
- * val model = rememberGltfAsset(onError = { error = it }) { loadFromNetwork() }
+ * val model = rememberGltfAsset(engine = engine, onError = { error = it }) { loadFromNetwork() }
+ * FilamentSceneView(engine = engine) { GltfInstance(asset = model) }
  * when {
- *     error != null -> ErrorPlaceholder()       // failed
- *     model == null -> LoadingSpinner()          // still loading
- *     else          -> GltfInstance(asset = model)
+ *     error != null           -> ErrorPlaceholder()   // failed
+ *     model?.isReady != true  -> LoadingSpinner()     // reading, parsing or uploading
  * }
  * ```
  *
