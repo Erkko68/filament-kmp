@@ -152,8 +152,10 @@ class MaterialBuilderTest : FilamatTestFixture() {
             .useLegacyMorphing()
             .compile()
         val apis = MaterialBuilder.TargetApi.entries.associateWith { unlit().targetApi(it).platform(MaterialBuilder.Platform.ALL).build().isValid }
-        // The prebuilt compiler has no WebGPU (WGSL) output.
-        assertEquals(MaterialBuilder.TargetApi.entries.associateWith { it != MaterialBuilder.TargetApi.WEBGPU }, apis)
+        // WGSL output exists only where the prebuilt filamat links Tint (Linux); elsewhere it is an invalid package.
+        // Either way the call returns: on Linux it used to end the process on an unresolved Tint symbol.
+        assertEquals(MaterialBuilder.TargetApi.entries.filter { it != MaterialBuilder.TargetApi.WEBGPU }.associateWith { true },
+                     apis - MaterialBuilder.TargetApi.WEBGPU)
     }
 
     @Test

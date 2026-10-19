@@ -19,6 +19,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Fixed
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
 - **Arrays shorter than Filament reads or writes now throw `IllegalArgumentException`** instead of an out-of-bounds native access (matrices, vectors, `out` arrays, counted uploads, mesh builders, custom LUTs).
+- **`TargetApi.WEBGPU` no longer ends the JVM on Linux** (`filamat`): the desktop library now links Dawn, whose Tint upstream's Linux filamat calls for WGSL; a missing symbol now fails the build instead.
 - **`MaterialProvider.materials` and `AssetLoader.materials` no longer abort** (`gltfio`): they wrapped the ubershader cache's not-yet-compiled (null) slots; they now list only compiled materials.
 
 ## [0.8.0] — 2026-10-14
