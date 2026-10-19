@@ -70,6 +70,26 @@ class GltfAssetLoadingTest {
         assertSceneEmpty(scene, "asset + instance leaked after disposal")
     }
 
+    /** Progress only grows, stays within 0..1, and is 1 once the asset is ready. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun progressRisesToOneWithIsReady() = withUiThreadFilamentScene { setContent, _, _ ->
+        var asset: GltfAsset? = null
+        setContent { asset = rememberGltfAsset { TestGlb.getFoxGlbBytes() } }
+
+        val seen = mutableListOf<Float>()
+        assertTrue(
+            pumpUntil { asset?.let { seen += it.progress; it.isReady } == true },
+            "the asset should become ready within the frame budget",
+        )
+        assertTrue(seen.all { it in 0f..1f }, "progress should stay within 0..1, got $seen")
+        assertEquals(seen.sorted(), seen, "progress should never go back, got $seen")
+        assertEquals(1f, seen.last(), "a ready asset should report full progress")
+
+        setContent {}
+        waitForIdle()
+    }
+
     /**
      * Bad bytes must not throw inside composition — the contract is null forever plus one [onError].
      * A composable that threw here would take down the whole UI on a corrupt download.
