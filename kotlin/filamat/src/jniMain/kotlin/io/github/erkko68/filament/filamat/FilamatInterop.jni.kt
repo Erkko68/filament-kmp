@@ -11,9 +11,9 @@ internal actual fun <R> String.useFilamatCString(block: (NativePointer) -> R): R
 
 internal actual fun readFilamatBytes(ptr: NativePointer, size: Int): ByteArray = ByteArray(size).also { FilaJni.buffer(ptr, size).get(it) }
 
-internal actual fun <R> ByteArray.useFilamatPinned(block: (NativePointer) -> R): R = usePinned(block)
+internal actual fun <R> ByteArray.useFilamatPinned(block: (NativePointer) -> R): R = usePinned(size, block)
 
-internal actual fun <R> IntArray.useFilamatPinned(block: (NativePointer) -> R): R = usePinned(block)
+internal actual fun <R> IntArray.useFilamatPinned(block: (NativePointer) -> R): R = usePinned(size, block)
 
 internal actual fun <R> List<NativePointer>.useFilamatPointers(block: (NativePointer) -> R): R = interopScope { block(toInterop(this@useFilamatPointers)) }
 

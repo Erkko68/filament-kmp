@@ -56,7 +56,7 @@ class Ktx2Reader(engine: Engine, quiet: Boolean = false) : AutoCloseable {
      * filters the final internal format.
      */
     fun load(data: ByteArray, transfer: TransferFunction): Texture? =
-        data.usePinned { FilaKtxreaderKtx2Reader_load(nativeHandle, it, data.size, transfer.ordinal) }.takeIf { it != NullPointer }?.let { Texture(it) }
+        data.usePinned(data.size) { FilaKtxreaderKtx2Reader_load(nativeHandle, it, data.size, transfer.ordinal) }.takeIf { it != NullPointer }?.let { Texture(it) }
 
     /**
      * Creates a texture without transcoding it yet, so mipmap levels can be populated
@@ -72,7 +72,7 @@ class Ktx2Reader(engine: Engine, quiet: Boolean = false) : AutoCloseable {
      * ```
      */
     fun asyncCreate(data: ByteArray, transfer: TransferFunction): Async? =
-        data.usePinned { FilaKtxreaderKtx2Reader_asyncCreate(nativeHandle, it, data.size, transfer.ordinal) }.takeIf { it != NullPointer }?.let { Async(it) }
+        data.usePinned(data.size) { FilaKtxreaderKtx2Reader_asyncCreate(nativeHandle, it, data.size, transfer.ordinal) }.takeIf { it != NullPointer }?.let { Async(it) }
 
     /** Frees [async] and the source data it copied, but not its texture. */
     fun asyncDestroy(async: Async) = interopScope {

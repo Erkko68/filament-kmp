@@ -4,56 +4,33 @@ import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class ToneMapperTest : FilamentTestFixture() {
+    /**
+     * Each subclass reaches its own native tone mapper: black stays black and, except for the false-colour
+     * DisplayRange debug mapper, brighter input never maps darker.
+     */
     @Test
-    fun testToneMapperInstantiationAndProperties() {
-        val t1 = ToneMapper.Linear()
-        assertNotNull(t1)
-
-        val t2 = ToneMapper.ACES()
-        assertNotNull(t2)
-
-        val t3 = ToneMapper.ACESLegacy()
-        assertNotNull(t3)
-
-        val t4 = ToneMapper.Filmic()
-        assertNotNull(t4)
-
-        val t5 = ToneMapper.PBRNeutralToneMapper()
-        assertNotNull(t5)
-
-        val t6 = ToneMapper.GT7ToneMapper()
-        assertNotNull(t6)
-
-        val t7 = ToneMapper.Agx(ToneMapper.Agx.AgxLook.NONE)
-        assertNotNull(t7)
-
-        val t8 = ToneMapper.Generic(1.5f, 0.18f, 0.22f, 10f)
-        assertNotNull(t8)
-
-        t8.contrast = 2.0f
-        assertEquals(2.0f, t8.contrast)
-
-        t8.midGrayIn = 0.25f
-        assertEquals(0.25f, t8.midGrayIn)
-
-        t8.midGrayOut = 0.35f
-        assertEquals(0.35f, t8.midGrayOut)
-
-        t8.hdrMax = 12f
-        assertEquals(12f, t8.hdrMax)
-
-        val t9 = ToneMapper.DisplayRange()
-        assertNotNull(t9)
-
-        listOf(t1, t2, t3, t4, t5, t6, t7, t8, t9).forEach { it.close() }
+    fun everyToneMapperIsMonotonic() {
+        val mappers = listOf(
+            ToneMapper.Linear(), ToneMapper.ACES(), ToneMapper.ACESLegacy(), ToneMapper.Filmic(),
+            ToneMapper.PBRNeutralToneMapper(), ToneMapper.GT7ToneMapper(), ToneMapper.Agx(ToneMapper.Agx.AgxLook.NONE),
+            ToneMapper.Generic(1.5f, 0.18f, 0.22f, 10f), ToneMapper.DisplayRange(),
+        )
+        for (mapper in mappers) {
+            val name = mapper::class.simpleName
+            mapper(floatArrayOf(0f, 0f, 0f)).forEach { assertEquals(0f, it, 1e-3f, "$name: black") }
+            if (mapper !is ToneMapper.DisplayRange) {
+                val ramp = listOf(0.01f, 0.1f, 0.5f, 1f, 4f).map { mapper(floatArrayOf(it, it, it))[1] }
+                assertTrue(ramp.zipWithNext().all { (a, b) -> b >= a }, "$name is not monotonic: $ramp")
+            }
+            mapper.close()
+        }
     }
 
     @Test
-    fun testToneMapperBaseApiAndDefaults() {
+    fun parametersRoundTrip() {
         ToneMapper.Linear().use { linear ->
             assertContentEquals(floatArrayOf(0.5f, 1f, 0f), linear(floatArrayOf(0.5f, 2f, -1f)))
             assertTrue(linear.isOneDimensional)
@@ -67,6 +44,14 @@ class ToneMapperTest : FilamentTestFixture() {
         ToneMapper.Generic().use { generic ->
             assertEquals(1.55f, generic.contrast)
             assertEquals(10f, generic.hdrMax)
+            generic.contrast = 2f
+            generic.midGrayIn = 0.25f
+            generic.midGrayOut = 0.35f
+            generic.hdrMax = 12f
+            assertEquals(2f, generic.contrast)
+            assertEquals(0.25f, generic.midGrayIn)
+            assertEquals(0.35f, generic.midGrayOut)
+            assertEquals(12f, generic.hdrMax)
         }
     }
 }

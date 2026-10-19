@@ -1,112 +1,77 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import io.github.erkko68.filament.interop.NullPointer
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ResourceLoaderTest : GltfioTestFixture() {
+    private fun resourceLoader() = ResourceLoader(ResourceConfiguration(engine))
+
     @Test
-    fun testResourceLoaderLifecycle() {
-        val loader = ResourceLoader(ResourceConfiguration(engine))
-        loader.addResourceData("http://example.com/texture.png", byteArrayOf(1, 2, 3))
-        assertTrue(loader.hasResourceData("http://example.com/texture.png"))
+    fun theUriCacheHoldsDataUntilEvicted() = resourceLoader().use { loader ->
+        assertFalse(loader.hasResourceData("tri.bin"))
+        loader.addResourceData("tri.bin", TestGlb.triangleBuffer)
+        assertTrue(loader.hasResourceData("tri.bin"))
         loader.evictResourceData()
-        assertNotEquals(NullPointer, loader.nativeObject)
+        assertFalse(loader.hasResourceData("tri.bin"))
+    }
+
+    /** Duck's texture decodes over several updates; its renderable is ready once it has. */
+    @Test
+    fun asyncLoadingProgressesToReadyRenderables() {
+        val asset = load(TestGlb.getDuckGlbBytes(), resources = false)
+        val before = asset.popRenderable()
+        val progress = mutableListOf<Float>()
+        val png = createStbProvider(engine)
+        resourceLoader().use { loader ->
+            loader.addTextureProvider("image/png", png)
+            assertTrue(loader.asyncBeginLoad(asset))
+            // Textures decode on worker threads: give them time, not a number of updates.
+            val deadline = Engine.steadyClockTimeNano + 10_000_000_000L
+            while (progress.lastOrNull() != 1f && Engine.steadyClockTimeNano < deadline) {
+                loader.asyncUpdateLoad()
+                progress += loader.asyncGetLoadProgress()
+            }
+        }
+        png.close()
+        val ready = asset.popRenderable()
+
+        assertEquals(0, before, "a renderable waits for its textures")
+        assertEquals(1f, progress.last())
+        assertEquals(progress.sorted(), progress, "progress only goes up")
+        assertEquals(asset.renderableEntities.single(), ready)
+        assertEquals(0, asset.popRenderable(), "each renderable is popped once")
+    }
+
+    /** Cancelling mid-load leaves an asset that tears down cleanly. */
+    @Test
+    fun aCancelledLoadTearsDown() {
+        val asset = load(TestGlb.getFoxGlbBytes(), resources = false)
+        resourceLoader().use { loader ->
+            assertTrue(loader.asyncBeginLoad(asset))
+            loader.asyncUpdateLoad()
+            loader.asyncCancelLoad()
+        }
+        destroy(asset)
+    }
+
+    @Test
+    fun destroyingTwiceIsANoOp() {
+        val loader = resourceLoader()
         loader.destroy()
-        // A second destroy has nothing left to free.
         loader.destroy()
         assertEquals(NullPointer, loader.nativeObject)
     }
 
     @Test
-    fun testNormalizeSkinningWeightsConstructor() {
-        ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true)).use { loader ->
-            loader.setConfiguration(ResourceConfiguration(engine, normalizeSkinningWeights = false))
-        }
-    }
-
-    @Test
-    fun testAsyncMethods() {
-        val loader = ResourceLoader(ResourceConfiguration(engine))
-        loader.asyncGetLoadProgress()
-        loader.asyncUpdateLoad()
-        loader.asyncCancelLoad()
-        loader.destroy()
-    }
-
-    @Test
-    fun testLoadResourcesWithGlb() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val assetLoader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = assetLoader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        assertTrue(resourceLoader.loadResources(asset))
-
-        resourceLoader.destroy()
-        assetLoader.destroyAsset(asset)
-        AssetLoader.destroy(assetLoader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testAsyncLoadWithGlb() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val assetLoader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = assetLoader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        assertTrue(resourceLoader.asyncBeginLoad(asset))
-
-        resourceLoader.asyncGetLoadProgress()
-        resourceLoader.asyncUpdateLoad()
-        resourceLoader.asyncCancelLoad()
-
-        resourceLoader.destroy()
-        assetLoader.destroyAsset(asset)
-        AssetLoader.destroy(assetLoader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testTextureProviders() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val assetLoader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = assetLoader.createAsset(bytes)
-        assertNotNull(asset)
-
-        // Duck's base color is a PNG: loading decodes it through the registered provider.
-        val stb = createStbProvider(engine)
-        val ktx2 = createKtx2Provider(engine)
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.addTextureProvider("image/png", stb)
-        resourceLoader.addTextureProvider("image/ktx2", ktx2)
-        assertTrue(resourceLoader.loadResources(asset))
+    fun webpProvidersExistWhereWebpIsBuiltIn() {
         val webp = createWebpProvider(engine)
-        assertEquals(isWebpSupported(), webp != null)
         webp?.close()
-
-        resourceLoader.destroy()
-        stb.close()
-        ktx2.destroy()
-        assetLoader.destroyAsset(asset)
-        AssetLoader.destroy(assetLoader)
-        provider.destroy()
+        assertEquals(isWebpSupported(), webp != null)
     }
 }

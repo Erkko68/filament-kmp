@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class RenderTargetTest : FilamentTestFixture() {
@@ -27,15 +27,8 @@ class RenderTargetTest : FilamentTestFixture() {
             .layer(RenderTarget.AttachmentPoint.COLOR, 0)
             .samples(1)
             .build(engine)
-
-        assertNotNull(target)
         assertTrue(engine.isValid(target))
-
-        val retrieved = target.getTexture(RenderTarget.AttachmentPoint.COLOR)
-        if (retrieved != null) {
-            assertEquals(tex.getWidth(), retrieved.getWidth())
-            assertEquals(tex.format, retrieved.format)
-        }
+        assertSame(tex, target.getTexture(RenderTarget.AttachmentPoint.COLOR))
         assertEquals(0, target.getMipLevel(RenderTarget.AttachmentPoint.COLOR))
         assertEquals(Texture.CubemapFace.POSITIVE_X, target.getFace(RenderTarget.AttachmentPoint.COLOR))
         assertEquals(0, target.getLayer(RenderTarget.AttachmentPoint.COLOR))

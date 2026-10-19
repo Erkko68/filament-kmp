@@ -10,3 +10,5 @@ actual object TestEnv {
 }
 
 actual annotation class IgnoreJs
+
+actual fun assumeRealBackend(): Unit = error("pixelTest does not run on android")

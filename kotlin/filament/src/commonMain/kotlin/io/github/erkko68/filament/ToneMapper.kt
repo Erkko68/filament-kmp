@@ -43,7 +43,7 @@ open class ToneMapper(internal val nativeHandle: NativePointer) : AutoCloseable 
      */
     operator fun invoke(color: FloatArray, out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        color.usePinned { c -> result.usePinned { r -> FilaToneMapper_invoke(nativeHandle, c, r) } }
+        color.usePinned(3) { c -> result.usePinned(3) { r -> FilaToneMapper_invoke(nativeHandle, c, r) } }
         return result
     }
 

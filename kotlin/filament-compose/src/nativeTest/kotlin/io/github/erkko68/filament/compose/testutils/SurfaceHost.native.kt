@@ -44,3 +44,5 @@ actual fun surfaceTest(frames: Int, content: @Composable (frame: Int) -> Unit) {
 }
 
 private fun pumpRunLoop(seconds: Double) = NSRunLoop.currentRunLoop.runUntilDate(NSDate.dateWithTimeIntervalSinceNow(seconds))
+
+actual typealias IgnoreWithoutViewInterop = kotlin.test.Ignore

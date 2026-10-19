@@ -1,103 +1,111 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
+import kotlin.math.atan
+import kotlin.math.sqrt
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class CameraTest : FilamentTestFixture() {
-    @Test
-    fun testCameraLifecycleAndMethods() {
+    // A helper, not @BeforeTest: web runs a subclass's @BeforeTest before the fixture's.
+    private fun withCamera(block: (Camera) -> Unit) {
         val entity = EntityManager.get().create()
-        val cam = engine.createCamera(entity)
-        assertNotNull(cam)
-        assertEquals(entity, cam.entity)
+        try {
+            block(engine.createCamera(entity))
+        } finally {
+            engine.destroyCameraComponent(entity)
+            EntityManager.get().destroy(entity)
+        }
+    }
 
-        // Projection
-        cam.setProjection(Camera.Projection.PERSPECTIVE, -1.0, 1.0, -1.0, 1.0, 1.0, 100.0)
-        cam.setProjection(45.0, 1.0, 1.0, 100.0, Camera.Fov.VERTICAL)
-        cam.setLensProjection(50.0, 1.0, 1.0, 100.0)
-        
-        val projMatrix = DoubleArray(16)
-        cam.setCustomProjection(projMatrix, 1.0, 100.0)
-        cam.setCustomProjection(projMatrix, projMatrix, 1.0, 100.0)
+    private fun assertClose(expected: FloatArray, actual: FloatArray, what: String) =
+        expected.indices.forEach { assertEquals(expected[it], actual[it], 1e-5f, "$what[$it]: ${actual.toList()}") }
 
-        // Custom eye projections
-        val eyeProjs = DoubleArray(32)
-        cam.setCustomEyeProjection(eyeProjs, 2, projMatrix, 1.0, 100.0)
-        cam.setEyeModelMatrix(0, DoubleArray(16))
+    private fun dot(a: FloatArray, b: FloatArray) = a.indices.sumOf { (a[it] * b[it]).toDouble() }
 
-        // Scaling & Shift
-        cam.setScaling(1.5, 1.5)
-        val scale = cam.getScaling()
-        assertEquals(1.5, scale[0])
-        assertEquals(1.5, scale[1])
+    @Test
+    fun lookAtPlacesAndOrientsTheCamera() = withCamera { camera ->
+        camera.lookAt(1.0, 2.0, 10.0, 1.0, 2.0, 0.0, 0.0, 1.0, 0.0)
+        assertContentEquals(doubleArrayOf(1.0, 2.0, 10.0), camera.getPosition())
+        assertClose(floatArrayOf(0f, 0f, -1f), camera.getForwardVector(), "forward")
+        assertClose(floatArrayOf(0f, 1f, 0f), camera.getUpVector(), "up")
+        val left = camera.getLeftVector()
+        assertEquals(1.0, sqrt(dot(left, left)), 1e-5)
+        assertEquals(0.0, dot(left, camera.getUpVector()), 1e-5)
+        assertEquals(0.0, dot(left, camera.getForwardVector()), 1e-5)
 
-        cam.setShift(0.1, 0.2)
-        val shift = cam.getShift()
-        assertEquals(0.1, shift[0])
-        assertEquals(0.2, shift[1])
+        // The model matrix holds the eye; the view matrix takes it back to the origin.
+        val model = camera.getModelMatrix()
+        assertContentEquals(doubleArrayOf(1.0, 2.0, 10.0), model.copyOfRange(12, 15))
+        val view = camera.getViewMatrix()
+        for (row in 0 until 3) {
+            val eyeInView = view[row] * 1.0 + view[4 + row] * 2.0 + view[8 + row] * 10.0 + view[12 + row]
+            assertEquals(0.0, eyeInView, 1e-9, "view * eye, row $row")
+        }
+    }
 
-        // Transforms
-        cam.lookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
-        cam.setModelMatrix(FloatArray(16))
-        cam.setModelMatrix(DoubleArray(16))
+    @Test
+    fun perspectiveProjectionKeepsItsParameters() = withCamera { camera ->
+        camera.setProjection(90.0, 1.0, 0.5, 50.0, Camera.Fov.VERTICAL)
+        assertEquals(0.5, camera.near)
+        assertEquals(50.0, camera.cullingFar)
+        assertEquals(90f, camera.getFieldOfViewInDegrees(Camera.Fov.VERTICAL), 1e-3f)
+        assertEquals(90f, camera.getFieldOfViewInDegrees(Camera.Fov.HORIZONTAL), 1e-3f)
+        // 1 / tan(45°) on both axes.
+        val projection = camera.getProjectionMatrix()
+        assertEquals(1.0, projection[0], 1e-9)
+        assertEquals(1.0, projection[5], 1e-9)
+    }
 
-        // Getters
-        val proj = cam.getProjectionMatrix()
-        assertEquals(16, proj.size)
-        val cullProj = cam.getCullingProjectionMatrix()
-        assertEquals(16, cullProj.size)
+    @Test
+    fun lensProjectionUsesAFullFrameSensor() = withCamera { camera ->
+        camera.setLensProjection(50.0, 1.0, 0.1, 100.0)
+        assertEquals(0.05, camera.focalLength, 1e-9)
+        // 24 mm sensor height: 2·atan(12 / 50).
+        val expected = (2 * atan(12.0 / 50.0) * 180 / kotlin.math.PI).toFloat()
+        assertEquals(expected, camera.getFieldOfViewInDegrees(Camera.Fov.VERTICAL), 1e-3f)
+    }
 
-        assertEquals(16, cam.getModelMatrix().size)
-        assertEquals(16, cam.getViewMatrix().size)
-        assertEquals(16, cam.getEyeFromViewMatrix().size)
+    @Test
+    fun customProjectionIsReturnedAsGiven() = withCamera { camera ->
+        val projection = Camera.projection(Camera.Fov.HORIZONTAL, 60.0, 1.5, 0.1, 100.0)
+        camera.setCustomProjection(projection, 0.1, 100.0)
+        val read = camera.getProjectionMatrix()
+        projection.indices.forEach { assertEquals(projection[it], read[it], 1e-9, "[$it]") }
 
-        // Directions & Vectors
-        val pos = cam.getPosition()
-        assertEquals(3, pos.size)
-        val left = cam.getLeftVector()
-        assertEquals(3, left.size)
-        val up = cam.getUpVector()
-        assertEquals(3, up.size)
-        val fwd = cam.getForwardVector()
-        assertEquals(3, fwd.size)
+        camera.setScaling(1.5, 2.5)
+        assertContentEquals(doubleArrayOf(1.5, 2.5), camera.getScaling().copyOf(2))
+        camera.setShift(0.1, 0.2)
+        assertContentEquals(doubleArrayOf(0.1, 0.2), camera.getShift())
+    }
 
-        // Clip planes
-        assertTrue(cam.near >= 0.0)
-        assertTrue(cam.cullingFar >= 0.0)
+    @Test
+    fun exposureSettingsRoundTrip() = withCamera { camera ->
+        camera.setExposure(16f, 1f / 125f, 100f)
+        assertEquals(16f, camera.aperture)
+        assertEquals(1f / 125f, camera.shutterSpeed)
+        assertEquals(100f, camera.sensitivity)
+        // A bare exposure is f/1, 1.2 s at the ISO that gives it (Filament clamps ISO to 10 and up).
+        camera.setExposure(0.5f)
+        assertEquals(1f, camera.aperture)
+        assertEquals(1.2f, camera.shutterSpeed, 1e-6f)
+        assertEquals(200f, camera.sensitivity, 1e-3f)
+        camera.focusDistance = 7.5f
+        assertEquals(7.5f, camera.focusDistance)
+    }
 
-        // Exposure & Lens Properties
-        cam.setExposure(1.8f, 0.01f, 100f)
-        cam.setExposure(12.0f)
-        assertTrue(cam.aperture >= 0f)
-        assertTrue(cam.shutterSpeed >= 0f)
-        assertTrue(cam.sensitivity >= 0f)
-        assertTrue(cam.focalLength >= 0.0)
-
-        // Focus Distance
-        cam.focusDistance = 7.5f
-        assertEquals(7.5f, cam.focusDistance)
-
-        // FOV check
-        assertTrue(cam.getFieldOfViewInDegrees(Camera.Fov.VERTICAL) >= 0f)
-
-        // Statics
-        assertEquals(16, Camera.projection(Camera.Fov.VERTICAL, 45.0, 1.0, 0.1).size)
-        assertEquals(16, Camera.projection(50.0, 1.0, 0.1, 100.0).size)
+    @Test
+    fun staticProjectionHelpers() {
         val lens = Camera.projection(50.0, 1.0, 0.1, 100.0)
-        val identity = Camera.inverseProjection(lens).let { inv -> DoubleArray(16) { i -> (0..3).sumOf { k -> lens[k * 4 + i % 4] * inv[(i / 4) * 4 + k] } } }
+        val inverse = Camera.inverseProjection(lens)
+        val identity = DoubleArray(16) { i -> (0..3).sumOf { k -> lens[k * 4 + i % 4] * inverse[(i / 4) * 4 + k] } }
         for (i in 0 until 16) assertEquals(if (i % 5 == 0) 1.0 else 0.0, identity[i], 1e-9)
-        val lensF = FloatArray(16) { lens[it].toFloat() }
-        val invF = Camera.inverseProjection(lensF)
-        for (i in 0 until 16) assertEquals(Camera.inverseProjection(lens)[i].toFloat(), invF[i], 1e-4f)
+        val inverseF = Camera.inverseProjection(FloatArray(16) { lens[it].toFloat() })
+        for (i in 0 until 16) assertEquals(inverse[i].toFloat(), inverseF[i], 1e-4f)
         assertTrue(Camera.computeEffectiveFocalLength(0.05, 10.0) > 0.05)
         // Focusing closer narrows the effective field of view.
         assertTrue(Camera.computeEffectiveFov(60.0, 1.0) < 60.0)
-
-        // Cleanup
-        engine.destroyCameraComponent(entity)
-        EntityManager.get().destroy(entity)
     }
 }

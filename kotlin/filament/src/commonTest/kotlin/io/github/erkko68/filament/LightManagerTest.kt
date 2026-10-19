@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -9,60 +10,16 @@ import kotlin.test.assertTrue
 
 class LightManagerTest : FilamentTestFixture() {
     @Test
-    fun testShadowOptionsAndCascades() {
-        val options = LightManager.ShadowOptions().apply {
-            mapSize = 1024
-            shadowCascades = 2
-            cascadeSplitPositions = floatArrayOf(0.1f)
-            constantBias = 0.05f
-            normalBias = 0.4f
-            shadowFar = 100f
-            shadowNearHint = 1f
-            shadowFarHint = 100f
-            stable = true
-            lispsm = true
-            screenSpaceContactShadows = false
-            stepCount = 16
-            maxShadowDistance = 100f
-            vsm.elvsm = false
-            vsm.blurWidth = 2.0f
-            shadowBulbRadius = 0.05f
-            transform = floatArrayOf(1f, 0f, 0f, 0f)
-            polygonOffsetConstant = 1.25f
-            polygonOffsetSlope = 3.5f
-            penumbraScale = 1.5f
-            penumbraRatioScale = 2.5f
-            maxPenumbraRatio = 6f
-            maxSearchRadius = 0.25f
+    fun cascadeSplitsAreOrderedWithinTheFrustum() {
+        val uniform = FloatArray(3).also { LightManager.ShadowCascades.computeUniformSplits(it, 4) }
+        assertContentEquals(floatArrayOf(0.25f, 0.5f, 0.75f), uniform)
+        val log = FloatArray(3).also { LightManager.ShadowCascades.computeLogSplits(it, 4, 1f, 100f) }
+        val practical = FloatArray(3).also { LightManager.ShadowCascades.computePracticalSplits(it, 4, 1f, 100f, 0.5f) }
+        for (split in listOf(log, practical)) {
+            assertTrue(split.toList().zipWithNext().all { (a, b) -> a < b } && split.all { it > 0f && it < 1f }, split.toList().toString())
         }
-        assertEquals(1024, options.mapSize)
-        assertEquals(2, options.shadowCascades)
-        assertEquals(0.1f, options.cascadeSplitPositions[0], 1e-6f)
-        assertEquals(0.05f, options.constantBias)
-        assertEquals(0.4f, options.normalBias)
-        assertEquals(100f, options.shadowFar)
-        assertEquals(1f, options.shadowNearHint)
-        assertEquals(100f, options.shadowFarHint)
-        assertTrue(options.stable)
-        assertTrue(options.lispsm)
-        assertFalse(options.screenSpaceContactShadows)
-        assertEquals(16, options.stepCount)
-        assertEquals(100f, options.maxShadowDistance)
-        assertFalse(options.vsm.elvsm)
-        assertEquals(2.0f, options.vsm.blurWidth)
-        assertEquals(0.05f, options.shadowBulbRadius)
-        assertEquals(1f, options.transform[0])
-        assertEquals(1.25f, options.polygonOffsetConstant)
-        assertEquals(3.5f, options.polygonOffsetSlope)
-        assertEquals(1.5f, options.penumbraScale)
-        assertEquals(2.5f, options.penumbraRatioScale)
-        assertEquals(6f, options.maxPenumbraRatio)
-        assertEquals(0.25f, options.maxSearchRadius)
-
-        val splits = FloatArray(4)
-        LightManager.ShadowCascades.computeUniformSplits(splits, 4)
-        LightManager.ShadowCascades.computeLogSplits(splits, 4, 1f, 100f)
-        LightManager.ShadowCascades.computePracticalSplits(splits, 4, 1f, 100f, 0.5f)
+        // Log splits crowd the near plane; the practical scheme sits between the two.
+        for (i in 0 until 3) assertTrue(log[i] < practical[i] && practical[i] < uniform[i], "split $i")
     }
 
     @Test
@@ -103,7 +60,6 @@ class LightManagerTest : FilamentTestFixture() {
     @Test
     fun testSunLightLifecycle() {
         val lm = engine.lightManager
-        assertNotNull(lm)
 
         val entity = EntityManager.get().create()
         assertFalse(lm.hasComponent(entity))
@@ -212,14 +168,12 @@ class LightManagerTest : FilamentTestFixture() {
         lm.setIntensityCandela(inst, 500f)
         assertEquals(500f, lm.getIntensity(inst), 1e-3f)
 
-        // Falloff
         lm.setFalloff(inst, 15f)
-        assertTrue(lm.getFalloff(inst) > 0f)
+        assertEquals(15f, lm.getFalloff(inst), 1e-4f)
 
-        // Spot Cone
         lm.setSpotLightCone(inst, 0.1f, 0.4f)
-        assertTrue(lm.getSpotLightInnerCone(inst) > 0f)
-        assertTrue(lm.getSpotLightOuterCone(inst) > 0f)
+        assertEquals(0.1f, lm.getSpotLightInnerCone(inst), 0.01f) // recomputed, not stored
+        assertEquals(0.4f, lm.getSpotLightOuterCone(inst), 1e-6f)
 
         lm.destroy(entity)
         EntityManager.get().destroy(entity)

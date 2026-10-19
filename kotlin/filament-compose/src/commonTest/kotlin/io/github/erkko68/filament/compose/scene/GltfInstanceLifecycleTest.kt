@@ -5,10 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.TestGlb
-import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
+import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.requestsFrames
-import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -17,10 +16,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Tier-B (real-backend) coverage for [GltfInstance] — the most-used composable in the module, and
- * previously the only major one with no tests. gltfio uploads real GPU buffers and compiles
- * ubershaders, so this gates on a DEFAULT backend via [TierBSceneFixture] and skips where none is
- * available.
+ * Coverage for [GltfInstance], the most-used composable in the module.
  *
  * The asset is `AnimatedMorphCube.glb`: one mesh with morph targets, the smallest thing that drives
  * the morph-weight path. It is loaded through the fixture's `gltfAsset()` rather than
@@ -33,7 +29,7 @@ import kotlin.test.assertTrue
  * and the recomposition patterns around the weight-diffing path, not the uploaded values. Checking
  * the values themselves needs a Tier-C frame capture or an upstream getter.
  */
-class GltfInstanceLifecycleTest : TierBSceneFixture() {
+class GltfInstanceLifecycleTest : ComposeTestFixture() {
 
     private fun morphCube() = gltfAsset(TestGlb.getAnimatedMorphCubeGlbBytes())
 
@@ -41,9 +37,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun instanceEntersAndLeavesCleanly() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var created = false
@@ -64,9 +58,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun assetActuallyHasMorphTargets() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var morphTargets = 0
@@ -102,9 +94,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun morphWeightRecompositionShapesAreHandled() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var weights by mutableStateOf<FloatArray?>(floatArrayOf(0f, 0f))
@@ -150,9 +140,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun visibleTogglesSceneMembership() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var visible by mutableStateOf(true)
@@ -181,9 +169,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun shadowOverridesRevertToTheAuthoredFlags() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var cast: Boolean? by mutableStateOf(null)
@@ -219,9 +205,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     /** Only a hoisted [AnimationState] needs a frame loop: a still model must not keep the window redrawing. */
     @Test
     fun frameLoopRunsOnlyWithAnAnimationState() {
-        val engine = engine ?: return
-        val scene = scene ?: return
-        val asset = morphCube() ?: return
+        val asset = morphCube()
 
         assertFalse(requestsFrames(engine, scene) { GltfInstance(asset = asset) }, "a still instance asked for frames")
         assertTrue(
@@ -234,9 +218,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun instancesOfOneAssetAreIndependent() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var both by mutableStateOf(true)
@@ -269,9 +251,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun transformAndParentFollowTheInputs() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
 
         withFilamentScene(engine, scene) { setContent ->
             var position by mutableStateOf(Position(1f, 2f, 3f))
@@ -305,9 +285,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun aPausedAnimationStatePosesTheModel() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = gltfAsset(TestGlb.getFoxGlbBytes()) ?: return@run skippedComposeTest()
+        val asset = gltfAsset(TestGlb.getFoxGlbBytes())
 
         withFilamentScene(engine, scene) { setContent ->
             val state = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0f, initialLoop = true)
@@ -349,9 +327,7 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun theAssetsOwnInstanceIsHandedOutOnceAtATime() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val asset = morphCube() ?: return@run skippedComposeTest()
+        val asset = morphCube()
         asset.filamentAsset.releaseSourceData()
         val own = asset.filamentAsset.instance.entities.size
 

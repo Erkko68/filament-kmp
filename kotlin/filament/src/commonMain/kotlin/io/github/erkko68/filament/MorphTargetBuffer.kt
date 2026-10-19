@@ -165,7 +165,7 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
      * @param offset Offset into the target buffer, in vertices.
      */
     fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int, offset: Int = 0) {
-        positions.usePinned { FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(nativeHandle, engine.nativeHandle, targetIndex, it, count, offset) }
+        positions.usePinned(count * 3) { FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(nativeHandle, engine.nativeHandle, targetIndex, it, count, offset) }
     }
 
     /**
@@ -179,6 +179,6 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
      * @param offset Offset into the target buffer, in vertices.
      */
     fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int, offset: Int = 0) {
-        tangents.usePinned { FilaMorphTargetBuffer_setTangentsAt(nativeHandle, engine.nativeHandle, targetIndex, it, count, offset) }
+        tangents.usePinned(count * 4) { FilaMorphTargetBuffer_setTangentsAt(nativeHandle, engine.nativeHandle, targetIndex, it, count, offset) }
     }
 }

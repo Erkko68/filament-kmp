@@ -185,7 +185,7 @@ class Material @InternalFilamentApi constructor(internal var nativeHandle: Nativ
             if (data.isNotEmpty()) {
                 payloadInvalid = !isValidFilamatPayload(data)
                 releasePayload()
-                payloadScope = InteropScope().also { FilaMaterialBuilder_package(nativeBuilder, it.toInterop(data), data.size) }
+                payloadScope = InteropScope().also { FilaMaterialBuilder_package(nativeBuilder, it.toInterop(data, data.size), data.size) }
             } else {
                 payloadInvalid = false
             }

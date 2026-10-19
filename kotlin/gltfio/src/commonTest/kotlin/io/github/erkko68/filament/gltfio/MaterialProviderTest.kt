@@ -1,30 +1,44 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.VertexBuffer
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import kotlin.test.Test
-import io.github.erkko68.filament.VertexBuffer
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class MaterialProviderTest : GltfioTestFixture() {
-    @Test
-    fun testUbershaderProviderLifecycle() {
-        val provider = createUbershaderProvider(engine)
+    private fun material(key: MaterialKey) = provider.getMaterial(key, Array(UV_MAP_SIZE) { UvSet.UNUSED }.also { constrainMaterial(key, it) })
 
-        // Don't call getMaterials() here: upstream's binding pre-allocates one
-        // slot per ubershader spec and lazily fills them on getMaterial(), but
-        // wraps every slot in `new Material(ptr)` unconditionally — so reading
-        // materials before any are populated crashes on null pointers.
-        provider.needsDummyData(VertexBuffer.VertexAttribute.POSITION)
+    /** The key reaches C: each shading model and alpha mode picks its own ubershader, compiled once. */
+    @Test
+    fun keysPickTheirUbershaderAndTheCacheKeepsIt() {
+        assertEquals(emptyList(), provider.materials, "nothing is compiled before it's asked for")
+        val unlit = material(MaterialKey(unlit = true))
+        val names = listOf(AlphaMode.OPAQUE, AlphaMode.MASK, AlphaMode.BLEND).map { material(MaterialKey(alphaMode = it))?.name }
+
+        assertEquals("base_unlit_opaque", unlit?.name)
+        assertEquals(listOf("base_lit_opaque", "base_lit_masked", "base_lit_fade"), names)
+        assertEquals(unlit?.nativeObject, material(MaterialKey(unlit = true))?.nativeObject, "a second request reuses the material")
+        assertEquals(4, provider.materials.size, "materials lists what's compiled, not the cache's empty slots")
+        assertTrue(provider.materialsCount >= provider.materials.size)
+
         provider.destroyMaterials()
-        provider.destroy()
+        assertEquals(0, provider.materialsCount)
     }
 
     @Test
-    fun testUbershaderAsMaterialProviderInterface() {
-        val provider: MaterialProvider = createUbershaderProvider(engine)
-        provider.needsDummyData(VertexBuffer.VertexAttribute.POSITION)
-        provider.destroy()
+    fun constrainMaterialMapsTheTexcoordSetsInUse() {
+        val uvmap: UvMap = Array(UV_MAP_SIZE) { UvSet.UNUSED }
+        constrainMaterial(MaterialKey(hasBaseColorTexture = true, baseColorUV = 0), uvmap)
+        assertEquals(UvSet.UV0, uvmap[0])
+        assertEquals(1, getNumUvSets(uvmap))
     }
 
-    // getMaterial / createMaterialInstance need a real backend to compile
-    // ubershaders — covered in MaterialProviderRenderingTest.
+    /** The ubershaders read UV0 unconditionally, so gltfio pads meshes without it. */
+    @Test
+    fun ubershadersNeedDummyTexcoordsOnly() {
+        assertTrue(provider.needsDummyData(VertexBuffer.VertexAttribute.UV0))
+        assertFalse(provider.needsDummyData(VertexBuffer.VertexAttribute.POSITION))
+    }
 }

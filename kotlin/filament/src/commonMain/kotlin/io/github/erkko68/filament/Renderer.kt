@@ -177,14 +177,14 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
         get() = withHandle({ FilaRendererClearOptions_create() }, { FilaRendererClearOptions_destroy(it) }) { o ->
             FilaRenderer_getClearOptions(nativeHandle, o)
             ClearOptions().apply {
-                clearColor.usePinned { FilaRendererClearOptions_getClearColor(o, it) }
+                clearColor.usePinned(4) { FilaRendererClearOptions_getClearColor(o, it) }
                 clearStencil = FilaRendererClearOptions_getClearStencil(o)
                 clear = FilaRendererClearOptions_getClear(o)
                 discard = FilaRendererClearOptions_getDiscard(o)
             }
         }
         set(value) = withHandle({ FilaRendererClearOptions_create() }, { FilaRendererClearOptions_destroy(it) }) { o ->
-            value.clearColor.usePinned { FilaRendererClearOptions_setClearColor(o, it) }
+            value.clearColor.usePinned(4) { FilaRendererClearOptions_setClearColor(o, it) }
             FilaRendererClearOptions_setClearStencil(o, value.clearStencil)
             FilaRendererClearOptions_setClear(o, value.clear)
             FilaRendererClearOptions_setDiscard(o, value.discard)
@@ -444,7 +444,7 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
 // the caller's storage once Filament releases it.
 private fun pixelsInto(buffer: Texture.PixelBufferDescriptor): Pair<NativePointer, NativePointer> {
     val scope = InteropScope()
-    val ptr = scope.toInterop(buffer.storage)
+    val ptr = scope.toInterop(buffer.storage, buffer.sizeInBytes)
     val userData = Callbacks.register(once = true) { _ ->
         with(scope) { ptr.fromInterop(buffer.storage) }
         scope.release()
@@ -456,7 +456,7 @@ private fun pixelsInto(buffer: Texture.PixelBufferDescriptor): Pair<NativePointe
 /** The FrameInfo a native one holds. */
 internal fun frameInfoOf(p: NativePointer): Renderer.FrameInfo {
     val ns = LongArray(1)
-    fun read(get: (NativePointer) -> Unit): Long { ns.usePinned(get); return ns[0] }
+    fun read(get: (NativePointer) -> Unit): Long { ns.usePinned(1, get); return ns[0] }
     return Renderer.FrameInfo(
         FilaRendererFrameInfo_getFrameId(p),
         read { FilaRendererFrameInfo_getGpuFrameDuration(p, it) },

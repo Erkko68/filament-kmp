@@ -38,9 +38,7 @@ import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberStandardMaterial
 import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.assertDestroyed
-import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
-import io.github.erkko68.filament.testsupport.TestEnv
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.test.Test
@@ -67,7 +65,7 @@ class TeardownOrderTest {
     fun aTreeLeavingWithItsEngineDestroysTheEngineLast() = teardownTest { setContent ->
         var engine: Engine? = null
         setContent {
-            val e = rememberFilamentEngine().also { engine = it }
+            val e = rememberFilamentEngine(Engine.Backend.NOOP).also { engine = it }
             rememberFilamentScene(e) {
                 DirectionalLight()
                 Group { Cube(material = rememberColorMaterialInstance(red)) }
@@ -82,7 +80,7 @@ class TeardownOrderTest {
     fun aSubcomposedSceneLeavingWithTheEngineAboveIt() = teardownTest { setContent ->
         var engine: Engine? = null
         setContent {
-            val e = rememberFilamentEngine().also { engine = it }
+            val e = rememberFilamentEngine(Engine.Backend.NOOP).also { engine = it }
             BoxWithConstraints {
                 rememberFilamentScene(e) { Cube(material = rememberColorMaterialInstance(red)) }
             }
@@ -123,10 +121,10 @@ class TeardownOrderTest {
         val engines = mutableListOf<Engine>()
         setContent {
             scope = rememberCoroutineScope()
-            val shared = if (hoistEngine) rememberFilamentEngine() else null
+            val shared = if (hoistEngine) rememberFilamentEngine(Engine.Backend.NOOP) else null
             LazyColumn(state = list, modifier = Modifier.height(400.dp)) {
                 items(50) {
-                    val e = shared ?: rememberFilamentEngine()
+                    val e = shared ?: rememberFilamentEngine(Engine.Backend.NOOP)
                     remember(e) { engines += e }
                     BoxWithConstraints(Modifier.height(200.dp)) {
                         rememberFilamentScene(e) {
@@ -148,7 +146,7 @@ class TeardownOrderTest {
     fun anOwnedEngineOutlivesAHoistedInstanceUsedInASubcomposition() = teardownTest { setContent ->
         var engine: Engine? = null
         setContent {
-            val e = rememberFilamentEngine().also { engine = it }
+            val e = rememberFilamentEngine(Engine.Backend.NOOP).also { engine = it }
             val instance = rememberMaterialInstance(rememberStandardMaterial(StandardMaterial.Lit, e), e)
             BoxWithConstraints {
                 rememberFilamentScene(e) { Cube(material = instance) }
@@ -207,7 +205,7 @@ class TeardownOrderTest {
     fun aCallerOwnedEngineIsDestroyedByItsOwnerAfterOurObjects() = teardownTest { setContent ->
         var engine: Engine? = null
         setContent {
-            val e = remember { Filament.init(); checkNotNull(Engine.create(Engine.Backend.DEFAULT)) }.also { engine = it }
+            val e = remember { Filament.init(); checkNotNull(Engine.create(Engine.Backend.NOOP)) }.also { engine = it }
             DisposableEffect(e) { onDispose { Engine.destroy(e) } }
             rememberFilamentScene(e) {
                 DirectionalLight()
@@ -262,7 +260,7 @@ class TeardownOrderTest {
         var engine: Engine? = null
         val textures = mutableListOf<Texture>()
         setContent {
-            val e = rememberFilamentEngine().also { engine = it }
+            val e = rememberFilamentEngine(Engine.Backend.NOOP).also { engine = it }
             val scene = rememberFilamentScene(e) { Cube(material = rememberColorMaterialInstance(red)) }
             rememberRenderTargetTexture(scene, width = size, height = size)?.let { t -> remember(t) { textures += t } }
         }
@@ -285,7 +283,7 @@ class TeardownOrderTest {
         var engine: Engine? = null
         var second: GltfAsset? = null
         setContent {
-            val e = rememberFilamentEngine().also { engine = it }
+            val e = rememberFilamentEngine(Engine.Backend.NOOP).also { engine = it }
             if (showFirst) rememberGltfAsset(engine = e) { bytes }
             second = rememberGltfAsset(engine = e) { bytes.copyOf() }
             rememberGltfAsset(engine = e, onError = {}) { ByteArray(64) { 0x7F } }
@@ -310,7 +308,7 @@ class TeardownOrderTest {
             var engine: Engine? = null
             var asset: GltfAsset? = null
             setContent {
-                val e = rememberFilamentEngine().also { engine = it }
+                val e = rememberFilamentEngine(Engine.Backend.NOOP).also { engine = it }
                 asset = rememberGltfAsset(engine = e) { duck }
             }
             repeat(30) { if (asset == null) frames(1) }
@@ -327,15 +325,14 @@ class TeardownOrderTest {
         waitForIdle()
     }
 
-    /** A GPU-gated host whose content can own its engine; swapping content in or out settles two frames. */
-    private fun teardownTest(body: ComposeUiTest.(setContent: (@Composable () -> Unit) -> Unit) -> Unit) =
-        if (!TestEnv.gpuBackendAvailable) skippedComposeTest() else runComposeUiTest {
-            mainClock.autoAdvance = false
-            var slot by mutableStateOf<@Composable () -> Unit>({})
-            setContent { slot() }
-            body { content -> slot = content; frames(2) }
-            slot = {}
-            waitForIdle()
-            mainClock.autoAdvance = true
-        }
+    /** A host whose content can own its (NOOP) engine; swapping content in or out settles two frames. */
+    private fun teardownTest(body: ComposeUiTest.(setContent: (@Composable () -> Unit) -> Unit) -> Unit) = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var slot by mutableStateOf<@Composable () -> Unit>({})
+        setContent { slot() }
+        body { content -> slot = content; frames(2) }
+        slot = {}
+        waitForIdle()
+        mainClock.autoAdvance = true
+    }
 }

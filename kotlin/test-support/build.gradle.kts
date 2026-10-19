@@ -1,5 +1,5 @@
-// Test-only multiplatform helpers (TestEnv host/target detection + per-target skip
-// annotations) shared across every module's commonTest. Deliberately NOT using the
+// Test-only multiplatform helpers (TestEnv host/target detection, per-target skip
+// annotations, frame readback) shared across every module's tests. Deliberately NOT using the
 // filament-kmp-module convention plugin: this module has no cinterop / prebuilts /
 // publishing — just plain Kotlin across the same targets the consumers use.
 plugins {
@@ -13,8 +13,11 @@ kotlin {
         compileSdk = 37
         minSdk = 24
     }
-    iosArm64()
-    iosSimulatorArm64()
+    // Same targets as :kotlin:filament, which declares iOS on macOS hosts only.
+    if (System.getProperty("os.name").startsWith("Mac")) {
+        iosArm64()
+        iosSimulatorArm64()
+    }
     jvm()
     js { browser() }
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
@@ -25,6 +28,14 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(kotlin("test"))
+            // Readback helpers and RealBackendFixture drive a real Engine.
+            api(project(":kotlin:filament"))
+        }
+        jvmMain.dependencies {
+            implementation(kotlin("test-junit"))
+        }
+        androidMain.dependencies {
+            implementation(kotlin("test-junit"))
         }
     }
 }

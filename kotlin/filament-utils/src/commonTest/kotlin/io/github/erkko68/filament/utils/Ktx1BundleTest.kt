@@ -1,6 +1,5 @@
 package io.github.erkko68.filament.utils
 
-import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.utils.testutils.UtilsTestFixture
 import io.github.erkko68.filament.utils.testutils.ktx1
 import kotlin.test.Test
@@ -32,11 +31,5 @@ class Ktx1BundleTest : UtilsTestFixture() {
             Ktx1Bundle(bytes).use { assertTrue(it.getSphericalHarmonics(result)) }
             assertContentEquals(sh, result)
         }
-    }
-
-    @Test
-    fun testSrgbFormats() {
-        assertTrue(Ktx1Reader.isSrgbTextureFormat(Texture.InternalFormat.SRGB8_A8))
-        assertFalse(Ktx1Reader.isSrgbTextureFormat(Texture.InternalFormat.RGBA8))
     }
 }

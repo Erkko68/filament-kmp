@@ -41,7 +41,7 @@ docs/
 - **[The Generated C API](internals/c-api.md)** — how the `Fila*` C API is generated from Filament's C++ headers: scope, type mappings, hand-written leftovers, `apiGaps`.
 - **[Native Bindings](internals/bindings.md)** — how the common Kotlin API calls the C API on each platform, and the rules at that boundary.
 - **[Upgrading the Filament Version](internals/upgrading-filament.md)** — bumping `filaVersion`: scoping the diff, refreshing prebuilts, regenerating, adapting the Kotlin API, verifying.
-- **Testing** — [environment gating](internals/testing/test-support.md) (`TestEnv`, `@IgnoreJs`), [real-backend rendering tests](internals/testing/rendering-backend-tests.md), [`filament-compose` tests](internals/testing/compose-tests.md).
+- **Testing** — [strategy](internals/testing/strategy.md) (NOOP first, pixel tests where they matter), [test support](internals/testing/test-support.md) (`TestEnv`, `RealBackendFixture`, `FrameProbe`, `@IgnoreJs`), [`filament-compose` tests](internals/testing/compose-tests.md).
 - **[Automation & Scripts](../scripts/README.md)** — maintenance scripts for upgrade diffs, materials and test runs.
 
 ## Upstream Filament documentation

@@ -15,24 +15,21 @@ import io.github.erkko68.filament.compose.scene.primitives.Mesh
 import io.github.erkko68.filament.compose.scene.primitives.Plane
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
 import io.github.erkko68.filament.compose.testutils.TestGlb
-import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
+import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.assertEntitiesDestroyed
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
-import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Tier-B (real-backend) lifecycle/leak coverage for the primitive composables. Each builds GPU
- * geometry (vertex/index buffers + a renderable), which the NOOP driver panics on — so this gates on
- * a DEFAULT backend via [TierBSceneFixture] and skips where none is available. The assertions guard
+ * Lifecycle/leak coverage for the primitive composables. The assertions guard
  * the dispose ordering documented in MeshData.kt: a primitive enters the scene as exactly one
  * renderable with a live RenderableManager component, and leaving composition removes it, destroys
  * the entity, and leaves the scene empty (the vertex/index buffers are freed in `onDispose`).
  */
-class PrimitiveLifecycleTest : TierBSceneFixture() {
+class PrimitiveLifecycleTest : ComposeTestFixture() {
 
     private fun primitives(
         material: MaterialInstance,
@@ -54,15 +51,11 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
         },
     )
 
-    // One withFilamentScene hosts the whole loop (mirroring LightLifecycleTest): each primitive is
-    // mounted then disposed inside the single harness body, and the test *returns* the harness
-    // result so the async web `runComposeUiTest` is awaited — see skippedComposeTest's KDoc.
+    // One withFilamentScene hosts the whole loop: each primitive is mounted, then disposed.
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun eachPrimitiveEntersAndLeavesCleanly() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val material = materialInstance() ?: return@run skippedComposeTest()
+        val material = materialInstance()
 
         withFilamentScene(engine, scene) { setContent ->
             for ((name, primitive) in primitives(material)) {
@@ -93,9 +86,7 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun shadowFlagsChangeInPlace() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val material = materialInstance() ?: return@run skippedComposeTest()
+        val material = materialInstance()
 
         withFilamentScene(engine, scene) { setContent ->
             var shadows by mutableStateOf(true)
@@ -124,10 +115,8 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun groupVisibilityHidesTheSubtree() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val material = materialInstance() ?: return@run skippedComposeTest()
-        val asset = gltfAsset(TestGlb.getAnimatedMorphCubeGlbBytes()) ?: return@run skippedComposeTest()
+        val material = materialInstance()
+        val asset = gltfAsset(TestGlb.getAnimatedMorphCubeGlbBytes())
 
         withFilamentScene(engine, scene) { setContent ->
             var outer by mutableStateOf(true)
@@ -182,10 +171,8 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun changingTheMaterialRebuildsTheEntity() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val first = materialInstance() ?: return@run skippedComposeTest()
-        val second = materialInstance() ?: return@run skippedComposeTest()
+        val first = materialInstance()
+        val second = materialInstance()
 
         withFilamentScene(engine, scene) { setContent ->
             var material: MaterialInstance? by mutableStateOf(first)
@@ -218,9 +205,7 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun boundingBoxesEncloseTheGeometry() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
-        val material = materialInstance() ?: return@run skippedComposeTest()
+        val material = materialInstance()
         val positions = floatArrayOf(-1f, 0f, 2f, 3f, 4f, 2f, 1f, -2f, 6f)
         val normals = floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f)
         val uvs = floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f)

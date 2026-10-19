@@ -104,7 +104,7 @@ class Skybox @InternalFilamentApi constructor(internal var nativeHandle: NativeP
          * @return This Builder, for chaining calls.
          */
         fun color(r: Float, g: Float, b: Float, a: Float): Builder {
-            floatArrayOf(r, g, b, a).usePinned { FilaSkyboxBuilder_color(nativeBuilder, it) }
+            floatArrayOf(r, g, b, a).usePinned(4) { FilaSkyboxBuilder_color(nativeBuilder, it) }
             return this
         }
 
@@ -146,7 +146,7 @@ class Skybox @InternalFilamentApi constructor(internal var nativeHandle: NativeP
      * @param a Alpha channel [0, 1].
      */
     fun setColor(r: Float, g: Float, b: Float, a: Float) {
-        floatArrayOf(r, g, b, a).usePinned { FilaSkybox_setColor(nativeHandle, it) }
+        floatArrayOf(r, g, b, a).usePinned(4) { FilaSkybox_setColor(nativeHandle, it) }
     }
     /**
      * Returns the Skybox's intensity in lux, or lumen/m².

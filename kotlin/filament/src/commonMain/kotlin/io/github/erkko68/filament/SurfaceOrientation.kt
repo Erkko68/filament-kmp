@@ -1,6 +1,8 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.capi.*
+import io.github.erkko68.filament.interop.MeshInputs
+import io.github.erkko68.filament.interop.strided
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -39,6 +41,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
         init { Filament.init() } // CPU-only, usable before any Engine exists
         private val nativeBuilder = FilaGeometrySurfaceOrientationBuilder_create()
         private val heap = InteropScope() // the C++ builder keeps the pointers until build()
+        private val inputs = MeshInputs()
 
         /**
          * Specifies the vertex count. This attribute is required.
@@ -47,6 +50,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun vertexCount(vertexCount: Int): Builder {
+            inputs.vertices = vertexCount
             FilaGeometrySurfaceOrientationBuilder_vertexCount(nativeBuilder, vertexCount)
             return this
         }
@@ -59,7 +63,8 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun normals(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaGeometrySurfaceOrientationBuilder_normals(nativeBuilder, heap.toInterop(buffer), stride)
+            inputs.vertexArray("normals", buffer.size, 3, stride)
+            FilaGeometrySurfaceOrientationBuilder_normals(nativeBuilder, heap.toInterop(buffer, buffer.size), stride)
             return this
         }
 
@@ -71,7 +76,8 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun tangents(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaGeometrySurfaceOrientationBuilder_tangents(nativeBuilder, heap.toInterop(buffer), stride)
+            inputs.vertexArray("tangents", buffer.size, 4, stride)
+            FilaGeometrySurfaceOrientationBuilder_tangents(nativeBuilder, heap.toInterop(buffer, buffer.size), stride)
             return this
         }
 
@@ -83,7 +89,8 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun uvs(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaGeometrySurfaceOrientationBuilder_uvs(nativeBuilder, heap.toInterop(buffer), stride)
+            inputs.vertexArray("uvs", buffer.size, 2, stride)
+            FilaGeometrySurfaceOrientationBuilder_uvs(nativeBuilder, heap.toInterop(buffer, buffer.size), stride)
             return this
         }
 
@@ -95,7 +102,8 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun positions(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaGeometrySurfaceOrientationBuilder_positions(nativeBuilder, heap.toInterop(buffer), stride)
+            inputs.vertexArray("positions", buffer.size, 3, stride)
+            FilaGeometrySurfaceOrientationBuilder_positions(nativeBuilder, heap.toInterop(buffer, buffer.size), stride)
             return this
         }
 
@@ -106,6 +114,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun triangleCount(triangleCount: Int): Builder {
+            inputs.triangles = triangleCount
             FilaGeometrySurfaceOrientationBuilder_triangleCount(nativeBuilder, triangleCount)
             return this
         }
@@ -116,7 +125,8 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun triangles(buffer: IntArray): Builder {
-            FilaGeometrySurfaceOrientationBuilder_triangles_uint3(nativeBuilder, heap.toInterop(buffer))
+            inputs.triangleArray(buffer.size)
+            FilaGeometrySurfaceOrientationBuilder_triangles_uint3(nativeBuilder, heap.toInterop(buffer, buffer.size))
             return this
         }
 
@@ -126,7 +136,8 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun triangles(buffer: ShortArray): Builder {
-            FilaGeometrySurfaceOrientationBuilder_triangles_ushort3(nativeBuilder, heap.toInterop(buffer))
+            inputs.triangleArray(buffer.size)
+            FilaGeometrySurfaceOrientationBuilder_triangles_ushort3(nativeBuilder, heap.toInterop(buffer, buffer.size))
             return this
         }
 
@@ -134,8 +145,14 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * Generates quaternions or returns null if the submitted data is an incomplete combination.
          *
          * @return A SurfaceOrientation instance, or null if the data combination is incomplete.
+         * @throws IllegalArgumentException if an array is shorter than [vertexCount] or [triangleCount] needs.
          */
         fun build(): SurfaceOrientation? {
+            inputs.shortfall()?.let { error ->
+                FilaGeometrySurfaceOrientationBuilder_destroy(nativeBuilder)
+                heap.release()
+                throw IllegalArgumentException(error)
+            }
             val handle = FilaGeometrySurfaceOrientationBuilder_build(nativeBuilder)
             FilaGeometrySurfaceOrientationBuilder_destroy(nativeBuilder)
             heap.release()
@@ -152,15 +169,21 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
      * @param stride Byte offset between consecutive quaternions; 0 means tightly packed.
      */
     fun getQuats(out: FloatArray, quatCount: Int, stride: Int = 0) =
-        out.usePinned { FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(nativeHandle, it, quatCount, stride) }
+        out.usePinned(quatValues(quatCount, stride, 4)) { FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(nativeHandle, it, quatCount, stride) }
 
     /** [getQuats] as normalized shorts (short4). */
     fun getQuats(out: ShortArray, quatCount: Int, stride: Int = 0) =
-        out.usePinned { FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(nativeHandle, it, quatCount, stride) }
+        out.usePinned(quatValues(quatCount, stride, 2)) { FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(nativeHandle, it, quatCount, stride) }
 
     /** [getQuats] as half floats (quath). */
     fun getHalfQuats(out: ShortArray, quatCount: Int, stride: Int = 0) =
-        out.usePinned { FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(nativeHandle, it, quatCount, stride) }
+        out.usePinned(quatValues(quatCount, stride, 2)) { FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(nativeHandle, it, quatCount, stride) }
+
+    // Values [quatCount] quaternions take in an out array of [bytes]-sized values; there are only vertexCount of them.
+    private fun quatValues(quatCount: Int, stride: Int, bytes: Int): Int {
+        require(quatCount in 0..vertexCount) { "$quatCount quaternions requested, but there are $vertexCount" }
+        return strided(quatCount, 4, stride, bytes)
+    }
 
     /** Destroys this SurfaceOrientation. */
     fun destroy() = FilaGeometrySurfaceOrientation_destroy(nativeHandle)

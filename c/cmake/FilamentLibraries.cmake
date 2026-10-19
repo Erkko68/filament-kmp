@@ -20,6 +20,10 @@ set(FILAMAT_LIBRARIES filamat shaders)
 
 if (FILAMENT_PLATFORM MATCHES "^(macos|linux|windows)$")
     list(APPEND FILAMENT_LIBRARIES bluegl bluevk gltfio)
+endif()
+if (FILAMENT_PLATFORM STREQUAL "linux")
+    # Upstream's Linux build has the WebGPU backend, and filamat emits WGSL through Dawn's Tint.
+    list(APPEND FILAMENT_LIBRARIES webgpu_dawn)
 elseif (FILAMENT_PLATFORM STREQUAL "android")
     list(APPEND FILAMENT_LIBRARIES bluevk perfetto abseil)
 elseif (FILAMENT_PLATFORM STREQUAL "wasm")

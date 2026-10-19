@@ -58,3 +58,5 @@ actual fun surfaceTest(frames: Int, content: @Composable (frame: Int) -> Unit): 
         if (frame <= frames) content(frame)
     }) { done.await() }
 }
+
+actual typealias IgnoreWithoutViewInterop = kotlin.test.Ignore

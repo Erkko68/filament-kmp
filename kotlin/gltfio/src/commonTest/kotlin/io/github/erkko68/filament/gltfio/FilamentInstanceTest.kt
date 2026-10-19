@@ -1,6 +1,5 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import io.github.erkko68.filament.testsupport.TestEnv
@@ -8,228 +7,90 @@ import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class FilamentInstanceTest : GltfioTestFixture() {
     @Test
-    fun testInstanceEntityQueries() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
+    fun aPlainAssetsInstanceIsTheAssetItself() {
+        val asset = load(TestGlb.getDuckGlbBytes(), resources = false)
         val instance = asset.instance
-        assertNotNull(instance)
-
-        assertTrue(instance.root != 0)
-        val entityCount = instance.entityCount
-        assertTrue(entityCount > 0)
-        assertEquals(entityCount, instance.entities.size)
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        val tm = engine.transformManager
+        assertEquals(asset.root, tm.getParent(tm.getInstance(instance.root)), "the instance hangs off the asset's root")
+        assertEquals(asset.entities.toSet(), instance.entities.toSet())
+        assertEquals(asset.nativeObject, instance.asset.nativeObject)
+        assertEquals(1, asset.assetInstanceCount)
     }
 
+    /** Fox has one skin of 24 joints, all nodes of the asset, each with an affine inverse bind matrix. */
     @Test
-    fun testInstanceBoundingBox() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
+    fun foxIsSkinnedByItsJoints() {
+        val fox = load(TestGlb.getFoxGlbBytes()).instance
+        val joints = fox.getJointsAt(0)
+        val inverseBinds = fox.getInverseBindMatricesAt(0)
 
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val bbox = asset.instance.boundingBox
-        assertFalse(bbox.isEmpty())
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        assertEquals(1, fox.skinCount)
+        assertNull(fox.getSkinNameAt(0), "Fox's skin is unnamed")
+        assertEquals(24, fox.getJointCountAt(0))
+        assertEquals(24, joints.size)
+        assertTrue(joints.all { it in fox.entities })
+        assertEquals(16 * 24, inverseBinds.size)
+        assertTrue((0 until 24).all { inverseBinds[16 * it + 15] == 1f })
+        assertEquals(0, load(TestGlb.getDuckGlbBytes()).instance.skinCount)
     }
 
+    /** A variant swaps the material instance the renderable draws with, and back. */
     @Test
-    fun testInstanceSkinning() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val instance = asset.instance
-        val skinCount = instance.skinCount
-        assertTrue(skinCount >= 0)
-        repeat(skinCount) { instance.getSkinNameAt(it) }
-
-        if (skinCount > 0) {
-            instance.getJointCountAt(0)
-            instance.getJointsAt(0)
+    fun variantsSwapTheRenderablesMaterial() {
+        val instance = load(TestGlb.getMaterialVariantsGlbBytes()).instance
+        val rm = engine.renderableManager
+        val renderable = rm.getInstance(instance.asset.renderableEntities.single())
+        fun drawnWith(variant: Int) = run {
+            instance.applyMaterialVariant(variant)
+            rm.getMaterialInstanceAt(renderable, 0)?.nativeObject
         }
+        val red = drawnWith(0)
+        val blue = drawnWith(1)
 
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        assertEquals(listOf("red", "blue"), List(instance.materialVariantCount) { instance.getMaterialVariantName(it) })
+        assertEquals(2, instance.materialInstanceCount)
+        assertNotEquals(red, blue)
+        assertEquals(instance.materialInstances.map { it.nativeObject }.toSet(), setOf(red, blue))
+        assertEquals(red, drawnWith(0))
     }
 
+    /** gltfio creates the animator while loading resources. */
     @Test
-    fun testInstanceMaterials() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val instance = asset.instance
-        if (instance.materialVariantCount > 0) {
-            instance.applyMaterialVariant(0)
-        }
-
-        assertNotNull(instance.materialInstances)
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+    fun theAnimatorArrivesWithTheResources() {
+        val asset = load(TestGlb.getFoxGlbBytes(), resources = false)
+        // Android can't tell a missing animator from a real one.
+        if (TestEnv.target != TestTarget.ANDROID) assertFailsWith<IllegalStateException> { asset.instance.animator }
+        ResourceLoader(ResourceConfiguration(engine)).use { assertTrue(it.loadResources(asset)) }
+        assertEquals(3, asset.instance.animator.animationCount)
     }
 
+    /** Recomputed from the skinned vertices: Fox's renderable keeps finite, non-empty bounds. */
     @Test
-    fun testSkinnedInstanceJointsAndSkins() {
-        val bytes = TestGlb.getFoxGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.loadResources(asset)
-
-        val instance = asset.instance
-        val skinCount = instance.skinCount
-        // Fox is a rigged model with at least one skin.
-        assertTrue(skinCount > 0)
-
-        repeat(skinCount) { instance.getSkinNameAt(it) }
-
-        val jointCount = instance.getJointCountAt(0)
-        assertTrue(jointCount > 0)
-        val joints = instance.getJointsAt(0)
-        assertEquals(jointCount, joints.size)
-
-        // Re-attach the first joint to its skin to exercise attach/detach bindings.
-        val target = joints[0]
-        instance.detachSkin(0, target)
-        instance.attachSkin(0, target)
-
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
+    fun recomputedBoundsAreFinite() {
+        val fox = load(TestGlb.getFoxGlbBytes())
+        fox.instance.recomputeBoundingBoxes()
+        val rm = engine.renderableManager
+        val box = rm.getAxisAlignedBoundingBox(rm.getInstance(fox.renderableEntities.single()))
+        assertTrue(box.halfExtent.all { it.isFinite() && it > 0f }, "half extent ${box.halfExtent.toList()}")
     }
 
+    /** Detached material instances belong to the app: they outlive the asset. */
     @Test
-    fun testInstanceMaterialVariants() {
-        val bytes = TestGlb.getMaterialVariantsGlbBytes()
-        if (bytes.isEmpty()) return
+    fun detachedMaterialInstancesOutliveTheAsset() {
+        val asset = load(TestGlb.getDuckGlbBytes())
+        val instances = asset.instance.materialInstances
+        val materials = instances.map { it.material }
+        asset.instance.detachMaterialInstances()
+        destroy(asset)
 
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val instance = asset.instance
-        // The synthetic asset declares two KHR_materials_variants.
-        assertEquals(2, instance.materialVariantCount)
-        assertEquals("red", instance.getMaterialVariantName(0))
-        assertEquals("blue", instance.getMaterialVariantName(1))
-
-        instance.applyMaterialVariant(0)
-        instance.applyMaterialVariant(1)
-
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testInstanceGetAssetAndAnimator() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = loader.createAsset(bytes)
-        assertNotNull(asset)
-
-        val instance = asset.instance
-        assertNotNull(instance.asset)
-
-        // gltfio creates the animator during resource load, so it does not exist yet — every
-        // target but Android can see that and says so instead of handing back a broken animator.
-        if (TestEnv.target != TestTarget.ANDROID) {
-            assertFailsWith<IllegalStateException> { instance.animator }
-        }
-
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        assertTrue(resourceLoader.loadResources(asset))
-        assertNotNull(instance.animator)
-
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testInverseBindMatricesAndBoundingBoxes() {
-        val bytes = TestGlb.getFoxGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = assertNotNull(loader.createAsset(bytes))
-        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
-        resourceLoader.loadResources(asset)
-
-        val instance = asset.instance
-        val matrices = instance.getInverseBindMatricesAt(0)
-        assertEquals(16 * instance.getJointCountAt(0), matrices.size)
-        assertEquals(1f, matrices[15]) // affine: bottom-right is 1
-        instance.recomputeBoundingBoxes()
-        assertFalse(instance.boundingBox.isEmpty())
-
-        resourceLoader.destroy()
-        loader.destroyAsset(asset)
-        AssetLoader.destroy(loader)
-        provider.destroy()
-    }
-
-    @Test
-    fun testDetachedMaterialInstances() {
-        val bytes = TestGlb.getDuckGlbBytes()
-        if (bytes.isEmpty()) return
-
-        val provider = createUbershaderProvider(engine)
-        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
-        val asset = assertNotNull(loader.createAsset(bytes))
-        val instance = asset.instance
-        val materialInstances = instance.materialInstances
-        instance.detachMaterialInstances()
-        loader.destroyAsset(asset)
-        // Detached instances outlive the asset; the client destroys them.
-        materialInstances.forEach { engine.destroy(it) }
-
-        AssetLoader.destroy(loader)
-        provider.destroy()
+        val alive = materials.zip(instances).all { (m, mi) -> engine.isValid(m, mi) }
+        instances.forEach { engine.destroy(it) }
+        assertTrue(alive)
     }
 }

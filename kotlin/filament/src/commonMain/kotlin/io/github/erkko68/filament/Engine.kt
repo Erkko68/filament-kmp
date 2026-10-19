@@ -395,7 +395,7 @@ class Engine internal constructor(
 
         /** The current time in nanoseconds since the epoch of the steady clock, the one [Renderer.beginFrame] uses. */
         val steadyClockTimeNano: Long
-            get() = LongArray(1).also { out -> out.usePinned { FilaEngine_getSteadyClockTimeNano(it) } }[0]
+            get() = LongArray(1).also { out -> out.usePinned(1) { FilaEngine_getSteadyClockTimeNano(it) } }[0]
     }
 
     /** Whether this Engine hasn't been destroyed. */
@@ -670,7 +670,7 @@ class Engine internal constructor(
     /** A feature flag's value, or null if it doesn't exist. */
     fun getFeatureFlag(name: String): Boolean? = interopScope {
         val out = ByteArray(1)
-        val ptr = toInterop(out)
+        val ptr = toInterop(out, 1)
         val present = FilaEngine_getFeatureFlag(nativeHandle, toInterop(name), ptr)
         ptr.fromInterop(out)
         if (present) out[0] != 0.toByte() else null

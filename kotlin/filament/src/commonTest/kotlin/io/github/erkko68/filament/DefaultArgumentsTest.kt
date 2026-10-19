@@ -10,6 +10,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /** Calls that lean on default or null arguments, which the explicit-argument tests never take. */
@@ -150,7 +151,7 @@ class DefaultArgumentsTest : FilamentTestFixture() {
             .texture(RenderTarget.AttachmentPoint.COLOR, color)
             .texture(RenderTarget.AttachmentPoint.DEPTH, null)
             .build(engine)
-        assertNotNull(target.getTexture(RenderTarget.AttachmentPoint.COLOR))
+        assertSame(color, target.getTexture(RenderTarget.AttachmentPoint.COLOR))
         assertNull(target.getTexture(RenderTarget.AttachmentPoint.DEPTH))
         engine.destroy(target)
         engine.destroy(color)

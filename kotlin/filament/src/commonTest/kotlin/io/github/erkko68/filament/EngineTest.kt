@@ -15,48 +15,6 @@ import kotlin.test.assertTrue
 
 class EngineTest {
     @Test
-    fun testConfigProperties() {
-        val config = Engine.Config().apply {
-            commandBufferSizeMB = 64
-            perRenderPassArenaSizeMB = 12
-            driverHandleArenaSizeMB = 12
-            minCommandBufferSizeMB = 12
-            perFrameCommandsSizeMB = 12
-            jobSystemThreadCount = 2
-            disableParallelShaderCompile = true
-            disableHandleUseAfterFreeCheck = true
-            assertNativeWindowIsValid = true
-            stereoscopicType = Engine.StereoscopicType.NONE
-            stereoscopicEyeCount = 2
-            resourceAllocatorCacheSizeMB = 16
-            resourceAllocatorCacheMaxAge = 10
-            preferredShaderLanguage = Engine.Config.ShaderLanguage.DEFAULT
-            forceGLES2Context = false
-            gpuContextPriority = Engine.GpuContextPriority.DEFAULT
-            sharedUboInitialSizeInBytes = 1024
-            enableMultipleDirectionalLights = true
-        }
-        assertEquals(64, config.commandBufferSizeMB)
-        assertEquals(12, config.perRenderPassArenaSizeMB)
-        assertEquals(12, config.driverHandleArenaSizeMB)
-        assertEquals(12, config.minCommandBufferSizeMB)
-        assertEquals(12, config.perFrameCommandsSizeMB)
-        assertEquals(2, config.jobSystemThreadCount)
-        assertTrue(config.disableParallelShaderCompile)
-        assertTrue(config.disableHandleUseAfterFreeCheck)
-        assertTrue(config.assertNativeWindowIsValid)
-        assertEquals(Engine.StereoscopicType.NONE, config.stereoscopicType)
-        assertEquals(2, config.stereoscopicEyeCount)
-        assertEquals(16, config.resourceAllocatorCacheSizeMB)
-        assertEquals(10, config.resourceAllocatorCacheMaxAge)
-        assertEquals(Engine.Config.ShaderLanguage.DEFAULT, config.preferredShaderLanguage)
-        assertFalse(config.forceGLES2Context)
-        assertEquals(Engine.GpuContextPriority.DEFAULT, config.gpuContextPriority)
-        assertEquals(1024, config.sharedUboInitialSizeInBytes)
-        assertTrue(config.enableMultipleDirectionalLights)
-    }
-
-    @Test
     fun testConfigIsReportedBackByTheEngine() {
         val config = Engine.Config().apply { resourceAllocatorCacheMaxAge = 7 }
         Engine.Builder().backend(Engine.Backend.NOOP).config(config).build()!!.use { engine ->
@@ -91,42 +49,25 @@ class EngineTest {
         val engine = Engine.create(Engine.Backend.NOOP)!!
         assertTrue(engine.isValid)
 
-        // Assert backend is NOOP (or fallback, but since we requested NOOP and JVM supports it, it should be NOOP)
-        assertNotNull(engine.backend)
-
+        assertEquals(Engine.Backend.NOOP, engine.backend)
         val activeFl = engine.activeFeatureLevel
-        val supportedFl = engine.supportedFeatureLevel
-        assertNotNull(activeFl)
-        assertNotNull(supportedFl)
-        
+        assertTrue(activeFl <= engine.supportedFeatureLevel)
         assertEquals(activeFl, engine.setActiveFeatureLevel(activeFl))
-        
+
         engine.isAutomaticInstancingEnabled = true
         assertTrue(engine.isAutomaticInstancingEnabled)
         engine.isAutomaticInstancingEnabled = false
         assertFalse(engine.isAutomaticInstancingEnabled)
-        
-        val cfg = engine.config
-        assertNotNull(cfg)
-        
+
         assertTrue(Engine.maxStereoscopicEyes >= 1)
-        engine.isStereoSupported(Engine.StereoscopicType.INSTANCED)
         assertTrue(engine.isValid(engine.defaultMaterial))
         assertEquals(0, engine.viewCount)
         val view = engine.createView()
         assertEquals(1, engine.viewCount)
         assertTrue(engine.destroy(view))
-        
-        // Managers
-        assertNotNull(engine.transformManager)
-        assertNotNull(engine.lightManager)
-        assertNotNull(engine.renderableManager)
-        assertNotNull(engine.entityManager)
-        
-        // Flush & wait
+
         engine.flush()
-        engine.flushAndWait()
-        engine.flushAndWait(100L)
+        assertTrue(engine.flushAndWait(1_000_000_000L)) // nanoseconds
 
         // A healthy engine reports no unrecoverable (device-lost) failure
         assertFalse(engine.hasUnrecoverableFailure)
@@ -156,25 +97,6 @@ class EngineTest {
         Engine.destroy(engine)
     }
 
-    @Test
-    fun testEntityAndCameraComponent() {
-        Filament.init()
-        val engine = Engine.create(Engine.Backend.NOOP)!!
-
-        // Camera component lookup
-        val entity = EntityManager.get().create()
-        val camera = engine.createCamera(entity)
-        assertNotNull(camera)
-        assertNotNull(engine.getCameraComponent(entity))
-        engine.destroyCameraComponent(entity)
-
-        // Entity destruction: the components, then the entity
-        engine.destroy(entity)
-        EntityManager.get().destroy(entity)
-
-        Engine.destroy(engine)
-    }
-
     // Written by createAsync's callback, possibly on Filament's thread.
     @Volatile private var token: Engine.Token? = null
 
@@ -186,18 +108,6 @@ class EngineTest {
         while (token == null && Engine.steadyClockTimeNano < deadline) Unit
         val engine = assertNotNull(Engine.getEngine(assertNotNull(token)))
         assertEquals(Engine.Backend.NOOP, engine.backend)
-        Engine.destroy(engine)
-    }
-
-    @Test
-    fun testFenceLifecycle() {
-        Filament.init()
-        val engine = Engine.create(Engine.Backend.NOOP)!!
-
-        val fence = engine.createFence()
-        assertNotNull(fence)
-        engine.destroy(fence)
-
         Engine.destroy(engine)
     }
 

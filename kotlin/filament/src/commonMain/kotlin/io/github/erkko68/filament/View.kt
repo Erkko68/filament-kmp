@@ -118,8 +118,8 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
         get() = withHandle({ FilaDynamicResolutionOptions_create() }, { FilaDynamicResolutionOptions_destroy(it) }) { o ->
             FilaView_getDynamicResolutionOptions(nativeHandle, o)
             DynamicResolutionOptions().apply {
-                minScale.usePinned { FilaDynamicResolutionOptions_getMinScale(o, it) }
-                maxScale.usePinned { FilaDynamicResolutionOptions_getMaxScale(o, it) }
+                minScale.usePinned(2) { FilaDynamicResolutionOptions_getMinScale(o, it) }
+                maxScale.usePinned(2) { FilaDynamicResolutionOptions_getMaxScale(o, it) }
                 sharpness = FilaDynamicResolutionOptions_getSharpness(o)
                 enabled = FilaDynamicResolutionOptions_getEnabled(o)
                 homogeneousScaling = FilaDynamicResolutionOptions_getHomogeneousScaling(o)
@@ -127,8 +127,8 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
             }
         }
         set(value) = withHandle({ FilaDynamicResolutionOptions_create() }, { FilaDynamicResolutionOptions_destroy(it) }) { o ->
-            value.minScale.usePinned { FilaDynamicResolutionOptions_setMinScale(o, it) }
-            value.maxScale.usePinned { FilaDynamicResolutionOptions_setMaxScale(o, it) }
+            value.minScale.usePinned(2) { FilaDynamicResolutionOptions_setMinScale(o, it) }
+            value.maxScale.usePinned(2) { FilaDynamicResolutionOptions_setMaxScale(o, it) }
             FilaDynamicResolutionOptions_setSharpness(o, value.sharpness)
             FilaDynamicResolutionOptions_setEnabled(o, value.enabled)
             FilaDynamicResolutionOptions_setHomogeneousScaling(o, value.homogeneousScaling)
@@ -138,7 +138,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
 
     /** Returns the `[x, y]` scale factors dynamic resolution used on the last frame. */
     val lastDynamicResolutionScale: FloatArray
-        get() = FloatArray(2).also { out -> out.usePinned { FilaView_getLastDynamicResolutionScale(nativeHandle, it) } }
+        get() = FloatArray(2).also { out -> out.usePinned(2) { FilaView_getLastDynamicResolutionScale(nativeHandle, it) } }
 
     /**
      * Global quality/performance trade-offs (e.g. color-buffer precision) for this View.
@@ -220,7 +220,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
                 maximumOpacity = FilaFogOptions_getMaximumOpacity(o)
                 height = FilaFogOptions_getHeight(o)
                 heightFalloff = FilaFogOptions_getHeightFalloff(o)
-                color.usePinned { FilaFogOptions_getColor(o, it) }
+                color.usePinned(3) { FilaFogOptions_getColor(o, it) }
                 density = FilaFogOptions_getDensity(o)
                 inScatteringStart = FilaFogOptions_getInScatteringStart(o)
                 inScatteringSize = FilaFogOptions_getInScatteringSize(o)
@@ -235,7 +235,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
             FilaFogOptions_setMaximumOpacity(o, value.maximumOpacity)
             FilaFogOptions_setHeight(o, value.height)
             FilaFogOptions_setHeightFalloff(o, value.heightFalloff)
-            value.color.usePinned { FilaFogOptions_setColor(o, it) }
+            value.color.usePinned(3) { FilaFogOptions_setColor(o, it) }
             FilaFogOptions_setDensity(o, value.density)
             FilaFogOptions_setInScatteringStart(o, value.inScatteringStart)
             FilaFogOptions_setInScatteringSize(o, value.inScatteringSize)
@@ -293,7 +293,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
                 midPoint = FilaVignetteOptions_getMidPoint(o)
                 roundness = FilaVignetteOptions_getRoundness(o)
                 feather = FilaVignetteOptions_getFeather(o)
-                color.usePinned { FilaVignetteOptions_getColor(o, it) }
+                color.usePinned(4) { FilaVignetteOptions_getColor(o, it) }
                 enabled = FilaVignetteOptions_getEnabled(o)
             }
         }
@@ -301,7 +301,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
             FilaVignetteOptions_setMidPoint(o, value.midPoint)
             FilaVignetteOptions_setRoundness(o, value.roundness)
             FilaVignetteOptions_setFeather(o, value.feather)
-            value.color.usePinned { FilaVignetteOptions_setColor(o, it) }
+            value.color.usePinned(4) { FilaVignetteOptions_setColor(o, it) }
             FilaVignetteOptions_setEnabled(o, value.enabled)
             FilaView_setVignetteOptions(nativeHandle, o)
         }
@@ -334,7 +334,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
                         shadowDistance = FilaAmbientOcclusionOptionsSsct_getShadowDistance(n)
                         contactDistanceMax = FilaAmbientOcclusionOptionsSsct_getContactDistanceMax(n)
                         intensity = FilaAmbientOcclusionOptionsSsct_getIntensity(n)
-                        lightDirection.usePinned { FilaAmbientOcclusionOptionsSsct_getLightDirection(n, it) }
+                        lightDirection.usePinned(3) { FilaAmbientOcclusionOptionsSsct_getLightDirection(n, it) }
                         depthBias = FilaAmbientOcclusionOptionsSsct_getDepthBias(n)
                         depthSlopeBias = FilaAmbientOcclusionOptionsSsct_getDepthSlopeBias(n)
                         sampleCount = FilaAmbientOcclusionOptionsSsct_getSampleCount(n)
@@ -374,7 +374,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
                 FilaAmbientOcclusionOptionsSsct_setShadowDistance(n, value.ssct.shadowDistance)
                 FilaAmbientOcclusionOptionsSsct_setContactDistanceMax(n, value.ssct.contactDistanceMax)
                 FilaAmbientOcclusionOptionsSsct_setIntensity(n, value.ssct.intensity)
-                value.ssct.lightDirection.usePinned { FilaAmbientOcclusionOptionsSsct_setLightDirection(n, it) }
+                value.ssct.lightDirection.usePinned(3) { FilaAmbientOcclusionOptionsSsct_setLightDirection(n, it) }
                 FilaAmbientOcclusionOptionsSsct_setDepthBias(n, value.ssct.depthBias)
                 FilaAmbientOcclusionOptionsSsct_setDepthSlopeBias(n, value.ssct.depthSlopeBias)
                 FilaAmbientOcclusionOptionsSsct_setSampleCount(n, value.ssct.sampleCount)
@@ -620,11 +620,11 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
 
     /** Sets the float4 material-global value at [index] (0–3), readable from all materials. */
     fun setMaterialGlobal(index: Int, value: FloatArray) {
-        value.usePinned { FilaView_setMaterialGlobal(nativeHandle, index, it) }
+        value.usePinned(4) { FilaView_setMaterialGlobal(nativeHandle, index, it) }
     }
     /** Returns the float4 material-global value at [index] (0–3). */
     fun getMaterialGlobal(index: Int): FloatArray {
-        return FloatArray(4).also { out -> out.usePinned { FilaView_getMaterialGlobal(nativeHandle, index, it) } }
+        return FloatArray(4).also { out -> out.usePinned(4) { FilaView_getMaterialGlobal(nativeHandle, index, it) } }
     }
     /** Entity representing the large-scale fog object; can be transformed via TransformManager. */
     val fogEntity: Entity get() = FilaView_getFogEntity(nativeHandle)
@@ -675,7 +675,7 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
     fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         // The result only lives for the callback's duration: copy it out right away.
         val userData = Callbacks.register(once = true) { result ->
-            val fragCoords = FloatArray(3).also { out -> out.usePinned { FilaViewPickingQueryResult_getFragCoords(result, it) } }
+            val fragCoords = FloatArray(3).also { out -> out.usePinned(3) { FilaViewPickingQueryResult_getFragCoords(result, it) } }
             callback(PickingQueryResult(FilaViewPickingQueryResult_getRenderable(result), FilaViewPickingQueryResult_getDepth(result), fragCoords))
         }
         FilaView_pick(nativeHandle, x, y, NullPointer, Callbacks.argUser, userData)

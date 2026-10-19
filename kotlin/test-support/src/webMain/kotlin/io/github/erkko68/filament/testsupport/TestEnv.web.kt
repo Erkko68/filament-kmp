@@ -8,3 +8,6 @@ actual object TestEnv {
 }
 
 actual typealias IgnoreJs = kotlin.test.Ignore
+
+// Chrome always has WebGL (SwiftShader when headless).
+actual fun assumeRealBackend() {}

@@ -25,7 +25,7 @@ class Box(
 
     /** Initializes the box from its [min] and [max] corners. @return This box. */
     fun set(min: FloatArray, max: FloatArray): Box = useNative { b ->
-        interopScope { FilaBox_set(b, toInterop(min), toInterop(max)) }
+        interopScope { FilaBox_set(b, toInterop(min, 3), toInterop(max, 3)) }
         load(b)
     }
 
@@ -33,7 +33,7 @@ class Box(
     fun unionSelf(box: Box): Box = useNative { b -> box.useNative { FilaBox_unionSelf(b, it) }; load(b) }
 
     /** A box centered in [tr] with the same extent as this one. */
-    fun translateTo(tr: FloatArray): Box = useNative { b -> box { out -> tr.usePinned { FilaBox_translateTo(b, it, out) } } }
+    fun translateTo(tr: FloatArray): Box = useNative { b -> box { out -> tr.usePinned(3) { FilaBox_translateTo(b, it, out) } } }
 
     /** The smallest sphere containing this box: its center (xyz) and radius (w). */
     fun getBoundingSphere(): FloatArray = useNative { b -> floats(4) { FilaBox_getBoundingSphere(b, it) } }
@@ -48,8 +48,8 @@ class Box(
     /** A native copy of this box for the duration of [block]. */
     internal fun <T> useNative(block: (NativePointer) -> T): T = withHandle({ FilaBox_create() }, { FilaBox_destroy(it) }) { b ->
         interopScope {
-            FilaBox_setCenter(b, toInterop(center))
-            FilaBox_setHalfExtent(b, toInterop(halfExtent))
+            FilaBox_setCenter(b, toInterop(center, 3))
+            FilaBox_setHalfExtent(b, toInterop(halfExtent, 3))
         }
         block(b)
     }
@@ -62,7 +62,7 @@ class Box(
     companion object {
         /** The bounding box of [box] transformed by the linear transform [m] (`mat3f`) and the translation [t]. */
         fun transform(m: FloatArray, t: FloatArray, box: Box): Box =
-            box.useNative { b -> box { out -> interopScope { FilaBox_transform(toInterop(m), toInterop(t), b, out) } } }
+            box.useNative { b -> box { out -> interopScope { FilaBox_transform(toInterop(m, 9), toInterop(t, 3), b, out) } } }
     }
 }
 
@@ -77,4 +77,4 @@ internal inline fun box(fill: (NativePointer) -> Unit): Box = withHandle({ FilaB
 }
 
 /** [size] floats [fill] writes. */
-internal inline fun floats(size: Int, fill: (NativePointer) -> Unit): FloatArray = FloatArray(size).also { it.usePinned(fill) }
+internal inline fun floats(size: Int, fill: (NativePointer) -> Unit): FloatArray = FloatArray(size).also { it.usePinned(size, fill) }

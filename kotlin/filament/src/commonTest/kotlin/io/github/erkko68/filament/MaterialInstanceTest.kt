@@ -2,108 +2,205 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
+import io.github.erkko68.filament.testsupport.pumpUntil
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MaterialInstanceTest : FilamentTestFixture() {
     @Test
     fun testMaterialInstanceLifecycleAndProperties() {
         val bytes = TestMaterials.getEmissiveMaterialBytes()
-        if (bytes.isEmpty()) return
+        val mat = Material.Builder().payload(bytes).build(engine)!!
+        val inst = mat.createInstance()
+        assertEquals(mat.nativeObject, inst.material.nativeObject)
 
-        // TODO: Creating a Material/MaterialInstance from a payload throws a driver-specific JNI PreconditionPanic under the software NOOP backend driver.
-        // val mat = Material.Builder()
-        //     .payload(bytes)
-        //     .build(engine)
+        inst.setParameter("color", RgbType.LINEAR, 0.5f, 0.25f, 1f)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f, 1f), inst.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
+        inst.setParameter("color", 0.25f, 0.5f, 0.75f)
+        assertContentEquals(floatArrayOf(0.25f, 0.5f, 0.75f), inst.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
+        inst.setParameter("intensity", 2f)
+        assertContentEquals(floatArrayOf(2f), inst.getParameter("intensity", MaterialInstance.FloatElement.FLOAT))
+        inst.setParameter("flags", 0xFFFFFFFFu)
+        assertContentEquals(intArrayOf(-1), inst.getParameter("flags", MaterialInstance.UIntElement.UINT))
+        inst.setParameter("ids", 1u, 2u, 0x80000000u)
+        assertContentEquals(intArrayOf(1, 2, Int.MIN_VALUE), inst.getParameter("ids", MaterialInstance.UIntElement.UINT3))
 
-        // val inst = mat.createInstance()
-        // assertNotNull(inst)
-        // assertEquals(mat.name, inst.material.name)
+        inst.setScissor(0, 0, 100, 100)
+        inst.unsetScissor()
+        inst.setPolygonOffset(1f, 1f)
 
-        // // Name
-        // val name = inst.name
-        // assertNotNull(name)
+        // maskThreshold, specularAntiAliasing* and isDoubleSided panic unless the material has the
+        // capability; testCapabilityPropertiesAndParameterOverloads covers them on params.mat.
+        inst.transparencyMode = Material.TransparencyMode.TWO_PASSES_ONE_SIDE
+        assertEquals(Material.TransparencyMode.TWO_PASSES_ONE_SIDE, inst.transparencyMode)
 
-        // // Set / Get parameters
-        // inst.setParameter("emissiveFactor", 1f, 1f, 1f)
-        // inst.setParameter("emissiveFactor", RgbType.sRGB, 1f, 1f, 1f)
+        inst.cullingMode = Material.CullingMode.FRONT
+        assertEquals(Material.CullingMode.FRONT, inst.cullingMode)
+        inst.setCullingMode(Material.CullingMode.FRONT, Material.CullingMode.BACK)
+        assertEquals(Material.CullingMode.BACK, inst.shadowCullingMode)
 
-        // // Scissor
-        // inst.setScissor(0, 0, 100, 100)
-        // inst.unsetScissor()
+        inst.isColorWriteEnabled = false
+        assertTrue(!inst.isColorWriteEnabled)
+        inst.isDepthWriteEnabled = false
+        assertTrue(!inst.isDepthWriteEnabled)
+        inst.isStencilWriteEnabled = false
+        assertTrue(!inst.isStencilWriteEnabled)
+        inst.isDepthCullingEnabled = false
+        assertTrue(!inst.isDepthCullingEnabled)
+        inst.depthFunc = TextureSampler.CompareFunc.G
+        assertEquals(TextureSampler.CompareFunc.G, inst.depthFunc)
 
-        // // Polygon offset
-        // inst.setPolygonOffset(1f, 1f)
+        inst.setStencilCompareFunction(TextureSampler.CompareFunc.A, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilCompareFunction(TextureSampler.CompareFunc.A)
+        inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR)
+        inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR)
+        inst.setStencilOpDepthStencilPass(MaterialInstance.StencilOperation.ZERO, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilOpDepthStencilPass(MaterialInstance.StencilOperation.ZERO)
+        inst.setStencilReferenceValue(2, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilReferenceValue(2)
+        inst.setStencilReadMask(128, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilReadMask(128)
+        inst.setStencilWriteMask(128, MaterialInstance.StencilFace.FRONT)
+        inst.setStencilWriteMask(128)
 
-        // // Properties
-        // inst.maskThreshold = 0.4f
-        // assertEquals(0.4f, inst.maskThreshold)
+        val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
+        assertEquals("duplicated_instance", dup.name)
+        engine.destroy(dup)
 
-        // inst.specularAntiAliasingVariance = 0.2f
-        // assertEquals(0.2f, inst.specularAntiAliasingVariance)
+        engine.destroy(inst)
+        engine.destroy(mat)
+    }
 
-        // inst.specularAntiAliasingThreshold = 0.1f
-        // assertEquals(0.1f, inst.specularAntiAliasingThreshold)
+    @Test
+    fun testGetSpecializationConstants() {
+        val bytes = TestMaterials.getConstantsMaterialBytes()
+        val mat = Material.Builder().payload(bytes).build(engine)!!
+        val inst = mat.createInstance()
 
-        // inst.isDoubleSided = true
-        // assertTrue(inst.isDoubleSided)
+        assertEquals(true, inst.getConstantBoolean("testBool"))
+        assertEquals(7, inst.getConstantInt("testInt"))
+        assertEquals(0.5f, inst.getConstantFloat("testFloat"))
 
-        // inst.transparencyMode = Material.TransparencyMode.TWO_PASSES_ONE_SIDE
-        // assertEquals(Material.TransparencyMode.TWO_PASSES_ONE_SIDE, inst.transparencyMode)
+        // No compile or draw after setConstant: destroying such an instance aborts upstream.
+        inst.setConstant("testBool", false)
+        inst.setConstant("testInt", 3)
+        inst.setConstant("testFloat", 0.25f)
+        assertEquals(false, inst.getConstantBoolean("testBool"))
+        assertEquals(3, inst.getConstantInt("testInt"))
+        assertEquals(0.25f, inst.getConstantFloat("testFloat"))
 
-        // inst.cullingMode = Material.CullingMode.FRONT
-        // assertEquals(Material.CullingMode.FRONT, inst.cullingMode)
+        engine.destroy(inst)
+        engine.destroy(mat)
+    }
 
-        // inst.setCullingMode(Material.CullingMode.FRONT, Material.CullingMode.BACK)
-        // assertEquals(Material.CullingMode.BACK, inst.shadowCullingMode)
+    @Test
+    fun testCapabilityPropertiesAndParameterOverloads() {
+        val mat = Material.Builder().payload(TestMaterials.getParamsMaterialBytes()).build(engine)!!
+        val inst = mat.createInstance()
+        assertTrue(engine.isValid(mat, inst))
+        assertTrue(engine.isValidExpensive(inst))
 
-        // inst.isColorWriteEnabled = false
-        // assertTrue(!inst.isColorWriteEnabled)
+        inst.maskThreshold = 0.25f
+        assertEquals(0.25f, inst.maskThreshold)
+        inst.specularAntiAliasingVariance = 0.5f
+        assertEquals(0.5f, inst.specularAntiAliasingVariance)
+        inst.specularAntiAliasingThreshold = 0.125f
+        assertEquals(0.125f, inst.specularAntiAliasingThreshold)
+        assertTrue(inst.isDoubleSided)
+        inst.isDoubleSided = false
+        assertFalse(inst.isDoubleSided)
 
-        // inst.isDepthWriteEnabled = false
-        // assertTrue(!inst.isDepthWriteEnabled)
+        inst.setParameter("b1", true)
+        inst.setParameter("b2", true, false)
+        inst.setParameter("b3", true, false, true)
+        inst.setParameter("b4", true, false, true, false)
+        inst.setParameter("i1", -1)
+        assertContentEquals(intArrayOf(-1), inst.getParameter("i1", MaterialInstance.IntElement.INT))
+        inst.setParameter("i2", 1, -2)
+        assertContentEquals(intArrayOf(1, -2), inst.getParameter("i2", MaterialInstance.IntElement.INT2))
+        inst.setParameter("i3", 1, 2, 3)
+        inst.setParameter("i4", 1, 2, 3, 4)
+        assertContentEquals(intArrayOf(1, 2, 3, 4), inst.getParameter("i4", MaterialInstance.IntElement.INT4))
+        inst.setParameter("u2", 1u, 0x80000000u)
+        assertContentEquals(intArrayOf(1, Int.MIN_VALUE), inst.getParameter("u2", MaterialInstance.UIntElement.UINT2))
+        inst.setParameter("u4", 1u, 2u, 3u, 0xFFFFFFFFu)
+        assertContentEquals(intArrayOf(1, 2, 3, -1), inst.getParameter("u4", MaterialInstance.UIntElement.UINT4))
+        inst.setParameter("f2", 0.5f, 0.25f)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f), inst.getParameter("f2", MaterialInstance.FloatElement.FLOAT2))
+        inst.setParameter("f4", 0.1f, 0.2f, 0.3f, 0.4f)
+        assertContentEquals(floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f), inst.getParameter("f4", MaterialInstance.FloatElement.FLOAT4))
+        inst.setParameter("f4", RgbaType.LINEAR, 0f, 1f, 0f, 1f)
+        assertContentEquals(floatArrayOf(0f, 1f, 0f, 1f), inst.getParameter("f4", MaterialInstance.FloatElement.FLOAT4))
+        // Array forms, from an offset.
+        inst.setParameter("i3", MaterialInstance.IntElement.INT3, intArrayOf(9, 7, 8, 9), 1, 1)
+        assertContentEquals(intArrayOf(7, 8, 9), inst.getParameter("i3", MaterialInstance.IntElement.INT3))
+        inst.setParameter("b2", MaterialInstance.BooleanElement.BOOL2, booleanArrayOf(false, true), 0, 1)
 
-        // inst.isStencilWriteEnabled = false
-        // assertTrue(!inst.isStencilWriteEnabled)
+        val texture = Texture.Builder().width(1).height(1).format(Texture.InternalFormat.RGBA8).build(engine)
+        inst.setParameter("tex", texture, TextureSampler())
+        inst.commit(engine)
 
-        // inst.isDepthCullingEnabled = false
-        // assertTrue(!inst.isDepthCullingEnabled)
+        var compiled: MaterialInstance? = null
+        inst.compile(Material.CompilerPriorityQueue.CRITICAL) { compiled = it }
+        engine.pumpUntil { compiled != null }
+        assertEquals(inst, compiled)
 
-        // inst.depthFunc = TextureSampler.CompareFunction.GREATER
-        // assertEquals(TextureSampler.CompareFunction.GREATER, inst.depthFunc)
+        engine.destroy(inst)
+        engine.destroy(mat)
+        engine.destroy(texture)
+    }
 
-        // // Stencil compare and operations
-        // inst.setStencilCompareFunction(TextureSampler.CompareFunction.ALWAYS, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilCompareFunction(TextureSampler.CompareFunction.ALWAYS)
+    // Each element type's array form: one element, read from an offset into the source.
+    @Test
+    fun testArrayParameterForms() {
+        val mat = Material.Builder().payload(TestMaterials.getParamsMaterialBytes()).build(engine)!!
+        val inst = mat.createInstance()
+        val ints = intArrayOf(0, 1, -2, 3, 0x40000000)
+        inst.setParameter("i1", MaterialInstance.IntElement.INT, ints, 1, 1)
+        assertContentEquals(intArrayOf(1), inst.getParameter("i1", MaterialInstance.IntElement.INT))
+        inst.setParameter("i2", MaterialInstance.IntElement.INT2, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2), inst.getParameter("i2", MaterialInstance.IntElement.INT2))
+        inst.setParameter("i4", MaterialInstance.IntElement.INT4, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2, 3, 0x40000000), inst.getParameter("i4", MaterialInstance.IntElement.INT4))
+        inst.setParameter("u2", MaterialInstance.UIntElement.UINT2, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2), inst.getParameter("u2", MaterialInstance.UIntElement.UINT2))
+        inst.setParameter("u4", MaterialInstance.UIntElement.UINT4, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2, 3, 0x40000000), inst.getParameter("u4", MaterialInstance.UIntElement.UINT4))
+        val floats = floatArrayOf(0f, 0.5f, 0.25f, 0.125f, 1f)
+        inst.setParameter("f2", MaterialInstance.FloatElement.FLOAT2, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f), inst.getParameter("f2", MaterialInstance.FloatElement.FLOAT2))
+        inst.setParameter("f4", MaterialInstance.FloatElement.FLOAT4, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f, 0.125f, 1f), inst.getParameter("f4", MaterialInstance.FloatElement.FLOAT4))
+        // Booleans have no getter.
+        val bools = booleanArrayOf(false, true, false, true, true)
+        inst.setParameter("b1", MaterialInstance.BooleanElement.BOOL, bools, 1, 1)
+        inst.setParameter("b3", MaterialInstance.BooleanElement.BOOL3, bools, 1, 1)
+        inst.setParameter("b4", MaterialInstance.BooleanElement.BOOL4, bools, 1, 1)
+        // A sampler can be left without a texture, and a duplicate keeps the name unless given one.
+        inst.setParameter("tex", null, TextureSampler())
+        val dup = MaterialInstance.duplicate(inst)
+        assertEquals(inst.name, dup.name)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f), dup.getParameter("f2", MaterialInstance.FloatElement.FLOAT2))
+        engine.destroy(dup)
+        engine.destroy(inst)
+        engine.destroy(mat)
 
-        // inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR_CLAMP, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilOpStencilFail(MaterialInstance.StencilOperation.DECR_CLAMP)
-
-        // inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR_CLAMP, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilOpDepthFail(MaterialInstance.StencilOperation.INCR_CLAMP)
-
-        // inst.setStencilOpDepthStencilPass(MaterialInstance.StencilOperation.ZERO, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilOpDepthStencilPass(MaterialInstance.StencilOperation.ZERO)
-
-        // inst.setStencilReferenceValue(2, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilReferenceValue(2)
-
-        // inst.setStencilReadMask(128, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilReadMask(128)
-
-        // inst.setStencilWriteMask(128, MaterialInstance.StencilFace.FRONT)
-        // inst.setStencilWriteMask(128)
-
-        // // Test companion duplicate
-        // val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
-        // assertNotNull(dup)
-        // assertEquals("duplicated_instance", dup.name)
-
-        // // Clean up
-        // engine.destroy(inst)
-        // engine.destroy(dup)
-        // engine.destroy(mat)
+        val emissive = Material.Builder().payload(TestMaterials.getEmissiveMaterialBytes()).build(engine)!!
+        val scalars = emissive.createInstance()
+        scalars.setParameter("flags", MaterialInstance.UIntElement.UINT, ints, 2, 1)
+        assertContentEquals(intArrayOf(-2), scalars.getParameter("flags", MaterialInstance.UIntElement.UINT))
+        scalars.setParameter("ids", MaterialInstance.UIntElement.UINT3, ints, 1, 1)
+        assertContentEquals(intArrayOf(1, -2, 3), scalars.getParameter("ids", MaterialInstance.UIntElement.UINT3))
+        scalars.setParameter("intensity", MaterialInstance.FloatElement.FLOAT, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f), scalars.getParameter("intensity", MaterialInstance.FloatElement.FLOAT))
+        scalars.setParameter("color", MaterialInstance.FloatElement.FLOAT3, floats, 1, 1)
+        assertContentEquals(floatArrayOf(0.5f, 0.25f, 0.125f), scalars.getParameter("color", MaterialInstance.FloatElement.FLOAT3))
+        engine.destroy(scalars)
+        engine.destroy(emissive)
     }
 }

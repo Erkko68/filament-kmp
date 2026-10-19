@@ -26,16 +26,16 @@ expect annotation class ExternalSymbolName(val name: String)
 /**
  * Hands Kotlin arrays to C for the duration of one call: pinned on Native, copied into native memory
  * (and back with [fromInterop]) on JVM, Android and web. Empty and null arrays map to [NullPointer].
- * Use through [interopScope] or the `usePinned` helpers.
+ * Use through [interopScope] with the length-checked `toInterop(array, size)`, or the `usePinned` helpers.
  */
 @InternalFilamentApi
 expect class InteropScope() {
-    fun toInterop(array: ByteArray?): NativePointer
-    fun toInterop(array: ShortArray?): NativePointer
-    fun toInterop(array: IntArray?): NativePointer
-    fun toInterop(array: LongArray?): NativePointer
-    fun toInterop(array: FloatArray?): NativePointer
-    fun toInterop(array: DoubleArray?): NativePointer
+    fun copyToInterop(array: ByteArray?): NativePointer
+    fun copyToInterop(array: ShortArray?): NativePointer
+    fun copyToInterop(array: IntArray?): NativePointer
+    fun copyToInterop(array: LongArray?): NativePointer
+    fun copyToInterop(array: FloatArray?): NativePointer
+    fun copyToInterop(array: DoubleArray?): NativePointer
 
     /** An array of pointers (`T* const*`, or a `T**` C writes through), as wide as the platform's; read it back with [readPointers]. */
     fun toInterop(pointers: List<NativePointer>): NativePointer
@@ -54,7 +54,39 @@ expect class InteropScope() {
 /** A NUL-terminated UTF-8 copy of [string] for a `const char*` parameter; null stays [NullPointer]. */
 @InternalFilamentApi
 fun InteropScope.toInterop(string: String?): NativePointer =
-    if (string == null) NullPointer else toInterop(string.encodeToByteArray() + 0)
+    if (string == null) NullPointer else copyToInterop(string.encodeToByteArray() + 0)
+
+/**
+ * Fails unless an array of [length] elements holds the [size] C reads or writes through it: a shorter one
+ * would be read or written out of bounds in native memory.
+ */
+@PublishedApi
+internal fun requireElements(length: Int, size: Int) =
+    require(size in 0..length) { "the array holds $length elements but $size are needed" }
+
+/** [array] for a C parameter that reads or writes [size] elements of it. */
+@InternalFilamentApi
+fun InteropScope.toInterop(array: ByteArray?, size: Int): NativePointer = copyToInterop(array?.also { requireElements(it.size, size) })
+
+/** [array] for a C parameter that reads or writes [size] elements of it. */
+@InternalFilamentApi
+fun InteropScope.toInterop(array: ShortArray?, size: Int): NativePointer = copyToInterop(array?.also { requireElements(it.size, size) })
+
+/** [array] for a C parameter that reads or writes [size] elements of it. */
+@InternalFilamentApi
+fun InteropScope.toInterop(array: IntArray?, size: Int): NativePointer = copyToInterop(array?.also { requireElements(it.size, size) })
+
+/** [array] for a C parameter that reads or writes [size] elements of it. */
+@InternalFilamentApi
+fun InteropScope.toInterop(array: LongArray?, size: Int): NativePointer = copyToInterop(array?.also { requireElements(it.size, size) })
+
+/** [array] for a C parameter that reads or writes [size] elements of it. */
+@InternalFilamentApi
+fun InteropScope.toInterop(array: FloatArray?, size: Int): NativePointer = copyToInterop(array?.also { requireElements(it.size, size) })
+
+/** [array] for a C parameter that reads or writes [size] elements of it. */
+@InternalFilamentApi
+fun InteropScope.toInterop(array: DoubleArray?, size: Int): NativePointer = copyToInterop(array?.also { requireElements(it.size, size) })
 
 /**
  * Element [index] of a float array C filled in. On js a FloatArray keeps the raw f32 value (0.7f reads back
@@ -119,7 +151,12 @@ expect object Callbacks {
 class Upload(val ptr: NativePointer, val size: Int, val callback: NativePointer, val userData: NativePointer)
 
 @InternalFilamentApi
-expect fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload
+fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload {
+    requireElements(data.size, size)
+    return platformUpload(data, size, onRelease)
+}
+
+internal expect fun platformUpload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload
 
 @InternalFilamentApi
 inline fun <T> interopScope(block: InteropScope.() -> T): T {
@@ -141,28 +178,41 @@ internal inline fun <T> withHandle(create: () -> NativePointer, destroy: (Native
     }
 }
 
-// The array's address for the duration of [block]; whatever C wrote there is in the array afterwards.
+// The array's address for the duration of a C call that reads or writes [size] elements of it;
+// whatever C wrote there is in the array afterwards.
 
 @InternalFilamentApi
-inline fun <R> ByteArray.usePinned(block: (NativePointer) -> R): R =
-    interopScope { val p = toInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+inline fun <R> ByteArray.usePinned(size: Int, block: (NativePointer) -> R): R {
+    requireElements(this.size, size)
+    return interopScope { val p = copyToInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+}
 
 @InternalFilamentApi
-inline fun <R> ShortArray.usePinned(block: (NativePointer) -> R): R =
-    interopScope { val p = toInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+inline fun <R> ShortArray.usePinned(size: Int, block: (NativePointer) -> R): R {
+    requireElements(this.size, size)
+    return interopScope { val p = copyToInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+}
 
 @InternalFilamentApi
-inline fun <R> IntArray.usePinned(block: (NativePointer) -> R): R =
-    interopScope { val p = toInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+inline fun <R> IntArray.usePinned(size: Int, block: (NativePointer) -> R): R {
+    requireElements(this.size, size)
+    return interopScope { val p = copyToInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+}
 
 @InternalFilamentApi
-inline fun <R> LongArray.usePinned(block: (NativePointer) -> R): R =
-    interopScope { val p = toInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+inline fun <R> LongArray.usePinned(size: Int, block: (NativePointer) -> R): R {
+    requireElements(this.size, size)
+    return interopScope { val p = copyToInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+}
 
 @InternalFilamentApi
-inline fun <R> FloatArray.usePinned(block: (NativePointer) -> R): R =
-    interopScope { val p = toInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+inline fun <R> FloatArray.usePinned(size: Int, block: (NativePointer) -> R): R {
+    requireElements(this.size, size)
+    return interopScope { val p = copyToInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+}
 
 @InternalFilamentApi
-inline fun <R> DoubleArray.usePinned(block: (NativePointer) -> R): R =
-    interopScope { val p = toInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+inline fun <R> DoubleArray.usePinned(size: Int, block: (NativePointer) -> R): R {
+    requireElements(this.size, size)
+    return interopScope { val p = copyToInterop(this@usePinned); block(p).also { p.fromInterop(this@usePinned) } }
+}

@@ -125,27 +125,23 @@ class InteractionTest : ComposeTestFixture() {
      *  always started at 1 unit/s no matter what maxMoveSpeed said. */
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun flightInitialMoveSpeedSetsActualSpeed() = run {
-        withFilamentScene(engine, scene) { setContent ->
-            assertEquals(1f, flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 1f), 0.05f)
-            assertEquals(4f, flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 4f), 0.2f)
-            // maxMoveSpeed is only the ceiling of the scroll curve; it must not move the start speed.
-            assertEquals(4f, flyForOneSecond(setContent, maxMoveSpeed = 100f, initialMoveSpeed = 4f), 0.2f)
-        }
+    fun flightInitialMoveSpeedSetsActualSpeed() = withFilamentScene(engine, scene) { setContent ->
+        assertEquals(1f, flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 1f), 0.05f)
+        assertEquals(4f, flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 4f), 0.2f)
+        // maxMoveSpeed is only the ceiling of the scroll curve; it must not move the start speed.
+        assertEquals(4f, flyForOneSecond(setContent, maxMoveSpeed = 100f, initialMoveSpeed = 4f), 0.2f)
     }
 
     /** Scrolling up speeds the camera up, and reaches maxMoveSpeed at the top of the curve. */
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun flightScrollAdjustsSpeedUpToMax() = run {
-        withFilamentScene(engine, scene) { setContent ->
-            val base = flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 1f)
-            val faster = flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 1f, scrollSteps = 5f)
-            assertTrue(faster > base * 1.5f, "scrolling up should noticeably speed the camera up")
-            // speedSteps defaults to 20, so +10 notches from the 1 u/s midpoint tops out at maxMoveSpeed.
-            assertEquals(10f, flyForOneSecond(setContent, 10f, 1f, scrollSteps = 10f), 0.5f)
-            assertEquals(10f, flyForOneSecond(setContent, 10f, 1f, scrollSteps = 50f), 0.5f) // clamped
-        }
+    fun flightScrollAdjustsSpeedUpToMax() = withFilamentScene(engine, scene) { setContent ->
+        val base = flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 1f)
+        val faster = flyForOneSecond(setContent, maxMoveSpeed = 10f, initialMoveSpeed = 1f, scrollSteps = 5f)
+        assertTrue(faster > base * 1.5f, "scrolling up should noticeably speed the camera up")
+        // speedSteps defaults to 20, so +10 notches from the 1 u/s midpoint tops out at maxMoveSpeed.
+        assertEquals(10f, flyForOneSecond(setContent, 10f, 1f, scrollSteps = 10f), 0.5f)
+        assertEquals(10f, flyForOneSecond(setContent, 10f, 1f, scrollSteps = 50f), 0.5f) // clamped
     }
 
     // Zoom out by scrolling, then check that a saved bookmark and resetToHome() both restore the start pose.
@@ -166,20 +162,18 @@ class InteractionTest : ComposeTestFixture() {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun orbitAndMapBookmarksRestorePose() = run {
-        withFilamentScene(engine, scene) { setContent ->
-            val orbitCam = newCameraState(Position(0f, 0f, 5f))
-            lateinit var orbit: OrbitCameraController
-            setContent { orbit = rememberOrbitCameraController(orbitCam) }
-            waitForIdle()
-            assertBookmarksRestorePose(orbitCam, orbit) { orbit.manipulator.scroll(50, 50, 20f); orbit.sync() }
+    fun orbitAndMapBookmarksRestorePose() = withFilamentScene(engine, scene) { setContent ->
+        val orbitCam = newCameraState(Position(0f, 0f, 5f))
+        lateinit var orbit: OrbitCameraController
+        setContent { orbit = rememberOrbitCameraController(orbitCam) }
+        waitForIdle()
+        assertBookmarksRestorePose(orbitCam, orbit) { orbit.manipulator.scroll(50, 50, 20f); orbit.sync() }
 
-            val mapCam = newCameraState(Position(0f, 10f, 0f))
-            lateinit var map: MapCameraController
-            setContent { map = rememberMapCameraController(mapCam) }
-            waitForIdle()
-            assertTrue(mapCam.eye.y > mapCam.target.y + 1f, "map looks down on its target: ${mapCam.eye}")
-            assertBookmarksRestorePose(mapCam, map) { map.manipulator.scroll(50, 50, 20f); map.sync() }
-        }
+        val mapCam = newCameraState(Position(0f, 10f, 0f))
+        lateinit var map: MapCameraController
+        setContent { map = rememberMapCameraController(mapCam) }
+        waitForIdle()
+        assertTrue(mapCam.eye.y > mapCam.target.y + 1f, "map looks down on its target: ${mapCam.eye}")
+        assertBookmarksRestorePose(mapCam, map) { map.manipulator.scroll(50, 50, 20f); map.sync() }
     }
 }

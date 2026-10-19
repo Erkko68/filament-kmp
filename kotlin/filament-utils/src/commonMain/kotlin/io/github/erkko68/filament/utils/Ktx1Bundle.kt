@@ -21,7 +21,7 @@ class Ktx1Bundle @InternalFilamentApi constructor(nativeHandle: NativePointer) :
 
     /** Creates a hierarchy of blobs by parsing the contents of a KTX file; [bytes] are copied. */
     constructor(bytes: ByteArray) :
-        this(loaded { bytes.usePinned { FilaImageKtx1Bundle_create_uint8_t_uint32_t(it, bytes.size) } })
+        this(loaded { bytes.usePinned(bytes.size) { FilaImageKtx1Bundle_create_uint8_t_uint32_t(it, bytes.size) } })
 
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
@@ -40,7 +40,7 @@ class Ktx1Bundle @InternalFilamentApi constructor(nativeHandle: NativePointer) :
     internal fun release(): NativePointer = nativeHandle.also { nativeHandle = NullPointer }
 
     /** Writes out the KTX file into [destination], which must hold [serializedLength] bytes; false if it's too small. */
-    fun serialize(destination: ByteArray): Boolean = destination.usePinned { FilaImageKtx1Bundle_serialize(nativeHandle, it, destination.size) }
+    fun serialize(destination: ByteArray): Boolean = destination.usePinned(destination.size) { FilaImageKtx1Bundle_serialize(nativeHandle, it, destination.size) }
 
     /** The size of the KTX file [serialize] writes. */
     val serializedLength: Int get() = FilaImageKtx1Bundle_getSerializedLength(nativeHandle)
@@ -59,7 +59,7 @@ class Ktx1Bundle @InternalFilamentApi constructor(nativeHandle: NativePointer) :
      *
      * @return false if the metadata is missing or malformed
      */
-    fun getSphericalHarmonics(result: FloatArray): Boolean = result.usePinned { FilaImageKtx1Bundle_getSphericalHarmonics(nativeHandle, it) }
+    fun getSphericalHarmonics(result: FloatArray): Boolean = result.usePinned(27) { FilaImageKtx1Bundle_getSphericalHarmonics(nativeHandle, it) }
 
     /** The number of miplevels. */
     val numMipLevels: Int get() = FilaImageKtx1Bundle_getNumMipLevels(nativeHandle)

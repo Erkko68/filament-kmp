@@ -8,9 +8,8 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
+import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.assertDestroyed
-import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,47 +18,34 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
- * Tier-B (real-backend) coverage for the built-in [StandardMaterial]s and the reactive
- * [rememberMaterialInstance] overload. Building a [Material] from the embedded `.filamat` bytes hits a
- * GPU resource the NOOP driver panics on, so this gates on a DEFAULT backend via [TierBSceneFixture]
- * and skips where none is available.
+ * Coverage for the built-in [StandardMaterial]s and the reactive [rememberMaterialInstance] overload.
  *
  * Verifies (1) every embedded standard material is valid `.filamat` and builds → kept alive while
  * composed → freed on disposal; (2) the reactive overload re-applies `configure` on a key change
  * without swapping the instance, and destroys it on disposal; (3) [StandardMaterialCache] shares one
  * base material per type and frees them on dispose.
  */
-class StandardMaterialLifecycleTest : TierBSceneFixture() {
+class StandardMaterialLifecycleTest : ComposeTestFixture() {
 
-    // One withFilamentScene hosts the whole loop, and the tests *return* the harness result
-    // (skippedComposeTest() on the skip branch) so the async web `runComposeUiTest` is awaited —
-    // see skippedComposeTest's KDoc.
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun eachStandardMaterialBuildsAndIsFreed() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
+    fun eachStandardMaterialBuildsAndIsFreed() = withFilamentScene(engine, scene) { setContent ->
+        for (type in StandardMaterial.entries) {
+            var captured: Material? = null
+            setContent { captured = rememberStandardMaterial(type) }
+            waitForIdle()
+            val m = assertNotNull(captured, "$type should build from embedded bytes")
+            assertTrue(engine.isValid(m), "$type should be live while composed")
 
-        withFilamentScene(engine, scene) { setContent ->
-            for (type in StandardMaterial.entries) {
-                var captured: Material? = null
-                setContent { captured = rememberStandardMaterial(type) }
-                waitForIdle()
-                val m = assertNotNull(captured, "$type should build from embedded bytes")
-                assertTrue(engine.isValid(m), "$type should be live while composed")
-
-                setContent {}
-                waitForIdle()
-                assertDestroyed("$type should be destroyed after disposal") { engine.isValid(m) }
-            }
+            setContent {}
+            waitForIdle()
+            assertDestroyed("$type should be destroyed after disposal") { engine.isValid(m) }
         }
     }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun reactiveInstanceReappliesOnKeyChangeAndIsFreed() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
         val material = Material.Builder().payload(StandardMaterial.Lit.payload()).build(engine)!!
 
         withFilamentScene(engine, scene) { setContent ->
@@ -103,8 +89,6 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun eachInstanceHelperAppliesItsParametersAndIsFreed() = run {
-        val engine = engine ?: return@run skippedComposeTest()
-        val scene = scene ?: return@run skippedComposeTest()
         val texture = Texture.Builder().width(1).height(1).format(Texture.InternalFormat.RGBA8).build(engine)
         val red = LinearColor(1f, 0f, 0f)
         val float = MaterialInstance.FloatElement.FLOAT
@@ -138,7 +122,6 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
 
     @Test
     fun cacheSharesOneMaterialPerTypeAndDisposes() {
-        val engine = engine ?: return
 
         val cache = StandardMaterialCache(engine)
         val lit1 = cache.get(StandardMaterial.Lit)

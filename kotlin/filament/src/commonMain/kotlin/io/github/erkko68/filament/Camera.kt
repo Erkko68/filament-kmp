@@ -104,7 +104,7 @@ class Camera @InternalFilamentApi constructor(
      * @param far Distance to far plane in world units (!= near)
      */
     fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
-        matrix.usePinned { pinned ->
+        matrix.usePinned(16) { pinned ->
             FilaCamera_setCustomProjection_double_double(nativeHandle, pinned, near, far)
         }
     }
@@ -120,8 +120,8 @@ class Camera @InternalFilamentApi constructor(
      * @param far Distance to far plane in world units (!= near)
      */
     fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double) {
-        matrix.usePinned { pinned ->
-            matrixForCulling.usePinned { pinnedCulling ->
+        matrix.usePinned(16) { pinned ->
+            matrixForCulling.usePinned(16) { pinnedCulling ->
                 FilaCamera_setCustomProjection_mat4_double_double(nativeHandle, pinned, pinnedCulling, near, far)
             }
         }
@@ -141,8 +141,8 @@ class Camera @InternalFilamentApi constructor(
      * @param far Distance to far plane in world units (!= near)
      */
     fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double) {
-        projection.usePinned { pinned ->
-            projectionForCulling.usePinned { pinnedCulling ->
+        projection.usePinned(count * 16) { pinned ->
+            projectionForCulling.usePinned(16) { pinnedCulling ->
                 FilaCamera_setCustomEyeProjection(nativeHandle, pinned, count, pinnedCulling, near, far)
             }
         }
@@ -165,7 +165,7 @@ class Camera @InternalFilamentApi constructor(
      * @param modelMatrix 4×4 model matrix for this eye relative to camera space
      */
     fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray) {
-        modelMatrix.usePinned { pinned ->
+        modelMatrix.usePinned(16) { pinned ->
             FilaCamera_setEyeModelMatrix(nativeHandle, eyeId, pinned)
         }
     }
@@ -186,7 +186,7 @@ class Camera @InternalFilamentApi constructor(
      * @param y Vertical scale factor
      */
     fun setScaling(x: Double, y: Double) {
-        doubleArrayOf(x, y).usePinned { FilaCamera_setScaling(nativeHandle, it) }
+        doubleArrayOf(x, y).usePinned(2) { FilaCamera_setScaling(nativeHandle, it) }
     }
     /**
      * Get the 2D scaling factors applied to the projection matrix.
@@ -195,7 +195,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getScaling(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(4)
-        result.usePinned { pinned ->
+        result.usePinned(4) { pinned ->
             FilaCamera_getScaling(nativeHandle, pinned)
         }
         return result
@@ -212,7 +212,7 @@ class Camera @InternalFilamentApi constructor(
      * @param y Vertical shift in NDC
      */
     fun setShift(x: Double, y: Double) {
-        doubleArrayOf(x, y).usePinned { FilaCamera_setShift(nativeHandle, it) }
+        doubleArrayOf(x, y).usePinned(2) { FilaCamera_setShift(nativeHandle, it) }
     }
     /**
      * Get the 2D translation shift applied to the projection matrix.
@@ -221,7 +221,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getShift(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(2)
-        result.usePinned { pinned ->
+        result.usePinned(2) { pinned ->
             FilaCamera_getShift(nativeHandle, pinned)
         }
         return result
@@ -243,9 +243,9 @@ class Camera @InternalFilamentApi constructor(
      * @param upZ Camera up vector Z (should be normalized)
      */
     fun lookAt(eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double = 0.0, upY: Double = 1.0, upZ: Double = 0.0) {
-        doubleArrayOf(eyeX, eyeY, eyeZ).usePinned { eye ->
-            doubleArrayOf(centerX, centerY, centerZ).usePinned { center ->
-                doubleArrayOf(upX, upY, upZ).usePinned { up -> FilaCamera_lookAt(nativeHandle, eye, center, up) }
+        doubleArrayOf(eyeX, eyeY, eyeZ).usePinned(3) { eye ->
+            doubleArrayOf(centerX, centerY, centerZ).usePinned(3) { center ->
+                doubleArrayOf(upX, upY, upZ).usePinned(3) { up -> FilaCamera_lookAt(nativeHandle, eye, center, up) }
             }
         }
     }
@@ -259,7 +259,7 @@ class Camera @InternalFilamentApi constructor(
      * @param modelMatrix 4×4 model matrix (rigid transform) in world space
      */
     fun setModelMatrix(modelMatrix: FloatArray) {
-        modelMatrix.usePinned { pinned ->
+        modelMatrix.usePinned(16) { pinned ->
             FilaCamera_setModelMatrix_mat4f(nativeHandle, pinned)
         }
     }
@@ -268,7 +268,7 @@ class Camera @InternalFilamentApi constructor(
      * @param modelMatrix 4×4 model matrix (rigid transform) in world space
      */
     fun setModelMatrix(modelMatrix: DoubleArray) {
-        modelMatrix.usePinned { pinned ->
+        modelMatrix.usePinned(16) { pinned ->
             FilaCamera_setModelMatrix_mat4(nativeHandle, pinned)
         }
     }
@@ -285,7 +285,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getProjectionMatrix(eyeId: Int = 0, out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
-        result.usePinned { pinned ->
+        result.usePinned(16) { pinned ->
             FilaCamera_getProjectionMatrix(nativeHandle, eyeId, pinned)
         }
         return result
@@ -300,7 +300,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getCullingProjectionMatrix(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
-        result.usePinned { pinned ->
+        result.usePinned(16) { pinned ->
             FilaCamera_getCullingProjectionMatrix(nativeHandle, pinned)
         }
         return result
@@ -316,7 +316,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getModelMatrix(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
-        result.usePinned { pinned ->
+        result.usePinned(16) { pinned ->
             FilaCamera_getModelMatrix(nativeHandle, pinned)
         }
         return result
@@ -332,7 +332,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getViewMatrix(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
-        result.usePinned { pinned ->
+        result.usePinned(16) { pinned ->
             FilaCamera_getViewMatrix(nativeHandle, pinned)
         }
         return result
@@ -345,7 +345,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getEyeFromViewMatrix(eyeId: Int = 0, out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(16)
-        result.usePinned { FilaCamera_getEyeFromViewMatrix(nativeHandle, eyeId, it) }
+        result.usePinned(16) { FilaCamera_getEyeFromViewMatrix(nativeHandle, eyeId, it) }
         return result
     }
     
@@ -356,7 +356,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getPosition(out: DoubleArray? = null): DoubleArray {
         val result = out ?: DoubleArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaCamera_getPosition(nativeHandle, pinned)
         }
         return result
@@ -369,7 +369,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getLeftVector(out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaCamera_getLeftVector(nativeHandle, pinned)
         }
         return result
@@ -381,7 +381,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getUpVector(out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaCamera_getUpVector(nativeHandle, pinned)
         }
         return result
@@ -393,7 +393,7 @@ class Camera @InternalFilamentApi constructor(
      */
     fun getForwardVector(out: FloatArray? = null): FloatArray {
         val result = out ?: FloatArray(3)
-        result.usePinned { pinned ->
+        result.usePinned(3) { pinned ->
             FilaCamera_getForwardVector(nativeHandle, pinned)
         }
         return result
@@ -486,7 +486,7 @@ class Camera @InternalFilamentApi constructor(
          */
         fun projection(direction: Fov, fovInDegrees: Double, aspect: Double, near: Double, far: Double = Double.POSITIVE_INFINITY, out: DoubleArray? = null): DoubleArray {
             val result = out ?: DoubleArray(16)
-            result.usePinned { FilaCamera_projection_Fov_double_double_double_double(direction.ordinal, fovInDegrees, aspect, near, far, it) }
+            result.usePinned(16) { FilaCamera_projection_Fov_double_double_double_double(direction.ordinal, fovInDegrees, aspect, near, far, it) }
             return result
         }
 
@@ -501,7 +501,7 @@ class Camera @InternalFilamentApi constructor(
          */
         fun projection(focalLengthInMillimeters: Double, aspect: Double, near: Double, far: Double = Double.POSITIVE_INFINITY, out: DoubleArray? = null): DoubleArray {
             val result = out ?: DoubleArray(16)
-            result.usePinned { FilaCamera_projection_double_double_double_double(focalLengthInMillimeters, aspect, near, far, it) }
+            result.usePinned(16) { FilaCamera_projection_double_double_double_double(focalLengthInMillimeters, aspect, near, far, it) }
             return result
         }
 
@@ -512,7 +512,7 @@ class Camera @InternalFilamentApi constructor(
          */
         fun inverseProjection(p: DoubleArray, out: DoubleArray? = null): DoubleArray {
             val result = out ?: DoubleArray(16)
-            p.usePinned { pp -> result.usePinned { FilaCamera_inverseProjection_mat4(pp, it) } }
+            p.usePinned(16) { pp -> result.usePinned(16) { FilaCamera_inverseProjection_mat4(pp, it) } }
             return result
         }
 
@@ -523,7 +523,7 @@ class Camera @InternalFilamentApi constructor(
          */
         fun inverseProjection(p: FloatArray, out: FloatArray? = null): FloatArray {
             val result = out ?: FloatArray(16)
-            p.usePinned { pp -> result.usePinned { FilaCamera_inverseProjection_mat4f(pp, it) } }
+            p.usePinned(16) { pp -> result.usePinned(16) { FilaCamera_inverseProjection_mat4f(pp, it) } }
             return result
         }
 

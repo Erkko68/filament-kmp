@@ -66,14 +66,14 @@ object FramePipelineEstimator {
     private inline fun workload(fill: (NativePointer) -> Unit): Workload =
         withHandle({ FilaFramePipelineEstimatorWorkload_create() }, { FilaFramePipelineEstimatorWorkload_destroy(it) }) { w ->
             fill(w)
-            val ns = LongArray(1).also { d -> d.usePinned { FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(w, it) } }[0]
+            val ns = LongArray(1).also { d -> d.usePinned(1) { FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(w, it) } }[0]
             Workload(ns, FilaFramePipelineEstimatorWorkload_getIdealFrameRate(w))
         }
 
     private inline fun pacing(fill: (NativePointer) -> Unit): PacingSizing =
         withHandle({ FilaFramePipelineEstimatorPacingSizing_create() }, { FilaFramePipelineEstimatorPacingSizing_destroy(it) }) { s ->
             fill(s)
-            val ns = LongArray(1).also { d -> d.usePinned { FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(s, it) } }[0]
+            val ns = LongArray(1).also { d -> d.usePinned(1) { FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(s, it) } }[0]
             PacingSizing(FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(s), ns)
         }
 }

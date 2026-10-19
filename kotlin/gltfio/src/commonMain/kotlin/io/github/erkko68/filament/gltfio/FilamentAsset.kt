@@ -56,7 +56,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * @see popRenderable
      */
     fun popRenderables(entities: IntArray): Int =
-        entities.usePinned { FilaGltfioFilamentAsset_popRenderables(nativeHandle, it, entities.size) }
+        entities.usePinned(entities.size) { FilaGltfioFilamentAsset_popRenderables(nativeHandle, it, entities.size) }
 
     /**
      * Gets the list of entities, one per glTF node. All have a Transform component; some also
@@ -95,7 +95,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * @return the number of entities written.
      */
     fun getEntitiesByName(name: String, entities: IntArray): Int =
-        name.useCString { s -> entities.usePinned { FilaGltfioFilamentAsset_getEntitiesByName(nativeHandle, s, it, entities.size) } }
+        name.useCString { s -> entities.usePinned(entities.size) { FilaGltfioFilamentAsset_getEntitiesByName(nativeHandle, s, it, entities.size) } }
 
     /**
      * Gets up to `entities.size` entities whose name label starts with [prefix] into [entities].
@@ -103,7 +103,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * @return the number of entities written.
      */
     fun getEntitiesByPrefix(prefix: String, entities: IntArray): Int =
-        prefix.useCString { s -> entities.usePinned { FilaGltfioFilamentAsset_getEntitiesByPrefix(nativeHandle, s, it, entities.size) } }
+        prefix.useCString { s -> entities.usePinned(entities.size) { FilaGltfioFilamentAsset_getEntitiesByPrefix(nativeHandle, s, it, entities.size) } }
 
     /** Returns the first entity with the given name, or 0 if none exists. */
     fun getFirstEntityByName(name: String): Entity = name.useCString { FilaGltfioFilamentAsset_getFirstEntityByName(nativeHandle, it) }
@@ -170,7 +170,7 @@ class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: 
      * scene indices) to [targetScene].
      */
     fun addEntitiesToScene(targetScene: Scene, entities: IntArray, sceneFilter: Int) =
-        entities.usePinned { FilaGltfioFilamentAsset_addEntitiesToScene(nativeHandle, targetScene.nativeObject, it, entities.size, sceneFilter) }
+        entities.usePinned(entities.size) { FilaGltfioFilamentAsset_addEntitiesToScene(nativeHandle, targetScene.nativeObject, it, entities.size, sceneFilter) }
 
     /**
      * Releases ownership of the Filament components (renderables, lights, …) so they outlive

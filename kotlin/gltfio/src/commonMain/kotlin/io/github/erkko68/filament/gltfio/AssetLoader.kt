@@ -80,7 +80,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
      * @return A new FilamentAsset, or null if parsing failed.
      */
     fun createAsset(buffer: ByteArray): FilamentAsset? {
-        val handle = buffer.usePinned { FilaGltfioAssetLoader_createAsset(nativeHandle, it, buffer.size) }
+        val handle = buffer.usePinned(buffer.size) { FilaGltfioAssetLoader_createAsset(nativeHandle, it, buffer.size) }
         return handle.takeIf { it != NullPointer }?.let { FilamentAsset(it) }
     }
 
@@ -97,7 +97,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
     fun createInstancedAsset(buffer: ByteArray, instances: Array<FilamentInstance>): FilamentAsset? {
         val handle = interopScope {
             val slots = toInterop(List(instances.size) { NullPointer })
-            buffer.usePinned { FilaGltfioAssetLoader_createInstancedAsset(nativeHandle, it, buffer.size, slots, instances.size) }
+            buffer.usePinned(buffer.size) { FilaGltfioAssetLoader_createInstancedAsset(nativeHandle, it, buffer.size, slots, instances.size) }
                 .also { if (it != NullPointer) readPointers(slots, instances.size).forEachIndexed { i, p -> instances[i].nativeHandle = p } }
         }
         return handle.takeIf { it != NullPointer }?.let { FilamentAsset(it) }
@@ -147,7 +147,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
 
     /** The materials this loader's assets use, across all its assets. */
     val materials: List<Material>
-        get() = readPointers(FilaGltfioAssetLoader_getMaterials(nativeHandle), materialsCount).map { Material(it) }
+        get() = readPointers(FilaGltfioAssetLoader_getMaterials(nativeHandle), materialsCount).filter { it != NullPointer }.map { Material(it) }
 
     val materialsCount: Int get() = FilaGltfioAssetLoader_getMaterialsCount(nativeHandle)
 

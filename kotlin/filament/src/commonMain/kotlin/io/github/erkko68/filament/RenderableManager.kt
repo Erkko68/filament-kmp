@@ -69,16 +69,24 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @param stride Bytes between vertices; 12 for packed float3, 16 for float4
          */
         fun computeAABB(vertices: FloatArray, indices: IntArray, count: Int = indices.size, stride: Int = 12): Box =
-            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_float3_uint32_t_size_t_size_t(v, i, count, stride, it) } } }
+            vertices.usePinned(reached(indices, count, stride, 4)) { v -> indices.usePinned(count) { i -> box { FilaRenderableManager_computeAABB_float3_uint32_t_size_t_size_t(v, i, count, stride, it) } } }
         /** [computeAABB] with 16-bit indices. */
         fun computeAABB(vertices: FloatArray, indices: ShortArray, count: Int = indices.size, stride: Int = 12): Box =
-            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_float3_uint16_t_size_t_size_t(v, i, count, stride, it) } } }
+            vertices.usePinned(reached(indices, count, stride, 4)) { v -> indices.usePinned(count) { i -> box { FilaRenderableManager_computeAABB_float3_uint16_t_size_t_size_t(v, i, count, stride, it) } } }
         /** [computeAABB] over half-float positions; [stride] is 6 for packed half3, 8 for half4. */
         fun computeAABB(vertices: ShortArray, indices: IntArray, count: Int = indices.size, stride: Int = 6): Box =
-            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_half3_uint32_t_size_t_size_t(v, i, count, stride, it) } } }
+            vertices.usePinned(reached(indices, count, stride, 2)) { v -> indices.usePinned(count) { i -> box { FilaRenderableManager_computeAABB_half3_uint32_t_size_t_size_t(v, i, count, stride, it) } } }
         /** [computeAABB] over half-float positions with 16-bit indices. */
         fun computeAABB(vertices: ShortArray, indices: ShortArray, count: Int = indices.size, stride: Int = 6): Box =
-            vertices.usePinned { v -> indices.usePinned { i -> box { FilaRenderableManager_computeAABB_half3_uint16_t_size_t_size_t(v, i, count, stride, it) } } }
+            vertices.usePinned(reached(indices, count, stride, 2)) { v -> indices.usePinned(count) { i -> box { FilaRenderableManager_computeAABB_half3_uint16_t_size_t_size_t(v, i, count, stride, it) } } }
+
+        // Elements of a vertex array computeAABB reads: x, y and z of the furthest indexed vertex.
+        private fun reached(indices: IntArray, count: Int, stride: Int, bytes: Int) =
+            reached(indices.asSequence().take(count).maxOfOrNull { it.toLong() and 0xFFFFFFFFL }, stride, bytes)
+        private fun reached(indices: ShortArray, count: Int, stride: Int, bytes: Int) =
+            reached(indices.asSequence().take(count).maxOfOrNull { it.toLong() and 0xFFFFL }, stride, bytes)
+        private fun reached(maxIndex: Long?, stride: Int, bytes: Int) =
+            if (maxIndex == null) 0 else (maxIndex * stride / bytes + 3).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
     }
 
     /**
@@ -337,7 +345,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun skinning(boneCount: Int, transforms: FloatArray): Builder = apply {
-            FilaRenderableManagerBuilder_skinning_size_t_mat4f(nativeBuilder, boneCount, scope.toInterop(transforms))
+            FilaRenderableManagerBuilder_skinning_size_t_mat4f(nativeBuilder, boneCount, scope.toInterop(transforms, boneCount * 16))
         }
         /**
          * Enables GPU vertex skinning for up to 255 bones with initial bone transforms.
@@ -347,7 +355,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun skinning(boneCount: Int, bones: Array<Bone>): Builder = apply {
-            FilaRenderableManagerBuilder_skinning_size_t_Bone(nativeBuilder, boneCount, scope.toInterop(bones.toFloats()))
+            FilaRenderableManagerBuilder_skinning_size_t_Bone(nativeBuilder, boneCount, scope.toInterop(bones.toFloats(), boneCount * 8))
         }
         /**
          * Enables GPU vertex skinning for up to 255 bones, 0 by default.
@@ -367,7 +375,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * @return Builder reference for chaining calls.
          */
         fun boneIndicesAndWeights(primitiveIndex: Int, indicesAndWeights: FloatArray, count: Int, bonesPerVertex: Int): Builder = apply {
-            FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(nativeBuilder, primitiveIndex, scope.toInterop(indicesAndWeights), count, bonesPerVertex)
+            FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(nativeBuilder, primitiveIndex, scope.toInterop(indicesAndWeights, count * 2), count, bonesPerVertex)
         }
         /**
          * Controls if the renderable has legacy vertex morphing targets, zero by default.
@@ -488,7 +496,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
     /** Returns the Entity of the component from its Instance. */
     fun getEntity(i: EntityInstance): Entity = FilaRenderableManager_getEntity(nativeHandle, i)
     /** All entities with a renderable component, in no particular order. */
-    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned { FilaRenderableManager_getAllEntities(nativeHandle, it, a.size) } }
+    val allEntities: IntArray get() = IntArray(componentCount).also { a -> a.usePinned(a.size) { FilaRenderableManager_getAllEntities(nativeHandle, it, a.size) } }
     /**
      * Destroys the renderable component in the given entity.
      *
@@ -581,7 +589,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param offset the index of the first bone to set
      */
     fun setBones(instance: EntityInstance, transforms: Array<Bone>, boneCount: Int = transforms.size, offset: Int = 0) {
-        transforms.toFloats().usePinned { FilaRenderableManager_setBones_Bone_size_t_size_t(nativeHandle, instance, it, boneCount, offset) }
+        transforms.toFloats().usePinned(boneCount * 8) { FilaRenderableManager_setBones_Bone_size_t_size_t(nativeHandle, instance, it, boneCount, offset) }
     }
     /**
      * Updates the bone transforms in the range [offset, offset + boneCount).
@@ -592,7 +600,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param offset the index of the first bone to set
      */
     fun setBones(instance: EntityInstance, transforms: FloatArray, boneCount: Int = transforms.size / 16, offset: Int = 0) {
-        transforms.usePinned { FilaRenderableManager_setBones_mat4f_size_t_size_t(nativeHandle, instance, it, boneCount, offset) }
+        transforms.usePinned(boneCount * 16) { FilaRenderableManager_setBones_mat4f_size_t_size_t(nativeHandle, instance, it, boneCount, offset) }
     }
     /**
      * Associates a region of a SkinningBuffer to a renderable instance.
@@ -617,7 +625,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
      * @param offset index of the first morph target weight to set
      */
     fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int = 0) {
-        weights.usePinned { FilaRenderableManager_setMorphWeights(nativeHandle, instance, it, weights.size, offset) }
+        weights.usePinned(weights.size) { FilaRenderableManager_setMorphWeights(nativeHandle, instance, it, weights.size, offset) }
     }
     /**
      * Associates a MorphTargetBuffer offset to the given primitive.

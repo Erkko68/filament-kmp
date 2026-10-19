@@ -20,7 +20,7 @@ class FrameHistoryStream(private val renderer: Renderer) : AutoCloseable {
         try {
             val missingBefore = IntArray(capacity)
             val n = interopScope {
-                missingBefore.usePinned { FilaFrameHistoryStream_getNewFrames(nativeHandle, toInterop(handles), it, capacity) }
+                missingBefore.usePinned(capacity) { FilaFrameHistoryStream_getNewFrames(nativeHandle, toInterop(handles), it, capacity) }
             }
             return buildList {
                 for (i in 0 until n) {

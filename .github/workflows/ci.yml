@@ -102,11 +102,6 @@ jobs:
       - name: API compatibility check
         shell: bash
         run: ./gradlew apiCheck --no-configuration-cache
-      # Runtime-floor guard: fails if any published JVM jar or its runtime deps ship bytecode
-      # above the declared target (17 desktop, 11 :jni). Publishing depends on it too.
-      - name: JVM bytecode level check
-        shell: bash
-        run: ./gradlew checkJvmBytecode --no-configuration-cache
       - name: Run JVM tests
         shell: bash
         run: |

@@ -51,7 +51,7 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
      *
      * @param entities The array to populate with newly created Entity IDs.
      */
-    fun create(entities: IntArray) = entities.usePinned { FilaUtilsEntityManager_create_size_t_Entity(nativeHandle, entities.size, it) }
+    fun create(entities: IntArray) = entities.usePinned(entities.size) { FilaUtilsEntityManager_create_size_t_Entity(nativeHandle, entities.size, it) }
 
     /**
      * Destroy an entity. The entity ID becomes invalid and should not be used after destruction.
@@ -65,7 +65,7 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
      *
      * @param entities Array of entities to destroy.
      */
-    fun destroy(entities: IntArray) = entities.usePinned { FilaUtilsEntityManager_destroy_size_t_Entity(nativeHandle, entities.size, it) }
+    fun destroy(entities: IntArray) = entities.usePinned(entities.size) { FilaUtilsEntityManager_destroy_size_t_Entity(nativeHandle, entities.size, it) }
 
     /**
      * Check whether an entity is alive (not destroyed).
@@ -85,5 +85,5 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
     fun reclaimSafeEpochs() = FilaUtilsEntityManager_reclaimSafeEpochs(nativeHandle)
 
     /** The current epoch's ID. */
-    val latestEpochID: Long get() = LongArray(1).also { out -> out.usePinned { FilaUtilsEntityManager_getLatestEpochID(nativeHandle, it) } }[0]
+    val latestEpochID: Long get() = LongArray(1).also { out -> out.usePinned(1) { FilaUtilsEntityManager_getLatestEpochID(nativeHandle, it) } }[0]
 }

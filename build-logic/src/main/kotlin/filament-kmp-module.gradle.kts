@@ -50,7 +50,7 @@ kotlin {
         }
 
         // Instrumented (on-device) tests inherit from `commonTest` (sourceSetTree
-        // "test") so the shared `expect`s (createTestSurface, TestMaterials) line up
+        // "test") so the shared `expect`s (GraphicsReady, surfaceTest) line up
         // with the per-Android `actual`s in `androidDeviceTest`.
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
@@ -109,6 +109,12 @@ kotlin {
                 withJvm()
                 withCompilations { it.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm }
             }
+            // pixelTest: tests that need a real backend (pixels, async calls). Only jvm and web have a
+            // rasterizer in CI; see test-support's assumeRealBackend.
+            group("pixel") {
+                withJvm()
+                group("web")
+            }
         }
     }
 
@@ -150,6 +156,7 @@ val simGpu: String = forcedGpu ?: (System.getenv("CI") == null).toString()
 
 tasks.withType<Test>().configureEach {
     environment("FILAMENT_TEST_GPU", jvmGpu)
+    inputs.property("filamentTestGpu", jvmGpu) // a flipped flag must re-run, not reuse the last results
     // Full exception output for failed tests — the default summary truncates the message,
     // hiding causes like a native "undefined symbol".
     testLogging {
@@ -225,7 +232,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimu
 // still written to the XML as skipped, so the suite total must equal the @Test
 // count in the sources that feed these targets.
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest>().configureEach {
-    val testSources = listOf("commonTest", "webTest")
+    val testSources = listOf("commonTest", "pixelTest", "webTest")
         .map { layout.projectDirectory.dir("src/$it") }
     val resultsDir = layout.buildDirectory.dir("test-results/$name")
     doLast {

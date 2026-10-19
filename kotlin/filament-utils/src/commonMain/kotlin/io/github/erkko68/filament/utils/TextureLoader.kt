@@ -30,7 +30,7 @@ object TextureLoader {
      * @return the created [Texture], or null on failure
      */
     fun loadTexture(engine: Engine, buffer: ByteArray, type: TextureType): Texture? {
-        val handle = buffer.usePinned { pinned ->
+        val handle = buffer.usePinned(buffer.size) { pinned ->
             FilaTextureLoader_loadTexture(
                 engine.nativeObject,
                 pinned,

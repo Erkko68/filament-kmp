@@ -95,7 +95,7 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
      * @param offset Index of the first bone to set in the SkinningBuffer
      */
     fun setBones(engine: Engine, transforms: Array<RenderableManager.Bone>, count: Int = transforms.size, offset: Int = 0) {
-        transforms.toFloats().usePinned { FilaSkinningBuffer_setBones_Bone_size_t_size_t(nativeHandle, engine.nativeHandle, it, count, offset) }
+        transforms.toFloats().usePinned(count * 8) { FilaSkinningBuffer_setBones_Bone_size_t_size_t(nativeHandle, engine.nativeHandle, it, count, offset) }
     }
 
     /**
@@ -107,6 +107,6 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
      * @param offset Index of the first bone to set in the SkinningBuffer
      */
     fun setBones(engine: Engine, transforms: FloatArray, count: Int = transforms.size / 16, offset: Int = 0) {
-        transforms.usePinned { FilaSkinningBuffer_setBones_mat4f_size_t_size_t(nativeHandle, engine.nativeHandle, it, count, offset) }
+        transforms.usePinned(count * 16) { FilaSkinningBuffer_setBones_mat4f_size_t_size_t(nativeHandle, engine.nativeHandle, it, count, offset) }
     }
 }
