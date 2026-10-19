@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.BlendMode
+import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.internal.FilamentSurface
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
@@ -133,8 +134,13 @@ fun FilamentView(
         }
     }
 
+    // Taps reach the scene's onTap handlers; no detector while there are none, so a scene without them pays nothing.
+    val tapTargets = scene.tapTargets
+    val dispatchTap = remember(tapTargets) { { result: View.PickingQueryResult -> tapTargets.handlerFor(result.renderable)?.invoke(); Unit } }
+    val tapModifier = if (tapTargets.isEmpty) Modifier else Modifier.pickOnTap(viewState, dispatchTap)
+
     FilamentSurface(
-        modifier = modifier.onSizeChanged { viewState.layoutSize = it },
+        modifier = modifier.onSizeChanged { viewState.layoutSize = it }.then(tapModifier),
         engine   = engine,
         renderer = renderer,
         view     = view,
