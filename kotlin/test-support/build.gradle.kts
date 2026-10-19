@@ -13,8 +13,11 @@ kotlin {
         compileSdk = 37
         minSdk = 24
     }
-    iosArm64()
-    iosSimulatorArm64()
+    // Same targets as :kotlin:filament, which declares iOS on macOS hosts only.
+    if (System.getProperty("os.name").startsWith("Mac")) {
+        iosArm64()
+        iosSimulatorArm64()
+    }
     jvm()
     js { browser() }
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
