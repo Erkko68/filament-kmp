@@ -31,5 +31,8 @@ kotlin {
         jvmMain.dependencies {
             implementation(kotlin("test-junit"))
         }
+        androidMain.dependencies {
+            implementation(kotlin("test-junit"))
+        }
     }
 }
