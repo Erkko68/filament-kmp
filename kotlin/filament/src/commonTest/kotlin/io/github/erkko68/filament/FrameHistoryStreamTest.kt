@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class FrameHistoryStreamTest : FilamentTestFixture() {
@@ -18,8 +19,11 @@ class FrameHistoryStreamTest : FilamentTestFixture() {
         }
         val stream = FrameHistoryStream(renderer)
 
+        // Timing lands some frames after a frame renders, later on a slow runner: render until two calls returned frames.
         val seen = mutableListOf<Int>()
-        repeat(2) {
+        var batches = 0
+        val deadline = Engine.steadyClockTimeNano + 10_000_000_000L
+        while (batches < 2 && Engine.steadyClockTimeNano < deadline) {
             repeat(4) {
                 if (renderer.beginFrame(swapChain, 0L)) {
                     renderer.render(view)
@@ -27,9 +31,11 @@ class FrameHistoryStreamTest : FilamentTestFixture() {
                 }
                 engine.flushAndWait()
             }
-            seen += stream.getNewFrames().onEach { r -> r.frameInfo?.let { assertTrue(it.frameId == r.frameId) } }.map { it.frameId }
+            val batch = stream.getNewFrames().onEach { r -> r.frameInfo?.let { assertTrue(it.frameId == r.frameId) } }.map { it.frameId }
+            if (batch.isNotEmpty()) batches++
+            seen += batch
         }
-        assertTrue(seen.isNotEmpty(), "no frames came back")
+        assertEquals(2, batches, "frames came back in $batches calls: $seen")
         // Oldest first, never repeated across calls (a frame still awaiting presentation timing comes later).
         assertTrue(seen.zipWithNext().all { (a, b) -> b > a }, "frame IDs not strictly increasing: $seen")
 
