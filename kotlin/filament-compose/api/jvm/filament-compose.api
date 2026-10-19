@@ -255,6 +255,7 @@ public final class io/github/erkko68/filament/compose/scene/Bloom {
 }
 
 public final class io/github/erkko68/filament/compose/scene/CameraKt {
+	public static final fun anchorTo (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/scene/Position;)Landroidx/compose/ui/Modifier;
 	public static final fun rememberCameraState (Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Projection;Lio/github/erkko68/filament/compose/scene/Exposure;FLio/github/erkko68/filament/compose/scene/LensShift;Lio/github/erkko68/filament/compose/scene/LensScaling;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/CameraState;
 }
 
@@ -282,6 +283,7 @@ public final class io/github/erkko68/filament/compose/scene/CameraState {
 	public final fun setShift (Lio/github/erkko68/filament/compose/scene/LensShift;)V
 	public final fun setTarget (Lio/github/erkko68/filament/compose/scene/Position;)V
 	public final fun setUp (Lio/github/erkko68/filament/compose/scene/Direction;)V
+	public final fun worldToScreen-x-9fifI (Lio/github/erkko68/filament/compose/scene/Position;)Landroidx/compose/ui/geometry/Offset;
 }
 
 public final class io/github/erkko68/filament/compose/scene/ColorGrade {

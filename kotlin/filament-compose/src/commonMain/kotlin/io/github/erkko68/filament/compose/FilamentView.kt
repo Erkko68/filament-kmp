@@ -134,7 +134,7 @@ fun FilamentView(
     }
 
     FilamentSurface(
-        modifier = modifier.onSizeChanged { viewState.layoutSize = it },
+        modifier = modifier.onSizeChanged { viewState.layoutSize = it; cameraState.layoutSize = it },
         engine   = engine,
         renderer = renderer,
         view     = view,

@@ -13,10 +13,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`CameraState.worldToScreen` and `Modifier.anchorTo`** (`filament-compose`): where a 3D point appears in the view, and Compose UI pinned there (labels, hotspots).
+
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
 ### Fixed
+- **`LensShift` KDoc** (`filament-compose`): a shift of 1 moves the image by a full viewport width/height, as Filament's `Camera::setShift` defines, not half.
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
 - **Arrays shorter than Filament reads or writes now throw `IllegalArgumentException`** instead of an out-of-bounds native access (matrices, vectors, `out` arrays, counted uploads, mesh builders, custom LUTs).
 - **`TargetApi.WEBGPU` no longer ends the JVM on Linux** (`filamat`): the desktop library now links Dawn, whose Tint upstream's Linux filamat calls for WGSL.

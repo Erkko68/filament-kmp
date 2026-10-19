@@ -377,6 +377,22 @@ FilamentView(scene, cameraState = cam)
 The camera object still belongs to the `FilamentView` you pass `cam` to; `CameraNode` only drives
 the state. The offsets are expressed in the group's local space.
 
+## Labels over 3D points
+
+`Modifier.anchorTo(cameraState, position)` centres a Compose element on where a world-space point
+appears in the view, and hides it while the point is behind the camera. Put it first in the
+modifier chain, on an element in the same `Box` as the view:
+
+```kotlin
+Box(Modifier.fillMaxSize()) {
+    FilamentView(scene, Modifier.fillMaxSize(), cameraState = cam)
+    Text("Engine", Modifier.anchorTo(cam, Position(0f, 1.2f, 0f)).background(Color.Black))
+}
+```
+
+It's placed in the layout phase, so camera motion moves it without recomposing. For the raw
+position (pixels from the view's top-left, or null), use `cam.worldToScreen(position)`.
+
 ## Rendering to a texture
 
 `rememberRenderTargetTexture` renders a scene **off-screen** through its own camera into a sampleable
