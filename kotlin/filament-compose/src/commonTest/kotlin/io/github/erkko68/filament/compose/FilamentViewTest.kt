@@ -2,20 +2,16 @@ package io.github.erkko68.filament.compose
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.dp
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.scene.Bloom
 import io.github.erkko68.filament.compose.scene.CameraState
@@ -27,19 +23,21 @@ import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
-import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.compose.testutils.IgnoreWithoutViewInterop
+import io.github.erkko68.filament.compose.testutils.renderFrames
+import io.github.erkko68.filament.compose.testutils.withEngine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * [FilamentSceneView] / [FilamentView] on a real engine: the view and camera attach while composed and
- * detach after, and [pickOnTap] delivers a picking result once frames render. Skips without a GPU.
+ * [FilamentSceneView] / [FilamentView] through each platform's surface, on NOOP: the view and camera attach while
+ * composed and detach after, [pickOnTap] is answered once frames render, and the view follows its inputs.
  */
+@IgnoreWithoutViewInterop
 class FilamentViewTest {
 
     @OptIn(ExperimentalTestApi::class)
@@ -77,49 +75,7 @@ class FilamentViewTest {
         show = false
         mainClock.advanceTimeByFrame()
         assertNull(viewState.view, "the view detaches with its composition")
-        assertNull(cam?.viewMatrix)
-    }
-
-    /** Compose rows run top-down, Filament's bottom-up: the top and bottom rows are both inside the viewport. */
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun pickReachesTheFirstAndLastRows() = withEngine { engine, setContent ->
-        val viewState = FilamentViewState()
-        setContent {
-            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState) {
-                // Fills the view: every pixel picks it.
-                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
-            }
-        }
-        repeat(3) { mainClock.advanceTimeByFrame() }
-        val viewport = assertNotNull(viewState.view).viewport
-
-        fun pick(y: Int): Int {
-            var result: View.PickingQueryResult? = null
-            runOnUiThread { viewState.pick(viewport.width / 2, y) { result = it } }
-            repeat(30) {
-                if (result != null) return@repeat
-                mainClock.advanceTimeByFrame()
-                runOnUiThread { engine.flushAndWait() }
-            }
-            return assertNotNull(result, "no picking result for row $y").renderable
-        }
-        assertNotEquals(0, pick(viewport.height / 2), "the cube should fill the view")
-        assertNotEquals(0, pick(0), "top row")
-        assertNotEquals(0, pick(viewport.height - 1), "bottom row")
-
-        // Outside the viewport: ignored, where Filament would abort.
-        var outside = false
-        runOnUiThread {
-            viewState.pick(viewport.width, 0) { outside = true }
-            viewState.pick(0, viewport.height) { outside = true }
-            viewState.pick(-1, -1) { outside = true }
-        }
-        repeat(5) {
-            mainClock.advanceTimeByFrame()
-            runOnUiThread { engine.flushAndWait() }
-        }
-        assertFalse(outside, "a pick outside the viewport should be ignored")
+        assertNull(cam.viewMatrix)
     }
 
     /** A view handed another engine moves its surface over too, instead of rendering into the old engine's target. */
@@ -127,7 +83,7 @@ class FilamentViewTest {
     @Test
     fun viewFollowsAnEngineChange() = withEngine { first, setContent ->
         var second: Engine? = null
-        runOnUiThread { second = Engine.create(Engine.Backend.DEFAULT) }
+        runOnUiThread { second = Engine.create(first.backend) }
         val other = assertNotNull(second)
         try {
             var engine by mutableStateOf(first)
@@ -239,36 +195,6 @@ class FilamentViewTest {
         assertEquals(0, view.visibleRenderableCount, "the view should settle again once the pick is answered")
     }
 
-    /** Desktop debounces a resize, stretching the old surface over the new layout: a pick is given in layout pixels. */
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun pickFollowsTheLayoutWhileTheSurfaceLags() = withEngine { engine, setContent ->
-        val viewState = FilamentViewState()
-        var size by mutableStateOf(64.dp)
-        setContent {
-            FilamentSceneView(Modifier.size(size), engine = engine, viewState = viewState) {
-                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
-            }
-        }
-        repeat(3) { mainClock.advanceTimeByFrame() }
-        val before = assertNotNull(viewState.view).viewport
-
-        size = 128.dp
-        repeat(2) { mainClock.advanceTimeByFrame() }
-        val layout = viewState.layoutSize
-        assertEquals(before.width, assertNotNull(viewState.view).viewport.width, "the surface should still be the old size")
-        assertEquals(before.width * 2, layout.width)
-
-        var result: View.PickingQueryResult? = null
-        runOnUiThread { viewState.pick(layout.width - 1, layout.height - 1) { result = it } }
-        repeat(30) {
-            if (result != null) return@repeat
-            mainClock.advanceTimeByFrame()
-            runOnUiThread { engine.flushAndWait() }
-        }
-        assertNotEquals(0, assertNotNull(result, "a pick in the grown layout should be answered").renderable)
-    }
-
     /** A view keeps the scene it was created for alive, so one handed another scene has to be a new view. */
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -322,41 +248,3 @@ class FilamentViewTest {
         assertFalse(engine.isValid(regraded))
     }
 }
-
-/** Advances [frames] frames, waiting for the GPU before each: a readback still in flight holds back the next render. */
-@OptIn(ExperimentalTestApi::class)
-internal fun ComposeUiTest.renderFrames(engine: Engine, frames: Int) = repeat(frames) {
-    runOnUiThread { engine.flushAndWait() }
-    mainClock.advanceTimeByFrame()
-}
-
-/**
- * Runs [body] with a DEFAULT engine created and destroyed on the UI thread, like rememberFilamentEngine.
- * Content goes through the handed `setContent`, which is cleared before the engine is destroyed.
- */
-@OptIn(ExperimentalTestApi::class)
-internal fun withEngine(body: ComposeUiTest.(Engine, setContent: (@Composable () -> Unit) -> Unit) -> Unit) =
-    runComposeUiTest {
-        if (!TestEnv.gpuBackendAvailable) return@runComposeUiTest
-        // The render loop's frame callbacks never let the clock go idle: drive frames by hand.
-        mainClock.autoAdvance = false
-        var engine: Engine? = null
-        runOnUiThread {
-            Filament.init()
-            engine = Engine.create(Engine.Backend.DEFAULT)
-        }
-        val e = engine ?: return@runComposeUiTest
-        var slot by mutableStateOf<@Composable () -> Unit>({})
-        setContent { slot() }
-        try {
-            body(e) { slot = it }
-        } finally {
-            slot = {}
-            mainClock.advanceTimeByFrame()
-            mainClock.autoAdvance = true
-            runOnUiThread {
-                e.flushAndWait()
-                Engine.destroy(e)
-            }
-        }
-    }

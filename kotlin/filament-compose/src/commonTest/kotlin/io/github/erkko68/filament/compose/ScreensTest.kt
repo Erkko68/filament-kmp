@@ -28,6 +28,9 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
 import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
 import io.github.erkko68.filament.compose.testutils.TestGlb
+import io.github.erkko68.filament.compose.testutils.IgnoreWithoutViewInterop
+import io.github.erkko68.filament.compose.testutils.renderFrames
+import io.github.erkko68.filament.compose.testutils.withEngine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -39,8 +42,9 @@ import kotlin.test.assertTrue
 /**
  * What an app with several screens puts a view through: screens swapping on an engine hoisted above them,
  * state holders, a scene or an asset outliving the screen that showed them, and views that move, overlap in a
- * transition or scroll away. Skips without a GPU.
+ * transition or scroll away.
  */
+@IgnoreWithoutViewInterop
 @OptIn(ExperimentalTestApi::class)
 class ScreensTest {
 
@@ -136,7 +140,7 @@ class ScreensTest {
         renderFrames(engine, 5)
         assertNull(states[1].view)
         assertEquals(1, assertNotNull(states[0].view).visibleRenderableCount, "one view leaving should not stop the other")
-        assertSame(hoisted?.scene, scene, "the scene should not have been rebuilt")
+        assertSame(hoisted.scene, scene, "the scene should not have been rebuilt")
     }
 
     /** An asset loaded once above the screens is instanced into each screen's own scene, and outlives them all. */
@@ -214,7 +218,7 @@ class ScreensTest {
         size = 32.dp
         renderFrames(engine, 15)
         assertSame(view, viewState.view)
-        assertEquals(32, view.viewport.width)
+        assertEquals(with(density) { 32.dp.roundToPx() }, view.viewport.width)
     }
 
     /** A list of views on one engine: the ones scrolled away are destroyed, and none is left once the list goes. */
