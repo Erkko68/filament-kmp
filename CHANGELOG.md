@@ -18,12 +18,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`GltfAsset.progress`** (`filament-compose`): how much of the asset's GPU upload is done, for a loading indicator; reaches 1 with `isReady`.
 - **`GltfInstance(fitToSize = …)`** (`filament-compose`): scales a model so its largest side is that many units and centres it on `position`, for models of unknown size.
 - **`SphericalHarmonics.NeutralStudio`** (`filament-compose`): a built-in neutral ambient, `IndirectLight(irradiance = …)`, so PBR models have shape without an environment file; `IndirectLight`'s `reflections` now defaults to null.
+- **`CameraState.worldToScreen` and `Modifier.anchorTo`** (`filament-compose`): where a 3D point appears in the view, and Compose UI pinned there (labels, hotspots).
 
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
 ### Fixed
 - **Orbit, map and flight camera gestures start past the touch slop** (`filament-compose`): a finger tap no longer nudges the camera or swallows the tap.
+- **`LensShift` KDoc** (`filament-compose`): a shift of 1 moves the image by a full viewport width/height, as Filament's `Camera::setShift` defines, not half.
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
 - **Arrays shorter than Filament reads or writes now throw `IllegalArgumentException`** instead of an out-of-bounds native access (matrices, vectors, `out` arrays, counted uploads, mesh builders, custom LUTs).
 - **`TargetApi.WEBGPU` no longer ends the JVM on Linux** (`filamat`): the desktop library now links Dawn, whose Tint upstream's Linux filamat calls for WGSL.

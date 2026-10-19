@@ -22,6 +22,7 @@ private val ENTRIES = listOf(
     "Primitives" to Screen.Primitives,
     "Lighting"   to Screen.Lighting,
     "Picking"    to Screen.Picking,
+    "Labels"     to Screen.Labels,
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
     "Split View" to Screen.SplitView,

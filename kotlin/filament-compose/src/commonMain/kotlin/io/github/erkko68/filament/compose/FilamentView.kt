@@ -140,7 +140,7 @@ fun FilamentView(
     val tapModifier = if (tapTargets.isEmpty) Modifier else Modifier.pickOnTap(viewState, dispatchTap)
 
     FilamentSurface(
-        modifier = modifier.onSizeChanged { viewState.layoutSize = it }.then(tapModifier),
+        modifier = modifier.onSizeChanged { viewState.layoutSize = it; cameraState.layoutSize = it }.then(tapModifier),
         engine   = engine,
         renderer = renderer,
         view     = view,
