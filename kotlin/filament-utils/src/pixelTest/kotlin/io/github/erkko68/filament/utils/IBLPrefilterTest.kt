@@ -1,37 +1,13 @@
 package io.github.erkko68.filament.utils
 
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.testsupport.assumeRealBackend
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import io.github.erkko68.filament.testsupport.RealBackendFixture
 import kotlin.test.Test
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /** The prefilter passes run on the GPU, so they need a real backend; the source is a synthetic equirectangular texture. */
-class IBLPrefilterTest {
-    private lateinit var engine: Engine
-
-    @BeforeTest
-    fun setUp() {
-        assumeRealBackend()
-        Filament.init()
-        engine = assertNotNull(Engine.create(Engine.Backend.DEFAULT), "no engine on a host with a rasterizer")
-        assertNotEquals(Engine.Backend.NOOP, engine.backend, "DEFAULT resolved to NOOP")
-    }
-
-    @AfterTest
-    fun tearDown() {
-        if (::engine.isInitialized) {
-            engine.flushAndWait()
-            Engine.destroy(engine)
-        }
-    }
-
+class IBLPrefilterTest : RealBackendFixture() {
     @Test
     fun filtersTurnAnEquirectangularImageIntoAnIbl() {
 

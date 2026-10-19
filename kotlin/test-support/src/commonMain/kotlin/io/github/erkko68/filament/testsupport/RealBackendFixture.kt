@@ -1,8 +1,7 @@
-package io.github.erkko68.filament.testutils
+package io.github.erkko68.filament.testsupport
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Filament
-import io.github.erkko68.filament.testsupport.assumeRealBackend
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotEquals

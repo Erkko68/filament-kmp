@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testutils.RealBackendFixture
+import io.github.erkko68.filament.testsupport.RealBackendFixture
 import java.awt.Canvas
 import java.awt.Frame
 import java.awt.GraphicsEnvironment

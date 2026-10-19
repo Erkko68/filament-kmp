@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testutils.RealBackendFixture
-import io.github.erkko68.filament.testutils.pumpUntil
+import io.github.erkko68.filament.testsupport.RealBackendFixture
+import io.github.erkko68.filament.testsupport.pumpUntil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

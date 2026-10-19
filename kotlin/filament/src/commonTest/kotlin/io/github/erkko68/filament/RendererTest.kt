@@ -3,8 +3,8 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.interop.toInterop
 import io.github.erkko68.filament.interop.InteropScope
 import io.github.erkko68.filament.testutils.FilamentTestFixture
-import io.github.erkko68.filament.testutils.ReadbackFlag
-import io.github.erkko68.filament.testutils.pumpUntil
+import io.github.erkko68.filament.testsupport.ReadbackFlag
+import io.github.erkko68.filament.testsupport.pumpUntil
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

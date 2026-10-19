@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.testutils.FilamentTestFixture
-import io.github.erkko68.filament.testutils.pumpUntil
+import io.github.erkko68.filament.testsupport.pumpUntil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

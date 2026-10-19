@@ -1,4 +1,4 @@
-package io.github.erkko68.filament.testutils
+package io.github.erkko68.filament.testsupport
 
 import io.github.erkko68.filament.Engine
 import kotlin.test.assertTrue

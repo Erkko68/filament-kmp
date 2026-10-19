@@ -1,10 +1,10 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testutils.FrameProbe
-import io.github.erkko68.filament.testutils.RealBackendFixture
+import io.github.erkko68.filament.testsupport.FrameProbe
+import io.github.erkko68.filament.testsupport.RealBackendFixture
 import io.github.erkko68.filament.testutils.TestMaterials
-import io.github.erkko68.filament.testutils.meanAbsoluteDifference
-import io.github.erkko68.filament.testutils.regionStats
+import io.github.erkko68.filament.testsupport.meanAbsoluteDifference
+import io.github.erkko68.filament.testsupport.regionStats
 import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
