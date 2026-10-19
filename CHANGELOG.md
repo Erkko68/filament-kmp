@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`SphericalHarmonics.NeutralStudio`** (`filament-compose`): a built-in neutral ambient, `IndirectLight(irradiance = …)`, so PBR models have shape without an environment file; `IndirectLight`'s `reflections` now defaults to null.
+
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 

@@ -26,6 +26,7 @@ FilamentSceneView(
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
     Skybox(color = LinearColor(0.1f, 0.12f, 0.15f))
+    IndirectLight(irradiance = SphericalHarmonics.NeutralStudio)   // soft ambient, no file to load
     DirectionalLight(direction = Direction(0.3f, -1f, -0.5f), intensity = LightIntensity.LuminousPower(100_000f))
     GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/Duck.glb") })
 }
