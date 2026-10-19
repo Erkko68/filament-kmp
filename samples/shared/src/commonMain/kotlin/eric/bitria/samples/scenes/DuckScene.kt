@@ -16,7 +16,6 @@ import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
-import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
@@ -27,7 +26,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 fun DuckScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 2f, 5f),
-        initialTarget     = Position(0f, 0.5f, 0f),
+        initialTarget     = Position(0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
@@ -44,10 +43,10 @@ fun DuckScene(onBack: () -> Unit) {
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = LightIntensity.LuminousPower(100_000f),
             )
+            // Two units across, centred on the origin, whatever size the glTF was authored at.
             GltfInstance(
-                asset    = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") },
-                position = Position(0f, 0f, 0f),
-                scale    = Scale(1f),
+                asset     = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") },
+                fitToSize = 2f,
             )
         }
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))

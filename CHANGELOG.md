@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`GltfInstance(fitToSize = …)`** (`filament-compose`): scales a model so its largest side is that many units and centres it on `position`, for models of unknown size.
+
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
