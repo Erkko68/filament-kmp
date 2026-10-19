@@ -443,6 +443,22 @@ FocusedSpotLight(
 )
 ```
 
+Physical units only look right with a matching camera exposure: an 800 lm bulb under the default
+daylight exposure renders almost black. Pick an exposure for the scene and lights in its range:
+
+| Scene | `Exposure` | EV100 | Lights in range |
+| :-- | :-- | :-- | :-- |
+| Full sunlight | `Exposure.Sunny` (default) | 15 | `LightIntensity.Sun` (100,000 lx) |
+| Heavy overcast | `Exposure.Overcast` | ≈ 12 | ⅛ of the sun (3 stops), ≈ 12,500 lx |
+| Home interior | `Exposure.Indoor` | 6 | `LightIntensity.HouseholdBulb` (800 lm), a few of them |
+
+```kotlin
+val cam = rememberCameraState(initialExposure = Exposure.Indoor)
+FilamentSceneView(cameraState = cam) {
+    PointLight(position = Position(0f, 2f, 0f), intensity = LightIntensity.HouseholdBulb)
+}
+```
+
 ## Component Reference
 
 The full, always-current list of composables, parameters, and types lives in the generated

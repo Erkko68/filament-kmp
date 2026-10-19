@@ -51,14 +51,27 @@ sealed class Projection {
 /**
  * Photographic exposure (aperture / shutter-speed / ISO triangle).
  *
- * Default values correspond to a typical outdoor daylight exposure (EV ≈ 15).
+ * Default values correspond to a typical outdoor daylight exposure (EV ≈ 15), [Sunny]. Lights must match the exposure:
+ * pair [Sunny] with [LightIntensity.Sun], [Indoor] with lamps like [LightIntensity.HouseholdBulb].
  */
 @Immutable
 data class Exposure(
     val aperture: Float = 16f,
     val shutterSpeed: Float = 1f / 125f,
     val sensitivity: Float = 100f,
-)
+) {
+    /** Typical scenes, at the EV100 photographers meter them at. */
+    companion object {
+        /** Full sunlight, distinct shadows: f/16, 1/125 s, ISO 100 (EV100 15, "sunny 16"). The default. */
+        val Sunny = Exposure(16f, 1f / 125f, 100f)
+
+        /** Heavy overcast: f/8, 1/60 s, ISO 100 (EV100 ≈ 12). */
+        val Overcast = Exposure(8f, 1f / 60f, 100f)
+
+        /** Home interiors under lamps: f/2, 1/16 s, ISO 100 (EV100 6). */
+        val Indoor = Exposure(2f, 1f / 16f, 100f)
+    }
+}
 
 // ── Public: lens shift and scaling ───────────────────────────────────────────
 
