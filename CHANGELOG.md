@@ -16,6 +16,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Added
 - **`onTap` on `GltfInstance`, the primitives and `Group`** (`filament-compose`): a tap on a `FilamentView` reaches the object it hits, without mapping entities by hand.
 - **`GltfAsset.progress`** (`filament-compose`): how much of the asset's GPU upload is done, for a loading indicator; reaches 1 with `isReady`.
+- **`GltfInstance(fitToSize = …)`** (`filament-compose`): scales a model so its largest side is that many units and centres it on `position`, for models of unknown size.
 
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.

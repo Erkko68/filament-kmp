@@ -251,6 +251,18 @@ FilamentSceneView(
 ) { /* … */ }
 ```
 
+## Showing a model of unknown size
+
+glTF files come in any unit and with their origin anywhere. `fitToSize` scales the model so its
+largest side is that many units and centres it on `position`, so one camera setup frames any model:
+
+```kotlin
+GltfInstance(asset = model, fitToSize = 2f)   // 2 units across, centred on the origin
+```
+
+`rotation` and `scale` apply after the fit, and `pivot` is in the fitted space. Leave it null to keep
+the model's own size, e.g. when several models must keep their true scale relative to each other.
+
 ## Animating glTF models
 
 `GltfInstance` takes one animation input, `animationState`; from there the control goes from declarative to fully manual.
