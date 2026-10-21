@@ -30,7 +30,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`AssetConfiguration.defaultNodeName`** (`gltfio`): the name anonymous nodes are found by.
 
 ### Changed
-- **Camera controllers work on `CameraState`** (`filament-compose`): bookmarks give way to `Viewpoint`s, and map's extent and flight's start-angle parameters come from the state. See the [migration guide](docs/migration/from-0.8.md).
+- **Camera controllers work on `CameraState`** (`filament-compose`, **source-breaking**): bookmarks give way to `Viewpoint`s, and map's extent and flight's start-angle parameters come from the state. See the [migration guide](docs/migration/from-0.8.md).
+- **The map controller starts from the `CameraState` pose** (`filament-compose`, behavior-breaking): it no longer puts the camera top-down by itself; set `initialEye` above the target and `initialUp` to -Z.
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
 ### Fixed

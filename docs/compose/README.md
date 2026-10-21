@@ -407,7 +407,7 @@ too: set `viewpoint` to jump, or call `animateTo` to fly. A controller carries o
 | Controller | Gestures |
 | :-- | :-- |
 | `rememberOrbitCameraController` + `Modifier.orbitGestures` | Drag orbits around `target`, pinch / wheel zoom towards it (stopping at the near plane), secondary drag pans. |
-| `rememberMapCameraController` + `Modifier.mapGestures` | Drag pans, pinch / wheel zoom towards the pointer; an orthographic projection zooms by scaling its extents. |
+| `rememberMapCameraController` + `Modifier.mapGestures` | Drag pans, pinch / wheel zoom towards the pointer; an orthographic projection zooms by scaling its extents. Start the state looking down, with `initialUp` of -Z. |
 | `rememberFlightCameraController` + `Modifier.flightGestures` | WASD / arrows move, drag looks around, wheel changes speed. |
 
 Every controller has `resetToHome()`, back to the viewpoint the camera had when it was created.

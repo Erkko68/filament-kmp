@@ -70,7 +70,7 @@ class FilamentViewState internal constructor() {
     /**
      * The view as it looks now, at its size in pixels: its scene rendered once more off-screen and read back, for
      * saving or sharing. Null while not attached. A view paused with `renderingEnabled = false` renders until the
-     * image is in, as Filament reads it back on a later frame.
+     * image is in, as Filament reads it back on a later frame. Call it from the main thread, like every Filament call.
      */
     suspend fun capture(): ImageBitmap? {
         val v = view ?: return null
