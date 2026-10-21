@@ -8,6 +8,19 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 
 class ColorGradingTest : FilamentTestFixture() {
+    /** LOW quality is a 16³ INTEGER LUT: RGBA, UINT_2_10_10_10_REV, 4 bytes per texel (ColorGrading.cpp); an adjustment keeps it 3D. */
+    @Test
+    fun exportLutHandsOverTheGeneratedLut() {
+        var exported: List<Any>? = null
+        val grading = ColorGrading.Builder()
+            .quality(ColorGrading.QualityLevel.LOW)
+            .saturation(0.5f)
+            .exportLut { data, format, type, width, height, depth -> exported = listOf(data.size, format, type, width, height, depth) }
+            .build(engine)
+        engine.destroy(grading)
+        assertEquals(listOf(16 * 16 * 16 * 4, Texture.Format.RGBA, Texture.Type.UINT_2_10_10_10_REV, 16, 16, 16), exported)
+    }
+
     /** A consumer's grade: built with every option, attached to a view, rendered, swapped for a custom LUT. */
     @Test
     fun gradesApplyToAViewThatKeepsRendering() {

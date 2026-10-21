@@ -45,6 +45,17 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     /** [type] as a parameter: [CBridge.convert] turns the C argument into C++'s. */
     fun param(type: CppType) = of(type, result = false)
 
+    /**
+     * [type] as the value a field setter stores. The field keeps it past the call, so a C string it would only borrow
+     * is interned (`Bridge.hpp`'s `intern`); any other borrowed pointer can't be kept.
+     */
+    fun fieldParam(type: CppType): CBridge {
+        val param = param(type)
+        if (!borrowsPointer(type)) return param
+        if (shape(param.c).let { it.base != "char" || it.indirection != listOf("*") }) throw Unsupported("${type.spelling}: the struct would keep the caller's pointer")
+        return CBridge("const char*", param.convert, assign = { field, v -> "$field = $v ? decltype($field)($h::intern($v)) : decltype($field)();" })
+    }
+
     /** [type] as a return value: [CBridge.convert] turns C++'s result into C's. [lvalue]: it outlives the call (a field). */
     fun result(type: CppType, lvalue: Boolean = false) = of(type, result = true, lvalue)
 

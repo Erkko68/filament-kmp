@@ -189,8 +189,7 @@ internal class CApiWriter(
             return
         }
         if (setter !in functionNames) emit(setter, cpp, section) {
-            if (bridges.borrowsPointer(field.type)) throw Unsupported("${field.type.spelling}: the struct would keep the caller's pointer")
-            val param = bridges.param(field.type)
+            val param = bridges.fieldParam(field.type)
             "void $setter(${cParams("$self* self", listOf("value" to param))})" to param.assign("$h::cpp(self)->${field.name}", "value")
         }
     }

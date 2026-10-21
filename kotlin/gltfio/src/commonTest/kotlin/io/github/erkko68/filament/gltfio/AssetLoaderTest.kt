@@ -35,6 +35,17 @@ class AssetLoaderTest : GltfioTestFixture() {
         assertTrue(alive)
     }
 
+    /** Duck's root and camera nodes have no name of their own, so they take the default ("<unknown>" without one, AssetLoader.cpp). */
+    @Test
+    fun anonymousNodesTakeTheDefaultNodeName() {
+        val named = AssetLoader.create(AssetConfiguration(engine, provider, defaultNodeName = "anonymous"))
+        val asset = named.createAsset(TestGlb.getDuckGlbBytes())!!
+        val found = asset.getEntitiesByName("anonymous", IntArray(4)) to asset.getEntitiesByName("<unknown>", IntArray(4))
+        named.destroyAsset(asset)
+        AssetLoader.destroy(named)
+        assertEquals(2 to 0, found)
+    }
+
     /** Each instance is its own entity tree with the same shape; one more can join until the source data goes. */
     @Test
     fun instancesAreSeparateCopiesOfTheAsset() {

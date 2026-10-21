@@ -20,11 +20,13 @@ public final class io/github/erkko68/filament/gltfio/Animator {
 }
 
 public final class io/github/erkko68/filament/gltfio/AssetConfiguration {
-	public fun <init> (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/EntityManager;)V
-	public synthetic fun <init> (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/EntityManager;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/EntityManager;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/EntityManager;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDefaultNodeName ()Ljava/lang/String;
 	public final fun getEngine ()Lio/github/erkko68/filament/Engine;
 	public final fun getEntities ()Lio/github/erkko68/filament/EntityManager;
 	public final fun getMaterials ()Lio/github/erkko68/filament/gltfio/MaterialProvider;
+	public final fun setDefaultNodeName (Ljava/lang/String;)V
 	public final fun setEngine (Lio/github/erkko68/filament/Engine;)V
 	public final fun setEntities (Lio/github/erkko68/filament/EntityManager;)V
 	public final fun setMaterials (Lio/github/erkko68/filament/gltfio/MaterialProvider;)V

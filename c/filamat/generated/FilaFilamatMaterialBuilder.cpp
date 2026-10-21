@@ -48,6 +48,10 @@ const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMateria
     return (fila::cpp(self)->name).data();
 }
 
+void FilaFilamatMaterialBuilderAttribute_setName(FilaFilamatMaterialBuilderAttribute* self, const char* value) {
+    fila::cpp(self)->name = value ? decltype(fila::cpp(self)->name)(fila::intern(value)) : decltype(fila::cpp(self)->name)();
+}
+
 FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self) {
     return static_cast<FilaUniformType>(fila::cpp(self)->type);
 }

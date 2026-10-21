@@ -118,6 +118,30 @@ class ManipulatorTest : UtilsTestFixture() {
         assertNear(floatArrayOf(0f, 0f, 0f), hit, 1e-2f)
     }
 
+    /** A raycast callback's hit lands at `eye + dir * t` (Manipulator::raycast); a miss falls back to the ground plane. */
+    @Test
+    fun theRaycastCallbackReplacesTheGroundPlane() {
+        var origin = FloatArray(3)
+        var direction = FloatArray(3)
+        var distance: Float? = 4f
+        Manipulator.Builder()
+            .viewport(800, 600)
+            .orbitHomePosition(0f, 0f, 10f)
+            .groundPlane(0f, 0f, 1f, 0f)
+            .raycastCallback { o, d -> origin = o; direction = d; distance }
+            .build(Mode.ORBIT)
+            .use { m ->
+                val hit = FloatArray(3)
+                assertTrue(m.raycast(400, 300, hit))
+                assertNear(floatArrayOf(0f, 0f, 10f), origin)
+                assertNear(FloatArray(3) { origin[it] + direction[it] * 4f }, hit)
+
+                distance = null
+                assertTrue(m.raycast(400, 300, hit))
+                assertNear(floatArrayOf(0f, 0f, 0f), hit, 1e-2f)
+            }
+    }
+
     /** Orbit bookmarks interpolate theta linearly; their duration only measures zoom and pan (Van Wijk), not turning. */
     @Test
     fun bookmarksRestoreAndInterpolatePoses() = orbit().use { m ->

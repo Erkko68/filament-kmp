@@ -15,6 +15,7 @@ import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.asStableRef
 import kotlinx.cinterop.pin
+import kotlinx.cinterop.readBytes
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toCPointer
 import kotlinx.cinterop.toKString
@@ -76,6 +77,9 @@ internal actual fun platformUpload(data: ByteArray, size: Int, onRelease: (() ->
 }
 
 actual fun stringFromInterop(ptr: NativePointer): String? = ptr.toCPointer<ByteVar>()?.toKString()
+
+actual fun readBytes(ptr: NativePointer, count: Int): ByteArray =
+    if (count == 0) ByteArray(0) else ptr.toCPointer<ByteVar>()!!.readBytes(count)
 
 actual fun readInts(ptr: NativePointer, count: Int): IntArray =
     if (count == 0) IntArray(0) else ptr.toCPointer<IntVar>()!!.let { p -> IntArray(count) { p[it] } }

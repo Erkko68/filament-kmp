@@ -15,6 +15,7 @@
 {"name":"FilaFilamatMaterialBuilderAttribute_getAttributeName","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getDefineName","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getName","returns":"ptr","params":[["self","ptr"]]},
+{"name":"FilaFilamatMaterialBuilderAttribute_setName","returns":"void","params":[["self","ptr"],["value","ptr"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getType","returns":"i32","params":[["self","ptr"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_setType","returns":"void","params":[["self","ptr"],["value","i32"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getLocation","returns":"i32","params":[["self","ptr"]]},
@@ -287,6 +288,11 @@
 {"name":"FilaKtxreaderKtx2Reader_load","returns":"ptr","params":[["self","ptr"],["data","ptr"],["size","i32"],["transfer","i32"]]},
 {"name":"FilaKtxreaderKtx2Reader_asyncCreate","returns":"ptr","params":[["self","ptr"],["data","ptr"],["size","i32"],["transfer","i32"]]},
 {"name":"FilaKtxreaderKtx2Reader_asyncDestroy","returns":"void","params":[["self","ptr"],["async","ptr"]]}
+],
+"filament-utils/manual/FilaCamutilsManipulatorManual.h": [
+{"name":"FilaCamutilsManipulatorBuilder_raycastCallback","returns":"ptr","params":[["self","ptr"],["callback","ptr"],["callbackUser","ptr"]]},
+{"name":"FilaCamutilsRaycast_destroy","returns":"void","params":[["raycast","ptr"]]},
+{"name":"FilaCamutilsRay_hit","returns":"void","params":[["ray","ptr"],["t","f32"]]}
 ],
 "filament-utils/manual/FilaGeometryTangentSpaceMeshManual.h": [
 {"name":"FilaGeometryTangentSpaceMeshBuilder_aux_float2","returns":"ptr","params":[["self","ptr"],["attribute","i32"],["data","ptr"],["stride","i32"]]},
@@ -1994,6 +2000,10 @@
 {"name":"FilaVsmShadowOptions_getLightBleedReduction","returns":"f32","params":[["self","ptr"]]},
 {"name":"FilaVsmShadowOptions_setLightBleedReduction","returns":"void","params":[["self","ptr"],["value","f32"]]}
 ],
+"filament/manual/FilaColorGradingManual.h": [
+{"name":"FilaColorGradingBuilder_exportLut","returns":"void","params":[["self","ptr"],["callback","ptr"],["callbackUser","ptr"]]},
+{"name":"FilaColorGradingLut_getData","returns":"ptr","params":[["lut","ptr"],["outInfo","ptr"]]}
+],
 "filament/manual/FilaFrameHistoryStreamManual.h": [
 {"name":"FilaFrameHistoryStream_getNewFrames","returns":"i32","params":[["self","ptr"],["out","ptr"],["missingBefore","ptr"],["outCapacity","i32"]]}
 ],
@@ -2002,6 +2012,9 @@
 ],
 "filament/manual/FilaMaterialManual.h": [
 {"name":"FilaMaterial_getParameters","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]}
+],
+"filament/manual/FilaRenderableManagerManual.h": [
+{"name":"FilaRenderableManagerBuilder_boneIndicesAndWeights_FixedCapacityVector","returns":"ptr","params":[["self","ptr"],["primitiveIndex","i32"],["pairs","ptr"],["pairCounts","ptr"],["vertexCount","i32"]]}
 ],
 "filament/manual/FilaSceneManual.h": [
 {"name":"FilaScene_forEach","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]}
@@ -2039,7 +2052,8 @@
 {"name":"FilaGltfioAssetConfiguration_setMaterials","returns":"void","params":[["self","ptr"],["value","ptr"]]},
 {"name":"FilaGltfioAssetConfiguration_getEntities","returns":"ptr","params":[["self","ptr"]]},
 {"name":"FilaGltfioAssetConfiguration_setEntities","returns":"void","params":[["self","ptr"],["value","ptr"]]},
-{"name":"FilaGltfioAssetConfiguration_getDefaultNodeName","returns":"ptr","params":[["self","ptr"]]}
+{"name":"FilaGltfioAssetConfiguration_getDefaultNodeName","returns":"ptr","params":[["self","ptr"]]},
+{"name":"FilaGltfioAssetConfiguration_setDefaultNodeName","returns":"void","params":[["self","ptr"],["value","ptr"]]}
 ],
 "gltfio/generated/FilaGltfioAssetLoader.h": [
 {"name":"FilaGltfioAssetLoader_create","returns":"ptr","params":[["config","ptr"]]},

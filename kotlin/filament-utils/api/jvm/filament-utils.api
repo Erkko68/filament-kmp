@@ -1233,6 +1233,7 @@ public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public final fun orbitHomePosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun orbitSpeed (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun panning (Z)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun raycastCallback (Lkotlin/jvm/functions/Function2;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun targetPosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun upVector (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun viewport (II)Lio/github/erkko68/filament/utils/Manipulator$Builder;

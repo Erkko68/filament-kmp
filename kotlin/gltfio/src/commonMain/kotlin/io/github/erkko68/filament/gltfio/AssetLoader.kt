@@ -13,11 +13,13 @@ import io.github.erkko68.filament.interop.*
  * @property engine Filament Engine to use for creating buffers and textures.
  * @property materials Supplies the assets' materials.
  * @property entities Optional EntityManager override (the engine's singleton when null).
+ * @property defaultNodeName Optional name for anonymous nodes, as `getFirstEntityByName` finds them.
  */
 class AssetConfiguration(
     var engine: Engine,
     var materials: MaterialProvider,
     var entities: EntityManager? = null,
+    var defaultNodeName: String? = null,
 )
 
 /**
@@ -53,6 +55,7 @@ class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Na
                 FilaGltfioAssetConfiguration_setEngine(c, config.engine.nativeObject)
                 FilaGltfioAssetConfiguration_setMaterials(c, config.materials.nativeObject)
                 FilaGltfioAssetConfiguration_setEntities(c, config.entities?.nativeObject ?: NullPointer)
+                config.defaultNodeName.useCString { FilaGltfioAssetConfiguration_setDefaultNodeName(c, it) }
                 return AssetLoader(FilaGltfioAssetLoader_create(c))
             } finally {
                 FilaGltfioAssetConfiguration_destroy(c)

@@ -29,7 +29,7 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_saturation(FilaColorGradingBuil
 FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, const FilaFloat3* shadowGamma, const FilaFloat3* midPoint, const FilaFloat3* highlightScale);
 FilaColorGradingBuilder* FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* self, const FilaFloat3* data, uint32_t dataCount, uint32_t dimension);
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace);
-// TODO(handwritten) FilaColorGradingBuilder_exportLut: Builder & filament::ColorGrading::Builder::exportLut(ExportCallback _Nullable callback, void * _Nullable user)
+// handwritten in manual/ FilaColorGradingBuilder_exportLut: Builder & filament::ColorGrading::Builder::exportLut(ExportCallback _Nullable callback, void * _Nullable user)
 //     void (*)(const void * _Nonnull, size_t, backend::PixelDataFormat, backend::PixelDataType, uint32_t, uint32_t, uint32_t, void * _Nullable): takes C++ types
 FilaColorGradingBuilder* FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* self, bool fastMath);
 FilaColorGrading* FilaColorGradingBuilder_build(const FilaColorGradingBuilder* self, FilaEngine* engine);

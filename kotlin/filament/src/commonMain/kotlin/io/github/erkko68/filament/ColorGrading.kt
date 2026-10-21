@@ -328,6 +328,19 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
             return this
         }
 
+        private var lutExport: ((data: ByteArray, format: Texture.Format, type: Texture.Type, width: Int, height: Int, depth: Int) -> Unit)? = null
+
+        /**
+         * Receives a copy of the generated 3D LUT during [build], for saving or inspection; null (the default) for none.
+         *
+         * @param callback Gets the LUT's bytes, pixel format and type, and its width, height and depth
+         * @return This Builder, for chaining calls
+         */
+        fun exportLut(callback: ((data: ByteArray, format: Texture.Format, type: Texture.Type, width: Int, height: Int, depth: Int) -> Unit)?): Builder {
+            lutExport = callback
+            return this
+        }
+
         /**
          * Creates the ColorGrading object.
          *
@@ -335,6 +348,15 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return The newly created ColorGrading
          */
         fun build(engine: Engine): ColorGrading {
+            // Set here, not in exportLut: C frees the binding when build calls it.
+            lutExport?.let { callback ->
+                val user = Callbacks.register(once = true) { lut ->
+                    val info = IntArray(6)
+                    val data = info.usePinned(6) { FilaColorGradingLut_getData(lut, it) }
+                    callback(readBytes(data, info[0]), Texture.Format.entries[info[1]], Texture.Type.entries[info[2]], info[3], info[4], info[5])
+                }
+                FilaColorGradingBuilder_exportLut(nativeHandle, Callbacks.argUser, user)
+            }
             val handle = FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle)
             FilaColorGradingBuilder_destroy(nativeHandle)
             return ColorGrading(handle)
