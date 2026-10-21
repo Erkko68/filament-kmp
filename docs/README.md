@@ -40,6 +40,7 @@ docs/
 - **[Repository Structure](internals/repo-structure.md)** — how the C API, the Kotlin modules, the per-platform runtimes (`jni/`, `desktop/`, `android/`, `web/`) and the prebuilts fit together.
 - **[The Generated C API](internals/c-api.md)** — how the `Fila*` C API is generated from Filament's C++ headers: scope, type mappings, hand-written leftovers, `apiGaps`.
 - **[Native Bindings](internals/bindings.md)** — how the common Kotlin API calls the C API on each platform, and the rules at that boundary.
+- **[Linux GPU Frame Sharing](internals/linux-gpu-sharing.md)** — why the Linux GPU-to-GPU target moves from GLX to a Vulkan engine (parked until a Linux machine).
 - **[Upgrading the Filament Version](internals/upgrading-filament.md)** — bumping `filaVersion`: scoping the diff, refreshing prebuilts, regenerating, adapting the Kotlin API, verifying.
 - **Testing** — [strategy](internals/testing/strategy.md) (NOOP first, pixel tests where they matter), [test support](internals/testing/test-support.md) (`TestEnv`, `RealBackendFixture`, `FrameProbe`, `@IgnoreJs`), [`filament-compose` tests](internals/testing/compose-tests.md).
 - **[Automation & Scripts](../scripts/README.md)** — maintenance scripts for upgrade diffs, materials and test runs.
