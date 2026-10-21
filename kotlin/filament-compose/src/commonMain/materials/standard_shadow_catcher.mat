@@ -1,0 +1,26 @@
+// filament-compose built-in: an invisible surface that shows only the directional-light shadows falling on it
+// (a ground for a floating model, an AR floor). Drives `rememberShadowCatcherMaterialInstance`. Parameters:
+//   strength — darkness of a full shadow, 0 = none, 1 = black.
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o standard_shadow_catcher.filamat standard_shadow_catcher.mat
+
+material {
+    name : StandardShadowCatcher,
+    shadingModel : unlit,
+    // The colour is scaled by the shadow (1 − light visibility): unshadowed, the surface is clear.
+    shadowMultiplier : true,
+    blending : transparent,
+    // Same trim as standard_lit: keep `vsm` (VSM/DPCF/PCSS soft shadows select it).
+    variantFilter : [ skinning, ssr, stereo ],
+    parameters : [
+        { type : float, name : strength }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = vec4(0.0, 0.0, 0.0, materialParams.strength);
+    }
+}

@@ -1,7 +1,9 @@
 package io.github.erkko68.filament.compose
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
@@ -20,15 +22,21 @@ import io.github.erkko68.filament.compose.scene.LensScaling
 import io.github.erkko68.filament.compose.scene.LensShift
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
+import io.github.erkko68.filament.compose.scene.Viewpoint
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/** Keyboard, wheel and pinch input of the camera controllers, and their bookmarks. */
+/** Keyboard, wheel and pinch input of the camera controllers, and how they meet camera moves. */
 @OptIn(ExperimentalTestApi::class)
 class CameraInputTest : ComposeTestFixture() {
     private fun cameraAt(eye: Position, target: Position) = CameraState(
@@ -115,39 +123,114 @@ class CameraInputTest : ComposeTestFixture() {
         }
     }
 
-    /** A bookmark brings the pose back, and home is where the controller started. */
+    // An orbit view with a coroutine scope for camera moves; the clock only moves when a test advances it.
+    private fun ComposeUiTest.orbitView(cam: CameraState): CoroutineScope {
+        lateinit var scope: CoroutineScope
+        setContent {
+            scope = rememberCoroutineScope()
+            Box(Modifier.testTag("view").size(400.dp).orbitGestures(rememberOrbitCameraController(cam)))
+        }
+        waitForIdle()
+        mainClock.autoAdvance = false
+        return scope
+    }
+
+    private fun assertNear(expected: Position, actual: Position, what: String) =
+        assertEquals(0f, (expected - actual).length, 1e-2f, "$what: expected $expected, got $actual")
+
+    /** animateTo lands on the viewpoint, and a drag then orbits on from there instead of snapping back. */
     @Test
-    fun bookmarksRestoreThePose() {
-        val cam = cameraAt(Position(1f, 2f, 3f), Position(1f, 2f, 2f))
+    fun aDragCarriesOnFromAMove() {
+        val cam = cameraAt(Position(0f, 0f, 10f), Position(0f, 0f, 0f))
         withFilamentScene(engine, scene) { _ ->
-            var flight: FlightCameraController? = null
-            setContent {
-                flight = rememberFlightCameraController(cam, moveDamping = 0f).also {
-                    Box(Modifier.testTag("view").size(400.dp).flightGestures(it))
+            val scope = orbitView(cam)
+            val side = Viewpoint(Position(10f, 0f, 0f), Position(0f))
+            runOnUiThread { scope.launch { cam.animateTo(side, tween(500)) } }
+            frames(40)
+            assertEquals(side, cam.viewpoint)
+            onNodeWithTag("view").performMouseInput {
+                moveTo(Offset(200f, 200f)); press(); moveTo(Offset(250f, 200f)); moveTo(Offset(300f, 200f)); release()
+            }
+            frames(1)
+            // OrbitManipulator::grabUpdate turns theta by (grab x - x) × orbitSpeed: 100 px right takes π/2 (+X) to π/2 - 1.
+            assertNear(Position(10f * cos(1f), 0f, 10f * sin(1f)), cam.eye, "orbited from the move's end")
+        }
+    }
+
+    /** A gesture stops a running move where it is, and the move's call ends with a CancellationException. */
+    @Test
+    fun aGestureStopsAMove() {
+        val cam = cameraAt(Position(0f, 0f, 10f), Position(0f, 0f, 0f))
+        val end = Position(10f, 0f, 0f)
+        withFilamentScene(engine, scene) { _ ->
+            val scope = orbitView(cam)
+            var stopped = false
+            runOnUiThread {
+                scope.launch {
+                    try { cam.animateTo(Viewpoint(end, Position(0f)), tween(1000)) } catch (e: CancellationException) { stopped = true; throw e }
                 }
             }
+            frames(10)
+            onNodeWithTag("view").performMouseInput { moveTo(Offset(200f, 200f)); scroll(-1f) }
+            frames(1)
+            val left = cam.eye
+            frames(60)
+            assertTrue(stopped, "the move should be cancelled")
+            assertEquals(left, cam.eye, "the camera stays where the gesture left it")
+            assertTrue((left - end).length > 1f, "it stopped short of the end: $left")
+        }
+    }
+
+    /** Setting the viewpoint stops a running move too. */
+    @Test
+    fun settingTheViewpointStopsAMove() {
+        val cam = cameraAt(Position(0f, 0f, 10f), Position(0f, 0f, 0f))
+        val set = Viewpoint(Position(0f, 3f, 3f), Position(0f))
+        withFilamentScene(engine, scene) { _ ->
+            val scope = orbitView(cam)
+            runOnUiThread { scope.launch { cam.animateTo(Viewpoint(Position(10f, 0f, 0f), Position(0f)), tween(1000)) } }
+            frames(10)
+            runOnUiThread { cam.viewpoint = set }
+            frames(60)
+            assertEquals(set, cam.viewpoint)
+        }
+    }
+
+    /** Setting the eye stops a running move, as setting the viewpoint does. */
+    @Test
+    fun settingTheEyeStopsAMove() {
+        val cam = cameraAt(Position(0f, 0f, 10f), Position(0f, 0f, 0f))
+        val set = Position(0f, 3f, 3f)
+        withFilamentScene(engine, scene) { _ ->
+            val scope = orbitView(cam)
+            runOnUiThread { scope.launch { cam.animateTo(Viewpoint(Position(10f, 0f, 0f), Position(0f)), tween(1000)) } }
+            frames(10)
+            runOnUiThread { cam.eye = set }
+            frames(60)
+            assertEquals(set, cam.eye)
+        }
+    }
+
+    /** Flight sits out a camera move and flies on from where it lands, facing the move's target. */
+    @Test
+    fun flightFliesOnFromAMove() {
+        val cam = cameraAt(Position(0f, 0f, 0f), Position(0f, 0f, -1f))
+        val side = Viewpoint(Position(5f, 0f, 0f), Position(0f))
+        withFilamentScene(engine, scene) { _ ->
+            lateinit var scope: CoroutineScope
+            setContent {
+                scope = rememberCoroutineScope()
+                Box(Modifier.testTag("view").size(400.dp).flightGestures(rememberFlightCameraController(cam, moveDamping = 0f)))
+            }
             waitForIdle()
-            val controller = flight!!
-            fun fly(key: Key) {
-                onNodeWithTag("view").performKeyInput { keyDown(key) }
-                frames(10)
-                onNodeWithTag("view").performKeyInput { keyUp(key) }
-                frames(2)
-            }
-            fun assertAt(expected: Position, what: String) {
-                for ((e, a) in listOf(expected.x to cam.eye.x, expected.y to cam.eye.y, expected.z to cam.eye.z)) assertEquals(e, a, 1e-3f, what)
-            }
-            val home = cam.eye
-            fly(Key.W)
-            val marked = cam.eye
-            controller.saveBookmark().use { bookmark ->
-                fly(Key.D)
-                assertTrue(abs(cam.eye.x - marked.x) > 0.01f)
-                runOnUiThread { controller.jumpToBookmark(bookmark) }
-                assertAt(marked, "jumpToBookmark")
-            }
-            runOnUiThread { controller.resetToHome() }
-            assertAt(home, "resetToHome")
+            mainClock.autoAdvance = false
+            runOnUiThread { scope.launch { cam.animateTo(side, tween(500)) } }
+            frames(40)
+            assertNear(side.eye, cam.eye, "landed on the move's eye")
+            onNodeWithTag("view").performKeyInput { keyDown(Key.W) }
+            frames(10)
+            onNodeWithTag("view").performKeyInput { keyUp(Key.W) }
+            assertTrue(cam.eye.x < 5f && abs(cam.eye.y) < 1e-3f && abs(cam.eye.z) < 1e-3f, "W should fly towards the origin, got ${cam.eye}")
         }
     }
 

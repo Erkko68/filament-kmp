@@ -99,6 +99,7 @@ class StandardMaterialLifecycleTest : ComposeTestFixture() {
             Triple("Textured", { rememberTexturedMaterialInstance(texture, metallic = 0.75f) }, "metallic" to 0.75f),
             Triple("Emissive", { rememberEmissiveMaterialInstance(red, intensity = 4f) }, "intensity" to 4f),
             Triple("TransparentColor", { rememberTransparentColorMaterialInstance(red, alpha = 0.3f) }, "alpha" to 0.3f),
+            Triple("ShadowCatcher", { rememberShadowCatcherMaterialInstance(strength = 0.4f) }, "strength" to 0.4f),
         )
 
         withFilamentScene(engine, scene) { setContent ->

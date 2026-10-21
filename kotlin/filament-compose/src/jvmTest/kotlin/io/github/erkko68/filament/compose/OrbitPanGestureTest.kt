@@ -71,13 +71,15 @@ class OrbitPanGestureTest : ComposeTestFixture() {
         return cam
     }
 
-    /** Right-drag translates the camera: eye and target move together, distance to target is kept. */
+    /** Right-drag translates the camera: eye and target (the pivot) move together, distance to target is kept. */
     @Test
     fun secondaryDragPans() {
         val cam = drag(MouseButton.Secondary)
         assertTrue(cam.eye.x != 0f || cam.eye.y != 0f, "right-drag should move the camera, got ${cam.eye}")
         assertTrue(abs(cam.eye.x - cam.target.x) < 1e-3f && abs(cam.eye.y - cam.target.y) < 1e-3f,
             "panning moves eye and target together, got eye=${cam.eye} target=${cam.target}")
+        // The pan raycasts the far plane, so it slides across the view: the pivot stays 10 ahead, in its z = 0 plane.
+        assertTrue(abs(cam.target.z) < 1e-3f && abs(cam.eye.z - 10f) < 1e-3f, "the target is the moved pivot, got ${cam.target}")
     }
 
     /**

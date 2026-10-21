@@ -174,8 +174,8 @@ from Filament: a call with no assertion only proves the symbol links. See the
 
 ### 6b. Regenerate the embedded standard materials
 
-`filament-compose` ships five precompiled built-in materials (`StandardMaterial.Lit`/`Unlit`/
-`Textured`/`Emissive`/`Transparent`) as embedded `.filamat` blobs — their `.mat` sources and compiled outputs live
+`filament-compose` ships six precompiled built-in materials (`StandardMaterial.Lit`/`Unlit`/
+`Textured`/`Emissive`/`Transparent`/`ShadowCatcher`) as embedded `.filamat` blobs — their `.mat` sources and compiled outputs live
 in [`kotlin/filament-compose/src/commonMain/materials/`](../../kotlin/filament-compose/src/commonMain/materials/),
 and the `generateEmbeddedMaterials` Gradle task base64-encodes them into a generated Kotlin object.
 

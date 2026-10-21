@@ -6,14 +6,21 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.IntSize
+import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.Renderer
+import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.compose.internal.imageBitmapOf
+import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Hoisted handle to a [FilamentView]'s live Filament objects. Create with
  * [rememberFilamentViewState], pass to a [FilamentView], and use it for imperative access —
- * picking, reading the viewport, or reaching the raw [View]/[Renderer] for advanced work.
+ * picking, [capture]s, reading the viewport, or reaching the raw [View]/[Renderer] for advanced work.
  *
  * [view] and [renderer] are null until the state is attached to an on-screen [FilamentView],
  * and become null again when that view leaves composition.
@@ -53,34 +60,87 @@ class FilamentViewState internal constructor() {
         // The surface can lag the layout (desktop debounces a resize) and is stretched over it meanwhile.
         val px = x * viewport.width / layout.width
         val py = y * viewport.height / layout.height
-        val attachment = attachments
-        pendingPicks++
+        val answered = readback()
         v.pick(px, viewport.height - 1 - py) {
-            // A view destroyed since has answered its queries; they aren't the next view's.
-            if (attachment == attachments) pendingPicks--
+            answered()
             onResult(it)
         }
     }
 
-    /** Queries sent to the attached view and not answered yet. */
-    internal var pendingPicks by mutableIntStateOf(0)
+    /**
+     * The view as it looks now, at its size in pixels: its scene rendered once more off-screen and read back, for
+     * saving or sharing. Null while not attached. A view paused with `renderingEnabled = false` renders until the
+     * image is in, as Filament reads it back on a later frame. Call it from the main thread, like every Filament call.
+     */
+    suspend fun capture(): ImageBitmap? {
+        val v = view ?: return null
+        val r = renderer ?: return null
+        val e = engine ?: return null
+        val width = v.viewport.width
+        val height = v.viewport.height
+        if (width <= 0 || height <= 0) return null
+        val color = Texture.Builder().width(width).height(height).levels(1).sampler(Texture.Sampler.SAMPLER_2D)
+            .format(Texture.InternalFormat.RGBA8).usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.BLIT_SRC).build(e)
+        val depth = Texture.Builder().width(width).height(height).levels(1).sampler(Texture.Sampler.SAMPLER_2D)
+            .format(Texture.InternalFormat.DEPTH24).usage(Texture.Usage.DEPTH_ATTACHMENT).build(e)
+        val target = RenderTarget.Builder().texture(RenderTarget.AttachmentPoint.COLOR, color)
+            .texture(RenderTarget.AttachmentPoint.DEPTH, depth).build(e)
+        val pixels = ByteArray(width * height * 4)
+        // OpenGL reads rows bottom-up, the other backends top-down.
+        val bottomUp = e.backend == Engine.Backend.OPENGL
+        val answered = readback()
+        val previous = v.renderTarget
+        v.renderTarget = target
+        r.renderStandaloneView(v)
+        v.renderTarget = previous
+        return suspendCancellableCoroutine { done ->
+            // Freed by the callback, not on cancellation: the readback still writes into them.
+            r.readPixels(target, 0, 0, width, height, Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) {
+                e.destroy(target)
+                e.destroy(color)
+                e.destroy(depth)
+                answered()
+                if (done.isActive) done.resume(imageBitmapOf(width, height, if (bottomUp) pixels.flippedRows(width * 4) else pixels))
+            })
+        }
+    }
+
+    /** Picks and captures the attached view hasn't answered yet: it keeps rendering until they're in. */
+    internal var pendingReadbacks by mutableIntStateOf(0)
         private set
     private var attachments = 0
+
+    /** Counts a readback in; call the result when it's answered. */
+    private fun readback(): () -> Unit {
+        val attachment = attachments
+        pendingReadbacks++
+        // A view destroyed since has answered its readbacks; they aren't the next view's.
+        return { if (attachment == attachments) pendingReadbacks-- }
+    }
+
+    private var engine: Engine? = null
 
     /** The view's size in the layout, in pixels. */
     internal var layoutSize = IntSize.Zero
 
-    internal fun attach(view: View, renderer: Renderer) {
+    internal fun attach(engine: Engine, view: View, renderer: Renderer) {
+        this.engine = engine
         this.view = view
         this.renderer = renderer
     }
 
     internal fun detach() {
+        this.engine = null
         this.view = null
         this.renderer = null
         attachments++
-        pendingPicks = 0
+        pendingReadbacks = 0
     }
+}
+
+private fun ByteArray.flippedRows(rowBytes: Int): ByteArray {
+    val rows = size / rowBytes
+    return ByteArray(size).also { out -> for (row in 0 until rows) copyInto(out, (rows - 1 - row) * rowBytes, row * rowBytes, (row + 1) * rowBytes) }
 }
 
 /** Creates and remembers a [FilamentViewState]. */

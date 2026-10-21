@@ -16,6 +16,7 @@ import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.gltfio.FilamentAsset
+import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.gltfio.FilamentInstance
 
 /**
@@ -95,6 +96,8 @@ private class GltfInstanceScopeImpl(
  *   default) keeps what the asset authored — matching the primitives' `castShadows` toggle.
  * @param receiveShadows Overrides shadow receiving for every renderable in the instance; null
  *   (the default) keeps what the asset authored.
+ * @param materialVariant The `KHR_materials_variants` variant to draw with, by name (see [GltfAsset.materialVariants]);
+ *   null (the default) keeps the authored materials. A name the asset lacks is ignored with a warning.
  * @param onCreate Called once when the instance is first added to the scene. Use for one-time
  *   setup such as swapping materials or finding entities by name.
  * @param onUpdate Called on every **recomposition** (not every frame — a static scene never
@@ -116,6 +119,7 @@ fun FilamentSceneScope.GltfInstance(
     visible: Boolean = true,
     castShadows: Boolean? = null,
     receiveShadows: Boolean? = null,
+    materialVariant: String? = null,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
     onTap: (() -> Unit)? = null,
@@ -232,6 +236,42 @@ fun FilamentSceneScope.GltfInstance(
                 val (cast, receive) = authoredShadows.getOrPut(entity) { rm.isShadowCaster(ri) to rm.isShadowReceiver(ri) }
                 rm.setCastShadows(ri, castShadows ?: cast)
                 rm.setReceiveShadows(ri, receiveShadows ?: receive)
+            }
+        }
+        onDispose { }
+    }
+
+    // gltfio only sets the primitives a variant maps, so the last variant's swaps go back first: unmapped primitives
+    // draw with their default material, as the spec asks. A primitive the app has set since keeps the app's material.
+    val variantSwaps = remember(instance) { HashMap<Pair<Int, Int>, Pair<MaterialInstance, MaterialInstance>>() }
+    DisposableEffect(instance, materialVariant) {
+        val rm = engine.renderableManager
+        fun materials() = buildMap {
+            for (entity in instance.entities) {
+                if (!rm.hasComponent(entity)) continue
+                val ri = rm.getInstance(entity)
+                for (p in 0 until rm.getPrimitiveCount(ri)) rm.getMaterialInstanceAt(ri, p)?.let { put(entity to p, it) }
+            }
+        }
+        if (variantSwaps.isNotEmpty()) {
+            val now = materials()
+            for ((key, swap) in variantSwaps) {
+                val (before, set) = swap
+                if (now[key]?.nativeObject == set.nativeObject) rm.setMaterialInstanceAt(rm.getInstance(key.first), key.second, before)
+            }
+            variantSwaps.clear()
+        }
+        if (materialVariant != null) {
+            val index = asset.materialVariants.indexOf(materialVariant)
+            if (index >= 0) {
+                val before = materials()
+                instance.applyMaterialVariant(index)
+                for ((key, after) in materials()) {
+                    val old = before[key] ?: continue
+                    if (old.nativeObject != after.nativeObject) variantSwaps[key] = old to after
+                }
+            } else {
+                logWarn("GltfInstance: no material variant \"$materialVariant\" in ${asset.materialVariants}")
             }
         }
         onDispose { }

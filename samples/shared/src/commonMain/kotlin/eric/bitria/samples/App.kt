@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import eric.bitria.samples.scenes.AnimationScene
+import eric.bitria.samples.scenes.CameraTourScene
+import eric.bitria.samples.scenes.CaptureScene
 import eric.bitria.samples.scenes.DuckScene
 import eric.bitria.samples.scenes.HDREnvironmentScene
 import eric.bitria.samples.scenes.KTXEnvironmentScene
@@ -31,6 +33,8 @@ fun App() {
             Screen.Lighting   -> LightingScene(onBack = { screen = Screen.Home })
             Screen.Picking    -> PickingScene(onBack = { screen = Screen.Home })
             Screen.Labels     -> LabelsScene(onBack = { screen = Screen.Home })
+            Screen.CameraTour -> CameraTourScene(onBack = { screen = Screen.Home })
+            Screen.Capture    -> CaptureScene(onBack = { screen = Screen.Home })
             Screen.Solar      -> SolarScene(onBack = { screen = Screen.Home })
             Screen.Animation  -> AnimationScene(onBack = { screen = Screen.Home })
             Screen.SplitView  -> SplitViewScene(onBack = { screen = Screen.Home })

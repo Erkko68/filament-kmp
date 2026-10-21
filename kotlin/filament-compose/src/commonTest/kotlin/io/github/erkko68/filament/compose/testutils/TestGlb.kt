@@ -18,6 +18,9 @@ object TestGlb {
     /** Skinned, with three clips (Survey, Walk, Run): for cross-fades and blend trees. */
     fun getFoxGlbBytes(): ByteArray = EmbeddedGlb.Fox
 
+    /** One red triangle whose variants cross over: "red" maps it to the blue material, "blue" to the red one. */
+    fun getMaterialVariantsGlbBytes(): ByteArray = EmbeddedGlb.MaterialVariants
+
     /** One triangle whose POSITION accessor has no min/max, so gltfio computes no bounds for it. */
     fun getUnboundedTriangleGlbBytes(): ByteArray = EmbeddedGlb.UnboundedTriangle
 }

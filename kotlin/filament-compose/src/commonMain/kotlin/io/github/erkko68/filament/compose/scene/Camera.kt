@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.animate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -12,6 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.job
 import kotlin.math.roundToInt
 import io.github.erkko68.filament.Camera as FilamentCamera
 import io.github.erkko68.filament.utils.Float2
@@ -159,9 +164,25 @@ class CameraState internal constructor(
     initialShift: LensShift,
     initialScaling: LensScaling,
 ) {
-    var eye:        Position   by mutableStateOf(initialEye)
-    var target:     Position   by mutableStateOf(initialTarget)
-    var up:         Direction  by mutableStateOf(initialUp)
+    private var eyeState by mutableStateOf(initialEye)
+    private var targetState by mutableStateOf(initialTarget)
+    private var upState by mutableStateOf(initialUp)
+
+    /** Where the camera is. Setting it stops a running [animateTo]. */
+    var eye: Position
+        get() = eyeState
+        set(value) { stopMove(); eyeState = value }
+
+    /** The point the camera looks at. Setting it stops a running [animateTo]. */
+    var target: Position
+        get() = targetState
+        set(value) { stopMove(); targetState = value }
+
+    /** The camera's up direction. Setting it stops a running [animateTo]. */
+    var up: Direction
+        get() = upState
+        set(value) { stopMove(); upState = value }
+
     var projection: Projection by mutableStateOf(initialProjection)
     var exposure:   Exposure   by mutableStateOf(initialExposure)
 
@@ -175,6 +196,60 @@ class CameraState internal constructor(
 
     /** Per-axis projection scaling; [LensScaling.Identity] leaves the frustum as computed. */
     var scaling:    LensScaling by mutableStateOf(initialScaling)
+
+    /** [eye], [target] and [up] together. Setting it puts the camera there at once and stops a running [animateTo]. */
+    var viewpoint: Viewpoint
+        get() = Viewpoint(eye, target, up)
+        set(value) { stopMove(); place(value) }
+
+    /**
+     * The viewpoint that frames a sphere of [radius] around [center], seen [from] that direction (from [center]
+     * towards the eye; the camera's current one when null), just far enough to fit the view's current shape. An
+     * orthographic projection keeps its extents, so the eye sits at twice the radius. Before the view first lays
+     * out, the shape is taken as square.
+     */
+    fun fitting(center: Position, radius: Float, from: Direction? = null): Viewpoint {
+        val away = (from ?: (eye - target)).normalized().takeIf { it.length > 0f } ?: Direction.Back
+        return Viewpoint(center + away * (fittingDistance(projection, aspect, radius) ?: (2f * radius)), center, up)
+    }
+
+    /**
+     * Moves the camera to [viewpoint] over [animationSpec] (see [CameraTransitions]), along [path]. A gesture on the
+     * view, another `animateTo` or setting [viewpoint], [eye], [target] or [up] stops it where it is, and it then throws a
+     * `CancellationException`, as cancelling the calling coroutine does.
+     */
+    suspend fun animateTo(
+        viewpoint: Viewpoint,
+        animationSpec: AnimationSpec<Float> = CameraTransitions.Smooth,
+        path: CameraPath = CameraPath.Orbit,
+    ) {
+        val from = this.viewpoint
+        coroutineScope {
+            stopMove()
+            val job = coroutineContext.job
+            move = job
+            try {
+                animate(0f, 1f, animationSpec = animationSpec) { t, _ -> place(path.at(from, viewpoint, t)) }
+                place(viewpoint)
+            } finally {
+                if (move === job) move = null
+            }
+        }
+    }
+
+    // The running animateTo, if any. Main thread only, like the rest of the state's writes.
+    private var move: Job? = null
+
+    internal fun stopMove() { move?.cancel() }
+
+    internal val isMoving get() = move != null
+
+    // Writes the pose without stopping a move: for the move itself and the flight controller.
+    internal fun place(viewpoint: Viewpoint) {
+        eyeState = viewpoint.eye
+        targetState = viewpoint.target
+        upState = viewpoint.up
+    }
 
     internal var attachedCamera: FilamentCamera? = null
 
