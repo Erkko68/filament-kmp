@@ -4,10 +4,7 @@ All notable changes to this project are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-Since `0.2.0`: minor (`X.Y.0`) tracks upstream Filament feature releases and may change
-public API; patch (`X.Y.Z`) is bug fixes only; a major bump is reserved for maturity
-milestones and very large changes. See
-[README → Versioning & stability](README.md#versioning--stability).
+What a release may break: [README → Versioning & stability](README.md#versioning--stability).
 
 Each entry is one line; click the version link at the bottom for the full diff.
 
