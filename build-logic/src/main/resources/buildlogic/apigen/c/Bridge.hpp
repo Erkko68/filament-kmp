@@ -10,7 +10,10 @@
 #include <cstring>
 #include <iterator>
 #include <memory>
+#include <mutex>
 #include <optional>
+#include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -158,6 +161,15 @@ template<typename V, typename F>
 uint32_t copy(const V& items, uint32_t capacity, F store) {
     for (uint32_t i = 0; i < capacity && i < std::size(items); i++) store(items[i], i);
     return uint32_t(std::size(items));
+}
+
+// C's string kept for the process, once per distinct string, for a field that keeps the pointer (a name); null stays null.
+inline const char* intern(const char* s) {
+    if (!s) return nullptr;
+    static std::mutex lock;
+    static std::unordered_set<std::string> strings;
+    std::lock_guard<std::mutex> guard(lock);
+    return strings.emplace(s).first->c_str();
 }
 
 // C's nullable pointer as the std::optional the callee takes; convert(*p) makes its value.

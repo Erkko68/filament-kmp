@@ -29,7 +29,7 @@ FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightSpeedSteps(
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightPanSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y);
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMoveDamping(FilaCamutilsManipulatorBuilder* self, float damping);
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_groundPlane(FilaCamutilsManipulatorBuilder* self, float a, float b, float c, float d);
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_raycastCallback: Builder & filament::camutils::Manipulator::Builder::raycastCallback(RayCallback cb, void * userdata)
+// handwritten in manual/ FilaCamutilsManipulatorBuilder_raycastCallback: Builder & filament::camutils::Manipulator::Builder::raycastCallback(RayCallback cb, void * userdata)
 //     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_panning(FilaCamutilsManipulatorBuilder* self, bool enabled);
 FilaCamutilsManipulator* FilaCamutilsManipulatorBuilder_build(FilaCamutilsManipulatorBuilder* self, FilaCamutilsMode mode);

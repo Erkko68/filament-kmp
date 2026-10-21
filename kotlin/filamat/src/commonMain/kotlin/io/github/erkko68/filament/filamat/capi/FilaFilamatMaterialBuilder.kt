@@ -37,6 +37,9 @@ internal external fun FilaFilamatMaterialBuilderAttribute_getDefineName(self: Na
 @ExternalSymbolName("FilaFilamatMaterialBuilderAttribute_getName")
 internal external fun FilaFilamatMaterialBuilderAttribute_getName(self: NativePointer): NativePointer
 
+@ExternalSymbolName("FilaFilamatMaterialBuilderAttribute_setName")
+internal external fun FilaFilamatMaterialBuilderAttribute_setName(self: NativePointer, value: NativePointer)
+
 @ExternalSymbolName("FilaFilamatMaterialBuilderAttribute_getType")
 internal external fun FilaFilamatMaterialBuilderAttribute_getType(self: NativePointer): Int
 

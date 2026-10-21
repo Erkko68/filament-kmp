@@ -19,8 +19,7 @@ void FilaGltfioAssetConfiguration_setMaterials(FilaGltfioAssetConfiguration* sel
 FilaUtilsEntityManager* FilaGltfioAssetConfiguration_getEntities(const FilaGltfioAssetConfiguration* self);
 void FilaGltfioAssetConfiguration_setEntities(FilaGltfioAssetConfiguration* self, FilaUtilsEntityManager* value);
 char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfiguration* self);
-// TODO(handwritten) FilaGltfioAssetConfiguration_setDefaultNodeName: char * filament::gltfio::AssetConfiguration::defaultNodeName
-//     char *: the struct would keep the caller's pointer
+void FilaGltfioAssetConfiguration_setDefaultNodeName(FilaGltfioAssetConfiguration* self, const char* value);
 // skipped filament::gltfio::AssetConfiguration::ext: uses filament::gltfio::AssetConfigurationExtended
 
 

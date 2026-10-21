@@ -22,8 +22,7 @@ void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttri
 uint32_t FilaFilamatMaterialBuilderAttribute_getAttributeName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity);
 uint32_t FilaFilamatMaterialBuilderAttribute_getDefineName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity);
 const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMaterialBuilderAttribute* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderAttribute_setName: std::string_view filamat::MaterialBuilder::Attribute::name
-//     std::string_view: the struct would keep the caller's pointer
+void FilaFilamatMaterialBuilderAttribute_setName(FilaFilamatMaterialBuilderAttribute* self, const char* value);
 FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self);
 void FilaFilamatMaterialBuilderAttribute_setType(FilaFilamatMaterialBuilderAttribute* self, FilaUniformType value);
 FilaVertexAttribute FilaFilamatMaterialBuilderAttribute_getLocation(const FilaFilamatMaterialBuilderAttribute* self);

@@ -40,4 +40,8 @@ char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfi
     return fila::cpp(self)->defaultNodeName;
 }
 
+void FilaGltfioAssetConfiguration_setDefaultNodeName(FilaGltfioAssetConfiguration* self, const char* value) {
+    fila::cpp(self)->defaultNodeName = value ? decltype(fila::cpp(self)->defaultNodeName)(fila::intern(value)) : decltype(fila::cpp(self)->defaultNodeName)();
+}
+
 } // extern "C"
