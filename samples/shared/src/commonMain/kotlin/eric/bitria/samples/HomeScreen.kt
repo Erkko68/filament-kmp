@@ -24,6 +24,7 @@ private val ENTRIES = listOf(
     "Picking"    to Screen.Picking,
     "Labels"     to Screen.Labels,
     "Camera Tour" to Screen.CameraTour,
+    "Capture"    to Screen.Capture,
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
     "Split View" to Screen.SplitView,
