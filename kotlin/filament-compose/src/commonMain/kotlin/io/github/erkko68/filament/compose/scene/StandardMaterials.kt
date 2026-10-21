@@ -22,7 +22,7 @@ import io.github.erkko68.filament.compose.noFilamentEngine
  * You rarely name these directly — use the convenience instance helpers
  * ([rememberColorMaterialInstance], [rememberUnlitColorMaterialInstance],
  * [rememberTexturedMaterialInstance], [rememberEmissiveMaterialInstance],
- * [rememberTransparentColorMaterialInstance]) instead. Reach for
+ * [rememberTransparentColorMaterialInstance], [rememberShadowCatcherMaterialInstance]) instead. Reach for
  * [rememberStandardMaterial] only when you want the shared base [Material] to instantiate yourself.
  *
  * To go beyond these (cloth, subsurface, refraction, custom shading), author your own `.mat`,
@@ -46,6 +46,9 @@ enum class StandardMaterial {
 
     /** LIT PBR with alpha transparency: `baseColor`, `alpha`, `metallic`, `roughness`, `reflectance`. */
     Transparent,
+
+    /** UNLIT, clear except for the directional-light shadows falling on it: `strength`. */
+    ShadowCatcher,
     ;
 
     internal fun payload(): ByteArray = when (this) {
@@ -54,6 +57,7 @@ enum class StandardMaterial {
         Textured -> EmbeddedMaterials.standardTextured
         Emissive -> EmbeddedMaterials.standardEmissive
         Transparent -> EmbeddedMaterials.standardTransparent
+        ShadowCatcher -> EmbeddedMaterials.standardShadowCatcher
     }
 
     internal fun build(engine: Engine): Material =
@@ -257,5 +261,29 @@ fun rememberTransparentColorMaterialInstance(
         setParameter("metallic", metallic)
         setParameter("roughness", roughness)
         setParameter("reflectance", reflectance)
+    }
+}
+
+/**
+ * A [MaterialInstance] that draws nothing but the shadows falling on it: a ground for a model floating over the
+ * background or skybox, or a floor in AR. Only a directional light's shadows show; without one it is fully clear.
+ * The surface must receive shadows and shouldn't cast any:
+ *
+ * ```kotlin
+ * DirectionalLight(shadow = ShadowConfig())
+ * Plane(material = rememberShadowCatcherMaterialInstance(), width = 10f, depth = 10f, castShadows = false)
+ * ```
+ *
+ * @param strength How dark a full shadow is: 0 = invisible, 1 = black.
+ * @param engine Engine that owns the material. Defaults to the current composition scope's engine.
+ */
+@Composable
+fun rememberShadowCatcherMaterialInstance(
+    strength: Float = 0.7f,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
+): MaterialInstance {
+    val material = rememberStandardMaterial(StandardMaterial.ShadowCatcher, engine)
+    return rememberConfiguredMaterialInstance(material, strength, engine = engine) {
+        setParameter("strength", strength)
     }
 }

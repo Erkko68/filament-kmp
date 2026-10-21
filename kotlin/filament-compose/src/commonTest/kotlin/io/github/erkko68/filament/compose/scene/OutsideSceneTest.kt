@@ -31,6 +31,7 @@ class OutsideSceneTest : ComposeTestFixture() {
         "rememberUnlitColorMaterialInstance" to { rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)) },
         "rememberEmissiveMaterialInstance" to { rememberEmissiveMaterialInstance(LinearColor(1f, 1f, 1f)) },
         "rememberTransparentColorMaterialInstance" to { rememberTransparentColorMaterialInstance(LinearColor(1f, 1f, 1f)) },
+        "rememberShadowCatcherMaterialInstance" to { rememberShadowCatcherMaterialInstance() },
     )
 
     // Everything that adds to the scene, as opposed to only building engine resources.

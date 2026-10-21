@@ -36,6 +36,9 @@ Sphere(material = rememberEmissiveMaterialInstance(LinearColor(1f, 0.85f, 0.4f),
 
 // LIT with alpha transparency — pre-multiplied, two-pass so solids self-composite correctly
 Sphere(material = rememberTransparentColorMaterialInstance(LinearColor(0.3f, 0.6f, 0.9f), alpha = 0.35f))
+
+// Shadow catcher — clear except for directional-light shadows: a ground under a floating model
+Plane(material = rememberShadowCatcherMaterialInstance(strength = 0.7f), width = 10f, depth = 10f, castShadows = false)
 ```
 
 Parameters track Compose state automatically — pass a new `color`/`intensity` and the instance is
