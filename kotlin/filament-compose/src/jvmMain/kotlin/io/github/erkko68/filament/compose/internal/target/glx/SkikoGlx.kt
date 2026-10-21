@@ -2,8 +2,10 @@ package io.github.erkko68.filament.compose.internal.target.glx
 
 import io.github.erkko68.filament.compose.internal.target.field
 import io.github.erkko68.filament.compose.internal.target.findSkiaLayer
+import io.github.erkko68.filament.compose.internal.target.unavailable
 import io.github.erkko68.filament.jni.GlxHelper
 import java.awt.Window
+import java.lang.reflect.Modifier
 import org.jetbrains.skia.DirectContext
 
 /**
@@ -44,7 +46,14 @@ internal class SkikoGlx private constructor(redrawer: Any, private val canvas: A
             val layer = window?.findSkiaLayer() ?: return null
             val redrawer = layer.field("redrawerManager")!!.field("redrawer") ?: return null
             if (redrawer.javaClass.simpleName != "LinuxOpenGLRedrawer") return null
+            if (!usesGlx(redrawer)) unavailable("skiko's Linux redrawer no longer uses GLX")
             return SkikoGlx(redrawer, layer.field("backedLayer")!!)
         }
+
+        // GLX skiko's native makeCurrent takes (display, window, context); skiko PR #1274 (EGL) makes it (context).
+        // Its `context` would then not be a GLXContext*, and dereferencing it crashes natively.
+        private fun usesGlx(redrawer: Any): Boolean =
+            Class.forName("org.jetbrains.skiko.redrawer.LinuxOpenGLRedrawerKt", false, redrawer.javaClass.classLoader)
+                .declaredMethods.any { it.name == "makeCurrent" && Modifier.isNative(it.modifiers) && it.parameterCount == 3 }
     }
 }
