@@ -16,6 +16,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Added
 - **`onTap` on `GltfInstance`, the primitives and `Group`** (`filament-compose`): a tap on a `FilamentView` reaches the object it hits, without mapping entities by hand.
 - **`GltfAsset.progress`** (`filament-compose`): how much of the asset's GPU upload is done, for a loading indicator; reaches 1 with `isReady`.
+- **`GltfInstance(materialVariant = …)`** (`filament-compose`): draws a `KHR_materials_variants` variant by name, listed in `GltfAsset.materialVariants`.
 - **`GltfInstance(fitToSize = …)`** (`filament-compose`): scales a model so its largest side is that many units and centres it on `position`, for models of unknown size.
 - **Built-in ambient presets on `SphericalHarmonics`** (`filament-compose`): `NeutralStudio`, `CoolStudio`, `Daylight`, `Sunset`, `Warm`, for `IndirectLight(irradiance = …)` without an environment file; `IndirectLight`'s `reflections` now defaults to null.
 - **`CameraState.worldToScreen` and `Modifier.anchorTo`** (`filament-compose`): where a 3D point appears in the view, and Compose UI pinned there (labels, hotspots).

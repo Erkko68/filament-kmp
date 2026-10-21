@@ -55,6 +55,12 @@ class GltfAsset internal constructor(
     var progress by mutableFloatStateOf(0f)
         internal set
 
+    /** The names of the asset's `KHR_materials_variants`, for [GltfInstance]'s `materialVariant`; empty without any. */
+    val materialVariants: List<String> by lazy {
+        val primary = filamentAsset.instance
+        List(primary.materialVariantCount) { primary.getMaterialVariantName(it).orEmpty() }
+    }
+
     /**
      * Whether the asset's built-in primary instance is currently held by a [GltfInstance].
      * `createInstance` can fail on some platforms; a failing instance may fall back to the

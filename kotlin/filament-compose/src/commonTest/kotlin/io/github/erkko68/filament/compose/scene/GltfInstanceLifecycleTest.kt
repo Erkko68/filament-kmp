@@ -13,6 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
@@ -199,6 +200,40 @@ class GltfInstanceLifecycleTest : ComposeTestFixture() {
             mainClock.advanceTimeByFrame()
             waitForIdle()
             assertEquals(authored, flags(), "null should restore the authored flags")
+        }
+    }
+
+    /** `materialVariant` swaps the material by name; null, or a name the asset lacks, draws the authored one. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun materialVariantSwapsByNameAndNullRestores() = run {
+        val asset = gltfAsset(TestGlb.getMaterialVariantsGlbBytes())
+        assertEquals(listOf("red", "blue"), asset.materialVariants)
+
+        withFilamentScene(engine, scene) { setContent ->
+            var variant: String? by mutableStateOf(null)
+            setContent { GltfInstance(asset = asset, materialVariant = variant) }
+            waitForIdle()
+            val rm = engine.renderableManager
+            fun drawnWith(name: String?) = run {
+                variant = name
+                mainClock.advanceTimeByFrame()
+                waitForIdle()
+                val renderable = buildList { scene.forEach(::add) }.single(rm::hasComponent)
+                rm.getMaterialInstanceAt(rm.getInstance(renderable), 0)?.nativeObject
+            }
+            val authored = drawnWith(null)
+
+            assertNotEquals(authored, drawnWith("red"), "\"red\" maps the triangle to the other material")
+            assertEquals(authored, drawnWith("blue"), "\"blue\" maps it to the authored one")
+            drawnWith("red")
+            assertEquals(authored, drawnWith(null), "null should restore the authored material")
+            drawnWith("red")
+            assertEquals(authored, drawnWith("green"), "an unknown name should draw the authored material")
+
+            setContent {}
+            waitForIdle()
+            assertSceneEmpty(scene)
         }
     }
 

@@ -366,6 +366,17 @@ targets:
 GltfInstance(asset = face, morphWeights = floatArrayOf(smile, blink, /* … */))
 ```
 
+## Material variants
+
+A glTF with `KHR_materials_variants` (one shoe in several colourways, say) lists its variant names in
+`GltfAsset.materialVariants`. Pass one to `GltfInstance` to draw with it; null keeps the authored materials:
+
+```kotlin
+var colourway by remember { mutableStateOf<String?>(null) }
+GltfInstance(asset = shoe, materialVariant = colourway)
+// e.g. a chip per name in shoe?.materialVariants
+```
+
 ## Tapping scene objects
 
 `GltfInstance`, the primitives and `Group` take an `onTap`, called when a tap on a `FilamentView`
