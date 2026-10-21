@@ -295,9 +295,7 @@ public final class io/github/erkko68/filament/compose/scene/CameraState {
 public final class io/github/erkko68/filament/compose/scene/CameraTransitions {
 	public static final field $stable I
 	public static final field INSTANCE Lio/github/erkko68/filament/compose/scene/CameraTransitions;
-	public final fun getBouncy ()Landroidx/compose/animation/core/AnimationSpec;
 	public final fun getCinematic ()Landroidx/compose/animation/core/AnimationSpec;
-	public final fun getLinear ()Landroidx/compose/animation/core/AnimationSpec;
 	public final fun getQuick ()Landroidx/compose/animation/core/AnimationSpec;
 	public final fun getSmooth ()Landroidx/compose/animation/core/AnimationSpec;
 }

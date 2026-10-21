@@ -196,6 +196,44 @@ class CameraInputTest : ComposeTestFixture() {
         }
     }
 
+    /** Setting the eye stops a running move, as setting the viewpoint does. */
+    @Test
+    fun settingTheEyeStopsAMove() {
+        val cam = cameraAt(Position(0f, 0f, 10f), Position(0f, 0f, 0f))
+        val set = Position(0f, 3f, 3f)
+        withFilamentScene(engine, scene) { _ ->
+            val scope = orbitView(cam)
+            runOnUiThread { scope.launch { cam.animateTo(Viewpoint(Position(10f, 0f, 0f), Position(0f)), tween(1000)) } }
+            frames(10)
+            runOnUiThread { cam.eye = set }
+            frames(60)
+            assertEquals(set, cam.eye)
+        }
+    }
+
+    /** Flight sits out a camera move and flies on from where it lands, facing the move's target. */
+    @Test
+    fun flightFliesOnFromAMove() {
+        val cam = cameraAt(Position(0f, 0f, 0f), Position(0f, 0f, -1f))
+        val side = Viewpoint(Position(5f, 0f, 0f), Position(0f))
+        withFilamentScene(engine, scene) { _ ->
+            lateinit var scope: CoroutineScope
+            setContent {
+                scope = rememberCoroutineScope()
+                Box(Modifier.testTag("view").size(400.dp).flightGestures(rememberFlightCameraController(cam, moveDamping = 0f)))
+            }
+            waitForIdle()
+            mainClock.autoAdvance = false
+            runOnUiThread { scope.launch { cam.animateTo(side, tween(500)) } }
+            frames(40)
+            assertNear(side.eye, cam.eye, "landed on the move's eye")
+            onNodeWithTag("view").performKeyInput { keyDown(Key.W) }
+            frames(10)
+            onNodeWithTag("view").performKeyInput { keyUp(Key.W) }
+            assertTrue(cam.eye.x < 5f && abs(cam.eye.y) < 1e-3f && abs(cam.eye.z) < 1e-3f, "W should fly towards the origin, got ${cam.eye}")
+        }
+    }
+
     /** The wheel zooms the orbit camera in and out along its view direction. */
     @Test
     fun orbitWheelZooms() {

@@ -241,25 +241,37 @@ fun FilamentSceneScope.GltfInstance(
         onDispose { }
     }
 
-    // gltfio only sets the primitives a variant maps, so the authored materials go back first: unmapped primitives
-    // draw with their default material, as the spec asks, and null restores them all.
-    val authoredMaterials = remember(instance) { HashMap<Pair<Int, Int>, MaterialInstance>() }
+    // gltfio only sets the primitives a variant maps, so the last variant's swaps go back first: unmapped primitives
+    // draw with their default material, as the spec asks. A primitive the app has set since keeps the app's material.
+    val variantSwaps = remember(instance) { HashMap<Pair<Int, Int>, Pair<MaterialInstance, MaterialInstance>>() }
     DisposableEffect(instance, materialVariant) {
-        if (materialVariant != null || authoredMaterials.isNotEmpty()) {
-            val rm = engine.renderableManager
+        val rm = engine.renderableManager
+        fun materials() = buildMap {
             for (entity in instance.entities) {
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
-                for (p in 0 until rm.getPrimitiveCount(ri)) {
-                    val authored = authoredMaterials[entity to p]
-                        ?: rm.getMaterialInstanceAt(ri, p)?.also { authoredMaterials[entity to p] = it } ?: continue
-                    rm.setMaterialInstanceAt(ri, p, authored)
-                }
+                for (p in 0 until rm.getPrimitiveCount(ri)) rm.getMaterialInstanceAt(ri, p)?.let { put(entity to p, it) }
             }
-            if (materialVariant != null) {
-                val index = asset.materialVariants.indexOf(materialVariant)
-                if (index >= 0) instance.applyMaterialVariant(index)
-                else logWarn("GltfInstance: no material variant \"$materialVariant\" in ${asset.materialVariants}")
+        }
+        if (variantSwaps.isNotEmpty()) {
+            val now = materials()
+            for ((key, swap) in variantSwaps) {
+                val (before, set) = swap
+                if (now[key]?.nativeObject == set.nativeObject) rm.setMaterialInstanceAt(rm.getInstance(key.first), key.second, before)
+            }
+            variantSwaps.clear()
+        }
+        if (materialVariant != null) {
+            val index = asset.materialVariants.indexOf(materialVariant)
+            if (index >= 0) {
+                val before = materials()
+                instance.applyMaterialVariant(index)
+                for ((key, after) in materials()) {
+                    val old = before[key] ?: continue
+                    if (old.nativeObject != after.nativeObject) variantSwaps[key] = old to after
+                }
+            } else {
+                logWarn("GltfInstance: no material variant \"$materialVariant\" in ${asset.materialVariants}")
             }
         }
         onDispose { }

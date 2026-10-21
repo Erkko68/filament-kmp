@@ -3,9 +3,6 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.saveable.Saver
@@ -54,12 +51,6 @@ object CameraTransitions {
 
     /** Two seconds of a slow start and a slow landing, for a guided tour. */
     val Cinematic: AnimationSpec<Float> = tween(2000, easing = CubicBezierEasing(0.65f, 0f, 0.35f, 1f))
-
-    /** Constant speed, no easing. */
-    val Linear: AnimationSpec<Float> = tween(1000, easing = LinearEasing)
-
-    /** Overshoots and settles back, like a camera on a spring arm. */
-    val Bouncy: AnimationSpec<Float> = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow)
 }
 
 /**

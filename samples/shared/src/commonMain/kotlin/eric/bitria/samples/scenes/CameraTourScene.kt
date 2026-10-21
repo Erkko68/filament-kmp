@@ -1,6 +1,8 @@
 package eric.bitria.samples.scenes
 
 import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -69,8 +71,8 @@ private val TRANSITIONS = listOf(
     "Smooth" to CameraTransitions.Smooth,
     "Quick" to CameraTransitions.Quick,
     "Cinematic" to CameraTransitions.Cinematic,
-    "Linear" to CameraTransitions.Linear,
-    "Bouncy" to CameraTransitions.Bouncy,
+    // A spring's overshoot carries the camera past the stop and back.
+    "Spring" to spring<Float>(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow),
     "Custom" to tween<Float>(1400, easing = OVERSHOOT),
 )
 

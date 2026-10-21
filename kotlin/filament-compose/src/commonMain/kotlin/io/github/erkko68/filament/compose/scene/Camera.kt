@@ -164,9 +164,25 @@ class CameraState internal constructor(
     initialShift: LensShift,
     initialScaling: LensScaling,
 ) {
-    var eye:        Position   by mutableStateOf(initialEye)
-    var target:     Position   by mutableStateOf(initialTarget)
-    var up:         Direction  by mutableStateOf(initialUp)
+    private var eyeState by mutableStateOf(initialEye)
+    private var targetState by mutableStateOf(initialTarget)
+    private var upState by mutableStateOf(initialUp)
+
+    /** Where the camera is. Setting it stops a running [animateTo]. */
+    var eye: Position
+        get() = eyeState
+        set(value) { stopMove(); eyeState = value }
+
+    /** The point the camera looks at. Setting it stops a running [animateTo]. */
+    var target: Position
+        get() = targetState
+        set(value) { stopMove(); targetState = value }
+
+    /** The camera's up direction. Setting it stops a running [animateTo]. */
+    var up: Direction
+        get() = upState
+        set(value) { stopMove(); upState = value }
+
     var projection: Projection by mutableStateOf(initialProjection)
     var exposure:   Exposure   by mutableStateOf(initialExposure)
 
@@ -189,7 +205,8 @@ class CameraState internal constructor(
     /**
      * The viewpoint that frames a sphere of [radius] around [center], seen [from] that direction (from [center]
      * towards the eye; the camera's current one when null), just far enough to fit the view's current shape. An
-     * orthographic projection keeps its extents, so the eye sits at twice the radius.
+     * orthographic projection keeps its extents, so the eye sits at twice the radius. Before the view first lays
+     * out, the shape is taken as square.
      */
     fun fitting(center: Position, radius: Float, from: Direction? = null): Viewpoint {
         val away = (from ?: (eye - target)).normalized().takeIf { it.length > 0f } ?: Direction.Back
@@ -198,7 +215,7 @@ class CameraState internal constructor(
 
     /**
      * Moves the camera to [viewpoint] over [animationSpec] (see [CameraTransitions]), along [path]. A gesture on the
-     * view, another `animateTo` or setting [viewpoint] stops it where it is, and it then throws a
+     * view, another `animateTo` or setting [viewpoint], [eye], [target] or [up] stops it where it is, and it then throws a
      * `CancellationException`, as cancelling the calling coroutine does.
      */
     suspend fun animateTo(
@@ -225,10 +242,13 @@ class CameraState internal constructor(
 
     internal fun stopMove() { move?.cancel() }
 
-    private fun place(viewpoint: Viewpoint) {
-        eye = viewpoint.eye
-        target = viewpoint.target
-        up = viewpoint.up
+    internal val isMoving get() = move != null
+
+    // Writes the pose without stopping a move: for the move itself and the flight controller.
+    internal fun place(viewpoint: Viewpoint) {
+        eyeState = viewpoint.eye
+        targetState = viewpoint.target
+        upState = viewpoint.up
     }
 
     internal var attachedCamera: FilamentCamera? = null

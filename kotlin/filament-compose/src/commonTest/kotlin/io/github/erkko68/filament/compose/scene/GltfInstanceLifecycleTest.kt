@@ -203,7 +203,10 @@ class GltfInstanceLifecycleTest : ComposeTestFixture() {
         }
     }
 
-    /** `materialVariant` swaps the material by name; null, or a name the asset lacks, draws the authored one. */
+    /**
+     * `materialVariant` swaps the material by name; null, or a name the asset lacks, draws the authored one. A material
+     * the app sets outside a variant survives the next variant change.
+     */
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun materialVariantSwapsByNameAndNullRestores() = run {
@@ -230,6 +233,13 @@ class GltfInstanceLifecycleTest : ComposeTestFixture() {
             assertEquals(authored, drawnWith(null), "null should restore the authored material")
             drawnWith("red")
             assertEquals(authored, drawnWith("green"), "an unknown name should draw the authored material")
+
+            drawnWith("red")
+            val triangle = rm.getInstance(buildList { scene.forEach(::add) }.single(rm::hasComponent))
+            val red = rm.getMaterialInstanceAt(triangle, 0)!!
+            drawnWith(null)
+            rm.setMaterialInstanceAt(triangle, 0, red)
+            assertEquals(red.nativeObject, drawnWith("green"), "a variant change should keep the material the app set")
 
             setContent {}
             waitForIdle()

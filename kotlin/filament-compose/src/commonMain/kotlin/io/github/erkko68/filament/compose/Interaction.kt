@@ -386,13 +386,13 @@ class FlightCameraController internal constructor(
     /** Advance the camera simulation by [deltaTime] seconds. Driven automatically per frame by
      *  [rememberFlightCameraController], so callers rarely call it directly. */
     fun update(deltaTime: Float) {
+        // A running camera move owns the state; the manipulator catches up once, when it ends.
+        if (cameraState.isMoving) return
         catchUp()
         manipulator.update(deltaTime)
         val e = FloatArray(3); val t = FloatArray(3); val u = FloatArray(3)
         manipulator.getLookAt(e, t, u)
-        cameraState.eye = Position(e[0], e[1], e[2])
-        cameraState.target = Position(t[0], t[1], t[2])
-        cameraState.up = Direction.Up
+        cameraState.place(Viewpoint(Position(e[0], e[1], e[2]), Position(t[0], t[1], t[2]), Direction.Up))
         written = cameraState.viewpoint
     }
 
