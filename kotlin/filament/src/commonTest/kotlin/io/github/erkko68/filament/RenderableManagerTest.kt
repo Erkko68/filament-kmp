@@ -4,6 +4,7 @@ import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -70,6 +71,27 @@ class RenderableManagerTest : FilamentTestFixture() {
         engine.destroy(entity)
         EntityManager.get().destroy(entity)
         engine.destroy(mtb)
+        engine.destroy(vb)
+        engine.destroy(ib)
+    }
+
+    /** One (index, weight) list per vertex, of any length; the build checks there's one per vertex (RenderableManager.cpp). */
+    @Test
+    fun bonePairsCanDifferPerVertex() {
+        val vb = triangle(advancedSkinning = true)
+        val ib = indices()
+        val entity = EntityManager.get().create()
+        val perVertex = listOf(floatArrayOf(0f, 1f), floatArrayOf(0f, 0.5f, 1f, 0.5f), floatArrayOf(0f, 0.25f, 1f, 0.25f, 2f, 0.5f))
+        val builder = RenderableManager.Builder(1)
+            .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
+            .boundingBox(unitBox)
+            .skinning(3)
+        assertFailsWith<IllegalArgumentException> { builder.boneIndicesAndWeights(0, listOf(floatArrayOf(0f))) }
+        builder.boneIndicesAndWeights(0, perVertex).build(engine, entity)
+        assertFalse(engine.renderableManager.empty())
+
+        engine.destroy(entity)
+        EntityManager.get().destroy(entity)
         engine.destroy(vb)
         engine.destroy(ib)
     }

@@ -66,6 +66,8 @@ internal actual fun platformUpload(data: ByteArray, size: Int, onRelease: (() ->
 
 actual fun stringFromInterop(ptr: NativePointer): String? = fila.readString(ptr)
 
+actual fun readBytes(ptr: NativePointer, count: Int): ByteArray = if (count == 0) ByteArray(0) else fila.readBytes(ptr, count)
+
 actual fun readInts(ptr: NativePointer, count: Int): IntArray = if (count == 0) IntArray(0) else fila.readInts(ptr, count)
 
 actual fun readFloats(ptr: NativePointer, count: Int): FloatArray = if (count == 0) FloatArray(0) else fila.readFloats(ptr, count)

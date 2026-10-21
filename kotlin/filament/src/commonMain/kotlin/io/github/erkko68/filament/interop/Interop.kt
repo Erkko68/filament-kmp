@@ -95,6 +95,10 @@ fun InteropScope.toInterop(array: DoubleArray?, size: Int): NativePointer = copy
 @InternalFilamentApi
 expect fun FloatArray.readF32(index: Int): Float
 
+/** A copy of [count] bytes C owns (a buffer a callback lends). */
+@InternalFilamentApi
+expect fun readBytes(ptr: NativePointer, count: Int): ByteArray
+
 /** A copy of [count] ints of an array C owns (a borrowed `const FilaEntity*`). */
 @InternalFilamentApi
 expect fun readInts(ptr: NativePointer, count: Int): IntArray

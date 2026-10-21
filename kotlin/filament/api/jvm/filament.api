@@ -358,6 +358,7 @@ public final class io/github/erkko68/filament/ColorGrading$Builder {
 	public final fun curves ([F[F[F)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun customLut ([FI)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun dimensions (I)Lio/github/erkko68/filament/ColorGrading$Builder;
+	public final fun exportLut (Lkotlin/jvm/functions/Function6;)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun exposure (F)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun fastMath (Z)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun format (Lio/github/erkko68/filament/ColorGrading$LutFormat;)Lio/github/erkko68/filament/ColorGrading$Builder;
@@ -1868,6 +1869,7 @@ public final class io/github/erkko68/filament/RenderableManager$Builder {
 	public static final field DEFAULT_CHANNEL I
 	public fun <init> (I)V
 	public final fun blendOrder (II)Lio/github/erkko68/filament/RenderableManager$Builder;
+	public final fun boneIndicesAndWeights (ILjava/util/List;)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun boneIndicesAndWeights (I[FII)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun boundingBox (Lio/github/erkko68/filament/Box;)Lio/github/erkko68/filament/RenderableManager$Builder;
 	public final fun build (Lio/github/erkko68/filament/Engine;I)Lio/github/erkko68/filament/RenderableManager$Builder$Result;
@@ -3126,6 +3128,7 @@ public final class io/github/erkko68/filament/interop/InteropScope {
 public final class io/github/erkko68/filament/interop/Interop_jniKt {
 	public static final fun getNullPointer ()J
 	public static final fun getSingleThreaded ()Z
+	public static final fun readBytes (JI)[B
 	public static final fun readF32 ([FI)F
 	public static final fun readFloats (JI)[F
 	public static final fun readInts (JI)[I

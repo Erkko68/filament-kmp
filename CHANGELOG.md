@@ -20,6 +20,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Built-in ambient presets on `SphericalHarmonics`** (`filament-compose`): `NeutralStudio`, `CoolStudio`, `Daylight`, `Sunset`, `Warm`, for `IndirectLight(irradiance = …)` without an environment file; `IndirectLight`'s `reflections` now defaults to null.
 - **`CameraState.worldToScreen` and `Modifier.anchorTo`** (`filament-compose`): where a 3D point appears in the view, and Compose UI pinned there (labels, hotspots).
 - **`Exposure.Sunny`/`Overcast`/`Indoor` and `LightIntensity.Sun`/`HouseholdBulb`** (`filament-compose`): reference values for matching lights to the camera exposure.
+- **`Manipulator.Builder.raycastCallback`** (`filament-utils`): grab-and-pan raycasts the scene; a miss falls back to the ground plane.
+- **`ColorGrading.Builder.exportLut`** (`filament`): a copy of the 3D LUT `build` generates.
+- **`RenderableManager.Builder.boneIndicesAndWeights(primitiveIndex, List<FloatArray>)`** (`filament`): any number of bone pairs per vertex.
+- **`AssetConfiguration.defaultNodeName`** (`gltfio`): the name anonymous nodes are found by.
 
 ### Changed
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.

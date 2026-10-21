@@ -125,19 +125,41 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
         /** Plane equation (ax + by + cz + d = 0) used as a raycast fallback for grab-and-pan. */
         fun groundPlane(a: Float, b: Float, c: Float, d: Float): Builder = apply { FilaCamutilsManipulatorBuilder_groundPlane(nativeBuilder, a, b, c, d) }
 
+        private var raycast: ((origin: FloatArray, direction: FloatArray) -> Float?)? = null
+
+        /**
+         * Raycasts the scene for accurate grab-and-pan: returns the distance along `direction` from `origin` where the
+         * ray hits, or null on a miss, which falls back to [groundPlane]. Called during [grabBegin] and [raycast].
+         */
+        fun raycastCallback(callback: ((origin: FloatArray, direction: FloatArray) -> Float?)?): Builder = apply { raycast = callback }
+
         /** Sets whether panning is enabled. */
         fun panning(enabled: Boolean): Builder = apply { FilaCamutilsManipulatorBuilder_panning(nativeBuilder, enabled) }
 
         /** Creates a new camera manipulator in [mode]. The builder can't be used afterwards. */
         fun build(mode: Mode): Manipulator {
+            val user = raycast?.let { callback ->
+                Callbacks.register(once = false) { ray ->
+                    val r = readFloats(ray, 6)
+                    callback(r.copyOfRange(0, 3), r.copyOfRange(3, 6))?.let { FilaCamutilsRay_hit(ray, it) }
+                }
+            }
+            val binding = user?.let { FilaCamutilsManipulatorBuilder_raycastCallback(nativeBuilder, Callbacks.argUser, it) }
             val handle = FilaCamutilsManipulatorBuilder_build(nativeBuilder, mode.ordinal)
             FilaCamutilsManipulatorBuilder_destroy(nativeBuilder)
-            return Manipulator(handle)
+            return Manipulator(handle).also { it.raycast = binding?.let { b -> b to user } }
         }
     }
 
+    // The raycast binding and its callback, freed with the manipulator.
+    private var raycast: Pair<NativePointer, NativePointer>? = null
+
     /** Destroys the manipulator and releases all resources. */
-    fun destroy() = FilaCamutilsManipulator_destroy(nativeHandle)
+    fun destroy() {
+        FilaCamutilsManipulator_destroy(nativeHandle)
+        raycast?.let { (binding, user) -> FilaCamutilsRaycast_destroy(binding); Callbacks.release(user) }
+        raycast = null
+    }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()
@@ -157,9 +179,10 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
     }
 
     /**
-     * Given a viewport coordinate, picks a point in the ground plane into [result] (size ≥ 3).
+     * Given a viewport coordinate, picks a point into [result] (size ≥ 3): in the scene through
+     * [Builder.raycastCallback], else in the ground plane.
      *
-     * @return whether the ray hit the ground plane
+     * @return whether the ray hit
      */
     fun raycast(x: Int, y: Int, result: FloatArray): Boolean = result.usePinned(3) { FilaCamutilsManipulator_raycast(nativeHandle, x, y, it) }
 

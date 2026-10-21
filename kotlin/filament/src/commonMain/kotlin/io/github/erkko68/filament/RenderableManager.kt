@@ -378,6 +378,21 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
             FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(nativeBuilder, primitiveIndex, scope.toInterop(indicesAndWeights, count * 2), count, bonesPerVertex)
         }
         /**
+         * Defines bone (index, weight) pairs per vertex for skinning, any number per vertex, in place of the
+         * BONE_INDICES and BONE_WEIGHTS attributes. The primitive's VertexBuffer must enable advanced skinning.
+         *
+         * @param primitiveIndex zero-based index of the primitive
+         * @param indicesAndWeights one array per vertex of (bone index, weight) pairs, 2 floats per pair
+         * @return Builder reference for chaining calls.
+         */
+        fun boneIndicesAndWeights(primitiveIndex: Int, indicesAndWeights: List<FloatArray>): Builder = apply {
+            require(indicesAndWeights.all { it.size % 2 == 0 }) { "each vertex's array holds (bone index, weight) pairs, 2 floats each" }
+            val pairs = FloatArray(indicesAndWeights.sumOf { it.size })
+            indicesAndWeights.fold(0) { at, v -> v.copyInto(pairs, at); at + v.size }
+            val counts = IntArray(indicesAndWeights.size) { indicesAndWeights[it].size / 2 }
+            FilaRenderableManagerBuilder_boneIndicesAndWeights_FixedCapacityVector(nativeBuilder, primitiveIndex, scope.toInterop(pairs, pairs.size), scope.toInterop(counts, counts.size), counts.size)
+        }
+        /**
          * Controls if the renderable has legacy vertex morphing targets, zero by default.
          *
          * For legacy morphing, the attached VertexBuffer must provide data in the

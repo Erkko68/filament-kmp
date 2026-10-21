@@ -57,6 +57,9 @@ internal actual fun platformUpload(data: ByteArray, size: Int, onRelease: (() ->
 
 actual fun stringFromInterop(ptr: NativePointer): String? = FilaJni.readString(ptr)
 
+actual fun readBytes(ptr: NativePointer, count: Int): ByteArray =
+    ByteArray(count).also { if (count > 0) FilaJni.buffer(ptr, count).get(it) }
+
 actual fun readInts(ptr: NativePointer, count: Int): IntArray =
     IntArray(count).also { if (count > 0) FilaJni.buffer(ptr, count * 4).asIntBuffer().get(it) }
 
