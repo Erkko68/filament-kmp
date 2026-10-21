@@ -81,7 +81,7 @@ fun interface CameraPath {
             val b = to.eye - to.target
             val ra = a.length
             val rb = b.length
-            if (ra < 1e-6f || rb < 1e-6f) return@CameraPath Viewpoint(lerp(from.eye, to.eye, t), lerp(from.target, to.target, t), lerpUp(from.up, to.up, t))
+            if (ra < 1e-6f || rb < 1e-6f) return@CameraPath Straight.at(from, to, t)
             val pa = asin((a.y / ra).coerceIn(-1f, 1f))
             val pb = asin((b.y / rb).coerceIn(-1f, 1f))
             // Straight above or below the target any heading is the same view: take the other end's.
@@ -96,6 +96,16 @@ fun interface CameraPath {
             val r = ra * (rb / ra).pow(t)
             val target = lerp(from.target, to.target, t)
             Viewpoint(target + Direction(sin(theta) * cos(phi), sin(phi), cos(theta) * cos(phi)) * r, target, lerpUp(from.up, to.up, t))
+        }
+
+        /** The eye and the target each in a straight line. */
+        val Straight = CameraPath { from, to, t ->
+            Viewpoint(lerp(from.eye, to.eye, t), lerp(from.target, to.target, t), lerpUp(from.up, to.up, t))
+        }
+
+        /** [Straight], with the eye rising [lift] world units above the line halfway: a hop over what's in between. */
+        fun Arc(lift: Float) = CameraPath { from, to, t ->
+            Straight.at(from, to, t).let { it.copy(eye = it.eye + Direction.Up * (lift * 4f * t * (1f - t))) }
         }
     }
 }

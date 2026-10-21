@@ -404,7 +404,8 @@ Every controller has `resetToHome()`, back to the viewpoint the camera had when 
 A `Viewpoint` is a plain value (`eye`, `target`, `up`): keep views in constants or state, compare them, save them
 with `Viewpoint.Saver`. `cam.fitting(center, radius, from)` gives the viewpoint that frames a sphere for the view's
 current shape. `animateTo` takes any `AnimationSpec<Float>` for its timing (`CameraTransitions` has presets) and a
-`CameraPath` for its route; a gesture on the view, another `animateTo` or a `viewpoint` write stops it where it is,
+`CameraPath` for its route (`Orbit`, the default, swings around the targets; `Straight`; `Arc(lift)` hops over;
+or your own, `CameraPath { from, to, t -> … }`); a gesture on the view, another `animateTo` or a `viewpoint` write stops it where it is,
 and it then throws a `CancellationException`:
 
 ```kotlin

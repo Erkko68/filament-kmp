@@ -258,7 +258,9 @@ public abstract interface class io/github/erkko68/filament/compose/scene/CameraP
 }
 
 public final class io/github/erkko68/filament/compose/scene/CameraPath$Companion {
+	public final fun Arc (F)Lio/github/erkko68/filament/compose/scene/CameraPath;
 	public final fun getOrbit ()Lio/github/erkko68/filament/compose/scene/CameraPath;
+	public final fun getStraight ()Lio/github/erkko68/filament/compose/scene/CameraPath;
 }
 
 public final class io/github/erkko68/filament/compose/scene/CameraState {

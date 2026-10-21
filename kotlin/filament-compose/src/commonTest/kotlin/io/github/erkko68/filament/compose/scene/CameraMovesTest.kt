@@ -49,6 +49,18 @@ class CameraMovesTest {
         assertEquals(0f, mid.eye.z, 1e-4f, "the eye stays in the plane of the end heading: ${mid.eye}")
     }
 
+    @Test
+    fun straightAndArcRunInLines() {
+        val from = Viewpoint(Position(0f, 1f, 4f), Position(0f))
+        val to = Viewpoint(Position(4f, 1f, 0f), Position(2f, 0f, 0f))
+        val straight = CameraPath.Straight.at(from, to, 0.5f)
+        assertNear(Position(2f, 1f, 2f), straight.eye, "straight eye")
+        assertNear(Position(1f, 0f, 0f), straight.target, "straight target")
+        // 4t(1 - t) of the lift: all of it halfway, none at the ends.
+        assertNear(Position(2f, 4f, 2f), CameraPath.Arc(3f).at(from, to, 0.5f).eye, "arc halfway")
+        assertNear(to.eye, CameraPath.Arc(3f).at(from, to, 1f).eye, "arc end")
+    }
+
     /** A 90° vertical lens fits a unit sphere at √2: its edge touches the frustum's 45° sides. */
     @Test
     fun fittingFramesTheSphere() {

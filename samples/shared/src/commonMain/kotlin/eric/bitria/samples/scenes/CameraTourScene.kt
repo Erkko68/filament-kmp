@@ -35,6 +35,7 @@ import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraController
+import io.github.erkko68.filament.compose.scene.CameraPath
 import io.github.erkko68.filament.compose.scene.CameraTransitions
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.DirectionalLight
@@ -73,6 +74,19 @@ private val TRANSITIONS = listOf(
     "Custom" to tween<Float>(1400, easing = OVERSHOOT),
 )
 
+// A custom route is any CameraPath: this one turns to face the new target first, then moves there.
+private val LOOK_FIRST = CameraPath { from, to, t ->
+    if (t < 0.5f) CameraPath.Straight.at(from, from.copy(target = to.target), t * 2f)
+    else CameraPath.Straight.at(from.copy(target = to.target), to, t * 2f - 1f)
+}
+
+private val PATHS = listOf(
+    "Orbit" to CameraPath.Orbit,
+    "Straight" to CameraPath.Straight,
+    "Arc" to CameraPath.Arc(lift = 3f),
+    "Look first" to LOOK_FIRST,
+)
+
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun CameraTourScene(onBack: () -> Unit) {
@@ -84,8 +98,9 @@ fun CameraTourScene(onBack: () -> Unit) {
     val orbit = rememberOrbitCameraController(cameraState)
     val scope = rememberCoroutineScope()
     var transition by remember { mutableStateOf(TRANSITIONS.first()) }
+    var path by remember { mutableStateOf(PATHS.first()) }
     // A newer flight or a touch on the view cancels the running one.
-    fun fly(to: Viewpoint) = scope.launch { cameraState.animateTo(to, transition.second) }
+    fun fly(to: Viewpoint) = scope.launch { cameraState.animateTo(to, transition.second, path.second) }
 
     // Each stop frames an object: its centre, a radius that encloses it, and the direction to see it from. Worked out
     // when the flight starts, as fitting depends on the view's shape.
@@ -105,7 +120,7 @@ fun CameraTourScene(onBack: () -> Unit) {
         // Grabbing the camera cancels the flight under way, which ends the tour.
         try {
             while (true) for ((_, stop) in stops) {
-                cameraState.animateTo(stop(), transition.second)
+                cameraState.animateTo(stop(), transition.second, path.second)
                 delay(1000)
             }
         } finally {
@@ -161,6 +176,14 @@ fun CameraTourScene(onBack: () -> Unit) {
                     Button(
                         onClick = { transition = choice },
                         colors = if (transition == choice) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
+                    ) { Text(choice.first) }
+                }
+            }
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                PATHS.forEach { choice ->
+                    Button(
+                        onClick = { path = choice },
+                        colors = if (path == choice) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
                     ) { Text(choice.first) }
                 }
             }
