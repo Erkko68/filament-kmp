@@ -388,6 +388,41 @@ A child without its own `onTap` answers with the nearest enclosing `Group`'s. A 
 for taps while some object in its scene has a handler. For the raw query (depth, fragment
 coordinates), use `Modifier.pickOnTap(viewState) { result -> … }`.
 
+## Camera controls and moves
+
+The camera lives in its `CameraState`. A controller turns input into changes to it, and anything else can move it
+too: set `viewpoint` to jump, or call `animateTo` to fly. A controller carries on from wherever the camera is.
+
+| Controller | Gestures |
+| :-- | :-- |
+| `rememberOrbitCameraController` + `Modifier.orbitGestures` | Drag orbits around `target`, pinch / wheel zoom towards it (stopping at the near plane), secondary drag pans. |
+| `rememberMapCameraController` + `Modifier.mapGestures` | Drag pans, pinch / wheel zoom towards the pointer; an orthographic projection zooms by scaling its extents. |
+| `rememberFlightCameraController` + `Modifier.flightGestures` | WASD / arrows move, drag looks around, wheel changes speed. |
+
+Every controller has `resetToHome()`, back to the viewpoint the camera had when it was created.
+
+A `Viewpoint` is a plain value (`eye`, `target`, `up`): keep views in constants or state, compare them, save them
+with `Viewpoint.Saver`. `cam.fitting(center, radius, from)` gives the viewpoint that frames a sphere for the view's
+current shape. `animateTo` takes any `AnimationSpec<Float>` for its timing (`CameraTransitions` has presets) and a
+`CameraPath` for its route; a gesture on the view, another `animateTo` or a `viewpoint` write stops it where it is,
+and it then throws a `CancellationException`:
+
+```kotlin
+val home = Viewpoint(eye = Position(0f, 2f, 6f), target = Position(0f, 0.5f, 0f))
+val cam = rememberCameraState(initialEye = home.eye, initialTarget = home.target)
+val orbit = rememberOrbitCameraController(cam)
+val scope = rememberCoroutineScope()
+var saved by rememberSaveable(stateSaver = Viewpoint.Saver) { mutableStateOf(home) }
+
+Button(onClick = { scope.launch { cam.animateTo(cam.fitting(Position(0f, 1f, 0f), radius = 1.5f, from = Direction(1f, 0.5f, 1f))) } }) {
+    Text("Duck")
+}
+Button(onClick = { saved = cam.viewpoint }) { Text("Save view") }
+Button(onClick = { scope.launch { cam.animateTo(saved, CameraTransitions.Quick) } }) { Text("Saved view") }
+```
+
+The samples' Camera Tour scene flies between stops, a saved view and home.
+
 ## Cameras that follow the scene graph
 
 `CameraState` is normally hoisted state you set imperatively. To make a camera **follow an

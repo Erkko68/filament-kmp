@@ -1,6 +1,8 @@
 package io.github.erkko68.filament.compose
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.scene.LensScaling
 import io.github.erkko68.filament.compose.scene.LensShift
@@ -9,27 +11,26 @@ import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Exposure
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
+import io.github.erkko68.filament.compose.scene.Viewpoint
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.SetSceneContent
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import io.github.erkko68.filament.utils.Manipulator
 import kotlin.math.sqrt
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Coverage for the shared [CameraController] surface on [FlightCameraController] — flight now exposes
- * `resetToHome`/`saveBookmark`/`jumpToBookmark` like the orbit/map controllers (Filament's
- * [Manipulator] supports bookmarks in FLIGHT mode). Verifies both restore the camera to a stored
- * pose after it has been flown away. The manipulator is CPU-only, so this runs on the NOOP fixture.
+ * The camera controllers on the NOOP fixture (flight's manipulator is CPU-only): flight speed, and every controller
+ * carrying on from a pose the app wrote. Expected poses follow camutils' OrbitManipulator/MapManipulator::scroll,
+ * which orbit and map reproduce, and FreeFlightManipulator::update.
  */
 class InteractionTest : ComposeTestFixture() {
 
-    private fun newCameraState(eye: Position) = CameraState(
+    private fun newCameraState(eye: Position, target: Position = Position(0f, 0f, -1f)) = CameraState(
         initialEye = eye,
-        initialTarget = Position(0f, 0f, -1f),
+        initialTarget = target,
         initialUp = Direction(0f, 1f, 0f),
         initialProjection = Projection.Perspective(),
         initialExposure = Exposure(),
@@ -38,59 +39,23 @@ class InteractionTest : ComposeTestFixture() {
         initialScaling = LensScaling.Identity,
     )
 
-    private fun CameraState.eyeDistanceTo(x: Float, y: Float, z: Float): Float {
-        val dx = eye.x - x; val dy = eye.y - y; val dz = eye.z - z
-        return sqrt(dx * dx + dy * dy + dz * dz)
+    private fun assertNear(expected: Position, actual: Position, what: String) {
+        assertEquals(0f, (expected - actual).length, 1e-3f, "$what: expected $expected, got $actual")
     }
 
-    // Fly forward for a while by holding the FORWARD key and integrating the manipulator.
-    private fun FlightCameraController.flyForward(steps: Int = 30) {
-        manipulator.keyDown(Manipulator.Key.FORWARD)
-        repeat(steps) { update(0.1f) }
+    // Hold FORWARD for one simulated second.
+    private fun FlightCameraController.flyForOneSecond() {
+        takeOver().keyDown(Manipulator.Key.FORWARD)
+        repeat(10) { update(0.1f) }
         manipulator.keyUp(Manipulator.Key.FORWARD)
-    }
-
-    // TODO: flaky on Linux (x86 + arm), fine on macOS/Windows. Root cause is upstream Filament:
-    //  FreeFlightManipulator::mEyeVelocity is never initialized and is read-before-write in the
-    //  damped update() path, so a garbage/NaN start value corrupts the pose (NaN > 0.1f is false).
-    //  Fix = zero-init mEyeVelocity in FreeFlightManipulator.h; re-enable once the prebuilt is rebuilt.
-    @Ignore
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun flightResetToHomeAndBookmarkRestorePose() = run {
-        val startEye = Position(0f, 0f, 5f)
-        val cam = newCameraState(startEye)
-        lateinit var state: FlightCameraController
-
-        withFilamentScene(engine, scene) { setContent ->
-            setContent { state = rememberFlightCameraController(cam) }
-            waitForIdle()
-            mainClock.advanceTimeByFrame() // mount + first (no-key) OnFrame tick; pose stays at start
-
-            // Home is the flight start pose; a fresh bookmark captures the same pose.
-            assertTrue(cam.eyeDistanceTo(0f, 0f, 5f) < 1e-3f, "camera should start at the home pose")
-            val home = state.saveBookmark()
-
-            // Fly away, then restore the saved bookmark → back at the start pose.
-            state.flyForward()
-            assertTrue(cam.eyeDistanceTo(0f, 0f, 5f) > 0.1f, "holding FORWARD should move the camera")
-            state.jumpToBookmark(home)
-            assertEquals(0f, cam.eyeDistanceTo(0f, 0f, 5f), 1e-2f)
-
-            // Fly away again, then resetToHome() → back at the start pose.
-            state.flyForward()
-            assertTrue(cam.eyeDistanceTo(0f, 0f, 5f) > 0.1f)
-            state.resetToHome()
-            assertEquals(0f, cam.eyeDistanceTo(0f, 0f, 5f), 1e-2f)
-        }
     }
 
     /**
      * Mounts a fresh flight controller at the origin and flies FORWARD for one simulated second,
      * returning the distance covered (= the effective move speed in units/s).
      *
-     * Undamped so the upstream mEyeVelocity read-before-write (see above) can't bite: with
-     * moveDamping = 0 the velocity is assigned, not accumulated. Takes the harness's `setContent`
+     * Undamped so the upstream mEyeVelocity read-before-write can't bite: FreeFlightManipulator never initialises it,
+     * and with moveDamping = 0 the velocity is assigned, not accumulated. Takes the harness's `setContent`
      * instead of opening its own scene: `withFilamentScene` returns a `TestResult` that only
      * completes asynchronously on web, so a caller-side harness would read the camera before the
      * body ever ran and report a distance of 0 on js/wasm.
@@ -115,10 +80,8 @@ class InteractionTest : ComposeTestFixture() {
         waitForIdle()
         mainClock.advanceTimeByFrame() // mount + first (no-key) OnFrame tick; pose stays at start
         if (scrollSteps != 0f) controller.adjustSpeed(scrollSteps)
-        controller.manipulator.keyDown(Manipulator.Key.FORWARD)
-        repeat(10) { controller.update(0.1f) } // 1 second of flight
-        controller.manipulator.keyUp(Manipulator.Key.FORWARD)
-        return cam.eyeDistanceTo(0f, 0f, 0f)
+        controller.flyForOneSecond()
+        return (cam.eye - Position(0f)).length
     }
 
     /** initialMoveSpeed is the speed the camera actually flies at — before this, the manipulator
@@ -144,36 +107,103 @@ class InteractionTest : ComposeTestFixture() {
         assertEquals(10f, flyForOneSecond(setContent, 10f, 1f, scrollSteps = 50f), 0.5f) // clamped
     }
 
-    // Zoom out by scrolling, then check that a saved bookmark and resetToHome() both restore the start pose.
-    @OptIn(ExperimentalTestApi::class)
-    private fun ComposeUiTest.assertBookmarksRestorePose(cam: CameraState, controller: CameraController, zoom: () -> Unit) {
-        controller.setViewport(100, 100)
-        val start = cam.eye
-        controller.saveBookmark().use { home ->
-            zoom()
-            assertTrue(cam.eyeDistanceTo(start.x, start.y, start.z) > 0.1f, "zooming should move the camera")
-            controller.jumpToBookmark(home)
-            assertEquals(0f, cam.eyeDistanceTo(start.x, start.y, start.z), 1e-2f)
-        }
-        zoom()
-        controller.resetToHome()
-        assertEquals(0f, cam.eyeDistanceTo(start.x, start.y, start.z), 1e-2f)
-    }
-
+    /** Flight looks towards the state's target from the start, and flies on from a viewpoint the app sets. */
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun orbitAndMapBookmarksRestorePose() = withFilamentScene(engine, scene) { setContent ->
-        val orbitCam = newCameraState(Position(0f, 0f, 5f))
-        lateinit var orbit: OrbitCameraController
-        setContent { orbit = rememberOrbitCameraController(orbitCam) }
+    fun flightFollowsTheState() = withFilamentScene(engine, scene) { setContent ->
+        val cam = newCameraState(Position(0f), target = Position(1f, 1f, -1f))
+        lateinit var flight: FlightCameraController
+        setContent { flight = rememberFlightCameraController(cam, moveDamping = 0f) }
         waitForIdle()
-        assertBookmarksRestorePose(orbitCam, orbit) { orbit.manipulator.scroll(50, 50, 20f); orbit.sync() }
+        flight.update(0.1f)
+        assertNear(Position(1f, 1f, -1f).let { Position(it.x / sqrt(3f), it.y / sqrt(3f), it.z / sqrt(3f)) }, cam.target, "looks at the target")
 
-        val mapCam = newCameraState(Position(0f, 10f, 0f))
-        lateinit var map: MapCameraController
-        setContent { map = rememberMapCameraController(mapCam) }
+        cam.viewpoint = Viewpoint(Position(3f, 0f, 0f), Position(3f, 0f, -5f))
+        flight.flyForOneSecond()
+        assertNear(Position(3f, 0f, -1f), cam.eye, "one unit along -Z from the new eye")
+    }
+
+    /** The orbit target is its pivot: a viewpoint the app sets is orbited and zoomed around, not snapped away from. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun orbitFollowsTheState() = withFilamentScene(engine, scene) { setContent ->
+        val cam = newCameraState(Position(0f, 0f, 5f), target = Position(0f))
+        lateinit var orbit: OrbitCameraController
+        setContent { orbit = rememberOrbitCameraController(cam) }
         waitForIdle()
-        assertTrue(mapCam.eye.y > mapCam.target.y + 1f, "map looks down on its target: ${mapCam.eye}")
-        assertBookmarksRestorePose(mapCam, map) { map.manipulator.scroll(50, 50, 20f); map.sync() }
+        cam.viewpoint = Viewpoint(Position(5f, 0f, 0f), Position(1f, 0f, 0f))
+        // As OrbitManipulator::scroll, the eye moves zoomSpeed × -delta along the gaze: 0.01 × 100 = 1 unit closer.
+        orbit.zoom(-100f, Offset(50f, 50f), IntSize(100, 100))
+        assertNear(Position(4f, 0f, 0f), cam.eye, "zoomed from the app's eye")
+        assertEquals(Position(1f, 0f, 0f), cam.target, "the target stays the pivot")
+    }
+
+    /** Zooming in stops at the near plane short of the pivot instead of flying through and turning round. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun orbitZoomStopsBeforeThePivot() = withFilamentScene(engine, scene) { setContent ->
+        val cam = newCameraState(Position(0f, 0f, 5f), target = Position(0f))
+        lateinit var orbit: OrbitCameraController
+        setContent { orbit = rememberOrbitCameraController(cam) }
+        waitForIdle()
+        orbit.zoom(-100_000f, Offset(50f, 50f), IntSize(100, 100))
+        // Projection.Perspective's near plane is 0.1.
+        assertNear(Position(0f, 0f, 0.1f), cam.eye, "at the near plane")
+        assertEquals(Position(0f), cam.target)
+    }
+
+    /** Map zooms from the state's height (camutils' started at its 512-unit default extent) and from a viewpoint the app sets. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun mapFollowsTheState() = withFilamentScene(engine, scene) { setContent ->
+        val cam = newCameraState(Position(0f, 10f, 0f), target = Position(0f))
+        lateinit var map: MapCameraController
+        setContent { map = rememberMapCameraController(cam) }
+        waitForIdle()
+        // As MapManipulator::scroll, the eye moves zoomSpeed × -delta of the way to the point under the pointer.
+        map.zoom(-10f, Offset(50f, 50f), IntSize(100, 100))
+        assertNear(Position(0f, 9f, 0f), cam.eye, "zoomed from the starting height")
+        assertNear(Position(0f), cam.target, "the target is the ground point below")
+
+        cam.viewpoint = Viewpoint(Position(4f, 20f, 2f), Position(4f, 0f, 2f), Direction(0f, 0f, -1f))
+        map.zoom(-10f, Offset(50f, 50f), IntSize(100, 100))
+        assertNear(Position(4f, 18f, 2f), cam.eye, "zoomed from the app's viewpoint")
+        assertNear(Position(4f, 0f, 2f), cam.target, "the target is the ground point below")
+    }
+
+    /** An orthographic map zooms by scaling its extents (moving closer shows the same), towards the pointer. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun orthographicMapZoomScalesItsExtents() = withFilamentScene(engine, scene) { setContent ->
+        val cam = newCameraState(Position(0f, 10f, 0f), target = Position(0f))
+        cam.up = Direction(0f, 0f, -1f)
+        cam.projection = Projection.Orthographic(-5.0, 5.0, -5.0, 5.0, 0.0, 100.0)
+        lateinit var map: MapCameraController
+        setContent { map = rememberMapCameraController(cam) }
+        waitForIdle()
+        // A tenth of the way to the pointer, 50 px right of centre on a view 10 units across: x = 5, so 0.5. The point
+        // under the pointer stays put: 0.5 plus half the new 9-unit width is 5.
+        map.zoom(-10f, Offset(100f, 50f), IntSize(100, 100))
+        val ortho = cam.projection as Projection.Orthographic
+        for ((expected, actual) in listOf(-4.5 to ortho.left, 4.5 to ortho.right, -4.5 to ortho.bottom, 4.5 to ortho.top)) {
+            assertEquals(expected, actual, 1e-6, "extents scaled by 0.9: $ortho")
+        }
+        assertNear(Position(0.5f, 0f, 0f), cam.target, "slid towards the pointer")
+        assertNear(Position(0.5f, 10f, 0f), cam.eye, "at the same height")
+    }
+
+    /** A pan keeps the point at the target's depth under the pointer, at the camera's own field of view. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun panFollowsThePointerAtTheFieldOfView() = withFilamentScene(engine, scene) { setContent ->
+        val cam = newCameraState(Position(0f, 0f, 10f), target = Position(0f))
+        cam.projection = Projection.Perspective(fovDegrees = 90.0)
+        lateinit var orbit: OrbitCameraController
+        setContent { orbit = rememberOrbitCameraController(cam) }
+        waitForIdle()
+        // 10 away at 90°, a 100 px tall view spans 2 × 10 × tan 45° = 20 units: 0.2 a pixel, so 10 px right is 2 units.
+        orbit.drag(secondary = true, Offset(10f, 0f), IntSize(100, 100))
+        assertNear(Position(-2f, 0f, 10f), cam.eye, "the camera slides left as the scene follows the pointer right")
+        assertNear(Position(-2f, 0f, 0f), cam.target, "with its target")
     }
 }

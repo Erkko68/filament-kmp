@@ -21,15 +21,20 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`CameraState.worldToScreen` and `Modifier.anchorTo`** (`filament-compose`): where a 3D point appears in the view, and Compose UI pinned there (labels, hotspots).
 - **`Exposure.Sunny`/`Overcast`/`Indoor` and `LightIntensity.Sun`/`HouseholdBulb`** (`filament-compose`): reference values for matching lights to the camera exposure.
 - **`FilamentViewState.capture()`** (`filament-compose`): the view as an `ImageBitmap`, for saving or sharing; a paused view renders until it's in.
+- **Camera moves** (`filament-compose`): `CameraState.viewpoint`, `fitting` and `animateTo`, with `Viewpoint`, `CameraTransitions` timings and `CameraPath` routes; a gesture stops a running move.
 - **`Manipulator.Builder.raycastCallback`** (`filament-utils`): grab-and-pan raycasts the scene; a miss falls back to the ground plane.
 - **`ColorGrading.Builder.exportLut`** (`filament`): a copy of the 3D LUT `build` generates.
 - **`RenderableManager.Builder.boneIndicesAndWeights(primitiveIndex, List<FloatArray>)`** (`filament`): any number of bone pairs per vertex.
 - **`AssetConfiguration.defaultNodeName`** (`gltfio`): the name anonymous nodes are found by.
 
 ### Changed
+- **Camera controllers work on `CameraState`** (`filament-compose`): bookmarks give way to `Viewpoint`s, and map's extent and flight's start-angle parameters come from the state. See the [migration guide](docs/migration/from-0.8.md).
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
 ### Fixed
+- **Camera writes stick under a controller** (`filament-compose`): a gesture carries on from a pose the app set instead of snapping back, and the orbit `target` is its pivot.
+- **Orbit zoom stops at the near plane** (`filament-compose`) instead of flying through the target and turning the camera round.
+- **Pans follow the pointer at the camera's field of view** (`filament-compose`), and an orthographic map zooms by scaling its extents.
 - **Orbit, map and flight camera gestures start past the touch slop** (`filament-compose`): a finger tap no longer nudges the camera or swallows the tap.
 - **`LensShift` KDoc** (`filament-compose`): a shift of 1 moves the image by a full viewport width/height, as Filament's `Camera::setShift` defines, not half.
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
