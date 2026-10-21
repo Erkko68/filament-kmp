@@ -481,8 +481,10 @@ public final class io/github/erkko68/filament/compose/scene/Fog {
 
 public final class io/github/erkko68/filament/compose/scene/GltfAsset {
 	public static final field $stable I
+	public final fun getCenter ()Lio/github/erkko68/filament/compose/scene/Position;
 	public final fun getMaterialVariants ()Ljava/util/List;
 	public final fun getProgress ()F
+	public final fun getRadius ()F
 	public final fun isReady ()Z
 }
 

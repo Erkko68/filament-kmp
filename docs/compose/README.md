@@ -262,6 +262,12 @@ GltfInstance(asset = model, fitToSize = 2f)   // 2 units across, centred on the 
 
 `rotation` and `scale` apply after the fit, and `pivot` is in the fitted space. Leave it null to keep
 the model's own size, e.g. when several models must keep their true scale relative to each other.
+To keep the size and move the camera instead, frame the asset's bounds (in its own units, so for an
+instance left at the origin and unscaled):
+
+```kotlin
+cam.viewpoint = cam.fitting(model.center, model.radius)
+```
 
 ## Animating glTF models
 

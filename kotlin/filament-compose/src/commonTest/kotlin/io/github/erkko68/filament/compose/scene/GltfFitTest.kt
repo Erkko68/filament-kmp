@@ -11,7 +11,7 @@ import kotlin.math.sqrt
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-/** [GltfInstance]'s `fitToSize`: the bounds' centre lands on `position` and their largest side becomes `fitToSize × scale`. */
+/** [GltfInstance]'s `fitToSize`: the bounds' centre lands on `position` and their largest side becomes `fitToSize × scale`; and [GltfAsset]'s bounds. */
 class GltfFitTest : ComposeTestFixture() {
 
     private class Placed(val root: FloatArray, val centre: FloatArray, val side: Float) {
@@ -73,6 +73,17 @@ class GltfFitTest : ComposeTestFixture() {
         val f = 2f / placed.side
         val pivotInMesh = floatArrayOf(placed.centre[0] + 1f / f, placed.centre[1], placed.centre[2])
         assertAt(Position(0f), placed.apply(pivotInMesh), "pivot")
+    }
+
+    /** `center`/`radius` are gltfio's asset box: its centre, and the half-diagonal that reaches every corner. */
+    @Test
+    fun centerAndRadiusBoundTheAssetBox() {
+        val duck = gltfAsset(TestGlb.getDuckGlbBytes())
+        val box = duck.filamentAsset.boundingBox
+        val c = box.center()
+        val h = box.extent()
+        assertAt(Position(c[0], c[1], c[2]), floatArrayOf(duck.center.x, duck.center.y, duck.center.z), "center")
+        assertNear(sqrt(h[0] * h[0] + h[1] * h[1] + h[2] * h[2]), duck.radius, "radius")
     }
 
     @Test

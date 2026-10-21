@@ -15,6 +15,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Added
 - **`onTap` on `GltfInstance`, the primitives and `Group`** (`filament-compose`): a tap on a `FilamentView` reaches the object it hits, without mapping entities by hand.
+- **`GltfAsset.center` and `radius`** (`filament-compose`): the model's bounds, for `CameraState.fitting` on a model kept at its own size.
 - **`GltfAsset.progress`** (`filament-compose`): how much of the asset's GPU upload is done, for a loading indicator; reaches 1 with `isReady`.
 - **`rememberShadowCatcherMaterialInstance`** (`filament-compose`): a built-in material that shows only the directional-light shadows falling on it, for a ground under a floating model.
 - **`GltfInstance(materialVariant = …)`** (`filament-compose`): draws a `KHR_materials_variants` variant by name, listed in `GltfAsset.materialVariants`.

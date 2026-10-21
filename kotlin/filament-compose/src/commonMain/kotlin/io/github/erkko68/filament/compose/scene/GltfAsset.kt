@@ -21,6 +21,7 @@ import io.github.erkko68.filament.gltfio.TextureProvider
 import io.github.erkko68.filament.gltfio.createKtx2Provider
 import io.github.erkko68.filament.gltfio.createStbProvider
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.math.sqrt
 
 /**
  * A loaded glTF asset whose GPU resources are ready. Obtain via [rememberGltfAsset].
@@ -59,6 +60,23 @@ class GltfAsset internal constructor(
     val materialVariants: List<String> by lazy {
         val primary = filamentAsset.instance
         List(primary.materialVariantCount) { primary.getMaterialVariantName(it).orEmpty() }
+    }
+
+    /**
+     * The centre of the model's bounding box, in the model's own units, for [CameraState.fitting]. An instance's
+     * `position`, `scale` and `fitToSize` move the model away from it.
+     */
+    val center: Position get() = bounds.first
+
+    /** The radius around [center] that holds the whole model, in its own units; 0 for a file that declares no bounds. */
+    val radius: Float get() = bounds.second
+
+    private val bounds: Pair<Position, Float> by lazy {
+        val box = filamentAsset.boundingBox
+        val (x, y, z) = box.extent()
+        // gltfio leaves the box inverted (min > max) when no primitive has bounds.
+        if (minOf(x, y, z) < 0f || !(x + y + z).isFinite()) Position(0f) to 0f
+        else box.center().let { Position(it[0], it[1], it[2]) } to sqrt(x * x + y * y + z * z)
     }
 
     /**
