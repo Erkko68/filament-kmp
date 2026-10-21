@@ -31,7 +31,7 @@ import io.github.erkko68.filament.compose.scene.Scale
  *   set false for a pure ground/receiver plane to avoid it shadowing itself.
  * @param receiveShadows  Whether the plane receives shadows cast by others. On by default.
  * @param onCreate  Runs once when the plane enters the scene, with the renderable entity and engine in scope ([EntityScope]).
- * @param onTap     Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits this object. Null
+ * @param onTap     Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits this object, with the world point it hit. Null
  *   answers with the enclosing [io.github.erkko68.filament.compose.scene.Group]'s `onTap`, if any.
  */
 @Composable
@@ -48,7 +48,7 @@ fun FilamentSceneScope.Plane(
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: EntityScope.() -> Unit = {},
-    onTap: (() -> Unit)? = null,
+    onTap: ((Position) -> Unit)? = null,
 ) {
     val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
     Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate, onTap)

@@ -136,7 +136,14 @@ fun FilamentView(
 
     // Taps reach the scene's onTap handlers; no detector while there are none, so a scene without them pays nothing.
     val tapTargets = scene.tapTargets
-    val dispatchTap = remember(tapTargets) { { result: View.PickingQueryResult -> tapTargets.handlerFor(result.renderable)?.invoke(); Unit } }
+    val dispatchTap = remember(tapTargets, view, cameraState) {
+        { result: View.PickingQueryResult ->
+            // ponytail: the camera as the result arrives, not at the tap; a tap mid-animateTo lands a frame or two off.
+            val handler = tapTargets.handlerFor(result.renderable)
+            val at = cameraState.hitPosition(result.fragCoords, view.viewport.width, view.viewport.height)
+            if (handler != null && at != null) handler(at)
+        }
+    }
     val tapModifier = if (tapTargets.isEmpty) Modifier else Modifier.pickOnTap(viewState, dispatchTap)
 
     FilamentSurface(

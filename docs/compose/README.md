@@ -386,14 +386,15 @@ GltfInstance(asset = shoe, materialVariant = colourway)
 ## Tapping scene objects
 
 `GltfInstance`, the primitives and `Group` take an `onTap`, called when a tap on a `FilamentView`
-hits the object. A tap that turns into a drag doesn't count, so it works alongside the camera
-gestures:
+hits the object, with the world `Position` it hit (to drop a marker there, say). A tap that turns
+into a drag doesn't count, so it works alongside the camera gestures:
 
 ```kotlin
 FilamentSceneView(modifier = Modifier.orbitGestures(orbit), cameraState = cam) {
     ducks.forEach { duck ->
         key(duck.id) { GltfInstance(duckAsset, position = duck.position, onTap = { selected = duck.id }) }
     }
+    Plane(ground, width = 10f, depth = 10f, onTap = { at -> marker = at })
     Group(onTap = { selected = "car" }) {   // one handler for the whole assembly
         Cube(body)
         Cylinder(wheel, position = Position(0.6f, -0.4f, 0f))

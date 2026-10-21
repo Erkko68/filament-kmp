@@ -22,6 +22,7 @@ import io.github.erkko68.filament.Camera as FilamentCamera
 import io.github.erkko68.filament.utils.Float2
 import io.github.erkko68.filament.utils.Float4
 import io.github.erkko68.filament.utils.Mat4
+import io.github.erkko68.filament.utils.inverse
 
 // ── Public: projection type ───────────────────────────────────────────────────
 
@@ -324,6 +325,21 @@ class CameraState internal constructor(
         val ny = lens.scaling.y * cy / cw + 2.0 * lens.shift.y
         // NDC to pixels; Compose's y runs down.
         return Offset(((nx + 1.0) * 0.5 * size.width).toFloat(), ((1.0 - ny) * 0.5 * size.height).toFloat())
+    }
+
+    /**
+     * The world point a pick on the attached view hit, from its `fragCoords` and the view's viewport size; null while
+     * detached. Upstream's recipe (View.h, `PickingQueryResult`), undoing the lens scaling and shift [worldToScreen] applies.
+     */
+    internal fun hitPosition(fragCoords: FloatArray, viewportWidth: Int, viewportHeight: Int): Position? {
+        val camera = attachedCamera ?: return null
+        if (viewportWidth <= 0 || viewportHeight <= 0) return null
+        val lens = snapshot()
+        val nx = (fragCoords[0] / viewportWidth * 2f - 1f - 2f * lens.shift.x) / lens.scaling.x
+        val ny = (fragCoords[1] / viewportHeight * 2f - 1f - 2f * lens.shift.y) / lens.scaling.y
+        val eye = inverse(camera.getProjectionMatrix(out = tmpProjArray).toMat4()) * Float4(nx, ny, fragCoords[2] * 2f - 1f, 1f)
+        val world = camera.getModelMatrix().toMat4() * Float4(eye.xyz / eye.w, 1f)
+        return Position(world.x, world.y, world.z)
     }
 
     internal fun snapshot(): CameraSnapshot =

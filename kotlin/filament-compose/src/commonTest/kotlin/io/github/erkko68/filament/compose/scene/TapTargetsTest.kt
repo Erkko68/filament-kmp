@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 /** Which handler each scene object registers for taps, and that registrations follow the entities. */
 class TapTargetsTest : ComposeTestFixture() {
 
-    private fun TapTargets.tap(entity: Int) = assertNotNull(handlerFor(entity), "entity $entity should answer taps").invoke()
+    private fun TapTargets.tap(entity: Int) = assertNotNull(handlerFor(entity), "entity $entity should answer taps").invoke(Position(0f))
 
     @OptIn(ExperimentalTestApi::class)
     @Test

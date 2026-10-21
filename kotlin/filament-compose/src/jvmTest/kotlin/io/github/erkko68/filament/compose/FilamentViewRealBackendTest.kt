@@ -25,6 +25,7 @@ import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
 import io.github.erkko68.filament.compose.testutils.renderFrames
 import io.github.erkko68.filament.compose.testutils.withEngine
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -152,6 +153,28 @@ class FilamentViewRealBackendTest {
         }
         settle()
         assertEquals(1, tapped, "a drag should orbit, not tap")
+    }
+
+    /** onTap gets the world point it hit: a click at the centre lands on the middle of the cube's front face. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun onTapGetsTheWorldPointItHit() = withEngine(Engine.Backend.DEFAULT) { engine, setContent ->
+        var hit: Position? = null
+        setContent {
+            FilamentSceneView(Modifier.testTag("view").size(64.dp), engine = engine,
+                cameraState = rememberCameraState(initialEye = Position(0f, 0f, 10f))) {
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 4f, onTap = { hit = it })
+            }
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        onNodeWithTag("view").performMouseInput { click(center) }
+        repeat(30) {
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        val at = assertNotNull(hit, "a click on the cube should reach its onTap")
+        // The face is flat at z = 2; x and y are off the centre by at most a pixel, ~0.1 units at that depth.
+        assertTrue(abs(at.z - 2f) < 0.05f && abs(at.x) < 0.2f && abs(at.y) < 0.2f, "expected about (0, 0, 2), got $at")
     }
 
     /** A finger moves a pixel or two during a tap: under the touch slop it stays a tap, and the camera stays put. */
