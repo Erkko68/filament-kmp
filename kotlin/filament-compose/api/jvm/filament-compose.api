@@ -64,6 +64,7 @@ public final class io/github/erkko68/filament/compose/FilamentViewKt {
 
 public final class io/github/erkko68/filament/compose/FilamentViewState {
 	public static final field $stable I
+	public final fun capture (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getRenderer ()Lio/github/erkko68/filament/Renderer;
 	public final fun getView ()Lio/github/erkko68/filament/View;
 	public final fun pick (IILkotlin/jvm/functions/Function1;)V

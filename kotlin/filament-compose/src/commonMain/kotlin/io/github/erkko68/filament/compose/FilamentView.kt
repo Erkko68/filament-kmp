@@ -109,7 +109,7 @@ fun FilamentView(
 
     // Expose the live View/Renderer through the hoisted handle.
     DisposableEffect(viewState, view, renderer) {
-        viewState.attach(view, renderer)
+        viewState.attach(engine, view, renderer)
         onDispose { viewState.detach() }
     }
 
@@ -145,8 +145,8 @@ fun FilamentView(
         renderer = renderer,
         view     = view,
         transparent = transparent,
-        // Filament answers a picking query by rendering.
-        renderingEnabled = renderingEnabled || viewState.pendingPicks > 0,
+        // Filament answers picks and readbacks by rendering.
+        renderingEnabled = renderingEnabled || viewState.pendingReadbacks > 0,
         onResize = onResize,
     )
 }

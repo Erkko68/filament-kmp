@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
@@ -27,6 +28,9 @@ import io.github.erkko68.filament.compose.testutils.IgnoreWithoutViewInterop
 import io.github.erkko68.filament.compose.testutils.renderFrames
 import io.github.erkko68.filament.compose.testutils.withEngine
 import kotlin.test.Test
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -186,13 +190,38 @@ class FilamentViewTest {
         }
         assertNotNull(result, "a paused view should answer a pick")
         assertEquals(0, view.visibleRenderableCount, "answering it renders the scene as it is now")
-        assertEquals(0, viewState.pendingPicks)
+        assertEquals(0, viewState.pendingReadbacks)
 
         // Answered: it settles again.
         renderFrames(engine, 10)
         visible = true
         renderFrames(engine, 10)
         assertEquals(0, view.visibleRenderableCount, "the view should settle again once the pick is answered")
+    }
+
+    /** A capture is the viewport's size; a settled paused view renders until it's read back. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun captureReadsBackAPausedView() = withEngine { engine, setContent ->
+        val viewState = FilamentViewState()
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState, renderingEnabled = false) {
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 1f, 1f)), size = 50f, position = Position(0f, 0f, -50f))
+            }
+        }
+        renderFrames(engine, 30)
+        val view = assertNotNull(viewState.view)
+
+        var image: ImageBitmap? = null
+        runOnUiThread { CoroutineScope(Dispatchers.Unconfined).launch { image = viewState.capture() } }
+        repeat(30) {
+            if (image != null) return@repeat
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        val captured = assertNotNull(image, "a paused view should answer a capture")
+        assertEquals(view.viewport.width to view.viewport.height, captured.width to captured.height)
+        assertEquals(0, viewState.pendingReadbacks)
     }
 
     /** A view keeps the scene it was created for alive, so one handed another scene has to be a new view. */
