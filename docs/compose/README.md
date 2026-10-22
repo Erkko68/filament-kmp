@@ -262,6 +262,12 @@ GltfInstance(asset = model, fitToSize = 2f)   // 2 units across, centred on the 
 
 `rotation` and `scale` apply after the fit, and `pivot` is in the fitted space. Leave it null to keep
 the model's own size, e.g. when several models must keep their true scale relative to each other.
+To keep the size and move the camera instead, frame the asset's bounds (in its own units, so for an
+instance left at the origin and unscaled):
+
+```kotlin
+cam.viewpoint = cam.fitting(model.center, model.radius)
+```
 
 ## Animating glTF models
 
@@ -380,14 +386,15 @@ GltfInstance(asset = shoe, materialVariant = colourway)
 ## Tapping scene objects
 
 `GltfInstance`, the primitives and `Group` take an `onTap`, called when a tap on a `FilamentView`
-hits the object. A tap that turns into a drag doesn't count, so it works alongside the camera
-gestures:
+hits the object, with the world `Position` it hit (to drop a marker there, say). A tap that turns
+into a drag doesn't count, so it works alongside the camera gestures:
 
 ```kotlin
 FilamentSceneView(modifier = Modifier.orbitGestures(orbit), cameraState = cam) {
     ducks.forEach { duck ->
         key(duck.id) { GltfInstance(duckAsset, position = duck.position, onTap = { selected = duck.id }) }
     }
+    Plane(ground, width = 10f, depth = 10f, onTap = { at -> marker = at })
     Group(onTap = { selected = "car" }) {   // one handler for the whole assembly
         Cube(body)
         Cylinder(wheel, position = Position(0.6f, -0.4f, 0f))

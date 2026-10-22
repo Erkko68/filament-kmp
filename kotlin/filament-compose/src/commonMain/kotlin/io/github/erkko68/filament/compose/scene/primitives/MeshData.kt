@@ -129,7 +129,7 @@ internal fun Mesh(
     castShadows: Boolean,
     receiveShadows: Boolean,
     onCreate: EntityScope.() -> Unit,
-    onTap: (() -> Unit)?,
+    onTap: ((Position) -> Unit)?,
 ) {
     if (material == null) return
 

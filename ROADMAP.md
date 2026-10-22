@@ -2,18 +2,19 @@
 
 ## Stability & long-term maintenance
 
-With `0.2.0` the project dropped the `-beta` label: the major development phase and the
-internal repository restructuring (prebuilt pipeline, vendored web externals, CI matrix,
-API-surface enforcement) are done, and the focus shifts to tracking upstream and hardening.
-
 - **Upstream tracking** — each Filament feature release (1.73 → 1.74 → …) is picked up as a
   minor release following [docs/internals/upgrading-filament.md](docs/internals/upgrading-filament.md);
   upstream point releases and wrapper fixes ship as patches. Minor releases are the ongoing
   channel — see [README → Versioning & stability](README.md#versioning--stability).
-- **Path to `1.0.0`** — a major bump is reserved for maturity and very large changes: a
-  stabilized public API and the known issue backlog worked down. It is not tied to any
-  upstream Filament version. Until then, minor releases may still adjust public API (always
-  listed in the [changelog](CHANGELOG.md)).
+- **Consolidating `filament-compose`** — the Compose API is the one most users touch, and it changed
+  in most minor releases while its shape settled: value types, the loader signature, the skybox and
+  environment as scene content, `CameraState` owning the camera. That shape is in place now. From
+  here, new API comes when users ask for it; needs below the common path go through `FilamentEffect`,
+  `onCreate` and the bindings rather than new compose surface; and stable API changes after `0.9.0`
+  go through a one-release deprecation ([README → What may change](README.md#what-may-change)).
+- **Path to `1.0.0`** — a major bump marks the public API holding still: several minor releases
+  with no compose break outside the deprecation cycle, and the known issue backlog worked down. It
+  is not tied to any upstream Filament version.
 - **Known gaps** — per-platform differences are marked with `@PlatformGap` and listed in
   [Platform Notes](docs/guide/platform-notes.md#api-coverage); since every platform calls the same C
   API, the only ones left come from WebGL and single-threaded wasm.

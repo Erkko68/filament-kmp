@@ -104,7 +104,7 @@ private class GltfInstanceScopeImpl(
  *   recomposes). Use it to react to Compose state changes with low-level calls; for genuinely
  *   per-frame work use [OnFrame] or `rememberFilamentScene`'s `FilamentEffect`.
  * @param onTap Called when a tap on a [io.github.erkko68.filament.compose.FilamentView] hits any part of this
- *   instance. Null answers with the enclosing [Group]'s `onTap`, if any.
+ *   instance, with the world point it hit. Null answers with the enclosing [Group]'s `onTap`, if any.
  */
 @Composable
 fun FilamentSceneScope.GltfInstance(
@@ -122,7 +122,7 @@ fun FilamentSceneScope.GltfInstance(
     materialVariant: String? = null,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
-    onTap: (() -> Unit)? = null,
+    onTap: ((Position) -> Unit)? = null,
 ) {
     if (asset == null) return
 
