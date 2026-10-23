@@ -198,6 +198,8 @@ private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "c
 /** The generator's tasks for Filament, and `apiGaps`, which reads Filament's libraries. */
 fun Project.registerFilamentApiGen() {
     registerApiGenTasks(FILAMENT_API)
+    // Reading the headers fetches them first: after a filaVersion bump, the new version's.
+    listOf("apiModel", "generateCApi", "apiCoverage", "apiVerify").forEach { tasks.named(it) { dependsOn("downloadIncludes") } }
 
     if (hostPlatform() == "windows") return // nm can't read MSVC objects
     val target = FilamentTarget.host()
