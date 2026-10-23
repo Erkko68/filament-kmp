@@ -75,6 +75,3 @@ internal external fun GeoCanvas_GetValue_int32_t(self: NativePointer, name: Nati
 
 @ExternalSymbolName("GeoCanvas_invoke")
 internal external fun GeoCanvas_invoke(self: NativePointer, time: Float)
-
-@ExternalSymbolName("GeoCanvas_GetDefault")
-internal external fun GeoCanvas_GetDefault(): NativePointer

@@ -6,3 +6,6 @@ import geo.interop.NativePointer
 
 @ExternalSymbolName("GeoCanvas_Adopt")
 internal external fun GeoCanvas_Adopt(self: NativePointer, shape: NativePointer)
+
+@ExternalSymbolName("GeoCanvas_GetDefault")
+internal external fun GeoCanvas_GetDefault(): NativePointer

@@ -35,8 +35,7 @@
 {"name":"GeoCanvas_SetValue_int32_t","returns":"void","params":[["self","ptr"],["name","ptr"],["value","i32"]]},
 {"name":"GeoCanvas_GetValue_float","returns":"f32","params":[["self","ptr"],["name","ptr"]]},
 {"name":"GeoCanvas_GetValue_int32_t","returns":"i32","params":[["self","ptr"],["name","ptr"]]},
-{"name":"GeoCanvas_invoke","returns":"void","params":[["self","ptr"],["time","f32"]]},
-{"name":"GeoCanvas_GetDefault","returns":"ptr","params":[]}
+{"name":"GeoCanvas_invoke","returns":"void","params":[["self","ptr"],["time","f32"]]}
 ],
 "geo/generated/GeoCircle.h": [
 {"name":"GeoCircle_create","returns":"ptr","params":[["radius","f32"]]},
@@ -116,6 +115,7 @@
 {"name":"GeoStyle_SetVisible","returns":"void","params":[["self","ptr"],["value","bool"]]}
 ],
 "geo/manual/GeoCanvasManual.h": [
-{"name":"GeoCanvas_Adopt","returns":"void","params":[["self","ptr"],["shape","ptr"]]}
+{"name":"GeoCanvas_Adopt","returns":"void","params":[["self","ptr"],["shape","ptr"]]},
+{"name":"GeoCanvas_GetDefault","returns":"ptr","params":[]}
 ]
 }

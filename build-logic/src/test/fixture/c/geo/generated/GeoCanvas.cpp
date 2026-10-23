@@ -100,8 +100,4 @@ void GeoCanvas_invoke(GeoCanvas* self, float time) {
     geo_c::cpp(self)->operator()(time);
 }
 
-GeoCanvas* GeoCanvas_GetDefault(void) {
-    return geo_c::c(geo::Canvas::GetDefault());
-}
-
 } // extern "C"

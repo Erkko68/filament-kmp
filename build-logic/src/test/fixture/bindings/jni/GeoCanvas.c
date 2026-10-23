@@ -111,7 +111,3 @@ JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1invoke(JNIEnv* env, 
     GeoCanvas_invoke((void*)(intptr_t) self, time);
 }
 
-JNIEXPORT jlong JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1GetDefault(JNIEnv* env, jclass cls) {
-    return (jlong)(intptr_t) GeoCanvas_GetDefault();
-}
-

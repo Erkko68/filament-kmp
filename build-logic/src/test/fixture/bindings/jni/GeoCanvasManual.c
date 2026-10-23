@@ -19,3 +19,7 @@ JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasManualKt_GeoCanvas_1Adopt(JNIEnv* 
     GeoCanvas_Adopt((void*)(intptr_t) self, (void*)(intptr_t) shape);
 }
 
+JNIEXPORT jlong JNICALL Java_geo_capi_GeoCanvasManualKt_GeoCanvas_1GetDefault(JNIEnv* env, jclass cls) {
+    return (jlong)(intptr_t) GeoCanvas_GetDefault();
+}
+

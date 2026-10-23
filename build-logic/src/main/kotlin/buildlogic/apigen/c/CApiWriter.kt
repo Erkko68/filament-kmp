@@ -193,24 +193,30 @@ internal class CApiWriter(
     }
 
     /**
-     * Writes one function, or a `TODO(handwritten)` naming [cpp] when [build] can't bridge it. A [guard]ed one exists on
-     * every target, and panics where the header's condition hides the C++ it calls.
+     * Writes one function, or a note naming [cpp] where it doesn't: manual/ writes it, or [build] can't bridge it
+     * (`TODO(handwritten)`). A [guard]ed one exists on every target, and panics where the header's condition hides the
+     * C++ it calls.
      */
     private fun emit(name: String, cpp: String, section: Section, guard: String? = null, build: () -> Pair<String, String>) {
-        try {
-            val (signature, body) = build()
-            if (!functionNames.add(name)) throw Unsupported("$name is already generated for another overload")
+        val (code, reason) = try {
+            build().also { if (name in functionNames) throw Unsupported("$name is already generated for another overload") } to null
+        } catch (e: Unsupported) {
+            null to e.message
+        }
+        // By hand as itself, which wins over the generator, or as one function per case (`_aux_float2`, … for a std::variant).
+        val handwritten = manual.filter { it == name || (code == null && it.startsWith("${name}_")) }
+        if (code != null && handwritten.isEmpty()) {
+            val (signature, body) = code
+            functionNames += name
             section.declarations.appendLine("$signature;")
             val guarded = if (guard == null) "    $body" else "#if $guard\n    $body\n#else\n    $h::unavailable(\"$name\");\n#endif"
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
             bindings += Binding(name, cpp, Status.GENERATED)
-        } catch (e: Unsupported) {
-            // By hand as itself, or as one function per case (`_aux_float2`, … for a std::variant).
-            val handwritten = manual.filter { it == name || it.startsWith("${name}_") }
-            val note = if (handwritten.isNotEmpty()) "handwritten in manual/" else "TODO(handwritten)"
-            section.declarations.appendLine("// $note $name: $cpp\n//     ${e.message}")
-            if (handwritten.isEmpty()) bindings += Binding(name, cpp, Status.TODO, e.message) else handwritten.forEach { bindings += Binding(it, cpp, Status.MANUAL) }
+            return
         }
+        val note = if (handwritten.isNotEmpty()) "handwritten in manual/" else "TODO(handwritten)"
+        section.declarations.appendLine("// $note $name: $cpp\n//     ${reason ?: "the generator binds it too, but manual/ declares it"}")
+        if (handwritten.isEmpty()) bindings += Binding(name, cpp, Status.TODO, reason) else handwritten.forEach { bindings += Binding(it, cpp, Status.MANUAL) }
     }
 
     private fun bridge(params: List<CppParam>) =

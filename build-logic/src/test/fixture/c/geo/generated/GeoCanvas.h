@@ -38,7 +38,8 @@ int32_t GeoCanvas_GetValue_int32_t(const GeoCanvas* self, const char* name);
 // TODO(handwritten) GeoCanvas_Convert: template T geo::Canvas::Convert(T value) const
 //     function template: functionInstantiations lists none
 void GeoCanvas_invoke(GeoCanvas* self, float time);
-GeoCanvas* GeoCanvas_GetDefault(void);
+// handwritten in manual/ GeoCanvas_GetDefault: static Canvas * geo::Canvas::GetDefault()
+//     the generator binds it too, but manual/ declares it
 
 
 #ifdef __cplusplus
