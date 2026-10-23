@@ -33,7 +33,14 @@ jobs:
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
+        # ports.ubuntu.com (the ARM runners' only mirror) intermittently drops connections: refresh and retry.
+        run: |
+          for i in 1 2 3; do
+            sudo apt-get update
+            sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev && exit 0
+            echo "apt attempt $i failed; retrying in 20s" && sleep 20
+          done
+          exit 1
       - uses: ./.github/actions/setup-filament-libs
         with: { targets: '${{ matrix.target }}' }
       - name: Build libfilament-c
