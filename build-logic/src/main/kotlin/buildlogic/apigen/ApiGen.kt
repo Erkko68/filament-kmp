@@ -31,15 +31,10 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     }
     val headers by lazy { apiHeaders.headers(includeDir) }
 
-    fun headerFiles() = headers.map(includeDir::resolve)
-
     fun generatedDirs() = apiHeaders.modules.keys.map { cDir.resolve("$it/generated") }
 
     /** Hand-written headers: what they declare, the generator leaves alone. */
-    fun manualHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
-
-    /** The hand-written C++ headers the forwarders are compiled against. */
-    fun bridgeHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "hpp" }.orEmpty().toList() }
+    private fun manualHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
 
     /** Everything clang reads in the API headers, nothing skipped. */
     fun model(): CppApi = CppApiReader(config.sources, workDir.apply { mkdirs() }).read(includeDir, headers).scoped(headers)

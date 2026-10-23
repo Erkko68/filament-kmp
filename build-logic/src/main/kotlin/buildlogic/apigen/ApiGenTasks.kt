@@ -1,8 +1,8 @@
 package buildlogic.apigen
 
+import buildlogic.apigen.bindings.GenerateBindingsTask
 import buildlogic.apigen.c.GenerateCApiTask
 import buildlogic.apigen.cpp.ApiModelTask
-import buildlogic.apigen.bindings.GenerateBindingsTask
 import buildlogic.apigen.kotlin.GenerateKotlinExternalsTask
 import buildlogic.apigen.report.ApiCoverageTask
 import buildlogic.apigen.report.ApiVerifyTask

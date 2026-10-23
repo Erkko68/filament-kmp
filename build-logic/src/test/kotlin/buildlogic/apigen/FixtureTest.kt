@@ -1,8 +1,8 @@
 package buildlogic.apigen
 
+import buildlogic.apigen.bindings.bindingFiles
 import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.modelReport
-import buildlogic.apigen.bindings.bindingFiles
 import buildlogic.apigen.report.KotlinDeclarations
 import buildlogic.apigen.report.coverage
 import buildlogic.apigen.report.enumCheck

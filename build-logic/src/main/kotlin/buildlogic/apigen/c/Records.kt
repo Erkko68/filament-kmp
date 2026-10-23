@@ -1,7 +1,7 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.TypeTables
 import buildlogic.apigen.RefCounting
+import buildlogic.apigen.TypeTables
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppField
 import buildlogic.apigen.cpp.CppMethod

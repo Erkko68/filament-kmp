@@ -1,7 +1,7 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.TypeTables
 import buildlogic.apigen.Scalar
+import buildlogic.apigen.TypeTables
 
 /**
  * The bridges of a value C passes as it is, given how C++ takes it: [const], [indirection] (`*`, `&`, `&&` or none),
