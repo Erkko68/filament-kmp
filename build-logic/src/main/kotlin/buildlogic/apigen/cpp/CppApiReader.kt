@@ -1,12 +1,12 @@
 package buildlogic.apigen.cpp
 
-import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.Sources
 import java.io.File
 import java.math.BigInteger
 
 /** Builds a [CppApi] from clang's AST of [headers]; nothing here parses C++ itself. */
-internal class CppApiReader(private val config: ApiGenConfig, private val workDir: File) {
-    private val ast = ClangAstDump(config, workDir)
+internal class CppApiReader(private val sources: Sources, private val workDir: File) {
+    private val ast = ClangAstDump(sources, workDir)
     private val scopes = CppScopes()
     private val records = LinkedHashMap<String, CppRecord>()
     private val enums = LinkedHashMap<String, CppEnum>()
@@ -23,18 +23,18 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
     fun read(includeDir: File, headers: Collection<String>): CppApi {
         guards = PreprocessorGuards(includeDir)
         val unit = workDir.resolve("headers.cpp")
-        unit.writeText((config.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
+        unit.writeText((sources.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
         // Every filter's namespace up front, before any dump runs.
-        config.astFilters.forEach { filter ->
+        sources.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             if (filter.endsWith("::")) scopes.namespace(namespace) else if (namespace.isNotEmpty()) scopes.partialNamespace(namespace)
-            config.skippedNamespaces.forEach { scopes.partialNamespace(qualify(namespace, it)) }
+            sources.skippedNamespaces.forEach { scopes.partialNamespace(qualify(namespace, it)) }
         }
         // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
-        config.astFilters.forEach { filter ->
+        sources.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
-            ast.forEachDeclaration(unit, includeDir, filter, config.skippedNamespaces) { document ->
+            ast.forEachDeclaration(unit, includeDir, filter, sources.skippedNamespaces) { document ->
                 locationOf = DeclarationFiles.of(document, includeDir)
                 visit(document, namespace, exported = false, accessible = true)
             }

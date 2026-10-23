@@ -41,9 +41,9 @@ class FixtureTest {
         apiGen.generateCApi()
         apiGen.generateKotlinExternals()
         val bindings = project.resolve("bindings")
-        GeneratedFiles(bindings, listOf(bindings), bindingFiles(CManifest.parse(apiGen.manifestFile.readText()).headers, GEO_API.kotlin!!, GEO_API.prefix)).write()
+        GeneratedFiles(bindings, listOf(bindings), bindingFiles(CManifest.parse(apiGen.manifestFile.readText()).headers, GEO_API.kotlin!!, GEO_API.naming.prefix)).write()
         val api = apiGen.api()
-        apiGen.coverageFile.writeText(coverage(api, apiGen.cApi(api).bindings, GEO_API.prefix, kotlinApiSources(apiGen.kotlinDir!!)).text)
+        apiGen.coverageFile.writeText(coverage(api, apiGen.cApi(api).bindings, GEO_API.naming.prefix, kotlinApiSources(apiGen.kotlinDir!!)).text)
         project.resolve("reports/api-model.txt").write(modelReport(apiGen.model()).text)
     }
 

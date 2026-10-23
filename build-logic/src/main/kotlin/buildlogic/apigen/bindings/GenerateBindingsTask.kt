@@ -33,7 +33,7 @@ abstract class GenerateBindingsTask : ApiGenTask() {
     fun generate() {
         val out = outputDir.get().asFile.apply { deleteRecursively() }
         val headers = CManifest.parse(manifest.get().asFile.readText()).headers
-        bindingFiles(headers, config.get().kotlin!!, config.get().prefix).forEach { (path, text) ->
+        bindingFiles(headers, config.get().kotlin!!, config.get().naming.prefix).forEach { (path, text) ->
             out.resolve(path).apply { parentFile.mkdirs() }.writeText(text)
         }
     }

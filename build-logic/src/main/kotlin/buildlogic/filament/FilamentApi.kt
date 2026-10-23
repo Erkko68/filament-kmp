@@ -1,10 +1,13 @@
 package buildlogic.filament
 
 import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.Bridges
 import buildlogic.apigen.CustomBridges
 import buildlogic.apigen.KotlinBindings
 import buildlogic.apigen.Mirror
+import buildlogic.apigen.Naming
 import buildlogic.apigen.Scalar
+import buildlogic.apigen.Sources
 import buildlogic.apigen.c.CBridge
 import buildlogic.apigen.c.DirectBridges
 import buildlogic.apigen.c.Unsupported
@@ -56,65 +59,65 @@ private val PACKAGES = mapOf(
 
 internal val FILAMENT_API = ApiGenConfig(
     name = "Filament",
-    includeDir = "include",
-    // No NEON: the API is what every target has (ToneMapper's float32x4_t overloads are ARM-only).
-    clangArgs = listOf("-U__ARM_NEON"),
-    // Dependencies first: filament uses utils::EntityManager, ktxreader uses image's bundles and filament.
-    astFilters = listOf("utils::EntityManager", "image::Ktx", "filament::", "filamat::", "ktxreader::", "IBLPrefilterContext"),
-    // Math templates are huge and declare no API of their own.
-    skippedNamespaces = setOf("math"),
-    prefix = "Fila",
-    droppedNamespaces = setOf("filament", "backend", "math"),
-    getter = "get",
-    setter = "set",
-    helpers = "fila",
-    bridgeHeader = "../manual/FilaBridge.hpp",
-    typedefs = listOf("typedef int32_t FilaEntity;"),
-    // Durations and time points are nanoseconds (since the steady clock's epoch); a tribool is 0, 1, or 2 for
-    // indeterminate; an Entity is its id.
-    scalars = mapOf(
-        "std::chrono::nanoseconds" to Scalar("int64_t", "std::chrono::nanoseconds({})", "({}).count()"),
-        "$STEADY::time_point" to Scalar(
-            "int64_t",
-            "$STEADY::time_point(std::chrono::duration_cast<$STEADY::duration>(std::chrono::nanoseconds({})))",
-            "std::chrono::duration_cast<std::chrono::nanoseconds>(({}).time_since_epoch()).count()",
+    sources = Sources(
+        includeDir = "include",
+        // Dependencies first: filament uses utils::EntityManager, ktxreader uses image's bundles and filament.
+        astFilters = listOf("utils::EntityManager", "image::Ktx", "filament::", "filamat::", "ktxreader::", "IBLPrefilterContext"),
+        // Math templates are huge and declare no API of their own.
+        skippedNamespaces = setOf("math"),
+        // No NEON: the API is what every target has (ToneMapper's float32x4_t overloads are ARM-only).
+        clangArgs = listOf("-U__ARM_NEON"),
+    ),
+    naming = Naming(prefix = "Fila", helpers = "fila", droppedNamespaces = setOf("filament", "backend", "math"), getter = "get", setter = "set"),
+    bridges = Bridges(
+        // Durations and time points are nanoseconds (since the steady clock's epoch); a tribool is 0, 1, or 2 for
+        // indeterminate; an Entity is its id.
+        scalars = mapOf(
+            "std::chrono::nanoseconds" to Scalar("int64_t", "std::chrono::nanoseconds({})", "({}).count()"),
+            "$STEADY::time_point" to Scalar(
+                "int64_t",
+                "$STEADY::time_point(std::chrono::duration_cast<$STEADY::duration>(std::chrono::nanoseconds({})))",
+                "std::chrono::duration_cast<std::chrono::nanoseconds>(({}).time_since_epoch()).count()",
+            ),
+            "utils::Entity::Type" to Scalar("uint32_t", "{}", "{}"),
+            "utils::bitset32" to Scalar("uint32_t", "utils::bitset32({})", "({}).getValue()"),
+            "utils::tribool" to Scalar(
+                "int32_t",
+                "utils::tribool(static_cast<utils::tribool::Value>({}))",
+                "[](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }({})",
+            ),
+            "utils::Entity" to Scalar("FilaEntity", "utils::Entity::import({})", "utils::Entity::smuggle({})", layout = true),
         ),
-        "utils::Entity::Type" to Scalar("uint32_t", "{}", "{}"),
-        "utils::bitset32" to Scalar("uint32_t", "utils::bitset32({})", "({}).getValue()"),
-        "utils::tribool" to Scalar(
-            "int32_t",
-            "utils::tribool(static_cast<utils::tribool::Value>({}))",
-            "[](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }({})",
+        mirrors = MIRRORS,
+        sequences = setOf("utils::FixedCapacityVector", "utils::Slice"),
+        views = setOf("utils::Slice"),
+        // Only literals make a StaticString; fila::staticString makes one because everything taking it copies it.
+        strings = mapOf("utils::CString" to "utils::CString", "utils::ImmutableCString" to "utils::ImmutableCString", "utils::StaticString" to "fila::staticString"),
+        literalOnly = setOf("filament::MaterialInstance::StringLiteral"),
+        // The instantiations the libraries export.
+        instantiations = mapOf(
+            "filament::camutils::Manipulator" to mapOf("FLOAT" to "float"),
+            "filament::camutils::Bookmark" to mapOf("FLOAT" to "float"),
         ),
-        "utils::Entity" to Scalar("FilaEntity", "utils::Entity::import({})", "utils::Entity::smuggle({})", layout = true),
+        functionInstantiations = mapOf(
+            "filamat::MaterialBuilder::constant" to each("T", CONSTANT_TYPES),
+            "filament::Material::Builder::constant" to each("T", CONSTANT_TYPES),
+            "filament::Material::setDefaultParameter" to each("T", PARAMETER_TYPES),
+            "filament::MaterialInstance::setParameter" to each("T", PARAMETER_TYPES),
+            "filament::MaterialInstance::getParameter" to each("T", READABLE_PARAMETER_TYPES),
+            "filament::MaterialInstance::setConstant" to each("T", CONSTANT_TYPES),
+            "filament::MaterialInstance::getConstant" to each("T", CONSTANT_TYPES),
+            "filament::RenderableManager::computeAABB" to math("float4", "half4", "float3", "half3")
+                .flatMap { v -> listOf("uint16_t", "uint32_t").map { mapOf("VECTOR" to v, "INDEX" to it) } },
+            "filament::geometry::TangentSpaceMesh::getAux" to each("T", math("float2", "float3", "float4", "ushort3", "ushort4")),
+            // ColorConversion::ACCURATE, the default.
+            "filament::Color::toLinear" to listOf(emptyMap()),
+            "filament::Color::toSRGB" to listOf(emptyMap()),
+        ),
+        custom = FilamentBridges,
+        typedefs = listOf("typedef int32_t FilaEntity;"),
+        header = "../manual/FilaBridge.hpp",
     ),
-    mirrors = MIRRORS,
-    sequences = setOf("utils::FixedCapacityVector", "utils::Slice"),
-    views = setOf("utils::Slice"),
-    // Only literals make a StaticString; fila::staticString makes one because everything taking it copies it.
-    strings = mapOf("utils::CString" to "utils::CString", "utils::ImmutableCString" to "utils::ImmutableCString", "utils::StaticString" to "fila::staticString"),
-    literalOnly = setOf("filament::MaterialInstance::StringLiteral"),
-    // The instantiations the libraries export.
-    instantiations = mapOf(
-        "filament::camutils::Manipulator" to mapOf("FLOAT" to "float"),
-        "filament::camutils::Bookmark" to mapOf("FLOAT" to "float"),
-    ),
-    functionInstantiations = mapOf(
-        "filamat::MaterialBuilder::constant" to each("T", CONSTANT_TYPES),
-        "filament::Material::Builder::constant" to each("T", CONSTANT_TYPES),
-        "filament::Material::setDefaultParameter" to each("T", PARAMETER_TYPES),
-        "filament::MaterialInstance::setParameter" to each("T", PARAMETER_TYPES),
-        "filament::MaterialInstance::getParameter" to each("T", READABLE_PARAMETER_TYPES),
-        "filament::MaterialInstance::setConstant" to each("T", CONSTANT_TYPES),
-        "filament::MaterialInstance::getConstant" to each("T", CONSTANT_TYPES),
-        "filament::RenderableManager::computeAABB" to math("float4", "half4", "float3", "half3")
-            .flatMap { v -> listOf("uint16_t", "uint32_t").map { mapOf("VECTOR" to v, "INDEX" to it) } },
-        "filament::geometry::TangentSpaceMesh::getAux" to each("T", math("float2", "float3", "float4", "ushort3", "ushort4")),
-        // ColorConversion::ACCURATE, the default.
-        "filament::Color::toLinear" to listOf(emptyMap()),
-        "filament::Color::toSRGB" to listOf(emptyMap()),
-    ),
-    custom = FilamentBridges,
     kotlin = KotlinBindings(
         packages = PACKAGES,
         interop = "io.github.erkko68.filament.interop",

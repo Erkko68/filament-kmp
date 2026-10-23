@@ -1,6 +1,6 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.Bridges
 import buildlogic.apigen.Scalar
 
 /**
@@ -9,10 +9,10 @@ import buildlogic.apigen.Scalar
  * optionals and functions.
  */
 class DirectBridges internal constructor(
-    private val config: ApiGenConfig, private val names: CNames,
+    private val config: Bridges, private val names: CNames,
     val const: Boolean, val indirection: String?, val result: Boolean, val lvalue: Boolean,
 ) {
-    private val h = config.helpers
+    private val h = names.helpers
     val byValue = indirection == null || (indirection == "&" && const)
     val c = if (const) "const " else ""
 

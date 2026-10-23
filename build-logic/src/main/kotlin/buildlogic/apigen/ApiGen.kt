@@ -17,7 +17,7 @@ import java.io.File
 internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File) {
     // Absolute: clang reports a declaration's file as the include path spells it.
     private val workDir = workDir.absoluteFile
-    val includeDir: File = projectDir.absoluteFile.resolve(config.includeDir)
+    val includeDir: File = projectDir.absoluteFile.resolve(config.sources.includeDir)
     val cDir: File = projectDir.absoluteFile.resolve(config.cDir)
     val apiHeadersFile: File = cDir.resolve("api-headers.txt")
     val manifestFile: File = cDir.resolve("api-manifest.json")
@@ -42,7 +42,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     fun bridgeHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "hpp" }.orEmpty().toList() }
 
     /** Everything clang reads in the API headers, nothing skipped. */
-    fun model(): CppApi = CppApiReader(config, workDir.apply { mkdirs() }).read(includeDir, headers).scoped(headers)
+    fun model(): CppApi = CppApiReader(config.sources, workDir.apply { mkdirs() }).read(includeDir, headers).scoped(headers)
 
     /** The API: the [model] less `api-headers.txt`'s skips, each of which must name something. */
     fun api(): CppApi {
@@ -56,7 +56,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
 
     /** The c stage: [api] in C, less the functions the [manualHeaders] declare. */
     fun cApi(api: CppApi = api()): CApi {
-        val function = Regex("""\b(${Regex.escape(config.prefix)}\w+)\s*\(""")
+        val function = Regex("""\b(${Regex.escape(config.naming.prefix)}\w+)\s*\(""")
         val manual = manualHeaders().flatMap { function.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
         return CApiWriter(api, config, apiHeaders, manual).write()
     }
@@ -72,7 +72,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     }
 
     /** The functions the C headers on disk declare, generated and hand-written. */
-    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.prefix, workDir)
+    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.naming.prefix, workDir)
 
     /** The kotlin stage: the externals of [manifest], in place of each module's package of them. */
     fun kotlinFiles(manifest: CManifest): GeneratedFiles {
@@ -87,7 +87,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     /** Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers. */
     fun checkCompiles(files: Collection<File>) {
         compile("headers.c", files.filter { it.extension == "h" }, listOf("clang", "-x", "c", "-std=c11"))
-        compile("forwarders.cpp", files.filter { it.extension == "cpp" }, listOf("clang++", "-std=${config.std}") + config.clangArgs + listOf("-I", includeDir.path))
+        compile("forwarders.cpp", files.filter { it.extension == "cpp" }, listOf("clang++", "-std=${config.sources.std}") + config.sources.clangArgs + listOf("-I", includeDir.path))
     }
 
     private fun compile(unit: String, sources: List<File>, command: List<String>) {

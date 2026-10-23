@@ -1,6 +1,6 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.Bridges
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppField
 import buildlogic.apigen.cpp.CppMethod
@@ -10,7 +10,7 @@ import buildlogic.apigen.cpp.CppRecord
  * What C binds of a record: `_create`/`_destroy`, upcasts, methods and field accessors. [CApiWriter] writes them.
  * [bound]: the records it writes them for, the API headers'.
  */
-internal class BindingRules(private val api: CppApi, private val config: ApiGenConfig, private val bridges: CBridges, private val bound: Set<String>) {
+internal class BindingRules(private val api: CppApi, private val config: Bridges, private val bridges: CBridges, private val bound: Set<String>) {
     /** Records the API's functions and constructors take. */
     private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
         .plus(api.records.values.flatMap { it.constructors })

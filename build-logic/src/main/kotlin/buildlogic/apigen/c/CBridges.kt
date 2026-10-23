@@ -1,6 +1,6 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.Bridges
 import buildlogic.apigen.RefCounting
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
@@ -12,8 +12,8 @@ import buildlogic.apigen.cpp.CppType.Kind
 private fun isArray(type: CppType) = type.spelling.trim().endsWith("]")
 
 /** Maps the model's types onto C, recording the math types the module's mirror structs must cover. */
-internal class CBridges(private val api: CppApi, private val config: ApiGenConfig, private val names: CNames) {
-    private val h = config.helpers
+internal class CBridges(private val api: CppApi, private val config: Bridges, private val names: CNames) {
+    private val h = names.helpers
     private val refs = config.refs
     val mathTypes = sortedSetOf<String>()
     /** Function pointer typedefs the forwarders use, by C name. */
@@ -56,7 +56,7 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     /** A template [record] C doesn't bind. */
     fun uninstantiated(record: CppRecord) = record.template && !instantiated(record.name)
 
-    /** [ApiGenConfig.functionInstantiations] entries no template matched: stale after an upstream rename. */
+    /** [Bridges.functionInstantiations] entries no template matched: stale after an upstream rename. */
     val unusedFunctionInstantiations = config.functionInstantiations.keys.toMutableSet()
 
     /**
@@ -187,7 +187,7 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     }
 
     /**
-     * A result type ([ApiGenConfig.results]) is its value, or NULL (false, for a value C copies out) when it holds an
+     * A result type ([Bridges.results]) is its value, or NULL (false, for a value C copies out) when it holds an
      * error, whose message is then copied into `outError` up to its capacity, NUL-terminated.
      */
     private fun fallible(type: CppType, bridge: DirectBridges): CBridge {
@@ -202,7 +202,7 @@ internal class CBridges(private val api: CppApi, private val config: ApiGenConfi
     }
 
     /**
-     * A sequence ([ApiGenConfig.sequences], std::vector, std::array) or array. C passes an array and its count;
+     * A sequence ([Bridges.sequences], std::vector, std::array) or array. C passes an array and its count;
      * `items` converts it to whichever the callee takes. A result fills C's array up to its capacity and returns how
      * many there are. Math elements are contiguous mirrors; value records, the handles C created to copy into.
      */

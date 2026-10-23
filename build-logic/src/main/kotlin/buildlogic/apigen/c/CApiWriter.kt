@@ -2,6 +2,7 @@ package buildlogic.apigen.c
 
 import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.ApiHeaders
+import buildlogic.apigen.Naming
 import buildlogic.apigen.c.Binding.Status
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
@@ -20,10 +21,11 @@ import buildlogic.apigen.cpp.CppType
 internal class CApiWriter(
     private val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val manual: Set<String> = emptySet(),
 ) {
-    private val h = config.helpers
-    private val names = CNames(config)
-    private val bridges = CBridges(api, config, names)
-    private val rules = BindingRules(api, config, bridges, api.apiRecords.mapTo(HashSet()) { it.name })
+    private val names = CNames(config.naming)
+    private val h = names.helpers
+    private val refs = config.bridges.refs
+    private val bridges = CBridges(api, config.bridges, names)
+    private val rules = BindingRules(api, config.bridges, bridges, api.apiRecords.mapTo(HashSet()) { it.name })
     private val surface = api.surface
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
@@ -88,8 +90,8 @@ internal class CApiWriter(
         }
         // What `_create` and results by value hand C: a reference to give back, in place of `_destroy`.
         if (counted && !bridges.uninstantiated(record)) {
-            emit("${self}_addRef", "${record.name}::${config.refs!!.addRef}()", section) { "void ${self}_addRef(const $self* self)" to "$h::cpp(self)->${config.refs!!.addRef}();" }
-            emit("${self}_release", "${record.name}::${config.refs!!.release}()", section) { "void ${self}_release(const $self* self)" to "$h::cpp(self)->${config.refs!!.release}();" }
+            emit("${self}_addRef", "${record.name}::${refs!!.addRef}()", section) { "void ${self}_addRef(const $self* self)" to "$h::cpp(self)->${refs!!.addRef}();" }
+            emit("${self}_release", "${record.name}::${refs!!.release}()", section) { "void ${self}_release(const $self* self)" to "$h::cpp(self)->${refs!!.release}();" }
         }
         if (rules.destroys(record)) {
             emit("${self}_destroy", "~${record.name}()", section) {
@@ -236,7 +238,7 @@ internal class CApiWriter(
     private fun types(module: String): String {
         val body = StringBuilder()
         if (module == baseModule) {
-            config.typedefs.forEach { body.appendLine("$it\n") }
+            config.bridges.typedefs.forEach { body.appendLine("$it\n") }
             bridges.mathTypes.forEach { body.appendLine(mirror(it)) }
             body.appendLine()
         }
@@ -253,7 +255,7 @@ internal class CApiWriter(
     /** The C++ headers, and the `cpp`/`c` overloads between the module's C types and C++'s (Bridge.hpp's `_TYPE` macro). */
     private fun includes(module: String): String {
         val text = StringBuilder("$banner\n#pragma once\n\n")
-        if (module == baseModule) text.append("#include \"${config.bridgeHeader ?: "Bridge.hpp"}\"\n\n").append(api.headers.joinToString("") { "#include <$it>\n" })
+        if (module == baseModule) text.append("#include \"${config.bridges.header ?: "Bridge.hpp"}\"\n\n").append(api.headers.joinToString("") { "#include <$it>\n" })
         else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
         if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
@@ -268,7 +270,7 @@ internal class CApiWriter(
     private val twinBases by lazy { surface.mapNotNull { api.records[it] }.flatMapTo(HashSet()) { bridges.twins(it) } }
 
     /** A record C holds by a handle: not a class template, nor what crosses as a mirror or a scalar. */
-    private fun handled(record: CppRecord) = !bridges.uninstantiated(record) && record.name !in config.mirrors && record.name !in config.scalars
+    private fun handled(record: CppRecord) = !bridges.uninstantiated(record) && record.name !in config.bridges.mirrors && record.name !in config.bridges.scalars
 
     private fun enum(enum: CppEnum): String {
         val name = names.type(enum.name)
@@ -301,11 +303,11 @@ internal class CApiWriter(
         spelled(m.params) + ")" + if (m.isConst) " const" else ""
 
     /** The C struct with the storage of a math type; C++ sees the same bytes through the `math` and `mirror` helpers. */
-    private fun mirror(decl: String) = config.mirrors.getValue(decl).let { m ->
+    private fun mirror(decl: String) = config.bridges.mirrors.getValue(decl).let { m ->
         names.type(decl).let { "typedef struct $it { ${m.element} v[${m.count}]; } $it;" }
     }
 
-    /** The helpers every library's forwarders call, in the [ApiGenConfig.helpers] namespace. */
+    /** The helpers every library's forwarders call, in the [Naming.helpers] namespace. */
     private fun bridge() = checkNotNull(javaClass.getResource("Bridge.hpp")) { "Bridge.hpp isn't on the classpath" }.readText()
         .replace("APIGEN_TYPE", typeMacro).replace(Regex("""\bapigen\b"""), h)
 
