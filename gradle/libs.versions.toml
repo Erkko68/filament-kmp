@@ -28,7 +28,6 @@ kotlinx-coroutines = "1.11.0"
 material3 = "1.9.0"
 vanniktech-publish = "0.37.0"
 dokka = "2.2.0"
-kover = "0.9.11"
 # tar.gz extraction for the prebuilt-download tasks in build-logic (replaced the Python scripts)
 commons-compress = "1.28.0"
 binary-compatibility-validator = "0.18.2"
@@ -46,7 +45,6 @@ compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin",
 vanniktech-publish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
-kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-composeUi" }
@@ -74,5 +72,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 vanniktechPublish = { id = "com.vanniktech.gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binary-compatibility-validator" }

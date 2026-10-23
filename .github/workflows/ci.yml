@@ -117,19 +117,6 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           ! readelf -d desktop/build/filament-c/*/libfilament-c.so | grep -E 'NEEDED.*(libc\+\+|libunwind)'
-      # Aggregate JVM test coverage once, on the macOS runner where the real-backend (Metal)
-      # tests also run, for the highest-coverage snapshot. Report-only (non-blocking) — no
-      # threshold is enforced. js/native actuals run on runtimes Kover can't instrument.
-      - name: Coverage report
-        if: matrix.target == 'macos-arm64'
-        shell: bash
-        run: ./gradlew koverXmlReport koverHtmlReport --no-configuration-cache
-      - name: Upload coverage report
-        if: matrix.target == 'macos-arm64'
-        uses: actions/upload-artifact@v7
-        with:
-          name: kover-coverage
-          path: build/reports/kover/
       - name: Build desktop sample
         working-directory: samples
         shell: bash

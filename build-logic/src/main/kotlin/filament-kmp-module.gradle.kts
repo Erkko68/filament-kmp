@@ -10,7 +10,6 @@ plugins {
     id("com.android.kotlin.multiplatform.library")
     id("filament-publish")
     id("org.jetbrains.dokka")
-    id("org.jetbrains.kotlinx.kover")
 }
 
 val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
