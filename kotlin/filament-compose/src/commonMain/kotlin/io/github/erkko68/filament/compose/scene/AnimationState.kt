@@ -371,7 +371,9 @@ fun rememberAnimationMixer(): AnimationMixer = remember { AnimationMixer() }
  *
  * ```kotlin
  * val names = rememberAnimationNames(character)
- * val anim = rememberAnimationState(initialAnimationIndex = names.indexOf("Idle"))
+ * val anim = rememberAnimationState(initialAnimationIndex = null)
+ * // The names arrive with the asset, after the state's initial index is read.
+ * LaunchedEffect(names) { anim.animationIndex = names.indexOf("Idle").takeIf { it >= 0 } }
  * ```
  */
 @Composable
