@@ -1,12 +1,9 @@
 # Build Artifacts
 **/build/
 .cxx/
-filament-source/
-/filament-main/
 /prebuilts/
 /include/
 **/bin/
-/kotlin-js-store/
 
 # Gradle
 .gradle/

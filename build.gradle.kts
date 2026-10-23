@@ -1,6 +1,6 @@
 plugins {
-    // Versioned via the catalog: the root applies no convention plugin, so unlike the
-    // subprojects it can't resolve these version-less from the build-logic classpath.
+    // Versioned via the catalog: subprojects inherit them through the classpath loaded here,
+    // but the root itself can't resolve them version-less.
     alias(libs.plugins.dokka)
     alias(libs.plugins.binaryCompatibilityValidator)
     id("filament-root")

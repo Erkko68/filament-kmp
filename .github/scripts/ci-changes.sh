@@ -20,7 +20,7 @@ classify() {
         # c/ is the C API every target builds; build-logic drives all of them.
         c/*|build-logic/*) all ;;
         desktop/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;
-        web/*|kotlin/*/src/web*|kotlin/*/src/js*|kotlin/*/src/wasmJs*|samples/webApp/*|gradle/karma/*|kotlin-js-store/*) web=true ;;
+        web/*|kotlin/*/src/web*|kotlin/*/src/js*|kotlin/*/src/wasmJs*|samples/webApp/*|gradle/karma/*) web=true ;;
         kotlin/*/src/native*|kotlin/*/src/ios*|samples/iosApp/*|samples/shared/src/iosMain/*) ios=true ;;
         # jni/ is the JNI runtime both desktop and Android build in.
         jni/*|kotlin/*/src/jniMain/*) jvm=true android=true ;;
