@@ -84,7 +84,8 @@ jobs:
         run: |
           SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           yes | "$SDKM" --licenses > /dev/null
-          "$SDKM" "ndk;29.0.14206865" "cmake;3.22.1" > /dev/null
+          prop() { sed -n "s/^$1=//p" gradle.properties; }
+          "$SDKM" "ndk;$(prop ndkVersion)" "cmake;$(prop androidCmakeVersion)" > /dev/null
       - name: Download desktop natives
         uses: actions/download-artifact@v8
         with:

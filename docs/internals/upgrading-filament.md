@@ -114,8 +114,8 @@ linker-error class) can no longer happen silently.
 `prebuilts/` is gitignored, so deleting it is safe. Upstream publishes no wasm (or windows-arm64)
 static libraries, so those `prebuilts_<id>` tasks build them from the release's source tarball
 (`BuildFromSourceTask`: host tools, then the Emscripten build with `libfilamat`). CI caches the result
-per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and bump `emsdkVersion` in
-`gradle.properties` to match.
+per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and `build/common/versions` for new
+NDK/CMake versions, and bump `emsdkVersion`, `ndkVersion` and `androidCmakeVersion` in `gradle.properties` to match.
 
 ### 4. Regenerate and audit
 

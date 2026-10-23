@@ -2,6 +2,7 @@ package buildlogic.cmake
 
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.FilamentTarget.*
+import buildlogic.platform.IOS_DEPLOYMENT_TARGET
 import org.gradle.api.file.Directory
 
 /** CMake toolchain arguments per target. Android's come from :android, which knows the SDK's NDK. */
@@ -19,7 +20,7 @@ private fun ios(sdk: String) = listOf(
     "-DCMAKE_SYSTEM_NAME=iOS",
     "-DCMAKE_OSX_SYSROOT=$sdk",
     "-DCMAKE_OSX_ARCHITECTURES=arm64",
-    "-DCMAKE_OSX_DEPLOYMENT_TARGET=15.0",
+    "-DCMAKE_OSX_DEPLOYMENT_TARGET=$IOS_DEPLOYMENT_TARGET",
 )
 
 internal fun emsdkDir(root: Directory): String = root.dir(".emsdk").asFile.invariantSeparatorsPath

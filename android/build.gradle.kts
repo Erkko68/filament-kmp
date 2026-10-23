@@ -13,8 +13,8 @@ plugins {
 // the SDK's NDK and CMake pinned to upstream's (build/common/versions) so the prebuilts' libc++ matches.
 // Plain CMake tasks rather than AGP's externalNativeBuild: configuring the build never needs an SDK.
 
-val ndkVersion = "29.0.14206865"
-val cmakeVersion = "3.22.1"
+val ndkVersion = providers.gradleProperty("ndkVersion").get()
+val cmakeVersion = providers.gradleProperty("androidCmakeVersion").get()
 val minSdkVersion = libs.versions.android.minSdk.get().toInt()
 
 kotlin {

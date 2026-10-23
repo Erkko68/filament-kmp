@@ -1,4 +1,5 @@
 import buildlogic.cmake.linkFilamentCApi
+import buildlogic.platform.IOS_DEPLOYMENT_TARGET
 import buildlogic.platform.hostPlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -173,11 +174,11 @@ kotlin.sourceSets.named("androidDeviceTest").configure {
 }
 
 // ── iOS deployment target ─────────────────────────────────────────────────────
-// The test executables link the C API, which is built for this minimum (Toolchains.kt).
+// The test executables link the C API, built for the same minimum.
 kotlin.targets.withType<KotlinNativeTarget>().configureEach {
     if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
         binaries.all {
-            freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
+            freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=$IOS_DEPLOYMENT_TARGET"
         }
     }
 }
