@@ -10,7 +10,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-10-23
+
+The `filament-compose` API now covers the common model-viewer path: camera moves, taps that reach the object they hit, screen-anchored labels, capture, material variants and built-in lighting. It is mostly complete from here on and changes only in small, focused steps; see [README → What may change](README.md#what-may-change). Feedback is still very welcome in the [API feedback discussion](https://github.com/Erkko68/filament-kmp/discussions/204).
+
+Upgrading from 0.8? See the [migration guide](docs/migration/from-0.8.md).
+
 ### Added
+- **New samples**: Labels (`anchorTo`), Camera Tour (`animateTo` along `CameraPath` routes) and Capture (`capture()` over a shadow-catcher ground); Primitives switches the ambient presets and the sun's shadows, Animation shows `progress`, Duck uses `fitToSize` and Picking uses `onTap`.
 - **`onTap` on `GltfInstance`, the primitives and `Group`** (`filament-compose`): a tap on a `FilamentView` reaches the object it hits, with the world point it hit, without mapping entities by hand.
 - **`GltfAsset.center` and `radius`** (`filament-compose`): the model's bounds, for `CameraState.fitting` on a model kept at its own size.
 - **`GltfAsset.progress`** (`filament-compose`): how much of the asset's GPU upload is done, for a loading indicator; reaches 1 with `isReady`.
@@ -40,6 +47,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Orbit zoom stops at the near plane** (`filament-compose`) instead of flying through the target and turning the camera round.
 - **Pans follow the pointer at the camera's field of view** (`filament-compose`), and an orthographic map zooms by scaling its extents.
 - **Orbit, map and flight camera gestures start past the touch slop** (`filament-compose`): a finger tap no longer nudges the camera or swallows the tap.
+- **KDoc examples** (`filament-compose`): `rememberGltfAsset` waits for `isReady` before hiding a spinner, and `rememberAnimationNames` no longer seeds an index from a not-yet-loaded asset.
 - **`LensShift` KDoc** (`filament-compose`): a shift of 1 moves the image by a full viewport width/height, as Filament's `Camera::setShift` defines, not half.
 - **`filament-compose-jvm` no longer pulls the macOS arm64 Skiko runtime** onto every desktop consumer; apps add `compose.desktop.currentOs` themselves, as Compose Desktop apps already do.
 - **Arrays shorter than Filament reads or writes now throw `IllegalArgumentException`** instead of an out-of-bounds native access (matrices, vectors, `out` arrays, counted uploads, mesh builders, custom LUTs).
@@ -601,7 +609,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.8.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/Erkko68/filament-kmp/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/Erkko68/filament-kmp/compare/0.7.3...0.8.0
 [0.7.3]: https://github.com/Erkko68/filament-kmp/compare/0.7.2...0.7.3
 [0.7.2]: https://github.com/Erkko68/filament-kmp/compare/0.7.1...0.7.2
