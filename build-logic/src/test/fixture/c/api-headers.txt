@@ -1,0 +1,18 @@
+# The fixture library's API: two modules, and a skip of each kind.
+
+[geo]
+geo/*.h
+!geo/Base.h
+!geo/Math.h
+# A record, and everything that takes it.
+-geo::Debug
+# A record's handle, without its members.
+-geo::Registry::.*
+# A member, and one overload by its parameters' declared types.
+-geo::Shape::DebugDump
+-geo::Shape::SetName\(std::string_view\)
+# An enum value Kotlin leaves out.
+-geo::Kind::GROUP
+
+[geo-io]
+geo-io/*.h

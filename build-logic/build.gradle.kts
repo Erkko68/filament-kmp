@@ -18,4 +18,13 @@ dependencies {
     implementation(libs.kover.gradlePlugin)
     // tar.gz extraction for the Filament prebuilt/header download tasks
     implementation(libs.commons.compress)
+
+    testImplementation(libs.kotlin.testJunit)
+}
+
+// The API generator's fixture test runs clang; -Papigen.update rewrites the fixture's expected output.
+tasks.test {
+    useJUnit()
+    inputs.dir("src/test/fixture").withPathSensitivity(PathSensitivity.RELATIVE)
+    systemProperty("apigen.update", providers.gradleProperty("apigen.update").isPresent)
 }

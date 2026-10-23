@@ -1,0 +1,6 @@
+_GeoIoLoader_GetFormat
+_GeoIoLoader_Load
+_GeoIoLoader_create
+_GeoIoLoader_destroy
+_malloc
+_free

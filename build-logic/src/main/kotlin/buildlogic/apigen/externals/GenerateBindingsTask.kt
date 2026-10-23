@@ -1,6 +1,8 @@
 package buildlogic.apigen.externals
 
 import buildlogic.apigen.ApiGenTask
+import buildlogic.apigen.KotlinBindings
+import buildlogic.apigen.c.CFunction
 import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.externals.jni.JniForwarderWriter
 import buildlogic.apigen.externals.wasm.WasmArityTableWriter
@@ -37,24 +39,30 @@ abstract class GenerateBindingsTask : ApiGenTask() {
     @TaskAction
     fun generate() {
         val out = outputDir.get().asFile.apply { deleteRecursively() }
-        val bindings = config.get().kotlin!!
         val headers = CManifest.parse(manifest.get().asFile.readText()).headers
-        headers.forEach { (header, functions) ->
-            // The externals' file, and the facade class its functions compile to on the JVM.
-            val name = File(header).nameWithoutExtension
-            val jvmClass = "${bindings.packages.getValue(header.substringBefore('/'))}.${name.replaceFirstChar { it.uppercase() }}Kt"
-            out.write("jni/$name.c", JniForwarderWriter.write("$name.kt", jvmClass, functions, headers.keys))
+        bindingFiles(headers, config.get().kotlin!!, config.get().prefix).forEach { (path, text) ->
+            out.resolve(path).apply { parentFile.mkdirs() }.writeText(text)
         }
+    }
+}
 
-        // A Kotlin module is named as its C module.
-        val byRuntime = headers.entries.groupBy({ bindings.wasmRuntimes[it.key.substringBefore('/')] ?: bindings.wasmRuntime }) { it.value }
-            .mapValues { (_, functions) -> functions.flatten().distinctBy { it.name }.sortedBy { it.name } }
-        byRuntime.forEach { (runtime, functions) ->
-            out.write("wasm/$runtime-exports.txt", WasmExportListWriter.write(functions))
-            out.write("wasm/$runtime-types.js", WasmTypeTableWriter.write(functions, config.get().prefix))
-        }
-        out.write("webTest/WasmArities.kt", WasmArityTableWriter.write(byRuntime[bindings.wasmRuntime].orEmpty(), bindings.wasmPackage))
+/** The glue of the functions each of [headers] declares, by path under the output dir. */
+internal fun bindingFiles(headers: Map<String, List<CFunction>>, bindings: KotlinBindings, prefix: String): Map<String, String> {
+    val out = LinkedHashMap<String, String>()
+    headers.forEach { (header, functions) ->
+        // The externals' file, and the facade class its functions compile to on the JVM.
+        val name = File(header).nameWithoutExtension
+        val jvmClass = "${bindings.packages.getValue(header.substringBefore('/'))}.${name.replaceFirstChar { it.uppercase() }}Kt"
+        out["jni/$name.c"] = JniForwarderWriter.write("$name.kt", jvmClass, functions, headers.keys)
     }
 
-    private fun File.write(path: String, text: String) = resolve(path).apply { parentFile.mkdirs() }.writeText(text)
+    // A Kotlin module is named as its C module.
+    val byRuntime = headers.entries.groupBy({ bindings.wasmRuntimes[it.key.substringBefore('/')] ?: bindings.wasmRuntime }) { it.value }
+        .mapValues { (_, functions) -> functions.flatten().distinctBy { it.name }.sortedBy { it.name } }
+    byRuntime.forEach { (runtime, functions) ->
+        out["wasm/$runtime-exports.txt"] = WasmExportListWriter.write(functions)
+        out["wasm/$runtime-types.js"] = WasmTypeTableWriter.write(functions, prefix)
+    }
+    out["webTest/WasmArities.kt"] = WasmArityTableWriter.write(byRuntime[bindings.wasmRuntime].orEmpty(), bindings.wasmPackage)
+    return out
 }
