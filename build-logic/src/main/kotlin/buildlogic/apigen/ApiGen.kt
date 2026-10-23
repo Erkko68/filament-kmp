@@ -18,7 +18,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     // Absolute: clang reports a declaration's file as the include path spells it.
     private val workDir = workDir.absoluteFile
     val includeDir: File = projectDir.absoluteFile.resolve(config.sources.includeDir)
-    val cDir: File = projectDir.absoluteFile.resolve(config.cDir)
+    val cDir: File = projectDir.absoluteFile.resolve(config.c.dir)
     val apiHeadersFile: File = cDir.resolve("api-headers.txt")
     val manifestFile: File = cDir.resolve("api-manifest.json")
     val coverageFile: File = cDir.resolve("api-coverage.txt")
@@ -56,7 +56,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
 
     /** The c stage: [api] in C, less the functions the [manualHeaders] declare. */
     fun cApi(api: CppApi = api()): CApi {
-        val function = Regex("""\b(${Regex.escape(config.naming.prefix)}\w+)\s*\(""")
+        val function = Regex("""\b(${Regex.escape(config.c.prefix)}\w+)\s*\(""")
         val manual = manualHeaders().flatMap { function.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
         return CApiWriter(api, config, apiHeaders, manual).write()
     }
@@ -72,7 +72,7 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     }
 
     /** The functions the C headers on disk declare, generated and hand-written. */
-    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.naming.prefix, workDir)
+    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.c.prefix, workDir)
 
     /** The kotlin stage: the externals of [manifest], in place of each module's package of them. */
     fun kotlinFiles(manifest: CManifest): GeneratedFiles {

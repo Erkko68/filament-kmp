@@ -9,8 +9,15 @@ import buildlogic.apigen.cpp.CppType
 val GEO_API = ApiGenConfig(
     name = "Geo",
     sources = Sources(includeDir = "include", astFilters = listOf("geo::"), skippedNamespaces = setOf("math")),
-    naming = Naming(prefix = "Geo", helpers = "geo_c", droppedNamespaces = setOf("geo", "detail"), memberPrefix = "^m(?=[A-Z])"),
-    bridges = Bridges(
+    c = CBindings(
+        prefix = "Geo",
+        helpers = "geo_c",
+        droppedNamespaces = setOf("geo", "detail"),
+        bridgeHeader = "../manual/GeoBridge.hpp",
+        typedefs = listOf("typedef uint32_t GeoHandle;"),
+    ),
+    naming = Naming(memberPrefix = "^m(?=[A-Z])"),
+    types = TypeTables(
         scalars = mapOf("geo::Handle" to Scalar("GeoHandle", "geo::Handle::fromId({})", "({}).getId()", layout = true)),
         mirrors = mapOf(
             "geo::math::float2" to Mirror("float", 2),
@@ -21,14 +28,14 @@ val GEO_API = ApiGenConfig(
         views = setOf("geo::Span"),
         refs = RefCounting(pointers = mapOf("geo::Ref" to false), targets = setOf("geo::RefTarget"), get = "get", addRef = "addRef", release = "release"),
         results = setOf("geo::Result"),
-        instantiations = mapOf("geo::Box" to mapOf("T" to "float")),
-        functionInstantiations = mapOf(
+        custom = GeoBridges,
+    ),
+    templates = Instantiations(
+        classes = mapOf("geo::Box" to mapOf("T" to "float")),
+        functions = mapOf(
             "geo::Canvas::SetValue" to listOf(mapOf("T" to "float"), mapOf("T" to "int32_t")),
             "geo::Canvas::GetValue" to listOf(mapOf("T" to "float"), mapOf("T" to "int32_t")),
         ),
-        custom = GeoBridges,
-        typedefs = listOf("typedef uint32_t GeoHandle;"),
-        header = "../manual/GeoBridge.hpp",
     ),
     kotlin = KotlinBindings(
         packages = mapOf("geo" to "geo.capi", "geo-io" to "geo.io.capi"),

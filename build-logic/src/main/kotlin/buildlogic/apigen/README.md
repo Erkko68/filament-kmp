@@ -22,11 +22,14 @@ reads the manifest, not the C++, so a hand-written C function gets its external 
 
 1. The config:
    - `sources`: the include dir, and the clang `-ast-dump-filter`s covering the API (`ns::` for a whole namespace).
-   - `naming`: the C prefix, the C++ namespace of the forwarders' helpers, the namespaces C names leave out, and how
-     field accessors are named (`getter`, `setter`, and `memberPrefix` for `mField`).
-   - `bridges`: how the library's own types cross into C: IDs as scalars, math types as mirrored structs, its
-     containers and strings, reference counting, value-or-error results, the template instantiations C binds, and a
-     `CustomBridges` object for what no table expresses.
+   - `c`: the C prefix, the C++ namespace of the forwarders' helpers, the namespaces C names leave out, and the
+     library's own bridge header and typedefs.
+   - `naming`: how the library names things, which the generated names follow: `memberPrefix` for `mField`, and the
+     verbs of its getters and setters.
+   - `types`: how the library's own types cross into C: IDs as scalars, math types as mirrored structs, its
+     containers and strings, reference counting, value-or-error results, and a `CustomBridges` object for what no
+     table expresses.
+   - `templates`: the class and function template instantiations C binds.
    - `kotlin`: the package of each module's externals, the interop package, the wasm runtimes; null for a C API alone.
 2. `c/api-headers.txt`:
 
@@ -39,7 +42,8 @@ reads the manifest, not the C++, so a hand-written C function gets its external 
 
    A skip that matches nothing fails the generator, so the list can't go stale.
 3. `c/<module>/manual/`: C for what the generator leaves as `TODO(handwritten)`. In the first module, the
-   `bridges.header` holds the helpers only the library can write: `retain` for `refs`, `result` for `results`.
+   `c.bridgeHeader` holds the helpers only the library can write: `retain` for `types.refs`, `result` for
+   `types.results`.
 4. The Kotlin runtime, in the interop package: `expect annotation class ExternalSymbolName(val name: String)`
    (`kotlin.native.SymbolName` on Native) and `expect class NativePointer` (a `Long` on the JVM and Native, an `Int`
    on web).

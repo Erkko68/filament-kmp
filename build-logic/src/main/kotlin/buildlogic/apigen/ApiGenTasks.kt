@@ -53,7 +53,7 @@ fun Project.registerApiGenTasks(config: ApiGenConfig) {
 
     val generateCApi = tasks.register<GenerateCApiTask>("generateCApi") {
         group = "build setup"
-        description = "Generates the ${config.naming.prefix}* C API from ${config.name}'s public headers into ${config.cDir}/<module>/generated."
+        description = "Generates the ${config.c.prefix}* C API from ${config.name}'s public headers into ${config.c.dir}/<module>/generated."
         configure()
         readsHeaders()
         // The functions the manual headers declare, and the bridge header the forwarders compile against.
@@ -64,7 +64,7 @@ fun Project.registerApiGenTasks(config: ApiGenConfig) {
 
     tasks.register<ApiCoverageTask>("apiCoverage") {
         group = "verification"
-        description = "Writes ${config.cDir}/api-coverage.txt: what of the C++ API the C and Kotlin APIs bind; warns on stale generated code."
+        description = "Writes ${config.c.dir}/api-coverage.txt: what of the C++ API the C and Kotlin APIs bind; warns on stale generated code."
         configure()
         // Reads what they write, and tasks run in parallel under the configuration cache.
         mustRunAfter(generateCApi)
@@ -75,7 +75,7 @@ fun Project.registerApiGenTasks(config: ApiGenConfig) {
 
     tasks.register<GenerateKotlinExternalsTask>("generateKotlinExternals") {
         group = "build setup"
-        description = "Generates the common Kotlin externals of the ${config.naming.prefix}* C functions in api-manifest.json."
+        description = "Generates the common Kotlin externals of the ${config.c.prefix}* C functions in api-manifest.json."
         configure()
         // Of the manifest generateCApi writes, which is up to date when nothing it reads changed.
         dependsOn(generateCApi)

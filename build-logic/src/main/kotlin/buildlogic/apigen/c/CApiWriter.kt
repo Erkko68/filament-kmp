@@ -2,7 +2,7 @@ package buildlogic.apigen.c
 
 import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.ApiHeaders
-import buildlogic.apigen.Naming
+import buildlogic.apigen.CBindings
 import buildlogic.apigen.c.Binding.Status
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
@@ -21,12 +21,12 @@ import buildlogic.apigen.cpp.CppType
 internal class CApiWriter(
     private val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val manual: Set<String> = emptySet(),
 ) {
-    private val names = CNames(config.naming)
+    private val names = CNames(config.c, config.naming)
     private val h = names.helpers
-    private val refs = config.bridges.refs
-    private val templates = Templates(api, config.bridges)
-    private val records = Records(api, config.bridges, names, templates, api.apiRecords.mapTo(HashSet()) { it.name })
-    private val bridges = CBridges(api, config.bridges, names, templates, records)
+    private val refs = config.types.refs
+    private val templates = Templates(api, config.templates)
+    private val records = Records(api, config.types, names, templates, api.apiRecords.mapTo(HashSet()) { it.name })
+    private val bridges = CBridges(api, config.types, names, templates, records)
     private val surface = api.surface
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
@@ -39,9 +39,9 @@ internal class CApiWriter(
     }
 
     fun write(): CApi {
-        api.apiRecords.filter(::handled).groupBy { topLevel(it.name) }.forEach { (top, records) ->
+        api.apiRecords.filter(::handled).groupBy { topLevel(it.name) }.forEach { (top, nested) ->
             val section = section(moduleOf(api.records.getValue(top).header), names.type(top))
-            records.forEach { record(it, section) }
+            nested.forEach { record(it, section) }
         }
         api.apiFunctions.groupBy { it.owner }.forEach { (namespace, functions) ->
             // A dropped namespace's own functions would otherwise land in a file named by the bare prefix.
@@ -239,7 +239,7 @@ internal class CApiWriter(
     private fun types(module: String): String {
         val body = StringBuilder()
         if (module == baseModule) {
-            config.bridges.typedefs.forEach { body.appendLine("$it\n") }
+            config.c.typedefs.forEach { body.appendLine("$it\n") }
             bridges.mathTypes.forEach { body.appendLine(mirror(it)) }
             body.appendLine()
         }
@@ -259,7 +259,7 @@ internal class CApiWriter(
      */
     private fun includes(module: String): String {
         val text = StringBuilder("$banner\n#pragma once\n\n")
-        text.append(if (module == baseModule) "#include \"${config.bridges.header ?: "Bridge.hpp"}\"\n" else "#include \"../../$baseModule/generated/Includes.hpp\"\n")
+        text.append(if (module == baseModule) "#include \"${config.c.bridgeHeader ?: "Bridge.hpp"}\"\n" else "#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("\n").append(api.headers.filter { moduleOf(it) == module }.joinToString("") { "#include <$it>\n" })
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
         if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
@@ -274,7 +274,7 @@ internal class CApiWriter(
     private val twinBases by lazy { surface.mapNotNull { api.records[it] }.flatMapTo(HashSet()) { records.twins(it) } }
 
     /** A record C holds by a handle: not a class template, nor what crosses as a mirror or a scalar. */
-    private fun handled(record: CppRecord) = !templates.uninstantiated(record) && record.name !in config.bridges.mirrors && record.name !in config.bridges.scalars
+    private fun handled(record: CppRecord) = !templates.uninstantiated(record) && record.name !in config.types.mirrors && record.name !in config.types.scalars
 
     private fun enum(enum: CppEnum): String {
         val name = names.type(enum.name)
@@ -307,11 +307,11 @@ internal class CApiWriter(
         spelled(m.params) + ")" + if (m.isConst) " const" else ""
 
     /** The C struct with the storage of a math type; C++ sees the same bytes through the `math` and `mirror` helpers. */
-    private fun mirror(decl: String) = config.bridges.mirrors.getValue(decl).let { m ->
+    private fun mirror(decl: String) = config.types.mirrors.getValue(decl).let { m ->
         names.type(decl).let { "typedef struct $it { ${m.element} v[${m.count}]; } $it;" }
     }
 
-    /** The helpers every library's forwarders call, in the [Naming.helpers] namespace. */
+    /** The helpers every library's forwarders call, in the [CBindings.helpers] namespace. */
     private fun bridge() = checkNotNull(javaClass.getResource("Bridge.hpp")) { "Bridge.hpp isn't on the classpath" }.readText()
         .replace("APIGEN_TYPE", typeMacro).replace(Regex("""\bapigen\b"""), h)
 

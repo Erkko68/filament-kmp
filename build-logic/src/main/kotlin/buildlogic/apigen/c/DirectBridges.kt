@@ -1,6 +1,6 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.Bridges
+import buildlogic.apigen.TypeTables
 import buildlogic.apigen.Scalar
 
 /**
@@ -9,7 +9,7 @@ import buildlogic.apigen.Scalar
  * optionals and functions.
  */
 class DirectBridges internal constructor(
-    private val config: Bridges, private val names: CNames,
+    private val config: TypeTables, private val names: CNames,
     val const: Boolean, val indirection: String?, val result: Boolean, val lvalue: Boolean,
 ) {
     private val h = names.helpers

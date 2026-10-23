@@ -1,18 +1,18 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.Bridges
+import buildlogic.apigen.Instantiations
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppRecord
 import buildlogic.apigen.cpp.CppType
 import buildlogic.apigen.cpp.CppType.Kind
 
-/** The template instantiations C binds ([Bridges.instantiations], [Bridges.functionInstantiations]), and how C++ spells them. */
-internal class Templates(private val api: CppApi, private val config: Bridges) {
+/** The template instantiations C binds ([Instantiations]), and how C++ spells them. */
+internal class Templates(private val api: CppApi, private val config: Instantiations) {
     private val used = HashSet<String>()
 
-    /** [Bridges.functionInstantiations] entries no template matched: stale after an upstream rename. */
-    val unused get() = config.functionInstantiations.keys - used
+    /** [Instantiations.functions] entries no template matched: stale after an upstream rename. */
+    val unused get() = config.functions.keys - used
 
     /** A class template C binds, or a record nested in one: C binds the instantiation the library exports. */
     fun instantiated(name: String) = instantiations(name).isNotEmpty()
@@ -21,7 +21,7 @@ internal class Templates(private val api: CppApi, private val config: Bridges) {
     fun uninstantiated(record: CppRecord) = record.template && !instantiated(record.name)
 
     /** The argument a class template's [parameter] (`Template::T`) takes, or null. */
-    fun argument(parameter: String) = config.instantiations[parameter.substringBeforeLast("::")]?.get(parameter.substringAfterLast("::"))
+    fun argument(parameter: String) = config.classes[parameter.substringBeforeLast("::")]?.get(parameter.substringAfterLast("::"))
 
     /**
      * The instantiations of the function template [method] C binds, each with the template arguments its call spells;
@@ -29,7 +29,7 @@ internal class Templates(private val api: CppApi, private val config: Bridges) {
      */
     fun functionInstantiations(method: CppMethod): List<Pair<CppMethod, List<String>>>? {
         val key = "${method.owner}::${method.name}"
-        val instantiations = config.functionInstantiations[key] ?: return null
+        val instantiations = config.functions[key] ?: return null
         used += key
         val parameters = method.templateParameters!!
         return instantiations.map { arguments ->
@@ -50,13 +50,13 @@ internal class Templates(private val api: CppApi, private val config: Bridges) {
         var qualified = ""
         return decl.split("::").joinToString("::") { segment ->
             qualified = if (qualified.isEmpty()) segment else "$qualified::$segment"
-            config.instantiations[qualified]?.let { "$segment<${it.values.joinToString()}>" } ?: segment
+            config.classes[qualified]?.let { "$segment<${it.values.joinToString()}>" } ?: segment
         }
     }
 
     /** [spelling], written in [scope], with the template parameters of the instantiations around it replaced. */
-    fun substitute(spelling: String, scope: String) = instantiations(scope).flatMap { config.instantiations.getValue(it).entries }
+    fun substitute(spelling: String, scope: String) = instantiations(scope).flatMap { config.classes.getValue(it).entries }
         .fold(spelling) { s, (parameter, argument) -> s.replace(Regex("\\b$parameter\\b"), argument) }
 
-    private fun instantiations(name: String) = name.split("::").runningReduce { a, b -> "$a::$b" }.filter { it in config.instantiations }
+    private fun instantiations(name: String) = name.split("::").runningReduce { a, b -> "$a::$b" }.filter { it in config.classes }
 }

@@ -1,13 +1,15 @@
 package buildlogic.filament
 
 import buildlogic.apigen.ApiGenConfig
-import buildlogic.apigen.Bridges
+import buildlogic.apigen.CBindings
 import buildlogic.apigen.CustomBridges
+import buildlogic.apigen.Instantiations
 import buildlogic.apigen.KotlinBindings
 import buildlogic.apigen.Mirror
 import buildlogic.apigen.Naming
 import buildlogic.apigen.Scalar
 import buildlogic.apigen.Sources
+import buildlogic.apigen.TypeTables
 import buildlogic.apigen.c.CBridge
 import buildlogic.apigen.c.DirectBridges
 import buildlogic.apigen.c.Unsupported
@@ -68,8 +70,15 @@ internal val FILAMENT_API = ApiGenConfig(
         // No NEON: the API is what every target has (ToneMapper's float32x4_t overloads are ARM-only).
         clangArgs = listOf("-U__ARM_NEON"),
     ),
-    naming = Naming(prefix = "Fila", helpers = "fila", droppedNamespaces = setOf("filament", "backend", "math"), getter = "get", setter = "set"),
-    bridges = Bridges(
+    c = CBindings(
+        prefix = "Fila",
+        helpers = "fila",
+        droppedNamespaces = setOf("filament", "backend", "math"),
+        bridgeHeader = "../manual/FilaBridge.hpp",
+        typedefs = listOf("typedef int32_t FilaEntity;"),
+    ),
+    naming = Naming(getter = "get", setter = "set"),
+    types = TypeTables(
         // Durations and time points are nanoseconds (since the steady clock's epoch); a tribool is 0, 1, or 2 for
         // indeterminate; an Entity is its id.
         scalars = mapOf(
@@ -94,12 +103,15 @@ internal val FILAMENT_API = ApiGenConfig(
         // Only literals make a StaticString; fila::staticString makes one because everything taking it copies it.
         strings = mapOf("utils::CString" to "utils::CString", "utils::ImmutableCString" to "utils::ImmutableCString", "utils::StaticString" to "fila::staticString"),
         literalOnly = setOf("filament::MaterialInstance::StringLiteral"),
+        custom = FilamentBridges,
+    ),
+    templates = Instantiations(
         // The instantiations the libraries export.
-        instantiations = mapOf(
+        classes = mapOf(
             "filament::camutils::Manipulator" to mapOf("FLOAT" to "float"),
             "filament::camutils::Bookmark" to mapOf("FLOAT" to "float"),
         ),
-        functionInstantiations = mapOf(
+        functions = mapOf(
             "filamat::MaterialBuilder::constant" to each("T", CONSTANT_TYPES),
             "filament::Material::Builder::constant" to each("T", CONSTANT_TYPES),
             "filament::Material::setDefaultParameter" to each("T", PARAMETER_TYPES),
@@ -114,9 +126,6 @@ internal val FILAMENT_API = ApiGenConfig(
             "filament::Color::toLinear" to listOf(emptyMap()),
             "filament::Color::toSRGB" to listOf(emptyMap()),
         ),
-        custom = FilamentBridges,
-        typedefs = listOf("typedef int32_t FilaEntity;"),
-        header = "../manual/FilaBridge.hpp",
     ),
     kotlin = KotlinBindings(
         packages = PACKAGES,

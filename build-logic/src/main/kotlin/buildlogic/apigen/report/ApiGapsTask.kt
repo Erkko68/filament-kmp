@@ -38,7 +38,7 @@ abstract class ApiGapsTask @Inject constructor(private val exec: ExecOperations)
         logger.lifecycle("${headerMethods.size} public methods in the headers, ${undeclared.size} more only in the libraries")
         undeclared.forEach { logger.info("  only in the libraries: $it") }
         val sections = mapOf(
-            "C++ methods the ${config.get().naming.prefix}* C API never calls" to
+            "C++ methods the ${config.get().c.prefix}* C API never calls" to
                 CppApiGaps.find(headerMethods, undeclared, nm.read(cApiObjects.files), headers.publicClasses),
         )
         val file = report.get().asFile

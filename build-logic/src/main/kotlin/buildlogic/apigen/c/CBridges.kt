@@ -1,6 +1,6 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.Bridges
+import buildlogic.apigen.TypeTables
 import buildlogic.apigen.RefCounting
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
@@ -11,7 +11,7 @@ import buildlogic.apigen.cpp.CppType.Kind
 
 /** Maps the model's types onto C, recording the math types the module's mirror structs must cover. */
 internal class CBridges(
-    private val api: CppApi, private val config: Bridges, private val names: CNames, private val templates: Templates, private val records: Records,
+    private val api: CppApi, private val config: TypeTables, private val names: CNames, private val templates: Templates, private val records: Records,
 ) {
     private val h = names.helpers
     private val refs = config.refs
@@ -115,7 +115,7 @@ internal class CBridges(
     }
 
     /**
-     * A result type ([Bridges.results]) is its value, or NULL (false, for a value C copies out) when it holds an
+     * A result type ([TypeTables.results]) is its value, or NULL (false, for a value C copies out) when it holds an
      * error, whose message is then copied into `outError` up to its capacity, NUL-terminated.
      */
     private fun fallible(type: CppType, bridge: DirectBridges): CBridge {
@@ -130,7 +130,7 @@ internal class CBridges(
     }
 
     /**
-     * A sequence ([Bridges.sequences], std::vector, std::array) or array. C passes an array and its count;
+     * A sequence ([TypeTables.sequences], std::vector, std::array) or array. C passes an array and its count;
      * `items` converts it to whichever the callee takes. A result fills C's array up to its capacity and returns how
      * many there are. Math elements are contiguous mirrors; value records, the handles C created to copy into.
      */

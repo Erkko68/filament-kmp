@@ -1,6 +1,6 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.Bridges
+import buildlogic.apigen.TypeTables
 import buildlogic.apigen.RefCounting
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppField
@@ -14,7 +14,7 @@ import buildlogic.apigen.cpp.CppType.Kind
  * [CApiWriter] writes for the [bound] records, the API headers'.
  */
 internal class Records(
-    private val api: CppApi, private val config: Bridges, private val names: CNames, private val templates: Templates, private val bound: Set<String>,
+    private val api: CppApi, private val config: TypeTables, private val names: CNames, private val templates: Templates, private val bound: Set<String>,
 ) {
     /** Records the API's functions and constructors take. */
     private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
