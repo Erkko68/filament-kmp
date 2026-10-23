@@ -19,3 +19,15 @@ class Shape internal constructor(internal val handle: NativePointer) {
 }
 
 enum class Kind(internal val value: Int) { CIRCLE(0), POLYGON(5) }
+
+// geo::Style's fields, from C++'s defaults: apiVerify compares them.
+class Style(var visible: Boolean = true) {
+    var width: Float = 1.5f
+    var kind: Kind = Kind.CIRCLE
+    var color: FloatArray = floatArrayOf(1f, 0f, 0f)
+    var weights = FloatArray(3)
+    var name: String? = null
+
+    // Its own scope: not Style's.
+    class Stroke { var width: Float = 9f }
+}

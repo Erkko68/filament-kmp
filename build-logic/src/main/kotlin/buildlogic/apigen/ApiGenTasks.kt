@@ -24,7 +24,7 @@ import org.gradle.kotlin.dsl.register
  * bindings/     api-manifest.json → JNI forwarders, wasm tables     generateBindings (build/)
  * report/       what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
  *               C++ API the C API's objects don't call                 apiGaps  (report; the library's build registers it)
- *               hand-written Kotlin enums send C the C++ values        apiVerify (fails)
+ *               hand-written Kotlin enums and defaults are C++'s       apiVerify (fails)
  * ```
  *
  * The Kotlin stages are registered when the config has [ApiGenConfig.kotlin]. generateKotlinExternals runs
@@ -83,7 +83,7 @@ fun Project.registerApiGenTasks(config: ApiGenConfig) {
 
     tasks.register<ApiVerifyTask>("apiVerify") {
         group = "verification"
-        description = "Checks the hand-written Kotlin enums send C the values of ${config.name}'s."
+        description = "Checks the hand-written Kotlin enums and option defaults are ${config.name}'s."
         configure()
     }
 

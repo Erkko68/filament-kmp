@@ -2,15 +2,15 @@ package buildlogic.apigen.report
 
 import buildlogic.apigen.cpp.CppApi
 
-/** How many Kotlin enums were checked, and each constant whose value differs from C++'s. */
-internal class EnumCheck(val checked: Int, val wrong: List<String>)
+/** How many Kotlin declarations a check compared with C++, and each whose value differs from C++'s. */
+internal class Check(val checked: Int, val wrong: List<String>)
 
 /**
  * Checks each Kotlin enum of [api]'s against C++: what it sends C, its ordinal or the number it's constructed with,
  * must be the C++ constant's of the same name, as clang reads it from the headers. Where `apiCoverage` reports what's
  * bound, this checks what's bound is right.
  */
-internal fun enumCheck(api: CppApi, declarations: KotlinDeclarations): EnumCheck {
+internal fun enumCheck(api: CppApi, declarations: KotlinDeclarations): Check {
     var checked = 0
     val wrong = api.apiEnums.flatMap { enum ->
         val constants = enum.constants.filter { api.skipReason("${enum.name}::${it.first}") == null }
@@ -23,5 +23,5 @@ internal fun enumCheck(api: CppApi, declarations: KotlinDeclarations): EnumCheck
         constants.filter { (name, value) -> kotlin[name]?.let { it.toLong() != value.toLong() } == true }
             .map { (name, value) -> "${enum.name}::$name is $value in C++, ${kotlin[name]} in Kotlin" }
     }
-    return EnumCheck(checked, wrong)
+    return Check(checked, wrong)
 }

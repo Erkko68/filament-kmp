@@ -23,18 +23,4 @@ internal object KotlinEnums {
     private fun number(text: String) = NUMBER.matchEntire(text)?.destructured?.let { (minus, hex, decimal) ->
         (if (hex.isNotEmpty()) BigInteger(hex.replace("_", ""), 16) else BigInteger(decimal.replace("_", ""))).let { if (minus.isEmpty()) it else -it }
     }
-
-    /** [text] cut at each [separator] outside brackets, up to a [stopAt] outside them. */
-    private fun split(text: String, separator: Char, stopAt: Char? = null): List<String> {
-        val parts = ArrayList<String>()
-        var depth = 0
-        var start = 0
-        for ((i, c) in text.withIndex()) when {
-            c in "({[" -> depth++
-            c in ")}]" -> depth--
-            depth == 0 && c == stopAt -> return parts + text.substring(start, i)
-            depth == 0 && c == separator -> { parts += text.substring(start, i); start = i + 1 }
-        }
-        return parts + text.substring(start)
-    }
 }

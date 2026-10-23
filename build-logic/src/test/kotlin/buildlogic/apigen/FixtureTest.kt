@@ -5,6 +5,7 @@ import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.modelReport
 import buildlogic.apigen.report.KotlinDeclarations
 import buildlogic.apigen.report.coverage
+import buildlogic.apigen.report.defaultsCheck
 import buildlogic.apigen.report.enumCheck
 import buildlogic.apigen.report.kotlinApiSources
 import java.io.File
@@ -34,6 +35,23 @@ class FixtureTest {
         assertEquals(emptyList(), enumCheck(api, KotlinDeclarations(kotlinApiSources(FIXTURE.resolve("kotlin")))).wrong)
         val wrong = KotlinDeclarations("enum class Kind(internal val value: Int) { CIRCLE(0), POLYGON(4) }")
         assertEquals(listOf("geo::Kind::POLYGON is 5 in C++, 4 in Kotlin"), enumCheck(api, wrong).wrong)
+    }
+
+    @Test
+    fun `apiVerify finds a Kotlin default that isn't C++'s`() {
+        val api = ApiGen(GEO_API, FIXTURE, temporaryDir()).api()
+        val check = defaultsCheck(api, KotlinDeclarations(kotlinApiSources(FIXTURE.resolve("kotlin"))), GEO_API.naming)
+        assertEquals(6 to emptyList(), check.checked to check.wrong)
+        val wrong = KotlinDeclarations("class Style(var visible: Boolean = false) {\n var width: Float = 2f\n var kind: Kind = Kind.POLYGON\n var weights = floatArrayOf(0f, 1f)\n}")
+        assertEquals(
+            listOf(
+                "geo::Style::mWidth is 1.5 in C++, 2f in Kotlin",
+                "geo::Style::mKind is geo::Kind::CIRCLE in C++, Kind.POLYGON in Kotlin",
+                "geo::Style::mWeights is {} in C++, floatArrayOf(0f, 1f) in Kotlin",
+                "geo::Style::mVisible is true in C++, false in Kotlin",
+            ),
+            defaultsCheck(api, wrong, GEO_API.naming).wrong,
+        )
     }
 
     /** What the tasks write, the glue and the model report in place of the build dir. */

@@ -1,6 +1,7 @@
 package buildlogic.apigen.cpp
 
 import buildlogic.apigen.cpp.CppValue.Aggregate
+import buildlogic.apigen.cpp.CppValue.Constructed
 import buildlogic.apigen.cpp.CppValue.EnumConstant
 import buildlogic.apigen.cpp.CppValue.Literal
 import buildlogic.apigen.cpp.CppValue.Named
@@ -28,9 +29,9 @@ internal class CppValues(private val scopes: CppScopes, private val constants: M
             "BinaryOperator" -> binary(expr["opcode"] as String, of(inner[0], scope), of(inner[1], scope))
             "DeclRefExpr" -> reference(expr["referencedDecl"] as Map<*, *>, scope)
             "InitListExpr" -> Aggregate(inner.map { of(it, scope) })
-            // A list-initialized object keeps its elements; any other construction converts its single argument.
+            // A list-initialized object keeps its arguments; any other construction converts its single argument.
             "CXXConstructExpr", "CXXTemporaryObjectExpr" ->
-                if (expr["list"] == true || inner.size != 1) Aggregate(inner.map { of(it, scope) }) else of(inner.single(), scope)
+                if (expr["list"] == true || inner.size != 1) Constructed(inner.map { of(it, scope) }) else of(inner.single(), scope)
             "CallExpr" -> callee(inner.first()).let { if (it.startsWith("__builtin_huge_val")) Literal("inf") else Unsupported("call $it") }
             else -> Unsupported(kind)
         }

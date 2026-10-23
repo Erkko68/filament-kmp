@@ -211,7 +211,9 @@ sealed interface CppValue {
     data class EnumConstant(val enum: String, val constant: String) : CppValue { override fun toString() = "$enum::$constant" }
     /** A named constant, with its value when it's one of [CppApi.constants]. */
     data class Named(val name: String, val value: CppValue?) : CppValue { override fun toString() = "$name(=$value)" }
-    /** A braced or constructor initializer; no elements means value-initialized (zero). */
+    /** An aggregate's braced initializer: its elements in order; none means value-initialized (zero). */
     data class Aggregate(val elements: List<CppValue>) : CppValue { override fun toString() = elements.joinToString(prefix = "{", postfix = "}") }
+    /** A constructor's [arguments], braced or not, which needn't be what it stores: a quaternion takes `w` first. */
+    data class Constructed(val arguments: List<CppValue>) : CppValue { override fun toString() = arguments.joinToString(prefix = "{", postfix = "}") }
     data class Unsupported(val kind: String) : CppValue { override fun toString() = "<$kind>" }
 }
