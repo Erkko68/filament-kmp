@@ -45,7 +45,7 @@ jobs:
         with: { targets: '${{ matrix.target }}' }
       - name: Build libfilament-c
         shell: bash
-        run: ./gradlew :desktop:cmakeBuild --no-configuration-cache
+        run: ./gradlew :desktop:cmakeBuild
       - name: Check libfilament-c needs no LLVM runtime (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -112,13 +112,12 @@ jobs:
           ./gradlew \
             -PlibVersion=${{ steps.version.outputs.version }} \
             -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
-            publishAllPublicationsToMavenCentralRepository \
-            --no-configuration-cache
+            publishAllPublicationsToMavenCentralRepository
 
       # Web apps serve these next to their bundle (klib resources don't reach webpack), so
       # each release carries them as assets; see docs/guide/getting-started.md.
       - name: Build web runtime assets
-        run: ./gradlew :web:stageFilamentWasm :web:stageFilamatWasm --no-configuration-cache
+        run: ./gradlew :web:stageFilamentWasm :web:stageFilamatWasm
 
       # ── GitHub release ──────────────────────────────────────────────────────
       # Only after Maven Central succeeded, and only for a real tag push — a

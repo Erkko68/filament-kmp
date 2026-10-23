@@ -74,7 +74,7 @@ EXIT=0
 run_gradle() {
   local label="$1"; shift
   echo "──────── $label ────────"
-  if ! ./gradlew "$@" --max-workers=2 --no-configuration-cache; then
+  if ! ./gradlew "$@" --max-workers=2; then
     echo "✗ $label failed" >&2
     EXIT=1
   else
