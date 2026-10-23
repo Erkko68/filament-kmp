@@ -10,6 +10,7 @@
 
 import buildlogic.filament.registerFilamentApiGen
 import buildlogic.cmake.registerCApiBuild
+import buildlogic.cmake.cmakeBuildSlot
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.hostPlatform
 import buildlogic.prebuilts.DownloadIncludesTask
@@ -41,6 +42,7 @@ FilamentTarget.entries.forEach { target ->
             cacheDir.set(archiveCache)
             emsdkDir.set(layout.projectDirectory.dir(".emsdk"))
             if (target == FilamentTarget.WASM) dependsOn(setupEmsdk)
+            usesService(cmakeBuildSlot())
         }
     } else {
         tasks.register<DownloadPrebuiltsTask>("prebuilts_${target.id}") {

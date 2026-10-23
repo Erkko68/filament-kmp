@@ -51,5 +51,6 @@ fun Project.registerCApiBuild(
         bindings, libDir, root.file("include/.filament-version"),
     )
     dependsOn(target.prebuiltsTask, ":downloadIncludes", ":generateBindings")
+    usesService(cmakeBuildSlot())
     configure()
 }
