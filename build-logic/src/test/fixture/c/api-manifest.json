@@ -89,6 +89,8 @@
 {"name":"GeoShape_Move_float2","returns":"void","params":[["self","ptr"],["delta","ptr"]]},
 {"name":"GeoShape_Scale","returns":"void","params":[["self","ptr"],["factors","ptr"]]},
 {"name":"GeoShape_Normalize","returns":"void","params":[["self","ptr"],["plane","ptr"]]},
+{"name":"GeoShape_Project","returns":"void","params":[["self","ptr"],["plane","ptr"],["planeCount","i32"]]},
+{"name":"GeoShape_Clip","returns":"void","params":[["self","ptr"],["planes","ptr"],["planesCount","i32"],["count","i32"]]},
 {"name":"GeoShape_DrawSync","returns":"void","params":[["self","ptr"]]}
 ],
 "geo/generated/GeoStats.h": [

@@ -91,6 +91,14 @@ JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1Normalize(JNIEnv* env,
     GeoShape_Normalize((void*)(intptr_t) self, (void*)(intptr_t) plane);
 }
 
+JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1Project(JNIEnv* env, jclass cls, jlong self, jlong plane, jint planeCount) {
+    GeoShape_Project((void*)(intptr_t) self, (void*)(intptr_t) plane, planeCount);
+}
+
+JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1Clip(JNIEnv* env, jclass cls, jlong self, jlong planes, jint planesCount, jint count) {
+    GeoShape_Clip((void*)(intptr_t) self, (void*)(intptr_t) planes, planesCount, count);
+}
+
 JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1DrawSync(JNIEnv* env, jclass cls, jlong self) {
     GeoShape_DrawSync((void*)(intptr_t) self);
 }

@@ -48,6 +48,7 @@ _GeoPolygon_asShape
 _GeoPolygon_release
 _GeoRegistry_create
 _GeoRegistry_destroy
+_GeoShape_Clip
 _GeoShape_Describe
 _GeoShape_DrawSync
 _GeoShape_GetArea
@@ -61,6 +62,7 @@ _GeoShape_GetStyle
 _GeoShape_Move_float2
 _GeoShape_Move_float_float
 _GeoShape_Normalize
+_GeoShape_Project
 _GeoShape_Scale
 _GeoShape_SetLimits
 _GeoShape_SetName

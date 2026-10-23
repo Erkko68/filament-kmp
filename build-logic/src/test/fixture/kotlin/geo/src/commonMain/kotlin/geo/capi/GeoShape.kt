@@ -61,5 +61,11 @@ internal external fun GeoShape_Scale(self: NativePointer, factors: NativePointer
 @ExternalSymbolName("GeoShape_Normalize")
 internal external fun GeoShape_Normalize(self: NativePointer, plane: NativePointer)
 
+@ExternalSymbolName("GeoShape_Project")
+internal external fun GeoShape_Project(self: NativePointer, plane: NativePointer, planeCount: Int)
+
+@ExternalSymbolName("GeoShape_Clip")
+internal external fun GeoShape_Clip(self: NativePointer, planes: NativePointer, planesCount: Int, count: Int)
+
 @ExternalSymbolName("GeoShape_DrawSync")
 internal external fun GeoShape_DrawSync(self: NativePointer)

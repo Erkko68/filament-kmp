@@ -30,8 +30,8 @@ void GeoShape_Move_float_float(GeoShape* self, float dx, float dy);
 void GeoShape_Move_float2(GeoShape* self, const GeoMathFloat2* delta);
 void GeoShape_Scale(GeoShape* self, GeoMathFloat3* factors);
 void GeoShape_Normalize(GeoShape* self, GeoMathFloat4* plane);
-// TODO(handwritten) GeoShape_Project: void geo::Shape::Project(math::float4 * plane)
-//     geo::math::float4 by pointer: C's mirror isn't aligned as the SIMD type is
+void GeoShape_Project(GeoShape* self, GeoMathFloat4* plane, uint32_t planeCount);
+void GeoShape_Clip(GeoShape* self, const GeoMathFloat4* planes, uint32_t planesCount, uint32_t count);
 void GeoShape_DrawSync(GeoShape* self);
 
 

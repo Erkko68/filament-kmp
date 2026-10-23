@@ -33,6 +33,7 @@ class geo::Shape
   void geo::Shape::Scale(math::float3 &{ext:geo::math::float3} factors)
   void geo::Shape::Normalize(math::float4 &{ext:geo::math::float4} plane)
   void geo::Shape::Project(math::float4 *{ext:geo::math::float4} plane)
+  void geo::Shape::Clip(const math::float4 *{ext:geo::math::float4} planes, size_t count)
   void geo::Shape::Legacy()
   void geo::Shape::DebugDump() const
   void geo::Shape::DrawSync()

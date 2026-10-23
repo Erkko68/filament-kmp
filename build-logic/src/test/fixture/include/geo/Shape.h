@@ -67,6 +67,7 @@ public:
     void Scale(math::float3& factors);
     void Normalize(math::float4& plane);
     void Project(math::float4* plane);
+    void Clip(const math::float4* planes, size_t count);
 
     [[deprecated]] void Legacy();
     void DebugDump() const;

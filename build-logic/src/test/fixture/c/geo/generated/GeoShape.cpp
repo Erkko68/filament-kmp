@@ -80,6 +80,14 @@ void GeoShape_Normalize(GeoShape* self, GeoMathFloat4* plane) {
     geo_c::cpp(self)->Normalize(geo_c::InOut<geo::math::float4, GeoMathFloat4>(plane));
 }
 
+void GeoShape_Project(GeoShape* self, GeoMathFloat4* plane, uint32_t planeCount) {
+    geo_c::cpp(self)->Project(geo_c::Aligned<geo::math::float4, GeoMathFloat4>(plane, planeCount));
+}
+
+void GeoShape_Clip(GeoShape* self, const GeoMathFloat4* planes, uint32_t planesCount, uint32_t count) {
+    geo_c::cpp(self)->Clip(geo_c::Aligned<geo::math::float4, const GeoMathFloat4>(planes, planesCount), static_cast<size_t>(count));
+}
+
 void GeoShape_DrawSync(GeoShape* self) {
 #if !(GEO_THREADS) && !(GEO_FIBERS)
     geo_c::cpp(self)->DrawSync();
