@@ -8,18 +8,6 @@ internal object KotlinEnums {
     private val ENTRY = Regex("""^(\w+)\s*(?:\((.*)\))?""", RegexOption.DOT_MATCHES_ALL)
     private val NUMBER = Regex("""(-?)(?:0[xX]([0-9a-fA-F_]+)|(\d[\d_]*))[uUL]*""")
 
-    /** Each `{ … }` body in [scope], which joins the bodies of every declaration of a name. */
-    fun bodies(scope: String): List<String> {
-        val bodies = ArrayList<String>()
-        var depth = 0
-        var open = 0
-        scope.forEachIndexed { i, c ->
-            if (c == '{' && depth++ == 0) open = i
-            if (c == '}' && --depth == 0) bodies += scope.substring(open + 1, i)
-        }
-        return bodies
-    }
-
     /**
      * What the wrappers pass C for each entry of an enum's [body]: the number it's constructed with when every entry
      * has one (`POSITION(0)`), else its ordinal.

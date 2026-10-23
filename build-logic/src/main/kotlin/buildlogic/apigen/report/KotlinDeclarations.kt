@@ -4,19 +4,19 @@ import java.io.File
 
 /** The hand-written Kotlin API ([sources], comments aside), searched for what it declares of the C++ one. */
 internal class KotlinDeclarations(private val sources: String) {
-    /** The bodies of the Kotlin declarations any of the C++ [names] maps to; null when Kotlin declares none. */
-    fun scope(names: Collection<String>): String? = names.mapNotNull(::scope).ifEmpty { null }?.joinToString("\n")
+    /** The `{ … }` bodies of the Kotlin declarations any of the C++ [names] maps to; null when Kotlin declares none. */
+    fun scope(names: Collection<String>): List<String>? = names.mapNotNull(::scope).flatten().ifEmpty { null }
 
     /** Whether [scope] declares the C++ [qualified] name's last segment. */
-    fun status(scope: String, qualified: String) =
-        if (Regex("""\b${qualified.substringAfterLast("::")}\b""").containsMatchIn(scope)) "declared" else "undeclared"
+    fun status(scope: List<String>, qualified: String) =
+        Regex("""\b${qualified.substringAfterLast("::")}\b""").let { name -> if (scope.any(name::containsMatchIn)) "declared" else "undeclared" }
 
     /** Each segment's declarations inside the previous one's (namespaces have none), or anywhere when the owner doesn't nest it. */
-    private fun scope(qualified: String): String? {
+    private fun scope(qualified: String): List<String>? {
         val segments = qualified.split("::")
-        var scope = sources
+        var scope = listOf(sources)
         segments.forEachIndexed { i, segment ->
-            val nested = bodies(scope, segment)
+            val nested = scope.flatMap { bodies(it, segment) }
             scope = when {
                 nested.isNotEmpty() -> nested
                 i < segments.lastIndex -> scope
@@ -27,7 +27,7 @@ internal class KotlinDeclarations(private val sources: String) {
     }
 
     /** The brace-matched bodies of every declaration of [name] in [text]. */
-    private fun bodies(text: String, name: String) = Regex("""\b(?:class|object|interface)\s+$name\b""").findAll(text).joinToString("\n") { m ->
+    private fun bodies(text: String, name: String) = Regex("""\b(?:class|object|interface)\s+$name\b""").findAll(text).mapNotNull { m ->
         // The body's brace follows the header: constructor parameters aside, no other declaration starts before it.
         val header = StringBuilder()
         var parens = 0
@@ -40,14 +40,14 @@ internal class KotlinDeclarations(private val sources: String) {
             }
             open++
         }
-        if (open == text.length || '}' in header || NEXT_DECLARATION.containsMatchIn(header)) return@joinToString ""
+        if (open == text.length || '}' in header || NEXT_DECLARATION.containsMatchIn(header)) return@mapNotNull null
         var depth = 0
         for (i in open until text.length) when (text[i]) {
             '{' -> depth++
-            '}' -> if (--depth == 0) return@joinToString text.substring(open, i + 1)
+            '}' -> if (--depth == 0) return@mapNotNull text.substring(open, i + 1)
         }
-        ""
-    }
+        null
+    }.toList()
 
     private companion object {
         val NEXT_DECLARATION = Regex("""\b(?:class|object|interface|fun|val|var|typealias)\b""")

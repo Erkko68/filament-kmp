@@ -15,7 +15,7 @@ internal fun enumCheck(api: CppApi, declarations: KotlinDeclarations): EnumCheck
     val wrong = api.apiEnums.flatMap { enum ->
         val constants = enum.constants.filter { api.skipReason("${enum.name}::${it.first}") == null }
         // Kotlin names an enum as the API's alias does, and may declare the name more than once: the one with its constants.
-        val kotlin = KotlinEnums.bodies(declarations.scope(api.aliasesOf(enum.name)).orEmpty()).map(KotlinEnums::values)
+        val kotlin = declarations.scope(api.aliasesOf(enum.name)).orEmpty().map { KotlinEnums.values(it.removeSurrounding("{", "}")) }
             .maxByOrNull { values -> constants.count { it.first in values } }?.takeIf { values -> constants.any { it.first in values } }
             ?: return@flatMap emptyList() // apiCoverage reports what Kotlin doesn't declare
         checked++

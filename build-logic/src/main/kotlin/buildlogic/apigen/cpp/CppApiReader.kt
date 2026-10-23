@@ -212,8 +212,6 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
         return node.children().firstOrNull { child -> NOT_EXPRESSIONS.none { (child["kind"] as String).endsWith(it) } }
     }
 
-    private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
-
     private companion object {
         val TEMPLATE_PARAMETERS = setOf("TemplateTypeParmDecl", "NonTypeTemplateParmDecl", "TemplateTemplateParmDecl")
         val NOT_EXPRESSIONS = listOf("Comment", "Attr", "Decl")
