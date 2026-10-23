@@ -81,7 +81,7 @@ void GeoShape_Normalize(GeoShape* self, GeoMathFloat4* plane) {
 }
 
 void GeoShape_DrawSync(GeoShape* self) {
-#if !(GEO_FIBERS)
+#if !(GEO_THREADS) && !(GEO_FIBERS)
     geo_c::cpp(self)->DrawSync();
 #else
     geo_c::unavailable("GeoShape_DrawSync");
