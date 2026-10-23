@@ -41,9 +41,9 @@ reads the manifest, not the C++, so a hand-written C function gets its external 
    ```
 
    A skip that matches nothing fails the generator, so the list can't go stale.
-3. `c/<module>/manual/`: C for what the generator leaves as `TODO(handwritten)`. In the first module, the
-   `c.bridgeHeader` holds the helpers only the library can write: `retain` for `types.refs`, `result` for
-   `types.results`.
+3. `c/<module>/manual/`: C for what the generator leaves as `TODO(handwritten)`, or writes otherwise: a function
+   declared here is never generated. In the first module, the `c.bridgeHeader` holds the helpers only the library
+   can write: `retain` for `types.refs`, `result` for `types.results`.
 4. The Kotlin runtime, in the interop package: `expect annotation class ExternalSymbolName(val name: String)`
    (`kotlin.native.SymbolName` on Native) and `expect class NativePointer` (a `Long` on the JVM and Native, an `Int`
    on web).
