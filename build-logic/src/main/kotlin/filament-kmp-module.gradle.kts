@@ -74,15 +74,17 @@ kotlin {
         }
     }
 
-    js { browser() }
+    // One Karma config for every module's web tests (gradle/karma/config.d).
+    val karmaConfig = rootProject.file("gradle/karma/config.d")
+    js { browser { testTask { useKarma { useChromeHeadless(); useConfigDirectory(karmaConfig) } } } }
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-    wasmJs { browser() }
+    wasmJs { browser { testTask { useKarma { useChromeHeadless(); useConfigDirectory(karmaConfig) } } } }
 
     // ── JS test bootstrapping ────────────────────────────────────────────────
     // Karma needs filament-kmp.js + .wasm (built by :wasm) loaded, and the module instantiated,
     // before any test touches Filament. Stage them with the bootstrap script into every module's
-    // web test resources; each module's karma.config.d/filament-setup.js lists them.
+    // web test resources; gradle/karma/config.d/filament-setup.js lists them.
     val stagedWebAssets = layout.buildDirectory.dir("filamentWebAssets")
     val stageFilamentWebAssets = tasks.register<Sync>("stageFilamentWebAssetsForJsTest") {
         dependsOn(":web:stageFilamentWasm")
@@ -198,8 +200,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimu
 }
 
 // ── Browser test-count assertion ──────────────────────────────────────────────
-// Karma retries a crashed page (browserDisconnectTolerance = 2 in each module's
-// karma.config.d) and the reporter keeps only the last attempt, so js/wasmJs
+// Karma retries a crashed page (browserDisconnectTolerance = 2 in
+// gradle/karma/config.d) and the reporter keeps only the last attempt, so js/wasmJs
 // browser tasks can drop whole suites and still exit SUCCESS. Ignored tests are
 // still written to the XML as skipped, so the suite total must equal the @Test
 // count in the sources that feed these targets.
