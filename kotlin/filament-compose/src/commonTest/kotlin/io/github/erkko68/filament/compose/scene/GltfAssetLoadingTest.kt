@@ -82,6 +82,7 @@ class GltfAssetLoadingTest {
             pumpUntil { asset?.let { seen += it.progress; it.isReady } == true },
             "the asset should become ready within the frame budget",
         )
+        assertTrue(seen.any { it < 1f }, "a loading indicator should see the upload before it finishes, got $seen")
         assertTrue(seen.all { it in 0f..1f }, "progress should stay within 0..1, got $seen")
         assertEquals(seen.sorted(), seen, "progress should never go back, got $seen")
         assertEquals(1f, seen.last(), "a ready asset should report full progress")

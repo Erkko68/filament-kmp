@@ -6,6 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toPixelMap
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithTag
@@ -51,6 +55,38 @@ class FilamentViewRealBackendTest {
         val pixels = onNodeWithTag("view").captureToImage().toPixelMap()
         val centre = pixels[pixels.width / 2, pixels.height / 2]
         assertTrue(centre.red > 0.6f && centre.green < 0.2f && centre.blue < 0.2f, "the red cube should be on screen, got $centre")
+    }
+
+    /** capture() is what the view shows, rows in screen order: red above the centre, blue below, as on screen. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun captureMatchesTheViewTopToBottom() = withEngine(Engine.Backend.DEFAULT) { engine, setContent ->
+        val viewState = FilamentViewState()
+        setContent {
+            FilamentSceneView(Modifier.testTag("view").size(64.dp), engine = engine, viewState = viewState,
+                cameraState = rememberCameraState(initialEye = Position(0f, 0f, 10f))) {
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(1f, 0f, 0f)), size = 2f, position = Position(0f, 2f, 0f))
+                Cube(rememberUnlitColorMaterialInstance(LinearColor(0f, 0f, 1f)), size = 2f, position = Position(0f, -2f, 0f))
+            }
+        }
+        renderFrames(engine, 10)
+        var image: ImageBitmap? = null
+        runOnUiThread { CoroutineScope(Dispatchers.Unconfined).launch { image = viewState.capture() } }
+        repeat(30) {
+            if (image != null) return@repeat
+            mainClock.advanceTimeByFrame()
+            runOnUiThread { engine.flushAndWait() }
+        }
+        val captured = assertNotNull(image, "the view should answer a capture").toPixelMap()
+        val screen = onNodeWithTag("view").captureToImage().toPixelMap()
+
+        // 10 away under the default 45° vertical lens the view spans ±4.14 in y: the cubes' centres sit at 26% and 74%.
+        for (pixels in listOf(captured, screen)) {
+            val top = pixels[pixels.width / 2, pixels.height * 26 / 100]
+            val bottom = pixels[pixels.width / 2, pixels.height * 74 / 100]
+            assertTrue(top.red > 0.6f && top.blue < 0.2f, "the red cube should be above the centre, got $top")
+            assertTrue(bottom.blue > 0.6f && bottom.red < 0.2f, "the blue cube should be below the centre, got $bottom")
+        }
     }
 
     /** Compose rows run top-down, Filament's bottom-up: the top and bottom rows are both inside the viewport. */

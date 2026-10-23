@@ -61,7 +61,7 @@ failing to get a real engine fails the test.
 | `filament` | `FrameSemanticsTest` (below, including `readPixels` row order), `ReadbackTest` (both `readPixels` overloads), `AsyncCallTest` |
 | `filamat` | `CompiledMaterialPixelTest`: a runtime-compiled material's parameter is the colour on screen |
 | `filament-utils` | `IBLPrefilterTest`; `LoadedTexturePixelTest`: a `TextureLoader` PNG sampled by a material compiled with filamat (a pixelTest-only dependency) |
-| `filament-compose` | `FilamentViewRealBackendTest` (`jvmTest`): the view shows its scene (`captureToImage`), and what a pick hits |
+| `filament-compose` | `FilamentViewRealBackendTest` (`jvmTest`): the view shows its scene (`captureToImage`) and `capture()` reads it back in screen order, what a pick hits and where, and a click or a jittery tap reaching `onTap`; `AmbientPresetsRealBackendTest`, `ExposurePresetsRealBackendTest`: the lighting presets look as documented |
 
 Materials compiled at runtime for a real backend need `targetApi(ALL)`: filamat's default is OpenGL only,
 which Metal rejects. Readback tests are `@IgnoreJs`: see the web caveat below.

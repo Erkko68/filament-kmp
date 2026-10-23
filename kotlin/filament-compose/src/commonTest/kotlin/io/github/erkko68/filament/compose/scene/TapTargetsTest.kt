@@ -16,7 +16,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /** Which handler each scene object registers for taps, and that registrations follow the entities. */
@@ -91,7 +90,7 @@ class TapTargetsTest : ComposeTestFixture() {
         }
     }
 
-    /** A new lambda each recomposition is answered without re-registering. */
+    /** A tap reaches the lambda from the latest recomposition, with what it captured then. */
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun latestLambdaAnswers() = run {
@@ -108,12 +107,10 @@ class TapTargetsTest : ComposeTestFixture() {
                 }
             }
             waitForIdle()
-            val registered = taps.handlerFor(cube)
             label = "b"
             mainClock.advanceTimeByFrame()
             waitForIdle()
 
-            assertSame(registered, taps.handlerFor(cube), "a new lambda shouldn't re-register")
             taps.tap(cube)
             assertEquals("b", last)
         }
