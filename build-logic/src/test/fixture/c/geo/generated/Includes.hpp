@@ -3,7 +3,6 @@
 
 #include "../manual/GeoBridge.hpp"
 
-#include <geo-io/Loader.h>
 #include <geo/Canvas.h>
 #include <geo/Internal.h>
 #include <geo/Shape.h>

@@ -3,12 +3,6 @@
 
 #include "../manual/FilaBridge.hpp"
 
-#include <camutils/Bookmark.h>
-#include <camutils/Manipulator.h>
-#include <filamat/Enums.h>
-#include <filamat/MaterialBuilder.h>
-#include <filamat/Package.h>
-#include <filament-iblprefilter/IBLPrefilterContext.h>
 #include <filament/Box.h>
 #include <filament/BufferObject.h>
 #include <filament/Camera.h>
@@ -51,20 +45,6 @@
 #include <filament/View.h>
 #include <filament/Viewport.h>
 #include <geometry/SurfaceOrientation.h>
-#include <geometry/TangentSpaceMesh.h>
-#include <geometry/Transcoder.h>
-#include <gltfio/Animator.h>
-#include <gltfio/AssetLoader.h>
-#include <gltfio/FilamentAsset.h>
-#include <gltfio/FilamentInstance.h>
-#include <gltfio/MaterialProvider.h>
-#include <gltfio/NodeManager.h>
-#include <gltfio/ResourceLoader.h>
-#include <gltfio/TextureProvider.h>
-#include <gltfio/TrsTransformManager.h>
-#include <image/Ktx1Bundle.h>
-#include <ktxreader/Ktx1Reader.h>
-#include <ktxreader/Ktx2Reader.h>
 #include <utils/EntityManager.h>
 #include "Types.h"
 

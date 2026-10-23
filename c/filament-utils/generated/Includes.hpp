@@ -2,6 +2,15 @@
 #pragma once
 
 #include "../../filament/generated/Includes.hpp"
+
+#include <camutils/Bookmark.h>
+#include <camutils/Manipulator.h>
+#include <filament-iblprefilter/IBLPrefilterContext.h>
+#include <geometry/TangentSpaceMesh.h>
+#include <geometry/Transcoder.h>
+#include <image/Ktx1Bundle.h>
+#include <ktxreader/Ktx1Reader.h>
+#include <ktxreader/Ktx2Reader.h>
 #include "Types.h"
 
 namespace fila {

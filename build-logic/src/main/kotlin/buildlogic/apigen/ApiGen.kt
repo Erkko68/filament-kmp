@@ -84,10 +84,15 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     /** Writes the externals of the committed manifest. */
     fun generateKotlinExternals() = kotlinFiles(CManifest.parse(manifestFile.readText())).write()
 
-    /** Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers. */
+    /**
+     * Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers,
+     * a module at a time as the build compiles them: one can't lean on another's includes.
+     */
     fun checkCompiles(files: Collection<File>) {
         compile("headers.c", files.filter { it.extension == "h" }, listOf("clang", "-x", "c", "-std=c11"))
-        compile("forwarders.cpp", files.filter { it.extension == "cpp" }, listOf("clang++", "-std=${config.sources.std}") + config.sources.clangArgs + listOf("-I", includeDir.path))
+        files.filter { it.extension == "cpp" }.groupBy { it.parentFile.parentFile.name }.forEach { (module, forwarders) ->
+            compile("$module.cpp", forwarders, listOf("clang++", "-std=${config.sources.std}") + config.sources.clangArgs + listOf("-I", includeDir.path))
+        }
     }
 
     private fun compile(unit: String, sources: List<File>, command: List<String>) {

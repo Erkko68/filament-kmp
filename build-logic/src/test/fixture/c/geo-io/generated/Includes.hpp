@@ -2,6 +2,8 @@
 #pragma once
 
 #include "../../geo/generated/Includes.hpp"
+
+#include <geo-io/Loader.h>
 #include "Types.h"
 
 namespace geo_c {

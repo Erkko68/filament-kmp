@@ -252,11 +252,14 @@ internal class CApiWriter(
         return header("${module}_Types", include, body.toString())
     }
 
-    /** The C++ headers, and the `cpp`/`c` overloads between the module's C types and C++'s (Bridge.hpp's `_TYPE` macro). */
+    /**
+     * The module's C++ headers, after the first module's (or the helpers, for the first), and the `cpp`/`c` overloads
+     * between the module's C types and C++'s (Bridge.hpp's `_TYPE` macro).
+     */
     private fun includes(module: String): String {
         val text = StringBuilder("$banner\n#pragma once\n\n")
-        if (module == baseModule) text.append("#include \"${config.bridges.header ?: "Bridge.hpp"}\"\n\n").append(api.headers.joinToString("") { "#include <$it>\n" })
-        else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
+        text.append(if (module == baseModule) "#include \"${config.bridges.header ?: "Bridge.hpp"}\"\n" else "#include \"../../$baseModule/generated/Includes.hpp\"\n")
+        text.append("\n").append(api.headers.filter { moduleOf(it) == module }.joinToString("") { "#include <$it>\n" })
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
         if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
         moduleRecords(module).filter { it.accessible }
