@@ -59,6 +59,28 @@ class LightLifecycleTest : ComposeTestFixture() {
         }
     }
 
+    /** Group's `visible` covers its whole subtree: a hidden lamp doesn't light the scene. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun hiddenGroupTurnsItsLightsOff() = withFilamentScene(engine, scene) { setContent ->
+        var visible by mutableStateOf(true)
+        setContent {
+            Group(visible = visible) {
+                PointLight()
+                Light(LightManager.Type.POINT) { intensity(1_000f) }
+            }
+        }
+        fun settle() { mainClock.advanceTimeByFrame(); waitForIdle() }
+        settle()
+        assertEquals(2, scene.lightCount)
+        visible = false
+        settle()
+        assertEquals(0, scene.lightCount, "a hidden Group's lights should leave the scene")
+        visible = true
+        settle()
+        assertEquals(2, scene.lightCount)
+    }
+
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun parameterUpdatesDoNotChurnEntities() = withFilamentScene(engine, scene) { setContent ->

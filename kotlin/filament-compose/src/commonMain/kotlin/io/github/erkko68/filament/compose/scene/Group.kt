@@ -27,7 +27,7 @@ import io.github.erkko68.filament.compose.internal.transformMatrix
 internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
 
 /**
- * Whether the surrounding Group subtree is visible. Leaf composables (primitives, GltfInstance)
+ * Whether the surrounding Group subtree is visible. Leaf composables (primitives, GltfInstance, lights)
  * AND their own `visible` with this, so hiding a Group hides everything declared inside it. True
  * at the top level (no enclosing Group). Nested groups multiply through the provided value.
  */
@@ -58,7 +58,7 @@ internal val LocalGroupVisible = compositionLocalOf { true }
  * @param scale     Scale applied to the whole group.
  * @param pivot     Mesh-space pivot point that rotation/scale revolve around.
  * @param visible   Whether the whole subtree is in the scene. False removes every child
- *   renderable (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
+ *   renderable and light (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
  * @param onCreate  Runs once when the group's transform entity is created, with the entity and
  *   engine in scope ([EntityScope]).
  * @param onTap     Called when a tap hits anything inside [content] that has no `onTap` of its own, with the

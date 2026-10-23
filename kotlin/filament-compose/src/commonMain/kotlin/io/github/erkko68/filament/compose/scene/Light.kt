@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.LightManager
+import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
@@ -173,16 +174,14 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     // Remembered before the effects below, so it's destroyed after their cleanups run.
     val entity = rememberOwned(engine, create = { engine.entityManager.create() }) { engine.entityManager.destroy(it) }
 
-    // Transform component + scene membership, independent of light parameters.
+    // Transform component, independent of light parameters.
     DisposableEffect(entity) {
         val tm = engine.transformManager
         if (!tm.hasComponent(entity)) tm.create(entity)
-        scene.addEntity(entity)
-        onDispose {
-            scene.remove(entity)
-            tm.destroy(entity)
-        }
+        onDispose { tm.destroy(entity) }
     }
+
+    GroupVisibleSceneMembership(scene, entity)
 
     // Build (and rebuild) the light component only when a build-time-only param changes.
     DisposableEffect(entity, snapshot.type, snapshot.shadow, snapshot.castLight) {
@@ -205,6 +204,16 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     // work, as the Group can move without a recomposition.
     if (!snapshot.followGroupRotation && parent != null) {
         PinWorldDirection(engine, entity, parent, snapshot)
+    }
+}
+
+/** Keeps a light in [scene] while every enclosing [Group] is visible: hiding a Group turns its lights off too. */
+@Composable
+private fun GroupVisibleSceneMembership(scene: Scene, entity: Entity) {
+    val visible = LocalGroupVisible.current
+    DisposableEffect(entity, visible) {
+        if (visible) scene.addEntity(entity)
+        onDispose { if (visible) scene.remove(entity) }
     }
 }
 
@@ -448,10 +457,7 @@ fun FilamentSceneScope.Light(
         }
     }
 
-    DisposableEffect(entity) {
-        scene.addEntity(entity)
-        onDispose { scene.remove(entity) }
-    }
+    GroupVisibleSceneMembership(scene, entity)
 
     DisposableEffect(entity, type, *keys) {
         LightManager.Builder(type).apply(configure).build(engine, entity)
