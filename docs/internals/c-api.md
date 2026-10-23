@@ -35,7 +35,7 @@ clang JSON AST ──► C++ API model ───────────► apiM
 | :--- | :--- | :--- |
 | `./gradlew apiModel` | the headers `c/api-headers.txt` lists | `build/reports/api-model.txt`: the C++ surface clang sees |
 | `./gradlew generateCApi` | the same headers + `c/api-headers.txt` + `c/<module>/manual/*.h` | `c/<module>/generated/`, each module's `Types.h`, and `c/api-manifest.json` |
-| `./gradlew generateKotlinExternals` | `c/api-manifest.json` | each Kotlin module's `capi` package |
+| `./gradlew generateKotlinExternals` | `c/api-manifest.json`, after running `generateCApi` (up to date when nothing it reads changed) | each Kotlin module's `capi` package |
 | `./gradlew generateBindings` | `c/api-manifest.json` | `build/generated/bindings/` (runs as part of every native build) |
 | `./gradlew apiCoverage` | the headers + `c/` + the Kotlin sources | `c/api-coverage.txt`; warns when `c/` or `capi` is stale |
 | `./gradlew apiVerify` | the headers + the Kotlin sources | nothing; fails when a hand-written Kotlin enum's ordinal (or explicit `value`) isn't the C++ constant's |
@@ -45,7 +45,11 @@ The generated C and Kotlin files are committed. A diff in them is the review sur
 or a generator change. Don't edit them by hand: the next run overwrites them.
 
 The generator lives in [`build-logic/…/buildlogic/apigen`](../../build-logic/src/main/kotlin/buildlogic/apigen),
-one package per stage (`cpp/`, `c/`, `kotlin/`, `externals/`, `gaps/`).
+one package per stage (`cpp/`, `c/`, `kotlin/`, `bindings/`, `report/`). It knows nothing of Filament:
+[`FilamentApi.kt`](../../build-logic/src/main/kotlin/buildlogic/filament/FilamentApi.kt) is Filament's config, and
+the generator's [README](../../build-logic/src/main/kotlin/buildlogic/apigen/README.md) says how to point it at
+another library. `./gradlew -p build-logic test` runs every stage on a small fixture library and compares the output
+with its committed one: run it after changing the generator, and review the diff `-Papigen.update` writes.
 
 ## Scope: `c/api-headers.txt`
 
