@@ -10,8 +10,8 @@ plugins {
 kotlin {
     android {
         namespace = "io.github.erkko68.filament.testsupport"
-        compileSdk = 37
-        minSdk = 24
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
     // Same targets as :kotlin:filament, which declares iOS on macOS hosts only.
     if (System.getProperty("os.name").startsWith("Mac")) {
