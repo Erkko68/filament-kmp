@@ -83,19 +83,17 @@ reports the public C++ methods (headers and libraries, by symbol) that `c/` does
 
 ## Versioning & releases
 
-Versions are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`), and all
-`io.github.erkko68.filament:*` artifacts share one version:
+The release policy is in [README → Versioning & stability](README.md#versioning--stability). What it means for a change:
 
-- **minor (`0.X.0`)** — a new upstream Filament feature release (1.73 → 1.74) plus any
-  wrapper API changes since the last one; pre-1.0, breaking changes may land here.
-- **patch (`0.0.X`)** — bug fixes only: upstream Filament point releases (e.g. 1.73.1) or
-  wrapper-only fixes.
-- **`1.0.0`** — tagged when the public API stabilizes; breaking changes then require a
-  major bump.
+- **Every user-visible change** gets a one-line entry under `[Unreleased]` in [CHANGELOG.md](CHANGELOG.md).
+- **Fixes** must not change the API: they ship in patch releases.
+- **`filament-compose` is mostly complete.** Change its API for a real pain point or a badly designed
+  area, never in anticipation, and keep each change small and focused. Prefer an addition that keeps
+  existing code compiling: a new parameter goes last with a default, a new data-class field last with a
+  default. A breaking change needs a migration note in [docs/migration/](docs/migration/).
+- **The core modules follow C++**: see the API rules above.
 
-Every user-visible change needs a one-line entry under `[Unreleased]` in
-[CHANGELOG.md](CHANGELOG.md). Cutting a release is a maintainer task — see
-[.github/workflows/README.md](.github/workflows/README.md).
+Cutting a release is a maintainer task: see [.github/workflows/README.md](.github/workflows/README.md).
 
 ## Commit & PR conventions
 

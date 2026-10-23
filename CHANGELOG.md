@@ -28,11 +28,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`AssetConfiguration.defaultNodeName`** (`gltfio`): the name anonymous nodes are found by.
 
 ### Changed
+- **The `filament-compose` API is mostly complete** (release): it changes, in small focused steps, for real pain points or badly designed areas; see [README → What may change](README.md#what-may-change).
+- **Scope and controller interfaces are sealed** (`filament-compose`): `FilamentSceneScope`, `EntityScope`, `FilamentEffectScope`, `GltfInstanceScope` and `CameraController` are implemented only by the library.
 - **Camera controllers work on `CameraState`** (`filament-compose`, **source-breaking**): bookmarks give way to `Viewpoint`s, and map's extent and flight's start-angle parameters come from the state. See the [migration guide](docs/migration/from-0.8.md).
 - **The map controller starts from the `CameraState` pose** (`filament-compose`, behavior-breaking): it no longer puts the camera top-down by itself; set `initialEye` above the target and `initialUp` to -Z.
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
 
 ### Fixed
+- **Hiding a `Group` turns off its lights** (`filament-compose`), as it already hid its renderables.
 - **Camera writes stick under a controller** (`filament-compose`): a gesture carries on from a pose the app set instead of snapping back, and the orbit `target` is its pivot.
 - **Orbit zoom stops at the near plane** (`filament-compose`) instead of flying through the target and turning the camera round.
 - **Pans follow the pointer at the camera's field of view** (`filament-compose`), and an orthographic map zooms by scaling its extents.
