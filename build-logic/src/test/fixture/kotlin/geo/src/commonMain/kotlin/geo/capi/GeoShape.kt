@@ -28,6 +28,9 @@ internal external fun GeoShape_GetStats(self: NativePointer, out: NativePointer)
 @ExternalSymbolName("GeoShape_GetLimits")
 internal external fun GeoShape_GetLimits(self: NativePointer, out: NativePointer)
 
+@ExternalSymbolName("GeoShape_GetPath")
+internal external fun GeoShape_GetPath(self: NativePointer): NativePointer
+
 @ExternalSymbolName("GeoShape_SetLimits")
 internal external fun GeoShape_SetLimits(self: NativePointer, limits: NativePointer)
 

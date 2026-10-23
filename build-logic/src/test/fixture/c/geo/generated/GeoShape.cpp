@@ -36,6 +36,10 @@ void GeoShape_GetLimits(const GeoShape* self, GeoLimits* out) {
     *geo_c::cpp(out) = geo_c::cpp(self)->GetLimits();
 }
 
+GeoPath* GeoShape_GetPath(const GeoShape* self) {
+    return geo_c::c(new geo::Path(geo_c::cpp(self)->GetPath()));
+}
+
 void GeoShape_SetLimits(GeoShape* self, const GeoLimits* limits) {
     geo_c::cpp(self)->SetLimits(*geo_c::cpp(limits));
 }

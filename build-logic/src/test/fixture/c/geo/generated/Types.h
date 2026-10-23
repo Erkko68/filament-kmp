@@ -21,6 +21,7 @@ typedef struct GeoBox GeoBox;
 typedef struct GeoCanvas GeoCanvas;
 typedef struct GeoCircle GeoCircle;
 typedef struct GeoLimits GeoLimits;
+typedef struct GeoPath GeoPath;
 typedef struct GeoPolygon GeoPolygon;
 typedef struct GeoRegistry GeoRegistry;
 typedef struct GeoShape GeoShape;

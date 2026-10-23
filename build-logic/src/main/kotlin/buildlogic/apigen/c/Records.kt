@@ -21,6 +21,12 @@ internal class Records(
         .plus(api.records.values.flatMap { it.constructors })
         .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
 
+    /** Records the API hands out by value, as results and fields: C destroys the copies it gets of the ones that aren't values. */
+    private val resultTypes = ((api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.returns } +
+        api.records.values.flatMap { r -> r.fields.filter { it.isPublic }.map { it.type } })
+        .filter { shape(it.spelling).indirection.isEmpty() }
+        .mapNotNullTo(HashSet()) { t -> t.decl?.let { generateSequence(it) { d -> api.aliases[d]?.decl }.last() } }
+
     /**
      * Records the API reads: taken by value, `const&`, `const*` or `&&`, and the records their fields hold. The others
      * are only results.
@@ -62,10 +68,14 @@ internal class Records(
         (record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated } || isValue(record.name) || record.name in parameterTypes)
 
     /**
-     * `_destroy`: for what C creates, and factory-made instances deleted through a declared destructor. Not what
-     * counts its references: C releases the one it holds.
+     * `_destroy`: for what C creates, factory-made instances deleted through a declared destructor, and the copies C
+     * gets of what the API hands out by value. Not what counts its references: C releases the one it holds.
      */
-    fun destroys(record: CppRecord) = creates(record) && !refCounted(record) && (record.constructors.isNotEmpty() || record.declaredDestructor) && record.destructible
+    fun destroys(record: CppRecord) = creates(record) && !refCounted(record) && record.destructible &&
+        (record.constructors.isNotEmpty() || record.declaredDestructor || record.name in resultTypes)
+
+    /** Whether C gets a `_destroy` for [record], so it can own one a call returns by value. */
+    fun owned(record: CppRecord) = record.name in bound && destroys(record)
 
     /**
      * The bases C gets an `_as<Base>` upcast to, however far up (JobSystemThreadPool as a JobSystem): C can't upcast,

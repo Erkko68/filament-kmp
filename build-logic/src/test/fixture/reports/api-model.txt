@@ -11,6 +11,8 @@ struct geo::Stats
   field uint32_t mCount = 0
 struct geo::Limits
   field float mMax = 1
+class geo::Path
+  float geo::Path::GetLength() const
 class geo::Shape
   float geo::Shape::GetArea() const
   Kind{geo::Kind} geo::Shape::GetKind() const
@@ -19,6 +21,7 @@ class geo::Shape
   void geo::Shape::SetStyle(const Style &{geo::Style} style)
   Stats{geo::Stats} geo::Shape::GetStats() const
   Limits{geo::Limits} geo::Shape::GetLimits() const
+  Path{geo::Path} geo::Shape::GetPath() const
   void geo::Shape::SetLimits(const Limits &{geo::Limits} limits)
   void geo::Shape::SetName(const char * name)
   void geo::Shape::SetName(const char * name, size_t nameLength)

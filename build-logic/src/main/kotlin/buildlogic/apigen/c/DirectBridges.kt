@@ -75,16 +75,23 @@ class DirectBridges internal constructor(
         }
     }
 
-    /** A value struct taken or returned by value is copied: in from a `const` pointer, out into one C created. */
-    fun record(decl: String, value: Boolean, copyable: Boolean): CBridge {
+    /**
+     * A value struct taken or returned by value is copied: in from a `const` pointer, out into one C created
+     * ([assignable]). A result by value C can't create one for, or of a class that isn't a value, moves to a copy C
+     * destroys, where it can ([owned]).
+     */
+    fun record(decl: String, value: Boolean, assignable: Boolean, owned: Boolean): CBridge {
         val name = names.type(decl)
+        val copy by lazy { CBridge("$name*", { "$h::c(new $decl($it))" }) }
         return when {
+            !value && indirection == null && result && owned -> copy
             !value && indirection == null -> throw Unsupported("$decl by value")
             !value || !byValue -> handle(name)
             !result -> CBridge("const $name*", { "*$h::cpp($it)" })
             // C can't create one to copy into; a reference's outlives the call, so C borrows it.
-            !copyable && indirection == "&" -> handle(name)
-            !copyable -> throw Unsupported("$decl result: C can't create one to copy it into")
+            !assignable && indirection == "&" -> handle(name)
+            !assignable && owned -> copy
+            !assignable -> throw Unsupported("$decl result: C can't create one to copy it into")
             else -> CBridge(name, { it }, out = true, store = { v, out -> "*$h::cpp($out) = $v;" })
         }
     }

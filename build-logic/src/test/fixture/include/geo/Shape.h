@@ -39,6 +39,16 @@ struct Limits : detail::Limits {
     float mMax = 1;
 };
 
+// A class C can't create, whose copies a call hands over: C destroys them.
+class GEO_PUBLIC Path {
+public:
+    float GetLength() const;
+
+private:
+    friend class Shape;
+    Path();
+};
+
 class GEO_PUBLIC Shape : public RefTarget<Shape> {
 public:
     virtual ~Shape();
@@ -50,6 +60,7 @@ public:
     void SetStyle(const Style& style);
     Stats GetStats() const;
     Limits GetLimits() const;
+    Path GetPath() const;
     void SetLimits(const Limits& limits);
 
     void SetName(const char* name);

@@ -19,6 +19,7 @@ GeoStyle* GeoShape_GetStyle(GeoShape* self);
 void GeoShape_SetStyle(GeoShape* self, const GeoStyle* style);
 void GeoShape_GetStats(const GeoShape* self, GeoStats* out);
 void GeoShape_GetLimits(const GeoShape* self, GeoLimits* out);
+GeoPath* GeoShape_GetPath(const GeoShape* self);
 void GeoShape_SetLimits(GeoShape* self, const GeoLimits* limits);
 void GeoShape_SetName(GeoShape* self, const char* name);
 const char* GeoShape_GetName(const GeoShape* self);

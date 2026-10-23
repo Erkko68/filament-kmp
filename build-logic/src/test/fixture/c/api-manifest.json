@@ -55,6 +55,10 @@
 {"name":"GeoLimits_GetMax","returns":"f32","params":[["self","ptr"]]},
 {"name":"GeoLimits_SetMax","returns":"void","params":[["self","ptr"],["value","f32"]]}
 ],
+"geo/generated/GeoPath.h": [
+{"name":"GeoPath_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoPath_GetLength","returns":"f32","params":[["self","ptr"]]}
+],
 "geo/generated/GeoPolygon.h": [
 {"name":"GeoPolygon_addRef","returns":"void","params":[["self","ptr"]]},
 {"name":"GeoPolygon_release","returns":"void","params":[["self","ptr"]]},
@@ -78,6 +82,7 @@
 {"name":"GeoShape_SetStyle","returns":"void","params":[["self","ptr"],["style","ptr"]]},
 {"name":"GeoShape_GetStats","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"GeoShape_GetLimits","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoShape_GetPath","returns":"ptr","params":[["self","ptr"]]},
 {"name":"GeoShape_SetLimits","returns":"void","params":[["self","ptr"],["limits","ptr"]]},
 {"name":"GeoShape_SetName","returns":"void","params":[["self","ptr"],["name","ptr"]]},
 {"name":"GeoShape_GetName","returns":"ptr","params":[["self","ptr"]]},

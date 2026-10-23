@@ -8,6 +8,7 @@
 #include "geo/generated/GeoCircle.h"
 #include "geo/generated/GeoGeo.h"
 #include "geo/generated/GeoLimits.h"
+#include "geo/generated/GeoPath.h"
 #include "geo/generated/GeoPolygon.h"
 #include "geo/generated/GeoRegistry.h"
 #include "geo/generated/GeoShape.h"

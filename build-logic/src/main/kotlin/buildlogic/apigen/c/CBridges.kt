@@ -85,7 +85,10 @@ internal class CBridges(
             decl in config.scalars -> bridge.scalar(decl, config.scalars.getValue(decl))
             decl in config.allStrings -> bridge.string(decl)
             decl in config.mirrors -> bridge.math(decl).also { mathTypes += decl }
-            decl in api.records -> bridge.record(templates.cpp(handle(target).name), records.isValue(decl), api.records.getValue(decl).let { records.creatable(it) && it.defaultConstructible && it.copyable })
+            // A copy of a field, which C++ can't move from.
+            decl in api.records -> api.records.getValue(decl).let { r ->
+                bridge.record(templates.cpp(handle(target).name), records.isValue(decl), records.creatable(r) && r.defaultConstructible && r.copyable, records.owned(r) && (r.copyable || !lvalue))
+            }
             else -> throw Unsupported("${type.spelling}: $decl")
         }
     }

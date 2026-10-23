@@ -8,6 +8,7 @@
 #include "geo/generated/GeoCircle.h"
 #include "geo/generated/GeoGeo.h"
 #include "geo/generated/GeoLimits.h"
+#include "geo/generated/GeoPath.h"
 #include "geo/generated/GeoPolygon.h"
 #include "geo/generated/GeoRegistry.h"
 #include "geo/generated/GeoShape.h"
@@ -45,6 +46,10 @@ JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1GetStats(JNIEnv* env, 
 
 JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1GetLimits(JNIEnv* env, jclass cls, jlong self, jlong out) {
     GeoShape_GetLimits((void*)(intptr_t) self, (void*)(intptr_t) out);
+}
+
+JNIEXPORT jlong JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1GetPath(JNIEnv* env, jclass cls, jlong self) {
+    return (jlong)(intptr_t) GeoShape_GetPath((void*)(intptr_t) self);
 }
 
 JNIEXPORT void JNICALL Java_geo_capi_GeoShapeKt_GeoShape_1SetLimits(JNIEnv* env, jclass cls, jlong self, jlong limits) {

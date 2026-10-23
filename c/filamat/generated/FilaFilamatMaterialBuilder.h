@@ -115,7 +115,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(Fi
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialSource(FilaFilamatMaterialBuilder* self, const char* source);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_setApiLevel(FilaFilamatMaterialBuilder* self, uint32_t apiLevel);
 // handwritten in manual/ FilaFilamatMaterialBuilder_build: Package filamat::MaterialBuilder::build(utils::JobSystem & jobSystem)
-//     filamat::Package by value
+//     utils::JobSystem &: utils::JobSystem
 uint32_t FilaFilamatMaterialBuilder_getAttributeDatabase(FilaFilamatMaterialBuilderAttribute* const* out, uint32_t outCapacity);
 
 

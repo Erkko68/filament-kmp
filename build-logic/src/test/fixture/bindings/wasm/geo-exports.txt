@@ -38,6 +38,8 @@ _GeoLimits_SetMax
 _GeoLimits_SetMin
 _GeoLimits_create
 _GeoLimits_destroy
+_GeoPath_GetLength
+_GeoPath_destroy
 _GeoPolygon_Create
 _GeoPolygon_GetPoints
 _GeoPolygon_GetWeights
@@ -56,6 +58,7 @@ _GeoShape_GetKind
 _GeoShape_GetLabel
 _GeoShape_GetLimits
 _GeoShape_GetName
+_GeoShape_GetPath
 _GeoShape_GetRadius
 _GeoShape_GetStats
 _GeoShape_GetStyle
