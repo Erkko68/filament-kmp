@@ -24,18 +24,10 @@ kotlin {
 
     jvm()
 
-    js {
-        browser {
-            binaries.executable()
-        }
-    }
+    js { browser() }
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-    wasmJs {
-        browser {
-            binaries.executable()
-        }
-    }
+    wasmJs { browser() }
 
     listOf(
         iosArm64(),

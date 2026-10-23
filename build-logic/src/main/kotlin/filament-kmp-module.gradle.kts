@@ -74,14 +74,10 @@ kotlin {
         }
     }
 
-    js {
-        browser { binaries.executable() }
-    }
+    js { browser() }
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-    wasmJs {
-        browser { binaries.executable() }
-    }
+    wasmJs { browser() }
 
     // ── JS test bootstrapping ────────────────────────────────────────────────
     // Karma needs filament-kmp.js + .wasm (built by :wasm) loaded, and the module instantiated,
