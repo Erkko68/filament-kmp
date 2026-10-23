@@ -24,8 +24,9 @@ internal class CApiWriter(
     private val names = CNames(config.naming)
     private val h = names.helpers
     private val refs = config.bridges.refs
-    private val bridges = CBridges(api, config.bridges, names)
-    private val rules = BindingRules(api, config.bridges, bridges, api.apiRecords.mapTo(HashSet()) { it.name })
+    private val templates = Templates(api, config.bridges)
+    private val records = Records(api, config.bridges, names, templates, api.apiRecords.mapTo(HashSet()) { it.name })
+    private val bridges = CBridges(api, config.bridges, names, templates, records)
     private val surface = api.surface
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
@@ -49,7 +50,7 @@ internal class CApiWriter(
             overloads(functions, section) { names.function(namespace, it.name, suffix = "") }
             section.declarations.appendLine()
         }
-        check(bridges.unusedFunctionInstantiations.isEmpty()) { "functionInstantiations lists unknown templates: ${bridges.unusedFunctionInstantiations}" }
+        check(templates.unused.isEmpty()) { "functionInstantiations lists unknown templates: ${templates.unused}" }
         val out = LinkedHashMap<String, String>()
         files.filterValues { it.declarations.isNotBlank() }.forEach { (name, section) ->
             val dir = "${section.module}/generated"
@@ -71,9 +72,9 @@ internal class CApiWriter(
     private fun record(record: CppRecord, file: Section) {
         val section = Section(file.module)
         val self = names.type(record.name)
-        val cpp = bridges.cpp(record.name)
-        val counted = bridges.refCounted(record)
-        if (rules.creates(record)) {
+        val cpp = templates.cpp(record.name)
+        val counted = records.refCounted(record)
+        if (records.creates(record)) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
             skipped.forEach {
                 section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), ""))
@@ -89,30 +90,30 @@ internal class CApiWriter(
             }
         }
         // What `_create` and results by value hand C: a reference to give back, in place of `_destroy`.
-        if (counted && !bridges.uninstantiated(record)) {
+        if (counted && !templates.uninstantiated(record)) {
             emit("${self}_addRef", "${record.name}::${refs!!.addRef}()", section) { "void ${self}_addRef(const $self* self)" to "$h::cpp(self)->${refs!!.addRef}();" }
             emit("${self}_release", "${record.name}::${refs!!.release}()", section) { "void ${self}_release(const $self* self)" to "$h::cpp(self)->${refs!!.release}();" }
         }
-        if (rules.destroys(record)) {
+        if (records.destroys(record)) {
             emit("${self}_destroy", "~${record.name}()", section) {
                 "void ${self}_destroy($self* self)" to "delete $h::cpp(self);"
             }
         }
-        rules.upcasts(record).forEach { base ->
+        records.upcasts(record).forEach { base ->
             val baseType = names.type(base.name)
             val name = "${self}_as${baseType.removePrefix(names.prefix)}"
-            val baseCpp = bridges.cpp(base.name)
+            val baseCpp = templates.cpp(base.name)
             emit(name, "${record.name} as ${base.name}", section) {
                 "$baseType* $name($self* self)" to "return $h::c(static_cast<$baseCpp*>($h::cpp(self)));"
             }
         }
-        val (skipped, methods) = rules.methods(record).partition { api.skipReason(it, record.name) != null }
+        val (skipped, methods) = records.methods(record).partition { api.skipReason(it, record.name) != null }
         skipped.forEach {
             section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}"))
             bindings += Binding(names.function(record.name, it.name), signature(it), Status.SKIPPED, api.skipReason(it, record.name))
         }
         overloads(methods, section) { names.function(record.name, it.name, suffix = "") }
-        rules.fields(record).forEach { f ->
+        records.fields(record).forEach { f ->
             api.skipReason(f, record.name)?.let {
                 section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}"))
                 bindings += Binding(names.getter(record.name, f.name), "${f.type.spelling} ${record.name}::${f.name}", Status.SKIPPED, it)
@@ -136,10 +137,10 @@ internal class CApiWriter(
     /** Emits [functions], suffixing overloads of one name with the types that tell them apart. */
     private fun overloads(functions: List<CppMethod>, section: Section, baseName: (CppMethod) -> String) {
         functions.groupBy { it.name }.values.forEach { all ->
-            val (templates, plain) = all.partition { it.isTemplate }
-            val (listed, unlisted) = templates.partition { bridges.functionInstantiations(it) != null }
+            val (generic, plain) = all.partition { it.isTemplate }
+            val (listed, unlisted) = generic.partition { templates.functionInstantiations(it) != null }
             val group = plain.map { Overload(it, null) } +
-                listed.flatMap { t -> bridges.functionInstantiations(t)!!.map { (m, arguments) -> Overload(m, t, arguments) } }
+                listed.flatMap { t -> templates.functionInstantiations(t)!!.map { (m, arguments) -> Overload(m, t, arguments) } }
             group.zip(suffixes(group.map { it.types })).forEach { (overload, suffix) ->
                 val name = baseName(overload.method) + if (suffix.isEmpty()) "" else "_$suffix"
                 emit(name, signature(overload.method), section, overload.method.guard) { forwarder(overload.method, name, overload.templateArguments) }
@@ -152,12 +153,12 @@ internal class CApiWriter(
     }
 
     private fun forwarder(method: CppMethod, name: String, templateArguments: List<String> = emptyList()): Pair<String, String> {
-        if (api.records[method.owner]?.let(bridges::uninstantiated) == true) throw Unsupported("member of a class template")
+        if (api.records[method.owner]?.let(templates::uninstantiated) == true) throw Unsupported("member of a class template")
         val returns = bridges.result(method.returns)
         val params = bridge(method.params)
         val const = if (method.isConst) "const " else ""
         val self = if (method.isStatic) null else "$const${names.type(method.owner)}* self"
-        val target = if (method.isStatic) "${bridges.cpp(method.owner)}::" else "$h::cpp(self)->"
+        val target = if (method.isStatic) "${templates.cpp(method.owner)}::" else "$h::cpp(self)->"
         val explicit = if (templateArguments.isEmpty()) "" else templateArguments.joinToString(prefix = "<", postfix = ">")
         val call = "$target${method.name}$explicit(${args(params)})"
         return when {
@@ -180,7 +181,7 @@ internal class CApiWriter(
             else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = names.setter(record.name, field.name)
-        if (rules.getterOnly(record, field)) {
+        if (records.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
             bindings += Binding(setter, cpp, Status.SKIPPED, "${record.name} is only a result, and C would have to keep the pointer")
             return
@@ -263,17 +264,17 @@ internal class CApiWriter(
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
         if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
         moduleRecords(module).filter { it.accessible }
-            .forEach { text.appendLine("$typeMacro(${names.type(it.name)}, ${bridges.cpp(it.name)})") }
+            .forEach { text.appendLine("$typeMacro(${names.type(it.name)}, ${templates.cpp(it.name)})") }
         return text.append("\n} // namespace $h\n").toString()
     }
 
     private fun moduleRecords(module: String) = surface.mapNotNull { api.records[it] }.filter { handled(it) && it !in twinBases && moduleOf(it.header) == module }.sortedBy { it.name }
 
     /** Bases sharing a derived record's C name: the name is the derived record's handle, which converts to them. */
-    private val twinBases by lazy { surface.mapNotNull { api.records[it] }.flatMapTo(HashSet()) { bridges.twins(it) } }
+    private val twinBases by lazy { surface.mapNotNull { api.records[it] }.flatMapTo(HashSet()) { records.twins(it) } }
 
     /** A record C holds by a handle: not a class template, nor what crosses as a mirror or a scalar. */
-    private fun handled(record: CppRecord) = !bridges.uninstantiated(record) && record.name !in config.bridges.mirrors && record.name !in config.bridges.scalars
+    private fun handled(record: CppRecord) = !templates.uninstantiated(record) && record.name !in config.bridges.mirrors && record.name !in config.bridges.scalars
 
     private fun enum(enum: CppEnum): String {
         val name = names.type(enum.name)
