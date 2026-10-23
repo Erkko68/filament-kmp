@@ -22,7 +22,7 @@ import io.github.erkko68.filament.gltfio.FilamentInstance
 /**
  * Scope for interacting with a specific glTF instance via low-level Filament APIs.
  */
-interface GltfInstanceScope {
+sealed interface GltfInstanceScope {
     /** This instance's own animator, material instances, and entity list. */
     val instance: FilamentInstance
     /** The shared asset — use for bounding box, name lookups, extras, morph target names. */

@@ -52,9 +52,9 @@ import kotlin.math.sin
  * The camera itself lives in the [CameraState]: read or set [CameraState.viewpoint], or fly with
  * [CameraState.animateTo], and the controller carries on from there.
  *
- * All three are created by their `remember*CameraController` factory; you never implement this yourself.
+ * All three are created by their `remember*CameraController` factory.
  */
-interface CameraController {
+sealed interface CameraController {
     /** Snap the camera back to the pose it had when this controller was first created. */
     fun resetToHome()
 }

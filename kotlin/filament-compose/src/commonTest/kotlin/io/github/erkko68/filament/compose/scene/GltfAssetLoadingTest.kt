@@ -8,6 +8,8 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -82,6 +84,10 @@ class GltfAssetLoadingTest {
             pumpUntil { asset?.let { seen += it.progress; it.isReady } == true },
             "the asset should become ready within the frame budget",
         )
+        // Single-threaded web runs gltfio's texture decodes inline, so the first update finishes them all: only 1 is seen.
+        if (TestEnv.target != TestTarget.JS) {
+            assertTrue(seen.any { it < 1f }, "a loading indicator should see the upload before it finishes, got $seen")
+        }
         assertTrue(seen.all { it in 0f..1f }, "progress should stay within 0..1, got $seen")
         assertEquals(seen.sorted(), seen, "progress should never go back, got $seen")
         assertEquals(1f, seen.last(), "a ready asset should report full progress")

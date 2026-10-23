@@ -10,9 +10,9 @@ rebuilding it), and that state reaches Filament (read back through Filament's ow
 | Where | Backend | Covers |
 | :-- | :-- | :-- |
 | `commonTest` | `NOOP`, every target (JVM, JS, Wasm, iOS sim, Android) | every scene composable: lights, groups, cameras, primitives, materials, glTF, environments, loaders, teardown order |
-| `commonTest` via `withEngine` | `NOOP`, JVM and Android | `FilamentViewTest`, `ScreensTest`: `FilamentView` / `FilamentSceneView` themselves (attach and detach, picks answered, engine and scene swaps, paused rendering, screens, lists) |
+| `commonTest` via `withEngine` | `NOOP`, JVM and Android | `FilamentViewTest`, `ScreensTest`, `WorldToScreenTest`: `FilamentView` / `FilamentSceneView` themselves (attach and detach, picks answered, engine and scene swaps, paused rendering, screens, lists, `worldToScreen` and `anchorTo`) |
 | `commonTest` via `surfaceTest` | real surface, gated on `TestEnv.gpuBackendAvailable` | `SurfaceLifecycleTest`: `FilamentView` on the platform's real surface |
-| `jvmTest` / `nativeTest` / `webTest` / `androidDeviceTest` | real backend and window | what a pick hits and the view showing its scene (`FilamentViewRealBackendTest`), window/page/activity lifecycle, gestures, the JVM GPU-sharing path |
+| `jvmTest` / `nativeTest` / `webTest` / `androidDeviceTest` | real backend and window | what a pick hits and the view showing its scene (`FilamentViewRealBackendTest`), the lighting presets' look (`AmbientPresetsRealBackendTest`, `ExposurePresetsRealBackendTest`), window/page/activity lifecycle, gestures, the JVM GPU-sharing path |
 
 NOOP runs Filament's whole CPU side, so materials, geometry, textures, IBL and glTF all build on it. Only
 pixels and async calls need a real backend (see the [strategy](strategy.md)).

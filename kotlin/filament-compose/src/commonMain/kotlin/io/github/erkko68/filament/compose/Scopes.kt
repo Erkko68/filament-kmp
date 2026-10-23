@@ -17,7 +17,7 @@ annotation class FilamentDsl
  * declaration.
  */
 @FilamentDsl
-interface FilamentSceneScope
+sealed interface FilamentSceneScope
 
 internal object FilamentSceneScopeInstance : FilamentSceneScope
 
@@ -29,7 +29,7 @@ internal object FilamentSceneScopeInstance : FilamentSceneScope
  * scope-receiver shape as `GltfInstance`'s richer
  * [GltfInstanceScope][io.github.erkko68.filament.compose.scene.GltfInstanceScope].
  */
-interface EntityScope {
+sealed interface EntityScope {
     /** The entity this composable created. */
     val entity: Entity
 

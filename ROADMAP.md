@@ -10,10 +10,10 @@
   in most minor releases while its shape settled: value types, the loader signature, the skybox and
   environment as scene content, `CameraState` owning the camera. That shape is in place now. From
   here, new API comes when users ask for it; needs below the common path go through `FilamentEffect`,
-  `onCreate` and the bindings rather than new compose surface; and stable API changes after `0.9.0`
-  go through a one-release deprecation ([README → What may change](README.md#what-may-change)).
+  `onCreate` and the bindings rather than new compose surface; and its API changes only for real pain
+  points or badly designed areas, in small focused steps ([README → What may change](README.md#what-may-change)).
 - **Path to `1.0.0`** — a major bump marks the public API holding still: several minor releases
-  with no compose break outside the deprecation cycle, and the known issue backlog worked down. It
+  with no compose break, and the known issue backlog worked down. It
   is not tied to any upstream Filament version.
 - **Known gaps** — per-platform differences are marked with `@PlatformGap` and listed in
   [Platform Notes](docs/guide/platform-notes.md#api-coverage); since every platform calls the same C

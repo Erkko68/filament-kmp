@@ -56,7 +56,7 @@ fun FilamentSceneScope.FilamentEffect(
     }
 }
 
-interface FilamentEffectScope {
+sealed interface FilamentEffectScope {
     val engine: Engine
     val scene: Scene
 

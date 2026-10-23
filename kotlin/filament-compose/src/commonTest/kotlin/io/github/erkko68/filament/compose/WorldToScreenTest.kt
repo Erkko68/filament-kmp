@@ -18,6 +18,7 @@ import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.anchorTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.compose.testutils.IgnoreWithoutViewInterop
 import io.github.erkko68.filament.compose.testutils.withEngine
 import kotlin.math.abs
 import kotlin.test.Test
@@ -26,6 +27,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /** [CameraState.worldToScreen] and [anchorTo] against the projection maths, on NOOP. */
+@IgnoreWithoutViewInterop
 class WorldToScreenTest {
 
     private val ortho = Projection.Orthographic(left = -1.0, right = 1.0, bottom = -1.0, top = 1.0, near = 0.1, far = 100.0)

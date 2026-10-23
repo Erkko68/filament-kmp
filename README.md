@@ -102,14 +102,14 @@ All published under `io.github.erkko68.filament`. The Desktop/JVM native runtime
 
 Releases are plain `X.Y.Z`:
 
-- **`X.Y.0` (minor)** — the normal release channel. New upstream **Filament feature releases** (1.73 → 1.74 → …) land here, along with new bindings and wrapper API additions. A minor may break API as described below; every break is listed in the [changelog](CHANGELOG.md), with a guide in [docs/migration](docs/migration/) when code has to change.
+- **`X.Y.0` (minor)** — the normal release channel. New upstream **Filament feature releases** (1.73 → 1.74 → …) land here, along with new bindings and wrapper API additions. A minor may break API as described below; every break is listed in the [changelog](CHANGELOG.md), with a guide in [docs/migration](docs/migration/) when code has to change. When Filament bumps its material version, recompile your `.filamat` files with the matching `matc`.
 - **`X.Y.Z` (patch)** — no API surface change: bug fixes in the wrapper, and upstream point releases picked up without binding anything new. Safe to pick up without reading anything.
 - **`X.0.0` (major)** — reserved for maturity milestones and very large changes (a stabilized public API, a full architectural rework). Routine upstream tracking never triggers a major bump — expect minor releases to keep flowing for as long as Filament keeps releasing.
 
 ### What may change
 
 - **The bindings** (`filament`, `gltfio`, `filament-utils`, …) follow Filament's C++ headers, so they change when upstream does: the minor that picks up a feature release carries its renames and removals. Beyond that they change only to match the headers more closely.
-- **`filament-compose`** covers the common path (load a model, light it, frame it, tap it, animate it, capture it) and grows when users ask for something, not ahead of need. Changes after `0.9.0` to its stable API go through a deprecation: the old API stays for one minor release, marked `@Deprecated` with a `ReplaceWith`, and is removed in the next.
+- **`filament-compose`** covers the common path (load a model, light it, frame it, tap it, animate it, capture it) and is mostly complete. Its API changes when a real pain point or a badly designed area turns up, from an issue, user feedback or our own use, and each change is kept small and focused.
 - **Opt-in APIs** — anything behind an `@Experimental…` annotation (such as `@ExperimentalGpuToGpuFrameSharing`) is still taking shape and may change in any minor release.
 
 All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term and tracks upstream Filament releases as they are published (see [docs/internals/upgrading-filament.md](docs/internals/upgrading-filament.md) for the process). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
