@@ -24,13 +24,23 @@ typedef struct GeoLimits GeoLimits;
 typedef struct GeoPath GeoPath;
 typedef struct GeoPolygon GeoPolygon;
 typedef struct GeoRegistry GeoRegistry;
+
+/**
+ * Something drawn on a canvas.
+ *
+ * A canvas counts its references.
+ */
 typedef struct GeoShape GeoShape;
+
 typedef struct GeoStats GeoStats;
 typedef struct GeoStyle GeoStyle;
 
 // geo::Kind
+/** What a shape is. \see Shape::GetKind */
 typedef enum GeoKind {
+    /** round */
     GEO_KIND_CIRCLE = 0,
+    /** straight-sided */
     GEO_KIND_POLYGON = 5,
     GEO_KIND_GROUP = 6,
 } GeoKind;

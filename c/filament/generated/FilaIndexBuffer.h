@@ -12,16 +12,121 @@ extern "C" {
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void);
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
 // skipped Builder & filament::IndexBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Size of the index buffer in elements.
+ * @param indexCount Number of indices the IndexBuffer can hold.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount);
+/**
+ * Type of the index buffer, 16-bit or 32-bit.
+ * @param indexType Type of indices stored in the IndexBuffer.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType);
+/**
+ * Associate an optional name with this IndexBuffer for debugging purposes.
+ *
+ * @param name A string to identify this IndexBuffer
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name);
+/**
+ * Specifies a callback that will execute once the resource's data has been fully allocated
+ * within the GPU memory. This enables the resource creation process to be handled
+ * asynchronously.
+ *
+ * Any asynchronous calls made during a resource's asynchronous creation (using this method)
+ * are safe because they are queued and executed in sequence. However, invoking regular
+ * methods on the same resource before it's fully ready is unsafe and may cause undefined
+ * behavior. Users can call the `isCreationComplete()` method for the resource to confirm
+ * when the resource is ready for regular API calls. It returns false if the asynchronous
+ * creation was canceled, in which case the resource was never populated and must not be
+ * used.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * @param handler Handler to dispatch the callback or nullptr for the default handler
+ * @param callback A function to be called upon the completion of an asynchronous creation.
+ *                 Its `AsyncCallStatus` argument reports whether the operation ran
+ *                 (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user The custom data that will be passed as the second argument to the `callback`.
+ * @return This Builder, for chaining calls.
+ */
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* self, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user);
+/**
+ * Creates the IndexBuffer object and returns a pointer to it. After creation, the index
+ * buffer is uninitialized. Use IndexBuffer::setBuffer() to initialize the IndexBuffer.
+ *
+ * @param engine Reference to the filament::Engine to associate this IndexBuffer with.
+ *
+ * @return pointer to the newly created object.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ *
+ * @see IndexBuffer::setBuffer
+ */
 FilaIndexBuffer* FilaIndexBufferBuilder_build(const FilaIndexBufferBuilder* self, FilaEngine* engine);
 
 // filament::IndexBuffer
+/**
+ * Copy-initializes a region of this IndexBuffer from the data provided.
+ *
+ * @param engine Reference to the filament::Engine to associate this IndexBuffer with.
+ * @param buffer A BufferDescriptor representing the data used to initialize the IndexBuffer.
+ *               BufferDescriptor points to raw, untyped data that will be interpreted as
+ *               either 16-bit or 32-bits indices based on the Type of this IndexBuffer.
+ * @param byteOffset Offset in *bytes* into the IndexBuffer. Must be multiple of 4.
+ */
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
+/**
+ * An asynchronous version of `setBuffer()`.
+ * Copy-initializes a region of this IndexBuffer from the data provided.
+ *
+ * Users can call the `Engine::cancelAsyncCall()` method with the returned ID to cancel the
+ * asynchronous call.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * @param engine Reference to the filament::Engine to associate this IndexBuffer with.
+ * @param buffer A BufferDescriptor representing the data used to initialize the IndexBuffer.
+ *               BufferDescriptor points to raw, untyped data that will be interpreted as
+ *               either 16-bit or 32-bits indices based on the Type of this IndexBuffer.
+ * @param byteOffset Offset in *bytes* into the IndexBuffer. Must be multiple of 4.
+ * @param handler   Handler to dispatch the callback or nullptr for the default handler
+ * @param callback  A function to be called upon the completion of an asynchronous creation.
+ *                  Its `AsyncCallStatus` argument reports whether the operation ran
+ *                  (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user      The custom data that will be passed as the second argument to the `callback`.
+ *
+ * @return       An ID that the caller can use to cancel the operation.
+ */
 uint32_t FilaIndexBuffer_setBufferAsync(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user);
+/**
+ * Returns the size of this IndexBuffer in elements.
+ * @return The number of indices the IndexBuffer holds.
+ */
 uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self);
+/**
+ * This non-blocking method checks if the resource has finished creation *successfully*. If the
+ * resource creation was initiated asynchronously, it will return true only after all related
+ * asynchronous tasks are complete, and only if none of them was canceled. If the resource was
+ * created normally without using async method, it will always return true.
+ *
+ * A canceled asynchronous creation never populates the resource, so this method keeps returning
+ * false for it. The object itself remains valid and must still be destroyed as usual.
+ *
+ * @return Whether the resource is created and usable.
+ *
+ * @see Builder::async()
+ */
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self);
 
 

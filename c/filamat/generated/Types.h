@@ -8,8 +8,44 @@
 extern "C" {
 #endif
 
+/**
+ * MaterialBuilder builds Filament materials from shader code.
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filamat/MaterialBuilder.h>
+ * using namespace filamat;
+ *
+ * // Must be called before any materials can be built.
+ * MaterialBuilder::init();
+ *
+ * MaterialBuilder builder;
+ * builder
+ *     .name("My material")
+ *     .material("void material (inout MaterialInputs material) {"
+ *               "  prepareMaterial(material);"
+ *               "  material.baseColor.rgb = float3(1.0, 0.0, 0.0);"
+ *               "}")
+ *     .shading(MaterialBuilder::Shading::LIT)
+ *     .targetApi(MaterialBuilder::TargetApi::ALL)
+ *     .platform(MaterialBuilder::Platform::ALL);
+ *
+ * Package package = builder.build();
+ * if (package.isValid()) {
+ *     // success!
+ * }
+ *
+ * // Call when finished building all materials to release internal
+ * // MaterialBuilder resources.
+ * MaterialBuilder::shutdown();
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @see filament::Material
+ */
 typedef struct FilaFilamatMaterialBuilder FilaFilamatMaterialBuilder;
+
+/** @endcond */
 typedef struct FilaFilamatMaterialBuilderAttribute FilaFilamatMaterialBuilderAttribute;
+
 typedef struct FilaFilamatMaterialBuilderPreprocessorDefine FilaFilamatMaterialBuilderPreprocessorDefine;
 typedef struct FilaFilamatMaterialBuilderBase FilaFilamatMaterialBuilderBase;
 typedef struct FilaFilamatPackage FilaFilamatPackage;
@@ -59,6 +95,12 @@ typedef enum FilaFilamatMaterialBuilderBaseOptimization {
 } FilaFilamatMaterialBuilderBaseOptimization;
 
 // filamat::MaterialBuilderBase::Platform
+/**
+ * High-level hint that works in concert with TargetApi to determine the shader models (used to
+ * generate GLSL) and final output representations (spirv and/or text).
+ * When generating the GLSL this is used to differentiate OpenGL from OpenGLES, it is also
+ * used to make some performance adjustments.
+ */
 typedef enum FilaFilamatMaterialBuilderBasePlatform {
     FILA_FILAMAT_MATERIAL_BUILDER_BASE_PLATFORM_DESKTOP = 0,
     FILA_FILAMAT_MATERIAL_BUILDER_BASE_PLATFORM_MOBILE = 1,
@@ -66,6 +108,10 @@ typedef enum FilaFilamatMaterialBuilderBasePlatform {
 } FilaFilamatMaterialBuilderBasePlatform;
 
 // filamat::MaterialBuilderBase::TargetApi
+/**
+ * TargetApi defines which language after transpilation will be used, it is used to
+ * account for some differences between these languages when generating the GLSL.
+ */
 typedef enum FilaFilamatMaterialBuilderBaseTargetApi {
     FILA_FILAMAT_MATERIAL_BUILDER_BASE_TARGET_API_OPENGL = 1,
     FILA_FILAMAT_MATERIAL_BUILDER_BASE_TARGET_API_VULKAN = 2,

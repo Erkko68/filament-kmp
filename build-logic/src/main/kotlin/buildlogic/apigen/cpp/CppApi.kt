@@ -148,6 +148,8 @@ class CppRecord(
     val allocatable: Boolean,
     val copyable: Boolean,
     val declaredDestructor: Boolean = false,
+    /** The documentation comment ([DocComments]), as on methods, fields and enums. */
+    val doc: String? = null,
 ) {
     val defaultConstructible get() = constructors.any { ctor -> ctor.all { it.default != null } }
 }
@@ -173,6 +175,7 @@ class CppMethod(
     val templateParameters: List<String>? = null,
     /** The header's `#if` condition around the declaration (e.g. `UTILS_HAS_THREADING`), or null. */
     val guard: String? = null,
+    val doc: String? = null,
 ) {
     val isTemplate get() = templateParameters != null
 
@@ -183,7 +186,7 @@ class CppMethod(
                 ?.let { a -> CppType(t.spelling.replace(Regex("\\b${t.decl!!.substringAfterLast("::")}\\b"), a.spelling), a.decl, a.kind, a.args) } ?: t
         }
         return CppMethod(owner, name, header, mangled, substitute(returns), params.map { CppParam(it.name, substitute(it.type), it.default) },
-            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard)
+            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard, doc = doc)
     }
 
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +
@@ -194,9 +197,12 @@ class CppParam(val name: String, val type: CppType, val default: CppValue?) {
     override fun toString() = "$type $name" + (default?.let { " = $it" } ?: "")
 }
 
-class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean, val isDeprecated: Boolean)
+class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean, val isDeprecated: Boolean, val doc: String? = null)
 
-class CppEnum(val name: String, val header: String?, val underlying: String?, val constants: List<Pair<String, BigInteger>>)
+class CppEnum(
+    val name: String, val header: String?, val underlying: String?, val constants: List<Pair<String, BigInteger>>,
+    val doc: String? = null, val constantDocs: Map<String, String> = emptyMap(),
+)
 
 /** A default argument or field initializer, folded as far as the AST allows. */
 sealed interface CppValue {

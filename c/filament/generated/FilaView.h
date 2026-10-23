@@ -13,11 +13,41 @@ FilaViewPickingQueryResult* FilaViewPickingQueryResult_create(void);
 void FilaViewPickingQueryResult_destroy(FilaViewPickingQueryResult* self);
 FilaEntity FilaViewPickingQueryResult_getRenderable(const FilaViewPickingQueryResult* self);
 void FilaViewPickingQueryResult_setRenderable(FilaViewPickingQueryResult* self, FilaEntity value);
+/** RenderableManager Entity at the queried coordinates */
 float FilaViewPickingQueryResult_getDepth(const FilaViewPickingQueryResult* self);
+/** RenderableManager Entity at the queried coordinates */
 void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float value);
 // skipped filament::View::PickingQueryResult::reserved1
 // skipped filament::View::PickingQueryResult::reserved2
+/**
+ * screen space coordinates in GL convention, this can be used to compute the view or
+ * world space position of the picking hit. For e.g.:
+ *   clip_space_position  = (fragCoords.xy / viewport.wh, fragCoords.z) * 2.0 - 1.0
+ *   view_space_position  = inverse(projection) * clip_space_position
+ *   world_space_position = model * view_space_position
+ *
+ * The viewport, projection and model matrices can be obtained from Camera. Because
+ * pick() has some latency, it might be more accurate to obtain these values at the
+ * time the View::pick() call is made.
+ *
+ * Note: if the Engine is running at FEATURE_LEVEL_0, the precision or `depth` and
+ *       `fragCoords.z` is only 8-bits.
+ */
 void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out);
+/**
+ * screen space coordinates in GL convention, this can be used to compute the view or
+ * world space position of the picking hit. For e.g.:
+ *   clip_space_position  = (fragCoords.xy / viewport.wh, fragCoords.z) * 2.0 - 1.0
+ *   view_space_position  = inverse(projection) * clip_space_position
+ *   world_space_position = model * view_space_position
+ *
+ * The viewport, projection and model matrices can be obtained from Camera. Because
+ * pick() has some latency, it might be more accurate to obtain these values at the
+ * time the View::pick() call is made.
+ *
+ * Note: if the Engine is running at FEATURE_LEVEL_0, the precision or `depth` and
+ *       `fragCoords.z` is only 8-bits.
+ */
 void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, const FilaFloat3* value);
 
 // filament::View::PickingQuery
@@ -33,85 +63,629 @@ void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self);
 // skipped void filament::View::pick(uint32_t x, uint32_t y, T * _Nonnull instance, backend::CallbackHandler * _Nullable handler): filament::View::pick\(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler\)
 // skipped void filament::View::pick(uint32_t x, uint32_t y, T instance, backend::CallbackHandler * _Nullable handler): filament::View::pick\(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler\)
 // skipped void filament::View::pick(const uint32_t x, const uint32_t y, T functor, backend::CallbackHandler * _Nullable handler): filament::View::pick\(uint32_t, uint32_t, filament::View::pick::T, filament::backend::CallbackHandler\)
+/**
+ * Sets the View's name. Only useful for debugging.
+ * @param name Pointer to the View's name. The string is copied.
+ */
 void FilaView_setName(FilaView* self, const char* name);
+/**
+ * Returns the View's name
+ *
+ * @return a pointer owned by the View instance to the View's name.
+ *
+ * @attention Do *not* free the pointer or modify its content.
+ */
 const char* FilaView_getName(const FilaView* self);
+/**
+ * Set this View instance's Scene.
+ *
+ * @param scene Associate the specified Scene to this View. A Scene can be associated to
+ *              several View instances.\n
+ *              \p scene can be nullptr to dissociate the currently set Scene
+ *              from this View.\n
+ *              The View doesn't take ownership of the Scene pointer (which
+ *              acts as a reference).
+ *
+ * @note
+ *  There is no reference-counting.
+ *  If a Scene is destroyed before it is dissociated from a View, it will be automatically
+ *  dissociated from that View (setting the View's Scene to nullptr).
+ */
 void FilaView_setScene(FilaView* self, FilaScene* scene);
+/**
+ * Returns the Scene currently associated with this View.
+ * @return A pointer to the Scene associated to this View. nullptr if no Scene is set.
+ */
 FilaScene* FilaView_getScene(FilaView* self);
+/**
+ * Specifies an offscreen render target to render into.
+ *
+ * By default, the view's associated render target is nullptr, which corresponds to the
+ * SwapChain associated with the engine.
+ *
+ * A view with a custom render target cannot rely on Renderer::ClearOptions, which only apply
+ * to the SwapChain. Such view can use a Skybox instead.
+ *
+ * @param renderTarget Render target associated with view, or nullptr for the swap chain.
+ */
 void FilaView_setRenderTarget(FilaView* self, FilaRenderTarget* renderTarget);
+/**
+ * Gets the offscreen render target associated with this view.
+ *
+ * Returns nullptr if the render target is the swap chain (which is default).
+ *
+ * @see setRenderTarget
+ */
 FilaRenderTarget* FilaView_getRenderTarget(const FilaView* self);
+/**
+ * Sets the rectangular region to render to.
+ *
+ * The viewport specifies where the content of the View (i.e. the Scene) is rendered in
+ * the render target. The Render target is automatically clipped to the Viewport.
+ *
+ * @param viewport  The Viewport to render the Scene into. The Viewport is a value-type, it is
+ *                  therefore copied. The parameter can be discarded after this call returns.
+ */
 void FilaView_setViewport(FilaView* self, const FilaViewport* viewport);
+/**
+ * Returns the rectangular region that gets rendered to.
+ * @return A constant reference to View's viewport.
+ */
 void FilaView_getViewport(const FilaView* self, FilaViewport* out);
+/**
+ * Sets this View's Camera.
+ *
+ * @param camera    Associate the specified Camera to this View. A Camera can be associated to
+ *                  several View instances.\n
+ *                  \p camera can be nullptr to dissociate the currently set Camera from this
+ *                  View.\n
+ *                  The View doesn't take ownership of the Camera pointer (which
+ *                  acts as a reference).
+ *                  If the camera isn't set, Renderer::render() will result in a no-op.
+ *
+ * @note
+ *  There is no reference-counting.
+ *  Make sure to dissociate a Camera from all Views before destroying it.
+ */
 void FilaView_setCamera(FilaView* self, FilaCamera* camera);
+/**
+ * Returns whether a Camera is set.
+ * @return true if a camera is set.
+ * @see setCamera()
+ */
 bool FilaView_hasCamera(const FilaView* self);
+/**
+ * Returns the Camera currently associated with this View.
+ * Undefined behavior if hasCamera() is false.
+ * @return A reference to the Camera associated to this View if hasCamera() is true.
+ * @see hasCamera()
+ */
 FilaCamera* FilaView_getCamera(FilaView* self);
+/**
+ * Sets whether a channel must clear the depth buffer before all primitives are rendered.
+ * Channel depth clear is off by default for all channels.
+ * This is orthogonal to Renderer::setClearOptions().
+ * @param channel between 0 and 7
+ * @param enabled true to enable clear, false to disable
+ */
 void FilaView_setChannelDepthClearEnabled(FilaView* self, uint32_t channel, bool enabled);
+/**
+ * @param channel between 0 and 7
+ * @return true if this channel has depth clear enabled.
+ */
 bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint32_t channel);
+/**
+ * Sets the blending mode used to draw the view into the SwapChain.
+ *
+ * @param blendMode either BlendMode::OPAQUE or BlendMode::TRANSLUCENT
+ * @see getBlendMode
+ */
 void FilaView_setBlendMode(FilaView* self, FilaBlendMode blendMode);
+/**
+ * @return blending mode set by setBlendMode
+ * @see setBlendMode
+ */
 FilaBlendMode FilaView_getBlendMode(const FilaView* self);
+/**
+ * Sets which layers are visible.
+ *
+ * Renderable objects can have one or several layers associated to them. Layers are
+ * represented with an 8-bits bitmask, where each bit corresponds to a layer.
+ *
+ * This call sets which of those layers are visible. Renderables in invisible layers won't be
+ * rendered.
+ *
+ * @param select    a bitmask specifying which layer to set or clear using \p values.
+ * @param values    a bitmask where each bit sets the visibility of the corresponding layer
+ *                  (1: visible, 0: invisible), only layers in \p select are affected.
+ *
+ * @see RenderableManager::setLayerMask().
+ *
+ * @note By default, only layer 0 (bitmask 0x01) is visible.
+ * @note This is a convenient way to quickly show or hide sets of Renderable objects.
+ */
 void FilaView_setVisibleLayers(FilaView* self, uint32_t select, uint32_t values);
+/**
+ * Helper function to enable or disable a visibility layer.
+ * @param layer     layer between 0 and 7 to enable or disable
+ * @param enabled   true to enable the layer, false to disable it
+ * @see RenderableManager::setLayerMask()
+ */
 void FilaView_setLayerEnabled(FilaView* self, uint32_t layer, bool enabled);
+/**
+ * Get the visible layers.
+ *
+ * @see View::setVisibleLayers()
+ */
 uint32_t FilaView_getVisibleLayers(const FilaView* self);
+/**
+ * Enables or disables shadow mapping. Enabled by default.
+ *
+ * @param enabled true enables shadow mapping, false disables it.
+ *
+ * @see LightManager::Builder::castShadows(),
+ *      RenderableManager::Builder::receiveShadows(),
+ *      RenderableManager::Builder::castShadows(),
+ */
 void FilaView_setShadowingEnabled(FilaView* self, bool enabled);
+/** @return whether shadowing is enabled */
 bool FilaView_isShadowingEnabled(const FilaView* self);
+/**
+ * Enables or disables screen space refraction. Enabled by default.
+ *
+ * @param enabled true enables screen space refraction, false disables it.
+ */
 void FilaView_setScreenSpaceRefractionEnabled(FilaView* self, bool enabled);
+/** @return whether screen space refraction is enabled */
 bool FilaView_isScreenSpaceRefractionEnabled(const FilaView* self);
+/**
+ * Enables or disables antialiasing in the post-processing stage. Enabled by default.
+ * MSAA can be enabled in addition, see setSampleCount().
+ *
+ * @param type FXAA for enabling, NONE for disabling antialiasing.
+ *
+ * @note For MSAA antialiasing, see setSamplerCount().
+ *
+ * @see setSampleCount
+ */
 void FilaView_setAntiAliasing(FilaView* self, FilaAntiAliasing type);
+/**
+ * Queries whether antialiasing is enabled during the post-processing stage. To query
+ * whether MSAA is enabled, see getSampleCount().
+ *
+ * @return The post-processing antialiasing method.
+ */
 FilaAntiAliasing FilaView_getAntiAliasing(const FilaView* self);
+/**
+ * Enables or disable temporal antialiasing (TAA). Disabled by default.
+ *
+ * @param options temporal antialiasing options
+ */
 void FilaView_setTemporalAntiAliasingOptions(FilaView* self, const FilaTemporalAntiAliasingOptions* options);
+/**
+ * Returns temporal antialiasing options.
+ *
+ * @return temporal antialiasing options
+ */
 void FilaView_getTemporalAntiAliasingOptions(const FilaView* self, FilaTemporalAntiAliasingOptions* out);
+/**
+ * Enables or disable screen-space reflections. Disabled by default.
+ *
+ * @param options screen-space reflections options
+ */
 void FilaView_setScreenSpaceReflectionsOptions(FilaView* self, const FilaScreenSpaceReflectionsOptions* options);
+/**
+ * Returns screen-space reflections options.
+ *
+ * @return screen-space reflections options
+ */
 void FilaView_getScreenSpaceReflectionsOptions(const FilaView* self, FilaScreenSpaceReflectionsOptions* out);
+/**
+ * Enables or disable screen-space guard band. Disabled by default.
+ *
+ * @param options guard band options
+ */
 void FilaView_setGuardBandOptions(FilaView* self, const FilaGuardBandOptions* options);
+/**
+ * Returns screen-space guard band options.
+ *
+ * @return guard band options
+ */
 void FilaView_getGuardBandOptions(const FilaView* self, FilaGuardBandOptions* out);
+/**
+ * Enables or disable multi-sample antialiasing (MSAA). Disabled by default.
+ * Note that MSAA is a post-processing effect, and post-processing is disabled at FL0.
+ * If the feature level is set to 0, values passed to this function are ignored.
+ *
+ * @param options multi-sample antialiasing options
+ */
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* self, const FilaMultiSampleAntiAliasingOptions* options);
+/**
+ * Returns multi-sample antialiasing options.
+ *
+ * @return multi-sample antialiasing options
+ */
 void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* self, FilaMultiSampleAntiAliasingOptions* out);
+/**
+ * Sets this View's color grading transforms.
+ *
+ * @param colorGrading Associate the specified ColorGrading to this View. A ColorGrading can be
+ *                     associated to several View instances.\n
+ *                     \p colorGrading can be nullptr to dissociate the currently set
+ *                     ColorGrading from this View. Doing so will revert to the use of the
+ *                     default color grading transforms.\n
+ *                     The View doesn't take ownership of the ColorGrading pointer (which
+ *                     acts as a reference).
+ *
+ * @note
+ *  There is no reference-counting.
+ *  Make sure to dissociate a ColorGrading from all Views before destroying it.
+ */
 void FilaView_setColorGrading(FilaView* self, FilaColorGrading* colorGrading);
+/**
+ * Returns the color grading transforms currently associated to this view.
+ * @return A pointer to the ColorGrading associated to this View.
+ */
 const FilaColorGrading* FilaView_getColorGrading(const FilaView* self);
+/**
+ * Sets ambient occlusion options.
+ *
+ * @param options Options for ambient occlusion.
+ */
 void FilaView_setAmbientOcclusionOptions(FilaView* self, const FilaAmbientOcclusionOptions* options);
+/**
+ * Gets the ambient occlusion options.
+ *
+ * @return ambient occlusion options currently set.
+ */
 void FilaView_getAmbientOcclusionOptions(const FilaView* self, FilaAmbientOcclusionOptions* out);
+/**
+ * Enables or disables bloom in the post-processing stage. Disabled by default.
+ *
+ * @param options options. Values may be silently clamped to valid ranges.
+ */
 void FilaView_setBloomOptions(FilaView* self, const FilaBloomOptions* options);
+/**
+ * Queries the bloom options.
+ *
+ * @return the current bloom options for this view.
+ */
 void FilaView_getBloomOptions(const FilaView* self, FilaBloomOptions* out);
+/**
+ * Enables or disables fog. Disabled by default.
+ *
+ * @param options options
+ */
 void FilaView_setFogOptions(FilaView* self, const FilaFogOptions* options);
+/**
+ * Queries the fog options.
+ *
+ * @return the current fog options for this view.
+ */
 void FilaView_getFogOptions(const FilaView* self, FilaFogOptions* out);
+/**
+ * Enables or disables Depth of Field. Disabled by default.
+ *
+ * @param options options
+ */
 void FilaView_setDepthOfFieldOptions(FilaView* self, const FilaDepthOfFieldOptions* options);
+/**
+ * Queries the depth of field options.
+ *
+ * @return the current depth of field options for this view.
+ */
 void FilaView_getDepthOfFieldOptions(const FilaView* self, FilaDepthOfFieldOptions* out);
+/**
+ * Enables or disables the vignetted effect in the post-processing stage. Disabled by default.
+ *
+ * @param options options
+ */
 void FilaView_setVignetteOptions(FilaView* self, const FilaVignetteOptions* options);
+/**
+ * Queries the vignette options.
+ *
+ * @return the current vignette options for this view.
+ */
 void FilaView_getVignetteOptions(const FilaView* self, FilaVignetteOptions* out);
+/**
+ * Enables or disables dithering in the post-processing stage. Enabled by default.
+ *
+ * @param dithering dithering type
+ */
 void FilaView_setDithering(FilaView* self, FilaDithering dithering);
+/**
+ * Queries whether dithering is enabled during the post-processing stage.
+ *
+ * @return the current dithering type for this view.
+ */
 FilaDithering FilaView_getDithering(const FilaView* self);
+/**
+ * Sets the dynamic resolution options for this view. Dynamic resolution options
+ * controls whether dynamic resolution is enabled, and if it is, how it behaves.
+ *
+ * @param options The dynamic resolution options to use on this view
+ */
 void FilaView_setDynamicResolutionOptions(FilaView* self, const FilaDynamicResolutionOptions* options);
+/**
+ * Returns the dynamic resolution options associated with this view.
+ * @return value set by setDynamicResolutionOptions().
+ */
 void FilaView_getDynamicResolutionOptions(const FilaView* self, FilaDynamicResolutionOptions* out);
+/**
+ * Returns the last dynamic resolution scale factor used by this view. This value is updated
+ * when Renderer::render(View*) is called
+ * @return a float2 where x is the horizontal and y the vertical scale factor.
+ * @see Renderer::render
+ */
 void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out);
+/**
+ * Sets the rendering quality for this view. Refer to RenderQuality for more
+ * information about the different settings available.
+ *
+ * @param renderQuality The render quality to use on this view
+ */
 void FilaView_setRenderQuality(FilaView* self, const FilaRenderQuality* renderQuality);
+/**
+ * Returns the render quality used by this view.
+ * @return value set by setRenderQuality().
+ */
 void FilaView_getRenderQuality(const FilaView* self, FilaRenderQuality* out);
+/**
+ * Sets options relative to dynamic lighting for this view.
+ *
+ * @param zLightNear Distance from the camera where the lights are expected to shine.
+ *                   This parameter can affect performance and is useful because depending
+ *                   on the scene, lights that shine close to the camera may not be
+ *                   visible -- in this case, using a larger value can improve performance.
+ *                   e.g. when standing and looking straight, several meters of the ground
+ *                   isn't visible and if lights are expected to shine there, there is no
+ *                   point using a short zLightNear. This value is clamped between
+ *                   the camera near and far plane. (Default 5m).
+ *
+ * @param zLightFar Distance from the camera after which lights are not expected to be visible.
+ *                  Similarly to zLightNear, setting this value properly can improve
+ *                  performance.  This value is clamped between the camera near and far plane.
+ *                  (Default 100m).
+ *
+ * Together zLightNear and zLightFar must be chosen so that the visible influence of lights
+ * is spread between these two values.
+ */
 void FilaView_setDynamicLightingOptions(FilaView* self, float zLightNear, float zLightFar);
+/**
+ * Sets the grid size for grid-based world origin snapping.
+ *
+ * The world origin used for rendering will snap to a grid of this size.
+ * This avoids recomputing all transforms every frame when the camera moves within a grid cell.
+ *
+ * Hysteresis is applied automatically to avoid rapid snapping near edges.
+ *
+ * @param size The size of the grid cell in world units. If set to 0 or negative,
+ *             the grid size is automatically calculated based on the camera frustum.
+ */
 void FilaView_setGridSize(FilaView* self, double size);
+/**
+ * Returns the grid size used for grid-based world origin snapping.
+ * @return The grid size in world units. A value of 0 or negative means automatic calculation is enabled.
+ */
 double FilaView_getGridSize(const FilaView* self);
+/**
+ * Returns the effective grid size used for grid-based world origin snapping.
+ * If grid size was set to 0 or negative, this returns the automatically calculated size.
+ * @return The effective grid size in world units.
+ */
 double FilaView_getEffectiveGridSize(const FilaView* self);
 void FilaView_setShadowType(FilaView* self, FilaShadowType shadow);
+/**
+ * Returns the shadow mapping technique used by this View.
+ *
+ * @return value set by setShadowType().
+ */
 FilaShadowType FilaView_getShadowType(const FilaView* self);
+/**
+ * Sets VSM shadowing options that apply across the entire View.
+ *
+ * Additional light-specific VSM options can be set with LightManager::setShadowOptions.
+ *
+ * Only applicable when shadow type is set to ShadowType::VSM.
+ *
+ * @param options Options for shadowing.
+ *
+ * @see setShadowType
+ *
+ * @warning This API is still experimental and subject to change.
+ */
 void FilaView_setVsmShadowOptions(FilaView* self, const FilaVsmShadowOptions* options);
+/**
+ * Returns the VSM shadowing options associated with this View.
+ *
+ * @return value set by setVsmShadowOptions().
+ */
 void FilaView_getVsmShadowOptions(const FilaView* self, FilaVsmShadowOptions* out);
+/**
+ * Sets soft shadowing options that apply across the entire View.
+ *
+ * Additional light-specific soft shadow parameters can be set with LightManager::setShadowOptions.
+ *
+ * Only applicable when shadow type is set to ShadowType::PCSS.
+ *
+ * @param options Options for shadowing.
+ *
+ * @see setShadowType
+ *
+ * @warning This API is still experimental and subject to change.
+ */
 void FilaView_setSoftShadowOptions(FilaView* self, const FilaSoftShadowOptions* options);
+/**
+ * Returns the soft shadowing options associated with this View.
+ *
+ * @return value set by setSoftShadowOptions().
+ */
 void FilaView_getSoftShadowOptions(const FilaView* self, FilaSoftShadowOptions* out);
+/**
+ * Enables or disables post-processing. Enabled by default.
+ *
+ * Post-processing includes:
+ *  - Depth-of-field
+ *  - Bloom
+ *  - Vignetting
+ *  - Temporal Anti-aliasing (TAA)
+ *  - Color grading & gamma encoding
+ *  - Dithering
+ *  - FXAA
+ *  - Dynamic scaling
+ *
+ * Disabling post-processing forgoes color correctness as well as some antialiasing techniques
+ * and should only be used for debugging, UI overlays or when using custom render targets
+ * (see RenderTarget).
+ *
+ * @param enabled true enables post-processing, false disables it.
+ *
+ * @see setBloomOptions, setColorGrading, setAntiAliasing, setDithering, setSampleCount
+ */
 void FilaView_setPostProcessingEnabled(FilaView* self, bool enabled);
+/** Returns true if post-processing is enabled. See setPostProcessingEnabled() for more info. */
 bool FilaView_isPostProcessingEnabled(const FilaView* self);
+/**
+ * Inverts the winding order of front faces. By default, front faces use a counter-clockwise
+ * winding order. When the winding order is inverted, front faces are faces with a clockwise
+ * winding order.
+ *
+ * Changing the winding order will directly affect the culling mode in materials
+ * (see Material::getCullingMode()).
+ *
+ * Inverting the winding order of front faces is useful when rendering mirrored reflections
+ * (water, mirror surfaces, front camera in AR, etc.).
+ *
+ * @param inverted True to invert front faces, false otherwise.
+ */
 void FilaView_setFrontFaceWindingInverted(FilaView* self, bool inverted);
+/**
+ * Returns true if the winding order of front faces is inverted.
+ * See setFrontFaceWindingInverted() for more information.
+ */
 bool FilaView_isFrontFaceWindingInverted(const FilaView* self);
+/**
+ * Enables or disables transparent picking. Disabled by default.
+ *
+ * When transparent picking is enabled, View::pick() will pick from both
+ * transparent and opaque renderables. When disabled, View::pick() will only
+ * pick from opaque renderables.
+ *
+ * @param enabled true enables transparent picking, false disables it.
+ *
+ * @note Transparent picking will create an extra pass for rendering depth
+ *       from both transparent and opaque renderables.
+ */
 void FilaView_setTransparentPickingEnabled(FilaView* self, bool enabled);
+/**
+ * Returns true if transparent picking is enabled.
+ * See setTransparentPickingEnabled() for more information.
+ */
 bool FilaView_isTransparentPickingEnabled(const FilaView* self);
+/**
+ * Enables use of the stencil buffer.
+ *
+ * The stencil buffer is an 8-bit, per-fragment unsigned integer stored alongside the depth
+ * buffer. The stencil buffer is cleared at the beginning of a frame and discarded after the
+ * color pass.
+ *
+ * Each fragment's stencil value is set during rasterization by specifying stencil operations on
+ * a Material. The stencil buffer can be used as a mask for later rendering by setting a
+ * Material's stencil comparison function and reference value. Fragments that don't pass the
+ * stencil test are then discarded.
+ *
+ * If post-processing is disabled, then the SwapChain must have the CONFIG_HAS_STENCIL_BUFFER
+ * flag set in order to use the stencil buffer.
+ *
+ * A renderable's priority (see RenderableManager::setPriority) is useful to control the order
+ * in which primitives are drawn.
+ *
+ * @param enabled True to enable the stencil buffer, false disables it (default)
+ */
 void FilaView_setStencilBufferEnabled(FilaView* self, bool enabled);
+/**
+ * Returns true if the stencil buffer is enabled.
+ * See setStencilBufferEnabled() for more information.
+ */
 bool FilaView_isStencilBufferEnabled(const FilaView* self);
+/**
+ * Sets the stereoscopic rendering options for this view.
+ *
+ * Currently, only one type of stereoscopic rendering is supported: side-by-side.
+ * Side-by-side stereo rendering splits the viewport into two halves: a left and right half.
+ * Eye 0 will render to the left half, while Eye 1 will render into the right half.
+ *
+ * Currently, the following features are not supported with stereoscopic rendering:
+ * - post-processing
+ * - shadowing
+ * - punctual lights
+ *
+ * Stereo rendering depends on device and platform support. To check if stereo rendering is
+ * supported, use Engine::isStereoSupported(). If stereo rendering is not supported, then the
+ * stereoscopic options have no effect.
+ *
+ * @param options The stereoscopic options to use on this view
+ */
 void FilaView_setStereoscopicOptions(FilaView* self, const FilaStereoscopicOptions* options);
+/**
+ * Returns the stereoscopic options associated with this View.
+ *
+ * @return value set by setStereoscopicOptions().
+ */
 void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptions* out);
+/** debugging: allows to entirely disable frustum culling. (culling enabled by default). */
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling);
+/** debugging: returns whether frustum culling is enabled. */
 bool FilaView_isFrustumCullingEnabled(const FilaView* self);
 // handwritten in manual/ FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
 //     void (*)(const PickingQueryResult &, PickingQuery * _Nonnull): takes C++ types
+/**
+ * Set the value of material global variables. There are up-to four such variable each of
+ * type float4. These variables can be read in a user Material with
+ * `getMaterialGlobal{0|1|2|3}()`. All variable start with a default value of { 0, 0, 0, 1 }
+ *
+ * @param index index of the variable to set between 0 and 3.
+ * @param value new value for the variable.
+ * @see getMaterialGlobal
+ */
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);
+/**
+ * Get the value of the material global variables.
+ * All variable start with a default value of { 0, 0, 0, 1 }
+ *
+ * @param index index of the variable to set between 0 and 3.
+ * @return current value of the variable.
+ * @see setMaterialGlobal
+ */
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out);
+/**
+ * Get an Entity representing the large scale fog object.
+ * This entity is always inherited by the View's Scene.
+ *
+ * It is for example possible to create a TransformManager component with this
+ * Entity and apply a transformation globally on the fog.
+ *
+ * @return an Entity representing the large scale fog object.
+ */
 FilaEntity FilaView_getFogEntity(const FilaView* self);
+/**
+ * Returns the most recent number of visible renderables for the current Scene as calculated
+ * the last time Renderer::render() was called with this View and Scene.
+ *
+ * Returns -1 if the cache is invalid (e.g. before the first render call, or if the scene
+ * was detached).
+ *
+ * @return the number of visible renderables, or -1 if no value is available.
+ */
 int32_t FilaView_getVisibleRenderableCount(const FilaView* self);
+/**
+ * When certain temporal features are used (e.g.: TAA or Screen-space reflections), the view
+ * keeps a history of previous frame renders associated with the Renderer the view was last
+ * used with. When switching Renderer, it may be necessary to clear that history by calling
+ * this method. Similarly, if the whole content of the screen change, like when a cut-scene
+ * starts, clearing the history might be needed to avoid artifacts due to the previous frame
+ * being very different.
+ */
 void FilaView_clearFrameHistory(FilaView* self, FilaEngine* engine);
 
 

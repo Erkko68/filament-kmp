@@ -9,15 +9,79 @@ extern "C" {
 #endif
 
 // filament::SwapChain
+/**
+ * Return whether createSwapChain supports the CONFIG_PROTECTED_CONTENT flag.
+ * The default implementation returns false.
+ *
+ * @param engine A pointer to the filament Engine
+ * @return true if CONFIG_PROTECTED_CONTENT is supported, false otherwise.
+ */
 bool FilaSwapChain_isProtectedContentSupported(const FilaEngine* engine);
+/**
+ * Return whether createSwapChain supports the CONFIG_SRGB_COLORSPACE flag.
+ * The default implementation returns false.
+ *
+ * @param engine A pointer to the filament Engine
+ * @return true if CONFIG_SRGB_COLORSPACE is supported, false otherwise.
+ */
 bool FilaSwapChain_isSRGBSwapChainSupported(const FilaEngine* engine);
+/**
+ * Return whether createSwapChain supports the CONFIG_MSAA_*_SAMPLES flag.
+ * The default implementation returns false.
+ *
+ * @param engine A pointer to the filament Engine
+ * @param samples The number of samples
+ * @return true if CONFIG_MSAA_*_SAMPLES is supported, false otherwise.
+ */
 bool FilaSwapChain_isMSAASwapChainSupported(const FilaEngine* engine, uint32_t samples);
+/**
+ * Return whether this SwapChain supports the setFrameRate() API.
+ *
+ * When a SwapChain is newly created, the actual surface capability state may not be fully
+ * sealed by the underlying OS. In this case, this method returns Indeterminate. Once the
+ * platform completes surface connection, the value permanently seals to True or False.
+ *
+ * @return A utils::tribool indicating True, False, or Indeterminate.
+ */
 int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self);
+/**
+ * Sets the intended frame rate for this SwapChain.
+ *
+ * @param frameRate     The intended frame rate in frames per second. 0.0f clears/resets the rate.
+ * @param compatibility Frame rate compatibility mode (default: DEFAULT).
+ * @param strategy      Change strategy for non-seamless transitions (default: ONLY_IF_SEAMLESS).
+ */
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy);
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* self);
 // handwritten in manual/ FilaSwapChain_setFrameScheduledCallback: void filament::SwapChain::setFrameScheduledCallback(backend::CallbackHandler * _Nullable handler, FrameScheduledCallback && callback, uint64_t flags)
 //     utils::Invocable<void (PresentCallable)>: C callbacks take at most one pointer
+/**
+ * Returns whether this SwapChain currently has a FrameScheduledCallback set.
+ *
+ * @return true, if the last call to setFrameScheduledCallback set a callback
+ *
+ * @see SwapChain::setFrameCompletedCallback
+ */
 bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* self);
+/**
+ * FrameCompletedCallback is a callback function that notifies an application when a frame's
+ * contents have completed rendering on the GPU.
+ *
+ * Use SwapChain::setFrameCompletedCallback to set a callback on an individual SwapChain. Each
+ * time a frame completes GPU rendering, the callback will be called.
+ *
+ * If handler is nullptr, the callback is guaranteed to be called on the main Filament thread.
+ *
+ * Use \c setFrameCompletedCallback() (with default arguments) to unset the callback.
+ *
+ * @param handler     Handler to dispatch the callback or nullptr for the default handler.
+ * @param callback    Callback called when each frame completes.
+ *
+ * @remark Only Filament's Metal backend supports frame callbacks. Other backends ignore the
+ * callback (which will never be called) and proceed normally.
+ *
+ * @see CallbackHandler
+ */
 void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* self, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 
 

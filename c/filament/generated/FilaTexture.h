@@ -12,47 +12,370 @@ extern "C" {
 FilaTextureBuilder* FilaTextureBuilder_create(void);
 void FilaTextureBuilder_destroy(FilaTextureBuilder* self);
 // skipped Builder & filament::Texture::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Specifies the width in texels of the texture. Doesn't need to be a power-of-two.
+ * @param width Width of the texture in texels (default: 1).
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_width(FilaTextureBuilder* self, uint32_t width);
+/**
+ * Specifies the height in texels of the texture. Doesn't need to be a power-of-two.
+ * @param height Height of the texture in texels (default: 1).
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_height(FilaTextureBuilder* self, uint32_t height);
+/**
+ * Specifies the depth in texels of the texture. Doesn't need to be a power-of-two.
+ * The depth controls the number of layers in a 2D array texture. Values greater than 1
+ * effectively create a 3D texture.
+ * @param depth Depth of the texture in texels (default: 1).
+ * @return This Builder, for chaining calls.
+ * @attention This Texture instance must use Sampler::SAMPLER_3D or
+ *            Sampler::SAMPLER_2D_ARRAY or it has no effect.
+ */
 FilaTextureBuilder* FilaTextureBuilder_depth(FilaTextureBuilder* self, uint32_t depth);
+/**
+ * Specifies the numbers of mip map levels.
+ * This creates a mip-map pyramid. The maximum number of levels a texture can have is
+ * such that max(width, height, level) / 2^MAX_LEVELS = 1
+ * @param levels Number of mipmap levels for this texture.
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_levels(FilaTextureBuilder* self, uint32_t levels);
+/**
+ * Specifies the numbers of samples used for MSAA (Multisample Anti-Aliasing).
+ *
+ * Calling this method implicitly indicates the texture is used as a render target. Hence,
+ * this method should not be used in conjunction with other methods that are semantically
+ * conflicting like `setImage`.
+ *
+ * If this is invoked for array textures, it means this texture is used for multiview.
+ *
+ * @param samples Number of samples for this texture.
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_samples(FilaTextureBuilder* self, uint32_t samples);
+/**
+ * Specifies the type of sampler to use.
+ * @param target Sampler type
+ * @return This Builder, for chaining calls.
+ * @see Sampler
+ */
 FilaTextureBuilder* FilaTextureBuilder_sampler(FilaTextureBuilder* self, FilaSamplerType target);
+/**
+ * Specifies the *internal* format of this texture.
+ *
+ * The internal format specifies how texels are stored (which may be different from how
+ * they're specified in setImage()). InternalFormat specifies both the color components
+ * and the data type used.
+ *
+ * @param format Format of the texture's texel.
+ * @return This Builder, for chaining calls.
+ * @see InternalFormat, setImage
+ */
 FilaTextureBuilder* FilaTextureBuilder_format(FilaTextureBuilder* self, FilaTextureFormat format);
+/**
+ * Specifies if the texture will be used as a render target attachment.
+ *
+ * If the texture is potentially rendered into, it may require a different memory layout,
+ * which needs to be known during construction.
+ *
+ * @param usage Defaults to Texture::Usage::DEFAULT; c.f. Texture::Usage::COLOR_ATTACHMENT.
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_usage(FilaTextureBuilder* self, FilaTextureUsage usage);
+/**
+ * Specifies how a texture's channels map to color components
+ *
+ * Texture Swizzle is only supported if isTextureSwizzleSupported() returns true.
+ *
+ * @param r  texture channel for red component
+ * @param g  texture channel for green component
+ * @param b  texture channel for blue component
+ * @param a  texture channel for alpha component
+ * @return This Builder, for chaining calls.
+ * @see Texture::isTextureSwizzleSupported()
+ */
 FilaTextureBuilder* FilaTextureBuilder_swizzle(FilaTextureBuilder* self, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a);
+/**
+ * Associate an optional name with this Texture for debugging purposes.
+ *
+ * @param name A string to identify this Texture
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaTextureBuilder* FilaTextureBuilder_name(FilaTextureBuilder* self, const char* name);
+/**
+ * Creates an external texture. The content must be set using setExternalImage().
+ * The sampler can be SAMPLER_EXTERNAL or SAMPLER_2D depending on the format. Generally
+ * YUV formats must use SAMPLER_EXTERNAL. This depends on the backend features and is not
+ * validated.
+ *
+ * If the Sampler is set to SAMPLER_EXTERNAL, external() is implied.
+ *
+ * @return
+ */
 FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self);
+/**
+ * Specifies a callback that will execute once the resource's data has been fully allocated
+ * within the GPU memory. This enables the resource creation process to be handled
+ * asynchronously.
+ *
+ * Any asynchronous calls made during a resource's asynchronous creation (using this method)
+ * are safe because they are queued and executed in sequence. However, invoking regular
+ * methods on the same resource before it's fully ready is unsafe and may cause undefined
+ * behavior. Users can call the `isCreationComplete()` method for the resource to confirm
+ * when the resource is ready for regular API calls. It returns false if the asynchronous
+ * creation was canceled, in which case the resource was never populated and must not be
+ * used.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * This method and the `external()` method are mutually exclusive. You cannot use both
+ * because external texture's contents are filled later by calling `setExternalImage()`.
+ *
+ * @param handler Handler to dispatch the callback or nullptr for the default handler
+ * @param callback A function to be called upon the completion of an asynchronous creation.
+ *                 Its `AsyncCallStatus` argument reports whether the operation ran
+ *                 (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user The custom data that will be passed as the second argument to the `callback`.
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_async(FilaTextureBuilder* self, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
+/**
+ * Creates the Texture object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this Texture with.
+ *
+ * @return pointer to the newly created object.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ */
 FilaTexture* FilaTextureBuilder_build(const FilaTextureBuilder* self, FilaEngine* engine);
+/**
+ * Specify a native texture to import as a Filament texture.
+ *
+ * The texture id is backend-specific:
+ *   - OpenGL: GLuint texture ID
+ *   - Metal: id<MTLTexture>
+ *
+ * With Metal, the id<MTLTexture> object should be cast to an intptr_t using
+ * CFBridgingRetain to transfer ownership to Filament. Filament will release ownership of
+ * the texture object when the Filament texture is destroyed.
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ *  id <MTLTexture> metalTexture = ...
+ *  filamentTexture->import((intptr_t) CFBridgingRetain(metalTexture));
+ *  // free to release metalTexture
+ *
+ *  // after using texture:
+ *  engine->destroy(filamentTexture);   // metalTexture is released
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @warning This method should be used as a last resort. This API is subject to change or
+ * removal.
+ *
+ * @param id a backend specific texture identifier
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaTextureBuilder* FilaTextureBuilder_import(FilaTextureBuilder* self, int64_t id);
 
 // filament::Texture
 // skipped void filament::Texture::setExternalImage(Engine & engine, ExternalImageHandleRef image)
 // skipped void filament::Texture::setExternalImage(Engine & engine, void * _Nonnull image, size_t plane)
+/** @return Whether a backend supports a particular format. */
 bool FilaTexture_isTextureFormatSupported(const FilaEngine* engine, FilaTextureFormat format);
+/** @return Whether a backend supports mipmapping of a particular format. */
 bool FilaTexture_isTextureFormatMipmappable(const FilaEngine* engine, FilaTextureFormat format);
+/** @return Whether particular format is compressed */
 bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format);
+/** @return Whether this backend supports protected textures. */
 bool FilaTexture_isProtectedTexturesSupported(const FilaEngine* engine);
+/** @return Whether a backend supports texture swizzling. */
 bool FilaTexture_isTextureSwizzleSupported(const FilaEngine* engine);
 uint32_t FilaTexture_computeTextureDataSize(FilaPixelDataFormat format, FilaPixelDataType type, uint32_t stride, uint32_t height, uint32_t alignment);
+/** @return Whether a combination of texture format, pixel format and type is valid. */
 bool FilaTexture_validatePixelFormatAndType(FilaTextureFormat internalFormat, FilaPixelDataFormat format, FilaPixelDataType type);
+/**
+ * @return the maximum size in texels of a texture of type \p type. At least 2048 for
+ * 2D textures, 256 for 3D textures.
+ */
 uint32_t FilaTexture_getMaxTextureSize(const FilaEngine* engine, FilaSamplerType type);
+/** @return the maximum number of layers supported by texture arrays. At least 256. */
 uint32_t FilaTexture_getMaxArrayTextureLayers(const FilaEngine* engine);
+/**
+ * Returns the width of a 2D or 3D texture level
+ * @param level texture level.
+ * @return Width in texel of the specified \p level, clamped to 1.
+ * @attention If this texture is using Sampler::SAMPLER_EXTERNAL, the dimension
+ * of the texture are unknown and this method always returns whatever was set on the Builder.
+ */
 uint32_t FilaTexture_getWidth(const FilaTexture* self, uint32_t level);
+/**
+ * Returns the height of a 2D or 3D texture level
+ * @param level texture level.
+ * @return Height in texel of the specified \p level, clamped to 1.
+ * @attention If this texture is using Sampler::SAMPLER_EXTERNAL, the dimension
+ * of the texture are unknown and this method always returns whatever was set on the Builder.
+ */
 uint32_t FilaTexture_getHeight(const FilaTexture* self, uint32_t level);
+/**
+ * Returns the depth of a 3D texture level
+ * @param level texture level.
+ * @return Depth in texel of the specified \p level, clamped to 1.
+ * @attention If this texture is using Sampler::SAMPLER_EXTERNAL, the dimension
+ * of the texture are unknown and this method always returns whatever was set on the Builder.
+ */
 uint32_t FilaTexture_getDepth(const FilaTexture* self, uint32_t level);
+/**
+ * Returns the maximum number of levels this texture can have.
+ * @return maximum number of levels this texture can have.
+ * @attention If this texture is using Sampler::SAMPLER_EXTERNAL, the dimension
+ * of the texture are unknown and this method always returns whatever was set on the Builder.
+ */
 uint32_t FilaTexture_getLevels(const FilaTexture* self);
+/**
+ * Return this texture Sampler as set by Builder::sampler().
+ * @return this texture Sampler as set by Builder::sampler()
+ */
 FilaSamplerType FilaTexture_getTarget(const FilaTexture* self);
+/**
+ * Return this texture InternalFormat as set by Builder::format().
+ * @return this texture InternalFormat as set by Builder::format().
+ */
 FilaTextureFormat FilaTexture_getFormat(const FilaTexture* self);
+/**
+ * Updates a sub-image of a 3D texture or 2D texture array for a level. Cubemaps are treated
+ * like a 2D array of six layers.
+ *
+ * @param engine    Engine this texture is associated to.
+ * @param level     Level to set the image for.
+ * @param xoffset   Left offset of the sub-region to update.
+ * @param yoffset   Bottom offset of the sub-region to update.
+ * @param zoffset   Depth offset of the sub-region to update.
+ * @param width     Width of the sub-region to update.
+ * @param height    Height of the sub-region to update.
+ * @param depth     Depth of the sub-region to update.
+ * @param buffer    Client-side buffer containing the image to set. The driver will invoke
+ *                  the callback associated with this buffer when the data has been consumed.
+ *
+ * @attention \p engine must be the instance passed to Builder::build()
+ * @attention \p level must be less than getLevels().
+ * @attention \p buffer's Texture::Format must match that of getFormat().
+ * @attention This Texture instance must use Sampler::SAMPLER_3D, Sampler::SAMPLER_2D_ARRAY
+ *             or Sampler::SAMPLER_CUBEMAP.
+ *
+ * @see Builder::sampler()
+ */
 void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
+/**
+ * inline helper to update a 2D texture
+ *
+ * @see setImage
+ */
 void FilaTexture_setImage_PixelBufferDescriptor(FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
+/**
+ * inline helper to update a 2D texture
+ *
+ * @see setImage
+ */
 void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
+/**
+ * An asynchronous version of `setImage()`.
+ * Updates a sub-image of a 3D texture or 2D texture array for a level. Cubemaps are treated
+ * like a 2D array of six layers.
+ *
+ * Users can call the `Engine::cancelAsyncCall()` method with the returned ID to cancel the
+ * asynchronous call.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * @param engine    Engine this texture is associated to.
+ * @param level     Level to set the image for.
+ * @param xoffset   Left offset of the sub-region to update.
+ * @param yoffset   Bottom offset of the sub-region to update.
+ * @param zoffset   Depth offset of the sub-region to update.
+ * @param width     Width of the sub-region to update.
+ * @param height    Height of the sub-region to update.
+ * @param depth     Depth of the sub-region to update.
+ * @param buffer    Client-side buffer containing the image to set.
+ * @param handler   Handler to dispatch the callback or nullptr for the default handler
+ * @param callback  A function to be called upon the completion of an asynchronous creation.
+ *                  Its `AsyncCallStatus` argument reports whether the operation ran
+ *                  (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user      The custom data that will be passed as the second argument to the `callback`.
+ *
+ * @return          An ID that the caller can use to cancel the operation.
+ *
+ * @attention \p engine must be the instance passed to Builder::build()
+ * @attention \p level must be less than getLevels().
+ * @attention \p buffer's Texture::Format must match that of getFormat().
+ * @attention This Texture instance must use Sampler::SAMPLER_3D, Sampler::SAMPLER_2D_ARRAY
+ *             or Sampler::SAMPLER_CUBEMAP.
+ *
+ * @see Builder::sampler()
+ */
 uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
+/**
+ * inline helper to update a 2D texture asynchronously
+ *
+ * @see setImageAsync
+ */
 uint32_t FilaTexture_setImageAsync_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
+/**
+ * inline helper to update a 2D texture asynchronously
+ *
+ * @see setImageAsync
+ */
 uint32_t FilaTexture_setImageAsync_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor_CallbackHandler_AsyncCompletionCallback_void(FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, FilaCallbackHandler* handler, FilaTextureAsyncCompletionCallback callback, void* user);
+/**
+ * Specify the external stream to associate with this Texture. Typically, the external
+ * stream is OS specific, and can be a video or camera stream.
+ * There are many restrictions when using an external stream as a texture, such as:
+ *   - only the level of detail (lod) 0 can be specified
+ *   - only nearest or linear filtering is supported
+ *   - the size and format of the texture is defined by the external stream
+ *
+ * @param engine        Engine this texture is associated to.
+ * @param stream        A Stream object
+ *
+ * @attention \p engine must be the instance passed to Builder::build()
+ * @attention This Texture instance must use Sampler::SAMPLER_EXTERNAL, or it has no effect
+ *
+ * @see Builder::sampler(), Stream
+ */
 void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaStream* stream);
+/**
+ * Generates all the mipmap levels automatically. This requires the texture to have a
+ * color-renderable format and usage set to BLIT_SRC | BLIT_DST. If unspecified,
+ * usage bits are set automatically.
+ *
+ * @param engine        Engine this texture is associated to.
+ *
+ * @attention \p engine must be the instance passed to Builder::build()
+ * @attention This Texture instance must NOT use SamplerType::SAMPLER_3D or it has no effect
+ */
 void FilaTexture_generateMipmaps(FilaTexture* self, FilaEngine* engine);
+/**
+ * This non-blocking method checks if the resource has finished creation *successfully*. If the
+ * resource creation was initiated asynchronously, it will return true only after all related
+ * asynchronous tasks are complete, and only if none of them was canceled. If the resource was
+ * created normally without using async method, it will always return true.
+ *
+ * A canceled asynchronous creation never populates the resource, so this method keeps returning
+ * false for it. The object itself remains valid and must still be destroyed as usual.
+ *
+ * @return Whether the resource is created and usable.
+ *
+ * @see Builder::async()
+ */
 bool FilaTexture_isCreationComplete(const FilaTexture* self);
 
 

@@ -11,6 +11,7 @@ extern "C" {
 // filament::geometry::SurfaceOrientation::Builder
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_create(void);
 void FilaGeometrySurfaceOrientationBuilder_destroy(FilaGeometrySurfaceOrientationBuilder* self);
+/** This attribute is required. */
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_vertexCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t vertexCount);
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_normals(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride);
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_tangents(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat4* arg0, uint32_t stride);
@@ -19,11 +20,19 @@ FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_pos
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangleCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t triangleCount);
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_uint3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUint3* arg0);
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_ushort3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUshort3* arg0);
+/** Generates quats or returns null if the submitted data is an incomplete combination. */
 FilaGeometrySurfaceOrientation* FilaGeometrySurfaceOrientationBuilder_build(FilaGeometrySurfaceOrientationBuilder* self);
 
 // filament::geometry::SurfaceOrientation
 void FilaGeometrySurfaceOrientation_destroy(FilaGeometrySurfaceOrientation* self);
+/** Returns the vertex count. */
 uint32_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self);
+/**
+ * Converts quaternions into the desired output format and writes up to "quatCount"
+ * to the given output pointer. Normally quatCount should be equal to the vertex count.
+ * The optional stride is the desired quat-to-quat stride in bytes.
+ * @{
+ */
 void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out_, uint32_t quatCount, uint32_t stride);
 void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out_, uint32_t quatCount, uint32_t stride);
 void FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuath* out_, uint32_t quatCount, uint32_t stride);

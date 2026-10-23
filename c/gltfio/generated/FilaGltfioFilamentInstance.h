@@ -11,25 +11,92 @@ extern "C" {
 // filament::gltfio::FilamentInstance
 FilaGltfioFilamentInstance* FilaGltfioFilamentInstance_create(void);
 void FilaGltfioFilamentInstance_destroy(FilaGltfioFilamentInstance* self);
+/** Gets the owner of this instance. */
 const FilaGltfioFilamentAsset* FilaGltfioFilamentInstance_getAsset(const FilaGltfioFilamentInstance* self);
+/**
+ * Gets the list of entities in this instance, one for each glTF node. All of these have a
+ * Transform component. Some of the returned entities may also have a Renderable component or
+ * Name component.
+ */
 const FilaEntity* FilaGltfioFilamentInstance_getEntities(const FilaGltfioFilamentInstance* self);
+/** Gets the number of entities returned by getEntities(). */
 uint32_t FilaGltfioFilamentInstance_getEntityCount(const FilaGltfioFilamentInstance* self);
+/** Gets the transform root for the instance, which has no matching glTF node. */
 FilaEntity FilaGltfioFilamentInstance_getRoot(const FilaGltfioFilamentInstance* self);
+/**
+ * Applies the given material variant to all primitives in this instance.
+ *
+ * Ignored if variantIndex is out of bounds.
+ */
 void FilaGltfioFilamentInstance_applyMaterialVariant(FilaGltfioFilamentInstance* self, uint32_t variantIndex);
+/** Returns the number of material variants in the asset. */
 uint32_t FilaGltfioFilamentInstance_getMaterialVariantCount(const FilaGltfioFilamentInstance* self);
+/** Returns the name of the given material variant, or null if it is out of bounds. */
 const char* FilaGltfioFilamentInstance_getMaterialVariantName(const FilaGltfioFilamentInstance* self, uint32_t variantIndex);
+/**
+ * Returns the animation engine for the instance.
+ *
+ * Note that an animator can be obtained either from an individual instance, or from the
+ * originating FilamentAsset. In the latter case, the animation frame is shared amongst all
+ * instances. If individual control is desired, users must obtain the animator from the
+ * individual instances.
+ *
+ * The animator is owned by the asset and should not be manually deleted.
+ */
 FilaGltfioAnimator* FilaGltfioFilamentInstance_getAnimator(FilaGltfioFilamentInstance* self);
+/** Gets the number of skins. */
 uint32_t FilaGltfioFilamentInstance_getSkinCount(const FilaGltfioFilamentInstance* self);
+/** Gets the skin name at skin index. */
 const char* FilaGltfioFilamentInstance_getSkinNameAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+/** Gets the number of joints at skin index. */
 uint32_t FilaGltfioFilamentInstance_getJointCountAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+/** Gets joints at skin index. */
 const FilaEntity* FilaGltfioFilamentInstance_getJointsAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+/**
+ * Attaches the given skin to the given node, which must have an associated mesh with
+ * BONE_INDICES and BONE_WEIGHTS attributes.
+ *
+ * This is a no-op if the given skin index or target is invalid.
+ */
 void FilaGltfioFilamentInstance_attachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target);
+/**
+ * Detaches the given skin from the given node.
+ *
+ * This is a no-op if the given skin index or target is invalid.
+ */
 void FilaGltfioFilamentInstance_detachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target);
+/**
+ * Gets inverse bind matrices for all joints at the given skin index.
+ *
+ * See getJointCountAt for determining the number of matrices returned (i.e. the number of joints).
+ */
 const FilaMat4f* FilaGltfioFilamentInstance_getInverseBindMatricesAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex);
+/**
+ * Resets the AABB on all renderables by manually computing the bounding box.
+ *
+ * THIS IS ONLY USEFUL FOR MALFORMED ASSETS THAT DO NOT HAVE MIN/MAX SET UP CORRECTLY.
+ *
+ * Does not affect the return value of getBoundingBox() on the owning asset.
+ * Cannot be called after releaseSourceData() on the owning asset.
+ * Can only be called after loadResources() or asyncBeginLoad().
+ */
 void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstance* self);
+/**
+ * Gets the axis-aligned bounding box from the supplied min / max values in glTF accessors.
+ *
+ * If recomputeBoundingBoxes() has been called, then this returns the recomputed AABB.
+ */
 void FilaGltfioFilamentInstance_getBoundingBox(const FilaGltfioFilamentInstance* self, FilaAabb* out);
+/** Gets all material instances (non-const). These are already bound to renderables. */
 FilaMaterialInstance* const* FilaGltfioFilamentInstance_getMaterialInstances(FilaGltfioFilamentInstance* self);
+/** Gets the number of materials returned by getMaterialInstances(). */
 uint32_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self);
+/**
+ * Releases ownership of material instances.
+ *
+ * This makes the client take responsibility for destroying MaterialInstance
+ * objects. The getMaterialInstances query becomes invalid after detachment.
+ */
 void FilaGltfioFilamentInstance_detachMaterialInstances(FilaGltfioFilamentInstance* self);
 
 

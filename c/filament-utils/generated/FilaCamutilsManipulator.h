@@ -12,45 +12,139 @@ extern "C" {
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_create(void);
 void FilaCamutilsManipulatorBuilder_destroy(FilaCamutilsManipulatorBuilder* self);
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_viewport(FilaCamutilsManipulatorBuilder* self, int32_t width, int32_t height);
+/** Width and height of the viewing area */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_targetPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+/** World-space position of interest, defaults to (0,0,0) */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_upVector(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+/** Orientation for the home position, defaults to (0,1,0) */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_zoomSpeed(FilaCamutilsManipulatorBuilder* self, float val);
+/** Multiplied with scroll delta, defaults to 0.01 */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitHomePosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+/** Initial eye position in world space, defaults to (0,0,1) */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y);
+/** Multiplied with viewport delta, defaults to 0.01 */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDirection(FilaCamutilsManipulatorBuilder* self, FilaCamutilsFov fov);
+/** The axis that's held constant when viewport changes */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDegrees(FilaCamutilsManipulatorBuilder* self, float degrees);
+/** The full FOV (not the half-angle) */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_farPlane(FilaCamutilsManipulatorBuilder* self, float distance);
+/** The distance to the far plane */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapExtent(FilaCamutilsManipulatorBuilder* self, float worldWidth, float worldHeight);
+/** The ground size for computing home position */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapMinDistance(FilaCamutilsManipulatorBuilder* self, float mindist);
+/** Constrains the zoom-in level */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+/** Initial eye position in world space, defaults to (0,0,0) */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartOrientation(FilaCamutilsManipulatorBuilder* self, float pitch, float yaw);
+/** Initial orientation in pitch and yaw, defaults to (0,0) */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed(FilaCamutilsManipulatorBuilder* self, float maxSpeed);
+/** The maximum camera speed in world units per second, defaults to 10 */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightSpeedSteps(FilaCamutilsManipulatorBuilder* self, int32_t steps);
+/** The number of speed steps adjustable with scroll wheel, defaults to 80 */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightPanSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y);
+/** Multiplied with viewport delta, defaults to 0.01,0.01 */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMoveDamping(FilaCamutilsManipulatorBuilder* self, float damping);
+/**
+ * Applies a deceleration to camera movement, defaults to 0 (no damping)
+ * Lower values give slower damping times, a good default is 15
+ * Too high a value may lead to instability
+ */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_groundPlane(FilaCamutilsManipulatorBuilder* self, float a, float b, float c, float d);
 // handwritten in manual/ FilaCamutilsManipulatorBuilder_raycastCallback: Builder & filament::camutils::Manipulator::Builder::raycastCallback(RayCallback cb, void * userdata)
 //     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
+/** Raycast function for accurate grab-and-pan */
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_panning(FilaCamutilsManipulatorBuilder* self, bool enabled);
+/**
+ * Creates a new camera manipulator, either ORBIT, MAP, or FREE_FLIGHT.
+ *
+ * Clients can simply use "delete" to destroy the manipulator.
+ */
 FilaCamutilsManipulator* FilaCamutilsManipulatorBuilder_build(FilaCamutilsManipulatorBuilder* self, FilaCamutilsMode mode);
 // skipped filament::camutils::Manipulator::Builder::details: uses filament::camutils::Manipulator::Config
 
 // filament::camutils::Manipulator
 void FilaCamutilsManipulator_destroy(FilaCamutilsManipulator* self);
+/** Gets the immutable mode of the manipulator. */
 FilaCamutilsMode FilaCamutilsManipulator_getMode(const FilaCamutilsManipulator* self);
+/** Sets the viewport dimensions. The manipulator uses this to process grab events and raycasts. */
 void FilaCamutilsManipulator_setViewport(FilaCamutilsManipulator* self, int32_t width, int32_t height);
+/** Gets the current orthonormal basis; this is usually called once per frame. */
 void FilaCamutilsManipulator_getLookAt(const FilaCamutilsManipulator* self, FilaFloat3* eyePosition, FilaFloat3* targetPosition, FilaFloat3* upward);
+/**
+ * Given a viewport coordinate, picks a point in the ground plane, or in the actual scene if the
+ * raycast callback was provided.
+ */
 bool FilaCamutilsManipulator_raycast(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* result);
+/** Given a viewport coordinate, computes a picking ray (origin + direction). */
 void FilaCamutilsManipulator_getRay(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* origin, FilaFloat3* dir);
+/**
+ * Starts a grabbing session (i.e. the user is dragging around in the viewport).
+ *
+ * In MAP mode, this starts a panning session.
+ * In ORBIT mode, this starts either rotating or strafing.
+ * In FREE_FLIGHT mode, this starts a nodal panning session.
+ *
+ * @param x X-coordinate for point of interest in viewport space
+ * @param y Y-coordinate for point of interest in viewport space
+ * @param strafe ORBIT mode only; if true, starts a translation rather than a rotation
+ */
 void FilaCamutilsManipulator_grabBegin(FilaCamutilsManipulator* self, int32_t x, int32_t y, bool strafe);
+/**
+ * Updates a grabbing session.
+ *
+ * This must be called at least once between grabBegin / grabEnd to dirty the camera.
+ */
 void FilaCamutilsManipulator_grabUpdate(FilaCamutilsManipulator* self, int32_t x, int32_t y);
+/** Ends a grabbing session. */
 void FilaCamutilsManipulator_grabEnd(FilaCamutilsManipulator* self);
+/**
+ * Signals that a key is now in the down state.
+ *
+ * In FREE_FLIGHT mode, the camera is translated forward and backward and strafed left and right
+ * depending on the depressed keys. This allows WASD-style movement.
+ */
 void FilaCamutilsManipulator_keyDown(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key);
+/**
+ * Signals that a key is now in the up state.
+ *
+ * @see keyDown
+ */
 void FilaCamutilsManipulator_keyUp(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key);
+/**
+ * In MAP and ORBIT modes, dollys the camera along the viewing direction.
+ * In FREE_FLIGHT mode, adjusts the move speed of the camera.
+ *
+ * @param x X-coordinate for point of interest in viewport space, ignored in FREE_FLIGHT mode
+ * @param y Y-coordinate for point of interest in viewport space, ignored in FREE_FLIGHT mode
+ * @param scrolldelta In MAP and ORBIT modes, negative means "zoom in", positive means "zoom out"
+ *                    In FREE_FLIGHT mode, negative means "slower", positive means "faster"
+ */
 void FilaCamutilsManipulator_scroll(FilaCamutilsManipulator* self, int32_t x, int32_t y, float scrolldelta);
+/**
+ * Processes input and updates internal state.
+ *
+ * This must be called once every frame before getLookAt is valid.
+ *
+ * @param deltaTime The amount of time, in seconds, passed since the previous call to update.
+ */
 void FilaCamutilsManipulator_update(FilaCamutilsManipulator* self, float deltaTime);
+/**
+ * Gets a handle that can be used to reset the manipulator back to its current position.
+ *
+ * @see jumpToBookmark
+ */
 void FilaCamutilsManipulator_getCurrentBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out);
+/**
+ * Gets a handle that can be used to reset the manipulator back to its home position.
+ *
+ * @see jumpToBookmark
+ */
 void FilaCamutilsManipulator_getHomeBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out);
+/**
+ * Sets the manipulator position and orientation back to a stashed state.
+ *
+ * @see getCurrentBookmark, getHomeBookmark
+ */
 void FilaCamutilsManipulator_jumpToBookmark(FilaCamutilsManipulator* self, const FilaCamutilsBookmark* bookmark);
 
 

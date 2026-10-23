@@ -18,10 +18,12 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
     private val seenHeaders = HashSet<String>()
     private var locationOf: Map<Map<*, *>, Location> = emptyMap()
     private lateinit var guards: PreprocessorGuards
+    private lateinit var docs: DocComments
 
     /** Reads [headers] (paths relative to [includeDir]); each must declare something the filters dump. */
     fun read(includeDir: File, headers: Collection<String>): CppApi {
         guards = PreprocessorGuards(includeDir)
+        docs = DocComments(includeDir)
         val unit = workDir.resolve("headers.cpp")
         unit.writeText((sources.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
@@ -135,11 +137,11 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
                     val deprecated = child.children().any { it["kind"] == "DeprecatedAttr" }
-                    fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated)
+                    fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated, doc(child))
                 }
                 // An anonymous union or struct's members are the record's own (MaterialKey's UV fields).
                 "CXXRecordDecl" if child["name"] == null -> anonymousFields(child).forEach { field ->
-                    fields += CppField(field["name"] as String, scopes.resolve(spelledType(field), qualified), null, isPublic, false)
+                    fields += CppField(field["name"] as String, scopes.resolve(spelledType(field), qualified), null, isPublic, false, doc(field))
                 }
                 // `class Frustum getFrustum()` declares Frustum in the namespace, though clang lists it here.
                 "CXXRecordDecl", "ClassTemplateDecl" -> if (child["parentDeclContextId"] == null)
@@ -149,6 +151,7 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
         }
         records[qualified] = CppRecord(
             qualified, locationOf[node]?.header, public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, declaredDestructor,
+            doc(node),
         )
     }
 
@@ -190,6 +193,7 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
             isOverride = node.children().any { it["kind"] == "OverrideAttr" || it["kind"] == "FinalAttr" },
             templateParameters = templateParameters,
             guard = locationOf[node]?.let { l -> l.header?.let { guards.at(it, l.line) } },
+            doc = doc(node),
         )
     }
 
@@ -203,8 +207,11 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
             constant["name"] as String to value
         }
         val underlying = (node["fixedUnderlyingType"] as? Map<*, *>)?.get("qualType") as? String
-        enums[qualified] = CppEnum(qualified, locationOf[node]?.header, underlying, constants)
+        val constantDocs = node.children().mapNotNull { c -> doc(c)?.let { c["name"] as String to it } }.toMap()
+        enums[qualified] = CppEnum(qualified, locationOf[node]?.header, underlying, constants, doc(node), constantDocs)
     }
+
+    private fun doc(node: Map<*, *>) = docs.of(node, locationOf[node]?.header)
 
     /** A declaration's initializer: its one child that isn't a comment or an attribute. */
     private fun initializer(node: Map<*, *>): Map<*, *>? {

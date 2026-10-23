@@ -47,6 +47,7 @@ public:
     void Visit(Visitor visitor, void* user) const;
     void Upload(Blob&& blob);
 
+    /// Loads a shape from a file. A glob like **/*.obj isn't expanded.
     Result<Ref<Shape>> Load(const char* path);
     Result<math::float3> Measure() const;
 
@@ -55,6 +56,7 @@ public:
 
     Box<float>& GetBox();
 
+    /// Sets a named value, of any type the config instantiates.
     template<typename T> void SetValue(const char* name, T value);
     template<typename T> T GetValue(const char* name) const;
     template<typename T> T Convert(T value) const;
@@ -63,6 +65,7 @@ public:
     static Canvas* GetDefault();
 };
 
+/// The distance between two points.
 GEO_PUBLIC float Distance(const math::float2& a, const math::float2& b);
 GEO_PUBLIC void Reset();
 

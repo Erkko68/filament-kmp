@@ -9,18 +9,55 @@ extern "C" {
 #endif
 
 // filament::Exposure
+/** Returns the exposure value (EV at ISO 100) of the specified camera. */
 float FilaExposure_ev100_Camera(const FilaCamera* camera);
+/** Returns the exposure value (EV at ISO 100) of the specified exposure parameters. */
 float FilaExposure_ev100_float_float_float(float aperture, float shutterSpeed, float sensitivity);
+/** Returns the exposure value (EV at ISO 100) for the given average luminance (in @f$ \frac{cd}{m^2} @f$). */
 float FilaExposure_ev100FromLuminance(float luminance);
+/** Returns the exposure value (EV at ISO 100) for the given illuminance (in lux). */
 float FilaExposure_ev100FromIlluminance(float illuminance);
+/** Returns the photometric exposure for the specified camera. */
 float FilaExposure_exposure_Camera(const FilaCamera* camera);
+/**
+ * Returns the photometric exposure for the specified exposure parameters.
+ * This function is equivalent to calling `exposure(ev100(aperture, shutterSpeed, sensitivity))`
+ * but is slightly faster and offers higher precision.
+ */
 float FilaExposure_exposure_float_float_float(float aperture, float shutterSpeed, float sensitivity);
+/** Returns the photometric exposure for the given EV100. */
 float FilaExposure_exposure_float(float ev100);
+/** Returns the incident luminance in @f$ \frac{cd}{m^2} @f$ for the specified camera acting as a spot meter. */
 float FilaExposure_luminance_Camera(const FilaCamera* camera);
+/**
+ * Returns the incident luminance in @f$ \frac{cd}{m^2} @f$ for the specified exposure parameters of
+ * a camera acting as a spot meter.
+ * This function is equivalent to calling `luminance(ev100(aperture, shutterSpeed, sensitivity))`
+ * but is slightly faster and offers higher precision.
+ */
 float FilaExposure_luminance_float_float_float(float aperture, float shutterSpeed, float sensitivity);
+/**
+ * Converts the specified EV100 to luminance in @f$ \frac{cd}{m^2} @f$.
+ * EV100 is not a measure of luminance, but an EV100 can be used to denote a
+ * luminance for which a camera would use said EV100 to obtain the nominally
+ * correct exposure
+ */
 float FilaExposure_luminance_float(float ev100);
+/** Returns the illuminance in lux for the specified camera acting as an incident light meter. */
 float FilaExposure_illuminance_Camera(const FilaCamera* camera);
+/**
+ * Returns the illuminance in lux for the specified exposure parameters of
+ * a camera acting as an incident light meter.
+ * This function is equivalent to calling `illuminance(ev100(aperture, shutterSpeed, sensitivity))`
+ * but is slightly faster and offers higher precision.
+ */
 float FilaExposure_illuminance_float_float_float(float aperture, float shutterSpeed, float sensitivity);
+/**
+ * Converts the specified EV100 to illuminance in lux.
+ * EV100 is not a measure of illuminance, but an EV100 can be used to denote an
+ * illuminance for which a camera would use said EV100 to obtain the nominally
+ * correct exposure.
+ */
 float FilaExposure_illuminance_float(float ev100);
 
 

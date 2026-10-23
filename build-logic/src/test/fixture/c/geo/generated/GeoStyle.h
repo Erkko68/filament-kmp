@@ -12,6 +12,7 @@ extern "C" {
 GeoStyle* GeoStyle_create(void);
 void GeoStyle_destroy(GeoStyle* self);
 float GeoStyle_GetWidth(const GeoStyle* self);
+/** in pixels */
 void GeoStyle_SetWidth(GeoStyle* self, float value);
 GeoKind GeoStyle_GetKind(const GeoStyle* self);
 void GeoStyle_SetKind(GeoStyle* self, GeoKind value);

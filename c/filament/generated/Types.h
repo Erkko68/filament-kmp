@@ -38,137 +38,1873 @@ typedef struct FilaUint4 { uint32_t v[4]; } FilaUint4;
 typedef struct FilaUshort3 { uint16_t v[3]; } FilaUshort3;
 typedef struct FilaUshort4 { uint16_t v[4]; } FilaUshort4;
 
+/**
+ * ACES tone mapping operator, modified to match the perceived brightness
+ * of FilmicToneMapper. This operator is the same as ACESToneMapper but
+ * applies a brightness multiplier of ~1.6 to the input color value to
+ * target brighter viewing environments.
+ */
 typedef struct FilaACESLegacyToneMapper FilaACESLegacyToneMapper;
+
+/**
+ * ACES tone mapping operator. This operator is an implementation of the
+ * ACES Reference Rendering Transform (RRT) combined with the Output Device
+ * Transform (ODT) for sRGB monitors (dim surround, 100 nits).
+ */
 typedef struct FilaACESToneMapper FilaACESToneMapper;
+
+/** An axis aligned box represented by its min and max coordinates */
 typedef struct FilaAabb FilaAabb;
+
 typedef struct FilaAabbCorners FilaAabbCorners;
+
+/** AgX tone mapping operator. */
 typedef struct FilaAgxToneMapper FilaAgxToneMapper;
+
+/**
+ * Options for screen space Ambient Occlusion (SSAO) and Screen Space Cone Tracing (SSCT)
+ * @see #setAmbientOcclusionOptions
+ */
 typedef struct FilaAmbientOcclusionOptions FilaAmbientOcclusionOptions;
+
+/** Ground Truth-base Ambient Occlusion (GTAO) options */
 typedef struct FilaAmbientOcclusionOptionsGtao FilaAmbientOcclusionOptionsGtao;
+
+/**
+ * Screen Space Cone Tracing (SSCT) options
+ * Ambient shadows from dominant light
+ */
 typedef struct FilaAmbientOcclusionOptionsSsct FilaAmbientOcclusionOptionsSsct;
+
+/**
+ * Options to control the bloom effect
+ *
+ * <ul>
+ * <li>enabled:     Enable or disable the bloom post-processing effect. Disabled by default.</li>
+ *
+ * <li>levels:      Number of successive blurs to achieve the blur effect, the minimum is 3 and the
+ *              maximum is 12. This value together with resolution influences the spread of the
+ *              blur effect. This value can be silently reduced to accommodate the original
+ *              image size.</li>
+ *
+ * <li>resolution:  Resolution of bloom's minor axis. The minimum value is 2^levels and the
+ *              the maximum is lower of the original resolution and 4096. This parameter is
+ *              silently clamped to the minimum and maximum.
+ *              It is highly recommended that this value be smaller than the target resolution
+ *              after dynamic resolution is applied (horizontally and vertically).</li>
+ *
+ * <li>strength:    how much of the bloom is added to the original image. Between 0 and 1.</li>
+ *
+ * <li>blendMode:   Whether the bloom effect is purely additive (false) or mixed with the original
+ *              image (true).</li>
+ *
+ * <li>threshold:   When enabled, a threshold at 1.0 is applied on the source image, this is
+ *              useful for artistic reasons and is usually needed when a dirt texture is used.</li>
+ *
+ * <li>dirt:        A dirt/scratch/smudges texture (that can be RGB), which gets added to the
+ *              bloom effect. Smudges are visible where bloom occurs. Threshold must be
+ *              enabled for the dirt effect to work properly.</li>
+ *
+ * <li>dirtStrength: Strength of the dirt texture.</li>
+ * </ul>
+ */
 typedef struct FilaBloomOptions FilaBloomOptions;
+
+/** An axis aligned 3D box represented by its center and half-extent. */
 typedef struct FilaBox FilaBox;
+
+/**
+ * A generic GPU buffer containing data.
+ *
+ * Usage of this BufferObject is optional. For simple use cases it is not necessary. It is useful
+ * only when you need to share data between multiple VertexBuffer instances. It also allows you to
+ * efficiently swap-out the buffers in VertexBuffer.
+ *
+ * NOTE: For now this is only used for vertex data, but in the future we may use it for other things
+ * (e.g. compute).
+ *
+ * @see VertexBuffer
+ */
 typedef struct FilaBufferObject FilaBufferObject;
+
 typedef struct FilaBufferObjectBuilder FilaBufferObjectBuilder;
+
+/**
+ * Camera represents the eye(s) through which the scene is viewed.
+ *
+ * A Camera has a position and orientation and controls the projection and exposure parameters.
+ *
+ * For stereoscopic rendering, a Camera maintains two separate "eyes": Eye 0 and Eye 1. These are
+ * arbitrary and don't necessarily need to correspond to "left" and "right".
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * In Filament, Camera is a component that must be associated with an entity. To do so,
+ * use Engine::createCamera(Entity). A Camera component is destroyed using
+ * Engine::destroyCameraComponent(Entity).
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *
+ *  utils::Entity myCameraEntity = utils::EntityManager::get().create();
+ *  filament::Camera* myCamera = engine->createCamera(myCameraEntity);
+ *  myCamera->setProjection(45, 16.0/9.0, 0.1, 1.0);
+ *  myCamera->lookAt({0, 1.60, 1}, {0, 0, 0});
+ *  engine->destroyCameraComponent(myCameraEntity);
+ * ~~~~~~~~~~~
+ *
+ *
+ * Coordinate system
+ * =================
+ *
+ * The camera coordinate system defines the *view space*. The camera points towards its -z axis
+ * and is oriented such that its top side is in the direction of +y, and its right side in the
+ * direction of +x.
+ *
+ * @note
+ * Since the *near* and *far* planes are defined by the distance from the camera,
+ * their respective coordinates are -\p distance(near) and -\p distance(far).
+ *
+ * Clipping planes
+ * ===============
+ *
+ * The camera defines six *clipping planes* which together create a *clipping volume*. The
+ * geometry outside this volume is clipped.
+ *
+ * The clipping volume can either be a box or a frustum depending on which projection is used,
+ * respectively Projection.ORTHO or Projection.PERSPECTIVE. The six planes are specified either
+ * directly or indirectly using setProjection().
+ *
+ * The six planes are:
+ * - left
+ * - right
+ * - bottom
+ * - top
+ * - near
+ * - far
+ *
+ * @note
+ * To increase the depth-buffer precision, the *far* clipping plane is always assumed to be at
+ * infinity for rendering. That is, it is not used to clip geometry during rendering.
+ * However, it is used during the culling phase (objects entirely behind the *far*
+ * plane are culled).
+ *
+ *
+ * Choosing the *near* plane distance
+ * ==================================
+ *
+ * The *near* plane distance greatly affects the depth-buffer resolution.
+ *
+ * Example: Precision at 1m, 10m, 100m and 1Km for various near distances assuming a 32-bit float
+ * depth-buffer:
+ *
+ *    near (m)  |   1 m  |   10 m  |  100 m   |  1 Km
+ *  -----------:|:------:|:-------:|:--------:|:--------:
+ *      0.001   | 7.2e-5 |  0.0043 |  0.4624  |  48.58
+ *      0.01    | 6.9e-6 |  0.0001 |  0.0430  |   4.62
+ *      0.1     | 3.6e-7 |  7.0e-5 |  0.0072  |   0.43
+ *      1.0     |    0   |  3.8e-6 |  0.0007  |   0.07
+ *
+ *  As can be seen in the table above, the depth-buffer precision drops rapidly with the
+ *  distance to the camera.
+ *
+ * Make sure to pick the highest *near* plane distance possible.
+ *
+ * On Vulkan and Metal platforms (or OpenGL platforms supporting either EXT_clip_control or
+ * ARB_clip_control extensions), the depth-buffer precision is much less dependent on the *near*
+ * plane value:
+ *
+ *    near (m)  |   1 m  |   10 m  |  100 m   |  1 Km
+ *  -----------:|:------:|:-------:|:--------:|:--------:
+ *      0.001   | 1.2e-7 |  9.5e-7 |  7.6e-6  |  6.1e-5
+ *      0.01    | 1.2e-7 |  9.5e-7 |  7.6e-6  |  6.1e-5
+ *      0.1     | 5.9e-8 |  9.5e-7 |  1.5e-5  |  1.2e-4
+ *      1.0     |    0   |  9.5e-7 |  7.6e-6  |  1.8e-4
+ *
+ *
+ * Choosing the *far* plane distance
+ * =================================
+ *
+ * The far plane distance is always set internally to infinity for rendering, however it is used for
+ * culling and shadowing calculations. It is important to keep a reasonable ratio between
+ * the near and far plane distances. Typically a ratio in the range 1:100 to 1:100000 is
+ * commanded. Larger values may causes rendering artifacts or trigger assertions in debug builds.
+ *
+ *
+ * Exposure
+ * ========
+ *
+ * The Camera is also used to set the scene's exposure, just like with a real camera. The lights
+ * intensity and the Camera exposure interact to produce the final scene's brightness.
+ *
+ *
+ * Stereoscopic rendering
+ * ======================
+ *
+ * The Camera's transform (as set by setModelMatrix or via TransformManager) defines a "head" space,
+ * which typically corresponds to the location of the viewer's head. Each eye's transform is set
+ * relative to this head space by setEyeModelMatrix.
+ *
+ * Each eye also maintains its own projection matrix. These can be set with setCustomEyeProjection.
+ * Care must be taken to correctly set the projectionForCulling matrix, as well as its corresponding
+ * near and far values. The projectionForCulling matrix must define a frustum (in head space) that
+ * bounds the frustums of both eyes. Alternatively, culling may be disabled with
+ * View::setFrustumCullingEnabled.
+ *
+ * \see Frustum, View
+ */
 typedef struct FilaCamera FilaCamera;
+
+/** Utilities to manipulate and convert colors */
 typedef struct FilaColor FilaColor;
+
+/**
+ * ColorGrading is used to transform (either to modify or correct) the colors of the HDR buffer
+ * rendered by Filament. Color grading transforms are applied after lighting, and after any lens
+ * effects (bloom for instance), and include tone mapping.
+ *
+ * Creation, usage and destruction
+ * ===============================
+ *
+ * A ColorGrading object is created using the ColorGrading::Builder and destroyed by calling
+ * Engine::destroy(const ColorGrading*). A ColorGrading object is meant to be set on a View.
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *
+ *  filament::ColorGrading* colorGrading = filament::ColorGrading::Builder()
+ *              .toneMapping(filament::ColorGrading::ToneMapping::ACES)
+ *              .build(*engine);
+ *
+ *  myView->setColorGrading(colorGrading);
+ *
+ *  engine->destroy(colorGrading);
+ * ~~~~~~~~~~~
+ *
+ * Performance
+ * ===========
+ *
+ * Creating a new ColorGrading object may be more expensive than other Filament objects as a LUT may
+ * need to be generated. The generation of this LUT, if necessary, may happen on the CPU.
+ *
+ * Ordering
+ * ========
+ *
+ * The various transforms held by ColorGrading are applied in the following order:
+ * - Exposure
+ * - Night adaptation
+ * - White balance
+ * - Channel mixer
+ * - Shadows/mid-tones/highlights
+ * - Slope/offset/power (CDL)
+ * - Contrast
+ * - Vibrance
+ * - Saturation
+ * - Curves
+ * - Tone mapping
+ * - Luminance scaling
+ * - Gamut mapping
+ *
+ * Defaults
+ * ========
+ *
+ * Here are the default color grading options:
+ * - Exposure: 0.0
+ * - Night adaptation: 0.0
+ * - White balance: temperature 0, and tint 0
+ * - Channel mixer: red {1,0,0}, green {0,1,0}, blue {0,0,1}
+ * - Shadows/mid-tones/highlights: shadows {1,1,1,0}, mid-tones {1,1,1,0}, highlights {1,1,1,0},
+ *   ranges {0,0.333,0.550,1}
+ * - Slope/offset/power: slope 1.0, offset 0.0, and power 1.0
+ * - Contrast: 1.0
+ * - Vibrance: 1.0
+ * - Saturation: 1.0
+ * - Curves: gamma {1,1,1}, midPoint {1,1,1}, and scale {1,1,1}
+ * - Tone mapping: ACESLegacyToneMapper
+ * - Luminance scaling: false
+ * - Gamut mapping: false
+ * - Output color space: Rec709-sRGB-D65
+ *
+ * @see View
+ */
 typedef struct FilaColorGrading FilaColorGrading;
+
+/** Use Builder to construct a ColorGrading object instance */
 typedef struct FilaColorGradingBuilder FilaColorGradingBuilder;
+
+/**
+ * Options to control Depth of Field (DoF) effect in the scene.
+ *
+ * <p>cocScale can be used to set the depth of field blur independently of the camera
+ * aperture, e.g. for artistic reasons. This can be achieved by setting:
+ *      cocScale = cameraAperture / desiredDoFAperture</p>
+ *
+ * @see Camera
+ */
 typedef struct FilaDepthOfFieldOptions FilaDepthOfFieldOptions;
+
+/**
+ * A tone mapper that converts the input HDR RGB color into one of 16 debug colors
+ * that represent the pixel's exposure. When the output is cyan, the input color
+ * represents  middle gray (18% exposure). Every exposure stop above or below middle
+ * gray causes a color shift.
+ *
+ * The relationship between exposures and colors is:
+ *
+ * - -5EV  black
+ * - -4EV  darkest blue
+ * - -3EV  darker blue
+ * - -2EV  dark blue
+ * - -1EV  blue
+ * -  OEV  cyan
+ * - +1EV  dark green
+ * - +2EV  green
+ * - +3EV  yellow
+ * - +4EV  yellow-orange
+ * - +5EV  orange
+ * - +6EV  bright red
+ * - +7EV  red
+ * - +8EV  magenta
+ * - +9EV  purple
+ * - +10EV white
+ *
+ * This tone mapper is useful to validate and tweak scene lighting.
+ */
 typedef struct FilaDisplayRangeToneMapper FilaDisplayRangeToneMapper;
+
+/**
+ * Dynamic resolution can be used to either reach a desired target frame rate
+ * by lowering the resolution of a View, or to increase the quality when the
+ * rendering is faster than the target frame rate.
+ *
+ * <p>This structure can be used to specify the minimum scale factor used when
+ * lowering the resolution of a View, and the maximum scale factor used when
+ * increasing the resolution for higher quality rendering. The scale factors
+ * can be controlled on each X and Y axis independently. By default, all scale
+ * factors are set to 1.0.</p>
+ *
+ * <ul>
+ * <li>enabled:   enable or disables dynamic resolution on a View</li>
+ *
+ * <li>homogeneousScaling: by default the system scales the major axis first. Set this to true
+ *                     to force homogeneous scaling.</li>
+ *
+ * <li>minScale:  the minimum scale in X and Y this View should use</li>
+ *
+ * <li>maxScale:  the maximum scale in X and Y this View should use</li>
+ *
+ * <li>quality:   upscaling quality.
+ *            LOW: 1 bilinear tap, Medium: 4 bilinear taps, High: 9 bilinear taps (tent)</li>
+ * </ul>
+ *
+ * <p>Note:
+ * Dynamic resolution is only supported on platforms where the time to render
+ * a frame can be measured accurately. On platforms where this is not supported,
+ * Dynamic Resolution can't be enabled unless <code>minScale == maxScale</code>.</p>
+ *
+ * @see Renderer.FrameRateOptions
+ */
 typedef struct FilaDynamicResolutionOptions FilaDynamicResolutionOptions;
+
+/**
+ * Engine is filament's main entry-point.
+ *
+ * An Engine instance main function is to keep track of all resources created by the user and
+ * manage the rendering thread as well as the hardware renderer.
+ *
+ * To use filament, an Engine instance must be created first:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Engine.h>
+ * using namespace filament;
+ *
+ * Engine* engine = Engine::create();
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Engine essentially represents (or is associated to) a hardware context
+ * (e.g. an OpenGL ES context).
+ *
+ * Rendering typically happens in an operating system's window (which can be full screen), such
+ * window is managed by a filament.Renderer.
+ *
+ * A typical filament render loop looks like this:
+ *
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Engine.h>
+ * #include <filament/Renderer.h>
+ * #include <filament/Scene.h>
+ * #include <filament/View.h>
+ * using namespace filament;
+ *
+ * Engine* engine       = Engine::create();
+ * SwapChain* swapChain = engine->createSwapChain(nativeWindow);
+ * Renderer* renderer   = engine->createRenderer();
+ * Scene* scene         = engine->createScene();
+ * View* view           = engine->createView();
+ *
+ * view->setScene(scene);
+ *
+ * do {
+ *     // typically we wait for VSYNC and user input events
+ *     if (renderer->beginFrame(swapChain)) {
+ *         renderer->render(view);
+ *         renderer->endFrame();
+ *     }
+ * } while (!quit);
+ *
+ * engine->destroy(view);
+ * engine->destroy(scene);
+ * engine->destroy(renderer);
+ * engine->destroy(swapChain);
+ * Engine::destroy(&engine); // clears engine*
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Resource Tracking
+ * =================
+ *
+ *  Each Engine instance keeps track of all objects created by the user, such as vertex and index
+ *  buffers, lights, cameras, etc...
+ *  The user is expected to free those resources, however, leaked resources are freed when the
+ *  engine instance is destroyed and a warning is emitted in the console.
+ *
+ * Thread safety
+ * =============
+ *
+ * An Engine instance is not thread-safe. The implementation makes no attempt to synchronize
+ * calls to an Engine instance methods.
+ * If multi-threading is needed, synchronization must be external.
+ *
+ * Multi-threading
+ * ===============
+ *
+ * When created, the Engine instance starts a render thread as well as multiple worker threads,
+ * these threads have an elevated priority appropriate for rendering, based on the platform's
+ * best practices. The number of worker threads depends on the platform and is automatically
+ * chosen for best performance.
+ *
+ * On platforms with asymmetric cores (e.g. ARM's Big.Little), Engine makes some educated guesses
+ * as to which cores to use for the render thread and worker threads. For example, it'll try to
+ * keep an OpenGL ES thread on a Big core.
+ *
+ * Swap Chains
+ * ===========
+ *
+ * A swap chain represents an Operating System's *native* renderable surface. Typically it's a window
+ * or a view. Because a SwapChain is initialized from a native object, it is given to filament
+ * as a `void*`, which must be of the proper type for each platform filament is running on.
+ *
+ * @see SwapChain
+ *
+ *
+ * @see Renderer
+ */
 typedef struct FilaEngine FilaEngine;
+
+/** Engine::Builder is used to create a new filament Engine. */
 typedef struct FilaEngineBuilder FilaEngineBuilder;
+
+/**
+ * Config is used to define the memory footprint used by the engine, such as the
+ * command buffer size. Config can be used to customize engine requirements based
+ * on the applications needs.
+ *
+ *    .perRenderPassArenaSizeMB (default: 3 MiB)
+ *   +--------------------------+
+ *   |                          |
+ *   | .perFrameCommandsSizeMB  |
+ *   |    (default 2 MiB)       |
+ *   |                          |
+ *   +--------------------------+
+ *   |  (froxel, etc...)        |
+ *   +--------------------------+
+ *
+ *
+ *      .commandBufferSizeMB (default 3MiB)
+ *   +--------------------------+
+ *   | .minCommandBufferSizeMB  |
+ *   +--------------------------+
+ *   | .minCommandBufferSizeMB  |
+ *   +--------------------------+
+ *   | .minCommandBufferSizeMB  |
+ *   +--------------------------+
+ *   :                          :
+ *   :                          :
+ */
 typedef struct FilaEngineConfig FilaEngineConfig;
+
+/**
+ * Feature flags can be enabled or disabled when the Engine is built. Some Feature flags can
+ * also be toggled at any time. Feature flags should alawys use their default value unless
+ * the feature enabled by the flag is faulty. Feature flags provide a last resort way to
+ * disable problematic features.
+ * Feature flags are intended to have a short life-time and are regularly removed as features
+ * mature.
+ */
 typedef struct FilaEngineFeatureFlag FilaEngineFeatureFlag;
+
+/** Fence is used to synchronize the application main thread with filament's rendering thread. */
 typedef struct FilaFence FilaFence;
+
+/**
+ * \privatesection
+ * FilamentAPI is used to define an API in filament.
+ * It ensures the class defining the API can't be created, destroyed
+ * or copied by the caller.
+ */
 typedef struct FilaFilamentAPI FilaFilamentAPI;
+
+/**
+ * "Filmic" tone mapping operator. This tone mapper was designed to
+ * approximate the aesthetics of the ACES RRT + ODT for Rec.709
+ * and historically Filament's default tone mapping operator. It exists
+ * only for backward compatibility purposes and is not otherwise recommended.
+ */
 typedef struct FilaFilmicToneMapper FilaFilmicToneMapper;
+
+/**
+ * Options to control large-scale fog in the scene. Materials can enable the <code>linearFog</code> property,
+ * which uses a simplified, linear equation for fog calculation; in this mode, the heightFalloff
+ * is ignored as well as the mipmap selection in IBL or skyColor mode.
+ */
 typedef struct FilaFogOptions FilaFogOptions;
+
+/**
+ * FrameHistoryStream is a public helper class to iterate over new frames rendered since the last query.
+ * It takes care of keeping track of the last processed frame ID and identifying missing frames.
+ *
+ * Note: An instance of FrameHistoryStream must be kept alive (e.g., as a member variable)
+ * rather than recreated transiently on the stack, in order to correctly track the last
+ * processed frame ID across successive calls to getNewFrames().
+ *
+ * Example usage:
+ * @code
+ * // Store this instance as a member variable or long-lived object:
+ * FrameHistoryStream stream(renderer);
+ *
+ * // ... then in the render or update loop:
+ * for (auto result : stream.getNewFrames()) {
+ *     if (result) {
+ *         // Accessed via operator-> or operator*
+ *         uint64_t presentTime = result->displayPresent;
+ *     } else {
+ *         // Missing frame
+ *         uint32_t missingId = result.getMissingId();
+ *     }
+ * }
+ * @endcode
+ */
 typedef struct FilaFrameHistoryStream FilaFrameHistoryStream;
+
+/**
+ * A helper class representing a range of new frames.
+ * Obtained by calling FrameHistoryStream::getNewFrames().
+ */
 typedef struct FilaFrameHistoryStreamNewFramesRange FilaFrameHistoryStreamNewFramesRange;
+
+/**
+ * FramePacer
+ *
+ * Coordinates frame scheduling and presentation timestamps across multi-threaded rendering architectures.
+ *
+ * The FramePacer decouples the CPU rendering loop from fluctuating hardware display cadences, acting
+ * as a deterministic filter between incoming platform VSYNC callbacks (such as AChoreographer on Android)
+ * and native buffer presentation submissions (via Renderer::setPresentationTime).
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * A FramePacer object is created using the FramePacer::Builder and destroyed by calling
+ * Engine::destroy(const FramePacer*).
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *
+ *  filament::FramePacer* pacer = filament::FramePacer::Builder()
+ *              .targetFrameRate(60.0f)
+ *              .latency(std::chrono::milliseconds(33)) // Configure 33ms target latency duration (~2 60Hz frames)
+ *              .build(*engine);
+ *
+ *  // Inside your application's AChoreographer frame callback:
+ *  void onChoreographerTick(const filament::FramePacer::VsyncTick& tick) {
+ *      if (pacer->setupFrame(tick) != filament::FramePacer::FrameStatus::ACCEPTED) {
+ *          // Yield or skip rendering to maintain pacing
+ *          return;
+ *      }
+ *
+ *      // Evaluate if the GPU is delayed, bypassing FrameSkipper check via Renderer::shouldRenderFrame()
+ *      if (pacer->hasGpuFallenBehind(renderer)) {
+ *          renderer->skipFrame(tick.baseTime);
+ *          return;
+ *      }
+ *
+ *      // Set presentation time which automatically switches Renderer to "paced mode"
+ *      pacer->applyPresentationTime(renderer);
+ *
+ *      if (renderer->beginFrame(swapChain)) {
+ *          renderer->render(view);
+ *          renderer->endFrame();
+ *      }
+ *  }
+ *
+ *  engine->destroy(pacer);
+ * ~~~~~~~~~~~
+ */
 typedef struct FilaFramePacer FilaFramePacer;
+
+/** Use Builder to construct a FramePacer object instance */
 typedef struct FilaFramePacerBuilder FilaFramePacerBuilder;
+
+/** Holds dynamic pacing targets and latency pipeline depth requirements. */
 typedef struct FilaFramePacerConfiguration FilaFramePacerConfiguration;
+
+/** Telemetry for a single expected hardware presentation timeline. */
 typedef struct FilaFramePacerHardwareTimeline FilaFramePacerHardwareTimeline;
+
+/** Encapsulates VSYNC synchronization telemetry received from the platform compositor. */
 typedef struct FilaFramePacerVsyncTick FilaFramePacerVsyncTick;
+
+/**
+ * FramePipelineEstimator calculates the ideal refresh rate (throughput) and ideal structural
+ * latency (pipeline depth) based on historical Renderer::FrameInfo telemetry.
+ *
+ * It implements a probabilistic timing model over the three primary rendering stages (Main CPU,
+ * Backend driver, GPU execution) using historical mean (mu) and standard deviation (sigma):
+ *
+ * 1. Determine Z-Score: Maps the target confidence interval (e.g. P90 = 1.282) to a normal Z-score.
+ * 2. Effective Workload: Compute worst-case execution time per stage: mu + (Z * sigma).
+ * 3. Ideal Throughput: Pipeline frame time is bounded entirely by the slowest individual stage.
+ * 4. Ideal Structural Latency: Ceiling division of total transit time by bottleneck frame time.
+ *
+ * @code
+ * auto const history = renderer->getFrameInfoHistory(renderer->getMaxFrameHistorySize());
+ *
+ * // 1. Estimate unthrottled timing bottleneck (throughput workload limit)
+ * auto const workload = FramePipelineEstimator::estimateWorkload(history,
+ *         FramePipelineEstimator::TargetPercentile::P90);
+ *
+ * // 2. Size latency and safe delay for vsync-locked 60 FPS pacing cadence
+ * auto const pacingPeriod = std::chrono::nanoseconds(16666666); // 60Hz pacing step
+ * auto const sizing = FramePipelineEstimator::estimatePacing(history,
+ *         pacingPeriod, FramePipelineEstimator::TargetPercentile::P90);
+ *
+ * renderer->setDesiredPresentationTime(now + workload.idealFrameDuration);
+ * pacer->configure(sizing.latencyFrames, sizing.safeDelayDuration);
+ * @endcode
+ */
 typedef struct FilaFramePipelineEstimator FilaFramePipelineEstimator;
+
+/** PacingSizing encapsulates the structural latency and CPU delay recommendations relative to a pacing period. */
 typedef struct FilaFramePipelineEstimatorPacingSizing FilaFramePipelineEstimatorPacingSizing;
+
+/** Workload encapsulates the computed ideal throughput recommendation (raw bottleneck). */
 typedef struct FilaFramePipelineEstimatorWorkload FilaFramePipelineEstimatorWorkload;
+
+/**
+ * Gran Turismo 7 tone mapping operator. This tone mapper was designed
+ * to preserve the appearance of materials across lighting conditions while
+ * avoiding artifacts in the highlights in high dynamic range conditions.
+ * This tone mapper targets an SDR paper white value of 250 nits, with a
+ * reference luminance of 100 cd/m^2 (a value of 1.0 in the HDR framebuffer).
+ */
 typedef struct FilaGT7ToneMapper FilaGT7ToneMapper;
+
+/**
+ * Generic tone mapping operator that gives control over the tone mapping
+ * curve. This operator can be used to control the aesthetics of the final
+ * image. This operator also allows to control the dynamic range of the
+ * scene referred values.
+ *
+ * The tone mapping curve is defined by 5 parameters:
+ * - contrast: controls the contrast of the curve
+ * - midGrayIn: sets the input middle gray
+ * - midGrayOut: sets the output middle gray
+ * - hdrMax: defines the maximum input value that will be mapped to
+ *           output white
+ */
 typedef struct FilaGenericToneMapper FilaGenericToneMapper;
+
+/**
+ * Options for the  screen-space guard band.
+ * <p>A guard band can be enabled to avoid some artifacts towards the edge of the screen when
+ * using screen-space effects such as SSAO. Enabling the guard band reduces performance slightly.
+ * Currently the guard band can only be enabled or disabled.</p>
+ */
 typedef struct FilaGuardBandOptions FilaGuardBandOptions;
+
+/**
+ * A buffer containing vertex indices into a VertexBuffer. Indices can be 16 or 32 bit.
+ * The buffer itself is a GPU resource, therefore mutating the data can be relatively slow.
+ * Typically these buffers are constant.
+ *
+ * It is possible, and even encouraged, to use a single index buffer for several Renderables.
+ *
+ * @see VertexBuffer, RenderableManager
+ */
 typedef struct FilaIndexBuffer FilaIndexBuffer;
+
 typedef struct FilaIndexBufferBuilder FilaIndexBufferBuilder;
+
+/**
+ * IndirectLight is used to simulate environment lighting, a form of global illumination.
+ *
+ * Environment lighting has a two components:
+ *  1. irradiance
+ *  2. reflections (specular component)
+ *
+ * Environments are usually captured as high-resolution HDR equirectangular images and processed
+ * by the **cmgen** tool to generate the data needed by IndirectLight.
+ *
+ * @note
+ * Currently IndirectLight is intended to be used for "distant probes", that is, to represent
+ * global illumination from a distant (i.e. at infinity) environment, such as the sky or distant
+ * mountains. Only a single IndirectLight can be used in a Scene. This limitation will be lifted
+ * in the future.
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * An IndirectLight object is created using the IndirectLight::Builder and destroyed by calling
+ * Engine::destroy(const IndirectLight*).
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *
+ *  filament::IndirectLight* environment = filament::IndirectLight::Builder()
+ *              .reflections(cubemap)
+ *              .build(*engine);
+ *
+ *  engine->destroy(environment);
+ * ~~~~~~~~~~~
+ *
+ *
+ * Irradiance
+ * ==========
+ *
+ * The irradiance represents the light that comes from the environment and shines an
+ * object's surface.
+ *
+ * The irradiance is calculated automatically from the Reflections (see below), and generally
+ * doesn't need to be provided explicitly.  However, it can be provided separately from the
+ * Reflections as
+ * [spherical harmonics](https://en.wikipedia.org/wiki/Spherical_harmonics) (SH) of 1, 2 or
+ * 3 bands, respectively 1, 4 or 9 coefficients.
+ *
+ * @note
+ * Use the **cmgen** tool to generate the `SH` for a given environment.
+ *
+ * Reflections
+ * ===========
+ *
+ * The reflections on object surfaces (specular component) is calculated from a specially
+ * filtered cubemap pyramid generated by the **cmgen** tool.
+ *
+ *
+ * @see Scene, Light, Texture, Skybox
+ */
 typedef struct FilaIndirectLight FilaIndirectLight;
+
+/** Use Builder to construct an IndirectLight object instance */
 typedef struct FilaIndirectLightBuilder FilaIndirectLightBuilder;
+
+/**
+ * InstanceBuffer holds draw (GPU) instance transforms. These can be provided to a renderable to
+ * "offset" each draw instance.
+ *
+ * @see RenderableManager::Builder::instances(size_t, InstanceBuffer*)
+ */
 typedef struct FilaInstanceBuffer FilaInstanceBuffer;
+
 typedef struct FilaInstanceBufferBuilder FilaInstanceBufferBuilder;
+
+/**
+ * LightManager allows to create a light source in the scene, such as a sun or street lights.
+ *
+ * At least one light must be added to a scene in order to see anything
+ * (unless the Material.Shading.UNLIT is used).
+ *
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * A Light component is created using the LightManager::Builder and destroyed by calling
+ * LightManager::destroy(utils::Entity).
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *  utils::Entity sun = utils::EntityManager.get().create();
+ *
+ *  filament::LightManager::Builder(Type::SUN)
+ *              .castShadows(true)
+ *              .build(*engine, sun);
+ *
+ *  engine->getLightManager().destroy(sun);
+ * ~~~~~~~~~~~
+ *
+ *
+ * Light types
+ * ===========
+ *
+ * Lights come in three flavors:
+ * - directional lights
+ * - point lights
+ * - spot lights
+ *
+ *
+ * Directional lights
+ * ------------------
+ *
+ * Directional lights have a direction, but don't have a position. All light rays are
+ * parallel and come from infinitely far away and from everywhere. Typically a directional light
+ * is used to simulate the sun.
+ *
+ * Directional lights and spot lights are able to cast shadows.
+ *
+ * To create a directional light use Type.DIRECTIONAL or Type.SUN, both are similar, but the later
+ * also draws a sun's disk in the sky and its reflection on glossy objects.
+ *
+ * By default, only the dominant directional light (the one with the highest intensity) of a
+ * scene is evaluated. Several directional lights can be used by enabling
+ * Engine::Config::enableMultipleDirectionalLights: the dominant one is still the only one that
+ * can cast shadows and draw a sun's disk, and up to CONFIG_MAX_EXTRA_DIRECTIONAL_LIGHTS (4)
+ * additional directional lights are evaluated without shadows; any further directional lights
+ * are ignored. Scenes with a single directional light don't pay any cost for this feature.
+ *
+ * @see Builder.direction(), Builder.sunAngularRadius()
+ *
+ * Point lights
+ * ------------
+ *
+ * Unlike directional lights, point lights have a position but emit light in all directions.
+ * The intensity of the light diminishes with the inverse square of the distance to the light.
+ * Builder.falloff() controls distance beyond which the light has no more influence.
+ *
+ * A scene can have multiple point lights.
+ *
+ * @see Builder.position(), Builder.falloff()
+ *
+ * Spot lights
+ * -----------
+ *
+ * Spot lights are similar to point lights but the light it emits is limited to a cone defined by
+ * Builder.spotLightCone() and the light's direction.
+ *
+ * A spot light is therefore defined by a position, a direction and inner and outer cones. The
+ * spot light's influence is limited to inside the outer cone. The inner cone defines the light's
+ * falloff attenuation.
+ *
+ * A physically correct spot light is a little difficult to use because changing the outer angle
+ * of the cone changes the illumination levels, as the same amount of light is spread over a
+ * changing volume. The coupling of illumination and the outer cone means that an artist cannot
+ * tweak the influence cone of a spot light without also changing the perceived illumination.
+ * It therefore makes sense to provide artists with a parameter to disable this coupling. This
+ * is the difference between Type.FOCUSED_SPOT and Type.SPOT.
+ *
+ * @see Builder.position(), Builder.direction(), Builder.falloff(), Builder.spotLightCone()
+ *
+ * Performance considerations
+ * ==========================
+ *
+ * Generally, adding lights to the scene hurts performance, however filament is designed to be
+ * able to handle hundreds of lights in a scene under certain conditions. Here are some tips
+ * to keep performances high.
+ *
+ * 1. Prefer spot lights to point lights and use the smallest outer cone angle possible.
+ *
+ * 2. Use the smallest possible falloff distance for point and spot lights.
+ *    Performance is very sensitive to overlapping lights. The falloff distance essentially
+ *    defines a sphere of influence for the light, so try to position point and spot lights
+ *    such that they don't overlap too much.
+ *
+ *    On the other hand, a scene can contain hundreds of non overlapping lights without
+ *    incurring a significant overhead.
+ *
+ * Instance lifetime
+ * =================
+ *
+ * An Instance is a transient handle: Instances are not stable when a component is added,
+ * removed or gc() is called on a component manager.
+ *
+ * Instances must therefore not be kept across frames. Keep the Entity instead, and call
+ * getInstance() again when needed; it is a fast lookup. Using a stale Instance doesn't crash
+ * but silently accesses the wrong component.
+ */
 typedef struct FilaLightManager FilaLightManager;
+
+/** Use Builder to construct a Light object instance */
 typedef struct FilaLightManagerBuilder FilaLightManagerBuilder;
+
 typedef struct FilaLightManagerShadowCascades FilaLightManagerShadowCascades;
+
+/** Control the quality / performance of the shadow map associated to this light */
 typedef struct FilaLightManagerShadowOptions FilaLightManagerShadowOptions;
+
+/**
+ * Options available when the View's ShadowType is set to VSM.
+ *
+ * @warning This API is still experimental and subject to change.
+ * @see View::setShadowType
+ */
 typedef struct FilaLightManagerShadowOptionsVsm FilaLightManagerShadowOptionsVsm;
+
+/**
+ * Linear tone mapping operator that returns the input color but clamped to
+ * the 0..1 range. This operator is mostly useful for debugging.
+ */
 typedef struct FilaLinearToneMapper FilaLinearToneMapper;
+
+/**
+ * A Material defines the visual appearance of a surface.
+ *
+ * Materials are created from a binary blob generated by the material compiler (matc).
+ * A Material is a template from which MaterialInstance objects can be created.
+ */
 typedef struct FilaMaterial FilaMaterial;
+
 typedef struct FilaMaterialBuilder FilaMaterialBuilder;
+
+/** Holds information about a material parameter. */
 typedef struct FilaMaterialParameterInfo FilaMaterialParameterInfo;
+
+/**
+ * A MaterialInstance represents a specific instance of a Material.
+ *
+ * While a Material defines the shader code and the set of parameters, a MaterialInstance
+ * holds the specific values for those parameters.
+ */
 typedef struct FilaMaterialInstance FilaMaterialInstance;
+
 typedef struct FilaMaterialInstanceStringLiteral FilaMaterialInstanceStringLiteral;
+
+/**
+ * A container for vertex morphing data that supports both automatic and manual morphing.
+ *
+ * MorphTargetBuffer operates in a hybrid model depending on the attribute being morphed:
+ *
+ * 1.  Automatic for Built-ins (positions/tangents):
+ *     Enable via `withPositions(true)` or `withTangents(true)`. The MorphTargetBuffer will
+ *     allocate internal storage and hold the data for these attributes, which you upload
+ *     via `setPositionsAt()` or `setTangentsAt()`. The framework automatically applies
+ *     the morphing logic in the vertex shader.
+ *
+ * 2.  Manual for Custom Data (e.g., UVs, colors):
+ *     The MorphTargetBuffer does NOT hold data for custom targets. The user is responsible
+ *     for the full data pipeline:
+ *     - Create and manage a separate `Texture` to hold the morph target data (offsets).
+ *     - In the material, declare a `sampler2d_array` parameter.
+ *     - Bind the `Texture` to the material instance.
+ *     - In the vertex shader, manually call `morphData2`, `morphData3`, or `morphData4`
+ *       with the custom sampler to apply the morphing.
+ *
+ * A MorphTargetBuffer object must be associated with a Renderable via
+ * `RenderableManager::Builder::morphing()` to enable the morphing pipeline for all cases.
+ *
+ * @see RenderableManager
+ */
 typedef struct FilaMorphTargetBuffer FilaMorphTargetBuffer;
+
 typedef struct FilaMorphTargetBufferBuilder FilaMorphTargetBufferBuilder;
+
+/**
+ * Options for Multi-Sample Anti-aliasing (MSAA)
+ * @see #setMultiSampleAntiAliasingOptions
+ */
 typedef struct FilaMultiSampleAntiAliasingOptions FilaMultiSampleAntiAliasingOptions;
+
+/**
+ * Khronos PBR Neutral tone mapping operator. This tone mapper was designed
+ * to preserve the appearance of materials across lighting conditions while
+ * avoiding artifacts in the highlights in high dynamic range conditions.
+ */
 typedef struct FilaPBRNeutralToneMapper FilaPBRNeutralToneMapper;
+
+/**
+ * Structure used to set the precision of the color buffer and related quality settings.
+ *
+ * @see #setRenderQuality
+ * @see #getRenderQuality
+ */
 typedef struct FilaRenderQuality FilaRenderQuality;
+
+/**
+ * An offscreen render target that can be associated with a View and contains
+ * weak references to a set of attached Texture objects.
+ *
+ * RenderTarget is intended to be used with the View's post-processing disabled for the most part.
+ * especially when a DEPTH attachment is also used (see Builder::texture()).
+ *
+ * Custom RenderTarget are ultimately intended to render into textures that might be used during
+ * the main render pass.
+ *
+ * Clients are responsible for the lifetime of all associated Texture attachments.
+ *
+ * @see View
+ */
 typedef struct FilaRenderTarget FilaRenderTarget;
+
+/** Use Builder to construct a RenderTarget object instance */
 typedef struct FilaRenderTargetBuilder FilaRenderTargetBuilder;
+
+/**
+ * Factory and manager for \em renderables, which are entities that can be drawn.
+ *
+ * Renderables are bundles of \em primitives, each of which has its own geometry and material. All
+ * primitives in a particular renderable share a set of rendering attributes, such as whether they
+ * cast shadows or use vertex skinning.
+ *
+ * Usage example:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * auto renderable = utils::EntityManager::get().create();
+ *
+ * RenderableManager::Builder(1)
+ *         .boundingBox({{ -1, -1, -1 }, { 1, 1, 1 }})
+ *         .material(0, matInstance)
+ *         .geometry(0, RenderableManager::PrimitiveType::TRIANGLES, vertBuffer, indBuffer, 0, 3)
+ *         .receiveShadows(false)
+ *         .build(engine, renderable);
+ *
+ * scene->addEntity(renderable);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Instance lifetime
+ * =================
+ *
+ * An Instance is a transient handle: Instances are not stable when a component is added,
+ * removed or gc() is called on a component manager.
+ *
+ * Instances must therefore not be kept across frames. Keep the Entity instead, and call
+ * getInstance() again when needed; it is a fast lookup. Using a stale Instance doesn't crash
+ * but silently accesses the wrong component.
+ *
+ * - For details about constructing renderables, see RenderableManager::Builder.
+ * - To associate a 4x4 transform with an entity, see TransformManager.
+ * - To associate a human-readable label with an entity, see utils::NameComponentManager.
+ */
 typedef struct FilaRenderableManager FilaRenderableManager;
+
+/**
+ * The transformation associated with a skinning joint.
+ *
+ * Clients can specify bones either using this quat-vec3 pair, or by using 4x4 matrices.
+ */
 typedef struct FilaRenderableManagerBone FilaRenderableManagerBone;
+
+/** Adds renderable components to entities using a builder pattern. */
 typedef struct FilaRenderableManagerBuilder FilaRenderableManagerBuilder;
+
+/**
+ * A Renderer instance represents an operating system's window.
+ *
+ * Typically, applications create a Renderer per window. The Renderer generates drawing commands
+ * for the render thread and manages frame latency.
+ *
+ * A Renderer generates drawing commands from a View, itself containing a Scene description.
+ *
+ * Creation and Destruction
+ * ========================
+ *
+ * A Renderer is created using Engine.createRenderer() and destroyed using
+ * Engine.destroy(const Renderer*).
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Renderer.h>
+ * #include <filament/Engine.h>
+ * using namespace filament;
+ *
+ * Engine* engine = Engine::create();
+ *
+ * Renderer* renderer = engine->createRenderer();
+ * engine->destroy(&renderer);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @see Engine, View
+ */
 typedef struct FilaRenderer FilaRenderer;
+
+/** ClearOptions are used at the beginning of a frame to clear or retain the SwapChain content. */
 typedef struct FilaRendererClearOptions FilaRendererClearOptions;
+
+/**
+ * Use DisplayInfo to set important Display properties. This is used to achieve correct
+ * frame pacing and dynamic resolution scaling.
+ */
 typedef struct FilaRendererDisplayInfo FilaRendererDisplayInfo;
+
+/**
+ * Timing information about a frame
+ * @see getFrameInfoHistory()
+ */
 typedef struct FilaRendererFrameInfo FilaRendererFrameInfo;
+
+/**
+ * Use FrameRateOptions to set the desired frame rate and control how quickly the system
+ * reacts to GPU load changes.
+ *
+ * interval: desired frame interval in multiple of the refresh period, set in DisplayInfo
+ *           (as 1 / DisplayInfo::refreshRate)
+ *
+ * The parameters below are relevant when some Views are using dynamic resolution scaling:
+ *
+ * headRoomRatio: additional headroom for the GPU as a ratio of the targetFrameTime.
+ *                Useful for taking into account constant costs like post-processing or
+ *                GPU drivers on different platforms.
+ * history:   History size. higher values, tend to filter more (clamped to 31)
+ * scaleRate: rate at which the gpu load is adjusted to reach the target frame rate
+ *            This value can be computed as 1 / N, where N is the number of frames
+ *            needed to reach 64% of the target scale factor.
+ *            Higher values make the dynamic resolution react faster.
+ *
+ * @see View::DynamicResolutionOptions
+ * @see Renderer::DisplayInfo
+ */
 typedef struct FilaRendererFrameRateOptions FilaRendererFrameRateOptions;
+
+/**
+ * A Scene is a flat container of Renderable and Light instances.
+ *
+ * A Scene doesn't provide a hierarchy of Renderable objects, i.e.: it's not a scene-graph.
+ * However, it manages the list of objects to render and the list of lights. Renderable
+ * and Light objects can be added or removed from a Scene at any time.
+ *
+ * A Renderable *must* be added to a Scene in order to be rendered, and the Scene must be
+ * provided to a View.
+ *
+ *
+ * Creation and Destruction
+ * ========================
+ *
+ * A Scene is created using Engine.createScene() and destroyed using
+ * Engine.destroy(const Scene*).
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Scene.h>
+ * #include <filament/Engine.h>
+ * using namespace filament;
+ *
+ * Engine* engine = Engine::create();
+ *
+ * Scene* scene = engine->createScene();
+ * engine->destroy(&scene);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @see View, Renderable, Light
+ */
 typedef struct FilaScene FilaScene;
+
+/**
+ * Options for Screen-space Reflections.
+ * @see #setScreenSpaceReflectionsOptions
+ */
 typedef struct FilaScreenSpaceReflectionsOptions FilaScreenSpaceReflectionsOptions;
+
+/**
+ * SkinningBuffer is used to hold skinning data (bones). It is a simple wraper around
+ * a structured UBO.
+ * @see RenderableManager::setSkinningBuffer
+ */
 typedef struct FilaSkinningBuffer FilaSkinningBuffer;
+
 typedef struct FilaSkinningBufferBuilder FilaSkinningBufferBuilder;
+
+/**
+ * Skybox
+ *
+ * When added to a Scene, the Skybox fills all untouched pixels.
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * A Skybox object is created using the Skybox::Builder and destroyed by calling
+ * Engine::destroy(const Skybox*).
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *
+ *  filament::IndirectLight* skybox = filament::Skybox::Builder()
+ *              .environment(cubemap)
+ *              .build(*engine);
+ *
+ *  engine->destroy(skybox);
+ * ~~~~~~~~~~~
+ *
+ *
+ * @note
+ * Currently only Texture based sky boxes are supported.
+ *
+ * @see Scene, IndirectLight
+ */
 typedef struct FilaSkybox FilaSkybox;
+
+/** Use Builder to construct an Skybox object instance */
 typedef struct FilaSkyboxBuilder FilaSkyboxBuilder;
+
+/**
+ * View-level options for PCSS Shadowing.
+ * @see #setSoftShadowOptions
+ * <b>Warning:</b> This API is still experimental and subject to change.
+ */
 typedef struct FilaSoftShadowOptions FilaSoftShadowOptions;
+
+/** Options for stereoscopic (multi-eye) rendering. */
 typedef struct FilaStereoscopicOptions FilaStereoscopicOptions;
+
+/**
+ * Stream is used to attach a video stream to a Filament `Texture`.
+ *
+ * Note that the `Stream` class is fairly Android centric. It supports two different
+ * configurations:
+ *
+ *   - ACQUIRED.....connects to an Android AHardwareBuffer
+ *   - NATIVE.......connects to an Android SurfaceTexture
+ *
+ * Before explaining these different configurations, let's review the high-level structure of an AR
+ * or video application that uses Filament:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * while (true) {
+ *
+ *     // Misc application work occurs here, such as:
+ *     // - Writing the image data for a video frame into a Stream
+ *     // - Moving the Filament Camera
+ *
+ *     if (renderer->beginFrame(swapChain)) {
+ *         renderer->render(view);
+ *         renderer->endFrame();
+ *     }
+ * }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Let's say that the video image data at the time of a particular invocation of `beginFrame`
+ * becomes visible to users at time A. The 3D scene state (including the camera) at the time of
+ * that same invocation becomes apparent to users at time B.
+ *
+ * - If time A matches time B, we say that the stream is \em{synchronized}.
+ * - Filament invokes low-level graphics commands on the \em{driver thread}.
+ * - The thread that calls `beginFrame` is called the \em{main thread}.
+ *
+ * For ACQUIRED streams, there is no need to perform the copy because Filament explicitly acquires
+ * the stream, then releases it later via a callback function. This configuration is especially
+ * useful when the Vulkan backend is enabled.
+ *
+ * NATIVE streams are deprecated because they are backend specific and do not make any synchronization guarantee.
+ *
+ * Please see `sample-stream-test` and `sample-hello-camera` for usage examples.
+ *
+ * @see backend::StreamType
+ * @see Texture#setExternalStream
+ * @see Engine#destroyStream
+ */
 typedef struct FilaStream FilaStream;
+
+/**
+ * Constructs a Stream object instance.
+ *
+ * By default, Stream objects are ACQUIRED and must have external images pushed to them via
+ * <pre>Stream::setAcquiredImage</pre>.
+ *
+ * To create a NATIVE stream, call the <pre>stream</pre> method on the builder.
+ */
 typedef struct FilaStreamBuilder FilaStreamBuilder;
+
+/**
+ * A swap chain represents an Operating System's *native* renderable surface.
+ *
+ * Typically, it's a native window or a view. Because a SwapChain is initialized from a
+ * native object, it is given to filament as a `void *`, which must be of the proper type
+ * for each platform filament is running on.
+ *
+ * ```
+ * SwapChain* swapChain = engine->createSwapChain(nativeWindow);
+ * ```
+ *
+ * When Engine::create() is used without specifying a Platform, the `nativeWindow`
+ * parameter above must be of type:
+ *
+ * Platform        | nativeWindow type
+ * :---------------|:----------------------------:
+ * Android         | ANativeWindow*
+ * macOS - OpenGL  | NSView*
+ * macOS - Metal   | CAMetalLayer*
+ * iOS - OpenGL    | CAEAGLLayer*
+ * iOS - Metal     | CAMetalLayer*
+ * X11             | Window
+ * Windows         | HWND
+ *
+ * Otherwise, the `nativeWindow` is defined by the concrete implementation of Platform.
+ *
+ *
+ * Examples:
+ *
+ * Android
+ * -------
+ *
+ * On Android, an `ANativeWindow*` can be obtained from a Java `Surface` object using:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  #include <android/native_window_jni.h>
+ *  // parameters
+ *  // env:         JNIEnv*
+ *  // surface:     jobject
+ *  ANativeWindow* win = ANativeWindow_fromSurface(env, surface);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * \warning
+ * Don't use reflection to access the `mNativeObject` field, it won't work.
+ *
+ * A `Surface` can be retrieved from a `SurfaceView` or `SurfaceHolder` easily using
+ * `SurfaceHolder.getSurface()` and/or `SurfaceView.getHolder()`.
+ *
+ * \note
+ * To use a `TextureView` as a SwapChain, it is necessary to first get its `SurfaceTexture`,
+ * for instance using `TextureView.SurfaceTextureListener` and then create a `Surface`:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.java}
+ *  // using a TextureView.SurfaceTextureListener:
+ *  public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+ *      mSurface = new Surface(surfaceTexture);
+ *      // mSurface can now be used in JNI to create an ANativeWindow.
+ *  }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Linux
+ * -----
+ *
+ * Example using SDL:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * SDL_SysWMinfo wmi;
+ * SDL_VERSION(&wmi.version);
+ * SDL_GetWindowWMInfo(sdlWindow, &wmi);
+ * Window nativeWindow = (Window) wmi.info.x11.window;
+ *
+ * using namespace filament;
+ * Engine* engine       = Engine::create();
+ * SwapChain* swapChain = engine->createSwapChain((void*) nativeWindow);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Windows
+ * -------
+ *
+ * Example using SDL:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * SDL_SysWMinfo wmi;
+ * SDL_VERSION(&wmi.version);
+ * FILAMENT_CHECK_POSTCONDITION(SDL_GetWindowWMInfo(sdlWindow, &wmi)) << "SDL version unsupported!";
+ * HDC nativeWindow = (HDC) wmi.info.win.hdc;
+ *
+ * using namespace filament;
+ * Engine* engine       = Engine::create();
+ * SwapChain* swapChain = engine->createSwapChain((void*) nativeWindow);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * OSX
+ * ---
+ *
+ * On OSX, any `NSView` can be used *directly* as a `nativeWindow` with createSwapChain().
+ *
+ * Example using SDL/Objective-C:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.mm}
+ *  #include <filament/Engine.h>
+ *
+ *  #include <Cocoa/Cocoa.h>
+ *  #include <SDL_syswm.h>
+ *
+ *  SDL_SysWMinfo wmi;
+ *  SDL_VERSION(&wmi.version);
+ *  NSWindow* win = (NSWindow*) wmi.info.cocoa.window;
+ *  NSView* view = [win contentView];
+ *  void* nativeWindow = view;
+ *
+ *  using namespace filament;
+ *  Engine* engine       = Engine::create();
+ *  SwapChain* swapChain = engine->createSwapChain(nativeWindow);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @see Engine
+ */
 typedef struct FilaSwapChain FilaSwapChain;
+
+/**
+ * Options for Temporal Anti-aliasing (TAA)
+ * Most TAA parameters are extremely costly to change, as they will trigger the TAA post-process
+ * shaders to be recompiled. These options should be changed or set during initialization.
+ * `filterWidth`, `feedback` and `jitterPattern`, however, can be changed at any time.
+ *
+ * <p><code>feedback</code> of 0.1 effectively accumulates a maximum of 19 samples in steady state.
+ * see "A Survey of Temporal Antialiasing Techniques" by Lei Yang and all for more information.</p>
+ *
+ * @see #setTemporalAntiAliasingOptions
+ */
 typedef struct FilaTemporalAntiAliasingOptions FilaTemporalAntiAliasingOptions;
+
+/**
+ * Texture
+ *
+ * The Texture class supports:
+ *  - 2D textures
+ *  - 3D textures
+ *  - Cube maps
+ *  - mip mapping
+ *
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * A Texture object is created using the Texture::Builder and destroyed by calling
+ * Engine::destroy(const Texture*).
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *
+ *  filament::Texture* texture = filament::Texture::Builder()
+ *              .width(64)
+ *              .height(64)
+ *              .build(*engine);
+ *
+ *  engine->destroy(texture);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 typedef struct FilaTexture FilaTexture;
+
+/** Use Builder to construct a Texture object instance */
 typedef struct FilaTextureBuilder FilaTextureBuilder;
+
+/** TextureSampler defines how a texture is accessed. */
 typedef struct FilaTextureSampler FilaTextureSampler;
+
+/**
+ * Interface for tone mapping operators. A tone mapping operator, or tone mapper,
+ * is responsible for compressing the dynamic range of the rendered scene to a
+ * dynamic range suitable for display.
+ *
+ * In Filament, tone mapping is a color grading step. ToneMapper instances are
+ * created and passed to the ColorGrading::Builder to produce a 3D LUT that will
+ * be used during post-processing to prepare the final color buffer for display.
+ *
+ * Filament provides several default tone mapping operators that fall into three
+ * categories:
+ *
+ * - Configurable tone mapping operators
+ *   - GenericToneMapper
+ *   - AgXToneMapper
+ * - Fixed-aesthetic tone mapping operators
+ *   - ACESToneMapper
+ *   - ACESLegacyToneMapper
+ *   - FilmicToneMapper
+ *   - PBRNeutralToneMapper
+ *   - GT7ToneMapper
+ * - Debug/validation tone mapping operators
+ *   - LinearToneMapper
+ *   - DisplayRangeToneMapper
+ *
+ * You can create custom tone mapping operators by subclassing ToneMapper.
+ */
 typedef struct FilaToneMapper FilaToneMapper;
+
+/**
+ * TransformManager is used to add transform components to entities.
+ *
+ * A Transform component gives an entity a position and orientation in space in the coordinate
+ * space of its parent transform. The TransformManager takes care of computing the world-space
+ * transform of each component (i.e. its transform relative to the root).
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * A transform component is created using TransformManager::create() and destroyed by calling
+ * TransformManager::destroy().
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  filament::Engine* engine = filament::Engine::create();
+ *  utils::Entity object = utils::EntityManager.get().create();
+ *
+ *  auto& tcm = engine->getTransformManager();
+ *
+ *  // create the transform component
+ *  tcm.create(object);
+ *
+ *  // set its transform
+ *  auto i = tcm.getInstance(object);
+ *  tcm.setTransform(i, mat4f::translation({ 0, 0, -1 }));
+ *
+ *  // destroy the transform component
+ *  tcm.destroy(object);
+ * ~~~~~~~~~~~
+ *
+ * Instance lifetime
+ * =================
+ *
+ * An Instance is a transient handle: Instances are not stable when a component is added,
+ * removed or gc() is called on a component manager. In addition, TransformManager reorders
+ * its components internally to speed up world transform computation, which changes the Instance
+ * associated with an Entity.
+ * An Instance obtained from getInstance() is only valid until the next call to any of:
+ *
+ * - create(), destroy() or setParent() on this TransformManager,
+ * - commitLocalTransformTransaction(),
+ * - Renderer::endFrame() or Renderer::skipFrame(), which perform periodic maintenance.
+ *
+ * Instances must therefore not be kept across frames. Keep the Entity instead, and call
+ * getInstance() again when needed; it is a fast lookup. Using a stale Instance doesn't crash
+ * but silently accesses the wrong component.
+ */
 typedef struct FilaTransformManager FilaTransformManager;
+
+/**
+ * Holds a set of buffers that define the geometry of a Renderable.
+ *
+ * The geometry of the Renderable itself is defined by a set of vertex attributes such as
+ * position, color, normals, tangents, etc...
+ *
+ * There is no need to have a 1-to-1 mapping between attributes and buffer. A buffer can hold the
+ * data of several attributes -- attributes are then referred as being "interleaved".
+ *
+ * The buffers themselves are GPU resources, therefore mutating their data can be relatively slow.
+ * For this reason, it is best to separate the constant data from the dynamic data into multiple
+ * buffers.
+ *
+ * It is possible, and even encouraged, to use a single vertex buffer for several Renderables.
+ *
+ * @see IndexBuffer, RenderableManager
+ */
 typedef struct FilaVertexBuffer FilaVertexBuffer;
+
 typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
+
+/**
+ * A View encompasses all the state needed for rendering a Scene.
+ *
+ * Renderer::render() operates on View objects. These View objects specify important parameters
+ * such as:
+ *  - The Scene
+ *  - The Camera
+ *  - The Viewport
+ *  - Some rendering parameters
+ *
+ * \note
+ * View instances are heavy objects that internally cache a lot of data needed for rendering.
+ * It is not advised for an application to use many View objects.
+ *
+ * For example, in a game, a View could be used for the main scene and another one for the
+ * game's user interface. More View instances could be used for creating special effects (e.g.
+ * a View is akin to a rendering pass).
+ *
+ *
+ * @see Renderer, Scene, Camera, RenderTarget
+ */
 typedef struct FilaView FilaView;
+
+/** User data for PickingQueryResultCallback */
 typedef struct FilaViewPickingQuery FilaViewPickingQuery;
+
+/** Result of a picking query */
 typedef struct FilaViewPickingQueryResult FilaViewPickingQueryResult;
+
+/**
+ * Viewport describes a view port in pixel coordinates
+ *
+ * A view port is represented by its left-bottom coordinate, width and height in pixels.
+ */
 typedef struct FilaViewport FilaViewport;
+
+/** Options to control the vignetting effect. */
 typedef struct FilaVignetteOptions FilaVignetteOptions;
+
+/**
+ * View-level options for VSM Shadowing.
+ * @see #setVsmShadowOptions
+ * <b>Warning:</b> This API is still experimental and subject to change.
+ */
 typedef struct FilaVsmShadowOptions FilaVsmShadowOptions;
+
+/**
+ * A CPU memory-buffer descriptor, typically used to transfer data from the CPU to the GPU.
+ *
+ * A BufferDescriptor owns the memory buffer it references, therefore BufferDescriptor cannot
+ * be copied, but can be moved.
+ *
+ * BufferDescriptor releases ownership of the memory-buffer when it's destroyed.
+ */
 typedef struct FilaBufferDescriptor FilaBufferDescriptor;
+
+/**
+ * A generic interface to dispatch callbacks.
+ *
+ * All APIs that take a callback as argument also take a
+ * CallbackHandler* which is used to dispatch the
+ * callback: CallbackHandler::post() method is called from a service thread as soon
+ * as possible (this will NEVER be the main thread), CallbackHandler::post()
+ * is  responsible for scheduling the callback onto the thread the
+ * user desires.
+ *
+ * This is intended to make callbacks interoperate with
+ * the platform/OS's own messaging system.
+ *
+ * CallbackHandler* can always be nullptr in which case the default handler is used. The
+ * default handler always dispatches callbacks on filament's main thread opportunistically.
+ *
+ * Life time:
+ * ---------
+ *
+ * Filament make no attempts to manage the life time of the CallbackHandler* and never takes
+ * ownership.
+ * In particular, this means that the CallbackHandler instance must stay valid until all
+ * pending callbacks are been dispatched.
+ *
+ * Similarly, when shutting down filament, care must be taken to ensure that all pending callbacks
+ * that might access filament's state have been dispatched. Filament can no longer ensure this
+ * because callback execution is the responsibility of the CallbackHandler, which is external to
+ * filament.
+ * Typically, the concrete CallbackHandler would have a mechanism to drain and/or wait for all
+ * callbacks to be processed.
+ */
 typedef struct FilaCallbackHandler FilaCallbackHandler;
+
+/**
+ * A descriptor to an image in main memory, typically used to transfer image data from the CPU
+ * to the GPU.
+ *
+ * A PixelBufferDescriptor owns the memory buffer it references, therefore PixelBufferDescriptor
+ * cannot be copied, but can be moved.
+ *
+ * PixelBufferDescriptor releases ownership of the memory-buffer when it's destroyed.
+ */
 typedef struct FilaPixelBufferDescriptor FilaPixelBufferDescriptor;
+
+/**
+ * Platform is an interface that abstracts how the backend (also referred to as Driver) is
+ * created. The backend provides several common Platform concrete implementations, which are
+ * selected automatically. It is possible however to provide a custom Platform when creating
+ * the filament Engine.
+ */
 typedef struct FilaPlatform FilaPlatform;
+
 typedef struct FilaPlatformCompositorTiming FilaPlatformCompositorTiming;
 typedef struct FilaPlatformDriverConfig FilaPlatformDriverConfig;
 typedef struct FilaPlatformFrameTimestamps FilaPlatformFrameTimestamps;
 typedef struct FilaPlatformSwapChain FilaPlatformSwapChain;
+
+/**
+ * A PresentCallable is a callable object that, when called, schedules a frame for presentation on
+ * a SwapChain.
+ *
+ * Typically, Filament's backend is responsible for scheduling a frame's presentation. However,
+ * there are certain cases where the application might want to control when a frame is scheduled for
+ * presentation.
+ *
+ * For example, on iOS, UIKit elements can be synchronized to 3D content by scheduling a present
+ * within a CATransaction:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * void myFrameScheduledCallback(PresentCallable presentCallable, void* user) {
+ *     [CATransaction begin];
+ *     // Update other UI elements...
+ *     presentCallable();
+ *     [CATransaction commit];
+ * }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * To obtain a PresentCallable, set a SwapChain::FrameScheduledCallback on a SwapChain with the
+ * SwapChain::setFrameScheduledCallback method. The callback is called with a PresentCallable object
+ * and optional user data:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * swapChain->setFrameScheduledCallback(nullptr, myFrameScheduledCallback);
+ * if (renderer->beginFrame(swapChain)) {
+ *     renderer->render(view);
+ *     renderer->endFrame();
+ * }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @remark The PresentCallable mechanism for user-controlled presentation is only supported by
+ * Filament's Metal backend. On other backends, the FrameScheduledCallback is still invoked, but the
+ * PresentCallable passed to it is a no-op and calling it has no effect.
+ *
+ * When using the Metal backend, applications *must* call each PresentCallable they receive. Each
+ * PresentCallable represents a frame that is waiting to be presented, and failing to call it
+ * will result in a memory leak. To "cancel" the presentation of a frame, pass false to the
+ * PresentCallable, which will cancel the presentation of the frame and release associated memory.
+ *
+ * @see Renderer, SwapChain::setFrameScheduledCallback
+ */
 typedef struct FilaPresentCallable FilaPresentCallable;
+
+/**
+ * <p>A color space in Filament is always an RGB color space. A specific RGB color space
+ * is defined by the following properties:</p>
+ * <ul>
+ *     <li>Three chromaticities of the red, green and blue primaries, which
+ *     define the gamut of the color space.</li>
+ *     <li>A white point chromaticity that defines the stimulus to which
+ *     color space values are normalized (also just called "white").</li>
+ *     <li>An opto-electronic transfer function, also called opto-electronic
+ *     conversion function or often, and approximately, gamma function.</li>
+ *     <li>An electro-optical transfer function, also called electo-optical
+ *     conversion function or often, and approximately, gamma function.</li>
+ * </ul>
+ *
+ * <h3>Primaries and white point chromaticities</h3>
+ * <p>In this implementation, the chromaticity of the primaries and the white
+ * point of an RGB color space is defined in the CIE xyY color space. This
+ * color space separates the chromaticity of a color, the x and y components,
+ * and its luminance, the Y component. Since the primaries and the white
+ * point have full brightness, the Y component is assumed to be 1 and only
+ * the x and y components are needed to encode them.</p>
+ *
+ * <h3>Transfer functions</h3>
+ * <p>A transfer function is a color component conversion function, defined as
+ * a single variable, monotonic mathematical function. It is applied to each
+ * individual component of a color. They are used to perform the mapping
+ * between linear tristimulus values and non-linear electronic signal value.</p>
+ * <p>The <em>opto-electronic transfer function</em> (OETF or OECF) encodes
+ * tristimulus values in a scene to a non-linear electronic signal value.</p>
+ */
 typedef struct FilaColorColorSpace FilaColorColorSpace;
+
+/**
+ * Defines the chromaticities of the primaries for a color space. The chromaticities
+ * are expressed as three pairs of xy coordinates (in xyY) for the red, green, and blue
+ * chromaticities.
+ */
 typedef struct FilaColorGamut FilaColorGamut;
+
+/**
+ * Intermediate class used when building a color space using the "-" syntax:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * // Declares a "linear sRGB" color space.
+ * ColorSpace myColorSpace = Rec709-Linear-D65;
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 typedef struct FilaColorPartialColorSpace FilaColorPartialColorSpace;
+
+/**
+ * Holds the chromaticities of a color space's primaries as xy coordinates
+ * in xyY (Y is assumed to be 1).
+ */
 typedef struct FilaColorPrimaries FilaColorPrimaries;
+
+/**
+ * <p>Defines the parameters for the ICC parametric curve type 4, as
+ * defined in ICC.1:2004-10, section 10.15.</p>
+ *
+ * <p>The EOTF is of the form:</p>
+ *
+ * \(\begin{equation}
+ * Y = \begin{cases}c X + f & X \lt d \\\
+ * \left( a X + b \right) ^{g} + e & X \ge d \end{cases}
+ * \end{equation}\)
+ *
+ * <p>The corresponding OETF is simply the inverse function.</p>
+ *
+ * <p>The parameters defined by this class form a valid transfer
+ * function only if all the following conditions are met:</p>
+ * <ul>
+ *     <li>No parameter is a NaN</li>
+ *     <li>\(d\) is in the range \([0..1]\)</li>
+ *     <li>The function is not constant</li>
+ *     <li>The function is positive and increasing</li>
+ * </ul>
+ */
 typedef struct FilaColorTransferFunction FilaColorTransferFunction;
+
+/** The surface orientation helper can be used to populate Filament-style TANGENTS buffers. */
 typedef struct FilaGeometrySurfaceOrientation FilaGeometrySurfaceOrientation;
+
+/**
+ * The Builder is used to construct an immutable surface orientation helper.
+ *
+ * Clients provide pointers into their own data, which is synchronously consumed during build().
+ * At a minimum, clients must supply a vertex count. They can supply data in any of the
+ * following combinations:
+ *
+ *   1. normals only ........................... not recommended, selects arbitrary orientation
+ *   2. normals + tangents ..................... sign of W determines bitangent orientation
+ *   3. normals + uvs + positions + indices .... selects Lengyel’s Method
+ *   4. positions + indices .................... generates normals for flat shading only
+ *
+ * Additionally, the client-side data has the following type constraints:
+ *
+ *  - Normals must be float3
+ *  - Tangents must be float4
+ *  - UVs must be float2
+ *  - Positions must be float3
+ *  - Triangles must be uint3 or ushort3
+ *
+ * Currently, mikktspace is not supported because it requires re-indexing the mesh. Instead
+ * we use the method described by Eric Lengyel in "Foundations of Game Engine Development"
+ * (Volume 2, Chapter 7).
+ */
 typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientationBuilder;
+
+/**
+ * @class EntityManager
+ * @brief Thread-safe coordinator managing the lifecycle, indices, and generation tracking for all Entity instances.
+ *
+ * @details The EntityManager is the core source-of-truth for Entity identities in Filament. It coordinates the
+ * creation, recycling, and safe reclamation of 32-bit Entity IDs. Due to the highly multithreaded nature of the
+ * engine, the EntityManager provides **two distinct groups of APIs**:
+ *
+ * ---
+ *
+ * ### 1. Public API (Gameplay & Application Layer)
+ * This group is aimed at standard usage for applications, renderers, and game systems.
+ * - **Entity Creation**: Methods like @p create() and @p create(size_t, Entity*) allocate new or recycled Entity
+ *   identities.
+ * - **Entity Destruction**: Methods like @p destroy(Entity) and @p destroy(size_t, Entity*) logically kill entities,
+ *   instantly advancing the active timeline.
+ * - **Queries & Hooks**: Mechanisms to query logical presence (@p isAlive()) or subscribe to global destruction
+ *   notifications via @p registerChangeCallback().
+ *
+ * ---
+ *
+ * ### 2. Internal Component API (ECS Integration & Component Managers)
+ * This group supports the underlying asynchronous **Epoch-Based Reclamation (EBR)** garbage collector. Designed
+ * exclusively for subclasses of @p SingleInstanceComponentManagerBase (e.g. @p FCameraManager, @p FTransformManager),
+ * these methods govern thread-consensus and physical payload purging budgets:
+ * - **Consensus Registration**: Methods like @p registerWatermark() and @p unregisterWatermark() allow components to
+ *   join or vacate the global timeline consensus.
+ * - **Timeline Sweeps**: Methods like @p advanceEpoch() and @p reclaimSafeEpochs() seal completed frames and process
+ *   physical reclaiming boundaries.
+ * - **Missed Garbage Harvests**: APIs like @p getMissedGarbage() enable Component Managers to retrieve logically dead
+ *   Entity bitsets precisely synced against their local watermarks in atomic, collision-free transaction blocks.
+ */
 typedef struct FilaUtilsEntityManager FilaUtilsEntityManager;
+
 
 // filament::AgxToneMapper::AgxLook
 typedef enum FilaAgxToneMapperAgxLook {
+    /** Base contrast with no look applied */
     FILA_AGX_TONE_MAPPER_AGX_LOOK_NONE = 0,
+    /** A punchy and more chroma laden look for sRGB displays */
     FILA_AGX_TONE_MAPPER_AGX_LOOK_PUNCHY = 1,
+    /** A golden tinted, slightly washed look for BT.1886 displays */
     FILA_AGX_TONE_MAPPER_AGX_LOOK_GOLDEN = 2,
 } FilaAgxToneMapperAgxLook;
 
 // filament::AmbientOcclusionOptions::AmbientOcclusionType
 typedef enum FilaAmbientOcclusionOptionsAmbientOcclusionType {
+    /** use Scalable Ambient Occlusion */
     FILA_AMBIENT_OCCLUSION_OPTIONS_AMBIENT_OCCLUSION_TYPE_SAO = 0,
+    /** use Ground Truth-Based Ambient Occlusion */
     FILA_AMBIENT_OCCLUSION_OPTIONS_AMBIENT_OCCLUSION_TYPE_GTAO = 1,
 } FilaAmbientOcclusionOptionsAmbientOcclusionType;
 
 // filament::AntiAliasing
+/**
+ * List of available post-processing anti-aliasing techniques.
+ * @see #setAntiAliasing
+ * @see #getAntiAliasing
+ * @see #setSampleCount
+ */
 typedef enum FilaAntiAliasing {
+    /** no anti aliasing performed as part of post-processing */
     FILA_ANTI_ALIASING_NONE = 0,
+    /** FXAA is a low-quality but very efficient type of anti-aliasing. (default). */
     FILA_ANTI_ALIASING_FXAA = 1,
 } FilaAntiAliasing;
 
@@ -179,38 +1915,60 @@ typedef enum FilaBlendMode {
 } FilaBlendMode;
 
 // filament::BlendingMode
+/** Supported blending modes */
 typedef enum FilaBlendingMode {
+    /** material is opaque */
     FILA_BLENDING_MODE_OPAQUE = 0,
+    /** material is transparent and color is alpha-pre-multiplied, affects diffuse lighting only */
     FILA_BLENDING_MODE_TRANSPARENT = 1,
+    /** material is additive (e.g.: hologram) */
     FILA_BLENDING_MODE_ADD = 2,
+    /** material is masked (i.e. alpha tested) */
     FILA_BLENDING_MODE_MASKED = 3,
+    /**
+     * material is transparent and color is alpha-pre-multiplied, affects specular lighting
+     * when adding more entries, change the size of FRenderer::CommandKey::blending
+     */
     FILA_BLENDING_MODE_FADE = 4,
+    /** material darkens what's behind it */
     FILA_BLENDING_MODE_MULTIPLY = 5,
+    /** material brightens what's behind it */
     FILA_BLENDING_MODE_SCREEN = 6,
+    /** custom blending function */
     FILA_BLENDING_MODE_CUSTOM = 7,
 } FilaBlendingMode;
 
 // filament::BloomOptions::BlendMode
 typedef enum FilaBloomOptionsBlendMode {
+    /** Bloom is modulated by the strength parameter and added to the scene */
     FILA_BLOOM_OPTIONS_BLEND_MODE_ADD = 0,
+    /** Bloom is interpolated with the scene using the strength parameter */
     FILA_BLOOM_OPTIONS_BLEND_MODE_INTERPOLATE = 1,
 } FilaBloomOptionsBlendMode;
 
 // filament::Camera::Fov
+/** Denotes a field-of-view direction. \see setProjection */
 typedef enum FilaCameraFov {
+    /** the field-of-view angle is defined on the vertical axis */
     FILA_CAMERA_FOV_VERTICAL = 0,
+    /** the field-of-view angle is defined on the horizontal axis */
     FILA_CAMERA_FOV_HORIZONTAL = 1,
 } FilaCameraFov;
 
 // filament::Camera::Projection
+/** Denotes the projection type used by this camera. \see setProjection */
 typedef enum FilaCameraProjection {
+    /** perspective projection, objects get smaller as they are farther */
     FILA_CAMERA_PROJECTION_PERSPECTIVE = 0,
+    /** orthonormal projection, preserves distances */
     FILA_CAMERA_PROJECTION_ORTHO = 1,
 } FilaCameraProjection;
 
 // filament::ColorGrading::LutFormat
 typedef enum FilaColorGradingLutFormat {
+    /** 10 bits per component */
     FILA_COLOR_GRADING_LUT_FORMAT_INTEGER = 0,
+    /** 16 bits per component (10 bits mantissa precision) */
     FILA_COLOR_GRADING_LUT_FORMAT_FLOAT = 1,
 } FilaColorGradingLutFormat;
 
@@ -230,8 +1988,11 @@ typedef enum FilaDepthOfFieldOptionsFilter {
 } FilaDepthOfFieldOptionsFilter;
 
 // filament::Dithering
+/** List of available post-processing dithering techniques. */
 typedef enum FilaDithering {
+    /** No dithering */
     FILA_DITHERING_NONE = 0,
+    /** Temporal dithering (default) */
     FILA_DITHERING_TEMPORAL = 1,
 } FilaDithering;
 
@@ -243,41 +2004,80 @@ typedef enum FilaEngineConfigShaderLanguage {
 } FilaEngineConfigShaderLanguage;
 
 // filament::Fence::Mode
+/**
+ * Mode controls the behavior of the command stream when calling wait()
+ *
+ * @attention
+ * It would be unwise to call `wait(..., Mode::DONT_FLUSH)` from the same thread
+ * the Fence was created, as it would most certainly create a dead-lock.
+ */
 typedef enum FilaFenceMode {
+    /** The command stream is flushed */
     FILA_FENCE_MODE_FLUSH = 0,
+    /** The command stream is not flushed */
     FILA_FENCE_MODE_DONT_FLUSH = 1,
 } FilaFenceMode;
 
 // filament::FramePacer::FrameStatus
 typedef enum FilaFramePacerFrameStatus {
+    /** Skipped to maintain target frame rate cadence (e.g. 30 FPS on 60Hz display). */
     FILA_FRAME_PACER_FRAME_STATUS_SKIPPED_SPURIOUS = -2,
+    /** Skipped to prevent out-of-order presentation (monotonic guard). */
     FILA_FRAME_PACER_FRAME_STATUS_SKIPPED_STALE = -1,
+    /** The frame is approved for rendering. */
     FILA_FRAME_PACER_FRAME_STATUS_ACCEPTED = 0,
 } FilaFramePacerFrameStatus;
 
 // filament::FramePacer::PacingStatus
 typedef enum FilaFramePacerPacingStatus {
+    /** Operating at or near the optimal configured latency. */
     FILA_FRAME_PACER_PACING_STATUS_STEADY = 0,
+    /** Latency has shrunk. The display is starving for buffers. */
     FILA_FRAME_PACER_PACING_STATUS_DISPLAY_STARVING = -1,
+    /** Latency has bloated. The display queue is stuffed. */
     FILA_FRAME_PACER_PACING_STATUS_DISPLAY_STUFFED = 1,
 } FilaFramePacerPacingStatus;
 
 // filament::FramePipelineEstimator::TargetPercentile
+/**
+ * TargetPercentile specifies the desired statistical confidence interval for workload estimation.
+ *
+ * The percentile P (e.g., P90 = 90%) represents the probability that a frame's processing
+ * time will fall within the estimated workload budget. Conversely, 1 - P represents the
+ * theoretical probability of exceeding the budget and missing a frame deadline (jank/stutter):
+ *
+ * - P50 (Z = 0.0): 50% theoretical miss rate. Expect constant judder (30 drops/sec at 60Hz).
+ * - P90 (Z = 1.282): 10% theoretical miss rate. Expect a drop every 10 frames (~6 drops/sec at 60Hz).
+ * - P95 (Z = 1.645): 5% theoretical miss rate. Expect a drop every 20 frames (~3 drops/sec at 60Hz).
+ *
+ * Note: In practice, actual visual stutters are significantly lower because:
+ * 1. Frame workloads have temporal coherence (spikes are clustered rather than independent).
+ * 2. The FramePacer's structural latency (queue depth) acts as a shock absorber.
+ */
 typedef enum FilaFramePipelineEstimatorTargetPercentile {
+    /** 50th percentile (mean workload, Z = 0.0) */
     FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P50 = 0,
+    /** 90th percentile (confidence interval, Z = 1.282) */
     FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P90 = 1,
+    /** 95th percentile (high confidence interval, Z = 1.645) */
     FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P95 = 2,
 } FilaFramePipelineEstimatorTargetPercentile;
 
 // filament::IndexBuffer::IndexType
+/** Type of the index buffer */
 typedef enum FilaIndexBufferIndexType {
+    /** 16-bit indices */
     FILA_INDEX_BUFFER_INDEX_TYPE_USHORT = 12,
+    /** 32-bit indices */
     FILA_INDEX_BUFFER_INDEX_TYPE_UINT = 17,
 } FilaIndexBufferIndexType;
 
 // filament::Interpolation
+/** Attribute interpolation types in the fragment shader */
 typedef enum FilaInterpolation {
+    /** default, smooth interpolation */
     FILA_INTERPOLATION_SMOOTH = 0,
+    /** flat interpolation */
     FILA_INTERPOLATION_FLAT = 1,
 } FilaInterpolation;
 
@@ -288,11 +2088,17 @@ typedef enum FilaLightManagerBuilderResult {
 } FilaLightManagerBuilderResult;
 
 // filament::LightManager::Type
+/** Denotes the type of the light being created. */
 typedef enum FilaLightManagerType {
+    /** Directional light that also draws a sun's disk in the sky. */
     FILA_LIGHT_MANAGER_TYPE_SUN = 0,
+    /** Directional light, emits light in a given direction. */
     FILA_LIGHT_MANAGER_TYPE_DIRECTIONAL = 1,
+    /** Point light, emits light from a position, in all directions. */
     FILA_LIGHT_MANAGER_TYPE_POINT = 2,
+    /** Physically correct spot light. */
     FILA_LIGHT_MANAGER_TYPE_FOCUSED_SPOT = 3,
+    /** Spot light with coupling of outer cone and illumination disabled. */
     FILA_LIGHT_MANAGER_TYPE_SPOT = 4,
 } FilaLightManagerType;
 
@@ -303,19 +2109,31 @@ typedef enum FilaMaterialBuilderShadowSamplingQuality {
 } FilaMaterialBuilderShadowSamplingQuality;
 
 // filament::Material::UboBatchingMode
+/** Defines whether a material instance should use UBO batching or not. */
 typedef enum FilaMaterialUboBatchingMode {
+    /**
+     * For default, it follows the engine settings.
+     * If UBO batching is enabled on the engine and the material domain is SURFACE, it
+     * turns on the UBO batching. Otherwise, it turns off the UBO batching.
+     */
     FILA_MATERIAL_UBO_BATCHING_MODE_DEFAULT = 0,
+    /** Disable the Ubo Batching for this material */
     FILA_MATERIAL_UBO_BATCHING_MODE_DISABLED = 1,
 } FilaMaterialUboBatchingMode;
 
 // filament::MaterialDomain
+/** Material domains */
 typedef enum FilaMaterialDomain {
+    /** shaders applied to renderables */
     FILA_MATERIAL_DOMAIN_SURFACE = 0,
+    /** shaders applied to rendered buffers */
     FILA_MATERIAL_DOMAIN_POST_PROCESS = 1,
+    /** compute shader */
     FILA_MATERIAL_DOMAIN_COMPUTE = 2,
 } FilaMaterialDomain;
 
 // filament::QualityLevel
+/** Generic quality level. */
 typedef enum FilaQualityLevel {
     FILA_QUALITY_LEVEL_LOW = 0,
     FILA_QUALITY_LEVEL_MEDIUM = 1,
@@ -324,42 +2142,66 @@ typedef enum FilaQualityLevel {
 } FilaQualityLevel;
 
 // filament::ReflectionMode
+/** Reflection mode */
 typedef enum FilaReflectionMode {
     FILA_REFLECTION_MODE_DEFAULT = 0,
+    /** reflections sample from the scene's IBL only */
     FILA_REFLECTION_MODE_SCREEN_SPACE = 1,
 } FilaReflectionMode;
 
 // filament::RefractionMode
+/** Refraction */
 typedef enum FilaRefractionMode {
+    /** no refraction */
     FILA_REFRACTION_MODE_NONE = 0,
+    /** refracted rays go to the ibl cubemap */
     FILA_REFRACTION_MODE_CUBEMAP = 1,
+    /** refracted rays go to screen space */
     FILA_REFRACTION_MODE_SCREEN_SPACE = 2,
 } FilaRefractionMode;
 
 // filament::RefractionType
+/** Refraction type */
 typedef enum FilaRefractionType {
+    /** refraction through solid objects (e.g. a sphere) */
     FILA_REFRACTION_TYPE_SOLID = 0,
+    /** refraction through thin objects (e.g. window) */
     FILA_REFRACTION_TYPE_THIN = 1,
 } FilaRefractionType;
 
 // filament::RenderTarget::AttachmentPoint
+/** Attachment identifiers */
 typedef enum FilaRenderTargetAttachmentPoint {
+    /** identifies the 1st color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR0 = 0,
+    /** identifies the 2nd color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR1 = 1,
+    /** identifies the 3rd color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR2 = 2,
+    /** identifies the 4th color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR3 = 3,
+    /** identifies the 5th color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR4 = 4,
+    /** identifies the 6th color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR5 = 5,
+    /** identifies the 7th color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR6 = 6,
+    /** identifies the 8th color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR7 = 7,
+    /** identifies the depth attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_DEPTH = 8,
+    /** identifies the 1st color attachment */
     FILA_RENDER_TARGET_ATTACHMENT_POINT_COLOR = 0,
 } FilaRenderTargetAttachmentPoint;
 
 // filament::RenderableManager::Builder::GeometryType
+/** Type of geometry for a Renderable */
 typedef enum FilaRenderableManagerBuilderGeometryType {
+    /** dynamic gemoetry has no restriction */
     FILA_RENDERABLE_MANAGER_BUILDER_GEOMETRY_TYPE_DYNAMIC = 0,
+    /** bounds and world space transform are immutable */
     FILA_RENDERABLE_MANAGER_BUILDER_GEOMETRY_TYPE_STATIC_BOUNDS = 1,
+    /** skinning/morphing not allowed and Vertex/IndexBuffer immutables */
     FILA_RENDERABLE_MANAGER_BUILDER_GEOMETRY_TYPE_STATIC = 2,
 } FilaRenderableManagerBuilderGeometryType;
 
@@ -370,20 +2212,45 @@ typedef enum FilaRenderableManagerBuilderResult {
 } FilaRenderableManagerBuilderResult;
 
 // filament::RgbType
+/** types of RGB colors */
 typedef enum FilaRgbType {
+    /** the color is defined in Rec.709-sRGB-D65 (sRGB) space */
     FILA_RGB_TYPE_S_RGB = 0,
+    /** the color is defined in Rec.709-Linear-D65 ("linear sRGB") space */
     FILA_RGB_TYPE_LINEAR = 1,
 } FilaRgbType;
 
 // filament::RgbaType
+/** types of RGBA colors */
 typedef enum FilaRgbaType {
+    /**
+     * the color is defined in Rec.709-sRGB-D65 (sRGB) space and the RGB values
+     * have not been pre-multiplied by the alpha (for instance, a 50%
+     * transparent red is <1,0,0,0.5>)
+     */
     FILA_RGBA_TYPE_S_RGB = 0,
+    /**
+     * the color is defined in Rec.709-Linear-D65 ("linear sRGB") space and the
+     * RGB values have not been pre-multiplied by the alpha (for instance, a 50%
+     * transparent red is <1,0,0,0.5>)
+     */
     FILA_RGBA_TYPE_LINEAR = 1,
+    /**
+     * the color is defined in Rec.709-sRGB-D65 (sRGB) space and the RGB values
+     * have been pre-multiplied by the alpha (for instance, a 50%
+     * transparent red is <0.5,0,0,0.5>)
+     */
     FILA_RGBA_TYPE_PREMULTIPLIED_S_RGB = 2,
+    /**
+     * the color is defined in Rec.709-Linear-D65 ("linear sRGB") space and the
+     * RGB values have been pre-multiplied by the alpha (for instance, a 50%
+     * transparent red is <0.5,0,0,0.5>)
+     */
     FILA_RGBA_TYPE_PREMULTIPLIED_LINEAR = 3,
 } FilaRgbaType;
 
 // filament::ShaderQuality
+/** Shader quality, affect some global quality parameters */
 typedef enum FilaShaderQuality {
     FILA_SHADER_QUALITY_DEFAULT = -1,
     FILA_SHADER_QUALITY_LOW = 0,
@@ -392,80 +2259,148 @@ typedef enum FilaShaderQuality {
 } FilaShaderQuality;
 
 // filament::Shading
+/** Supported shading models */
 typedef enum FilaShading {
+    /** no lighting applied, emissive possible */
     FILA_SHADING_UNLIT = 0,
+    /** default, standard lighting */
     FILA_SHADING_LIT = 1,
+    /** subsurface lighting model */
     FILA_SHADING_SUBSURFACE = 2,
+    /** cloth lighting model */
     FILA_SHADING_CLOTH = 3,
+    /** legacy lighting model */
     FILA_SHADING_SPECULAR_GLOSSINESS = 4,
 } FilaShading;
 
 // filament::ShadowType
+/**
+ * List of available shadow mapping techniques.
+ * @see #setShadowType
+ */
 typedef enum FilaShadowType {
+    /** percentage-closer filtered shadows (default) */
     FILA_SHADOW_TYPE_PCF = 0,
+    /** exponential variance shadows (EVSM) */
     FILA_SHADOW_TYPE_VSM = 1,
+    /** @deprecated falls back to PCSS */
     FILA_SHADOW_TYPE_DPCF = 2,
+    /** EVSM with soft shadows and contact hardening */
     FILA_SHADOW_TYPE_PCSS = 3,
+    /** EVSM with soft shadows and contact hardening */
     FILA_SHADOW_TYPE_PCFD = 4,
 } FilaShadowType;
 
 // filament::SpecularAmbientOcclusion
+/** Specular occlusion */
 typedef enum FilaSpecularAmbientOcclusion {
+    /** no specular occlusion */
     FILA_SPECULAR_AMBIENT_OCCLUSION_NONE = 0,
+    /** simple specular occlusion */
     FILA_SPECULAR_AMBIENT_OCCLUSION_SIMPLE = 1,
+    /** more accurate specular occlusion, requires bent normals */
     FILA_SPECULAR_AMBIENT_OCCLUSION_BENT_NORMALS = 2,
 } FilaSpecularAmbientOcclusion;
 
 // filament::TemporalAntiAliasingOptions::BoxClipping
 typedef enum FilaTemporalAntiAliasingOptionsBoxClipping {
+    /** Accurate box clipping */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_BOX_CLIPPING_ACCURATE = 0,
+    /** clamping */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_BOX_CLIPPING_CLAMP = 1,
+    /** no rejections (use for debugging) */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_BOX_CLIPPING_NONE = 2,
 } FilaTemporalAntiAliasingOptionsBoxClipping;
 
 // filament::TemporalAntiAliasingOptions::BoxType
 typedef enum FilaTemporalAntiAliasingOptionsBoxType {
+    /** use an AABB neighborhood */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_BOX_TYPE_AABB = 0,
+    /** use both AABB and variance */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_BOX_TYPE_AABB_VARIANCE = 1,
 } FilaTemporalAntiAliasingOptionsBoxType;
 
 // filament::TemporalAntiAliasingOptions::JitterPattern
 typedef enum FilaTemporalAntiAliasingOptionsJitterPattern {
+    /** 4-samples, rotated grid sampling */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_JITTER_PATTERN_RGSS_X4 = 0,
+    /** 4-samples, uniform grid in helix sequence */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_JITTER_PATTERN_UNIFORM_HELIX_X4 = 1,
+    /** 8-samples of halton 2,3 */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_JITTER_PATTERN_HALTON_23_X8 = 2,
+    /** 16-samples of halton 2,3 */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_JITTER_PATTERN_HALTON_23_X16 = 3,
+    /** 32-samples of halton 2,3 */
     FILA_TEMPORAL_ANTI_ALIASING_OPTIONS_JITTER_PATTERN_HALTON_23_X32 = 4,
 } FilaTemporalAntiAliasingOptionsJitterPattern;
 
 // filament::TransparencyMode
+/** How transparent objects are handled */
 typedef enum FilaTransparencyMode {
+    /** the transparent object is drawn honoring the raster state */
     FILA_TRANSPARENCY_MODE_DEFAULT = 0,
+    /**
+     * the transparent object is first drawn in the depth buffer,
+     * then in the color buffer, honoring the culling mode, but ignoring the depth test function
+     */
     FILA_TRANSPARENCY_MODE_TWO_PASSES_ONE_SIDE = 1,
+    /**
+     * the transparent object is drawn twice in the color buffer,
+     * first with back faces only, then with front faces; the culling
+     * mode is ignored. Can be combined with two-sided lighting
+     */
     FILA_TRANSPARENCY_MODE_TWO_PASSES_TWO_SIDES = 2,
 } FilaTransparencyMode;
 
 // filament::UserVariantFilterBit
 typedef enum FilaUserVariantFilterBit {
+    /**
+     * Directional lighting
+     *
+     * \note Since directional lighting was migrated to specialization constants, filtering this bit
+     * no longer affects the size of offline compiled materials (.filamat). However, we keep it
+     * for pruning unnecessary pipeline compilations at runtime.
+     */
     FILA_USER_VARIANT_FILTER_BIT_DIRECTIONAL_LIGHTING = 1,
+    /**
+     * Dynamic lighting
+     *
+     * \note Since dynamic lighting was migrated to specialization constants, filtering this bit
+     * no longer affects the size of offline compiled materials (.filamat). However, we keep it
+     * for pruning unnecessary pipeline compilations at runtime.
+     */
     FILA_USER_VARIANT_FILTER_BIT_DYNAMIC_LIGHTING = 2,
+    /** Shadow receiver */
     FILA_USER_VARIANT_FILTER_BIT_SHADOW_RECEIVER = 4,
+    /** Skinning */
     FILA_USER_VARIANT_FILTER_BIT_SKINNING = 8,
+    /** Fog */
     FILA_USER_VARIANT_FILTER_BIT_FOG = 16,
+    /** Variance shadow maps */
     FILA_USER_VARIANT_FILTER_BIT_VSM = 32,
+    /** Screen-space reflections */
     FILA_USER_VARIANT_FILTER_BIT_SSR = 64,
+    /** Instanced stereo rendering */
     FILA_USER_VARIANT_FILTER_BIT_STE = 128,
     FILA_USER_VARIANT_FILTER_BIT_ALL = 255,
 } FilaUserVariantFilterBit;
 
 // filament::VertexAttribute
+/** Vertex attribute types */
 typedef enum FilaVertexAttribute {
+    /** XYZ position (float3) */
     FILA_VERTEX_ATTRIBUTE_POSITION = 0,
+    /** tangent, bitangent and normal, encoded as a quaternion (float4) */
     FILA_VERTEX_ATTRIBUTE_TANGENTS = 1,
+    /** vertex color (float4) */
     FILA_VERTEX_ATTRIBUTE_COLOR = 2,
+    /** texture coordinates (float2) */
     FILA_VERTEX_ATTRIBUTE_UV0 = 3,
+    /** texture coordinates (float2) */
     FILA_VERTEX_ATTRIBUTE_UV1 = 4,
+    /** indices of 4 bones, as unsigned integers (uvec4) */
     FILA_VERTEX_ATTRIBUTE_BONE_INDICES = 5,
+    /** weights of the 4 bones (normalized float4) */
     FILA_VERTEX_ATTRIBUTE_BONE_WEIGHTS = 6,
     FILA_VERTEX_ATTRIBUTE_CUSTOM0 = 8,
     FILA_VERTEX_ATTRIBUTE_CUSTOM1 = 9,
@@ -486,45 +2421,86 @@ typedef enum FilaVertexAttribute {
 } FilaVertexAttribute;
 
 // filament::VertexDomain
+/** Supported types of vertex domains. */
 typedef enum FilaVertexDomain {
+    /** vertices are in object space, default */
     FILA_VERTEX_DOMAIN_OBJECT = 0,
+    /** vertices are in world space */
     FILA_VERTEX_DOMAIN_WORLD = 1,
+    /** vertices are in view space */
     FILA_VERTEX_DOMAIN_VIEW = 2,
+    /** vertices are in normalized device space */
     FILA_VERTEX_DOMAIN_DEVICE = 3,
 } FilaVertexDomain;
 
 // filament::backend::AsyncCallStatus
+/**
+ * Outcome of an asynchronous operation, reported to its completion callback.
+ *
+ * A completion callback that cannot say why it fired is ambiguous: chaining another operation from
+ * a callback that fired because the operation was canceled would proceed on a resource that was
+ * never populated. The caller cannot reconstruct the answer out of band either, because an
+ * operation can be canceled without anyone asking for it (the driver dropping queued work while
+ * shutting down).
+ *
+ * @see AsyncCallback, cancelAsyncJob
+ */
 typedef enum FilaAsyncCallStatus {
+    /** The operation ran to completion. */
     FILA_ASYNC_CALL_STATUS_COMPLETED = 0,
+    /**
+     * The operation never ran: it was canceled, or dropped because the driver is
+     * shutting down.
+     */
     FILA_ASYNC_CALL_STATUS_CANCELED = 1,
 } FilaAsyncCallStatus;
 
 // filament::backend::Backend
+/** Selects which driver a particular Engine should use. */
 typedef enum FilaBackend {
+    /** Automatically selects an appropriate driver for the platform. */
     FILA_BACKEND_DEFAULT = 0,
+    /** Selects the OpenGL/ES driver (default on Android) */
     FILA_BACKEND_OPENGL = 1,
+    /** Selects the Vulkan driver if the platform supports it (default on Linux/Windows) */
     FILA_BACKEND_VULKAN = 2,
+    /** Selects the Metal driver if the platform supports it (default on MacOS/iOS). */
     FILA_BACKEND_METAL = 3,
+    /** Selects the Webgpu driver if the platform supports webgpu. */
     FILA_BACKEND_WEBGPU = 4,
+    /** Selects the no-op driver for testing purposes. */
     FILA_BACKEND_NOOP = 5,
 } FilaBackend;
 
 // filament::backend::BlendFunction
+/** blending function */
 typedef enum FilaBlendFunction {
+    /** f(src, dst) = 0 */
     FILA_BLEND_FUNCTION_ZERO = 0,
+    /** f(src, dst) = 1 */
     FILA_BLEND_FUNCTION_ONE = 1,
+    /** f(src, dst) = src */
     FILA_BLEND_FUNCTION_SRC_COLOR = 2,
+    /** f(src, dst) = 1-src */
     FILA_BLEND_FUNCTION_ONE_MINUS_SRC_COLOR = 3,
+    /** f(src, dst) = dst */
     FILA_BLEND_FUNCTION_DST_COLOR = 4,
+    /** f(src, dst) = 1-dst */
     FILA_BLEND_FUNCTION_ONE_MINUS_DST_COLOR = 5,
+    /** f(src, dst) = src.a */
     FILA_BLEND_FUNCTION_SRC_ALPHA = 6,
+    /** f(src, dst) = 1-src.a */
     FILA_BLEND_FUNCTION_ONE_MINUS_SRC_ALPHA = 7,
+    /** f(src, dst) = dst.a */
     FILA_BLEND_FUNCTION_DST_ALPHA = 8,
+    /** f(src, dst) = 1-dst.a */
     FILA_BLEND_FUNCTION_ONE_MINUS_DST_ALPHA = 9,
+    /** f(src, dst) = (1,1,1) * min(src.a, 1 - dst.a), 1 */
     FILA_BLEND_FUNCTION_SRC_ALPHA_SATURATE = 10,
 } FilaBlendFunction;
 
 // filament::backend::BufferObjectBinding
+/** Buffer object binding type */
 typedef enum FilaBufferObjectBinding {
     FILA_BUFFER_OBJECT_BINDING_VERTEX = 0,
     FILA_BUFFER_OBJECT_BINDING_UNIFORM = 1,
@@ -532,13 +2508,29 @@ typedef enum FilaBufferObjectBinding {
 } FilaBufferObjectBinding;
 
 // filament::backend::CompilerPriorityQueue
+/**
+ * Shader compiler priority queue
+ *
+ * On platforms which support parallel shader compilation, compilation requests will be processed in
+ * order of priority, then insertion order. See Material::compile().
+ */
 typedef enum FilaCompilerPriorityQueue {
+    /**
+     * We need this program NOW.
+     *
+     * When passed as an argument to Material::compile(), if the platform doesn't support parallel
+     * compilation, but does support amortized shader compilation, the given shader program will be
+     * synchronously compiled.
+     */
     FILA_COMPILER_PRIORITY_QUEUE_CRITICAL = 0,
+    /** We will need this program soon. */
     FILA_COMPILER_PRIORITY_QUEUE_HIGH = 1,
+    /** We will need this program eventually. */
     FILA_COMPILER_PRIORITY_QUEUE_LOW = 2,
 } FilaCompilerPriorityQueue;
 
 // filament::backend::CompressedPixelDataType
+/** Compressed pixel data types */
 typedef enum FilaCompressedPixelDataType {
     FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_R11 = 0,
     FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_R11_SIGNED = 1,
@@ -597,6 +2589,7 @@ typedef enum FilaCompressedPixelDataType {
 } FilaCompressedPixelDataType;
 
 // filament::backend::ConstantType
+/** Supported constant parameter types */
 typedef enum FilaConstantType {
     FILA_CONSTANT_TYPE_INT = 0,
     FILA_CONSTANT_TYPE_FLOAT = 1,
@@ -604,14 +2597,20 @@ typedef enum FilaConstantType {
 } FilaConstantType;
 
 // filament::backend::CullingMode
+/** Face culling Mode */
 typedef enum FilaCullingMode {
+    /** No culling, front and back faces are visible */
     FILA_CULLING_MODE_NONE = 0,
+    /** Front face culling, only back faces are visible */
     FILA_CULLING_MODE_FRONT = 1,
+    /** Back face culling, only front faces are visible */
     FILA_CULLING_MODE_BACK = 2,
+    /** Front and Back, geometry is not visible */
     FILA_CULLING_MODE_FRONT_AND_BACK = 3,
 } FilaCullingMode;
 
 // filament::backend::ElementType
+/** Supported element types */
 typedef enum FilaElementType {
     FILA_ELEMENT_TYPE_BYTE = 0,
     FILA_ELEMENT_TYPE_BYTE2 = 1,
@@ -642,94 +2641,193 @@ typedef enum FilaElementType {
 } FilaElementType;
 
 // filament::backend::FeatureLevel
+/** Defines the backend's feature levels. */
 typedef enum FilaFeatureLevel {
+    /** OpenGL ES 2.0 features */
     FILA_FEATURE_LEVEL_FEATURE_LEVEL_0 = 0,
+    /** OpenGL ES 3.0 features (default) */
     FILA_FEATURE_LEVEL_FEATURE_LEVEL_1 = 1,
+    /** OpenGL ES 3.1 features + 16 textures units + cubemap arrays */
     FILA_FEATURE_LEVEL_FEATURE_LEVEL_2 = 2,
+    /** OpenGL ES 3.1 features + 31 textures units + cubemap arrays */
     FILA_FEATURE_LEVEL_FEATURE_LEVEL_3 = 3,
 } FilaFeatureLevel;
 
 // filament::backend::FenceStatus
+/**
+ * Error codes for Fence::wait()
+ * @see Fence, Fence::wait()
+ */
 typedef enum FilaFenceStatus {
+    /** An error occurred. The Fence condition is not satisfied. */
     FILA_FENCE_STATUS_ERROR = -1,
+    /** The Fence condition is satisfied. */
     FILA_FENCE_STATUS_CONDITION_SATISFIED = 0,
+    /** wait()'s timeout expired. The Fence condition is not satisfied. */
     FILA_FENCE_STATUS_TIMEOUT_EXPIRED = 1,
 } FilaFenceStatus;
 
 // filament::backend::PixelDataFormat
+/** Pixel Data Format */
 typedef enum FilaPixelDataFormat {
+    /** One Red channel, float */
     FILA_PIXEL_DATA_FORMAT_R = 0,
+    /** One Red channel, integer */
     FILA_PIXEL_DATA_FORMAT_R_INTEGER = 1,
+    /** Two Red and Green channels, float */
     FILA_PIXEL_DATA_FORMAT_RG = 2,
+    /** Two Red and Green channels, integer */
     FILA_PIXEL_DATA_FORMAT_RG_INTEGER = 3,
+    /** Three Red, Green and Blue channels, float */
     FILA_PIXEL_DATA_FORMAT_RGB = 4,
+    /** Three Red, Green and Blue channels, integer */
     FILA_PIXEL_DATA_FORMAT_RGB_INTEGER = 5,
+    /** Four Red, Green, Blue and Alpha channels, float */
     FILA_PIXEL_DATA_FORMAT_RGBA = 6,
+    /** Four Red, Green, Blue and Alpha channels, integer */
     FILA_PIXEL_DATA_FORMAT_RGBA_INTEGER = 7,
     FILA_PIXEL_DATA_FORMAT_UNUSED = 8,
+    /** Depth, 16-bit or 24-bits usually */
     FILA_PIXEL_DATA_FORMAT_DEPTH_COMPONENT = 9,
+    /** Two Depth (24-bits) + Stencil (8-bits) channels */
     FILA_PIXEL_DATA_FORMAT_DEPTH_STENCIL = 10,
     FILA_PIXEL_DATA_FORMAT_ALPHA = 11,
 } FilaPixelDataFormat;
 
 // filament::backend::PixelDataType
+/** Pixel Data Type */
 typedef enum FilaPixelDataType {
+    /** unsigned byte */
     FILA_PIXEL_DATA_TYPE_UBYTE = 0,
+    /** signed byte */
     FILA_PIXEL_DATA_TYPE_BYTE = 1,
+    /** unsigned short (16-bit) */
     FILA_PIXEL_DATA_TYPE_USHORT = 2,
+    /** signed short (16-bit) */
     FILA_PIXEL_DATA_TYPE_SHORT = 3,
+    /** unsigned int (32-bit) */
     FILA_PIXEL_DATA_TYPE_UINT = 4,
+    /** signed int (32-bit) */
     FILA_PIXEL_DATA_TYPE_INT = 5,
+    /** half-float (16-bit float) */
     FILA_PIXEL_DATA_TYPE_HALF = 6,
+    /** float (32-bits float) */
     FILA_PIXEL_DATA_TYPE_FLOAT = 7,
+    /** compressed pixels, @see CompressedPixelDataType */
     FILA_PIXEL_DATA_TYPE_COMPRESSED = 8,
+    /** three low precision floating-point numbers */
     FILA_PIXEL_DATA_TYPE_UINT_10_F_11_F_11_F_REV = 9,
+    /** unsigned int (16-bit), encodes 3 RGB channels */
     FILA_PIXEL_DATA_TYPE_USHORT_565 = 10,
+    /** unsigned normalized 10 bits RGB, 2 bits alpha */
     FILA_PIXEL_DATA_TYPE_UINT_2_10_10_10_REV = 11,
 } FilaPixelDataType;
 
 // filament::backend::Platform::AsynchronousMode
+/** Defines how asynchronous operations are handled by the engine. */
 typedef enum FilaPlatformAsynchronousMode {
+    /** Asynchronous operations are disabled. This is the default. */
     FILA_PLATFORM_ASYNCHRONOUS_MODE_NONE = 0,
+    /**
+     * Attempts to use a dedicated worker thread for asynchronous tasks. If threading is not
+     * supported by the platform, it automatically falls back to using an amortization strategy.
+     */
     FILA_PLATFORM_ASYNCHRONOUS_MODE_THREAD_PREFERRED = 1,
+    /**
+     * Uses an amortization strategy, processing a small number of asynchronous tasks during
+     * each engine update cycle.
+     */
     FILA_PLATFORM_ASYNCHRONOUS_MODE_AMORTIZATION = 2,
 } FilaPlatformAsynchronousMode;
 
 // filament::backend::Platform::ChangeFrameRateStrategy
+/** Frame rate change strategy for setFrameRate(). */
 typedef enum FilaPlatformChangeFrameRateStrategy {
+    /**
+     * The frame rate transition is applied only if the display controller can perform it
+     * seamlessly without visual glitches or disruptive display mode switch blackouts.
+     */
     FILA_PLATFORM_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS = 0,
+    /**
+     * The transition is applied immediately, even if it requires a non-seamless display
+     * mode switch that introduces brief screen interruptions or visual artifacts.
+     */
     FILA_PLATFORM_CHANGE_FRAME_RATE_STRATEGY_ALWAYS = 1,
 } FilaPlatformChangeFrameRateStrategy;
 
 // filament::backend::Platform::DeviceInfoType
+/** Types of device/driver information that can be queried from the platform. */
 typedef enum FilaPlatformDeviceInfoType {
+    /** glGetString(GL_RENDERER) */
     FILA_PLATFORM_DEVICE_INFO_TYPE_OPENGL_RENDERER = 0,
+    /** glGetString(GL_VENDOR) */
     FILA_PLATFORM_DEVICE_INFO_TYPE_OPENGL_VENDOR = 1,
+    /** glGetString(GL_VERSION) */
     FILA_PLATFORM_DEVICE_INFO_TYPE_OPENGL_VERSION = 2,
+    /** VkPhysicalDeviceProperties::deviceName */
     FILA_PLATFORM_DEVICE_INFO_TYPE_VULKAN_DEVICE_NAME = 3,
+    /** VkPhysicalDeviceDriverProperties::driverName */
     FILA_PLATFORM_DEVICE_INFO_TYPE_VULKAN_DRIVER_NAME = 4,
+    /** VkPhysicalDeviceDriverProperties::driverInfo */
     FILA_PLATFORM_DEVICE_INFO_TYPE_VULKAN_DRIVER_INFO = 5,
 } FilaPlatformDeviceInfoType;
 
 // filament::backend::Platform::FrameRateCompatibility
+/** Frame rate compatibility mode for setFrameRate(). */
 typedef enum FilaPlatformFrameRateCompatibility {
+    /**
+     * The OS matches the frame rate when the surface is active, but may pick a different
+     * rate to better harmonize with concurrent windows or display power policies.
+     */
     FILA_PLATFORM_FRAME_RATE_COMPATIBILITY_DEFAULT = 0,
+    /**
+     * The surface represents a fixed-rate source (like video). The OS strongly prioritizes
+     * running the display at this exact frame rate regardless of concurrent compositing.
+     */
     FILA_PLATFORM_FRAME_RATE_COMPATIBILITY_FIXED_SOURCE = 1,
 } FilaPlatformFrameRateCompatibility;
 
 // filament::backend::Platform::GpuContextPriority
+/**
+ * This controls the priority level for GPU work scheduling, which helps prioritize the
+ * submitted GPU work and enables preemption.
+ */
 typedef enum FilaPlatformGpuContextPriority {
+    /** Backend default GPU context priority (typically MEDIUM) */
     FILA_PLATFORM_GPU_CONTEXT_PRIORITY_DEFAULT = 0,
+    /**
+     * For non-interactive, deferrable workloads. This should not interfere with standard
+     * applications.
+     */
     FILA_PLATFORM_GPU_CONTEXT_PRIORITY_LOW = 1,
+    /** The default priority level for standard applications. */
     FILA_PLATFORM_GPU_CONTEXT_PRIORITY_MEDIUM = 2,
+    /**
+     * For high-priority, latency-sensitive workloads that are more important than standard
+     * applications.
+     */
     FILA_PLATFORM_GPU_CONTEXT_PRIORITY_HIGH = 3,
+    /**
+     * The highest priority, intended for system-critical, real-time applications where missing
+     * deadlines is unacceptable (e.g., VR/AR compositors or other system-critical tasks).
+     */
     FILA_PLATFORM_GPU_CONTEXT_PRIORITY_REALTIME = 4,
 } FilaPlatformGpuContextPriority;
 
 // filament::backend::Platform::StereoscopicType
+/**
+ * The type of technique for stereoscopic rendering. (Note that the materials used will need to
+ * be compatible with the chosen technique.)
+ */
 typedef enum FilaPlatformStereoscopicType {
+    /** No stereoscopic rendering */
     FILA_PLATFORM_STEREOSCOPIC_TYPE_NONE = 0,
+    /** Stereoscopic rendering is performed using instanced rendering technique. */
     FILA_PLATFORM_STEREOSCOPIC_TYPE_INSTANCED = 1,
+    /**
+     * Stereoscopic rendering is performed using the multiview feature from the graphics
+     * backend.
+     */
     FILA_PLATFORM_STEREOSCOPIC_TYPE_MULTIVIEW = 2,
 } FilaPlatformStereoscopicType;
 
@@ -742,70 +2840,112 @@ typedef enum FilaPrecision {
 } FilaPrecision;
 
 // filament::backend::PrimitiveType
+/** Primitive types */
 typedef enum FilaPrimitiveType {
+    /** points */
     FILA_PRIMITIVE_TYPE_POINTS = 0,
+    /** lines */
     FILA_PRIMITIVE_TYPE_LINES = 1,
+    /** line strip */
     FILA_PRIMITIVE_TYPE_LINE_STRIP = 3,
+    /** triangles */
     FILA_PRIMITIVE_TYPE_TRIANGLES = 4,
+    /** triangle strip */
     FILA_PRIMITIVE_TYPE_TRIANGLE_STRIP = 5,
 } FilaPrimitiveType;
 
 // filament::backend::SamplerCompareFunc
+/** comparison function for the depth / stencil sampler */
 typedef enum FilaSamplerCompareFunc {
+    /** Less or equal */
     FILA_SAMPLER_COMPARE_FUNC_LE = 0,
+    /** Greater or equal */
     FILA_SAMPLER_COMPARE_FUNC_GE = 1,
+    /** Strictly less than */
     FILA_SAMPLER_COMPARE_FUNC_L = 2,
+    /** Strictly greater than */
     FILA_SAMPLER_COMPARE_FUNC_G = 3,
+    /** Equal */
     FILA_SAMPLER_COMPARE_FUNC_E = 4,
+    /** Not equal */
     FILA_SAMPLER_COMPARE_FUNC_NE = 5,
+    /** Always. Depth / stencil testing is deactivated. */
     FILA_SAMPLER_COMPARE_FUNC_A = 6,
+    /** Never. The depth / stencil test always fails. */
     FILA_SAMPLER_COMPARE_FUNC_N = 7,
 } FilaSamplerCompareFunc;
 
 // filament::backend::SamplerCompareMode
+/** Sampler compare mode */
 typedef enum FilaSamplerCompareMode {
     FILA_SAMPLER_COMPARE_MODE_NONE = 0,
     FILA_SAMPLER_COMPARE_MODE_COMPARE_TO_TEXTURE = 1,
 } FilaSamplerCompareMode;
 
 // filament::backend::SamplerFormat
+/** Texture sampler format */
 typedef enum FilaSamplerFormat {
+    /** signed integer sampler */
     FILA_SAMPLER_FORMAT_INT = 0,
+    /** unsigned integer sampler */
     FILA_SAMPLER_FORMAT_UINT = 1,
+    /** float sampler */
     FILA_SAMPLER_FORMAT_FLOAT = 2,
+    /** shadow sampler (PCF) */
     FILA_SAMPLER_FORMAT_SHADOW = 3,
 } FilaSamplerFormat;
 
 // filament::backend::SamplerMagFilter
+/** Sampler magnification filter */
 typedef enum FilaSamplerMagFilter {
+    /** No filtering. Nearest neighbor is used. */
     FILA_SAMPLER_MAG_FILTER_NEAREST = 0,
+    /** Box filtering. Weighted average of 4 neighbors is used. */
     FILA_SAMPLER_MAG_FILTER_LINEAR = 1,
 } FilaSamplerMagFilter;
 
 // filament::backend::SamplerMinFilter
+/** Sampler minification filter */
 typedef enum FilaSamplerMinFilter {
+    /** No filtering. Nearest neighbor is used. */
     FILA_SAMPLER_MIN_FILTER_NEAREST = 0,
+    /** Box filtering. Weighted average of 4 neighbors is used. */
     FILA_SAMPLER_MIN_FILTER_LINEAR = 1,
+    /** Mip-mapping is activated. But no filtering occurs. */
     FILA_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_NEAREST = 2,
+    /** Box filtering within a mip-map level. */
     FILA_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_NEAREST = 3,
+    /** Mip-map levels are interpolated, but no other filtering occurs. */
     FILA_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_LINEAR = 4,
+    /** Both interpolated Mip-mapping and linear filtering are used. */
     FILA_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR = 5,
 } FilaSamplerMinFilter;
 
 // filament::backend::SamplerType
+/** Texture sampler type */
 typedef enum FilaSamplerType {
+    /** 2D texture */
     FILA_SAMPLER_TYPE_SAMPLER_2_D = 0,
+    /** 2D array texture */
     FILA_SAMPLER_TYPE_SAMPLER_2_D_ARRAY = 1,
+    /** Cube map texture */
     FILA_SAMPLER_TYPE_SAMPLER_CUBEMAP = 2,
+    /** External texture */
     FILA_SAMPLER_TYPE_SAMPLER_EXTERNAL = 3,
+    /** 3D texture */
     FILA_SAMPLER_TYPE_SAMPLER_3_D = 4,
+    /** Cube map array texture (feature level 2) */
     FILA_SAMPLER_TYPE_SAMPLER_CUBEMAP_ARRAY = 5,
 } FilaSamplerType;
 
 // filament::backend::SamplerWrapMode
+/** Sampler Wrap mode */
 typedef enum FilaSamplerWrapMode {
+    /** clamp-to-edge. The edge of the texture extends to infinity. */
     FILA_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE = 0,
+    /** repeat. The texture infinitely repeats in the wrap direction. */
     FILA_SAMPLER_WRAP_MODE_REPEAT = 1,
+    /** mirrored-repeat. The texture infinitely repeats and mirrors in the wrap direction. */
     FILA_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2,
 } FilaSamplerWrapMode;
 
@@ -819,46 +2959,143 @@ typedef enum FilaShaderStageFlags {
 } FilaShaderStageFlags;
 
 // filament::backend::StencilFace
+/** stencil faces */
 typedef enum FilaStencilFace {
+    /** Update stencil state for front-facing polygons. */
     FILA_STENCIL_FACE_FRONT = 1,
+    /** Update stencil state for back-facing polygons. */
     FILA_STENCIL_FACE_BACK = 2,
+    /** Update stencil state for all polygons. */
     FILA_STENCIL_FACE_FRONT_AND_BACK = 3,
 } FilaStencilFace;
 
 // filament::backend::StencilOperation
+/** stencil operation */
 typedef enum FilaStencilOperation {
+    /** Keeps the current value. */
     FILA_STENCIL_OPERATION_KEEP = 0,
+    /** Sets the value to 0. */
     FILA_STENCIL_OPERATION_ZERO = 1,
+    /** Sets the value to the stencil reference value. */
     FILA_STENCIL_OPERATION_REPLACE = 2,
+    /** Increments the current value. Clamps to the maximum representable unsigned value. */
     FILA_STENCIL_OPERATION_INCR = 3,
+    /** Increments the current value. Wraps value to zero when incrementing the maximum representable unsigned value. */
     FILA_STENCIL_OPERATION_INCR_WRAP = 4,
+    /** Decrements the current value. Clamps to 0. */
     FILA_STENCIL_OPERATION_DECR = 5,
+    /** Decrements the current value. Wraps value to the maximum representable unsigned value when decrementing a value of zero. */
     FILA_STENCIL_OPERATION_DECR_WRAP = 6,
+    /** Bitwise inverts the current value. */
     FILA_STENCIL_OPERATION_INVERT = 7,
 } FilaStencilOperation;
 
 // filament::backend::StreamType
+/** Stream for external textures */
 typedef enum FilaStreamType {
+    /** Not synchronized but copy-free. Good for video. */
     FILA_STREAM_TYPE_NATIVE = 0,
+    /** Synchronized, copy-free, and take a release callback. Good for AR but requires API 26+. */
     FILA_STREAM_TYPE_ACQUIRED = 1,
 } FilaStreamType;
 
 // filament::backend::SubpassType
+/** Subpass type */
 typedef enum FilaSubpassType {
     FILA_SUBPASS_TYPE_SUBPASS_INPUT = 0,
 } FilaSubpassType;
 
 // filament::backend::TextureCubemapFace
+/** Texture Cubemap Face */
 typedef enum FilaTextureCubemapFace {
+    /** +x face */
     FILA_TEXTURE_CUBEMAP_FACE_POSITIVE_X = 0,
+    /** -x face */
     FILA_TEXTURE_CUBEMAP_FACE_NEGATIVE_X = 1,
+    /** +y face */
     FILA_TEXTURE_CUBEMAP_FACE_POSITIVE_Y = 2,
+    /** -y face */
     FILA_TEXTURE_CUBEMAP_FACE_NEGATIVE_Y = 3,
+    /** +z face */
     FILA_TEXTURE_CUBEMAP_FACE_POSITIVE_Z = 4,
+    /** -z face */
     FILA_TEXTURE_CUBEMAP_FACE_NEGATIVE_Z = 5,
 } FilaTextureCubemapFace;
 
 // filament::backend::TextureFormat
+/**
+ * Supported texel formats
+ * These formats are typically used to specify a texture's internal storage format.
+ *
+ * Enumerants syntax format
+ * ========================
+ *
+ * `[components][size][type]`
+ *
+ * `components` : List of stored components by this format.\n
+ * `size`       : Size in bit of each component.\n
+ * `type`       : Type this format is stored as.\n
+ *
+ *
+ * Name     | Component
+ * :--------|:-------------------------------
+ * R        | Linear Red
+ * RG       | Linear Red, Green
+ * RGB      | Linear Red, Green, Blue
+ * RGBA     | Linear Red, Green Blue, Alpha
+ * SRGB     | sRGB encoded Red, Green, Blue
+ * DEPTH    | Depth
+ * STENCIL  | Stencil
+ *
+ * \n
+ * Name     | Type
+ * :--------|:---------------------------------------------------
+ * (none)   | Unsigned Normalized Integer [0, 1]
+ * _SNORM   | Signed Normalized Integer [-1, 1]
+ * UI       | Unsigned Integer @f$ [0, 2^{size}] @f$
+ * I        | Signed Integer @f$ [-2^{size-1}, 2^{size-1}-1] @f$
+ * F        | Floating-point
+ *
+ *
+ * Special color formats
+ * ---------------------
+ *
+ * There are a few special color formats that don't follow the convention above:
+ *
+ * Name             | Format
+ * :----------------|:--------------------------------------------------------------------------
+ * RGB565           |  5-bits for R and B, 6-bits for G.
+ * RGB5_A1          |  5-bits for R, G and B, 1-bit for A.
+ * RGB10_A2         | 10-bits for R, G and B, 2-bits for A.
+ * RGB9_E5          | **Unsigned** floating point. 9-bits mantissa for RGB, 5-bits shared exponent
+ * R11F_G11F_B10F   | **Unsigned** floating point. 6-bits mantissa, for R and G, 5-bits for B. 5-bits exponent.
+ * SRGB8_A8         | sRGB 8-bits with linear 8-bits alpha.
+ * DEPTH24_STENCIL8 | 24-bits unsigned normalized integer depth, 8-bits stencil.
+ * DEPTH32F_STENCIL8| 32-bits floating-point depth, 8-bits stencil.
+ *
+ *
+ * Compressed texture formats
+ * --------------------------
+ *
+ * Many compressed texture formats are supported as well, which include (but are not limited to)
+ * the following list:
+ *
+ * Name             | Format
+ * :----------------|:--------------------------------------------------------------------------
+ * EAC_R11          | Compresses R11UI
+ * EAC_R11_SIGNED   | Compresses R11I
+ * EAC_RG11         | Compresses RG11UI
+ * EAC_RG11_SIGNED  | Compresses RG11I
+ * ETC2_RGB8        | Compresses RGB8
+ * ETC2_SRGB8       | compresses SRGB8
+ * ETC2_EAC_RGBA8   | Compresses RGBA8
+ * ETC2_EAC_SRGBA8  | Compresses SRGB8_A8
+ * ETC2_RGB8_A1     | Compresses RGB8 with 1-bit alpha
+ * ETC2_SRGB8_A1    | Compresses sRGB8 with 1-bit alpha
+ *
+ *
+ * @see Texture
+ */
 typedef enum FilaTextureFormat {
     FILA_TEXTURE_FORMAT_R8 = 0,
     FILA_TEXTURE_FORMAT_R8_SNORM = 1,
@@ -972,6 +3209,7 @@ typedef enum FilaTextureFormat {
 } FilaTextureFormat;
 
 // filament::backend::TextureSwizzle
+/** Texture swizzle */
 typedef enum FilaTextureSwizzle {
     FILA_TEXTURE_SWIZZLE_SUBSTITUTE_ZERO = 0,
     FILA_TEXTURE_SWIZZLE_SUBSTITUTE_ONE = 1,
@@ -982,23 +3220,37 @@ typedef enum FilaTextureSwizzle {
 } FilaTextureSwizzle;
 
 // filament::backend::TextureUsage
+/** Bitmask describing the intended Texture Usage */
 typedef enum FilaTextureUsage {
     FILA_TEXTURE_USAGE_NONE = 0,
+    /** Texture can be used as a color attachment */
     FILA_TEXTURE_USAGE_COLOR_ATTACHMENT = 1,
+    /** Texture can be used as a depth attachment */
     FILA_TEXTURE_USAGE_DEPTH_ATTACHMENT = 2,
+    /** Texture can be used as a stencil attachment */
     FILA_TEXTURE_USAGE_STENCIL_ATTACHMENT = 4,
+    /** Data can be uploaded into this texture (default) */
     FILA_TEXTURE_USAGE_UPLOADABLE = 8,
+    /** Texture can be sampled (default) */
     FILA_TEXTURE_USAGE_SAMPLEABLE = 16,
+    /** Texture can be used as a subpass input */
     FILA_TEXTURE_USAGE_SUBPASS_INPUT = 32,
+    /** Texture can be used the source of a blit() */
     FILA_TEXTURE_USAGE_BLIT_SRC = 64,
+    /** Texture can be used the destination of a blit() */
     FILA_TEXTURE_USAGE_BLIT_DST = 128,
+    /** Texture can be used for protected content */
     FILA_TEXTURE_USAGE_PROTECTED = 256,
+    /** Texture can be used with generateMipmaps() */
     FILA_TEXTURE_USAGE_GEN_MIPMAPPABLE = 512,
+    /** Default texture usage */
     FILA_TEXTURE_USAGE_DEFAULT = 24,
+    /** Mask of all attachments */
     FILA_TEXTURE_USAGE_ALL_ATTACHMENTS = 39,
 } FilaTextureUsage;
 
 // filament::backend::UniformType
+/** Supported uniform types */
 typedef enum FilaUniformType {
     FILA_UNIFORM_TYPE_BOOL = 0,
     FILA_UNIFORM_TYPE_BOOL2 = 1,
@@ -1016,7 +3268,9 @@ typedef enum FilaUniformType {
     FILA_UNIFORM_TYPE_UINT2 = 13,
     FILA_UNIFORM_TYPE_UINT3 = 14,
     FILA_UNIFORM_TYPE_UINT4 = 15,
+    /** a 3x3 float matrix */
     FILA_UNIFORM_TYPE_MAT3 = 16,
+    /** a 4x4 float matrix */
     FILA_UNIFORM_TYPE_MAT4 = 17,
     FILA_UNIFORM_TYPE_STRUCT = 18,
 } FilaUniformType;

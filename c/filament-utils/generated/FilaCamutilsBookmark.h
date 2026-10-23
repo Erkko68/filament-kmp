@@ -11,7 +11,15 @@ extern "C" {
 // filament::camutils::Bookmark
 FilaCamutilsBookmark* FilaCamutilsBookmark_create(void);
 void FilaCamutilsBookmark_destroy(FilaCamutilsBookmark* self);
+/**
+ * Interpolates between two bookmarks. The t argument must be between 0 and 1 (inclusive), and
+ * the two endpoints must have the same mode (ORBIT or MAP).
+ */
 void FilaCamutilsBookmark_interpolate(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b, double t, FilaCamutilsBookmark* out);
+/**
+ * Recommends a duration for animation between two MAP endpoints. The return value is a unitless
+ * multiplier.
+ */
 double FilaCamutilsBookmark_duration(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b);
 
 

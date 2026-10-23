@@ -20,18 +20,74 @@ extern "C" {
 // skipped void utils::EntityManager::unregisterWatermark(std::atomic<uint64_t> * _Nonnull watermark)
 // skipped void utils::EntityManager::rebindWatermark(const std::atomic<uint64_t> * _Nonnull oldW, std::atomic<uint64_t> * _Nonnull newW, ImmutableCString newName, const PagedArenaBitset * _Nullable newEntityBitset, Mutex * _Nullable newEntityBitsetLock)
 // skipped uint64_t utils::EntityManager::getMissedGarbage(std::vector<const PagedArenaBitset *> & out, uint64_t readerWatermark)
+/**
+ * @brief Gets a reference to the global EntityManager singleton.
+ * @note It is recommended to cache this reference locally to bypass lookups.
+ * @return Reference to the thread-safe global EntityManager.
+ */
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void);
+/**
+ * @brief Flushes all pending entity lifecycle change notifications to registered callbacks.
+ * @details Invoked automatically upon internal queue thresholds, or manually per frame.
+ */
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self);
+/**
+ * @brief Retrieves the maximum theoretical upper bound of entities that can exist concurrently.
+ * @details Factored around reserved index slots and 2^GENERATION_SHIFT limits.
+ * @return The maximum available 32-bit Entity identity limit.
+ */
 uint32_t FilaUtilsEntityManager_getMaxEntityCount(void);
+/**
+ * @brief Returns the total number of currently active/alive Entities.
+ * @return Count of logical entities currently populated in the system.
+ */
 uint32_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self);
 void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities);
+/**
+ * @brief Allocates and creates a single new or recycled Entity.
+ * @return The populated Entity ID, or Entity.isNull() upon allocation failure.
+ */
 FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self);
 void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, const FilaEntity* entities);
+/**
+ * @brief Globally and logically destroys a single Entity identity.
+ * @param[in] e The Entity to logically kill.
+ */
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e);
+/**
+ * @brief Queries the logical lifecycle state of a given Entity.
+ * @param[in] e The Entity to test for presence.
+ * @return True if the Entity is active and logically alive, false if dead/destroyed.
+ */
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e);
+/**
+ * @brief Advances the timeline to the next epoch.
+ *
+ * @details Increments the current epoch ID and seals the current epoch. All subsequent
+ * entity destructions will be recorded in the new epoch. Automatically triggers
+ * reclaimSafeEpochs() to recycle safe, completed epochs.
+ * Thread-safe.
+ */
 void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self);
+/**
+ * @brief Reclaims and recycles all indices from epochs that are safe to reclaim.
+ * @note This method is intended EXCLUSIVELY for testing, unit test harnesses, and micro-benchmarks
+ * to trigger harvesting sweeps in isolation. In production, Filament NEVER needs to call this method,
+ * as advanceEpoch() automatically and synchronously invokes the identical recycling sweep.
+ */
 void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self);
+/**
+ * @brief Returns the current active (unsealed) epoch ID.
+ * Thread-safe.
+ *
+ * @return The current epoch ID.
+ */
 void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out);
+/**
+ * @brief Use carefully, several entities can have the same index.
+ * @param e The entity to query.
+ * @return The entity index.
+ */
 uint32_t FilaUtilsEntityManager_getIndex(FilaEntity e);
 
 

@@ -11,69 +11,167 @@ extern "C" {
 // IBLPrefilterContext::EquirectangularToCubemap::Config
 FilaIBLPrefilterContextEquirectangularToCubemapConfig* FilaIBLPrefilterContextEquirectangularToCubemapConfig_create(void);
 void FilaIBLPrefilterContextEquirectangularToCubemapConfig_destroy(FilaIBLPrefilterContextEquirectangularToCubemapConfig* self);
+/** mirror the source horizontally */
 bool FilaIBLPrefilterContextEquirectangularToCubemapConfig_getMirror(const FilaIBLPrefilterContextEquirectangularToCubemapConfig* self);
+/** mirror the source horizontally */
 void FilaIBLPrefilterContextEquirectangularToCubemapConfig_setMirror(FilaIBLPrefilterContextEquirectangularToCubemapConfig* self, bool value);
 
 // IBLPrefilterContext::EquirectangularToCubemap
 FilaIBLPrefilterContextEquirectangularToCubemap* FilaIBLPrefilterContextEquirectangularToCubemap_create(FilaIBLPrefilterContext* context);
 FilaIBLPrefilterContextEquirectangularToCubemap* FilaIBLPrefilterContextEquirectangularToCubemap_create_Config(FilaIBLPrefilterContext* context, const FilaIBLPrefilterContextEquirectangularToCubemapConfig* config);
 void FilaIBLPrefilterContextEquirectangularToCubemap_destroy(FilaIBLPrefilterContextEquirectangularToCubemap* self);
+/**
+ * Converts an equirectangular image to a cubemap.
+ * @param equirectangular   Texture to convert to a cubemap.
+ *                          - Can't be null.
+ *                          - Must be a 2d texture
+ *                          - Must have equirectangular geometry, that is width == 2*height.
+ *                          - Must be allocated with all mip levels.
+ *                          - Must be SAMPLEABLE
+ * @param outCubemap        Output cubemap. If null the texture is automatically created
+ *                          with default parameters (size of 256 with 9 levels).
+ *                          - Must be a cubemap
+ *                          - Must have SAMPLEABLE and COLOR_ATTACHMENT usage bits
+ * @return returns outCubemap
+ */
 FilaTexture* FilaIBLPrefilterContextEquirectangularToCubemap_invoke(FilaIBLPrefilterContextEquirectangularToCubemap* self, FilaTexture* equirectangular, FilaTexture* outCubemap);
 
 // IBLPrefilterContext::IrradianceFilter::Config
 FilaIBLPrefilterContextIrradianceFilterConfig* FilaIBLPrefilterContextIrradianceFilterConfig_create(void);
 void FilaIBLPrefilterContextIrradianceFilterConfig_destroy(FilaIBLPrefilterContextIrradianceFilterConfig* self);
+/** filter sample count (max 2048) */
 uint32_t FilaIBLPrefilterContextIrradianceFilterConfig_getSampleCount(const FilaIBLPrefilterContextIrradianceFilterConfig* self);
+/** filter sample count (max 2048) */
 void FilaIBLPrefilterContextIrradianceFilterConfig_setSampleCount(FilaIBLPrefilterContextIrradianceFilterConfig* self, uint32_t value);
+/** filter kernel */
 FilaIBLPrefilterContextKernel FilaIBLPrefilterContextIrradianceFilterConfig_getKernel(const FilaIBLPrefilterContextIrradianceFilterConfig* self);
+/** filter kernel */
 void FilaIBLPrefilterContextIrradianceFilterConfig_setKernel(FilaIBLPrefilterContextIrradianceFilterConfig* self, FilaIBLPrefilterContextKernel value);
 
 // IBLPrefilterContext::IrradianceFilter::Options
 FilaIBLPrefilterContextIrradianceFilterOptions* FilaIBLPrefilterContextIrradianceFilterOptions_create(void);
 void FilaIBLPrefilterContextIrradianceFilterOptions_destroy(FilaIBLPrefilterContextIrradianceFilterOptions* self);
+/** no HDR compression up to this value */
 float FilaIBLPrefilterContextIrradianceFilterOptions_getHdrLinear(const FilaIBLPrefilterContextIrradianceFilterOptions* self);
+/** no HDR compression up to this value */
 void FilaIBLPrefilterContextIrradianceFilterOptions_setHdrLinear(FilaIBLPrefilterContextIrradianceFilterOptions* self, float value);
+/** HDR compression between hdrLinear and hdrMax */
 float FilaIBLPrefilterContextIrradianceFilterOptions_getHdrMax(const FilaIBLPrefilterContextIrradianceFilterOptions* self);
+/** HDR compression between hdrLinear and hdrMax */
 void FilaIBLPrefilterContextIrradianceFilterOptions_setHdrMax(FilaIBLPrefilterContextIrradianceFilterOptions* self, float value);
+/** Good values are 2.0 or 3.0. Higher values help with heavily HDR inputs. */
 float FilaIBLPrefilterContextIrradianceFilterOptions_getLodOffset(const FilaIBLPrefilterContextIrradianceFilterOptions* self);
+/** Good values are 2.0 or 3.0. Higher values help with heavily HDR inputs. */
 void FilaIBLPrefilterContextIrradianceFilterOptions_setLodOffset(FilaIBLPrefilterContextIrradianceFilterOptions* self, float value);
+/** set to false if the input environment map already has mipmaps */
 bool FilaIBLPrefilterContextIrradianceFilterOptions_getGenerateMipmap(const FilaIBLPrefilterContextIrradianceFilterOptions* self);
+/** set to false if the input environment map already has mipmaps */
 void FilaIBLPrefilterContextIrradianceFilterOptions_setGenerateMipmap(FilaIBLPrefilterContextIrradianceFilterOptions* self, bool value);
 
 // IBLPrefilterContext::IrradianceFilter
 FilaIBLPrefilterContextIrradianceFilter* FilaIBLPrefilterContextIrradianceFilter_create_Config(FilaIBLPrefilterContext* context, const FilaIBLPrefilterContextIrradianceFilterConfig* config);
 FilaIBLPrefilterContextIrradianceFilter* FilaIBLPrefilterContextIrradianceFilter_create(FilaIBLPrefilterContext* context);
 void FilaIBLPrefilterContextIrradianceFilter_destroy(FilaIBLPrefilterContextIrradianceFilter* self);
+/**
+ * Generates an irradiance cubemap. Mipmaps are not generated even if present.
+ * @param options                   Options for this environment
+ * @param environmentCubemap        Environment cubemap (input). Can't be null.
+ *                                  This cubemap must be SAMPLEABLE and must have all its
+ *                                  levels allocated. If Options.generateMipmap is true,
+ *                                  the mipmap levels will be overwritten, otherwise
+ *                                  it is assumed that all levels are correctly initialized.
+ * @param outIrradianceTexture      Output irradiance texture or, if null, it is
+ *                                  automatically created with some default parameters.
+ *                                  outIrradianceTexture must be a cubemap, it must have
+ *                                  at least COLOR_ATTACHMENT and SAMPLEABLE usages.
+ *
+ * @return returns outIrradianceTexture
+ */
 FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, const FilaIBLPrefilterContextIrradianceFilterOptions* options, FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture);
+/**
+ * Generates a prefiltered cubemap.
+ * @param environmentCubemap        Environment cubemap (input). Can't be null.
+ *                                  This cubemap must be SAMPLEABLE and must have all its
+ *                                  levels allocated. If Options.generateMipmap is true,
+ *                                  the mipmap levels will be overwritten, otherwise
+ *                                  it is assumed that all levels are correctly initialized.
+ * @param outIrradianceTexture      Output irradiance texture or, if null, it is
+ *                                  automatically created with some default parameters.
+ *                                  outIrradianceTexture must be a cubemap, it must have
+ *                                  at least COLOR_ATTACHMENT and SAMPLEABLE usages.
+ *
+ * @return returns outReflectionsTexture
+ */
 FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture);
 
 // IBLPrefilterContext::SpecularFilter::Config
 FilaIBLPrefilterContextSpecularFilterConfig* FilaIBLPrefilterContextSpecularFilterConfig_create(void);
 void FilaIBLPrefilterContextSpecularFilterConfig_destroy(FilaIBLPrefilterContextSpecularFilterConfig* self);
+/** filter sample count (max 2048) */
 uint32_t FilaIBLPrefilterContextSpecularFilterConfig_getSampleCount(const FilaIBLPrefilterContextSpecularFilterConfig* self);
+/** filter sample count (max 2048) */
 void FilaIBLPrefilterContextSpecularFilterConfig_setSampleCount(FilaIBLPrefilterContextSpecularFilterConfig* self, uint32_t value);
+/** number of roughness levels */
 uint32_t FilaIBLPrefilterContextSpecularFilterConfig_getLevelCount(const FilaIBLPrefilterContextSpecularFilterConfig* self);
+/** number of roughness levels */
 void FilaIBLPrefilterContextSpecularFilterConfig_setLevelCount(FilaIBLPrefilterContextSpecularFilterConfig* self, uint32_t value);
+/** filter kernel */
 FilaIBLPrefilterContextKernel FilaIBLPrefilterContextSpecularFilterConfig_getKernel(const FilaIBLPrefilterContextSpecularFilterConfig* self);
+/** filter kernel */
 void FilaIBLPrefilterContextSpecularFilterConfig_setKernel(FilaIBLPrefilterContextSpecularFilterConfig* self, FilaIBLPrefilterContextKernel value);
 
 // IBLPrefilterContext::SpecularFilter::Options
 FilaIBLPrefilterContextSpecularFilterOptions* FilaIBLPrefilterContextSpecularFilterOptions_create(void);
 void FilaIBLPrefilterContextSpecularFilterOptions_destroy(FilaIBLPrefilterContextSpecularFilterOptions* self);
+/** no HDR compression up to this value */
 float FilaIBLPrefilterContextSpecularFilterOptions_getHdrLinear(const FilaIBLPrefilterContextSpecularFilterOptions* self);
+/** no HDR compression up to this value */
 void FilaIBLPrefilterContextSpecularFilterOptions_setHdrLinear(FilaIBLPrefilterContextSpecularFilterOptions* self, float value);
+/** HDR compression between hdrLinear and hdrMax */
 float FilaIBLPrefilterContextSpecularFilterOptions_getHdrMax(const FilaIBLPrefilterContextSpecularFilterOptions* self);
+/** HDR compression between hdrLinear and hdrMax */
 void FilaIBLPrefilterContextSpecularFilterOptions_setHdrMax(FilaIBLPrefilterContextSpecularFilterOptions* self, float value);
+/** Good values are 1.0 or 2.0. Higher values help with heavily HDR inputs. */
 float FilaIBLPrefilterContextSpecularFilterOptions_getLodOffset(const FilaIBLPrefilterContextSpecularFilterOptions* self);
+/** Good values are 1.0 or 2.0. Higher values help with heavily HDR inputs. */
 void FilaIBLPrefilterContextSpecularFilterOptions_setLodOffset(FilaIBLPrefilterContextSpecularFilterOptions* self, float value);
+/** set to false if the input environment map already has mipmaps */
 bool FilaIBLPrefilterContextSpecularFilterOptions_getGenerateMipmap(const FilaIBLPrefilterContextSpecularFilterOptions* self);
+/** set to false if the input environment map already has mipmaps */
 void FilaIBLPrefilterContextSpecularFilterOptions_setGenerateMipmap(FilaIBLPrefilterContextSpecularFilterOptions* self, bool value);
 
 // IBLPrefilterContext::SpecularFilter
 FilaIBLPrefilterContextSpecularFilter* FilaIBLPrefilterContextSpecularFilter_create_Config(FilaIBLPrefilterContext* context, const FilaIBLPrefilterContextSpecularFilterConfig* config);
 FilaIBLPrefilterContextSpecularFilter* FilaIBLPrefilterContextSpecularFilter_create(FilaIBLPrefilterContext* context);
 void FilaIBLPrefilterContextSpecularFilter_destroy(FilaIBLPrefilterContextSpecularFilter* self);
+/**
+ * Generates a prefiltered cubemap.
+ * @param options                   Options for this environment
+ * @param environmentCubemap        Environment cubemap (input). Can't be null.
+ *                                  This cubemap must be SAMPLEABLE and must have all its
+ *                                  levels allocated. If Options.generateMipmap is true,
+ *                                  the mipmap levels will be overwritten, otherwise
+ *                                  it is assumed that all levels are correctly initialized.
+ * @param outReflectionsTexture     Output prefiltered texture or, if null, it is
+ *                                  automatically created with some default parameters.
+ *                                  outReflectionsTexture must be a cubemap, it must have
+ *                                  at least COLOR_ATTACHMENT and SAMPLEABLE usages and at
+ *                                  least the same number of levels than requested by Config.
+ * @return returns outReflectionsTexture
+ */
 FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, const FilaIBLPrefilterContextSpecularFilterOptions* options, FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture);
+/**
+ * Generates a prefiltered cubemap.
+ * @param environmentCubemap        Environment cubemap (input). Can't be null.
+ *                                  This cubemap must be SAMPLEABLE and must have all its
+ *                                  levels allocated. All mipmap levels will be overwritten.
+ * @param outReflectionsTexture     Output prefiltered texture or, if null, it is
+ *                                  automatically created with some default parameters.
+ *                                  outReflectionsTexture must be a cubemap, it must have
+ *                                  at least COLOR_ATTACHMENT and SAMPLEABLE usages and at
+ *                                  least the same number of levels than requested by Config.
+ * @return returns outReflectionsTexture
+ */
 FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture);
 
 // IBLPrefilterContext

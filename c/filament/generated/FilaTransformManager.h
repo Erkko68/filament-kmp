@@ -12,29 +12,192 @@ extern "C" {
 // skipped children_iterator filament::TransformManager::getChildrenBegin(Instance parent) const: uses filament::TransformManager::children_iterator
 // skipped children_iterator filament::TransformManager::getChildrenEnd(Instance parent) const: uses filament::TransformManager::children_iterator
 // skipped children_range filament::TransformManager::getChildrenRange(const Instance parent) const: uses filament::TransformManager::children_range
+/**
+ * Returns whether a particular Entity is associated with a component of this TransformManager
+ * @param e An Entity.
+ * @return true if this Entity has a component associated with this manager.
+ */
 bool FilaTransformManager_hasComponent(const FilaTransformManager* self, FilaEntity e);
+/**
+ * Gets an Instance representing the transform component associated with the given Entity.
+ * @param e An Entity.
+ * @return An Instance object, which represents the transform component associated with the Entity e.
+ * @note Use Instance::isValid() to make sure the component exists.
+ * @note The returned Instance is transient and must not be kept across frames, see
+ *       "Instance lifetime" above. Instances are not stable when a component is added,
+ *       removed or gc() is called on a component manager.
+ * @see hasComponent()
+ */
 uint32_t FilaTransformManager_getInstance(const FilaTransformManager* self, FilaEntity e);
+/** @return the number of Components */
 uint32_t FilaTransformManager_getComponentCount(const FilaTransformManager* self);
+/** @return true if the this manager has no components */
 bool FilaTransformManager_empty(const FilaTransformManager* self);
+/**
+ * Retrieve the `Entity` of the component from its `Instance`.
+ * @param i Instance of the component obtained from getInstance()
+ * @return
+ */
 FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* self, uint32_t i);
+/**
+ * Retrieve the Entities of all the components of this manager.
+ * @return A list, in no particular order, of all the entities managed by this manager.
+ */
 uint32_t FilaTransformManager_getAllEntities(const FilaTransformManager* self, FilaEntity* out, uint32_t outCapacity);
+/**
+ * Enables or disable the accurate translation mode. Disabled by default.
+ *
+ * When accurate translation mode is active, the translation component of all transforms is
+ * maintained at double precision. This is only useful if the mat4 version of setTransform()
+ * is used, as well as getTransformAccurate().
+ *
+ * @param enable true to enable the accurate translation mode, false to disable.
+ *
+ * @see isAccurateTranslationsEnabled
+ * @see create(utils::Entity, Instance, const math::mat4&);
+ * @see setTransform(Instance, const math::mat4&)
+ * @see getTransformAccurate
+ * @see getWorldTransformAccurate
+ */
 void FilaTransformManager_setAccurateTranslationsEnabled(FilaTransformManager* self, bool enable);
+/**
+ * Returns whether the high precision translation mode is active.
+ * @return true if accurate translations mode is active, false otherwise
+ * @see setAccurateTranslationsEnabled
+ */
 bool FilaTransformManager_isAccurateTranslationsEnabled(const FilaTransformManager* self);
+/**
+ * Creates a transform component and associate it with the given entity.
+ * @param entity            An Entity to associate a transform component to.
+ * @param parent            The Instance of the parent transform, or Instance{} if no parent.
+ * @param localTransform    The transform to initialize the transform component with.
+ *                          This is always relative to the parent.
+ *
+ * If this component already exists on the given entity, it is first destroyed as if
+ * destroy(utils::Entity e) was called.
+ *
+ * @see destroy()
+ */
 void FilaTransformManager_create_mat4f(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4f* localTransform);
 void FilaTransformManager_create_mat4(FilaTransformManager* self, FilaEntity entity, uint32_t parent, const FilaMat4* localTransform);
 void FilaTransformManager_create(FilaTransformManager* self, FilaEntity entity, uint32_t parent);
+/**
+ * Destroys this component from the given entity, children are orphaned.
+ * @param e An entity.
+ *
+ * @note If this transform had children, these are orphaned, which means their local
+ * transform becomes a world transform. Usually it's nonsensical. It's recommended to make
+ * sure that a destroyed transform doesn't have children.
+ *
+ * @see create()
+ */
 void FilaTransformManager_destroy(FilaTransformManager* self, FilaEntity e);
+/**
+ * Re-parents an entity to a new one.
+ * @param i             The instance of the transform component to re-parent
+ * @param newParent     The instance of the new parent transform
+ * @attention It is an error to re-parent an entity to a descendant and will cause undefined behaviour.
+ * @see getInstance()
+ */
 void FilaTransformManager_setParent(FilaTransformManager* self, uint32_t i, uint32_t newParent);
+/**
+ * Returns the parent of a transform component, or the null entity if it is a root.
+ * @param i The instance of the transform component to query.
+ */
 FilaEntity FilaTransformManager_getParent(const FilaTransformManager* self, uint32_t i);
+/**
+ * Returns the number of children of a transform component.
+ * @param i The instance of the transform component to query.
+ * @return The number of children of the queried component.
+ */
 uint32_t FilaTransformManager_getChildCount(const FilaTransformManager* self, uint32_t i);
+/**
+ * Gets a list of children for a transform component.
+ *
+ * @param i The instance of the transform component to query.
+ * @param children Pointer to array-of-Entity. The array must have at least "count" elements.
+ * @param count The maximum number of children to retrieve.
+ * @return The number of children written to the pointer.
+ */
 uint32_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint32_t i, FilaEntity* children, uint32_t count);
+/**
+ * Sets a local transform of a transform component.
+ * @param ci              The instance of the transform component to set the local transform to.
+ * @param localTransform  The local transform (i.e. relative to the parent).
+ * @see getTransform()
+ * @attention This operation can be slow if the hierarchy of transform is too deep, and this
+ *            will be particularly bad when updating a lot of transforms. In that case,
+ *            consider using openLocalTransformTransaction() / commitLocalTransformTransaction().
+ */
 void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, const FilaMat4f* localTransform);
+/**
+ * Sets a local transform of a transform component and keeps double precision translation.
+ * All other values of the transform are stored at single precision.
+ * @param ci              The instance of the transform component to set the local transform to.
+ * @param localTransform  The local transform (i.e. relative to the parent).
+ * @see getTransform()
+ * @attention This operation can be slow if the hierarchy of transform is too deep, and this
+ *            will be particularly bad when updating a lot of transforms. In that case,
+ *            consider using openLocalTransformTransaction() / commitLocalTransformTransaction().
+ */
 void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, const FilaMat4* localTransform);
+/**
+ * Returns the local transform of a transform component.
+ * @param ci The instance of the transform component to query the local transform from.
+ * @return The local transform of the component (i.e. relative to the parent). This always
+ *         returns the value set by setTransform().
+ * @see setTransform()
+ */
 void FilaTransformManager_getTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out);
+/**
+ * Returns the local transform of a transform component.
+ * @param ci The instance of the transform component to query the local transform from.
+ * @return The local transform of the component (i.e. relative to the parent). This always
+ *         returns the value set by setTransform().
+ * @see setTransform()
+ */
 void FilaTransformManager_getTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out);
+/**
+ * Return the world transform of a transform component.
+ * @param ci The instance of the transform component to query the world transform from.
+ * @return The world transform of the component (i.e. relative to the root). This is the
+ *         composition of this component's local transform with its parent's world transform.
+ * @see setTransform()
+ */
 void FilaTransformManager_getWorldTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out);
+/**
+ * Return the world transform of a transform component.
+ * @param ci The instance of the transform component to query the world transform from.
+ * @return The world transform of the component (i.e. relative to the root). This is the
+ *         composition of this component's local transform with its parent's world transform.
+ * @see setTransform()
+ */
 void FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out);
+/**
+ * Opens a local transform transaction. During a transaction, getWorldTransform() can
+ * return an invalid transform until commitLocalTransformTransaction() is called. However,
+ * setTransform() will perform significantly better and in constant time.
+ *
+ * This is useful when updating many transforms and the transform hierarchy is deep (say more
+ * than 4 or 5 levels).
+ *
+ * @note If the local transform transaction is already open, this is a no-op.
+ *
+ * @see commitLocalTransformTransaction(), setTransform()
+ */
 void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* self);
+/**
+ * Commits the currently open local transform transaction. When this returns, calls
+ * to getWorldTransform() will return the proper value.
+ *
+ * @attention failing to call this method when done updating the local transform will cause
+ *            a lot of rendering problems. The system never closes the transaction
+ *            automatically.
+ *
+ * @note If the local transform transaction is not open, this is a no-op.
+ *
+ * @see openLocalTransformTransaction(), setTransform()
+ */
 void FilaTransformManager_commitLocalTransformTransaction(FilaTransformManager* self);
 
 

@@ -12,13 +12,57 @@ extern "C" {
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void);
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self);
 // skipped Builder & filament::BufferObject::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Size of the buffer in bytes.
+ * @param byteCount Maximum number of bytes the BufferObject can hold.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount);
+/**
+ * The binding type for this buffer object. (defaults to VERTEX)
+ * @param bindingType Distinguishes between SSBO, VBO, etc. For now this must be VERTEX.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType);
+/**
+ * Associate an optional name with this BufferObject for debugging purposes.
+ *
+ * @param name A string to identify this BufferObject
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* self, const char* name);
+/**
+ * Creates the BufferObject and returns a pointer to it. After creation, the buffer
+ * object is uninitialized. Use BufferObject::setBuffer() to initialize it.
+ *
+ * @param engine Reference to the filament::Engine to associate this BufferObject with.
+ *
+ * @return pointer to the newly created object
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ *
+ * @see IndexBuffer::setBuffer
+ */
 FilaBufferObject* FilaBufferObjectBuilder_build(const FilaBufferObjectBuilder* self, FilaEngine* engine);
 
 // filament::BufferObject
+/**
+ * Asynchronously copy-initializes a region of this BufferObject from the data provided.
+ *
+ * @param engine Reference to the filament::Engine associated with this BufferObject.
+ * @param buffer A BufferDescriptor representing the data used to initialize the BufferObject.
+ * @param byteOffset Offset in bytes into the BufferObject. Must be multiple of 4.
+ */
 void FilaBufferObject_setBuffer(FilaBufferObject* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
+/**
+ * Returns the size of this BufferObject in elements.
+ * @return The maximum capacity of the BufferObject.
+ */
 uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self);
 
 

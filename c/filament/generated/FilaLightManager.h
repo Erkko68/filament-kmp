@@ -11,122 +11,1018 @@ extern "C" {
 // filament::LightManager::ShadowOptions::Vsm
 FilaLightManagerShadowOptionsVsm* FilaLightManagerShadowOptionsVsm_create(void);
 void FilaLightManagerShadowOptionsVsm_destroy(FilaLightManagerShadowOptionsVsm* self);
+/**
+ * When elvsm is set to true, "Exponential Layered VSM without Layers" are used. It is
+ * an improvement to the default EVSM which suffers important light leaks. Enabling
+ * ELVSM for a single shadowmap doubles the memory usage of all shadow maps.
+ * ELVSM is mostly useful when large blurs are used.
+ *
+ * elvsm is only relevant when the ShadowType is VSM
+ * elvsm is always enabled with PCSS
+ */
 bool FilaLightManagerShadowOptionsVsm_getElvsm(const FilaLightManagerShadowOptionsVsm* self);
+/**
+ * When elvsm is set to true, "Exponential Layered VSM without Layers" are used. It is
+ * an improvement to the default EVSM which suffers important light leaks. Enabling
+ * ELVSM for a single shadowmap doubles the memory usage of all shadow maps.
+ * ELVSM is mostly useful when large blurs are used.
+ *
+ * elvsm is only relevant when the ShadowType is VSM
+ * elvsm is always enabled with PCSS
+ */
 void FilaLightManagerShadowOptionsVsm_setElvsm(FilaLightManagerShadowOptionsVsm* self, bool value);
+/**
+ * Blur width for the VSM blur. Zero do disable.
+ * The maximum value is 125.
+ */
 float FilaLightManagerShadowOptionsVsm_getBlurWidth(const FilaLightManagerShadowOptionsVsm* self);
+/**
+ * Blur width for the VSM blur. Zero do disable.
+ * The maximum value is 125.
+ */
 void FilaLightManagerShadowOptionsVsm_setBlurWidth(FilaLightManagerShadowOptionsVsm* self, float value);
 
 // filament::LightManager::ShadowOptions
 FilaLightManagerShadowOptions* FilaLightManagerShadowOptions_create(void);
 void FilaLightManagerShadowOptions_destroy(FilaLightManagerShadowOptions* self);
+/** Size of the shadow map in texels. Must be a power-of-two and larger or equal to 8. */
 uint32_t FilaLightManagerShadowOptions_getMapSize(const FilaLightManagerShadowOptions* self);
+/** Size of the shadow map in texels. Must be a power-of-two and larger or equal to 8. */
 void FilaLightManagerShadowOptions_setMapSize(FilaLightManagerShadowOptions* self, uint32_t value);
+/**
+ * Number of shadow cascades to use for this light. Must be between 1 and 4 (inclusive).
+ * A value greater than 1 turns on cascaded shadow mapping (CSM).
+ * Only applicable to Type.SUN or Type.DIRECTIONAL lights.
+ *
+ * When using shadow cascades, cascadeSplitPositions must also be set.
+ *
+ * @see ShadowOptions::cascadeSplitPositions
+ */
 uint32_t FilaLightManagerShadowOptions_getShadowCascades(const FilaLightManagerShadowOptions* self);
+/**
+ * Number of shadow cascades to use for this light. Must be between 1 and 4 (inclusive).
+ * A value greater than 1 turns on cascaded shadow mapping (CSM).
+ * Only applicable to Type.SUN or Type.DIRECTIONAL lights.
+ *
+ * When using shadow cascades, cascadeSplitPositions must also be set.
+ *
+ * @see ShadowOptions::cascadeSplitPositions
+ */
 void FilaLightManagerShadowOptions_setShadowCascades(FilaLightManagerShadowOptions* self, uint32_t value);
+/**
+ * The split positions for shadow cascades.
+ *
+ * Cascaded shadow mapping (CSM) partitions the camera frustum into cascades. These values
+ * determine the planes along the camera's Z axis to split the frustum. The camera near
+ * plane is represented by 0.0f and the far plane represented by 1.0f.
+ *
+ * For example, if using 4 cascades, these values would set a uniform split scheme:
+ * { 0.25f, 0.50f, 0.75f }
+ *
+ * For N cascades, N - 1 split positions will be read from this array.
+ *
+ * Filament provides utility methods inside LightManager::ShadowCascades to help set these
+ * values. For example, to use a uniform split scheme:
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *   LightManager::ShadowCascades::computeUniformSplits(options.splitPositions, 4);
+ * ~~~~~~~~~~~
+ *
+ * @see ShadowCascades::computeUniformSplits
+ * @see ShadowCascades::computeLogSplits
+ * @see ShadowCascades::computePracticalSplits
+ */
 uint32_t FilaLightManagerShadowOptions_getCascadeSplitPositions(const FilaLightManagerShadowOptions* self, float* out, uint32_t outCapacity);
+/**
+ * The split positions for shadow cascades.
+ *
+ * Cascaded shadow mapping (CSM) partitions the camera frustum into cascades. These values
+ * determine the planes along the camera's Z axis to split the frustum. The camera near
+ * plane is represented by 0.0f and the far plane represented by 1.0f.
+ *
+ * For example, if using 4 cascades, these values would set a uniform split scheme:
+ * { 0.25f, 0.50f, 0.75f }
+ *
+ * For N cascades, N - 1 split positions will be read from this array.
+ *
+ * Filament provides utility methods inside LightManager::ShadowCascades to help set these
+ * values. For example, to use a uniform split scheme:
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *   LightManager::ShadowCascades::computeUniformSplits(options.splitPositions, 4);
+ * ~~~~~~~~~~~
+ *
+ * @see ShadowCascades::computeUniformSplits
+ * @see ShadowCascades::computeLogSplits
+ * @see ShadowCascades::computePracticalSplits
+ */
 void FilaLightManagerShadowOptions_setCascadeSplitPositions(FilaLightManagerShadowOptions* self, const float* value, uint32_t valueCount);
+/**
+ * Constant bias in world units (e.g. meters) by which shadows are moved away from the
+ * light. 1mm by default.
+ * This is ignored when the View's ShadowType is set to VSM or PCSS.
+ */
 float FilaLightManagerShadowOptions_getConstantBias(const FilaLightManagerShadowOptions* self);
+/**
+ * Constant bias in world units (e.g. meters) by which shadows are moved away from the
+ * light. 1mm by default.
+ * This is ignored when the View's ShadowType is set to VSM or PCSS.
+ */
 void FilaLightManagerShadowOptions_setConstantBias(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Amount by which the maximum sampling error is scaled. The resulting value is used
+ * to move the shadow away from the fragment normal. Should be 1.0.
+ * This is ignored when the View's ShadowType is set to VSM or PCSS.
+ */
 float FilaLightManagerShadowOptions_getNormalBias(const FilaLightManagerShadowOptions* self);
+/**
+ * Amount by which the maximum sampling error is scaled. The resulting value is used
+ * to move the shadow away from the fragment normal. Should be 1.0.
+ * This is ignored when the View's ShadowType is set to VSM or PCSS.
+ */
 void FilaLightManagerShadowOptions_setNormalBias(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Distance from the camera after which shadows are clipped. This is used to clip
+ * shadows that are too far and wouldn't contribute to the scene much, improving
+ * performance and quality. This value is always positive.
+ * Use 0.0f to use the camera far distance.
+ * This only affect directional lights.
+ */
 float FilaLightManagerShadowOptions_getShadowFar(const FilaLightManagerShadowOptions* self);
+/**
+ * Distance from the camera after which shadows are clipped. This is used to clip
+ * shadows that are too far and wouldn't contribute to the scene much, improving
+ * performance and quality. This value is always positive.
+ * Use 0.0f to use the camera far distance.
+ * This only affect directional lights.
+ */
 void FilaLightManagerShadowOptions_setShadowFar(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Optimize the quality of shadows from this distance from the camera. Shadows will
+ * be rendered in front of this distance, but the quality may not be optimal.
+ * This value is always positive. Use 0.0f to use the camera near distance.
+ * The default of 1m works well with many scenes. The quality of shadows may drop
+ * rapidly when this value decreases.
+ */
 float FilaLightManagerShadowOptions_getShadowNearHint(const FilaLightManagerShadowOptions* self);
+/**
+ * Optimize the quality of shadows from this distance from the camera. Shadows will
+ * be rendered in front of this distance, but the quality may not be optimal.
+ * This value is always positive. Use 0.0f to use the camera near distance.
+ * The default of 1m works well with many scenes. The quality of shadows may drop
+ * rapidly when this value decreases.
+ */
 void FilaLightManagerShadowOptions_setShadowNearHint(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Optimize the quality of shadows in front of this distance from the camera. Shadows
+ * will be rendered behind this distance, but the quality may not be optimal.
+ * This value is always positive. Use std::numerical_limits<float>::infinity() to
+ * use the camera far distance.
+ */
 float FilaLightManagerShadowOptions_getShadowFarHint(const FilaLightManagerShadowOptions* self);
+/**
+ * Optimize the quality of shadows in front of this distance from the camera. Shadows
+ * will be rendered behind this distance, but the quality may not be optimal.
+ * This value is always positive. Use std::numerical_limits<float>::infinity() to
+ * use the camera far distance.
+ */
 void FilaLightManagerShadowOptions_setShadowFarHint(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Controls whether the shadow map should be optimized for resolution or stability.
+ * When set to true, all resolution enhancing features that can affect stability are
+ * disabling, resulting in significantly lower resolution shadows, albeit stable ones.
+ *
+ * Setting this flag to true always disables LiSPSM (see below).
+ *
+ * @see lispsm
+ */
 bool FilaLightManagerShadowOptions_getStable(const FilaLightManagerShadowOptions* self);
+/**
+ * Controls whether the shadow map should be optimized for resolution or stability.
+ * When set to true, all resolution enhancing features that can affect stability are
+ * disabling, resulting in significantly lower resolution shadows, albeit stable ones.
+ *
+ * Setting this flag to true always disables LiSPSM (see below).
+ *
+ * @see lispsm
+ */
 void FilaLightManagerShadowOptions_setStable(FilaLightManagerShadowOptions* self, bool value);
+/**
+ * LiSPSM, or light-space perspective shadow-mapping is a technique allowing to better
+ * optimize the use of the shadow-map texture. When enabled the effective resolution of
+ * shadows is greatly improved and yields result similar to using cascades without the
+ * extra cost. LiSPSM comes with some drawbacks however, in particular it is incompatible
+ * with blurring because it effectively affects the blur kernel size.
+ *
+ * Blurring is only an issue when using ShadowType::VSM with a large blur or with
+ * ShadowType::PCSS however.
+ *
+ * If these blurring artifacts become problematic, this flag can be used to disable LiSPSM.
+ *
+ * @see stable
+ */
 bool FilaLightManagerShadowOptions_getLispsm(const FilaLightManagerShadowOptions* self);
+/**
+ * LiSPSM, or light-space perspective shadow-mapping is a technique allowing to better
+ * optimize the use of the shadow-map texture. When enabled the effective resolution of
+ * shadows is greatly improved and yields result similar to using cascades without the
+ * extra cost. LiSPSM comes with some drawbacks however, in particular it is incompatible
+ * with blurring because it effectively affects the blur kernel size.
+ *
+ * Blurring is only an issue when using ShadowType::VSM with a large blur or with
+ * ShadowType::PCSS however.
+ *
+ * If these blurring artifacts become problematic, this flag can be used to disable LiSPSM.
+ *
+ * @see stable
+ */
 void FilaLightManagerShadowOptions_setLispsm(FilaLightManagerShadowOptions* self, bool value);
+/**
+ * Constant bias in depth-resolution units by which shadows are moved away from the
+ * light. The default value of 0.5 is used to round depth values up.
+ * Generally this value shouldn't be changed or at least be small and positive.
+ * This is ignored when the View's ShadowType is set to VSM.
+ */
 float FilaLightManagerShadowOptions_getPolygonOffsetConstant(const FilaLightManagerShadowOptions* self);
+/**
+ * Constant bias in depth-resolution units by which shadows are moved away from the
+ * light. The default value of 0.5 is used to round depth values up.
+ * Generally this value shouldn't be changed or at least be small and positive.
+ * This is ignored when the View's ShadowType is set to VSM.
+ */
 void FilaLightManagerShadowOptions_setPolygonOffsetConstant(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Bias based on the change in depth in depth-resolution units by which shadows are moved
+ * away from the light. The default value of 2.0 works well with SHADOW_SAMPLING_PCF_LOW.
+ * Generally this value is between 0.5 and the size in texel of the PCF filter.
+ * Setting this value correctly is essential for LISPSM shadow-maps.
+ * This is ignored when the View's ShadowType is set to VSM.
+ */
 float FilaLightManagerShadowOptions_getPolygonOffsetSlope(const FilaLightManagerShadowOptions* self);
+/**
+ * Bias based on the change in depth in depth-resolution units by which shadows are moved
+ * away from the light. The default value of 2.0 works well with SHADOW_SAMPLING_PCF_LOW.
+ * Generally this value is between 0.5 and the size in texel of the PCF filter.
+ * Setting this value correctly is essential for LISPSM shadow-maps.
+ * This is ignored when the View's ShadowType is set to VSM.
+ */
 void FilaLightManagerShadowOptions_setPolygonOffsetSlope(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Whether screen-space contact shadows are used. This applies regardless of whether a
+ * Renderable is a shadow caster.
+ * Screen-space contact shadows are typically useful in large scenes.
+ * (off by default)
+ */
 bool FilaLightManagerShadowOptions_getScreenSpaceContactShadows(const FilaLightManagerShadowOptions* self);
+/**
+ * Whether screen-space contact shadows are used. This applies regardless of whether a
+ * Renderable is a shadow caster.
+ * Screen-space contact shadows are typically useful in large scenes.
+ * (off by default)
+ */
 void FilaLightManagerShadowOptions_setScreenSpaceContactShadows(FilaLightManagerShadowOptions* self, bool value);
+/**
+ * Number of ray-marching steps for screen-space contact shadows (8 by default).
+ *
+ * CAUTION: this parameter is ignored for all lights except the directional/sun light,
+ *          all other lights use the same value set for the directional/sun light.
+ */
 uint32_t FilaLightManagerShadowOptions_getStepCount(const FilaLightManagerShadowOptions* self);
+/**
+ * Number of ray-marching steps for screen-space contact shadows (8 by default).
+ *
+ * CAUTION: this parameter is ignored for all lights except the directional/sun light,
+ *          all other lights use the same value set for the directional/sun light.
+ */
 void FilaLightManagerShadowOptions_setStepCount(FilaLightManagerShadowOptions* self, uint32_t value);
+/**
+ * Maximum shadow-occluder distance for screen-space contact shadows (world units).
+ * (30 cm by default)
+ *
+ * CAUTION: this parameter is ignored for all lights except the directional/sun light,
+ *          all other lights use the same value set for the directional/sun light.
+ */
 float FilaLightManagerShadowOptions_getMaxShadowDistance(const FilaLightManagerShadowOptions* self);
+/**
+ * Maximum shadow-occluder distance for screen-space contact shadows (world units).
+ * (30 cm by default)
+ *
+ * CAUTION: this parameter is ignored for all lights except the directional/sun light,
+ *          all other lights use the same value set for the directional/sun light.
+ */
 void FilaLightManagerShadowOptions_setMaxShadowDistance(FilaLightManagerShadowOptions* self, float value);
 void FilaLightManagerShadowOptions_getVsm(const FilaLightManagerShadowOptions* self, FilaLightManagerShadowOptionsVsm* out);
 void FilaLightManagerShadowOptions_setVsm(FilaLightManagerShadowOptions* self, const FilaLightManagerShadowOptionsVsm* value);
+/**
+ * Light bulb radius used for soft shadows. This is only used PCSS.
+ * A negative value is used to use a default value for each light type.
+ * For Spot and point-lights, this is the radius of the light bulb in meters.
+ * For Directional lights, this is tan(angularRadius), or just angularRadius [Rad] for small angles.
+ * SUN: getSunAngularRadius() * getSunHaloSize()
+ * DIRECTIONAL: 1.0 (1m area light)
+ * POINT / SPOT: 0.06 (A19 bulb)
+ */
 float FilaLightManagerShadowOptions_getShadowBulbRadius(const FilaLightManagerShadowOptions* self);
+/**
+ * Light bulb radius used for soft shadows. This is only used PCSS.
+ * A negative value is used to use a default value for each light type.
+ * For Spot and point-lights, this is the radius of the light bulb in meters.
+ * For Directional lights, this is tan(angularRadius), or just angularRadius [Rad] for small angles.
+ * SUN: getSunAngularRadius() * getSunHaloSize()
+ * DIRECTIONAL: 1.0 (1m area light)
+ * POINT / SPOT: 0.06 (A19 bulb)
+ */
 void FilaLightManagerShadowOptions_setShadowBulbRadius(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Transforms the shadow direction. Must be a unit quaternion.
+ * The default is identity.
+ * Ignored if the light type isn't directional. For artistic use. Use with caution.
+ */
 void FilaLightManagerShadowOptions_getTransform(const FilaLightManagerShadowOptions* self, FilaQuatf* out);
+/**
+ * Transforms the shadow direction. Must be a unit quaternion.
+ * The default is identity.
+ * Ignored if the light type isn't directional. For artistic use. Use with caution.
+ */
 void FilaLightManagerShadowOptions_setTransform(FilaLightManagerShadowOptions* self, const FilaQuatf* value);
+/**
+ * Sets a light-specific scale factor applied to the final penumbra size of PCSS shadows.
+ *
+ * This parameter acts as an artistic modifier, allowing you to artificially soften or
+ * sharpen the shadows cast by this specific light without changing its physical
+ * light bulb size or altering the global scene lighting.
+ *
+ * The final scale applied to the shadow is calculated by modulating this local
+ * value with the global SoftShadowOptions::penumbraScale (global * local).
+ *
+ * The local penumbra scale multiplier. Default is 1.0.
+ *
+ * @see SoftShadowOptions::penumbraScale
+ */
 float FilaLightManagerShadowOptions_getPenumbraScale(const FilaLightManagerShadowOptions* self);
+/**
+ * Sets a light-specific scale factor applied to the final penumbra size of PCSS shadows.
+ *
+ * This parameter acts as an artistic modifier, allowing you to artificially soften or
+ * sharpen the shadows cast by this specific light without changing its physical
+ * light bulb size or altering the global scene lighting.
+ *
+ * The final scale applied to the shadow is calculated by modulating this local
+ * value with the global SoftShadowOptions::penumbraScale (global * local).
+ *
+ * The local penumbra scale multiplier. Default is 1.0.
+ *
+ * @see SoftShadowOptions::penumbraScale
+ */
 void FilaLightManagerShadowOptions_setPenumbraScale(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Sets a light-specific scale factor applied to the PCSS geometric ratio before clamping.
+ *
+ * This parameter controls the "contact shadow contrast" for this specific light. It
+ * allows artists to dictate how rapidly this light's shadow transitions from razor-sharp
+ * at the contact point to its maximum blur radius. It is heavily utilized to stylize
+ * lighting and aggressively mask 2.5D shadow map limitations near occluders.
+ *
+ * - Values > 1.0 (e.g., 10.0 or 20.0) create a rapid, cinematic blur acceleration.
+ * - Values < 1.0 keep the shadow crisp over longer distances.
+ *
+ * The final ratio scale applied is calculated by modulating this local value with
+ * the global SoftShadowOptions::penumbraRatioScale (global * local).
+ *
+ * The local penumbra ratio scale multiplier. Default is 1.0.
+ *
+ * @see SoftShadowOptions::penumbraRatioScale
+ */
 float FilaLightManagerShadowOptions_getPenumbraRatioScale(const FilaLightManagerShadowOptions* self);
+/**
+ * Sets a light-specific scale factor applied to the PCSS geometric ratio before clamping.
+ *
+ * This parameter controls the "contact shadow contrast" for this specific light. It
+ * allows artists to dictate how rapidly this light's shadow transitions from razor-sharp
+ * at the contact point to its maximum blur radius. It is heavily utilized to stylize
+ * lighting and aggressively mask 2.5D shadow map limitations near occluders.
+ *
+ * - Values > 1.0 (e.g., 10.0 or 20.0) create a rapid, cinematic blur acceleration.
+ * - Values < 1.0 keep the shadow crisp over longer distances.
+ *
+ * The final ratio scale applied is calculated by modulating this local value with
+ * the global SoftShadowOptions::penumbraRatioScale (global * local).
+ *
+ * The local penumbra ratio scale multiplier. Default is 1.0.
+ *
+ * @see SoftShadowOptions::penumbraRatioScale
+ */
 void FilaLightManagerShadowOptions_setPenumbraRatioScale(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Sets a light-specific maximum geometric ratio applied to Percentage-Closer Soft Shadows (PCSS),
+ * overriding the global default.
+ *
+ * In PCSS, overlapping occluders (like complex light fixtures) can cause the shadow map's 2.5D
+ * depth limitations to calculate an artificially close blocker depth. This drives the geometric
+ * ratio toward infinity, resulting in unnatural, massive "ghost" shadows.
+ *
+ * This parameter allows you to clamp the geometric ratio for this specific light, fixing geometric
+ * artifacts caused by layered occluders without compromising the soft shadows of other lights in
+ * the scene.
+ *
+ * The maximum penumbra ratio. Setting this to a value <= 0.0f disables the
+ * override and reverts the light to using the global default.
+ *
+ * @see SoftShadowOptions::maxPenumbraRatio
+ */
 float FilaLightManagerShadowOptions_getMaxPenumbraRatio(const FilaLightManagerShadowOptions* self);
+/**
+ * Sets a light-specific maximum geometric ratio applied to Percentage-Closer Soft Shadows (PCSS),
+ * overriding the global default.
+ *
+ * In PCSS, overlapping occluders (like complex light fixtures) can cause the shadow map's 2.5D
+ * depth limitations to calculate an artificially close blocker depth. This drives the geometric
+ * ratio toward infinity, resulting in unnatural, massive "ghost" shadows.
+ *
+ * This parameter allows you to clamp the geometric ratio for this specific light, fixing geometric
+ * artifacts caused by layered occluders without compromising the soft shadows of other lights in
+ * the scene.
+ *
+ * The maximum penumbra ratio. Setting this to a value <= 0.0f disables the
+ * override and reverts the light to using the global default.
+ *
+ * @see SoftShadowOptions::maxPenumbraRatio
+ */
 void FilaLightManagerShadowOptions_setMaxPenumbraRatio(FilaLightManagerShadowOptions* self, float value);
+/**
+ * Sets a light-specific maximum world-space radius used during the PCSS blocker search,
+ * overriding the global default.
+ *
+ * In PCSS, the shadow algorithm searches a region of the shadow map to find the
+ * average depth of occluders. If this search region expands too much, it may inadvertently
+ * overlap distinct foreground geometry (like the light's own complex fixture) or climb
+ * vertical surfaces (like a pole), causing the shadow to detach from the contact point
+ * and appear to float.
+ *
+ * This parameter allows you to clamp the physical footprint of the blocker search
+ * for this specific light, fixing floating contact artifacts without compromising the
+ * soft shadows of other lights in the scene.
+ *
+ * The maximum search radius in world-space meters. Setting this to a
+ * value <= 0.0f disables the override and reverts the light to using the global default.
+ *
+ * @see SoftShadowOptions::maxSearchRadius
+ */
 float FilaLightManagerShadowOptions_getMaxSearchRadius(const FilaLightManagerShadowOptions* self);
+/**
+ * Sets a light-specific maximum world-space radius used during the PCSS blocker search,
+ * overriding the global default.
+ *
+ * In PCSS, the shadow algorithm searches a region of the shadow map to find the
+ * average depth of occluders. If this search region expands too much, it may inadvertently
+ * overlap distinct foreground geometry (like the light's own complex fixture) or climb
+ * vertical surfaces (like a pole), causing the shadow to detach from the contact point
+ * and appear to float.
+ *
+ * This parameter allows you to clamp the physical footprint of the blocker search
+ * for this specific light, fixing floating contact artifacts without compromising the
+ * soft shadows of other lights in the scene.
+ *
+ * The maximum search radius in world-space meters. Setting this to a
+ * value <= 0.0f disables the override and reverts the light to using the global default.
+ *
+ * @see SoftShadowOptions::maxSearchRadius
+ */
 void FilaLightManagerShadowOptions_setMaxSearchRadius(FilaLightManagerShadowOptions* self, float value);
 
 // filament::LightManager::ShadowCascades
+/**
+ * Utility method to compute ShadowOptions::cascadeSplitPositions according to a uniform
+ * split scheme.
+ *
+ * @param splitPositions    a float array of at least size (cascades - 1) to write the split
+ *                          positions into
+ * @param cascades          the number of shadow cascades, at most 4
+ */
 void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint32_t cascades);
+/**
+ * Utility method to compute ShadowOptions::cascadeSplitPositions according to a logarithmic
+ * split scheme.
+ *
+ * @param splitPositions    a float array of at least size (cascades - 1) to write the split
+ *                          positions into
+ * @param cascades          the number of shadow cascades, at most 4
+ * @param near              the camera near plane
+ * @param far               the camera far plane
+ */
 void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint32_t cascades, float near, float far);
+/**
+ * Utility method to compute ShadowOptions::cascadeSplitPositions according to a practical
+ * split scheme.
+ *
+ * The practical split scheme uses uses a lambda value to interpolate between the logarithmic
+ * and uniform split schemes. Start with a lambda value of 0.5f and adjust for your scene.
+ *
+ * See: Zhang et al 2006, "Parallel-split shadow maps for large-scale virtual environments"
+ *
+ * @param splitPositions    a float array of at least size (cascades - 1) to write the split
+ *                          positions into
+ * @param cascades          the number of shadow cascades, at most 4
+ * @param near              the camera near plane
+ * @param far               the camera far plane
+ * @param lambda            a float in the range [0, 1] that interpolates between log and
+ *                          uniform split schemes
+ */
 void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint32_t cascades, float near, float far, float lambda);
 
 // filament::LightManager::Builder
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType type);
 void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self);
+/**
+ * Enables or disables a light channel. Light channel 0 is enabled by default.
+ *
+ * @param channel Light channel to enable or disable, between 0 and 7.
+ * @param enable Whether to enable or disable the light channel.
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, uint32_t channel, bool enable);
+/**
+ * Whether this Light casts shadows (disabled by default)
+ *
+ * @param enable Enables or disables casting shadows from this Light.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable);
+/**
+ * Sets the shadow-map options for this light.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* self, const FilaLightManagerShadowOptions* options);
+/**
+ * Whether this light casts light (enabled by default)
+ *
+ * @param enable Enables or disables lighting from this Light.
+ *
+ * @return This Builder, for chaining calls.
+ *
+ * @note
+ * In some situations it can be useful to have a light in the scene that doesn't
+ * actually emit light, but does cast shadows.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* self, bool enable);
+/**
+ * Sets the initial position of the light in world space.
+ *
+ * @param position Light's position in world space. The default is at the origin.
+ *
+ * @return This Builder, for chaining calls.
+ *
+ * @note
+ * The Light's position is ignored for directional lights (Type.DIRECTIONAL or Type.SUN)
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, const FilaFloat3* position);
+/**
+ * Sets the initial direction of a light in world space.
+ *
+ * @param direction Light's direction in world space. Should be a unit vector.
+ *                  The default is {0,-1,0}.
+ *
+ * @return This Builder, for chaining calls.
+ *
+ * @note
+ * The Light's direction is ignored for Type.POINT lights.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, const FilaFloat3* direction);
+/**
+ * Sets the initial color of a light.
+ *
+ * @param color Color of the light specified in the linear sRGB color-space.
+ *              The default is white {1,1,1}.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, const FilaFloat3* color);
+/**
+ * Sets the initial intensity of a light.
+ * @param intensity This parameter depends on the Light.Type:
+ *                  - For directional lights, it specifies the illuminance in *lux*
+ *                  (or *lumen/m^2*).
+ *                  - For point lights and spot lights, it specifies the luminous power
+ *                  in *lumen*.
+ *
+ * @return This Builder, for chaining calls.
+ *
+ * For example, the sun's illuminance is about 100,000 lux.
+ *
+ * This method overrides any prior calls to intensity or intensityCandela.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* self, float intensity);
+/**
+ * Sets the initial intensity of a light in watts.
+ *
+ * @param watts         Energy consumed by a lightbulb. It is related to the energy produced
+ *                      and ultimately the brightness by the \p efficiency parameter.
+ *                      This value is often available on the packaging of commercial
+ *                      lightbulbs.
+ *
+ * @param efficiency    Efficiency in percent. This depends on the type of lightbulb used.
+ *
+ *  Lightbulb type  | Efficiency
+ * ----------------:|-----------:
+ *     Incandescent |  2.2%
+ *         Halogen  |  7.0%
+ *             LED  |  8.7%
+ *     Fluorescent  | 10.7%
+ *
+ * @return This Builder, for chaining calls.
+ *
+ *
+ * @note
+ * This call is equivalent to `Builder::intensity(efficiency * 683 * watts);`
+ *
+ * This method overrides any prior calls to intensity or intensityCandela.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity_float(FilaLightManagerBuilder* self, float watts, float efficiency);
+/**
+ * Sets the initial intensity of a spot or point light in candela.
+ *
+ * @param intensity Luminous intensity in *candela*.
+ *
+ * @return This Builder, for chaining calls.
+ *
+ * @note
+ * This method is equivalent to calling intensity(float intensity) for directional lights
+ * (Type.DIRECTIONAL or Type.SUN).
+ *
+ * This method overrides any prior calls to intensity or intensityCandela.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensityCandela(FilaLightManagerBuilder* self, float intensity);
+/**
+ * Set the falloff distance for point lights and spot lights.
+ *
+ * At the falloff distance, the light has no more effect on objects.
+ *
+ * The falloff distance essentially defines a *sphere of influence* around the light, and
+ * therefore has an impact on performance. Larger falloffs might reduce performance
+ * significantly, especially when many lights are used.
+ *
+ * Try to avoid having a large number of light's spheres of influence overlap.
+ *
+ * @param radius Falloff distance in world units. Default is 1 meter.
+ *
+ * @return This Builder, for chaining calls.
+ *
+ * @note
+ * The Light's falloff is ignored for directional lights (Type.DIRECTIONAL or Type.SUN)
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_falloff(FilaLightManagerBuilder* self, float radius);
+/**
+ * Defines a spot light'st angular falloff attenuation.
+ *
+ * A spot light is defined by a position, a direction and two cones, \p inner and \p outer.
+ * These two cones are used to define the angular falloff attenuation of the spot light
+ * and are defined by the angle from the center axis to where the falloff begins (i.e.
+ * cones are defined by their half-angle).
+ *
+ * Both inner and outer are silently clamped to a minimum value of 0.5 degrees
+ * (~0.00873 radians) to avoid floating-point precision issues during rendering.
+ *
+ * @param inner inner cone angle in *radians* between 0.00873 and \p outer
+ * @param outer outer cone angle in *radians* between 0.00873 inner and @f$ \pi/2 @f$
+ * @return This Builder, for chaining calls.
+ *
+ * @note
+ * The spot light cone is ignored for directional and point lights.
+ *
+ * @see Type.SPOT, Type.FOCUSED_SPOT
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_spotLightCone(FilaLightManagerBuilder* self, float inner, float outer);
+/**
+ * Defines the angular radius of the sun, in degrees, between 0.25° and 20.0°
+ *
+ * The Sun as seen from Earth has an angular size of 0.526° to 0.545°
+ *
+ * @param angularRadiusDeg sun's radius in degree. Default is 0.545°.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunAngularRadius(FilaLightManagerBuilder* self, float angularRadiusDeg);
+/**
+ * Defines the halo radius of the sun. The radius of the halo is defined as a
+ * multiplier of the sun angular radius.  Must be at least 1.0.
+ *
+ * @param haloSize radius multiplier. Default is 10.0.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloSize(FilaLightManagerBuilder* self, float haloSize);
+/**
+ * Defines the halo falloff of the sun. The falloff is a dimensionless number
+ * used as an exponent. Must be at least 1.0.
+ *
+ * @param haloFalloff halo falloff. Default is 80.0.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloFalloff(FilaLightManagerBuilder* self, float haloFalloff);
+/**
+ * Adds the Light component to an entity.
+ *
+ * @param engine Reference to the filament::Engine to associate this light with.
+ * @param entity Entity to add the light component to.
+ * @return Success if the component was created successfully, Error otherwise.
+ *
+ * If exceptions are disabled and an error occurs, this function is a no-op.
+ *        Success can be checked by looking at the return value.
+ *
+ * If this component already exists on the given entity, it is first destroyed as if
+ * destroy(utils::Entity e) was called.
+ *
+ * @warning
+ * Currently, only 2048 lights can be created on a given Engine.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ */
 FilaLightManagerBuilderResult FilaLightManagerBuilder_build(const FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity);
 
 // filament::LightManager
+/**
+ * Returns the number of component in the LightManager, note that component are not
+ * guaranteed to be active. Use the EntityManager::isAlive() before use if needed.
+ *
+ * @return number of component in the LightManager
+ */
 uint32_t FilaLightManager_getComponentCount(const FilaLightManager* self);
+/**
+ * Returns whether a particular Entity is associated with a component of this LightManager
+ * @param e An Entity.
+ * @return true if this Entity has a component associated with this manager.
+ */
 bool FilaLightManager_hasComponent(const FilaLightManager* self, FilaEntity e);
+/** @return true if the this manager has no components */
 bool FilaLightManager_empty(const FilaLightManager* self);
+/**
+ * Retrieve the `Entity` of the component from its `Instance`.
+ * @param i Instance of the component obtained from getInstance()
+ * @return
+ */
 FilaEntity FilaLightManager_getEntity(const FilaLightManager* self, uint32_t i);
+/**
+ * Retrieve the Entities of all the components of this manager.
+ * @return A list, in no particular order, of all the entities managed by this manager.
+ */
 uint32_t FilaLightManager_getAllEntities(const FilaLightManager* self, FilaEntity* out, uint32_t outCapacity);
+/**
+ * Gets an Instance representing the Light component associated with the given Entity.
+ * @param e An Entity.
+ * @return An Instance object, which represents the Light component associated with the Entity e.
+ * @note Use Instance::isValid() to make sure the component exists.
+ * @note The returned Instance is transient and must not be kept across frames, see
+ *       "Instance lifetime" above. Instances are not stable when a component is added,
+ *       removed or gc() is called on a component manager.
+ * @see hasComponent()
+ */
 uint32_t FilaLightManager_getInstance(const FilaLightManager* self, FilaEntity e);
 void FilaLightManager_destroy(FilaLightManager* self, FilaEntity e);
 FilaLightManagerType FilaLightManager_getType(const FilaLightManager* self, uint32_t i);
+/**
+ * Helper function that returns if a light is a directional light
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @return      true is this light is a type of directional light
+ */
 bool FilaLightManager_isDirectional(const FilaLightManager* self, uint32_t i);
+/**
+ * Helper function that returns if a light is a point light
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @return      true is this light is a type of point light
+ */
 bool FilaLightManager_isPointLight(const FilaLightManager* self, uint32_t i);
+/**
+ * Helper function that returns if a light is a spot light
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @return      true is this light is a type of spot light
+ */
 bool FilaLightManager_isSpotLight(const FilaLightManager* self, uint32_t i);
+/**
+ * Enables or disables a light channel. Light channel 0 is enabled by default.
+ * @param channel light channel to enable or disable, between 0 and 7.
+ * @param enable whether to enable (true) or disable (false) the specified light channel.
+ */
 void FilaLightManager_setLightChannel(FilaLightManager* self, uint32_t i, uint32_t channel, bool enable);
+/**
+ * Returns whether a light channel is enabled on a specified light.
+ * @param i        Instance of the component obtained from getInstance().
+ * @param channel  Light channel to query
+ * @return         true if the light channel is enabled, false otherwise
+ */
 bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, uint32_t channel);
+/**
+ * Dynamically updates the light's position.
+ *
+ * @param i        Instance of the component obtained from getInstance().
+ * @param position Light's position in world space. The default is at the origin.
+ *
+ * @see Builder.position()
+ */
 void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, const FilaFloat3* position);
+/** returns the light's position in world space */
 void FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i, FilaFloat3* out);
+/**
+ * Dynamically updates the light's direction
+ *
+ * @param i         Instance of the component obtained from getInstance().
+ * @param direction Light's direction in world space. Should be a unit vector.
+ *                  The default is {0,-1,0}.
+ *
+ * @see Builder.direction()
+ */
 void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, const FilaFloat3* direction);
+/** returns the light's direction in world space */
 void FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i, FilaFloat3* out);
+/**
+ * Dynamically updates the light's hue as linear sRGB
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @param color Color of the light specified in the linear sRGB color-space.
+ *              The default is white {1,1,1}.
+ *
+ * @see Builder.color(), getInstance()
+ */
 void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, const FilaFloat3* color);
+/**
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the light's color in linear sRGB
+ */
 void FilaLightManager_getColor(const FilaLightManager* self, uint32_t i, FilaFloat3* out);
+/**
+ * Dynamically updates the light's intensity. The intensity can be negative.
+ *
+ * @param i         Instance of the component obtained from getInstance().
+ * @param intensity This parameter depends on the Light.Type:
+ *                  - For directional lights, it specifies the illuminance in *lux*
+ *                  (or *lumen/m^2*).
+ *                  - For point lights and spot lights, it specifies the luminous power
+ *                  in *lumen*.
+ *
+ * @see Builder.intensity()
+ */
 void FilaLightManager_setIntensity(FilaLightManager* self, uint32_t i, float intensity);
+/**
+ * Dynamically updates the light's intensity. The intensity can be negative.
+ *
+ * @param i             Instance of the component obtained from getInstance().
+ * @param watts         Energy consumed by a lightbulb. It is related to the energy produced
+ *                      and ultimately the brightness by the \p efficiency parameter.
+ *                      This value is often available on the packaging of commercial
+ *                      lightbulbs.
+ * @param efficiency    Efficiency in percent. This depends on the type of lightbulb used.
+ *
+ *  Lightbulb type  | Efficiency
+ * ----------------:|-----------:
+ *     Incandescent |  2.2%
+ *         Halogen  |  7.0%
+ *             LED  |  8.7%
+ *     Fluorescent  | 10.7%
+ *
+ * @see Builder.intensity(float watts, float efficiency)
+ */
 void FilaLightManager_setIntensity_float(FilaLightManager* self, uint32_t i, float watts, float efficiency);
+/**
+ * Dynamically updates the light's intensity in candela. The intensity can be negative.
+ *
+ * @param i         Instance of the component obtained from getInstance().
+ * @param intensity Luminous intensity in *candela*.
+ *
+ * @note
+ * This method is equivalent to calling setIntensity(float intensity) for directional lights
+ * (Type.DIRECTIONAL or Type.SUN).
+ *
+ * @see Builder.intensityCandela(float intensity)
+ */
 void FilaLightManager_setIntensityCandela(FilaLightManager* self, uint32_t i, float intensity);
+/**
+ * returns the light's luminous intensity in candela.
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ *
+ * @note for Type.FOCUSED_SPOT lights, the returned value depends on the \p outer cone angle.
+ *
+ * @return luminous intensity in candela.
+ */
 float FilaLightManager_getIntensity(const FilaLightManager* self, uint32_t i);
+/**
+ * Set the falloff distance for point lights and spot lights.
+ *
+ * @param i      Instance of the component obtained from getInstance().
+ * @param radius falloff distance in world units. Default is 1 meter.
+ *
+ * @see Builder.falloff()
+ */
 void FilaLightManager_setFalloff(FilaLightManager* self, uint32_t i, float radius);
+/**
+ * returns the falloff distance of this light.
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the falloff distance of this light.
+ */
 float FilaLightManager_getFalloff(const FilaLightManager* self, uint32_t i);
+/**
+ * Dynamically updates a spot light's cone as angles
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @param inner inner cone angle in *radians* between 0.00873 and outer
+ * @param outer outer cone angle in *radians* between 0.00873 and pi/2
+ *
+ * @see Builder.spotLightCone()
+ */
 void FilaLightManager_setSpotLightCone(FilaLightManager* self, uint32_t i, float inner, float outer);
+/**
+ * returns the outer cone angle in *radians* between inner and pi/2.
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the outer cone angle of this light.
+ */
 float FilaLightManager_getSpotLightOuterCone(const FilaLightManager* self, uint32_t i);
+/**
+ * returns the inner cone angle in *radians* between 0 and pi/2.
+ *
+ * The value is recomputed from the initial values, thus is not precisely
+ * the same as the one passed to setSpotLightCone() or Builder.spotLightCone().
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the inner cone angle of this light.
+ */
 float FilaLightManager_getSpotLightInnerCone(const FilaLightManager* self, uint32_t i);
+/**
+ * Dynamically updates the angular radius of a Type.SUN light
+ *
+ * The Sun as seen from Earth has an angular size of 0.526° to 0.545°
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @param angularRadius sun's radius in degrees. Default is 0.545°.
+ */
 void FilaLightManager_setSunAngularRadius(FilaLightManager* self, uint32_t i, float angularRadius);
+/**
+ * returns the angular radius if the sun in degrees.
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the angular radius if the sun in degrees.
+ */
 float FilaLightManager_getSunAngularRadius(const FilaLightManager* self, uint32_t i);
+/**
+ * Dynamically updates the halo radius of a Type.SUN light. The radius
+ * of the halo is defined as a multiplier of the sun angular radius.
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @param haloSize radius multiplier. Default is 10.0.
+ */
 void FilaLightManager_setSunHaloSize(FilaLightManager* self, uint32_t i, float haloSize);
+/**
+ * returns the halo size of a Type.SUN light as a multiplier of the
+ * sun angular radius.
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the halo size
+ */
 float FilaLightManager_getSunHaloSize(const FilaLightManager* self, uint32_t i);
+/**
+ * Dynamically updates the halo falloff of a Type.SUN light. The falloff
+ * is a dimensionless number used as an exponent.
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @param haloFalloff halo falloff. Default is 80.0.
+ */
 void FilaLightManager_setSunHaloFalloff(FilaLightManager* self, uint32_t i, float haloFalloff);
+/**
+ * returns the halo falloff of a Type.SUN light as a dimensionless value.
+ * @param i     Instance of the component obtained from getInstance().
+ * @return the halo falloff
+ */
 float FilaLightManager_getSunHaloFalloff(const FilaLightManager* self, uint32_t i);
+/**
+ * returns the shadow-map options for a given light
+ * @param i     Instance of the component obtained from getInstance().
+ * @return      A ShadowOption structure
+ */
 void FilaLightManager_getShadowOptions(const FilaLightManager* self, uint32_t i, FilaLightManagerShadowOptions* out);
+/**
+ * sets the shadow-map options for a given light
+ * @param i     Instance of the component obtained from getInstance().
+ * @param options  A ShadowOption structure
+ */
 void FilaLightManager_setShadowOptions(FilaLightManager* self, uint32_t i, const FilaLightManagerShadowOptions* options);
+/**
+ * Whether this Light casts shadows (disabled by default)
+ *
+ * @param i     Instance of the component obtained from getInstance().
+ * @param shadowCaster Enables or disables casting shadows from this Light.
+ *
+ * @warning
+ * - Only a Type.DIRECTIONAL, Type.SUN, Type.SPOT, or Type.FOCUSED_SPOT light can cast shadows
+ */
 void FilaLightManager_setShadowCaster(FilaLightManager* self, uint32_t i, bool shadowCaster);
+/**
+ * returns whether this light casts shadows.
+ * @param i     Instance of the component obtained from getInstance().
+ */
 bool FilaLightManager_isShadowCaster(const FilaLightManager* self, uint32_t i);
 
 

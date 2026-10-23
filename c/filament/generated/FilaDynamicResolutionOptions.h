@@ -11,17 +11,57 @@ extern "C" {
 // filament::DynamicResolutionOptions
 FilaDynamicResolutionOptions* FilaDynamicResolutionOptions_create(void);
 void FilaDynamicResolutionOptions_destroy(FilaDynamicResolutionOptions* self);
+/** minimum scale factors in x and y */
 void FilaDynamicResolutionOptions_getMinScale(const FilaDynamicResolutionOptions* self, FilaFloat2* out);
+/** minimum scale factors in x and y */
 void FilaDynamicResolutionOptions_setMinScale(FilaDynamicResolutionOptions* self, const FilaFloat2* value);
+/** maximum scale factors in x and y */
 void FilaDynamicResolutionOptions_getMaxScale(const FilaDynamicResolutionOptions* self, FilaFloat2* out);
+/** maximum scale factors in x and y */
 void FilaDynamicResolutionOptions_setMaxScale(FilaDynamicResolutionOptions* self, const FilaFloat2* value);
+/** sharpness when QualityLevel::MEDIUM or higher is used [0 (disabled), 1 (sharpest)] */
 float FilaDynamicResolutionOptions_getSharpness(const FilaDynamicResolutionOptions* self);
+/** sharpness when QualityLevel::MEDIUM or higher is used [0 (disabled), 1 (sharpest)] */
 void FilaDynamicResolutionOptions_setSharpness(FilaDynamicResolutionOptions* self, float value);
+/** enable or disable dynamic resolution */
 bool FilaDynamicResolutionOptions_getEnabled(const FilaDynamicResolutionOptions* self);
+/** enable or disable dynamic resolution */
 void FilaDynamicResolutionOptions_setEnabled(FilaDynamicResolutionOptions* self, bool value);
+/** set to true to force homogeneous scaling */
 bool FilaDynamicResolutionOptions_getHomogeneousScaling(const FilaDynamicResolutionOptions* self);
+/** set to true to force homogeneous scaling */
 void FilaDynamicResolutionOptions_setHomogeneousScaling(FilaDynamicResolutionOptions* self, bool value);
+/**
+ * Upscaling quality
+ * <ul>
+ * <li>LOW:    bilinear filtered blit. Fastest, poor quality</li>
+ * <li>MEDIUM: Qualcomm Snapdragon Game Super Resolution (SGSR) 1.0</li>
+ * <li>HIGH:   AMD FidelityFX FSR1 w/ mobile optimizations</li>
+ * <li>ULTRA:  AMD FidelityFX FSR1</li>
+ * </ul>
+ *      FSR1 and SGSR require a well anti-aliased (MSAA or TAA), noise free scene.
+ *      Avoid FXAA and dithering.
+ *
+ * <p>The default upscaling quality is set to LOW.</p>
+ *
+ * <p>caveat: currently, <code>quality</code> is always set to LOW if the View is TRANSLUCENT.</p>
+ */
 FilaQualityLevel FilaDynamicResolutionOptions_getQuality(const FilaDynamicResolutionOptions* self);
+/**
+ * Upscaling quality
+ * <ul>
+ * <li>LOW:    bilinear filtered blit. Fastest, poor quality</li>
+ * <li>MEDIUM: Qualcomm Snapdragon Game Super Resolution (SGSR) 1.0</li>
+ * <li>HIGH:   AMD FidelityFX FSR1 w/ mobile optimizations</li>
+ * <li>ULTRA:  AMD FidelityFX FSR1</li>
+ * </ul>
+ *      FSR1 and SGSR require a well anti-aliased (MSAA or TAA), noise free scene.
+ *      Avoid FXAA and dithering.
+ *
+ * <p>The default upscaling quality is set to LOW.</p>
+ *
+ * <p>caveat: currently, <code>quality</code> is always set to LOW if the View is TRANSLUCENT.</p>
+ */
 void FilaDynamicResolutionOptions_setQuality(FilaDynamicResolutionOptions* self, FilaQualityLevel value);
 
 

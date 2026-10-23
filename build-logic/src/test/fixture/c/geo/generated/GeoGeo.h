@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // geo
+/** The distance between two points. */
 float Geo_Distance(const GeoMathFloat2* a, const GeoMathFloat2* b);
 void Geo_Reset(void);
 

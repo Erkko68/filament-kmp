@@ -11,9 +11,25 @@ extern "C" {
 // filament::gltfio::ResourceConfiguration
 FilaGltfioResourceConfiguration* FilaGltfioResourceConfiguration_create(void);
 void FilaGltfioResourceConfiguration_destroy(FilaGltfioResourceConfiguration* self);
+/**
+ * The engine that the loader should pass to builder objects (e.g.
+ * filament::Texture::Builder).
+ */
 FilaEngine* FilaGltfioResourceConfiguration_getEngine(const FilaGltfioResourceConfiguration* self);
+/**
+ * The engine that the loader should pass to builder objects (e.g.
+ * filament::Texture::Builder).
+ */
 void FilaGltfioResourceConfiguration_setEngine(FilaGltfioResourceConfiguration* self, FilaEngine* value);
+/**
+ * If true, adjusts skinning weights to sum to 1. Well formed glTF files do not need this,
+ * but it is useful for robustness.
+ */
 bool FilaGltfioResourceConfiguration_getNormalizeSkinningWeights(const FilaGltfioResourceConfiguration* self);
+/**
+ * If true, adjusts skinning weights to sum to 1. Well formed glTF files do not need this,
+ * but it is useful for robustness.
+ */
 void FilaGltfioResourceConfiguration_setNormalizeSkinningWeights(FilaGltfioResourceConfiguration* self, bool value);
 
 

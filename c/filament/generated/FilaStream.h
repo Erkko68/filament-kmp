@@ -12,16 +12,95 @@ extern "C" {
 FilaStreamBuilder* FilaStreamBuilder_create(void);
 void FilaStreamBuilder_destroy(FilaStreamBuilder* self);
 // skipped Builder & filament::Stream::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * @param width initial width of the incoming stream. Whether this value is used is
+ *              stream dependent. On Android, it must be set when using
+ *              Builder::stream.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width);
+/**
+ * @param height initial height of the incoming stream. Whether this value is used is
+ *              stream dependent. On Android, it must be set when using
+ *              Builder::stream.
+ *
+ * @return This Builder, for chaining calls.
+ */
 FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height);
+/**
+ * Associate an optional name with this Stream for debugging purposes.
+ *
+ * @param name A string to identify this Stream
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ *       It exists primarily for language bindings and dynamic string generation.
+ */
 FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* name);
+/**
+ * Creates the Stream object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this Stream with.
+ *
+ * @return pointer to the newly created object.
+ */
 FilaStream* FilaStreamBuilder_build(const FilaStreamBuilder* self, FilaEngine* engine);
 
 // filament::Stream
+/** Indicates whether this stream is a NATIVE stream or ACQUIRED stream. */
 FilaStreamType FilaStream_getStreamType(const FilaStream* self);
+/**
+ * Updates an ACQUIRED stream with an image that is guaranteed to be used in the next frame.
+ *
+ * This method tells Filament to immediately "acquire" the image and trigger a callback
+ * when it is done with it. This should be called by the user outside of beginFrame / endFrame,
+ * and should be called only once per frame. If the user pushes images to the same stream
+ * multiple times in a single frame, only the final image is honored, but all callbacks are
+ * invoked.
+ *
+ * This method should be called on the same thread that calls Renderer::beginFrame, which is
+ * also where the callback is invoked. This method can only be used for streams that were
+ * constructed without calling the `stream` method on the builder.
+ *
+ * @see Stream for more information about NATIVE and ACQUIRED configurations.
+ *
+ * @param image      Pointer to AHardwareBuffer, casted to void* since this is a public header.
+ * @param callback   This is triggered by Filament when it wishes to release the image.
+ *                   The callback tales two arguments: the AHardwareBuffer and the userdata.
+ * @param userdata   Optional closure data. Filament will pass this into the callback when it
+ *                   releases the image.
+ * @param transform  Optional transform matrix to apply to the image.
+ */
 void FilaStream_setAcquiredImage_Callback_void_mat3f(FilaStream* self, void* image, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform);
+/**
+ * @see setAcquiredImage(void*, Callback, void*)
+ *
+ * @param image      Pointer to AHardwareBuffer (cast to void* since this is a public header).
+ * @param handler    Handler to dispatch the AcquiredImage or nullptr for the default handler.
+ * @param callback   This is triggered by Filament when it wishes to release the image.
+ *                   This callback takes two arguments: the AHardwareBuffer and the userdata.
+ * @param userdata   Optional closure data. Filament will pass this into the callback when it
+ *                   releases the image.
+ * @param transform  Optional transform matrix to apply to the image.
+ */
 void FilaStream_setAcquiredImage_CallbackHandler_Callback_void_mat3f(FilaStream* self, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform);
+/**
+ * Updates the size of the incoming stream. Whether this value is used is
+ *              stream dependent. On Android, it must be set when using
+ *              Builder::stream.
+ *
+ * @param width     new width of the incoming stream
+ * @param height    new height of the incoming stream
+ */
 void FilaStream_setDimensions(FilaStream* self, uint32_t width, uint32_t height);
+/**
+ * Returns the presentation time of the currently displayed frame in nanosecond.
+ *
+ * This value can change at any time.
+ *
+ * @return timestamp in nanosecond.
+ */
 void FilaStream_getTimestamp(const FilaStream* self, int64_t* out);
 
 

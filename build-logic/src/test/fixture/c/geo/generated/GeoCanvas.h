@@ -27,12 +27,15 @@ void GeoCanvas_SetListener(GeoCanvas* self, GeoListener listener, void* listener
 void GeoCanvas_Track(GeoCanvas* self, GeoTracker tracker, void* user);
 void GeoCanvas_Visit(const GeoCanvas* self, GeoVisitor visitor, void* user);
 void GeoCanvas_Upload(GeoCanvas* self, void* blob, uint32_t blobSize, GeoBlobCallback blobCallback, void* blobUser);
+/** Loads a shape from a file. A glob like ** / *.obj isn't expanded. */
 GeoShape* GeoCanvas_Load(GeoCanvas* self, const char* path, char* outError, uint32_t outErrorCapacity);
 bool GeoCanvas_Measure(const GeoCanvas* self, GeoMathFloat3* out, char* outError, uint32_t outErrorCapacity);
 void GeoCanvas_SetBackground(GeoCanvas* self, const float* rgba, uint32_t rgbaCount);
 void GeoCanvas_Fill(const GeoCanvas* self, float* rgba, uint32_t rgbaCount);
 GeoBox* GeoCanvas_GetBox(GeoCanvas* self);
+/** Sets a named value, of any type the config instantiates. */
 void GeoCanvas_SetValue_float(GeoCanvas* self, const char* name, float value);
+/** Sets a named value, of any type the config instantiates. */
 void GeoCanvas_SetValue_int32_t(GeoCanvas* self, const char* name, int32_t value);
 float GeoCanvas_GetValue_float(const GeoCanvas* self, const char* name);
 int32_t GeoCanvas_GetValue_int32_t(const GeoCanvas* self, const char* name);

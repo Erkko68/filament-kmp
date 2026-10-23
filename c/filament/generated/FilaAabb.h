@@ -21,16 +21,52 @@ void FilaAabbCorners_setVertices(FilaAabbCorners* self, const FilaFloat3* value,
 // filament::Aabb
 FilaAabb* FilaAabb_create(void);
 void FilaAabb_destroy(FilaAabb* self);
+/**
+ * Computes the center of the box.
+ * @return (max + min)/2
+ */
 void FilaAabb_center(const FilaAabb* self, FilaFloat3* out);
+/**
+ * Computes the half-extent of the box.
+ * @return (max - min)/2
+ */
 void FilaAabb_extent(const FilaAabb* self, FilaFloat3* out);
+/**
+ * Whether the box is empty, i.e.: it's volume is null or negative.
+ * @return true if min >= max, i.e: the volume of the box is null or negative
+ */
 bool FilaAabb_isEmpty(const FilaAabb* self);
+/** Returns the 8 corner vertices of the AABB. */
 void FilaAabb_getCorners(const FilaAabb* self, FilaAabbCorners* out);
+/**
+ * Returns whether the box contains a given point.
+ *
+ * @param p the point to test
+ * @return the maximum signed distance to the box. Negative if p is in the box
+ */
 float FilaAabb_contains(const FilaAabb* self, const FilaFloat3* p);
+/**
+ * Applies an affine transformation to the AABB.
+ *
+ * @param m the 3x3 transformation to apply
+ * @param t the translation
+ * @return the transformed box
+ */
 void FilaAabb_transform_mat3f_float3_Aabb(const FilaMat3f* m, const FilaFloat3* t, const FilaAabb* box, FilaAabb* out);
+/**
+ * Applies an affine transformation to the AABB.
+ *
+ * @param m the affine transformation to apply
+ * @return the bounding box of the transformed box
+ */
 void FilaAabb_transform_mat4f(const FilaAabb* self, const FilaMat4f* m, FilaAabb* out);
+/** min coordinates */
 void FilaAabb_getMin(const FilaAabb* self, FilaFloat3* out);
+/** min coordinates */
 void FilaAabb_setMin(FilaAabb* self, const FilaFloat3* value);
+/** max coordinates */
 void FilaAabb_getMax(const FilaAabb* self, FilaFloat3* out);
+/** max coordinates */
 void FilaAabb_setMax(FilaAabb* self, const FilaFloat3* value);
 
 

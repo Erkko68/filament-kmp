@@ -11,29 +11,211 @@ extern "C" {
 // filament::FogOptions
 FilaFogOptions* FilaFogOptions_create(void);
 void FilaFogOptions_destroy(FilaFogOptions* self);
+/** Distance in world units [m] from the camera to where the fog starts ( >= 0.0 ) */
 float FilaFogOptions_getDistance(const FilaFogOptions* self);
+/** Distance in world units [m] from the camera to where the fog starts ( >= 0.0 ) */
 void FilaFogOptions_setDistance(FilaFogOptions* self, float value);
+/**
+ * Distance in world units [m] after which the fog calculation is disabled.
+ * This can be used to exclude the skybox, which is desirable if it already contains clouds or
+ * fog. The default value is +infinity which applies the fog to everything.
+ *
+ * <p>Note: The SkyBox is typically at a distance of 1e19 in world space (depending on the near
+ * plane distance and projection used though).</p>
+ */
 float FilaFogOptions_getCutOffDistance(const FilaFogOptions* self);
+/**
+ * Distance in world units [m] after which the fog calculation is disabled.
+ * This can be used to exclude the skybox, which is desirable if it already contains clouds or
+ * fog. The default value is +infinity which applies the fog to everything.
+ *
+ * <p>Note: The SkyBox is typically at a distance of 1e19 in world space (depending on the near
+ * plane distance and projection used though).</p>
+ */
 void FilaFogOptions_setCutOffDistance(FilaFogOptions* self, float value);
+/** fog's maximum opacity between 0 and 1. Ignored in <code>linearFog</code> mode. */
 float FilaFogOptions_getMaximumOpacity(const FilaFogOptions* self);
+/** fog's maximum opacity between 0 and 1. Ignored in <code>linearFog</code> mode. */
 void FilaFogOptions_setMaximumOpacity(FilaFogOptions* self, float value);
+/** Fog's floor in world units [m]. This sets the "sea level". */
 float FilaFogOptions_getHeight(const FilaFogOptions* self);
+/** Fog's floor in world units [m]. This sets the "sea level". */
 void FilaFogOptions_setHeight(FilaFogOptions* self, float value);
+/**
+ * How fast the fog dissipates with the altitude. heightFalloff has a unit of [1/m].
+ * It can be expressed as 1/H, where H is the altitude change in world units [m] that causes a
+ * factor 2.78 (e) change in fog density.
+ *
+ * <p>A falloff of 0 means the fog density is constant everywhere and may result is slightly
+ * faster computations.</p>
+ *
+ * <p>In <code>linearFog</code> mode, only use to compute the slope of the linear equation. Completely
+ * ignored if set to 0.</p>
+ */
 float FilaFogOptions_getHeightFalloff(const FilaFogOptions* self);
+/**
+ * How fast the fog dissipates with the altitude. heightFalloff has a unit of [1/m].
+ * It can be expressed as 1/H, where H is the altitude change in world units [m] that causes a
+ * factor 2.78 (e) change in fog density.
+ *
+ * <p>A falloff of 0 means the fog density is constant everywhere and may result is slightly
+ * faster computations.</p>
+ *
+ * <p>In <code>linearFog</code> mode, only use to compute the slope of the linear equation. Completely
+ * ignored if set to 0.</p>
+ */
 void FilaFogOptions_setHeightFalloff(FilaFogOptions* self, float value);
+/**
+ *  Fog's color is used for ambient light in-scattering, a good value is
+ *  to use the average of the ambient light, possibly tinted towards blue
+ *  for outdoors environments. Color component's values should be between 0 and 1, values
+ *  above one are allowed but could create a non energy-conservative fog (this is dependant
+ *  on the IBL's intensity as well).
+ *
+ *  <p>We assume that our fog has no absorption and therefore all the light it scatters out
+ *  becomes ambient light in-scattering and has lost all directionality, i.e.: scattering is
+ *  isotropic. This somewhat simulates Rayleigh scattering.</p>
+ *
+ *  <p>This value is used as a tint instead, when fogColorFromIbl is enabled.</p>
+ *
+ *  @see #fogColorFromIbl
+ */
 void FilaFogOptions_getColor(const FilaFogOptions* self, FilaFloat3* out);
+/**
+ *  Fog's color is used for ambient light in-scattering, a good value is
+ *  to use the average of the ambient light, possibly tinted towards blue
+ *  for outdoors environments. Color component's values should be between 0 and 1, values
+ *  above one are allowed but could create a non energy-conservative fog (this is dependant
+ *  on the IBL's intensity as well).
+ *
+ *  <p>We assume that our fog has no absorption and therefore all the light it scatters out
+ *  becomes ambient light in-scattering and has lost all directionality, i.e.: scattering is
+ *  isotropic. This somewhat simulates Rayleigh scattering.</p>
+ *
+ *  <p>This value is used as a tint instead, when fogColorFromIbl is enabled.</p>
+ *
+ *  @see #fogColorFromIbl
+ */
 void FilaFogOptions_setColor(FilaFogOptions* self, const FilaFloat3* value);
+/**
+ * Extinction factor in [1/m] at an altitude 'height'. The extinction factor controls how much
+ * light is absorbed and out-scattered per unit of distance. Each unit of extinction reduces
+ * the incoming light to 37% of its original value.
+ *
+ * <p>Note: The extinction factor is related to the fog density, it's usually some constant K times
+ * the density at sea level (more specifically at fog height). The constant K depends on
+ * the composition of the fog/atmosphere.</p>
+ *
+ * <p>For historical reason this parameter is called <code>density</code>.</p>
+ *
+ * <p>In <code>linearFog</code> mode this is the slope of the linear equation if heightFalloff is set to 0.
+ * Otherwise, heightFalloff affects the slope calculation such that it matches the slope of
+ * the standard equation at the camera height.</p>
+ */
 float FilaFogOptions_getDensity(const FilaFogOptions* self);
+/**
+ * Extinction factor in [1/m] at an altitude 'height'. The extinction factor controls how much
+ * light is absorbed and out-scattered per unit of distance. Each unit of extinction reduces
+ * the incoming light to 37% of its original value.
+ *
+ * <p>Note: The extinction factor is related to the fog density, it's usually some constant K times
+ * the density at sea level (more specifically at fog height). The constant K depends on
+ * the composition of the fog/atmosphere.</p>
+ *
+ * <p>For historical reason this parameter is called <code>density</code>.</p>
+ *
+ * <p>In <code>linearFog</code> mode this is the slope of the linear equation if heightFalloff is set to 0.
+ * Otherwise, heightFalloff affects the slope calculation such that it matches the slope of
+ * the standard equation at the camera height.</p>
+ */
 void FilaFogOptions_setDensity(FilaFogOptions* self, float value);
+/**
+ * Distance in world units [m] from the camera where the Sun in-scattering starts.
+ * Ignored in <code>linearFog</code> mode.
+ */
 float FilaFogOptions_getInScatteringStart(const FilaFogOptions* self);
+/**
+ * Distance in world units [m] from the camera where the Sun in-scattering starts.
+ * Ignored in <code>linearFog</code> mode.
+ */
 void FilaFogOptions_setInScatteringStart(FilaFogOptions* self, float value);
+/**
+ * Very inaccurately simulates the Sun's in-scattering. That is, the light from the sun that
+ * is scattered (by the fog) towards the camera.
+ * Size of the Sun in-scattering (>0 to activate). Good values are >> 1 (e.g. ~10 - 100).
+ * Smaller values result is a larger scattering size.
+ * Ignored in <code>linearFog</code> mode.
+ */
 float FilaFogOptions_getInScatteringSize(const FilaFogOptions* self);
+/**
+ * Very inaccurately simulates the Sun's in-scattering. That is, the light from the sun that
+ * is scattered (by the fog) towards the camera.
+ * Size of the Sun in-scattering (>0 to activate). Good values are >> 1 (e.g. ~10 - 100).
+ * Smaller values result is a larger scattering size.
+ * Ignored in <code>linearFog</code> mode.
+ */
 void FilaFogOptions_setInScatteringSize(FilaFogOptions* self, float value);
+/**
+ * The fog color will be sampled from the IBL in the view direction and tinted by <code>color</code>.
+ * Depending on the scene this can produce very convincing results.
+ *
+ * <p>This simulates a more anisotropic phase-function.</p>
+ *
+ * <p><code>fogColorFromIbl</code> is ignored when skyTexture is specified.</p>
+ *
+ * @see #skyColor
+ */
 bool FilaFogOptions_getFogColorFromIbl(const FilaFogOptions* self);
+/**
+ * The fog color will be sampled from the IBL in the view direction and tinted by <code>color</code>.
+ * Depending on the scene this can produce very convincing results.
+ *
+ * <p>This simulates a more anisotropic phase-function.</p>
+ *
+ * <p><code>fogColorFromIbl</code> is ignored when skyTexture is specified.</p>
+ *
+ * @see #skyColor
+ */
 void FilaFogOptions_setFogColorFromIbl(FilaFogOptions* self, bool value);
+/**
+ * skyTexture must be a mipmapped cubemap. When provided, the fog color will be sampled from
+ * this texture, higher resolution mip levels will be used for objects at the far clip plane,
+ * and lower resolution mip levels for objects closer to the camera. The skyTexture should
+ * typically be heavily blurred; a typical way to produce this texture is to blur the base
+ * level with a strong gaussian filter or even an irradiance filter and then generate mip
+ * levels as usual. How blurred the base level is somewhat of an artistic decision.
+ *
+ * <p>This simulates a more anisotropic phase-function.</p>
+ *
+ * <p><code>fogColorFromIbl</code> is ignored when skyTexture is specified.</p>
+ *
+ * <p>In <code>linearFog</code> mode mipmap level 0 is always used.</p>
+ *
+ * @see Texture
+ * @see #fogColorFromIbl
+ */
 FilaTexture* FilaFogOptions_getSkyColor(const FilaFogOptions* self);
+/**
+ * skyTexture must be a mipmapped cubemap. When provided, the fog color will be sampled from
+ * this texture, higher resolution mip levels will be used for objects at the far clip plane,
+ * and lower resolution mip levels for objects closer to the camera. The skyTexture should
+ * typically be heavily blurred; a typical way to produce this texture is to blur the base
+ * level with a strong gaussian filter or even an irradiance filter and then generate mip
+ * levels as usual. How blurred the base level is somewhat of an artistic decision.
+ *
+ * <p>This simulates a more anisotropic phase-function.</p>
+ *
+ * <p><code>fogColorFromIbl</code> is ignored when skyTexture is specified.</p>
+ *
+ * <p>In <code>linearFog</code> mode mipmap level 0 is always used.</p>
+ *
+ * @see Texture
+ * @see #fogColorFromIbl
+ */
 void FilaFogOptions_setSkyColor(FilaFogOptions* self, FilaTexture* value);
+/** Enable or disable large-scale fog */
 bool FilaFogOptions_getEnabled(const FilaFogOptions* self);
+/** Enable or disable large-scale fog */
 void FilaFogOptions_setEnabled(FilaFogOptions* self, bool value);
 
 

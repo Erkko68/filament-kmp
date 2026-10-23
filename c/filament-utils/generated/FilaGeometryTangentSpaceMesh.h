@@ -11,35 +11,172 @@ extern "C" {
 // filament::geometry::TangentSpaceMesh::Builder
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_create(void);
 void FilaGeometryTangentSpaceMeshBuilder_destroy(FilaGeometryTangentSpaceMeshBuilder* self);
+/**
+ * Client must provide this parameter
+ *
+ * @param vertexCount The input number of vertcies
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_vertexCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t vertexCount);
+/**
+ * @param normals The input normals
+ * @param stride The stride for iterating through `normals`
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_normals(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* normals, uint32_t stride);
+/**
+ * @param tangents The input tangents. The `w` component is for use with
+ *     Algorithm::SIGN_OF_W.
+ * @param stride The stride for iterating through `tangents`
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_tangents(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat4* tangents, uint32_t stride);
+/**
+ * @param uvs The input uvs
+ * @param stride The stride for iterating through `uvs`
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_uvs(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat2* uvs, uint32_t stride);
 // handwritten in manual/ FilaGeometryTangentSpaceMeshBuilder_aux: Builder & filament::geometry::TangentSpaceMesh::Builder::aux(AuxAttribute attribute, InData data, size_t stride)
 //     InData: std::variant
+/**
+ * @param positions The input positions
+ * @param stride The stride for iterating through `positions`
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_positions(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* positions, uint32_t stride);
+/**
+ * @param triangleCount The input number of triangles
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangleCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t triangleCount);
+/**
+ * @param triangles The triangles in 32-bit indices
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangles_uint3(FilaGeometryTangentSpaceMeshBuilder* self, const FilaUint3* triangles);
+/**
+ * @param triangles The triangles in 16-bit indices
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangles_ushort3(FilaGeometryTangentSpaceMeshBuilder* self, const FilaUshort3* triangles);
+/**
+ * The Client can provide an algorithm hint to produce the tangents.
+ *
+ * @param algorithm The algorithm hint.
+ * @return Builder
+ */
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_algorithm(FilaGeometryTangentSpaceMeshBuilder* self, FilaGeometryTangentSpaceMeshAlgorithm algorithm);
+/**
+ * Computes the tangent space mesh. The resulting mesh object is owned by the callee. The
+ * callee must call TangentSpaceMesh::destroy on the object once they are finished with it.
+ *
+ * The state of the Builder will be reset after each call to build(). The client needs to
+ * populate the builder with parameters again if they choose to re-use it.
+ *
+ * @return A TangentSpaceMesh
+ */
 FilaGeometryTangentSpaceMesh* FilaGeometryTangentSpaceMeshBuilder_build(FilaGeometryTangentSpaceMeshBuilder* self);
 
 // filament::geometry::TangentSpaceMesh
+/**
+ * Destroy the mesh object
+ * @param mesh A pointer to a TangentSpaceMesh ready to be destroyed
+ */
 void FilaGeometryTangentSpaceMesh_destroy(FilaGeometryTangentSpaceMesh* mesh);
+/**
+ * Number of output vertices
+ *
+ * The number of output vertices can be the same as the input if the selected algorithm did not
+ * "remesh" the input.
+ *
+ * @return The number of vertices
+ */
 uint32_t FilaGeometryTangentSpaceMesh_getVertexCount(const FilaGeometryTangentSpaceMesh* self);
+/**
+ * Get output vertex positions.
+ * Assumes the `out` param is at least of getVertexCount() length (while accounting for
+ * `stride`). The output vertices can be the same as the input if the selected algorithm did
+ * not "remesh" the input. The remeshed vertices are not guarranteed to have correlation in
+ * order with the input mesh.
+ *
+ * @param  out    Client-allocated array that will be used for copying out positions.
+ * @param  stride Stride for iterating through `out`
+ */
 void FilaGeometryTangentSpaceMesh_getPositions(const FilaGeometryTangentSpaceMesh* self, FilaFloat3* out_, uint32_t stride);
+/**
+ * Get output UVs.
+ * Assumes the `out` param is at least of getVertexCount() length (while accounting for
+ * `stride`). The output uvs can be the same as the input if the selected algorithm did
+ * not "remesh" the input. The remeshed UVs are not guarranteed to have correlation in order
+ * with the input mesh.
+ *
+ * @param  out    Client-allocated array that will be used for copying out UVs.
+ * @param  stride Stride for iterating through `out`
+ */
 void FilaGeometryTangentSpaceMesh_getUVs(const FilaGeometryTangentSpaceMesh* self, FilaFloat2* out_, uint32_t stride);
+/**
+ * Get output tangent space.
+ * Assumes the `out` param is at least of getVertexCount() length (while accounting for
+ * `stride`).
+ *
+ * @param  out    Client-allocated array that will be used for copying out tangent space in
+ *                32-bit floating points.
+ * @param  stride Stride for iterating through `out`
+ */
 void FilaGeometryTangentSpaceMesh_getQuats_quatf_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuatf* out_, uint32_t stride);
+/**
+ * Get output tangent space.
+ * Assumes the `out` param is at least of getVertexCount() length (while accounting for
+ * `stride`).
+ *
+ * @param  out    Client-allocated array that will be used for copying out tangent space in
+ *                16-bit signed integers.
+ * @param  stride Stride for iterating through `out`
+ */
 void FilaGeometryTangentSpaceMesh_getQuats_short4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaShort4* out_, uint32_t stride);
+/**
+ * Get output tangent space.
+ * Assumes the `out` param is at least of getVertexCount() length (while accounting for
+ * `stride`).
+ *
+ * @param  out    Client-allocated array that will be used for copying out tangent space in
+ *                16-bit floating points.
+ * @param  stride Stride for iterating through `out`
+ */
 void FilaGeometryTangentSpaceMesh_getQuats_quath_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuath* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getAux_float2_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat2* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getAux_float3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat3* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getAux_float4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat4* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getAux_ushort3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort3* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getAux_ushort4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort4* out_, uint32_t stride);
+/**
+ * Get number of output triangles.
+ * The number of output triangles is the same as the number of input triangles. However, when a
+ * "remesh" is carried out the output triangles are not guarranteed to have any correlation with
+ * the input.
+ *
+ * @return The number of vertices
+ */
 uint32_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self);
+/**
+ * Get output triangles.
+ * This method assumes that the `out` param provided by the client is at least of
+ * getTriangleCount() length. If the client calls getTriangles() and triangles were not
+ * provided as input, we will throw and exception.
+ *
+ * @param out Client's array for the output triangles in unsigned 32-bit indices.
+ */
 void FilaGeometryTangentSpaceMesh_getTriangles_uint3(const FilaGeometryTangentSpaceMesh* self, FilaUint3* out_);
+/**
+ * Get output triangles.
+ * This method assumes that the `out` param provided by the client is at least of
+ * getTriangleCount() length. If the client calls getTriangles() and triangles were not
+ * provided as input, we will throw and exception.
+ *
+ * @param out Client's array for the output triangles in unsigned 16-bit indices.
+ */
 void FilaGeometryTangentSpaceMesh_getTriangles_ushort3(const FilaGeometryTangentSpaceMesh* self, FilaUshort3* out_);
+/** @return Whether the TBN algorithm remeshed the input. */
 bool FilaGeometryTangentSpaceMesh_remeshed(const FilaGeometryTangentSpaceMesh* self);
 
 

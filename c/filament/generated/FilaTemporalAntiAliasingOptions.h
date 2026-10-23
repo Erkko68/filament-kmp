@@ -11,37 +11,69 @@ extern "C" {
 // filament::TemporalAntiAliasingOptions
 FilaTemporalAntiAliasingOptions* FilaTemporalAntiAliasingOptions_create(void);
 void FilaTemporalAntiAliasingOptions_destroy(FilaTemporalAntiAliasingOptions* self);
+/** @deprecated has no effect. */
 float FilaTemporalAntiAliasingOptions_getFilterWidth(const FilaTemporalAntiAliasingOptions* self);
+/** @deprecated has no effect. */
 void FilaTemporalAntiAliasingOptions_setFilterWidth(FilaTemporalAntiAliasingOptions* self, float value);
+/** history feedback, between 0 (maximum temporal AA) and 1 (no temporal AA). */
 float FilaTemporalAntiAliasingOptions_getFeedback(const FilaTemporalAntiAliasingOptions* self);
+/** history feedback, between 0 (maximum temporal AA) and 1 (no temporal AA). */
 void FilaTemporalAntiAliasingOptions_setFeedback(FilaTemporalAntiAliasingOptions* self, float value);
+/** texturing lod bias (typically -1 or -2) */
 float FilaTemporalAntiAliasingOptions_getLodBias(const FilaTemporalAntiAliasingOptions* self);
+/** texturing lod bias (typically -1 or -2) */
 void FilaTemporalAntiAliasingOptions_setLodBias(FilaTemporalAntiAliasingOptions* self, float value);
+/** post-TAA sharpen, especially useful when upscaling is true. */
 float FilaTemporalAntiAliasingOptions_getSharpness(const FilaTemporalAntiAliasingOptions* self);
+/** post-TAA sharpen, especially useful when upscaling is true. */
 void FilaTemporalAntiAliasingOptions_setSharpness(FilaTemporalAntiAliasingOptions* self, float value);
+/** enables or disables temporal anti-aliasing */
 bool FilaTemporalAntiAliasingOptions_getEnabled(const FilaTemporalAntiAliasingOptions* self);
+/** enables or disables temporal anti-aliasing */
 void FilaTemporalAntiAliasingOptions_setEnabled(FilaTemporalAntiAliasingOptions* self, bool value);
+/** Upscaling factor. Disables Dynamic Resolution. [BETA] */
 float FilaTemporalAntiAliasingOptions_getUpscaling(const FilaTemporalAntiAliasingOptions* self);
+/** Upscaling factor. Disables Dynamic Resolution. [BETA] */
 void FilaTemporalAntiAliasingOptions_setUpscaling(FilaTemporalAntiAliasingOptions* self, float value);
+/** whether to filter the history buffer */
 bool FilaTemporalAntiAliasingOptions_getFilterHistory(const FilaTemporalAntiAliasingOptions* self);
+/** whether to filter the history buffer */
 void FilaTemporalAntiAliasingOptions_setFilterHistory(FilaTemporalAntiAliasingOptions* self, bool value);
+/** whether to apply the reconstruction filter to the input */
 bool FilaTemporalAntiAliasingOptions_getFilterInput(const FilaTemporalAntiAliasingOptions* self);
+/** whether to apply the reconstruction filter to the input */
 void FilaTemporalAntiAliasingOptions_setFilterInput(FilaTemporalAntiAliasingOptions* self, bool value);
+/** whether to use the YcoCg color-space for history rejection */
 bool FilaTemporalAntiAliasingOptions_getUseYCoCg(const FilaTemporalAntiAliasingOptions* self);
+/** whether to use the YcoCg color-space for history rejection */
 void FilaTemporalAntiAliasingOptions_setUseYCoCg(FilaTemporalAntiAliasingOptions* self, bool value);
+/** set to true for HDR content */
 bool FilaTemporalAntiAliasingOptions_getHdr(const FilaTemporalAntiAliasingOptions* self);
+/** set to true for HDR content */
 void FilaTemporalAntiAliasingOptions_setHdr(FilaTemporalAntiAliasingOptions* self, bool value);
+/** type of color gamut box */
 FilaTemporalAntiAliasingOptionsBoxType FilaTemporalAntiAliasingOptions_getBoxType(const FilaTemporalAntiAliasingOptions* self);
+/** type of color gamut box */
 void FilaTemporalAntiAliasingOptions_setBoxType(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsBoxType value);
+/** clipping algorithm */
 FilaTemporalAntiAliasingOptionsBoxClipping FilaTemporalAntiAliasingOptions_getBoxClipping(const FilaTemporalAntiAliasingOptions* self);
+/** clipping algorithm */
 void FilaTemporalAntiAliasingOptions_setBoxClipping(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsBoxClipping value);
+/** Jitter Pattern */
 FilaTemporalAntiAliasingOptionsJitterPattern FilaTemporalAntiAliasingOptions_getJitterPattern(const FilaTemporalAntiAliasingOptions* self);
+/** Jitter Pattern */
 void FilaTemporalAntiAliasingOptions_setJitterPattern(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsJitterPattern value);
+/** High values increases ghosting artefact, lower values increases jittering, range [0.75, 1.25] */
 float FilaTemporalAntiAliasingOptions_getVarianceGamma(const FilaTemporalAntiAliasingOptions* self);
+/** High values increases ghosting artefact, lower values increases jittering, range [0.75, 1.25] */
 void FilaTemporalAntiAliasingOptions_setVarianceGamma(FilaTemporalAntiAliasingOptions* self, float value);
+/** adjust the feedback dynamically to reduce flickering */
 bool FilaTemporalAntiAliasingOptions_getPreventFlickering(const FilaTemporalAntiAliasingOptions* self);
+/** adjust the feedback dynamically to reduce flickering */
 void FilaTemporalAntiAliasingOptions_setPreventFlickering(FilaTemporalAntiAliasingOptions* self, bool value);
+/** whether to apply history reprojection (debug option) */
 bool FilaTemporalAntiAliasingOptions_getHistoryReprojection(const FilaTemporalAntiAliasingOptions* self);
+/** whether to apply history reprojection (debug option) */
 void FilaTemporalAntiAliasingOptions_setHistoryReprojection(FilaTemporalAntiAliasingOptions* self, bool value);
 
 

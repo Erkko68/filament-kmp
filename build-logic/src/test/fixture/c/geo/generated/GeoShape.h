@@ -13,6 +13,7 @@ void GeoShape_addRef(const GeoShape* self);
 void GeoShape_release(const GeoShape* self);
 // skipped void geo::Shape::SetName(std::string_view name): geo::Shape::SetName\(std::string_view\)
 // skipped void geo::Shape::DebugDump() const
+/** @return its area, in square pixels */
 float GeoShape_GetArea(const GeoShape* self);
 GeoKind GeoShape_GetKind(const GeoShape* self);
 GeoStyle* GeoShape_GetStyle(GeoShape* self);
@@ -21,6 +22,11 @@ void GeoShape_GetStats(const GeoShape* self, GeoStats* out);
 void GeoShape_GetLimits(const GeoShape* self, GeoLimits* out);
 GeoPath* GeoShape_GetPath(const GeoShape* self);
 void GeoShape_SetLimits(GeoShape* self, const GeoLimits* limits);
+/**
+ * Names the shape.
+ *
+ * @param name what it's called; the shape copies it
+ */
 void GeoShape_SetName(GeoShape* self, const char* name);
 const char* GeoShape_GetName(const GeoShape* self);
 uint32_t GeoShape_Describe(const GeoShape* self, char* out, uint32_t outCapacity);

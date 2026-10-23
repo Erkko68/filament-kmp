@@ -11,71 +11,147 @@ extern "C" {
 // filament::AmbientOcclusionOptions::Ssct
 FilaAmbientOcclusionOptionsSsct* FilaAmbientOcclusionOptionsSsct_create(void);
 void FilaAmbientOcclusionOptionsSsct_destroy(FilaAmbientOcclusionOptionsSsct* self);
+/** full cone angle in radian, between 0 and pi/2 */
 float FilaAmbientOcclusionOptionsSsct_getLightConeRad(const FilaAmbientOcclusionOptionsSsct* self);
+/** full cone angle in radian, between 0 and pi/2 */
 void FilaAmbientOcclusionOptionsSsct_setLightConeRad(FilaAmbientOcclusionOptionsSsct* self, float value);
+/** how far shadows can be cast */
 float FilaAmbientOcclusionOptionsSsct_getShadowDistance(const FilaAmbientOcclusionOptionsSsct* self);
+/** how far shadows can be cast */
 void FilaAmbientOcclusionOptionsSsct_setShadowDistance(FilaAmbientOcclusionOptionsSsct* self, float value);
+/** max distance for contact */
 float FilaAmbientOcclusionOptionsSsct_getContactDistanceMax(const FilaAmbientOcclusionOptionsSsct* self);
+/** max distance for contact */
 void FilaAmbientOcclusionOptionsSsct_setContactDistanceMax(FilaAmbientOcclusionOptionsSsct* self, float value);
+/** intensity */
 float FilaAmbientOcclusionOptionsSsct_getIntensity(const FilaAmbientOcclusionOptionsSsct* self);
+/** intensity */
 void FilaAmbientOcclusionOptionsSsct_setIntensity(FilaAmbientOcclusionOptionsSsct* self, float value);
+/** light direction */
 void FilaAmbientOcclusionOptionsSsct_getLightDirection(const FilaAmbientOcclusionOptionsSsct* self, FilaFloat3* out);
+/** light direction */
 void FilaAmbientOcclusionOptionsSsct_setLightDirection(FilaAmbientOcclusionOptionsSsct* self, const FilaFloat3* value);
+/** depth bias in world units (mitigate self shadowing) */
 float FilaAmbientOcclusionOptionsSsct_getDepthBias(const FilaAmbientOcclusionOptionsSsct* self);
+/** depth bias in world units (mitigate self shadowing) */
 void FilaAmbientOcclusionOptionsSsct_setDepthBias(FilaAmbientOcclusionOptionsSsct* self, float value);
+/** depth slope bias (mitigate self shadowing) */
 float FilaAmbientOcclusionOptionsSsct_getDepthSlopeBias(const FilaAmbientOcclusionOptionsSsct* self);
+/** depth slope bias (mitigate self shadowing) */
 void FilaAmbientOcclusionOptionsSsct_setDepthSlopeBias(FilaAmbientOcclusionOptionsSsct* self, float value);
+/** tracing sample count, between 1 and 255 */
 uint32_t FilaAmbientOcclusionOptionsSsct_getSampleCount(const FilaAmbientOcclusionOptionsSsct* self);
+/** tracing sample count, between 1 and 255 */
 void FilaAmbientOcclusionOptionsSsct_setSampleCount(FilaAmbientOcclusionOptionsSsct* self, uint32_t value);
+/** # of rays to trace, between 1 and 255 */
 uint32_t FilaAmbientOcclusionOptionsSsct_getRayCount(const FilaAmbientOcclusionOptionsSsct* self);
+/** # of rays to trace, between 1 and 255 */
 void FilaAmbientOcclusionOptionsSsct_setRayCount(FilaAmbientOcclusionOptionsSsct* self, uint32_t value);
+/** enables or disables SSCT */
 bool FilaAmbientOcclusionOptionsSsct_getEnabled(const FilaAmbientOcclusionOptionsSsct* self);
+/** enables or disables SSCT */
 void FilaAmbientOcclusionOptionsSsct_setEnabled(FilaAmbientOcclusionOptionsSsct* self, bool value);
 
 // filament::AmbientOcclusionOptions::Gtao
 FilaAmbientOcclusionOptionsGtao* FilaAmbientOcclusionOptionsGtao_create(void);
 void FilaAmbientOcclusionOptionsGtao_destroy(FilaAmbientOcclusionOptionsGtao* self);
+/** # of slices. Higher value makes less noise. */
 uint32_t FilaAmbientOcclusionOptionsGtao_getSampleSliceCount(const FilaAmbientOcclusionOptionsGtao* self);
+/** # of slices. Higher value makes less noise. */
 void FilaAmbientOcclusionOptionsGtao_setSampleSliceCount(FilaAmbientOcclusionOptionsGtao* self, uint32_t value);
+/** # of steps the radius is divided into for integration. Higher value makes less bias. */
 uint32_t FilaAmbientOcclusionOptionsGtao_getSampleStepsPerSlice(const FilaAmbientOcclusionOptionsGtao* self);
+/** # of steps the radius is divided into for integration. Higher value makes less bias. */
 void FilaAmbientOcclusionOptionsGtao_setSampleStepsPerSlice(FilaAmbientOcclusionOptionsGtao* self, uint32_t value);
+/** thickness heuristic, should be closed to 0. No effect when useVisibilityBitmasks sets to true. */
 float FilaAmbientOcclusionOptionsGtao_getThicknessHeuristic(const FilaAmbientOcclusionOptionsGtao* self);
+/** thickness heuristic, should be closed to 0. No effect when useVisibilityBitmasks sets to true. */
 void FilaAmbientOcclusionOptionsGtao_setThicknessHeuristic(FilaAmbientOcclusionOptionsGtao* self, float value);
+/**
+ * Enables or disables visibility bitmasks mode. Notes that bent normal doesn't work under this mode.
+ * Caution: Changing this option at runtime is very expensive as it may trigger a shader re-compilation.
+ */
 bool FilaAmbientOcclusionOptionsGtao_getUseVisibilityBitmasks(const FilaAmbientOcclusionOptionsGtao* self);
+/**
+ * Enables or disables visibility bitmasks mode. Notes that bent normal doesn't work under this mode.
+ * Caution: Changing this option at runtime is very expensive as it may trigger a shader re-compilation.
+ */
 void FilaAmbientOcclusionOptionsGtao_setUseVisibilityBitmasks(FilaAmbientOcclusionOptionsGtao* self, bool value);
+/** constant thickness value of objects on the screen in world space. Only take effect when useVisibilityBitmasks is set to true. */
 float FilaAmbientOcclusionOptionsGtao_getConstThickness(const FilaAmbientOcclusionOptionsGtao* self);
+/** constant thickness value of objects on the screen in world space. Only take effect when useVisibilityBitmasks is set to true. */
 void FilaAmbientOcclusionOptionsGtao_setConstThickness(FilaAmbientOcclusionOptionsGtao* self, float value);
+/**
+ * Increase thickness with distance to maintain detail on distant surfaces.
+ * Caution: Changing this option at runtime is very expensive as it may trigger a shader re-compilation.
+ */
 bool FilaAmbientOcclusionOptionsGtao_getLinearThickness(const FilaAmbientOcclusionOptionsGtao* self);
+/**
+ * Increase thickness with distance to maintain detail on distant surfaces.
+ * Caution: Changing this option at runtime is very expensive as it may trigger a shader re-compilation.
+ */
 void FilaAmbientOcclusionOptionsGtao_setLinearThickness(FilaAmbientOcclusionOptionsGtao* self, bool value);
 
 // filament::AmbientOcclusionOptions
 FilaAmbientOcclusionOptions* FilaAmbientOcclusionOptions_create(void);
 void FilaAmbientOcclusionOptions_destroy(FilaAmbientOcclusionOptions* self);
+/** Type of ambient occlusion algorithm. */
 FilaAmbientOcclusionOptionsAmbientOcclusionType FilaAmbientOcclusionOptions_getAoType(const FilaAmbientOcclusionOptions* self);
+/** Type of ambient occlusion algorithm. */
 void FilaAmbientOcclusionOptions_setAoType(FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsAmbientOcclusionType value);
+/** Ambient Occlusion radius in meters, between 0 and ~10. */
 float FilaAmbientOcclusionOptions_getRadius(const FilaAmbientOcclusionOptions* self);
+/** Ambient Occlusion radius in meters, between 0 and ~10. */
 void FilaAmbientOcclusionOptions_setRadius(FilaAmbientOcclusionOptions* self, float value);
+/** Controls ambient occlusion's contrast. Must be positive. */
 float FilaAmbientOcclusionOptions_getPower(const FilaAmbientOcclusionOptions* self);
+/** Controls ambient occlusion's contrast. Must be positive. */
 void FilaAmbientOcclusionOptions_setPower(FilaAmbientOcclusionOptions* self, float value);
+/**
+ * Self-occlusion bias in meters. Use to avoid self-occlusion.
+ * Between 0 and a few mm. No effect when aoType set to GTAO
+ */
 float FilaAmbientOcclusionOptions_getBias(const FilaAmbientOcclusionOptions* self);
+/**
+ * Self-occlusion bias in meters. Use to avoid self-occlusion.
+ * Between 0 and a few mm. No effect when aoType set to GTAO
+ */
 void FilaAmbientOcclusionOptions_setBias(FilaAmbientOcclusionOptions* self, float value);
+/** How each dimension of the AO buffer is scaled. Must be either 0.5 or 1.0. */
 float FilaAmbientOcclusionOptions_getResolution(const FilaAmbientOcclusionOptions* self);
+/** How each dimension of the AO buffer is scaled. Must be either 0.5 or 1.0. */
 void FilaAmbientOcclusionOptions_setResolution(FilaAmbientOcclusionOptions* self, float value);
+/** Strength of the Ambient Occlusion effect. */
 float FilaAmbientOcclusionOptions_getIntensity(const FilaAmbientOcclusionOptions* self);
+/** Strength of the Ambient Occlusion effect. */
 void FilaAmbientOcclusionOptions_setIntensity(FilaAmbientOcclusionOptions* self, float value);
+/** depth distance that constitute an edge for filtering */
 float FilaAmbientOcclusionOptions_getBilateralThreshold(const FilaAmbientOcclusionOptions* self);
+/** depth distance that constitute an edge for filtering */
 void FilaAmbientOcclusionOptions_setBilateralThreshold(FilaAmbientOcclusionOptions* self, float value);
+/** affects # of samples used for AO and params for filtering */
 FilaQualityLevel FilaAmbientOcclusionOptions_getQuality(const FilaAmbientOcclusionOptions* self);
+/** affects # of samples used for AO and params for filtering */
 void FilaAmbientOcclusionOptions_setQuality(FilaAmbientOcclusionOptions* self, FilaQualityLevel value);
+/** affects AO smoothness. Recommend setting to HIGH when aoType set to GTAO. */
 FilaQualityLevel FilaAmbientOcclusionOptions_getLowPassFilter(const FilaAmbientOcclusionOptions* self);
+/** affects AO smoothness. Recommend setting to HIGH when aoType set to GTAO. */
 void FilaAmbientOcclusionOptions_setLowPassFilter(FilaAmbientOcclusionOptions* self, FilaQualityLevel value);
+/** affects AO buffer upsampling quality */
 FilaQualityLevel FilaAmbientOcclusionOptions_getUpsampling(const FilaAmbientOcclusionOptions* self);
+/** affects AO buffer upsampling quality */
 void FilaAmbientOcclusionOptions_setUpsampling(FilaAmbientOcclusionOptions* self, FilaQualityLevel value);
+/** enables or disables screen-space ambient occlusion */
 bool FilaAmbientOcclusionOptions_getEnabled(const FilaAmbientOcclusionOptions* self);
+/** enables or disables screen-space ambient occlusion */
 void FilaAmbientOcclusionOptions_setEnabled(FilaAmbientOcclusionOptions* self, bool value);
+/** enables bent normals computation from AO, and specular AO */
 bool FilaAmbientOcclusionOptions_getBentNormals(const FilaAmbientOcclusionOptions* self);
+/** enables bent normals computation from AO, and specular AO */
 void FilaAmbientOcclusionOptions_setBentNormals(FilaAmbientOcclusionOptions* self, bool value);
+/** min angle in radian to consider. No effect when aoType set to GTAO. */
 float FilaAmbientOcclusionOptions_getMinHorizonAngleRad(const FilaAmbientOcclusionOptions* self);
+/** min angle in radian to consider. No effect when aoType set to GTAO. */
 void FilaAmbientOcclusionOptions_setMinHorizonAngleRad(FilaAmbientOcclusionOptions* self, float value);
 void FilaAmbientOcclusionOptions_getSsct(const FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsSsct* out);
 void FilaAmbientOcclusionOptions_setSsct(FilaAmbientOcclusionOptions* self, const FilaAmbientOcclusionOptionsSsct* value);

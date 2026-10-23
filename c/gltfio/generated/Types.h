@@ -8,16 +8,210 @@
 extern "C" {
 #endif
 
+/**
+ * \class Animator Animator.h gltfio/Animator.h
+ * \brief Updates matrices according to glTF \c animation and \c skin definitions.
+ *
+ * Animator can be used for two things:
+ * - Updating matrices in filament::TransformManager components according to glTF \c animation definitions.
+ * - Updating bone matrices in filament::RenderableManager components according to glTF \c skin definitions.
+ *
+ * For a usage example, see the documentation for AssetLoader.
+ */
 typedef struct FilaGltfioAnimator FilaGltfioAnimator;
+
+/**
+ * \struct AssetConfiguration AssetLoader.h gltfio/AssetLoader.h
+ * \brief Construction parameters for AssetLoader.
+ */
 typedef struct FilaGltfioAssetConfiguration FilaGltfioAssetConfiguration;
+
+/**
+ * \class AssetLoader AssetLoader.h gltfio/AssetLoader.h
+ * \brief Consumes glTF content and produces FilamentAsset objects.
+ *
+ * AssetLoader consumes a blob of glTF 2.0 content (either JSON or GLB) and produces a FilamentAsset
+ * object, which is a bundle of Filament textures, vertex buffers, index buffers, etc. An asset is
+ * composed of 1 or more FilamentInstance objects which contain entities and components.
+ *
+ * Clients must use AssetLoader to create and destroy FilamentAsset objects. This is similar to
+ * how filament::Engine is used to create and destroy core objects like VertexBuffer.
+ *
+ * AssetLoader does not fetch external buffer data or create textures on its own. Clients can use
+ * ResourceLoader for this, which obtains the URI list from the asset. This is demonstrated in the
+ * code snippet below.
+ *
+ * AssetLoader also owns a cache of filament::Material objects that may be re-used across multiple
+ * loads.
+ *
+ * Example usage:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * auto engine = Engine::create();
+ * auto materials = createJitShaderProvider(engine);
+ * auto decoder = createStbProvider(engine);
+ * auto loader = AssetLoader::create({engine, materials});
+ *
+ * // Parse the glTF content and create Filament entities.
+ * std::vector<uint8_t> content(...);
+ * FilamentAsset* asset = loader->createAsset(content.data(), content.size());
+ * content.clear();
+ *
+ * // Load buffers and textures from disk.
+ * ResourceLoader resourceLoader({engine, ".", true});
+ * resourceLoader.addTextureProvider("image/png", decoder);
+ * resourceLoader.addTextureProvider("image/jpeg", decoder);
+ * resourceLoader.loadResources(asset);
+ *
+ * // Free the glTF hierarchy as it is no longer needed.
+ * asset->releaseSourceData();
+ *
+ * // Add renderables to the scene.
+ * scene->addEntities(asset->getEntities(), asset->getEntityCount());
+ *
+ * // Extract the animator interface from the FilamentInstance.
+ * auto animator = asset->getInstance()->getAnimator();
+ *
+ * // Execute the render loop and play the first animation.
+ * do {
+ *      animator->applyAnimation(0, time);
+ *      animator->updateBoneMatrices();
+ *      if (renderer->beginFrame(swapChain)) {
+ *          renderer->render(view);
+ *          renderer->endFrame();
+ *      }
+ * } while (!quit);
+ *
+ * scene->removeEntities(asset->getEntities(), asset->getEntityCount());
+ * loader->destroyAsset(asset);
+ * materials->destroyMaterials();
+ * delete materials;
+ * delete decoder;
+ * AssetLoader::destroy(&loader);
+ * Engine::destroy(&engine);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 typedef struct FilaGltfioAssetLoader FilaGltfioAssetLoader;
+
+/**
+ * \class FilamentAsset FilamentAsset.h gltfio/FilamentAsset.h
+ * \brief Owns a bundle of Filament objects that have been created by AssetLoader.
+ *
+ * For usage instructions, see the documentation for AssetLoader.
+ *
+ * This class owns a hierarchy of entities that have been loaded from a glTF asset. Every entity has
+ * a filament::TransformManager component, and some entities also have \c Name, \c Renderable,
+ * \c Light, \c Camera, or \c Node components.
+ *
+ * In addition to the aforementioned entities, an asset has strong ownership over a list of
+ * filament::VertexBuffer, filament::IndexBuffer, filament::Texture,
+ * and, optionally, a simple animation engine (gltfio::Animator).
+ *
+ * Clients must use ResourceLoader to create filament::Texture objects, compute tangent quaternions,
+ * and upload data into vertex buffers and index buffers.
+ *
+ * \todo Only the default glTF scene is loaded, other glTF scenes are ignored.
+ */
 typedef struct FilaGltfioFilamentAsset FilaGltfioFilamentAsset;
+
+/**
+ * \class FilamentInstance FilamentInstance.h gltfio/FilamentInstance.h
+ * \brief Provides access to a hierarchy of entities that have been instanced from a glTF asset.
+ *
+ * Every entity has a TransformManager component, and some entities also have \c Name or
+ * \c Renderable components.
+ *
+ * \see AssetLoader::createInstancedAsset()
+ */
 typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;
+
+/**
+ * \struct MaterialKey MaterialProvider.h gltfio/MaterialProvider.h
+ * \brief Small POD structure that specifies the requirements for a glTF material.
+ * \note This key is processed by MurmurHashFn so please make padding explicit.
+ */
 typedef struct FilaGltfioMaterialKey FilaGltfioMaterialKey;
+
+/**
+ * \class MaterialProvider MaterialProvider.h gltfio/MaterialProvider.h
+ * \brief Interface to a provider of glTF materials (has two implementations).
+ *
+ * - The \c JitShaderProvider implementation generates materials at run time (which can be slow) and
+ *   requires the filamat library, but produces streamlined shaders. See createJitShaderProvider().
+ *
+ * - The \c UbershaderProvider implementation uses a small number of pre-built materials with complex
+ *   fragment shaders, but does not require any run time work or usage of filamat. See
+ *   createUbershaderProvider().
+ *
+ * Both implementations of MaterialProvider maintain a small cache of materials which must be
+ * explicitly freed using destroyMaterials(). These materials are not freed automatically when the
+ * MaterialProvider is destroyed, which allows clients to take ownership if desired.
+ */
 typedef struct FilaGltfioMaterialProvider FilaGltfioMaterialProvider;
+
+/**
+ * \struct ResourceConfiguration ResourceLoader.h gltfio/ResourceLoader.h
+ * \brief Construction parameters for ResourceLoader.
+ */
 typedef struct FilaGltfioResourceConfiguration FilaGltfioResourceConfiguration;
+
+/**
+ * \class ResourceLoader ResourceLoader.h gltfio/ResourceLoader.h
+ * \brief Prepares and uploads vertex buffers and textures to the GPU.
+ *
+ * For a usage example, see the documentation for AssetLoader.
+ *
+ * ResourceLoader must be destroyed on the same thread that calls filament::Renderer::render()
+ * because it listens to filament::backend::BufferDescriptor callbacks in order to determine when to
+ * free CPU-side data blobs.
+ *
+ * \todo If clients persist their ResourceLoader, Filament textures are currently re-created upon
+ * subsequent re-loads of the same asset. To fix this, we would need to enable shared ownership
+ * of Texture objects between ResourceLoader and FilamentAsset.
+ */
 typedef struct FilaGltfioResourceLoader FilaGltfioResourceLoader;
+
+/**
+ * TextureProvider is an interface that allows clients to implement their own texture decoding
+ * facility for JPEG, PNG, or KTX2 content. It constructs Filament Texture objects synchronously,
+ * but populates their miplevels asynchronously.
+ *
+ * gltfio calls all public methods from the foreground thread, i.e. the thread that the Filament
+ * engine was created with. However the implementation may create 0 or more background threads to
+ * perform decoding work.
+ *
+ * The following pseudocode illustrates how this interface could be used, but in practice the only
+ * client is the gltfio ResourceLoader.
+ *
+ *     filament::Engine* engine = ...;
+ *     TextureProvider* provider = createStbProvider(engine);
+ *
+ *     for (auto filename : textureFiles) {
+ *         std::vector<uint8_t> buf = readEntireFile(filename);
+ *         Texture* texture = provider->pushTexture(buf.data(), buf.size(), "image/png", 0);
+ *         if (texture == nullptr) { puts(provider->getPushMessage()); exit(1); }
+ *     }
+ *
+ *     // At this point, the returned textures can be bound to material instances, but none of their
+ *     // miplevel images have been populated yet.
+ *
+ *     while (provider->getPoppedCount() < provider->getPushedCount()) {
+ *         sleep(200);
+ *
+ *         // The following call gives the provider an opportunity to reap the results of any
+ *         // background decoder work that has been completed (e.g. by calling Texture::setImage).
+ *         provider->updateQueue();
+ *
+ *         // Check for textures that now have all their miplevels initialized.
+ *         while (Texture* texture = provider->popTexture()) {
+ *             printf("%p has all its miplevels ready.\n", texture);
+ *         }
+ *     }
+ *
+ *     delete provider;
+ */
 typedef struct FilaGltfioTextureProvider FilaGltfioTextureProvider;
+
 
 // filament::gltfio::AlphaMode
 typedef enum FilaGltfioAlphaMode {

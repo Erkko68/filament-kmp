@@ -11,27 +11,109 @@ extern "C" {
 // filament::DepthOfFieldOptions
 FilaDepthOfFieldOptions* FilaDepthOfFieldOptions_create(void);
 void FilaDepthOfFieldOptions_destroy(FilaDepthOfFieldOptions* self);
+/** circle of confusion scale factor (amount of blur) */
 float FilaDepthOfFieldOptions_getCocScale(const FilaDepthOfFieldOptions* self);
+/** circle of confusion scale factor (amount of blur) */
 void FilaDepthOfFieldOptions_setCocScale(FilaDepthOfFieldOptions* self, float value);
+/** width/height aspect ratio of the circle of confusion (simulate anamorphic lenses) */
 float FilaDepthOfFieldOptions_getCocAspectRatio(const FilaDepthOfFieldOptions* self);
+/** width/height aspect ratio of the circle of confusion (simulate anamorphic lenses) */
 void FilaDepthOfFieldOptions_setCocAspectRatio(FilaDepthOfFieldOptions* self, float value);
+/** maximum aperture diameter in meters (zero to disable rotation) */
 float FilaDepthOfFieldOptions_getMaxApertureDiameter(const FilaDepthOfFieldOptions* self);
+/** maximum aperture diameter in meters (zero to disable rotation) */
 void FilaDepthOfFieldOptions_setMaxApertureDiameter(FilaDepthOfFieldOptions* self, float value);
+/** enable or disable depth of field effect */
 bool FilaDepthOfFieldOptions_getEnabled(const FilaDepthOfFieldOptions* self);
+/** enable or disable depth of field effect */
 void FilaDepthOfFieldOptions_setEnabled(FilaDepthOfFieldOptions* self, bool value);
+/** filter to use for filling gaps in the kernel */
 FilaDepthOfFieldOptionsFilter FilaDepthOfFieldOptions_getFilter(const FilaDepthOfFieldOptions* self);
+/** filter to use for filling gaps in the kernel */
 void FilaDepthOfFieldOptions_setFilter(FilaDepthOfFieldOptions* self, FilaDepthOfFieldOptionsFilter value);
+/** perform DoF processing at native resolution */
 bool FilaDepthOfFieldOptions_getNativeResolution(const FilaDepthOfFieldOptions* self);
+/** perform DoF processing at native resolution */
 void FilaDepthOfFieldOptions_setNativeResolution(FilaDepthOfFieldOptions* self, bool value);
+/**
+ * Number of of rings used by the gather kernels. The number of rings affects quality
+ * and performance. The actual number of sample per pixel is defined
+ * as (ringCount * 2 - 1)^2. Here are a few commonly used values:
+ * <ul>
+ *       <li>3 rings :   25 ( 5x 5 grid)</li>
+ *       <li>4 rings :   49 ( 7x 7 grid)</li>
+ *       <li>5 rings :   81 ( 9x 9 grid)</li>
+ *      <li>17 rings : 1089 (33x33 grid)</li>
+ * </ul>
+ *
+ * <p>With a maximum circle-of-confusion of 32, it is never necessary to use more than 17 rings.</p>
+ *
+ * <p>Usually all three settings below are set to the same value, however, it is often
+ * acceptable to use a lower ring count for the "fast tiles", which improves performance.
+ * Fast tiles are regions of the screen where every pixels have a similar
+ * circle-of-confusion radius.</p>
+ *
+ * <p>A value of 0 means default, which is 5 on desktop and 3 on mobile.</p>
+ *
+ * @see #backgroundRingCount
+ * @see #fastGatherRingCount
+ * /
+ * / ** number of kernel rings for foreground tiles
+ */
 uint32_t FilaDepthOfFieldOptions_getForegroundRingCount(const FilaDepthOfFieldOptions* self);
+/**
+ * Number of of rings used by the gather kernels. The number of rings affects quality
+ * and performance. The actual number of sample per pixel is defined
+ * as (ringCount * 2 - 1)^2. Here are a few commonly used values:
+ * <ul>
+ *       <li>3 rings :   25 ( 5x 5 grid)</li>
+ *       <li>4 rings :   49 ( 7x 7 grid)</li>
+ *       <li>5 rings :   81 ( 9x 9 grid)</li>
+ *      <li>17 rings : 1089 (33x33 grid)</li>
+ * </ul>
+ *
+ * <p>With a maximum circle-of-confusion of 32, it is never necessary to use more than 17 rings.</p>
+ *
+ * <p>Usually all three settings below are set to the same value, however, it is often
+ * acceptable to use a lower ring count for the "fast tiles", which improves performance.
+ * Fast tiles are regions of the screen where every pixels have a similar
+ * circle-of-confusion radius.</p>
+ *
+ * <p>A value of 0 means default, which is 5 on desktop and 3 on mobile.</p>
+ *
+ * @see #backgroundRingCount
+ * @see #fastGatherRingCount
+ * /
+ * / ** number of kernel rings for foreground tiles
+ */
 void FilaDepthOfFieldOptions_setForegroundRingCount(FilaDepthOfFieldOptions* self, uint32_t value);
+/** number of kernel rings for background tiles */
 uint32_t FilaDepthOfFieldOptions_getBackgroundRingCount(const FilaDepthOfFieldOptions* self);
+/** number of kernel rings for background tiles */
 void FilaDepthOfFieldOptions_setBackgroundRingCount(FilaDepthOfFieldOptions* self, uint32_t value);
+/** number of kernel rings for fast tiles */
 uint32_t FilaDepthOfFieldOptions_getFastGatherRingCount(const FilaDepthOfFieldOptions* self);
+/** number of kernel rings for fast tiles */
 void FilaDepthOfFieldOptions_setFastGatherRingCount(FilaDepthOfFieldOptions* self, uint32_t value);
+/**
+ * maximum circle-of-confusion in pixels for the foreground, must be in [0, 32] range.
+ * A value of 0 means default, which is 32 on desktop and 24 on mobile.
+ */
 uint32_t FilaDepthOfFieldOptions_getMaxForegroundCOC(const FilaDepthOfFieldOptions* self);
+/**
+ * maximum circle-of-confusion in pixels for the foreground, must be in [0, 32] range.
+ * A value of 0 means default, which is 32 on desktop and 24 on mobile.
+ */
 void FilaDepthOfFieldOptions_setMaxForegroundCOC(FilaDepthOfFieldOptions* self, uint32_t value);
+/**
+ * maximum circle-of-confusion in pixels for the background, must be in [0, 32] range.
+ * A value of 0 means default, which is 32 on desktop and 24 on mobile.
+ */
 uint32_t FilaDepthOfFieldOptions_getMaxBackgroundCOC(const FilaDepthOfFieldOptions* self);
+/**
+ * maximum circle-of-confusion in pixels for the background, must be in [0, 32] range.
+ * A value of 0 means default, which is 32 on desktop and 24 on mobile.
+ */
 void FilaDepthOfFieldOptions_setMaxBackgroundCOC(FilaDepthOfFieldOptions* self, uint32_t value);
 
 

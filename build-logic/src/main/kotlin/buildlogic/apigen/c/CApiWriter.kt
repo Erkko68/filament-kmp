@@ -16,7 +16,7 @@ import buildlogic.apigen.cpp.CppType
  * Writes the C API of [api]: per module a `Types.h` (handles, enums, math mirrors) and an `Includes.hpp` of the API
  * headers, the helpers the forwarders call (`Bridge.hpp`), and per top-level class or namespace a header and its C++
  * forwarders. What can't be bridged becomes a `TODO(handwritten)` comment where its declaration would be; for one
- * [manual] writes by hand, a note it's done.
+ * [manual] writes by hand, a note it's done. A declaration keeps the C++ one's documentation comment.
  */
 internal class CApiWriter(
     private val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val manual: Set<String> = emptySet(),
@@ -143,7 +143,7 @@ internal class CApiWriter(
                 listed.flatMap { t -> templates.functionInstantiations(t)!!.map { (m, arguments) -> Overload(m, t, arguments) } }
             group.zip(suffixes(group.map { it.types })).forEach { (overload, suffix) ->
                 val name = baseName(overload.method) + if (suffix.isEmpty()) "" else "_$suffix"
-                emit(name, signature(overload.method), section, overload.method.guard) { forwarder(overload.method, name, overload.templateArguments) }
+                emit(name, signature(overload.method), section, overload.method.guard, overload.method.doc) { forwarder(overload.method, name, overload.templateArguments) }
             }
             unlisted.forEach {
                 section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: functionInstantiations lists none")
@@ -174,7 +174,7 @@ internal class CApiWriter(
         val cpp = "${field.type.spelling} ${record.name}::${field.name}"
         // A method of the same name already reads it.
         val getter = names.getter(record.name, field.name)
-        if (getter !in functionNames) emit(getter, cpp, section) {
+        if (getter !in functionNames) emit(getter, cpp, section, doc = field.doc) {
             val result = bridges.result(field.type, lvalue = true)
             val read = "$h::cpp(self)->${field.name}"
             if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read, "out")
@@ -186,7 +186,7 @@ internal class CApiWriter(
             bindings += Binding(setter, cpp, Status.SKIPPED, "${record.name} is only a result, and C would have to keep the pointer")
             return
         }
-        if (setter !in functionNames) emit(setter, cpp, section) {
+        if (setter !in functionNames) emit(setter, cpp, section, doc = field.doc) {
             val param = bridges.fieldParam(field.type)
             "void $setter(${cParams("$self* self", listOf("value" to param))})" to param.assign("$h::cpp(self)->${field.name}", "value")
         }
@@ -197,7 +197,7 @@ internal class CApiWriter(
      * (`TODO(handwritten)`). A [guard]ed one exists on every target, and panics where the header's condition hides the
      * C++ it calls.
      */
-    private fun emit(name: String, cpp: String, section: Section, guard: String? = null, build: () -> Pair<String, String>) {
+    private fun emit(name: String, cpp: String, section: Section, guard: String? = null, doc: String? = null, build: () -> Pair<String, String>) {
         val (code, reason) = try {
             build().also { if (name in functionNames) throw Unsupported("$name is already generated for another overload") } to null
         } catch (e: Unsupported) {
@@ -208,7 +208,7 @@ internal class CApiWriter(
         if (code != null && handwritten.isEmpty()) {
             val (signature, body) = code
             functionNames += name
-            section.declarations.appendLine("$signature;")
+            section.declarations.append(comment(doc)).appendLine("$signature;")
             val guarded = if (guard == null) "    $body" else "#if $guard\n    $body\n#else\n    $h::unavailable(\"$name\");\n#endif"
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
             bindings += Binding(name, cpp, Status.GENERATED)
@@ -249,7 +249,12 @@ internal class CApiWriter(
             bridges.mathTypes.forEach { body.appendLine(mirror(it)) }
             body.appendLine()
         }
-        moduleRecords(module).forEach { body.appendLine("typedef struct ${names.type(it.name)} ${names.type(it.name)};") }
+        moduleRecords(module).forEach { record ->
+            // A documented one stands apart from the list.
+            if (record.doc != null && body.isNotEmpty() && !body.endsWith("\n\n")) body.appendLine()
+            body.append(comment(record.doc)).appendLine("typedef struct ${names.type(record.name)} ${names.type(record.name)};")
+            if (record.doc != null) body.appendLine()
+        }
         surface.mapNotNull { api.enums[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
             .forEach { body.appendLine().append(enum(it)) }
         // Callbacks take the handles and enums above.
@@ -287,12 +292,20 @@ internal class CApiWriter(
         // C enumerators are ints; wider enums become a fixed-width integer and macros.
         val wide = bridges.wideEnumType(enum)
         return if (wide == null) {
-            "// ${enum.name}\ntypedef enum $name {\n" +
-                enum.constants.joinToString("") { (c, v) -> "    ${names.enumConstant(enum.name, c)} = $v,\n" } + "} $name;\n"
+            "// ${enum.name}\n${comment(enum.doc)}typedef enum $name {\n" +
+                enum.constants.joinToString("") { (c, v) -> comment(enum.constantDocs[c], "    ") + "    ${names.enumConstant(enum.name, c)} = $v,\n" } + "} $name;\n"
         } else {
-            "// ${enum.name}\ntypedef $wide $name;\n" +
-                enum.constants.joinToString("") { (c, v) -> "#define ${names.enumConstant(enum.name, c)} (($name)${v}ULL)\n" }
+            "// ${enum.name}\n${comment(enum.doc)}typedef $wide $name;\n" +
+                enum.constants.joinToString("") { (c, v) -> comment(enum.constantDocs[c]) + "#define ${names.enumConstant(enum.name, c)} (($name)${v}ULL)\n" }
         }
+    }
+
+    /** [doc] as a C documentation comment on lines of its own, at [indent]; nothing for none. */
+    private fun comment(doc: String?, indent: String = ""): String {
+        // A block comment ends at the first `*/`, and warns of a `/*` inside it.
+        val lines = doc?.replace("*/", "* /")?.replace("/*", "/ *")?.lines() ?: return ""
+        if (lines.size == 1) return "$indent/** ${lines[0]} */\n"
+        return "$indent/**\n" + lines.joinToString("") { "$indent *${if (it.isEmpty()) "" else " $it"}\n" } + "$indent */\n"
     }
 
     private fun header(name: String, include: String, body: String): String {

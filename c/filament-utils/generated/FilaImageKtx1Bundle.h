@@ -17,14 +17,36 @@ void FilaImageKtx1Bundle_destroy(FilaImageKtx1Bundle* self);
 // skipped bool image::Ktx1Bundle::getBlob(KtxBlobIndex index, uint8_t ** data, uint32_t * size) const: uses image::KtxBlobIndex
 // skipped bool image::Ktx1Bundle::setBlob(KtxBlobIndex index, const uint8_t * data, uint32_t size): uses image::KtxBlobIndex
 // skipped bool image::Ktx1Bundle::allocateBlob(KtxBlobIndex index, uint32_t size): uses image::KtxBlobIndex
+/**
+ * Serializes the bundle into the given target memory. Returns false if there's not enough
+ * memory.
+ *
+ * Typically, this method is used to write out the contents of a KTX file.
+ *
+ * \note Asserts via `FILAMENT_CHECK_POSTCONDITION` if internal payload constraints are violated.
+ */
 bool FilaImageKtx1Bundle_serialize(const FilaImageKtx1Bundle* self, uint8_t* destination, uint32_t numBytes);
+/**
+ * Computes the size (in bytes) of the serialized bundle.
+ *
+ * \note Asserts via `FILAMENT_CHECK_POSTCONDITION` if internal LOD sizes are inconsistent or total size overflows 32-bit bounds.
+ */
 uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self);
 // handwritten in manual/ FilaImageKtx1Bundle_getMetadata: const char * image::Ktx1Bundle::getMetadata(const char * key, size_t * valueSize) const
 //     size_t*: its width differs across targets
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value);
+/**
+ * Parses the key="sh" metadata and returns 3 bands of data.
+ *
+ * Assumes 3 bands for a total of 9 RGB coefficients.
+ * Returns true if successful.
+ */
 bool FilaImageKtx1Bundle_getSphericalHarmonics(FilaImageKtx1Bundle* self, FilaFloat3* result);
+/** Gets the number of miplevels (this is never zero). */
 uint32_t FilaImageKtx1Bundle_getNumMipLevels(const FilaImageKtx1Bundle* self);
+/** Gets the number of array elements (this is never zero). */
 uint32_t FilaImageKtx1Bundle_getArrayLength(const FilaImageKtx1Bundle* self);
+/** Returns whether or not this is a cubemap. */
 bool FilaImageKtx1Bundle_isCubemap(const FilaImageKtx1Bundle* self);
 
 

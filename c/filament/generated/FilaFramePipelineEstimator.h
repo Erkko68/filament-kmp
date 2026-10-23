@@ -11,24 +11,68 @@ extern "C" {
 // filament::FramePipelineEstimator::Workload
 FilaFramePipelineEstimatorWorkload* FilaFramePipelineEstimatorWorkload_create(void);
 void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorkload* self);
+/** Ideal bottleneck frame duration (Throughput) */
 void FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(const FilaFramePipelineEstimatorWorkload* self, int64_t* out);
+/** Ideal bottleneck frame duration (Throughput) */
 void FilaFramePipelineEstimatorWorkload_setIdealFrameDuration(FilaFramePipelineEstimatorWorkload* self, int64_t value);
+/** Ideal frame rate in Hz (1.0 / idealFrameDuration) */
 float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self);
+/** Ideal frame rate in Hz (1.0 / idealFrameDuration) */
 void FilaFramePipelineEstimatorWorkload_setIdealFrameRate(FilaFramePipelineEstimatorWorkload* self, float value);
 
 // filament::FramePipelineEstimator::PacingSizing
 FilaFramePipelineEstimatorPacingSizing* FilaFramePipelineEstimatorPacingSizing_create(void);
 void FilaFramePipelineEstimatorPacingSizing_destroy(FilaFramePipelineEstimatorPacingSizing* self);
+/** Recommended structural latency (Pipeline Depth in frames) */
 uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFramePipelineEstimatorPacingSizing* self);
+/** Recommended structural latency (Pipeline Depth in frames) */
 void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value);
+/** Maximum safe delay (slack) before starting CPU work */
 void FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(const FilaFramePipelineEstimatorPacingSizing* self, int64_t* out);
+/** Maximum safe delay (slack) before starting CPU work */
 void FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration(FilaFramePipelineEstimatorPacingSizing* self, int64_t value);
 
 // filament::FramePipelineEstimator
+/**
+ * Converts a TargetPercentile enum to its corresponding normal distribution Z-score.
+ *
+ * @param targetPercentile Desired confidence interval percentile.
+ * @return Standard normal distribution Z-score.
+ */
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile);
+/**
+ * Evaluates historical frame telemetry to estimate raw unthrottled throughput limit.
+ *
+ * @param history Contiguous slice of past Renderer::FrameInfo records.
+ * @param targetPercentile Statistical confidence interval (defaults to P90).
+ * @return Estimated Workload.
+ */
 void FilaFramePipelineEstimator_estimateWorkload_TargetPercentile(const FilaRendererFrameInfo* const* history, uint32_t historyCount, FilaFramePipelineEstimatorTargetPercentile targetPercentile, FilaFramePipelineEstimatorWorkload* out);
+/**
+ * Evaluates historical frame telemetry to estimate raw unthrottled throughput limit using a custom Z-score.
+ *
+ * @param history Contiguous slice of past Renderer::FrameInfo records.
+ * @param zScore Normal distribution Z-score multiplier for standard deviation.
+ * @return Estimated Workload.
+ */
 void FilaFramePipelineEstimator_estimateWorkload_double(const FilaRendererFrameInfo* const* history, uint32_t historyCount, double zScore, FilaFramePipelineEstimatorWorkload* out);
+/**
+ * Evaluates historical frame telemetry to size latency and safe delay for a given pacing period.
+ *
+ * @param history Contiguous slice of past Renderer::FrameInfo records.
+ * @param pacingPeriod Frame interval step at which the pipeline is throttled (e.g. 16.67ms VSYNC period).
+ * @param targetPercentile Statistical confidence interval (defaults to P90).
+ * @return Estimated latency and safe delay pacing configurations.
+ */
 void FilaFramePipelineEstimator_estimatePacing_TargetPercentile(const FilaRendererFrameInfo* const* history, uint32_t historyCount, int64_t pacingPeriod, FilaFramePipelineEstimatorTargetPercentile targetPercentile, FilaFramePipelineEstimatorPacingSizing* out);
+/**
+ * Evaluates historical frame telemetry to size latency and safe delay for a given pacing period using a custom Z-score.
+ *
+ * @param history Contiguous slice of past Renderer::FrameInfo records.
+ * @param pacingPeriod Frame interval step at which the pipeline is throttled.
+ * @param zScore Normal distribution Z-score multiplier for standard deviation.
+ * @return Estimated latency and safe delay pacing configurations.
+ */
 void FilaFramePipelineEstimator_estimatePacing_double(const FilaRendererFrameInfo* const* history, uint32_t historyCount, int64_t pacingPeriod, double zScore, FilaFramePipelineEstimatorPacingSizing* out);
 
 

@@ -10,14 +10,19 @@
 
 namespace geo {
 
-enum class Kind : uint8_t { CIRCLE, POLYGON = 5, GROUP };
+/// What a shape is. \see Shape::GetKind
+enum class Kind : uint8_t {
+    CIRCLE,      //!< round
+    POLYGON = 5, //!< straight-sided
+    GROUP
+};
 
 // Wider than a C enum's int.
 enum Layers : uint64_t { LAYER_NONE = 0, LAYER_ALL = 0xFFFFFFFFFFull };
 
 // A value struct; its fields are mX, read by GetX.
 struct Style {
-    float mWidth = 1.5f;
+    float mWidth = 1.5f; //!< in pixels
     Kind mKind = Kind::CIRCLE;
     math::float3 mColor = { 1, 0, 0 };
     float mWeights[3] = {};
@@ -49,9 +54,15 @@ private:
     Path();
 };
 
+/**
+ * Something drawn on a canvas.
+ *
+ * A canvas counts its references.
+ */
 class GEO_PUBLIC Shape : public RefTarget<Shape> {
 public:
     virtual ~Shape();
+    /// @return its area, in square pixels
     virtual float GetArea() const = 0;
 
     Kind GetKind() const;
@@ -63,6 +74,11 @@ public:
     Path GetPath() const;
     void SetLimits(const Limits& limits);
 
+    /**
+     * Names the shape.
+     *
+     * @param name what it's called; the shape copies it
+     */
     void SetName(const char* name);
     void SetName(const char* name, size_t nameLength);
     void SetName(std::string_view name);

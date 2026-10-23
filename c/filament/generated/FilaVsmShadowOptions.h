@@ -11,17 +11,61 @@ extern "C" {
 // filament::VsmShadowOptions
 FilaVsmShadowOptions* FilaVsmShadowOptions_create(void);
 void FilaVsmShadowOptions_destroy(FilaVsmShadowOptions* self);
+/**
+ * Sets the number of anisotropic samples to use when sampling a VSM shadow map. If greater
+ * than 0, mipmaps will automatically be generated each frame for all lights.
+ *
+ * <p>The number of anisotropic samples = 2 ^ vsmAnisotropy.</p>
+ */
 uint32_t FilaVsmShadowOptions_getAnisotropy(const FilaVsmShadowOptions* self);
+/**
+ * Sets the number of anisotropic samples to use when sampling a VSM shadow map. If greater
+ * than 0, mipmaps will automatically be generated each frame for all lights.
+ *
+ * <p>The number of anisotropic samples = 2 ^ vsmAnisotropy.</p>
+ */
 void FilaVsmShadowOptions_setAnisotropy(FilaVsmShadowOptions* self, uint32_t value);
+/** Whether to generate mipmaps for all VSM shadow maps. */
 bool FilaVsmShadowOptions_getMipmapping(const FilaVsmShadowOptions* self);
+/** Whether to generate mipmaps for all VSM shadow maps. */
 void FilaVsmShadowOptions_setMipmapping(FilaVsmShadowOptions* self, bool value);
+/**
+ * The number of MSAA samples to use when rendering VSM shadow maps.
+ * Must be a power-of-two and greater than or equal to 1. A value of 1 effectively turns
+ * off MSAA.
+ * Higher values may not be available depending on the underlying hardware.
+ */
 uint32_t FilaVsmShadowOptions_getMsaaSamples(const FilaVsmShadowOptions* self);
+/**
+ * The number of MSAA samples to use when rendering VSM shadow maps.
+ * Must be a power-of-two and greater than or equal to 1. A value of 1 effectively turns
+ * off MSAA.
+ * Higher values may not be available depending on the underlying hardware.
+ */
 void FilaVsmShadowOptions_setMsaaSamples(FilaVsmShadowOptions* self, uint32_t value);
+/**
+ * Whether to use a 32-bits or 16-bits texture format for VSM shadow maps. 32-bits
+ * precision is rarely needed, but it does reduce light leaks as well as "fading"
+ * of the shadows in some situations. Setting highPrecision to true for a single
+ * shadow map will double the memory usage of all shadow maps.
+ * This may not be supported on all mobile devices.
+ */
 bool FilaVsmShadowOptions_getHighPrecision(const FilaVsmShadowOptions* self);
+/**
+ * Whether to use a 32-bits or 16-bits texture format for VSM shadow maps. 32-bits
+ * precision is rarely needed, but it does reduce light leaks as well as "fading"
+ * of the shadows in some situations. Setting highPrecision to true for a single
+ * shadow map will double the memory usage of all shadow maps.
+ * This may not be supported on all mobile devices.
+ */
 void FilaVsmShadowOptions_setHighPrecision(FilaVsmShadowOptions* self, bool value);
+/** @deprecated has no effect. */
 float FilaVsmShadowOptions_getMinVarianceScale(const FilaVsmShadowOptions* self);
+/** @deprecated has no effect. */
 void FilaVsmShadowOptions_setMinVarianceScale(FilaVsmShadowOptions* self, float value);
+/** VSM light bleeding reduction amount, between 0 and 1. */
 float FilaVsmShadowOptions_getLightBleedReduction(const FilaVsmShadowOptions* self);
+/** VSM light bleeding reduction amount, between 0 and 1. */
 void FilaVsmShadowOptions_setLightBleedReduction(FilaVsmShadowOptions* self, float value);
 
 

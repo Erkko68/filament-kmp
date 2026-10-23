@@ -12,9 +12,47 @@ extern "C" {
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_create(void);
 void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self);
 // skipped Builder & filament::SkinningBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Size of the skinning buffer in bones.
+ *
+ * Due to limitation in the GLSL, the SkinningBuffer must always by a multiple of
+ * 256, this adjustment is done automatically, but can cause
+ * some memory overhead. This memory overhead can be mitigated by using the same
+ * SkinningBuffer to store the bone information for multiple RenderPrimitives.
+ *
+ * @param boneCount Number of bones the skinning buffer can hold.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_boneCount(FilaSkinningBufferBuilder* self, uint32_t boneCount);
+/**
+ * The new buffer is created with identity bones
+ * @param initialize true to initializing the buffer, false to not.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* self, bool initialize);
+/**
+ * Associate an optional name with this SkinningBuffer for debugging purposes.
+ *
+ * @param name A string to identify this SkinningBuffer
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_name(FilaSkinningBufferBuilder* self, const char* name);
+/**
+ * Creates the SkinningBuffer object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this SkinningBuffer with.
+ *
+ * @return pointer to the newly created object.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ *
+ * @see SkinningBuffer::setBones
+ */
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(const FilaSkinningBufferBuilder* self, FilaEngine* engine);
 
 // filament::SkinningBuffer
@@ -22,6 +60,10 @@ FilaSkinningBuffer* FilaSkinningBufferBuilder_build(const FilaSkinningBufferBuil
 // skipped void filament::SkinningBuffer::setBones(Engine & engine, utils::Slice<const math::mat4f> transforms, size_t offset): .*\(.*utils::Slice.*\)
 void FilaSkinningBuffer_setBones_Bone_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaRenderableManagerBone* transforms, uint32_t count, uint32_t offset);
 void FilaSkinningBuffer_setBones_mat4f_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaMat4f* transforms, uint32_t count, uint32_t offset);
+/**
+ * Returns the size of this SkinningBuffer in elements.
+ * @return The number of bones the SkinningBuffer holds.
+ */
 uint32_t FilaSkinningBuffer_getBoneCount(const FilaSkinningBuffer* self);
 
 

@@ -11,15 +11,25 @@ extern "C" {
 // filament::VignetteOptions
 FilaVignetteOptions* FilaVignetteOptions_create(void);
 void FilaVignetteOptions_destroy(FilaVignetteOptions* self);
+/** high values restrict the vignette closer to the corners, between 0 and 1 */
 float FilaVignetteOptions_getMidPoint(const FilaVignetteOptions* self);
+/** high values restrict the vignette closer to the corners, between 0 and 1 */
 void FilaVignetteOptions_setMidPoint(FilaVignetteOptions* self, float value);
+/** controls the shape of the vignette, from a rounded rectangle (0.0), to an oval (0.5), to a circle (1.0) */
 float FilaVignetteOptions_getRoundness(const FilaVignetteOptions* self);
+/** controls the shape of the vignette, from a rounded rectangle (0.0), to an oval (0.5), to a circle (1.0) */
 void FilaVignetteOptions_setRoundness(FilaVignetteOptions* self, float value);
+/** softening amount of the vignette effect, between 0 and 1 */
 float FilaVignetteOptions_getFeather(const FilaVignetteOptions* self);
+/** softening amount of the vignette effect, between 0 and 1 */
 void FilaVignetteOptions_setFeather(FilaVignetteOptions* self, float value);
+/** color of the vignette effect, alpha is currently ignored */
 void FilaVignetteOptions_getColor(const FilaVignetteOptions* self, FilaFloat4* out);
+/** color of the vignette effect, alpha is currently ignored */
 void FilaVignetteOptions_setColor(FilaVignetteOptions* self, const FilaFloat4* value);
+/** enables or disables the vignette effect */
 bool FilaVignetteOptions_getEnabled(const FilaVignetteOptions* self);
+/** enables or disables the vignette effect */
 void FilaVignetteOptions_setEnabled(FilaVignetteOptions* self, bool value);
 
 

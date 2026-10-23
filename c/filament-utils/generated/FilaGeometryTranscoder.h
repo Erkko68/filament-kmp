@@ -17,12 +17,27 @@ bool FilaGeometryTranscoderConfig_getNormalized(const FilaGeometryTranscoderConf
 void FilaGeometryTranscoderConfig_setNormalized(FilaGeometryTranscoderConfig* self, bool value);
 uint32_t FilaGeometryTranscoderConfig_getComponentCount(const FilaGeometryTranscoderConfig* self);
 void FilaGeometryTranscoderConfig_setComponentCount(FilaGeometryTranscoderConfig* self, uint32_t value);
+/** If stride is 0, the transcoder assumes tight packing. */
 uint32_t FilaGeometryTranscoderConfig_getInputStrideBytes(const FilaGeometryTranscoderConfig* self);
+/** If stride is 0, the transcoder assumes tight packing. */
 void FilaGeometryTranscoderConfig_setInputStrideBytes(FilaGeometryTranscoderConfig* self, uint32_t value);
 
 // filament::geometry::Transcoder
 FilaGeometryTranscoder* FilaGeometryTranscoder_create(const FilaGeometryTranscoderConfig* config);
 void FilaGeometryTranscoder_destroy(FilaGeometryTranscoder* self);
+/**
+ * Converts arbitrary data into tightly packed 32-bit floating point values.
+ *
+ * If target is non-null, writes up to "count" items into target and returns the number of bytes
+ * actually written.
+ *
+ * If target is null, returns the number of bytes required.
+ *
+ * @param target Client owned area to write into, or null for a size query
+ * @param source Pointer to the data to read from (does not get retained)
+ * @param count The maximum number of items to write (i.e. number of float3 values, not bytes)
+ * @return Number of bytes required to contain "count" items after conversion to packed floats
+ */
 uint32_t FilaGeometryTranscoder_invoke(const FilaGeometryTranscoder* self, float* target, const void* source, uint32_t count);
 
 
