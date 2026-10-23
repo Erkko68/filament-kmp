@@ -60,8 +60,12 @@ JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1SetLayers(JNIEnv* en
     GeoCanvas_SetLayers((void*)(intptr_t) self, layers);
 }
 
-JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1SetListener(JNIEnv* env, jclass cls, jlong self, jlong listener) {
-    GeoCanvas_SetListener((void*)(intptr_t) self, (void*)(intptr_t) listener);
+JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1SetListener(JNIEnv* env, jclass cls, jlong self, jlong listener, jlong listenerUser) {
+    GeoCanvas_SetListener((void*)(intptr_t) self, (void*)(intptr_t) listener, (void*)(intptr_t) listenerUser);
+}
+
+JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1Track(JNIEnv* env, jclass cls, jlong self, jlong tracker, jlong user) {
+    GeoCanvas_Track((void*)(intptr_t) self, (void*)(intptr_t) tracker, (void*)(intptr_t) user);
 }
 
 JNIEXPORT void JNICALL Java_geo_capi_GeoCanvasKt_GeoCanvas_1Visit(JNIEnv* env, jclass cls, jlong self, jlong visitor, jlong user) {

@@ -10,6 +10,8 @@
 namespace geo {
 
 using Listener = std::function<void(Shape* shape, float progress)>;
+// Has its user data: C passes it to Track, which passes it on.
+using Tracker = std::function<void(void* user, uint32_t frame)>;
 using Visitor = void (*)(void* user, uint32_t index);
 
 // C binds the instantiation the config lists.
@@ -41,6 +43,7 @@ public:
     void SetLayers(Layers layers);
 
     void SetListener(Listener listener);
+    void Track(Tracker tracker, void* user);
     void Visit(Visitor visitor, void* user) const;
     void Upload(Blob&& blob);
 

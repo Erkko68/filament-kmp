@@ -207,7 +207,8 @@ internal class CBridges(
 
     /**
      * A `std::function` alias C passes as a function pointer of the same shape, declared under the alias's name: its
-     * arguments cross as results do. NULL is an empty function.
+     * arguments cross as results do. One whose arguments have no `void*` for C's user data, which C++ passes through
+     * the call, gets it last, from the argument after the pointer. NULL is an empty function.
      */
     private fun function(alias: String, signature: CppType, bridge: DirectBridges): CBridge {
         if (bridge.result || !bridge.byValue) throw Unsupported("$alias by reference or as a result")
@@ -215,12 +216,17 @@ internal class CBridges(
         if (returns.spelling != "void") throw Unsupported("$alias: returns a value")
         val args = signature.args.drop(1).map { result(it) }
         if (args.any { it.out || it.extra.isNotEmpty() }) throw Unsupported("$alias: arguments C takes in pieces")
+        // ponytail: any void* is taken for user data; a table of the ones that aren't, if a library has one.
+        val user = args.none { it.c == "void*" }
         val name = names.type(alias)
-        callbackTypes[name] = "typedef void (*$name)(${args.joinToString { it.c }.ifEmpty { "void" }});"
+        callbackTypes[name] = "typedef void (*$name)(${(args.map { it.c } + listOfNotNull("void* user".takeIf { user })).joinToString().ifEmpty { "void" }});"
         val params = args.indices.joinToString { "auto a$it" }
+        // ponytail: C frees its user data once it knows C++ is done with the function (it set another, or the owner
+        // went); a release callback when a library copies them where C can't tell.
         return CBridge(name, { n ->
-            "$n ? ${templates.cpp(alias)}([=]($params) { $n(${args.withIndex().joinToString { (i, a) -> a.convert("a$i") }}); }) : nullptr"
-        })
+            val passed = args.mapIndexed { i, a -> a.convert("a$i") } + listOfNotNull("${n}User".takeIf { user })
+            "$n ? ${templates.cpp(alias)}([=]($params) { $n(${passed.joinToString()}); }) : nullptr"
+        }, extra = if (user) listOf("void*" to "User") else emptyList())
     }
 
     /**

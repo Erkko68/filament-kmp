@@ -38,7 +38,10 @@ internal external fun GeoCanvas_GetLayers(self: NativePointer, out: NativePointe
 internal external fun GeoCanvas_SetLayers(self: NativePointer, layers: Long)
 
 @ExternalSymbolName("GeoCanvas_SetListener")
-internal external fun GeoCanvas_SetListener(self: NativePointer, listener: NativePointer)
+internal external fun GeoCanvas_SetListener(self: NativePointer, listener: NativePointer, listenerUser: NativePointer)
+
+@ExternalSymbolName("GeoCanvas_Track")
+internal external fun GeoCanvas_Track(self: NativePointer, tracker: NativePointer, user: NativePointer)
 
 @ExternalSymbolName("GeoCanvas_Visit")
 internal external fun GeoCanvas_Visit(self: NativePointer, visitor: NativePointer, user: NativePointer)

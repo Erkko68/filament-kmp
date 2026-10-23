@@ -23,6 +23,7 @@ _GeoCanvas_SetLayers
 _GeoCanvas_SetListener
 _GeoCanvas_SetValue_float
 _GeoCanvas_SetValue_int32_t
+_GeoCanvas_Track
 _GeoCanvas_Upload
 _GeoCanvas_Visit
 _GeoCanvas_create

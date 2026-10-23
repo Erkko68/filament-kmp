@@ -73,6 +73,7 @@ class geo::Canvas
   Layers{geo::Layers} geo::Canvas::GetLayers() const
   void geo::Canvas::SetLayers(Layers{geo::Layers} layers)
   void geo::Canvas::SetListener(Listener{geo::Listener} listener)
+  void geo::Canvas::Track(Tracker{geo::Tracker} tracker, void * user)
   void geo::Canvas::Visit(Visitor{geo::Visitor} visitor, void * user) const
   void geo::Canvas::Upload(Blob &&{geo::Blob} blob)
   Result<Ref<Shape>>{geo::Result} geo::Canvas::Load(const char * path)
@@ -101,6 +102,7 @@ struct geo::Handle
   uint32_t geo::Handle::getId() const
 enum geo::Layers : uint64_t { LAYER_NONE = 0, LAYER_ALL = 1099511627775 }
 alias geo::Listener = std::function<void (Shape *, float)>{ext:std::function}
+alias geo::Tracker = std::function<void (void *, uint32_t)>{ext:std::function}
 alias geo::Visitor = void (*)(void *, uint32_t)
 struct geo::Blob
 struct geo::Result

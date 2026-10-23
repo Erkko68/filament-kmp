@@ -41,7 +41,8 @@ typedef uint64_t GeoLayers;
 #define GEO_LAYERS_LAYER_ALL ((GeoLayers)1099511627775ULL)
 
 typedef void (*GeoBlobCallback)(void* buffer, size_t size, void* user);
-typedef void (*GeoListener)(GeoShape*, float);
+typedef void (*GeoListener)(GeoShape*, float, void* user);
+typedef void (*GeoTracker)(void*, uint32_t);
 typedef void (*GeoVisitor)(void*, uint32_t);
 
 #ifdef __cplusplus

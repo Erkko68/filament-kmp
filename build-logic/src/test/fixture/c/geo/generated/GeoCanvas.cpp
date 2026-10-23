@@ -48,8 +48,12 @@ void GeoCanvas_SetLayers(GeoCanvas* self, GeoLayers layers) {
     geo_c::cpp(self)->SetLayers(static_cast<geo::Layers>(layers));
 }
 
-void GeoCanvas_SetListener(GeoCanvas* self, GeoListener listener) {
-    geo_c::cpp(self)->SetListener(listener ? geo::Listener([=](auto a0, auto a1) { listener(geo_c::c(a0), a1); }) : nullptr);
+void GeoCanvas_SetListener(GeoCanvas* self, GeoListener listener, void* listenerUser) {
+    geo_c::cpp(self)->SetListener(listener ? geo::Listener([=](auto a0, auto a1) { listener(geo_c::c(a0), a1, listenerUser); }) : nullptr);
+}
+
+void GeoCanvas_Track(GeoCanvas* self, GeoTracker tracker, void* user) {
+    geo_c::cpp(self)->Track(tracker ? geo::Tracker([=](auto a0, auto a1) { tracker(a0, a1); }) : nullptr, user);
 }
 
 void GeoCanvas_Visit(const GeoCanvas* self, GeoVisitor visitor, void* user) {
