@@ -2,11 +2,11 @@ package buildlogic.apigen
 
 import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.modelReport
-import buildlogic.apigen.externals.bindingFiles
-import buildlogic.apigen.gaps.coverage
-import buildlogic.apigen.kotlin.KotlinDeclarations
-import buildlogic.apigen.kotlin.kotlinApiSources
-import buildlogic.apigen.verify.enumCheck
+import buildlogic.apigen.bindings.bindingFiles
+import buildlogic.apigen.report.KotlinDeclarations
+import buildlogic.apigen.report.coverage
+import buildlogic.apigen.report.enumCheck
+import buildlogic.apigen.report.kotlinApiSources
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test

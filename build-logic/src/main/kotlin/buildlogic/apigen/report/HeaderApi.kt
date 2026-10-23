@@ -1,4 +1,4 @@
-package buildlogic.apigen.gaps
+package buildlogic.apigen.report
 
 import buildlogic.apigen.cpp.CppApi
 

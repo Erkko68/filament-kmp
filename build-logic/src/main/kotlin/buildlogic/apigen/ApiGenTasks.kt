@@ -2,10 +2,10 @@ package buildlogic.apigen
 
 import buildlogic.apigen.c.GenerateCApiTask
 import buildlogic.apigen.cpp.ApiModelTask
-import buildlogic.apigen.externals.GenerateBindingsTask
-import buildlogic.apigen.gaps.ApiCoverageTask
+import buildlogic.apigen.bindings.GenerateBindingsTask
 import buildlogic.apigen.kotlin.GenerateKotlinExternalsTask
-import buildlogic.apigen.verify.ApiVerifyTask
+import buildlogic.apigen.report.ApiCoverageTask
+import buildlogic.apigen.report.ApiVerifyTask
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
@@ -13,16 +13,17 @@ import org.gradle.kotlin.dsl.register
  * Registers the API generator for the library [config] describes, C++ headers → C → Kotlin, one package per stage:
  *
  * ```
- * ApiGenConfig  what the generator is told about the library; ApiGen runs the cpp and c stages, without Gradle
+ * ApiGenConfig  what the generator is told about the library
  * ApiHeaders    api-headers.txt: which headers are API, and the C module each goes to
+ * ApiGen        the stages, each reading what the one before wrote; no Gradle
  * cpp/          clang's AST of those headers → CppApi model         apiModel        (report)
  * c/            CppApi → c/<module>/generated; the functions those and
  *               c/<module>/manual declare → c/api-manifest.json     generateCApi    (committed)
  * kotlin/       api-manifest.json → Kotlin externals                generateKotlinExternals (committed)
- * externals/    api-manifest.json → JNI forwarders, wasm tables     generateBindings (build/)
- * gaps/         what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
+ * bindings/     api-manifest.json → JNI forwarders, wasm tables     generateBindings (build/)
+ * report/       what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
  *               C++ API the C API's objects don't call                 apiGaps  (report; the library's build registers it)
- * verify/       hand-written Kotlin enums send C the C++ values        apiVerify (fails)
+ *               hand-written Kotlin enums send C the C++ values        apiVerify (fails)
  * ```
  *
  * The Kotlin stages are registered when the config has [ApiGenConfig.kotlin].

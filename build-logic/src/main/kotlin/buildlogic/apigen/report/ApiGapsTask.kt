@@ -1,4 +1,4 @@
-package buildlogic.apigen.gaps
+package buildlogic.apigen.report
 
 import buildlogic.apigen.ApiGenTask
 import org.gradle.api.file.ConfigurableFileCollection

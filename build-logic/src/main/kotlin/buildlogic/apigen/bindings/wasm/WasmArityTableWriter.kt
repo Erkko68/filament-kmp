@@ -1,4 +1,4 @@
-package buildlogic.apigen.externals.wasm
+package buildlogic.apigen.bindings.wasm
 
 import buildlogic.apigen.c.CFunction
 

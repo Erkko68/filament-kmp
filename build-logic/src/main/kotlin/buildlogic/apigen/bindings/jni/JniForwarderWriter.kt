@@ -1,4 +1,4 @@
-package buildlogic.apigen.externals.jni
+package buildlogic.apigen.bindings.jni
 
 import buildlogic.apigen.c.CFunction
 

@@ -10,7 +10,7 @@ import buildlogic.apigen.c.DirectBridges
 import buildlogic.apigen.c.Unsupported
 import buildlogic.apigen.c.shape
 import buildlogic.apigen.cpp.CppType
-import buildlogic.apigen.gaps.ApiGapsTask
+import buildlogic.apigen.report.ApiGapsTask
 import buildlogic.apigen.registerApiGenTasks
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget

@@ -1,4 +1,4 @@
-package buildlogic.apigen.verify
+package buildlogic.apigen.report
 
 import java.math.BigInteger
 

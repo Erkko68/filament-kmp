@@ -1,6 +1,9 @@
 package buildlogic.apigen.kotlin
 
+import buildlogic.apigen.KotlinBindings
 import buildlogic.apigen.c.CFunction
+import buildlogic.apigen.c.CManifest
+import java.io.File
 
 /**
  * Writes the common `@ExternalSymbolName external fun` of a C header's functions, named like the C symbol (web binds
@@ -28,3 +31,14 @@ internal object KotlinExternalsWriter {
         "when", "while",
     )
 }
+
+/** Each header's externals by path under the Kotlin dir. */
+internal fun kotlinExternals(manifest: CManifest, bindings: KotlinBindings): Map<String, String> =
+    manifest.headers.entries.associate { (header, functions) ->
+        val module = header.substringBefore('/')
+        val pkg = bindings.packages.getValue(module)
+        "${packageDir(module, pkg)}/${File(header).nameWithoutExtension}.kt" to KotlinExternalsWriter.write(header, functions, pkg, bindings.interop)
+    }
+
+/** Where [module]'s externals in [pkg] live, under the Kotlin dir. */
+internal fun packageDir(module: String, pkg: String) = "$module/src/commonMain/kotlin/${pkg.replace('.', '/')}"

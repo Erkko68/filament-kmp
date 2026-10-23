@@ -1,4 +1,4 @@
-package buildlogic.apigen.kotlin
+package buildlogic.apigen.report
 
 import java.io.File
 

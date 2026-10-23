@@ -1,4 +1,4 @@
-package buildlogic.apigen.gaps
+package buildlogic.apigen.report
 
 /**
  * Methods of the library's public classes the C API's objects never mention: the headers' public methods, inline
