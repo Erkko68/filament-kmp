@@ -1,0 +1,129 @@
+{
+"geo-io/generated/GeoIoLoader.h": [
+{"name":"GeoIoLoader_create","returns":"ptr","params":[["format","i32"]]},
+{"name":"GeoIoLoader_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoIoLoader_GetFormat","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoIoLoader_Load","returns":"ptr","params":[["self","ptr"],["path","ptr"]]}
+],
+"geo/generated/GeoBox.h": [
+{"name":"GeoBox_create","returns":"ptr","params":[]},
+{"name":"GeoBox_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoBox_Get","returns":"f32","params":[["self","ptr"]]},
+{"name":"GeoBox_Set","returns":"void","params":[["self","ptr"],["value","f32"]]}
+],
+"geo/generated/GeoCanvas.h": [
+{"name":"GeoCanvas_create","returns":"ptr","params":[]},
+{"name":"GeoCanvas_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoCanvas_Add_Shape","returns":"void","params":[["self","ptr"],["shape","ptr"]]},
+{"name":"GeoCanvas_Add_vector","returns":"void","params":[["self","ptr"],["shapes","ptr"],["shapesCount","i32"]]},
+{"name":"GeoCanvas_GetCount","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoCanvas_GetIds","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoCanvas_GetHandle","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoCanvas_SetHandle","returns":"void","params":[["self","ptr"],["handle","i32"]]},
+{"name":"GeoCanvas_GetHandles","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoCanvas_GetLayers","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoCanvas_SetLayers","returns":"void","params":[["self","ptr"],["layers","i64"]]},
+{"name":"GeoCanvas_SetListener","returns":"void","params":[["self","ptr"],["listener","ptr"],["listenerUser","ptr"]]},
+{"name":"GeoCanvas_Track","returns":"void","params":[["self","ptr"],["tracker","ptr"],["user","ptr"]]},
+{"name":"GeoCanvas_Visit","returns":"void","params":[["self","ptr"],["visitor","ptr"],["user","ptr"]]},
+{"name":"GeoCanvas_Upload","returns":"void","params":[["self","ptr"],["blob","ptr"],["blobSize","i32"],["blobCallback","ptr"],["blobUser","ptr"]]},
+{"name":"GeoCanvas_Load","returns":"ptr","params":[["self","ptr"],["path","ptr"],["outError","ptr"],["outErrorCapacity","i32"]]},
+{"name":"GeoCanvas_Measure","returns":"bool","params":[["self","ptr"],["out","ptr"],["outError","ptr"],["outErrorCapacity","i32"]]},
+{"name":"GeoCanvas_SetBackground","returns":"void","params":[["self","ptr"],["rgba","ptr"],["rgbaCount","i32"]]},
+{"name":"GeoCanvas_Fill","returns":"void","params":[["self","ptr"],["rgba","ptr"],["rgbaCount","i32"]]},
+{"name":"GeoCanvas_GetBox","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoCanvas_SetValue_float","returns":"void","params":[["self","ptr"],["name","ptr"],["value","f32"]]},
+{"name":"GeoCanvas_SetValue_int32_t","returns":"void","params":[["self","ptr"],["name","ptr"],["value","i32"]]},
+{"name":"GeoCanvas_GetValue_float","returns":"f32","params":[["self","ptr"],["name","ptr"]]},
+{"name":"GeoCanvas_GetValue_int32_t","returns":"i32","params":[["self","ptr"],["name","ptr"]]},
+{"name":"GeoCanvas_invoke","returns":"void","params":[["self","ptr"],["time","f32"]]}
+],
+"geo/generated/GeoCircle.h": [
+{"name":"GeoCircle_create","returns":"ptr","params":[["radius","f32"]]},
+{"name":"GeoCircle_addRef","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoCircle_release","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoCircle_asShape","returns":"ptr","params":[["self","ptr"]]}
+],
+"geo/generated/GeoGeo.h": [
+{"name":"Geo_Distance","returns":"f32","params":[["a","ptr"],["b","ptr"]]},
+{"name":"Geo_Reset","returns":"void","params":[]}
+],
+"geo/generated/GeoLimits.h": [
+{"name":"GeoLimits_create","returns":"ptr","params":[]},
+{"name":"GeoLimits_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoLimits_GetMin","returns":"f32","params":[["self","ptr"]]},
+{"name":"GeoLimits_SetMin","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"GeoLimits_GetMax","returns":"f32","params":[["self","ptr"]]},
+{"name":"GeoLimits_SetMax","returns":"void","params":[["self","ptr"],["value","f32"]]}
+],
+"geo/generated/GeoPath.h": [
+{"name":"GeoPath_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoPath_GetLength","returns":"f32","params":[["self","ptr"]]}
+],
+"geo/generated/GeoPolygon.h": [
+{"name":"GeoPolygon_addRef","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoPolygon_release","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoPolygon_asShape","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoPolygon_Create","returns":"ptr","params":[["sides","i32"]]},
+{"name":"GeoPolygon_GetPoints","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoPolygon_SetPoints","returns":"void","params":[["self","ptr"],["points","ptr"],["pointsCount","i32"]]},
+{"name":"GeoPolygon_GetWeights","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoPolygon_SetWeights","returns":"void","params":[["self","ptr"],["weights","ptr"],["weightsCount","i32"]]}
+],
+"geo/generated/GeoRegistry.h": [
+{"name":"GeoRegistry_create","returns":"ptr","params":[]},
+{"name":"GeoRegistry_destroy","returns":"void","params":[["self","ptr"]]}
+],
+"geo/generated/GeoShape.h": [
+{"name":"GeoShape_addRef","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoShape_release","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoShape_GetArea","returns":"f32","params":[["self","ptr"]]},
+{"name":"GeoShape_GetKind","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoShape_GetStyle","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoShape_SetStyle","returns":"void","params":[["self","ptr"],["style","ptr"]]},
+{"name":"GeoShape_GetStats","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoShape_GetLimits","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoShape_GetPath","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoShape_SetLimits","returns":"void","params":[["self","ptr"],["limits","ptr"]]},
+{"name":"GeoShape_SetName","returns":"void","params":[["self","ptr"],["name","ptr"]]},
+{"name":"GeoShape_GetName","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoShape_Describe","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoShape_GetLabel","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoShape_GetRadius","returns":"bool","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoShape_SetRadius","returns":"void","params":[["self","ptr"],["radius","ptr"]]},
+{"name":"GeoShape_Move_float_float","returns":"void","params":[["self","ptr"],["dx","f32"],["dy","f32"]]},
+{"name":"GeoShape_Move_float2","returns":"void","params":[["self","ptr"],["delta","ptr"]]},
+{"name":"GeoShape_Scale","returns":"void","params":[["self","ptr"],["factors","ptr"]]},
+{"name":"GeoShape_Normalize","returns":"void","params":[["self","ptr"],["plane","ptr"]]},
+{"name":"GeoShape_Project","returns":"void","params":[["self","ptr"],["plane","ptr"],["planeCount","i32"]]},
+{"name":"GeoShape_Clip","returns":"void","params":[["self","ptr"],["planes","ptr"],["planesCount","i32"],["count","i32"]]},
+{"name":"GeoShape_DrawSync","returns":"void","params":[["self","ptr"]]}
+],
+"geo/generated/GeoStats.h": [
+{"name":"GeoStats_create","returns":"ptr","params":[]},
+{"name":"GeoStats_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoStats_GetLabel","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoStats_GetCount","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoStats_SetCount","returns":"void","params":[["self","ptr"],["value","i32"]]}
+],
+"geo/generated/GeoStyle.h": [
+{"name":"GeoStyle_create","returns":"ptr","params":[]},
+{"name":"GeoStyle_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoStyle_GetWidth","returns":"f32","params":[["self","ptr"]]},
+{"name":"GeoStyle_SetWidth","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"GeoStyle_GetKind","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoStyle_SetKind","returns":"void","params":[["self","ptr"],["value","i32"]]},
+{"name":"GeoStyle_GetColor","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoStyle_SetColor","returns":"void","params":[["self","ptr"],["value","ptr"]]},
+{"name":"GeoStyle_GetWeights","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoStyle_SetWeights","returns":"void","params":[["self","ptr"],["value","ptr"],["valueCount","i32"]]},
+{"name":"GeoStyle_GetName","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoStyle_SetName","returns":"void","params":[["self","ptr"],["value","ptr"]]},
+{"name":"GeoStyle_GetVisible","returns":"bool","params":[["self","ptr"]]},
+{"name":"GeoStyle_SetVisible","returns":"void","params":[["self","ptr"],["value","bool"]]}
+],
+"geo/manual/GeoCanvasManual.h": [
+{"name":"GeoCanvas_Adopt","returns":"void","params":[["self","ptr"],["shape","ptr"]]},
+{"name":"GeoCanvas_GetDefault","returns":"ptr","params":[]}
+]
+}

@@ -2,6 +2,16 @@
 #pragma once
 
 #include "../../filament/generated/Includes.hpp"
+
+#include <gltfio/Animator.h>
+#include <gltfio/AssetLoader.h>
+#include <gltfio/FilamentAsset.h>
+#include <gltfio/FilamentInstance.h>
+#include <gltfio/MaterialProvider.h>
+#include <gltfio/NodeManager.h>
+#include <gltfio/ResourceLoader.h>
+#include <gltfio/TextureProvider.h>
+#include <gltfio/TrsTransformManager.h>
 #include "Types.h"
 
 namespace fila {

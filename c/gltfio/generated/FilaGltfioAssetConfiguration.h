@@ -11,14 +11,44 @@ extern "C" {
 // filament::gltfio::AssetConfiguration
 FilaGltfioAssetConfiguration* FilaGltfioAssetConfiguration_create(void);
 void FilaGltfioAssetConfiguration_destroy(FilaGltfioAssetConfiguration* self);
+/**
+ * The engine that the loader should pass to builder objects (e.g.
+ * filament::VertexBuffer::Builder).
+ */
 FilaEngine* FilaGltfioAssetConfiguration_getEngine(const FilaGltfioAssetConfiguration* self);
+/**
+ * The engine that the loader should pass to builder objects (e.g.
+ * filament::VertexBuffer::Builder).
+ */
 void FilaGltfioAssetConfiguration_setEngine(FilaGltfioAssetConfiguration* self, FilaEngine* value);
+/**
+ * Controls whether the loader uses filamat to generate materials on the fly, or loads a small
+ * set of precompiled ubershader materials. Deleting the MaterialProvider is the client's
+ * responsibility. See createJitShaderProvider() and createUbershaderProvider().
+ */
 FilaGltfioMaterialProvider* FilaGltfioAssetConfiguration_getMaterials(const FilaGltfioAssetConfiguration* self);
+/**
+ * Controls whether the loader uses filamat to generate materials on the fly, or loads a small
+ * set of precompiled ubershader materials. Deleting the MaterialProvider is the client's
+ * responsibility. See createJitShaderProvider() and createUbershaderProvider().
+ */
 void FilaGltfioAssetConfiguration_setMaterials(FilaGltfioAssetConfiguration* self, FilaGltfioMaterialProvider* value);
 // skipped filament::gltfio::AssetConfiguration::names
+/**
+ * Overrides the factory used for creating entities in the transform hierarchy. If this is not
+ * specified, AssetLoader will use the singleton EntityManager associated with the current
+ * process.
+ */
 FilaUtilsEntityManager* FilaGltfioAssetConfiguration_getEntities(const FilaGltfioAssetConfiguration* self);
+/**
+ * Overrides the factory used for creating entities in the transform hierarchy. If this is not
+ * specified, AssetLoader will use the singleton EntityManager associated with the current
+ * process.
+ */
 void FilaGltfioAssetConfiguration_setEntities(FilaGltfioAssetConfiguration* self, FilaUtilsEntityManager* value);
+/** Optional default node name for anonymous nodes */
 char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfiguration* self);
+/** Optional default node name for anonymous nodes */
 void FilaGltfioAssetConfiguration_setDefaultNodeName(FilaGltfioAssetConfiguration* self, const char* value);
 // skipped filament::gltfio::AssetConfiguration::ext: uses filament::gltfio::AssetConfigurationExtended
 

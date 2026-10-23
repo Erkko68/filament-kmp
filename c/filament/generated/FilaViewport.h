@@ -12,16 +12,31 @@ extern "C" {
 FilaViewport* FilaViewport_create(void);
 FilaViewport* FilaViewport_create_int32_t_int32_t_uint32_t_uint32_t(int32_t left, int32_t bottom, uint32_t width, uint32_t height);
 void FilaViewport_destroy(FilaViewport* self);
+/**
+ * Returns whether the area of the view port is null.
+ *
+ * @return true if either width or height is 0 pixel.
+ */
 bool FilaViewport_empty(const FilaViewport* self);
+/** get the right coordinate in window space of the viewport */
 int32_t FilaViewport_right(const FilaViewport* self);
+/** get the top coordinate in window space of the viewport */
 int32_t FilaViewport_top(const FilaViewport* self);
+/** left coordinate in window space. */
 int32_t FilaViewport_getLeft(const FilaViewport* self);
+/** left coordinate in window space. */
 void FilaViewport_setLeft(FilaViewport* self, int32_t value);
+/** bottom coordinate in window space. */
 int32_t FilaViewport_getBottom(const FilaViewport* self);
+/** bottom coordinate in window space. */
 void FilaViewport_setBottom(FilaViewport* self, int32_t value);
+/** width in pixels */
 uint32_t FilaViewport_getWidth(const FilaViewport* self);
+/** width in pixels */
 void FilaViewport_setWidth(FilaViewport* self, uint32_t value);
+/** height in pixels */
 uint32_t FilaViewport_getHeight(const FilaViewport* self);
+/** height in pixels */
 void FilaViewport_setHeight(FilaViewport* self, uint32_t value);
 
 

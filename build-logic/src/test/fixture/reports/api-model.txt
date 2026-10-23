@@ -1,0 +1,117 @@
+struct geo::Style
+  field float mWidth = 1.5
+  field Kind{geo::Kind} mKind = geo::Kind::CIRCLE
+  field math::float3{ext:geo::math::float3} mColor = {1, 0, 0}
+  field float[3] mWeights = {}
+  field const char * mName = nullptr
+  field bool mVisible = true
+  float geo::Style::GetWidth() const
+struct geo::Stats
+  field const char * mLabel = nullptr
+  field uint32_t mCount = 0
+struct geo::Limits
+  field float mMax = 1
+class geo::Path
+  float geo::Path::GetLength() const
+class geo::Shape
+  float geo::Shape::GetArea() const
+  Kind{geo::Kind} geo::Shape::GetKind() const
+  Style &{geo::Style} geo::Shape::GetStyle()
+  const Style &{geo::Style} geo::Shape::GetStyle() const
+  void geo::Shape::SetStyle(const Style &{geo::Style} style)
+  Stats{geo::Stats} geo::Shape::GetStats() const
+  Limits{geo::Limits} geo::Shape::GetLimits() const
+  Path{geo::Path} geo::Shape::GetPath() const
+  void geo::Shape::SetLimits(const Limits &{geo::Limits} limits)
+  void geo::Shape::SetName(const char * name)
+  void geo::Shape::SetName(const char * name, size_t nameLength)
+  void geo::Shape::SetName(std::string_view{ext:std::string_view} name)
+  const std::string &{ext:std::string} geo::Shape::GetName() const
+  std::string{ext:std::string} geo::Shape::Describe() const
+  std::string_view{ext:std::string_view} geo::Shape::GetLabel() const
+  std::optional<float>{ext:std::optional} geo::Shape::GetRadius() const
+  void geo::Shape::SetRadius(std::optional<float>{ext:std::optional} radius)
+  void geo::Shape::Move(float dx, float dy)
+  void geo::Shape::Move(const math::float2 &{ext:geo::math::float2} delta)
+  void geo::Shape::Scale(math::float3 &{ext:geo::math::float3} factors)
+  void geo::Shape::Normalize(math::float4 &{ext:geo::math::float4} plane)
+  void geo::Shape::Project(math::float4 *{ext:geo::math::float4} plane)
+  void geo::Shape::Clip(const math::float4 *{ext:geo::math::float4} planes, size_t count)
+  void geo::Shape::Legacy()
+  void geo::Shape::DebugDump() const
+  void geo::Shape::DrawSync()
+class geo::Circle
+  float geo::Circle::GetArea() const
+class geo::Polygon
+  static Ref<Polygon>{geo::Ref} geo::Polygon::Create(uint32_t sides)
+  float geo::Polygon::GetArea() const
+  std::vector<math::float2>{ext:std::vector} geo::Polygon::GetPoints() const
+  void geo::Polygon::SetPoints(const std::vector<math::float2> &{ext:std::vector} points)
+  Span<float>{geo::Span} geo::Polygon::GetWeights() const
+  void geo::Polygon::SetWeights(Span<float>{geo::Span} weights)
+class geo::io::Loader
+  Format{geo::io::Format} geo::io::Loader::GetFormat() const
+  Ref<Shape>{geo::Ref} geo::io::Loader::Load(const char * path)
+class geo::Debug
+  void geo::Debug::Dump()
+class geo::Registry
+  static Registry &{geo::Registry} geo::Registry::Get()
+  void geo::Registry::Clear()
+struct geo::Box
+  T{geo::Box::T} geo::Box::Get() const
+  void geo::Box::Set(T{geo::Box::T} value)
+class geo::Canvas
+  void geo::Canvas::Add(Shape *{geo::Shape} shape)
+  void geo::Canvas::Add(const std::vector<Shape *> &{ext:std::vector} shapes)
+  void geo::Canvas::Adopt(Shape &&{geo::Shape} shape)
+  void geo::Canvas::Attach(Debug *{geo::Debug} debug)
+  size_t geo::Canvas::GetCount() const
+  std::vector<uint32_t>{ext:std::vector} geo::Canvas::GetIds() const
+  Handle{geo::Handle} geo::Canvas::GetHandle() const
+  void geo::Canvas::SetHandle(Handle{geo::Handle} handle)
+  Handle *{geo::Handle} geo::Canvas::GetHandles()
+  Layers{geo::Layers} geo::Canvas::GetLayers() const
+  void geo::Canvas::SetLayers(Layers{geo::Layers} layers)
+  void geo::Canvas::SetListener(Listener{geo::Listener} listener)
+  void geo::Canvas::Track(Tracker{geo::Tracker} tracker, void * user)
+  void geo::Canvas::Visit(Visitor{geo::Visitor} visitor, void * user) const
+  void geo::Canvas::Upload(Blob &&{geo::Blob} blob)
+  Result<Ref<Shape>>{geo::Result} geo::Canvas::Load(const char * path)
+  Result<math::float3>{geo::Result} geo::Canvas::Measure() const
+  void geo::Canvas::SetBackground(std::array<float, 4>{ext:std::array} rgba)
+  void geo::Canvas::Fill(std::array<float, 4> &{ext:std::array} rgba) const
+  Box<float> &{geo::Box} geo::Canvas::GetBox()
+  void geo::Canvas::SetValue(const char * name, T{geo::Canvas::SetValue::T} value)
+  T{geo::Canvas::GetValue::T} geo::Canvas::GetValue(const char * name) const
+  T{geo::Canvas::Convert::T} geo::Canvas::Convert(T{geo::Canvas::Convert::T} value) const
+  void geo::Canvas::operator()(float time)
+  static Canvas *{geo::Canvas} geo::Canvas::GetDefault()
+enum geo::Kind : uint8_t { CIRCLE = 0, POLYGON = 5, GROUP = 6 }
+struct geo::detail::Limits
+  field float mMin = 0
+struct geo::RefTarget
+  void geo::RefTarget::addRef() const
+  void geo::RefTarget::release() const
+struct geo::Ref
+  T *{geo::Ref::T} geo::Ref::get() const
+struct geo::Span
+  size_t geo::Span::size() const
+enum geo::io::Format : int { OBJ = 0, SVG = 1 }
+struct geo::Handle
+  static Handle{geo::Handle} geo::Handle::fromId(uint32_t id)
+  uint32_t geo::Handle::getId() const
+enum geo::Layers : uint64_t { LAYER_NONE = 0, LAYER_ALL = 1099511627775 }
+alias geo::Listener = std::function<void (Shape *, float)>{ext:std::function}
+alias geo::Tracker = std::function<void (void *, uint32_t)>{ext:std::function}
+alias geo::Visitor = void (*)(void *, uint32_t)
+struct geo::Blob
+struct geo::Result
+  bool geo::Result::hasError() const
+  const T &{geo::Result::T} geo::Result::get() const
+  const std::string &{ext:std::string} geo::Result::getError() const
+function static float geo::Distance(const math::float2 &{ext:geo::math::float2} a, const math::float2 &{ext:geo::math::float2} b)
+function static void geo::Reset()
+
+## Unresolved types
+
+## Unsupported defaults

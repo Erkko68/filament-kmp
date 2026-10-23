@@ -17,95 +17,717 @@ void FilaRendererDisplayInfo_setRefreshRate(FilaRendererDisplayInfo* self, float
 // filament::Renderer::FrameInfo
 FilaRendererFrameInfo* FilaRendererFrameInfo_create(void);
 void FilaRendererFrameInfo_destroy(FilaRendererFrameInfo* self);
+/** monotonically increasing frame identifier */
 uint32_t FilaRendererFrameInfo_getFrameId(const FilaRendererFrameInfo* self);
+/** monotonically increasing frame identifier */
 void FilaRendererFrameInfo_setFrameId(FilaRendererFrameInfo* self, uint32_t value);
+/** frame duration on the GPU in nanosecond [ns] */
 void FilaRendererFrameInfo_getGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out);
+/** frame duration on the GPU in nanosecond [ns] */
 void FilaRendererFrameInfo_setGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value);
+/** denoised frame duration on the GPU in [ns] */
 void FilaRendererFrameInfo_getDenoisedGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out);
+/** denoised frame duration on the GPU in [ns] */
 void FilaRendererFrameInfo_setDenoisedGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value);
+/** Renderer::beginFrame() time since epoch [ns] */
 void FilaRendererFrameInfo_getBeginFrame(const FilaRendererFrameInfo* self, int64_t* out);
+/** Renderer::beginFrame() time since epoch [ns] */
 void FilaRendererFrameInfo_setBeginFrame(FilaRendererFrameInfo* self, int64_t value);
+/** Renderer::endFrame() time since epoch [ns] */
 void FilaRendererFrameInfo_getEndFrame(const FilaRendererFrameInfo* self, int64_t* out);
+/** Renderer::endFrame() time since epoch [ns] */
 void FilaRendererFrameInfo_setEndFrame(FilaRendererFrameInfo* self, int64_t value);
+/** Backend thread time of frame start since epoch [ns] */
 void FilaRendererFrameInfo_getBackendBeginFrame(const FilaRendererFrameInfo* self, int64_t* out);
+/** Backend thread time of frame start since epoch [ns] */
 void FilaRendererFrameInfo_setBackendBeginFrame(FilaRendererFrameInfo* self, int64_t value);
+/** Backend thread time of frame end since epoch [ns] */
 void FilaRendererFrameInfo_getBackendEndFrame(const FilaRendererFrameInfo* self, int64_t* out);
+/** Backend thread time of frame end since epoch [ns] */
 void FilaRendererFrameInfo_setBackendEndFrame(FilaRendererFrameInfo* self, int64_t value);
+/** GPU thread time of frame end since epoch [ns] or 0 */
 void FilaRendererFrameInfo_getGpuFrameComplete(const FilaRendererFrameInfo* self, int64_t* out);
+/** GPU thread time of frame end since epoch [ns] or 0 */
 void FilaRendererFrameInfo_setGpuFrameComplete(FilaRendererFrameInfo* self, int64_t value);
+/** VSYNC time of this frame since epoch [ns] */
 void FilaRendererFrameInfo_getVsync(const FilaRendererFrameInfo* self, int64_t* out);
+/** VSYNC time of this frame since epoch [ns] */
 void FilaRendererFrameInfo_setVsync(FilaRendererFrameInfo* self, int64_t value);
+/** Actual presentation time of this frame since epoch [ns] */
 void FilaRendererFrameInfo_getDisplayPresent(const FilaRendererFrameInfo* self, int64_t* out);
+/** Actual presentation time of this frame since epoch [ns] */
 void FilaRendererFrameInfo_setDisplayPresent(FilaRendererFrameInfo* self, int64_t value);
+/** deadline for queuing a frame [ns] */
 void FilaRendererFrameInfo_getPresentDeadline(const FilaRendererFrameInfo* self, int64_t* out);
+/** deadline for queuing a frame [ns] */
 void FilaRendererFrameInfo_setPresentDeadline(FilaRendererFrameInfo* self, int64_t value);
+/** display refresh rate [ns] */
 void FilaRendererFrameInfo_getDisplayPresentInterval(const FilaRendererFrameInfo* self, int64_t* out);
+/** display refresh rate [ns] */
 void FilaRendererFrameInfo_setDisplayPresentInterval(FilaRendererFrameInfo* self, int64_t value);
+/** time between the start of composition and the expected present time [ns] */
 void FilaRendererFrameInfo_getCompositionToPresentLatency(const FilaRendererFrameInfo* self, int64_t* out);
+/** time between the start of composition and the expected present time [ns] */
 void FilaRendererFrameInfo_setCompositionToPresentLatency(FilaRendererFrameInfo* self, int64_t value);
+/** time between vsync and the system's expected presentation time [ns] */
 void FilaRendererFrameInfo_getExpectedPresentLatency(const FilaRendererFrameInfo* self, int64_t* out);
+/** time between vsync and the system's expected presentation time [ns] */
 void FilaRendererFrameInfo_setExpectedPresentLatency(FilaRendererFrameInfo* self, int64_t value);
+/** frame scheduling callback entry time since epoch [ns] */
 void FilaRendererFrameInfo_getFrameScheduleTime(const FilaRendererFrameInfo* self, int64_t* out);
+/** frame scheduling callback entry time since epoch [ns] */
 void FilaRendererFrameInfo_setFrameScheduleTime(FilaRendererFrameInfo* self, int64_t value);
 
 // filament::Renderer::FrameRateOptions
 FilaRendererFrameRateOptions* FilaRendererFrameRateOptions_create(void);
 void FilaRendererFrameRateOptions_destroy(FilaRendererFrameRateOptions* self);
+/** additional headroom for the GPU */
 float FilaRendererFrameRateOptions_getHeadRoomRatio(const FilaRendererFrameRateOptions* self);
+/** additional headroom for the GPU */
 void FilaRendererFrameRateOptions_setHeadRoomRatio(FilaRendererFrameRateOptions* self, float value);
+/** rate at which the system reacts to load changes */
 float FilaRendererFrameRateOptions_getScaleRate(const FilaRendererFrameRateOptions* self);
+/** rate at which the system reacts to load changes */
 void FilaRendererFrameRateOptions_setScaleRate(FilaRendererFrameRateOptions* self, float value);
+/** history size */
 uint32_t FilaRendererFrameRateOptions_getHistory(const FilaRendererFrameRateOptions* self);
+/** history size */
 void FilaRendererFrameRateOptions_setHistory(FilaRendererFrameRateOptions* self, uint32_t value);
+/** desired frame interval in unit of 1.0 / DisplayInfo::refreshRate */
 uint32_t FilaRendererFrameRateOptions_getInterval(const FilaRendererFrameRateOptions* self);
+/** desired frame interval in unit of 1.0 / DisplayInfo::refreshRate */
 void FilaRendererFrameRateOptions_setInterval(FilaRendererFrameRateOptions* self, uint32_t value);
 
 // filament::Renderer::ClearOptions
 FilaRendererClearOptions* FilaRendererClearOptions_create(void);
 void FilaRendererClearOptions_destroy(FilaRendererClearOptions* self);
+/**
+ * Color to use to clear the RenderTarget (typically the SwapChain).
+ *
+ * The RenderTarget is cleared using this color, which won't be tone-mapped since
+ * tone-mapping is part of View rendering (this is not).
+ *
+ * The value is stored as four doubles. The backend converts them as-is into the
+ * matching native clear entry-point based on the attachment's format -- so the
+ * caller is responsible for putting a value here that makes sense for the
+ * attachment family (e.g. for a UINT attachment, a value in [0, UINT32_MAX]).
+ * int32_t / uint32_t values round-trip exactly because double has a 53-bit mantissa.
+ *
+ * When a View is rendered, there are 3 scenarios to consider:
+ * - Pixels rendered by the View replace the clear color (or blend with it in
+ *   `BlendMode::TRANSLUCENT` mode).
+ *
+ * - With blending mode set to `BlendMode::TRANSLUCENT`, Pixels untouched by the View
+ *   are considered fulling transparent and let the clear color show through.
+ *
+ * - With blending mode set to `BlendMode::OPAQUE`, Pixels untouched by the View
+ *   are set to the clear color. However, because it is now used in the context of a View,
+ *   it will go through the post-processing stage, which includes tone-mapping.
+ *
+ * For consistency, it is recommended to always use a Skybox to clear an opaque View's
+ * background, or to use black or fully-transparent (i.e. {0,0,0,0}) as the clear color.
+ */
 void FilaRendererClearOptions_getClearColor(const FilaRendererClearOptions* self, FilaDouble4* out);
+/**
+ * Color to use to clear the RenderTarget (typically the SwapChain).
+ *
+ * The RenderTarget is cleared using this color, which won't be tone-mapped since
+ * tone-mapping is part of View rendering (this is not).
+ *
+ * The value is stored as four doubles. The backend converts them as-is into the
+ * matching native clear entry-point based on the attachment's format -- so the
+ * caller is responsible for putting a value here that makes sense for the
+ * attachment family (e.g. for a UINT attachment, a value in [0, UINT32_MAX]).
+ * int32_t / uint32_t values round-trip exactly because double has a 53-bit mantissa.
+ *
+ * When a View is rendered, there are 3 scenarios to consider:
+ * - Pixels rendered by the View replace the clear color (or blend with it in
+ *   `BlendMode::TRANSLUCENT` mode).
+ *
+ * - With blending mode set to `BlendMode::TRANSLUCENT`, Pixels untouched by the View
+ *   are considered fulling transparent and let the clear color show through.
+ *
+ * - With blending mode set to `BlendMode::OPAQUE`, Pixels untouched by the View
+ *   are set to the clear color. However, because it is now used in the context of a View,
+ *   it will go through the post-processing stage, which includes tone-mapping.
+ *
+ * For consistency, it is recommended to always use a Skybox to clear an opaque View's
+ * background, or to use black or fully-transparent (i.e. {0,0,0,0}) as the clear color.
+ */
 void FilaRendererClearOptions_setClearColor(FilaRendererClearOptions* self, const FilaDouble4* value);
+/** Value to clear the stencil buffer */
 uint32_t FilaRendererClearOptions_getClearStencil(const FilaRendererClearOptions* self);
+/** Value to clear the stencil buffer */
 void FilaRendererClearOptions_setClearStencil(FilaRendererClearOptions* self, uint32_t value);
+/**
+ * Whether the SwapChain should be cleared using the clearColor. Use this if translucent
+ * View will be drawn, for instance.
+ */
 bool FilaRendererClearOptions_getClear(const FilaRendererClearOptions* self);
+/**
+ * Whether the SwapChain should be cleared using the clearColor. Use this if translucent
+ * View will be drawn, for instance.
+ */
 void FilaRendererClearOptions_setClear(FilaRendererClearOptions* self, bool value);
+/**
+ * Whether the SwapChain content should be discarded. clear implies discard. Set this
+ * to false (along with clear to false as well) if the SwapChain already has content that
+ * needs to be preserved
+ */
 bool FilaRendererClearOptions_getDiscard(const FilaRendererClearOptions* self);
+/**
+ * Whether the SwapChain content should be discarded. clear implies discard. Set this
+ * to false (along with clear to false as well) if the SwapChain already has content that
+ * needs to be preserved
+ */
 void FilaRendererClearOptions_setDiscard(FilaRendererClearOptions* self, bool value);
 
 // filament::Renderer
+/**
+ * Retrieve a history of frame timing information. The maximum frame history size is
+ * given by getMaxFrameHistorySize().
+ * All or part of the history can be lost when using a different SwapChain in beginFrame().
+ * @param historySize requested history size. The returned vector could be smaller.
+ * @return A vector of FrameInfo.
+ * @see beginFrame()
+ */
 uint32_t FilaRenderer_getFrameInfoHistory(const FilaRenderer* self, uint32_t historySize, FilaRendererFrameInfo* const* out, uint32_t outCapacity);
+/**
+ * @return the maximum supported frame history size.
+ * @see getFrameInfoHistory()
+ */
 uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self);
+/**
+ * Information about the display this Renderer is associated to. This information is needed
+ * to accurately compute dynamic-resolution scaling and for frame-pacing.
+ */
 void FilaRenderer_setDisplayInfo(FilaRenderer* self, const FilaRendererDisplayInfo* info);
+/** Set options controlling the desired frame-rate. */
 void FilaRenderer_setFrameRateOptions(FilaRenderer* self, const FilaRendererFrameRateOptions* options);
+/**
+ * Set ClearOptions which are used at the beginning of a frame to clear or retain the
+ * SwapChain content.
+ */
 void FilaRenderer_setClearOptions(FilaRenderer* self, const FilaRendererClearOptions* options);
+/**
+ * Returns the ClearOptions currently set.
+ * @return A reference to a ClearOptions structure.
+ */
 void FilaRenderer_getClearOptions(const FilaRenderer* self, FilaRendererClearOptions* out);
+/**
+ * Get the Engine that created this Renderer.
+ *
+ * @return A pointer to the Engine instance this Renderer is associated to.
+ */
 FilaEngine* FilaRenderer_getEngine(FilaRenderer* self);
+/**
+ * The use of this method is optional. It sets the VSYNC time expressed as the duration in
+ * nanosecond since epoch of std::chrono::steady_clock.
+ * If called, passing 0 to vsyncSteadyClockTimeNano in Renderer::beginFrame will use this
+ * time instead.
+ * @param steadyClockTimeNano duration in nanosecond since epoch of std::chrono::steady_clock
+ * @see Engine::getSteadyClockTimeNano()
+ * @see Renderer::beginFrame()
+ */
 void FilaRenderer_setVsyncTime(FilaRenderer* self, uint64_t steadyClockTimeNano);
+/**
+ * Call skipFrame when momentarily skipping frames, for instance if the content of the
+ * scene doesn't change.
+ *
+ * @param vsyncSteadyClockTimeNano
+ */
 void FilaRenderer_skipFrame(FilaRenderer* self, uint64_t vsyncSteadyClockTimeNano);
+/**
+ * Returns true if the current frame should be rendered.
+ *
+ * This is a convenience method that returns the same value as beginFrame().
+ *
+ * @return
+ *      *false* the current frame should be skipped, or an unrecoverable backend exception has occurred.
+ *      *true* the current frame can be rendered
+ *
+ * @note This method will return false once a backend exception has been delivered to the main thread.
+ *
+ * @see
+ * beginFrame()
+ */
 bool FilaRenderer_shouldRenderFrame(const FilaRenderer* self);
+/**
+ * Set up a frame for this Renderer.
+ *
+ * beginFrame() manages frame-pacing, and returns whether a frame should be drawn. The
+ * goal of this is to skip frames when the GPU falls behind in order to keep the frame
+ * latency low.
+ *
+ * If a given frame takes too much time in the GPU, the CPU will get ahead of the GPU. The
+ * display will draw the same frame twice producing a stutter. At this point, the CPU is
+ * ahead of the GPU and depending on how many frames are buffered, latency increases.
+ *
+ * beginFrame() attempts to detect this situation and returns false in that case, indicating
+ * to the caller to skip the current frame.
+ *
+ * When beginFrame() returns true, it is mandatory to render the frame and call endFrame().
+ * However, when beginFrame() returns false, the caller has the choice to either skip the
+ * frame and not call endFrame(), or proceed as though true was returned.
+ *
+ * @param vsyncSteadyClockTimeNano The time in nanosecond of when the current frame started,
+ *                                 or 0 if unknown. This value should be the timestamp of
+ *                                 the last h/w vsync. It is expressed in the
+ *                                 std::chrono::steady_clock time base.
+ *                                 On Android this should be the frame time received from
+ *                                 a Choreographer.
+ * @param swapChain A pointer to the SwapChain instance to use.
+ *
+ * @return
+ *      *false* the current frame should be skipped,
+ *      *true* the current frame must be drawn and endFrame() must be called.
+ *
+ * @remark
+ * When skipping a frame, the whole frame is canceled, and endFrame() must not be called.
+ *
+ * @note
+ * All calls to render() must happen *after* beginFrame().
+ * It is recommended to use the same swapChain for every call to beginFrame, failing to do
+ * so can result is losing all or part of the FrameInfo history.
+ *
+ * @throws std::exception (or derived) if the backend thread encountered an unrecoverable error (when exceptions are enabled).
+ *
+ * @note This method will return false if called again after a backend exception was already thrown and delivered to the main thread.
+ *
+ * @see
+ * endFrame()
+ */
 bool FilaRenderer_beginFrame(FilaRenderer* self, FilaSwapChain* swapChain, uint64_t vsyncSteadyClockTimeNano);
+/**
+ * Set the time at which the frame must be presented to the display hardware.
+ *
+ * This value is used to configure the hardware and must typically be strictly smaller than the
+ * desired presentation time (i.e. it must include some headroom but not too much). For instance,
+ * on Android, it is typically set to desired_presentation_time - vsync_period / 2. This behavior
+ * can vary on other platforms.
+ *
+ * This must be called before endFrame().
+ *
+ * @note Not all backends and platforms can schedule the presentation of a frame. This call is
+ *       silently ignored when the presentation time is not supported.
+ *
+ * @param monotonic_clock_ns  the presentation configuration timestamp in nanoseconds on the steady clock.
+ */
 void FilaRenderer_setPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
+/**
+ * Set the time at which the frame must be presented to the display hardware using a strong steady clock time point.
+ *
+ * This value is used to configure the hardware and must typically be strictly smaller than the
+ * desired presentation time (i.e. it must include some headroom but not too much). For instance,
+ * on Android, it is typically set to desired_presentation_time - vsync_period / 2. This behavior
+ * can vary on other platforms.
+ *
+ * This must be called before endFrame().
+ *
+ * @note Not all backends and platforms can schedule the presentation of a frame. This call is
+ *       silently ignored when the presentation time is not supported.
+ *
+ * @param monotonic_clock  the presentation configuration time point on the steady clock.
+ */
 void FilaRenderer_setPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock);
+/**
+ * Set the real desired presentation time targeted for this frame.
+ *
+ * Unlike setPresentationTime(), which configures hardware headroom, this is the exact target
+ * presentation time and is used for FrameInfo frame history reporting.
+ *
+ * This must be called before endFrame().
+ *
+ * @param monotonic_clock_ns  the desired presentation timestamp in nanoseconds on the steady clock.
+ */
 void FilaRenderer_setDesiredPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
+/**
+ * Set the real desired presentation time targeted for this frame.
+ *
+ * Unlike setPresentationTime(), which configures hardware headroom, this is the exact target
+ * presentation time and is used for FrameInfo frame history reporting.
+ *
+ * This must be called before endFrame().
+ *
+ * @param monotonic_clock  the desired presentation time point on the steady clock.
+ */
 void FilaRenderer_setDesiredPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock);
+/**
+ * Set the deadline time point on the steady clock by which CPU and GPU rendering must complete
+ * for the buffer to meet its target display latching window.
+ *
+ * This must be called before endFrame().
+ *
+ * @param monotonic_clock_ns  the deadline timestamp in nanoseconds on the steady clock.
+ */
 void FilaRenderer_setRenderingDeadline_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
+/**
+ * Set the deadline time point on the steady clock by which CPU and GPU rendering must complete
+ * for the buffer to meet its target display latching window.
+ *
+ * This must be called before endFrame().
+ *
+ * @param monotonic_clock  the deadline time point on the steady clock.
+ */
 void FilaRenderer_setRenderingDeadline_time_point(FilaRenderer* self, int64_t monotonic_clock);
+/**
+ * Render a View into this renderer's window.
+ *
+ * This is filament main rendering method, most of the CPU-side heavy lifting is performed
+ * here. render() main function is to generate render commands which are asynchronously
+ * executed by the Engine's render thread.
+ *
+ * render() generates commands for each of the following stages:
+ *
+ * 1. Shadow map passes, if needed.
+ * 2. Depth pre-pass.
+ * 3. Color pass.
+ * 4. Post-processing pass.
+ *
+ * A typical render loop looks like this:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Renderer.h>
+ * #include <filament/View.h>
+ * using namespace filament;
+ *
+ * void renderLoop(Renderer* renderer, SwapChain* swapChain) {
+ *     do {
+ *         // typically we wait for VSYNC and user input events
+ *         if (renderer->beginFrame(swapChain)) {
+ *             renderer->render(mView);
+ *             renderer->endFrame();
+ *         }
+ *     } while (!quit());
+ * }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *
+ * @param view A pointer to the view to render.
+ *
+ * @attention
+ * render() must be called *after* beginFrame() and *before* endFrame().
+ *
+ * @note
+ * render() must be called from the Engine's main thread (or external synchronization
+ * must be provided). In particular, calls to render() on different Renderer instances
+ * **must** be synchronized.
+ *
+ * @remark
+ * render() perform potentially heavy computations and cannot be multi-threaded. However,
+ * internally, render() is highly multi-threaded to both improve performance in mitigate
+ * the call's latency.
+ *
+ * @remark
+ * render() is typically called once per frame (but not necessarily).
+ *
+ * @throws std::exception (or derived) if the backend thread encountered an unrecoverable error (when exceptions are enabled).
+ * @throws utils::Panic if called again after a backend exception was already thrown.
+ *
+ * @see
+ * beginFrame(), endFrame(), View
+ */
 void FilaRenderer_render(FilaRenderer* self, const FilaView* view);
+/**
+ * Copy the currently rendered view to the indicated swap chain, using the
+ * indicated source and destination rectangle.
+ *
+ * @param dstSwapChain The swap chain into which the frame should be copied.
+ * @param dstViewport The destination rectangle in which to draw the view.
+ * @param srcViewport The source rectangle to be copied.
+ * @param flags One or more CopyFrameFlag behavior configuration flags.
+ *
+ * @remark
+ * copyFrame() should be called after a frame is rendered using render()
+ * but before endFrame() is called.
+ */
 void FilaRenderer_copyFrame(FilaRenderer* self, FilaSwapChain* dstSwapChain, const FilaViewport* dstViewport, const FilaViewport* srcViewport, uint32_t flags);
+/**
+ * Reads back the content of the SwapChain associated with this Renderer.
+ *
+ * @param xoffset   Left offset of the sub-region to read back.
+ * @param yoffset   Bottom offset of the sub-region to read back.
+ * @param width     Width of the sub-region to read back.
+ * @param height    Height of the sub-region to read back.
+ * @param buffer    Client-side buffer where the read-back will be written.
+ *
+ * The following formats are always supported:
+ *                      - PixelBufferDescriptor::PixelDataFormat::RGBA
+ *                      - PixelBufferDescriptor::PixelDataFormat::RGBA_INTEGER
+ *
+ * The following types are always supported:
+ *                      - PixelBufferDescriptor::PixelDataType::UBYTE
+ *                      - PixelBufferDescriptor::PixelDataType::UINT
+ *                      - PixelBufferDescriptor::PixelDataType::INT
+ *                      - PixelBufferDescriptor::PixelDataType::FLOAT
+ *
+ * Other combinations of format/type may be supported. If a combination is
+ * not supported, this operation may fail silently. Use a DEBUG build
+ * to get some logs about the failure.
+ *
+ *
+ *  Framebuffer as seen on User buffer (PixelBufferDescriptor&)
+ *  screen
+ *
+ *      +--------------------+
+ *      |                    |                .stride         .alignment
+ *      |                    |         ----------------------->-->
+ *      |                    |         O----------------------+--+   low addresses
+ *      |                    |         |          |           |  |
+ *      |             w      |         |          | .top      |  |
+ *      |       <--------->  |         |          V           |  |
+ *      |       +---------+  |         |     +---------+      |  |
+ *      |       |     ^   |  | ======> |     |         |      |  |
+ *      |   x   |    h|   |  |         |.left|         |      |  |
+ *      +------>|     v   |  |         +---->|         |      |  |
+ *      |       +.........+  |         |     +.........+      |  |
+ *      |            ^       |         |                      |  |
+ *      |          y |       |         +----------------------+--+  high addresses
+ *      O------------+-------+
+ *
+ *
+ * readPixels() must be called within a frame, meaning after beginFrame() and before endFrame().
+ * Typically, readPixels() will be called after render().
+ *
+ * After issuing this method, the callback associated with `buffer` will be invoked on the
+ * main thread, indicating that the read-back has completed. Typically, this will happen
+ * after multiple calls to beginFrame(), render(), endFrame().
+ *
+ * It is also possible to use a Fence to wait for the read-back.
+ *
+ * @remark
+ * readPixels() is intended for debugging and testing. It will impact performance significantly.
+ */
 void FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
+/**
+ * Reads back the content of the provided RenderTarget.
+ *
+ * @param renderTarget  RenderTarget to read back from.
+ * @param xoffset       Left offset of the sub-region to read back.
+ * @param yoffset       Bottom offset of the sub-region to read back.
+ * @param width         Width of the sub-region to read back.
+ * @param height        Height of the sub-region to read back.
+ * @param buffer        Client-side buffer where the read-back will be written.
+ *
+ * The following formats are always supported:
+ *                      - PixelBufferDescriptor::PixelDataFormat::RGBA
+ *                      - PixelBufferDescriptor::PixelDataFormat::RGBA_INTEGER
+ *
+ * The following types are always supported:
+ *                      - PixelBufferDescriptor::PixelDataType::UBYTE
+ *                      - PixelBufferDescriptor::PixelDataType::UINT
+ *                      - PixelBufferDescriptor::PixelDataType::INT
+ *                      - PixelBufferDescriptor::PixelDataType::FLOAT
+ *
+ * Other combinations of format/type may be supported. If a combination is
+ * not supported, this operation may fail silently. Use a DEBUG build
+ * to get some logs about the failure.
+ *
+ *
+ *  Framebuffer as seen on User buffer (PixelBufferDescriptor&)
+ *  screen
+ *
+ *      +--------------------+
+ *      |                    |                .stride         .alignment
+ *      |                    |         ----------------------->-->
+ *      |                    |         O----------------------+--+   low addresses
+ *      |                    |         |          |           |  |
+ *      |             w      |         |          | .top      |  |
+ *      |       <--------->  |         |          V           |  |
+ *      |       +---------+  |         |     +---------+      |  |
+ *      |       |     ^   |  | ======> |     |         |      |  |
+ *      |   x   |    h|   |  |         |.left|         |      |  |
+ *      +------>|     v   |  |         +---->|         |      |  |
+ *      |       +.........+  |         |     +.........+      |  |
+ *      |            ^       |         |                      |  |
+ *      |          y |       |         +----------------------+--+  high addresses
+ *      O------------+-------+
+ *
+ *
+ * Typically readPixels() will be called after render() and before endFrame().
+ *
+ * After issuing this method, the callback associated with `buffer` will be invoked on the
+ * main thread, indicating that the read-back has completed. Typically, this will happen
+ * after multiple calls to beginFrame(), render(), endFrame().
+ *
+ * It is also possible to use a Fence to wait for the read-back.
+ *
+ * OpenGL only: if issuing a readPixels on a RenderTarget backed by a Texture that had data
+ * uploaded to it via setImage, the data returned from readPixels will be y-flipped with respect
+ * to the setImage call.
+ *
+ * Note: the texture that backs the COLOR attachment for `renderTarget` must have
+ * TextureUsage::BLIT_SRC as part of its usage.
+ *
+ * @remark
+ * readPixels() is intended for debugging and testing. It will impact performance significantly.
+ */
 void FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, FilaRenderTarget* renderTarget, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
+/**
+ * Finishes the current frame and schedules it for display.
+ *
+ * endFrame() schedules the current frame to be displayed on the Renderer's window.
+ *
+ * @note
+ * All calls to render() must happen *before* endFrame(). endFrame() must be called if
+ * beginFrame() returned true, otherwise, endFrame() must not be called unless the caller
+ * ignored beginFrame()'s return value.
+ *
+ * @throws std::exception (or derived) if the backend thread encountered an unrecoverable error (when exceptions are enabled).
+ * @throws utils::Panic if called again after a backend exception was already thrown.
+ *
+ * @see
+ * beginFrame()
+ */
 void FilaRenderer_endFrame(FilaRenderer* self);
+/**
+ * Render a standalone View into its associated RenderTarget
+ *
+ * This call is mostly equivalent to calling render(View*) inside a
+ * beginFrame / endFrame block, but incurs less overhead. It can be used
+ * as a poor man's compute API.
+ *
+ * @param view A pointer to the view to render. This View must have a RenderTarget associated
+ *             to it.
+ *
+ * @attention
+ * renderStandaloneView() must be called outside of beginFrame() / endFrame().
+ *
+ * @note
+ * renderStandaloneView() must be called from the Engine's main thread
+ * (or external synchronization must be provided). In particular, calls to
+ * renderStandaloneView() on different Renderer instances **must** be synchronized.
+ *
+ * @remark
+ * renderStandaloneView() perform potentially heavy computations and cannot be multi-threaded.
+ * However, internally, renderStandaloneView() is highly multi-threaded to both improve
+ * performance in mitigate the call's latency.
+ */
 void FilaRenderer_renderStandaloneView(FilaRenderer* self, const FilaView* view);
+/**
+ * Returns the material time in seconds evaluated for the current frame. This value is constant for all
+ * views rendered during a frame. When available, this time is projected forward to the predicted
+ * presentation time on the display; otherwise, it evaluates at the vsync time of beginFrame().
+ * The epoch is set with setMaterialTimeEpoch().
+ *
+ * In materials, this value can be queried using `vec4 getUserTime()`. The value returned
+ * is a highp vec4 encoded as follows:
+ *
+ *      time.x = (float)Renderer.getMaterialTime();
+ *      time.y = Renderer.getMaterialTime() - time.x;
+ *
+ * It follows that the following invariants are true:
+ *
+ *      (double)time.x + (double)time.y == Renderer.getMaterialTime()
+ *      time.x == (float)Renderer.getMaterialTime()
+ *
+ * This "float-float" encoding allows the shader code to perform high precision (i.e. double) time
+ * calculations when needed despite the lack of double precision in the shader (e.g. using Dekker's
+ * algorithms). For example, to compute (double)time * vertex in the material, use the following construct:
+ *
+ *              vec3 result = time.x * vertex + time.y * vertex;
+ *
+ *
+ * Most of the time, high precision computations are not required, but be aware that the
+ * precision of time.x rapidly diminishes as time passes:
+ *
+ *          time    | precision
+ *          --------+----------
+ *          16.7s   |    us
+ *          4h39    |    ms
+ *         77h      |   1/60s
+ *
+ *
+ * In other words, it is only possible to get microsecond accuracy for about 16s or millisecond
+ * accuracy for just under 5h.
+ *
+ * This problem can be mitigated by calling setMaterialTimeEpoch(), or using high precision time as
+ * described above.
+ *
+ * @return The time in seconds since setMaterialTimeEpoch() was last called.
+ *
+ * @see
+ * setMaterialTimeEpoch()
+ */
 double FilaRenderer_getMaterialTime(const FilaRenderer* self);
+/**
+ * Backward compatibility helper for getUserTime().
+ * @deprecated Use getMaterialTime() instead.
+ */
 double FilaRenderer_getUserTime(const FilaRenderer* self);
+/**
+ * Sets the material time epoch to the specified steady clock timestamp in nanoseconds, i.e. resets
+ * the material time to zero relative to that time.
+ *
+ * Use this method to keep the precision of time high in materials, in practice it should
+ * be called at least when the application is paused, e.g. Activity.onPause() in Android.
+ *
+ * @param monotonic_clock_ns  the steady clock timestamp in nanoseconds to set as the material time epoch.
+ *
+ * @see
+ * getMaterialTime()
+ */
 void FilaRenderer_setMaterialTimeEpoch_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns);
+/**
+ * Sets the material time epoch to the specified steady clock time point, i.e. resets
+ * the material time to zero relative to that time point.
+ *
+ * Use this method to keep the precision of time high in materials, in practice it should
+ * be called at least when the application is paused, e.g. Activity.onPause() in Android.
+ *
+ * @param monotonic_clock  the time point on the steady clock to set as the material time epoch.
+ *
+ * @see
+ * getMaterialTime()
+ */
 void FilaRenderer_setMaterialTimeEpoch_time_point(FilaRenderer* self, int64_t monotonic_clock);
+/**
+ * Backward compatibility helper for resetUserTime().
+ * @deprecated Use setMaterialTimeEpoch() instead.
+ */
 void FilaRenderer_resetUserTime(FilaRenderer* self);
+/**
+ * Requests the next frameCount frames to be skipped. For Debugging.
+ * @param frameCount number of frames to skip.
+ */
 void FilaRenderer_skipNextFrames(FilaRenderer* self, uint32_t frameCount);
+/**
+ * Remainder count of frame to be skipped
+ * @return remaining frames to be skipped
+ */
 uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self);
+/**
+ * Queries whether the GPU execution has fallen behind the CPU rendering execution.
+ *
+ * This is highly useful when managing the application's presentation loop manually (e.g.
+ * with the `FramePacer`), allowing the client to proactively detect and react to a latency build-up
+ * before continuing with frame execution.
+ *
+ * @return true if the GPU pipeline is delayed, false if ready.
+ */
 bool FilaRenderer_hasGpuFallenBehind(const FilaRenderer* self);
+/**
+ * Sets the physical clock time when the frame scheduling callback was entered.
+ * This is used by the frame pacer and pipeline estimator to accurately
+ * measure the active CPU duration (including app logic running before beginFrame).
+ *
+ * @param time Monotonic steady clock time_point.
+ */
 void FilaRenderer_setFrameScheduleTime_time_point(FilaRenderer* self, int64_t time);
+/**
+ * Sets the physical clock time when the frame scheduling callback was entered.
+ * Helper overload accepting raw nanoseconds since epoch.
+ *
+ * @param timeSteadyClockNano Monotonic steady clock timestamp in nanoseconds since epoch.
+ */
 void FilaRenderer_setFrameScheduleTime_uint64_t(FilaRenderer* self, uint64_t timeSteadyClockNano);
+/**
+ * Stalls the render thread (GPU submission pipeline) for the given duration in nanoseconds.
+ *
+ * This is useful for simulating long rendering frames (e.g. testing buffer stuffing recovery)
+ * without blocking the application's main event loop thread.
+ *
+ * @param duration_ns  the duration to pause the render thread in nanoseconds.
+ */
 void FilaRenderer_pauseRenderThread(FilaRenderer* self, uint64_t duration_ns);
 
 

@@ -27,7 +27,7 @@ clang JSON AST ──► C++ API model ───────────► apiM
                         │    generateBindings ◄───────┘  JNI forwarders, wasm export lists  (build/, not committed)
                         │
                         ├──► apiCoverage ──► c/api-coverage.txt: bound in C, called by Kotlin? (committed)
-                        ├──► apiVerify ──► fails when a Kotlin enum's values aren't the C++ ones
+                        ├──► apiVerify ──► fails when Kotlin enum values or defaults aren't the C++ ones
                         └──► apiGaps ──► C++ API the C layer doesn't call               (report)
 ```
 
@@ -35,17 +35,21 @@ clang JSON AST ──► C++ API model ───────────► apiM
 | :--- | :--- | :--- |
 | `./gradlew apiModel` | the headers `c/api-headers.txt` lists | `build/reports/api-model.txt`: the C++ surface clang sees |
 | `./gradlew generateCApi` | the same headers + `c/api-headers.txt` + `c/<module>/manual/*.h` | `c/<module>/generated/`, each module's `Types.h`, and `c/api-manifest.json` |
-| `./gradlew generateKotlinExternals` | `c/api-manifest.json` | each Kotlin module's `capi` package |
+| `./gradlew generateKotlinExternals` | `c/api-manifest.json`, after running `generateCApi` (up to date when nothing it reads changed) | each Kotlin module's `capi` package |
 | `./gradlew generateBindings` | `c/api-manifest.json` | `build/generated/bindings/` (runs as part of every native build) |
 | `./gradlew apiCoverage` | the headers + `c/` + the Kotlin sources | `c/api-coverage.txt`; warns when `c/` or `capi` is stale |
-| `./gradlew apiVerify` | the headers + the Kotlin sources | nothing; fails when a hand-written Kotlin enum's ordinal (or explicit `value`) isn't the C++ constant's |
+| `./gradlew apiVerify` | the headers + the Kotlin sources | nothing; fails when a hand-written Kotlin enum's ordinal (or explicit `value`) isn't the C++ constant's, or a Kotlin class mirroring a C++ struct (`BloomOptions`, `Engine.Config`) gives a property another default than the field's initializer |
 | `./gradlew apiGaps` | Filament's libraries + the `c/` objects | `build/reports/api-gaps.txt` (macOS and Linux hosts) |
 
 The generated C and Kotlin files are committed. A diff in them is the review surface for an upgrade
 or a generator change. Don't edit them by hand: the next run overwrites them.
 
 The generator lives in [`build-logic/…/buildlogic/apigen`](../../build-logic/src/main/kotlin/buildlogic/apigen),
-one package per stage (`cpp/`, `c/`, `kotlin/`, `externals/`, `gaps/`).
+one package per stage (`cpp/`, `c/`, `kotlin/`, `bindings/`, `report/`). It knows nothing of Filament:
+[`FilamentApi.kt`](../../build-logic/src/main/kotlin/buildlogic/filament/FilamentApi.kt) is Filament's config, and
+the generator's [README](../../build-logic/src/main/kotlin/buildlogic/apigen/README.md) says how to point it at
+another library. `./gradlew -p build-logic test` runs every stage on a small fixture library and compares the output
+with its committed one: run it after changing the generator, and review the diff `-Papigen.update` writes.
 
 ## Scope: `c/api-headers.txt`
 
@@ -72,6 +76,7 @@ One mapping per C++ shape, so the same kind of declaration always looks the same
 | C++ | C | Kotlin |
 | :--- | :--- | :--- |
 | class (`Engine`, `View`, `Builder`) | opaque handle `FilaEngine*`; methods take it as `self` | a class holding the handle |
+| class returned by value (not a value struct) | a heap copy the caller destroys with its `_destroy` | the class, owning the handle |
 | value struct (`BloomOptions`, `Engine::Config`) | handle with `_create`/`_destroy` and a getter/setter per field, created with the C++ defaults | a plain class with `var` fields, copied through a handle on each get/set |
 | `filament::math` vector/matrix | layout-compatible mirror (`FilaFloat3`, `FilaMat4`) by pointer | `FloatArray`/`DoubleArray` |
 | enum | integer-typed C enum (`FilaBloomOptionsBlendMode`) | Kotlin enum, same constants and order |
@@ -79,10 +84,13 @@ One mapping per C++ shape, so the same kind of declaration always looks the same
 | strings, `StaticString` | `const char*` (+ length where C++ takes one) | `String` |
 | `Slice`, `FixedCapacityVector`, `std::array`, C arrays | pointer + `uint32_t` count; out-arrays are capacity-bounded | arrays / `List` |
 | `std::optional<T>` | parameter: nullable pointer (`NULL` is `nullopt`); result: `bool` return + `out` pointer | nullable |
-| `std::function` / callback aliases | C function pointer + `void* user` of the same shape | lambda (`Callbacks` registry) |
+| `std::function` / callback aliases | C function pointer of the same shape, plus C's `void* user` when the C++ signature has no `void*` of its own | lambda (`Callbacks` registry) |
 | buffer descriptors (uploads) | pointer + size + release callback + user | array + `onRelease` |
 | templates | the instantiations a table lists (e.g. `Manipulator<float>`, `constant<int32_t/float/bool>`) | one class / overloads |
 | `std::chrono` durations and time points | `int64_t` nanoseconds | `Long` |
+
+Each generated declaration keeps the C++ documentation comment as the header spells it (Doxygen
+commands and all): functions, field accessors, enums and their constants, and the handle typedefs.
 
 Signatures also follow the C ABI rules that let one Kotlin declaration bind on every target (fixed
 widths, no 8/16-bit integer parameters, 64-bit results through an out-pointer, no structs by
@@ -109,6 +117,9 @@ Today that is a small set: `Scene::forEach`, `Material::getParameters`, `View::p
 same ABI rules and gets its Kotlin external generated the same way. One C++ function can become
 several, named `<function>_<case>` (`FilaGeometryTangentSpaceMeshBuilder_aux_float2`, … one per
 `std::variant` alternative).
+
+A manual function wins over the generator's: when the generator could bind it too, the note says
+so, which is the cue to check whether the hand-written one still earns its place.
 
 When `generateCApi` meets a declaration it can't bridge and no manual function covers, it leaves a
 `TODO(handwritten)` comment with the reason instead of code. Each TODO is either written in

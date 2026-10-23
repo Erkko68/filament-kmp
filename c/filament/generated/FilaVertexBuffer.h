@@ -12,22 +12,230 @@ extern "C" {
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_create(void);
 void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* self);
 // skipped Builder & filament::VertexBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Defines how many buffers will be created in this vertex buffer set. These buffers are
+ * later referenced by index from 0 to \p bufferCount - 1.
+ *
+ * This call is mandatory. The default is 0.
+ *
+ * @param bufferCount Number of buffers in this vertex buffer set. The maximum value is 8.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* self, uint32_t bufferCount);
+/**
+ * Size of each buffer in the set in vertex.
+ *
+ * @param vertexCount Number of vertices in each buffer in this set.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_vertexCount(FilaVertexBufferBuilder* self, uint32_t vertexCount);
+/**
+ * Allows buffers to be swapped out and shared using BufferObject.
+ *
+ * If buffer objects mode is enabled, clients must call setBufferObjectAt rather than
+ * setBufferAt. This allows sharing of data between VertexBuffer objects, but it may
+ * slightly increase the memory footprint of Filament's internal bookkeeping.
+ *
+ * @param enabled If true, enables buffer object mode.  False by default.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* self, bool enabled);
+/**
+ * Sets up an attribute for this vertex buffer set.
+ *
+ * Using \p byteOffset and \p byteStride, attributes can be interleaved in the same buffer.
+ *
+ * @param attribute The attribute to set up.
+ * @param bufferIndex  The index of the buffer containing the data for this attribute. Must
+ *                     be between 0 and bufferCount() - 1.
+ * @param attributeType The type of the attribute data (e.g. byte, float3, etc...)
+ * @param byteOffset Offset in *bytes* into the buffer \p bufferIndex
+ * @param byteStride Stride in *bytes* to the next element of this attribute. When set to
+ *                   zero the attribute size, as defined by \p attributeType is used.
+ *
+ * @return A reference to this Builder for chaining calls.
+ *
+ * @warning VertexAttribute::TANGENTS must be specified as a quaternion and is how normals
+ *          are specified.
+ *
+ * @warning Not all backends support 3-component attributes that are not floats. For help
+ *          with conversion, see geometry::Transcoder.
+ *
+ * @see VertexAttribute
+ *
+ * This is a no-op if the \p attribute is an invalid enum.
+ * This is a no-op if the \p bufferIndex is out of bounds.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaElementType attributeType, uint32_t byteOffset, uint32_t byteStride);
+/**
+ * Sets whether a given attribute should be normalized. By default attributes are not
+ * normalized. A normalized attribute is mapped between 0 and 1 in the shader. This applies
+ * only to integer types.
+ *
+ * @param attribute Enum of the attribute to set the normalization flag to.
+ * @param normalized true to automatically normalize the given attribute.
+ * @return A reference to this Builder for chaining calls.
+ *
+ * This is a no-op if the \p attribute is an invalid enum.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, bool normalized);
+/**
+ * Sets advanced skinning mode. Bone data, indices and weights will be
+ * set in RenderableManager:Builder:boneIndicesAndWeights methods.
+ * Works with or without buffer objects.
+ *
+ * @param enabled If true, enables advanced skinning mode. False by default.
+ *
+ * @return A reference to this Builder for chaining calls.
+ *
+ * @see RenderableManager:Builder:boneIndicesAndWeights
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* self, bool enabled);
+/**
+ * Associate an optional name with this VertexBuffer for debugging purposes.
+ *
+ * @param name A string to identify this VertexBuffer
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_name(FilaVertexBufferBuilder* self, const char* name);
+/**
+ * Specifies a callback that will execute once the resource's data has been fully allocated
+ * within the GPU memory. This enables the resource creation process to be handled
+ * asynchronously.
+ *
+ * Any asynchronous calls made during a resource's asynchronous creation (using this method)
+ * are safe because they are queued and executed in sequence. However, invoking regular
+ * methods on the same resource before it's fully ready is unsafe and may cause undefined
+ * behavior. Users can call the `isCreationComplete()` method for the resource to confirm
+ * when the resource is ready for regular API calls. It returns false if the asynchronous
+ * creation was canceled, in which case the resource was never populated and must not be
+ * used.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * @param handler Handler to dispatch the callback or nullptr for the default handler
+ * @param callback A function to be called upon the completion of an asynchronous creation.
+ *                 Its `AsyncCallStatus` argument reports whether the operation ran
+ *                 (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user The custom data that will be passed as the second argument to the `callback`.
+ * @return This Builder, for chaining calls.
+ */
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_async(FilaVertexBufferBuilder* self, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user);
+/**
+ * Creates the VertexBuffer object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this VertexBuffer with.
+ *
+ * @return pointer to the newly created object.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ */
 FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* self, FilaEngine* engine);
 
 // filament::VertexBuffer
+/**
+ * Returns the vertex count.
+ * @return Number of vertices in this vertex buffer set.
+ */
 uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* self);
+/**
+ * copy-initializes the specified buffer from the given buffer data.
+ *
+ * Do not use this if you called enableBufferObjects() on the Builder.
+ *
+ * @param engine Reference to the filament::Engine to associate this VertexBuffer with.
+ * @param bufferIndex Index of the buffer to initialize. Must be between 0
+ *                    and Builder::bufferCount() - 1.
+ * @param buffer A BufferDescriptor representing the data used to initialize the buffer at
+ *               index \p bufferIndex. BufferDescriptor points to raw, untyped data that will
+ *               be copied as-is into the buffer.
+ * @param byteOffset Offset in *bytes* into the buffer at index \p bufferIndex of this vertex
+ *                   buffer set.  Must be multiple of 4.
+ */
 void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
+/**
+ * An asynchronous version of `setBufferAt()`.
+ * Asynchronously copy-initializes the specified buffer from the given buffer data.
+ *
+ * Users can call the `Engine::cancelAsyncCall()` method with the returned ID to cancel the
+ * asynchronous call.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * Do not use this if you called enableBufferObjects() on the Builder.
+ *
+ * @param engine Reference to the filament::Engine to associate this VertexBuffer with.
+ * @param bufferIndex Index of the buffer to initialize. Must be between 0
+ *                    and Builder::bufferCount() - 1.
+ * @param buffer A BufferDescriptor representing the data used to initialize the buffer at
+ *               index \p bufferIndex. BufferDescriptor points to raw, untyped data that will
+ *               be copied as-is into the buffer.
+ * @param byteOffset Offset in *bytes* into the buffer at index \p bufferIndex of this vertex
+ *                   buffer set.  Must be multiple of 4.
+ * @param handler Handler to dispatch the callback or nullptr for the default handler
+ * @param callback A function to be called upon the completion of an asynchronous creation.
+ *                 Its `AsyncCallStatus` argument reports whether the operation ran
+ *                 (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user The custom data that will be passed as the second argument to the `callback`.
+ *
+ * @return An ID that the caller can use to cancel the operation.
+ */
 uint32_t FilaVertexBuffer_setBufferAtAsync(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user);
+/**
+ * Swaps in the given buffer object.
+ *
+ * To use this, you must first call enableBufferObjects() on the Builder.
+ *
+ * @param engine Reference to the filament::Engine to associate this VertexBuffer with.
+ * @param bufferIndex Index of the buffer to initialize. Must be between 0
+ *                    and Builder::bufferCount() - 1.
+ * @param bufferObject The handle to the GPU data that will be used in this buffer slot.
+ */
 void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject);
+/**
+ * An asynchronous version of `setBufferObjectAt()`.
+ * Swaps in the given buffer object.
+ *
+ * Users can call the `Engine::cancelAsyncCall()` method with the returned ID to cancel the
+ * asynchronous call.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * To use this, you must first call enableBufferObjects() on the Builder.
+ *
+ * @param engine Reference to the filament::Engine to associate this VertexBuffer with.
+ * @param bufferIndex Index of the buffer to initialize. Must be between 0
+ *                    and Builder::bufferCount() - 1.
+ * @param bufferObject The handle to the GPU data that will be used in this buffer slot.
+ * @param handler   Handler to dispatch the callback or nullptr for the default handler
+ * @param callback  A function to be called upon the completion of an asynchronous creation.
+ *                  Its `AsyncCallStatus` argument reports whether the operation ran
+ *                  (`COMPLETED`) or never ran (`CANCELED`).
+ * @param user      The custom data that will be passed as the second argument to the `callback`.
+ *
+ * @return An ID that the caller can use to cancel the operation.
+ */
 uint32_t FilaVertexBuffer_setBufferObjectAtAsync(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user);
+/**
+ * This non-blocking method checks if the resource has finished creation *successfully*. If the
+ * resource creation was initiated asynchronously, it will return true only after all related
+ * asynchronous tasks are complete, and only if none of them was canceled. If the resource was
+ * created normally without using async method, it will always return true.
+ *
+ * A canceled asynchronous creation never populates the resource, so this method keeps returning
+ * false for it. The object itself remains valid and must still be destroyed as usual.
+ *
+ * @return Whether the resource is created and usable.
+ *
+ * @see Builder::async()
+ */
 bool FilaVertexBuffer_isCreationComplete(const FilaVertexBuffer* self);
 
 

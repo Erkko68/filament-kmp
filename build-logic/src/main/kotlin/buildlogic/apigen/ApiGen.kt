@@ -1,23 +1,27 @@
 package buildlogic.apigen
 
+import buildlogic.apigen.c.CApi
 import buildlogic.apigen.c.CApiWriter
 import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppApiReader
 import buildlogic.apigen.cpp.clang
+import buildlogic.apigen.kotlin.kotlinExternals
+import buildlogic.apigen.kotlin.packageDir
 import java.io.File
 
 /**
- * The generator for one library, laid out as [ApiGenConfig] says under [projectDir]. Nothing here is Gradle's: the
- * tasks drive it. [workDir] holds scratch files.
+ * The generator for one library, laid out as [ApiGenConfig] says under [projectDir]: each stage reads what the one
+ * before wrote. Nothing here is Gradle's: the tasks run the stages. [workDir] holds scratch files.
  */
 internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File) {
     // Absolute: clang reports a declaration's file as the include path spells it.
     private val workDir = workDir.absoluteFile
-    val includeDir: File = projectDir.absoluteFile.resolve(config.includeDir)
-    val cDir: File = projectDir.absoluteFile.resolve(config.cDir)
+    val includeDir: File = projectDir.absoluteFile.resolve(config.sources.includeDir)
+    val cDir: File = projectDir.absoluteFile.resolve(config.c.dir)
     val apiHeadersFile: File = cDir.resolve("api-headers.txt")
     val manifestFile: File = cDir.resolve("api-manifest.json")
+    val coverageFile: File = cDir.resolve("api-coverage.txt")
     /** The Kotlin modules' dir, or null for a C API alone. */
     val kotlinDir: File? = config.kotlin?.let { projectDir.absoluteFile.resolve(it.dir) }
     val apiHeaders by lazy {
@@ -27,46 +31,63 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
     }
     val headers by lazy { apiHeaders.headers(includeDir) }
 
-    fun headerFiles() = headers.map(includeDir::resolve)
-
     fun generatedDirs() = apiHeaders.modules.keys.map { cDir.resolve("$it/generated") }
 
     /** Hand-written headers: what they declare, the generator leaves alone. */
-    fun manualHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
+    private fun manualHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "h" }.orEmpty().toList() }
 
-    /** The functions the C headers on disk declare, generated and hand-written. */
-    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.prefix, workDir)
+    /** Everything clang reads in the API headers, nothing skipped. */
+    fun model(): CppApi = CppApiReader(config.sources, workDir.apply { mkdirs() }).read(includeDir, headers).scoped(headers)
 
-    /** The hand-written C++ headers the forwarders are compiled against. */
-    fun bridgeHeaders() = apiHeaders.modules.keys.flatMap { cDir.resolve("$it/manual").listFiles { f -> f.extension == "hpp" }.orEmpty().toList() }
-
-    fun read(): CppApi = CppApiReader(config, this.workDir.apply { mkdirs() }).read(includeDir, headers)
-
-    /** The [CApiWriter] of the API headers; [manualHeaders] say which functions are hand-written. */
-    fun writer(): CApiWriter {
-        val api = read().skipping(apiHeaders.skipped)
+    /** The API: the [model] less `api-headers.txt`'s skips, each of which must name something. */
+    fun api(): CppApi {
+        val api = model().scoped(headers, apiHeaders.skipped)
         val unknown = api.unknownSkips().map { entry ->
             entry + api.overloads(entry.substringBefore("\\(")).ifEmpty { null }?.joinToString(prefix = " (has: ", postfix = ")").orEmpty()
         }
         check(unknown.isEmpty()) { "api-headers.txt skips unknown declarations: ${unknown.joinToString()}" }
-        val function = Regex("""\b(${Regex.escape(config.prefix)}\w+)\s*\(""")
+        return api
+    }
+
+    /** The c stage: [api] in C, less the functions the [manualHeaders] declare. */
+    fun cApi(api: CppApi = api()): CApi {
+        val function = Regex("""\b(${Regex.escape(config.c.prefix)}\w+)\s*\(""")
         val manual = manualHeaders().flatMap { function.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
-        return CApiWriter(api, config, apiHeaders, headers, manual)
+        return CApiWriter(api, config, apiHeaders, manual).write()
     }
 
-    /** Replaces the generated dirs with [files] (text by path under [cDir]). */
-    fun write(files: Map<String, String>) {
-        generatedDirs().forEach { it.deleteRecursively() }
-        files.forEach { (path, text) -> cDir.resolve(path).apply { parentFile.mkdirs() }.writeText(text) }
+    /** [CApi.files] on disk, in place of the generated dirs. */
+    fun cFiles(c: CApi) = GeneratedFiles(cDir, generatedDirs(), c.files)
+
+    /** Writes the C API and the manifest of what its headers declare, once it compiles. */
+    fun generateCApi(): CApi = cApi().also { c ->
+        cFiles(c).write()
+        checkCompiles(c.files.keys.map(cDir::resolve))
+        manifestFile.writeText(manifest().json())
     }
 
-    /** The paths under [cDir] where the generated dirs aren't what [files] says: changed, missing or left over. */
-    fun stale(files: Map<String, String>) = stale(cDir, files, generatedDirs())
+    /** The functions the C headers on disk declare, generated and hand-written. */
+    fun manifest() = CManifest.read((generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() } + manualHeaders()).sortedBy { it.path }, cDir, config.c.prefix, workDir)
 
-    /** Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers. */
+    /** The kotlin stage: the externals of [manifest], in place of each module's package of them. */
+    fun kotlinFiles(manifest: CManifest): GeneratedFiles {
+        val kotlin = checkNotNull(kotlinDir) { "The config has no Kotlin bindings" }
+        val bindings = config.kotlin!!
+        return GeneratedFiles(kotlin, bindings.packages.map { (module, pkg) -> kotlin.resolve(packageDir(module, pkg)) }, kotlinExternals(manifest, bindings))
+    }
+
+    /** Writes the externals of the committed manifest. */
+    fun generateKotlinExternals() = kotlinFiles(CManifest.parse(manifestFile.readText())).write()
+
+    /**
+     * Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers,
+     * a module at a time as the build compiles them: one can't lean on another's includes.
+     */
     fun checkCompiles(files: Collection<File>) {
         compile("headers.c", files.filter { it.extension == "h" }, listOf("clang", "-x", "c", "-std=c11"))
-        compile("forwarders.cpp", files.filter { it.extension == "cpp" }, listOf("clang++", "-std=${config.std}") + config.clangArgs + listOf("-I", includeDir.path))
+        files.filter { it.extension == "cpp" }.groupBy { it.parentFile.parentFile.name }.forEach { (module, forwarders) ->
+            compile("$module.cpp", forwarders, listOf("clang++", "-std=${config.sources.std}") + config.sources.clangArgs + listOf("-I", includeDir.path))
+        }
     }
 
     private fun compile(unit: String, sources: List<File>, command: List<String>) {
@@ -74,10 +95,4 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
         val (exit, errors) = clang(command + listOf("-fsyntax-only", file.path), workDir)
         check(exit == 0) { "Generated C API doesn't compile ($unit):\n$errors" }
     }
-}
-
-/** The paths under [root] where [dirs] aren't what [files] (text by path under [root]) says: changed, missing or left over. */
-internal fun stale(root: File, files: Map<String, String>, dirs: List<File>): Set<String> {
-    val onDisk = dirs.flatMap { dir -> dir.walkTopDown().filter { it.isFile }.map { it.relativeTo(root).invariantSeparatorsPath } }
-    return files.filter { (path, text) -> root.resolve(path).let { !it.isFile || it.readText() != text } }.keys + (onDisk - files.keys)
 }

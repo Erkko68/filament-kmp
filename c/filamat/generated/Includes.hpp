@@ -2,6 +2,10 @@
 #pragma once
 
 #include "../../filament/generated/Includes.hpp"
+
+#include <filamat/Enums.h>
+#include <filamat/MaterialBuilder.h>
+#include <filamat/Package.h>
 #include "Types.h"
 
 namespace fila {

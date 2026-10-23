@@ -10,11 +10,36 @@ extern "C" {
 
 // filament::gltfio::MaterialProvider
 void FilaGltfioMaterialProvider_destroy(FilaGltfioMaterialProvider* self);
+/**
+ * Creates or fetches a compiled Filament material, then creates an instance from it.
+ *
+ * @param config Specifies requirements; might be mutated due to resource constraints.
+ * @param uvmap Output argument that gets populated with a small table that maps from a glTF uv
+ *              index to a Filament uv index.
+ * @param label Optional tag that is not a part of the cache key.
+ * @param extras Optional extras as stringified JSON (not a part of the cache key).
+ *               Does not store the pointer.
+ */
 FilaMaterialInstance* FilaGltfioMaterialProvider_createMaterialInstance(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label, const char* extras);
+/** Creates or fetches a compiled Filament material corresponding to the given config. */
 FilaMaterial* FilaGltfioMaterialProvider_getMaterial(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label);
+/** Gets a weak reference to the array of cached materials. */
 const FilaMaterial* const* FilaGltfioMaterialProvider_getMaterials(const FilaGltfioMaterialProvider* self);
+/** Gets the number of cached materials. */
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self);
+/**
+ * Destroys all cached materials.
+ *
+ * This is not called automatically when MaterialProvider is destroyed, which allows
+ * clients to take ownership of the cache if desired.
+ */
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self);
+/**
+ * Returns true if the presence of the given vertex attribute is required.
+ *
+ * Some types of providers (e.g. ubershader) require dummy attribute values
+ * if the glTF model does not provide them.
+ */
 bool FilaGltfioMaterialProvider_needsDummyData(const FilaGltfioMaterialProvider* self, FilaVertexAttribute attrib);
 
 

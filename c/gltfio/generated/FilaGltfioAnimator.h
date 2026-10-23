@@ -10,12 +10,54 @@ extern "C" {
 
 // filament::gltfio::Animator
 // skipped void filament::gltfio::Animator::addInstance(FFilamentInstance * instance)
+/**
+ * Applies rotation, translation, and scale to entities that have been targeted by the given
+ * animation definition. Uses filament::TransformManager.
+ *
+ * @param animationIndex Zero-based index for the \c animation of interest.
+ * @param time Elapsed time of interest in seconds.
+ */
 void FilaGltfioAnimator_applyAnimation(const FilaGltfioAnimator* self, uint32_t animationIndex, float time);
+/**
+ * Computes root-to-node transforms for all bone nodes, then passes
+ * the results into filament::RenderableManager::setBones.
+ * Uses filament::TransformManager and filament::RenderableManager.
+ *
+ * NOTE: this operation is independent of \c animation.
+ */
 void FilaGltfioAnimator_updateBoneMatrices(FilaGltfioAnimator* self);
+/**
+ * Applies a blended transform to the union of nodes affected by two animations.
+ * Used for cross-fading from a previous skinning-based animation or rigid body animation.
+ *
+ * First, this stashes the current transform hierarchy into a transient memory buffer.
+ *
+ * Next, this applies previousAnimIndex / previousAnimTime to the actual asset by internally
+ * calling applyAnimation().
+ *
+ * Finally, the stashed local transforms are lerped (via the scale / translation / rotation
+ * components) with their live counterparts, and the results are pushed to the asset.
+ *
+ * To achieve a cross fade effect with skinned models, clients will typically call animator
+ * methods in this order: (1) applyAnimation (2) applyCrossFade (3) updateBoneMatrices. The
+ * animation that clients pass to applyAnimation is the "current" animation corresponding to
+ * alpha=1, while the "previous" animation passed to applyCrossFade corresponds to alpha=0.
+ */
 void FilaGltfioAnimator_applyCrossFade(FilaGltfioAnimator* self, uint32_t previousAnimIndex, float previousAnimTime, float alpha);
+/**
+ * Pass the identity matrix into all bone nodes, useful for returning to the T pose.
+ *
+ * NOTE: this operation is independent of \c animation.
+ */
 void FilaGltfioAnimator_resetBoneMatrices(FilaGltfioAnimator* self);
+/** Returns the number of \c animation definitions in the glTF asset. */
 uint32_t FilaGltfioAnimator_getAnimationCount(const FilaGltfioAnimator* self);
+/** Returns the duration of the specified glTF \c animation in seconds. */
 float FilaGltfioAnimator_getAnimationDuration(const FilaGltfioAnimator* self, uint32_t animationIndex);
+/**
+ * Returns a weak reference to the string name of the specified \c animation, or an
+ * empty string if none was specified.
+ */
 const char* FilaGltfioAnimator_getAnimationName(const FilaGltfioAnimator* self, uint32_t animationIndex);
 
 

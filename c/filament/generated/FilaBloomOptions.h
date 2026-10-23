@@ -11,43 +11,101 @@ extern "C" {
 // filament::BloomOptions
 FilaBloomOptions* FilaBloomOptions_create(void);
 void FilaBloomOptions_destroy(FilaBloomOptions* self);
+/** user provided dirt texture */
 FilaTexture* FilaBloomOptions_getDirt(const FilaBloomOptions* self);
+/** user provided dirt texture */
 void FilaBloomOptions_setDirt(FilaBloomOptions* self, FilaTexture* value);
+/** strength of the dirt texture */
 float FilaBloomOptions_getDirtStrength(const FilaBloomOptions* self);
+/** strength of the dirt texture */
 void FilaBloomOptions_setDirtStrength(FilaBloomOptions* self, float value);
+/** bloom's strength between 0.0 and 1.0 */
 float FilaBloomOptions_getStrength(const FilaBloomOptions* self);
+/** bloom's strength between 0.0 and 1.0 */
 void FilaBloomOptions_setStrength(FilaBloomOptions* self, float value);
+/** resolution of vertical axis (2^levels to 2048) */
 uint32_t FilaBloomOptions_getResolution(const FilaBloomOptions* self);
+/** resolution of vertical axis (2^levels to 2048) */
 void FilaBloomOptions_setResolution(FilaBloomOptions* self, uint32_t value);
+/** number of blur levels (1 to 11) */
 uint32_t FilaBloomOptions_getLevels(const FilaBloomOptions* self);
+/** number of blur levels (1 to 11) */
 void FilaBloomOptions_setLevels(FilaBloomOptions* self, uint32_t value);
+/** how the bloom effect is applied */
 FilaBloomOptionsBlendMode FilaBloomOptions_getBlendMode(const FilaBloomOptions* self);
+/** how the bloom effect is applied */
 void FilaBloomOptions_setBlendMode(FilaBloomOptions* self, FilaBloomOptionsBlendMode value);
+/** whether to threshold the source */
 bool FilaBloomOptions_getThreshold(const FilaBloomOptions* self);
+/** whether to threshold the source */
 void FilaBloomOptions_setThreshold(FilaBloomOptions* self, bool value);
+/** enable or disable bloom */
 bool FilaBloomOptions_getEnabled(const FilaBloomOptions* self);
+/** enable or disable bloom */
 void FilaBloomOptions_setEnabled(FilaBloomOptions* self, bool value);
+/** limit highlights to this value before bloom [10, +inf] */
 float FilaBloomOptions_getHighlight(const FilaBloomOptions* self);
+/** limit highlights to this value before bloom [10, +inf] */
 void FilaBloomOptions_setHighlight(FilaBloomOptions* self, float value);
+/**
+ * Bloom quality level.
+ * <ul>
+ * <li>LOW (default): use a more optimized down-sampling filter, however there can be artifacts
+ *      with dynamic resolution, this can be alleviated by using the homogenous mode.</li>
+ * <li>MEDIUM: Good balance between quality and performance.</li>
+ * <li>HIGH: In this mode the bloom resolution is automatically increased to avoid artifacts.
+ *      This mode can be significantly slower on mobile, especially at high resolution.
+ *      This mode greatly improves the anamorphic bloom.</li>
+ * </ul>
+ */
 FilaQualityLevel FilaBloomOptions_getQuality(const FilaBloomOptions* self);
+/**
+ * Bloom quality level.
+ * <ul>
+ * <li>LOW (default): use a more optimized down-sampling filter, however there can be artifacts
+ *      with dynamic resolution, this can be alleviated by using the homogenous mode.</li>
+ * <li>MEDIUM: Good balance between quality and performance.</li>
+ * <li>HIGH: In this mode the bloom resolution is automatically increased to avoid artifacts.
+ *      This mode can be significantly slower on mobile, especially at high resolution.
+ *      This mode greatly improves the anamorphic bloom.</li>
+ * </ul>
+ */
 void FilaBloomOptions_setQuality(FilaBloomOptions* self, FilaQualityLevel value);
+/** enable screen-space lens flare */
 bool FilaBloomOptions_getLensFlare(const FilaBloomOptions* self);
+/** enable screen-space lens flare */
 void FilaBloomOptions_setLensFlare(FilaBloomOptions* self, bool value);
+/** enable starburst effect on lens flare */
 bool FilaBloomOptions_getStarburst(const FilaBloomOptions* self);
+/** enable starburst effect on lens flare */
 void FilaBloomOptions_setStarburst(FilaBloomOptions* self, bool value);
+/** amount of chromatic aberration */
 float FilaBloomOptions_getChromaticAberration(const FilaBloomOptions* self);
+/** amount of chromatic aberration */
 void FilaBloomOptions_setChromaticAberration(FilaBloomOptions* self, float value);
+/** number of flare "ghosts" */
 uint32_t FilaBloomOptions_getGhostCount(const FilaBloomOptions* self);
+/** number of flare "ghosts" */
 void FilaBloomOptions_setGhostCount(FilaBloomOptions* self, uint32_t value);
+/** spacing of the ghost in screen units [0, 1[ */
 float FilaBloomOptions_getGhostSpacing(const FilaBloomOptions* self);
+/** spacing of the ghost in screen units [0, 1[ */
 void FilaBloomOptions_setGhostSpacing(FilaBloomOptions* self, float value);
+/** hdr threshold for the ghosts */
 float FilaBloomOptions_getGhostThreshold(const FilaBloomOptions* self);
+/** hdr threshold for the ghosts */
 void FilaBloomOptions_setGhostThreshold(FilaBloomOptions* self, float value);
+/** thickness of halo in vertical screen units, 0 to disable */
 float FilaBloomOptions_getHaloThickness(const FilaBloomOptions* self);
+/** thickness of halo in vertical screen units, 0 to disable */
 void FilaBloomOptions_setHaloThickness(FilaBloomOptions* self, float value);
+/** radius of halo in vertical screen units [0, 0.5] */
 float FilaBloomOptions_getHaloRadius(const FilaBloomOptions* self);
+/** radius of halo in vertical screen units [0, 0.5] */
 void FilaBloomOptions_setHaloRadius(FilaBloomOptions* self, float value);
+/** hdr threshold for the halo */
 float FilaBloomOptions_getHaloThreshold(const FilaBloomOptions* self);
+/** hdr threshold for the halo */
 void FilaBloomOptions_setHaloThreshold(FilaBloomOptions* self, float value);
 
 

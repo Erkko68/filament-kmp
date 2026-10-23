@@ -1,12 +1,12 @@
 package buildlogic.apigen.cpp
 
-import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.Sources
 import java.io.File
 import java.math.BigInteger
 
 /** Builds a [CppApi] from clang's AST of [headers]; nothing here parses C++ itself. */
-internal class CppApiReader(private val config: ApiGenConfig, private val workDir: File) {
-    private val ast = ClangAstDump(config, workDir)
+internal class CppApiReader(private val sources: Sources, private val workDir: File) {
+    private val ast = ClangAstDump(sources, workDir)
     private val scopes = CppScopes()
     private val records = LinkedHashMap<String, CppRecord>()
     private val enums = LinkedHashMap<String, CppEnum>()
@@ -18,23 +18,25 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
     private val seenHeaders = HashSet<String>()
     private var locationOf: Map<Map<*, *>, Location> = emptyMap()
     private lateinit var guards: PreprocessorGuards
+    private lateinit var docs: DocComments
 
     /** Reads [headers] (paths relative to [includeDir]); each must declare something the filters dump. */
     fun read(includeDir: File, headers: Collection<String>): CppApi {
         guards = PreprocessorGuards(includeDir)
+        docs = DocComments(includeDir)
         val unit = workDir.resolve("headers.cpp")
-        unit.writeText((config.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
+        unit.writeText((sources.prelude + headers.sorted()).joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
         // Every filter's namespace up front, before any dump runs.
-        config.astFilters.forEach { filter ->
+        sources.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             if (filter.endsWith("::")) scopes.namespace(namespace) else if (namespace.isNotEmpty()) scopes.partialNamespace(namespace)
-            config.skippedNamespaces.forEach { scopes.partialNamespace(qualify(namespace, it)) }
+            sources.skippedNamespaces.forEach { scopes.partialNamespace(qualify(namespace, it)) }
         }
         // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
-        config.astFilters.forEach { filter ->
+        sources.astFilters.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
-            ast.forEachDeclaration(unit, includeDir, filter, config.skippedNamespaces) { document ->
+            ast.forEachDeclaration(unit, includeDir, filter, sources.skippedNamespaces) { document ->
                 locationOf = DeclarationFiles.of(document, includeDir)
                 visit(document, namespace, exported = false, accessible = true)
             }
@@ -135,11 +137,11 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
                     val deprecated = child.children().any { it["kind"] == "DeprecatedAttr" }
-                    fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated)
+                    fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated, doc(child))
                 }
                 // An anonymous union or struct's members are the record's own (MaterialKey's UV fields).
                 "CXXRecordDecl" if child["name"] == null -> anonymousFields(child).forEach { field ->
-                    fields += CppField(field["name"] as String, scopes.resolve(spelledType(field), qualified), null, isPublic, false)
+                    fields += CppField(field["name"] as String, scopes.resolve(spelledType(field), qualified), null, isPublic, false, doc(field))
                 }
                 // `class Frustum getFrustum()` declares Frustum in the namespace, though clang lists it here.
                 "CXXRecordDecl", "ClassTemplateDecl" -> if (child["parentDeclContextId"] == null)
@@ -149,6 +151,7 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
         }
         records[qualified] = CppRecord(
             qualified, locationOf[node]?.header, public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, declaredDestructor,
+            doc(node),
         )
     }
 
@@ -190,6 +193,7 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
             isOverride = node.children().any { it["kind"] == "OverrideAttr" || it["kind"] == "FinalAttr" },
             templateParameters = templateParameters,
             guard = locationOf[node]?.let { l -> l.header?.let { guards.at(it, l.line) } },
+            doc = doc(node),
         )
     }
 
@@ -203,16 +207,17 @@ internal class CppApiReader(private val config: ApiGenConfig, private val workDi
             constant["name"] as String to value
         }
         val underlying = (node["fixedUnderlyingType"] as? Map<*, *>)?.get("qualType") as? String
-        enums[qualified] = CppEnum(qualified, locationOf[node]?.header, underlying, constants)
+        val constantDocs = node.children().mapNotNull { c -> doc(c)?.let { c["name"] as String to it } }.toMap()
+        enums[qualified] = CppEnum(qualified, locationOf[node]?.header, underlying, constants, doc(node), constantDocs)
     }
+
+    private fun doc(node: Map<*, *>) = docs.of(node, locationOf[node]?.header)
 
     /** A declaration's initializer: its one child that isn't a comment or an attribute. */
     private fun initializer(node: Map<*, *>): Map<*, *>? {
         if (node["init"] == null && node["hasInClassInitializer"] != true) return null
         return node.children().firstOrNull { child -> NOT_EXPRESSIONS.none { (child["kind"] as String).endsWith(it) } }
     }
-
-    private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
 
     private companion object {
         val TEMPLATE_PARAMETERS = setOf("TemplateTypeParmDecl", "NonTypeTemplateParmDecl", "TemplateTemplateParmDecl")

@@ -9,14 +9,52 @@ extern "C" {
 #endif
 
 // filament::Color
+/** converts an RGB color to linear space, the conversion depends on the specified type */
 void FilaColor_toLinear_RgbType_float3(FilaRgbType type, const FilaFloat3* color, FilaFloat3* out);
+/** converts an RGBA color to linear space, the conversion depends on the specified type */
 void FilaColor_toLinear_RgbaType_float4(FilaRgbaType type, const FilaFloat4* color, FilaFloat4* out);
+/** converts an RGB color in sRGB space to an RGB color in linear space */
 void FilaColor_toLinear_sRGBColor(const FilaFloat3* color, FilaFloat3* out);
+/**
+ * Converts an RGBA color in Rec.709-sRGB-D65 (sRGB) space to an RGBA color in
+ * Rec.709-Linear-D65 ("linear sRGB") space the alpha component is left unmodified.
+ */
 void FilaColor_toLinear_sRGBColorA(const FilaFloat4* color, FilaFloat4* out);
+/**
+ * Converts an RGB color in Rec.709-Linear-D65 ("linear sRGB") space to an
+ * RGB color in Rec.709-sRGB-D65 (sRGB) space.
+ */
 void FilaColor_toSRGB_LinearColor(const FilaFloat3* color, FilaFloat3* out);
+/**
+ * Converts an RGBA color in Rec.709-Linear-D65 ("linear sRGB") space to
+ * an RGBA color in Rec.709-sRGB-D65 (sRGB) space the alpha component is
+ * left unmodified.
+ */
 void FilaColor_toSRGB_LinearColorA(const FilaFloat4* color, FilaFloat4* out);
+/**
+ * Converts a correlated color temperature to a linear RGB color in sRGB
+ * space the temperature must be expressed in kelvin and must be in the
+ * range 1,000K to 15,000K.
+ */
 void FilaColor_cct(float K, FilaFloat3* out);
+/**
+ * Converts a CIE standard illuminant series D to a linear RGB color in
+ * sRGB space the temperature must be expressed in kelvin and must be in
+ * the range 4,000K to 25,000K
+ */
 void FilaColor_illuminantD(float K, FilaFloat3* out);
+/**
+ * Computes the Beer-Lambert absorption coefficients from the specified
+ * transmittance color and distance. The computed absorption will guarantee
+ * the white light will become the specified color at the specified distance.
+ * The output of this function can be used as the absorption parameter of
+ * materials that use refraction.
+ *
+ * @param color the desired linear RGB color in sRGB space
+ * @param distance the distance at which white light should become the specified color
+ *
+ * @return absorption coefficients for the Beer-Lambert law
+ */
 void FilaColor_absorptionAtDistance(const FilaFloat3* color, float distance, FilaFloat3* out);
 
 

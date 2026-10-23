@@ -11,10 +11,34 @@ extern "C" {
 // filament::gltfio
 uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
 void FilaGltfio_constrainMaterial(FilaGltfioMaterialKey* key, FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
+/**
+ * Creates a material provider that loads a small set of pre-built materials.
+ *
+ * @return New material provider that can quickly load a material from a cache.
+ *
+ * @see createJitShaderProvider
+ */
 FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount);
+/**
+ * Creates a simple decoder based on stb_image that can handle "image/png" and "image/jpeg".
+ * This works only if your build configuration includes STB.
+ */
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine);
+/**
+ * Creates a decoder that can handle certain types of "image/ktx2" content as specified in
+ * the KHR_texture_basisu specification.
+ */
 FilaGltfioTextureProvider* FilaGltfio_createKtx2Provider(FilaEngine* engine);
+/**
+ * If webp support is enabled at build time, creates a decoder that can handle "image/webp"
+ * lossless and lossy content.
+ * If webp support is not enabled at build time, returns nullptr.
+ */
 FilaGltfioTextureProvider* FilaGltfio_createWebpProvider(FilaEngine* engine);
+/**
+ * Indicates if build-time webp support was included.
+ * Returns true if it was and false if not.
+ */
 bool FilaGltfio_isWebpSupported(void);
 
 

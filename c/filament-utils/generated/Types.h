@@ -8,25 +8,210 @@
 extern "C" {
 #endif
 
+/**
+ * IBLPrefilterContext creates and initializes GPU state common to all environment map filters
+ * supported. Typically, only one instance per filament Engine of this object needs to exist.
+ *
+ * Usage Example:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Engine.h>
+ * using namespace filament;
+ *
+ * Engine* engine = Engine::create();
+ *
+ * IBLPrefilterContext context(engine);
+ * IBLPrefilterContext::SpecularFilter filter(context);
+ * Texture* texture = filter(environment_cubemap);
+ *
+ * IndirectLight* indirectLight = IndirectLight::Builder()
+ *     .reflections(texture)
+ *     .build(engine);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 typedef struct FilaIBLPrefilterContext FilaIBLPrefilterContext;
+
+/** EquirectangularToCubemap is use to convert an equirectangluar image to a cubemap. */
 typedef struct FilaIBLPrefilterContextEquirectangularToCubemap FilaIBLPrefilterContextEquirectangularToCubemap;
+
 typedef struct FilaIBLPrefilterContextEquirectangularToCubemapConfig FilaIBLPrefilterContextEquirectangularToCubemapConfig;
+
+/**
+ * IrradianceFilter is a GPU based implementation of the diffuse probe pre-integration filter.
+ * An instance of IrradianceFilter is needed per filter configuration. A filter configuration
+ * contains the filter's kernel and sample count.
+ */
 typedef struct FilaIBLPrefilterContextIrradianceFilter FilaIBLPrefilterContextIrradianceFilter;
+
+/** Filter configuration. */
 typedef struct FilaIBLPrefilterContextIrradianceFilterConfig FilaIBLPrefilterContextIrradianceFilterConfig;
+
+/** Filtering options for the current environment. */
 typedef struct FilaIBLPrefilterContextIrradianceFilterOptions FilaIBLPrefilterContextIrradianceFilterOptions;
+
+/**
+ * SpecularFilter is a GPU based implementation of the specular probe pre-integration filter.
+ * An instance of SpecularFilter is needed per filter configuration. A filter configuration
+ * contains the filter's kernel and sample count.
+ */
 typedef struct FilaIBLPrefilterContextSpecularFilter FilaIBLPrefilterContextSpecularFilter;
+
+/** Filter configuration. */
 typedef struct FilaIBLPrefilterContextSpecularFilterConfig FilaIBLPrefilterContextSpecularFilterConfig;
+
+/** Filtering options for the current environment. */
 typedef struct FilaIBLPrefilterContextSpecularFilterOptions FilaIBLPrefilterContextSpecularFilterOptions;
+
+/**
+ * Opaque memento to a viewing position and orientation (e.g. the "home" camera position).
+ *
+ * This little struct is meant to be passed around by value and can be used to track camera
+ * animation between waypoints. In map mode this implements Van Wijk interpolation.
+ *
+ * @see Manipulator::getCurrentBookmark, Manipulator::jumpToBookmark
+ */
 typedef struct FilaCamutilsBookmark FilaCamutilsBookmark;
+
+/**
+ * Helper that enables camera interaction similar to sketchfab or Google Maps.
+ *
+ * Clients notify the camera manipulator of various mouse or touch events, then periodically call
+ * its getLookAt() method so that they can adjust their camera(s). Three modes are supported: ORBIT,
+ * MAP, and FREE_FLIGHT. To construct a manipulator instance, the desired mode is passed into the
+ * create method.
+ *
+ * Usage example:
+ *
+ *     using CameraManipulator = camutils::Manipulator<float>;
+ *     CameraManipulator* manip;
+ *
+ *     void init() {
+ *         manip = CameraManipulator::Builder()
+ *             .viewport(1024, 768)
+ *             .build(camutils::Mode::ORBIT);
+ *     }
+ *
+ *     void onMouseDown(int x, int y) {
+ *         manip->grabBegin(x, y, false);
+ *     }
+ *
+ *     void onMouseMove(int x, int y) {
+ *         manip->grabUpdate(x, y);
+ *     }
+ *
+ *     void onMouseUp(int x, int y) {
+ *         manip->grabEnd();
+ *     }
+ *
+ *     void gameLoop() {
+ *         while (true) {
+ *             filament::math::float3 eye, center, up;
+ *             manip->getLookAt(&eye, &center, &up);
+ *             camera->lookAt(eye, center, up);
+ *             render();
+ *         }
+ *     }
+ *
+ * @see Bookmark
+ */
 typedef struct FilaCamutilsManipulator FilaCamutilsManipulator;
+
 typedef struct FilaCamutilsManipulatorBuilder FilaCamutilsManipulatorBuilder;
+
+/**
+ * This class builds Filament-style TANGENTS buffers given an input mesh.
+ *
+ * This class enables the client to chose between several algorithms. The client can retrieve the
+ * result through the `get` methods on the class. If the chosen algorithm did not remesh the input,
+ * the client is advised to just use the data they provided instead of querying.  For example, if
+ * the chosen method is Algorithm::FRISVAD, then the client should not need to call getPositions().
+ * We will simply copy from the input `positions` in that case.
+ *
+ * If the client calls getPositions() and positions were not provided as input, we will throw
+ * and exception. Similar behavior will apply to UVs.
+ *
+ * This class supersedes the implementation in SurfaceOrientation.h
+ */
 typedef struct FilaGeometryTangentSpaceMesh FilaGeometryTangentSpaceMesh;
+
+/**
+ * Use this class to provide input to the TangentSpaceMesh computation. **Important**:
+ * Computation of the tangent space is intended to be synchronous (working on the same thread).
+ * Client is expected to keep the input immutable and in a good state for the duration of both
+ * computation *and* query. That is, when querying the result of the tangent spaces, part of the
+ * result might depend on the input data.
+ */
 typedef struct FilaGeometryTangentSpaceMeshBuilder FilaGeometryTangentSpaceMeshBuilder;
+
+/**
+ * Creates a function object that can convert vertex attribute data into tightly packed floats.
+ *
+ * This is especially useful for 3-component formats which are not supported by all backends.
+ * e.g. The Vulkan minspec includes float3 but not short3.
+ *
+ * Usage Example:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * using filament::geometry::Transcoder;
+ * using filament::geometry::ComponentType;
+ *
+ * Transcoder transcode({
+ *     .componentType = ComponentType::BYTE,
+ *     .normalized = true,
+ *     .componentCount = 3,
+ *     .inputStrideBytes = 0
+ * });
+ *
+ * transcode(outputPtr, inputPtr, count);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * The interpretation of signed normalized data is consistent with Vulkan and OpenGL ES 3.0+.
+ * Note that this slightly differs from earlier versions of OpenGL ES.  For example, a signed byte
+ * value of -127 maps exactly to -1.0f under ES3 and VK rules, but not ES2.
+ */
 typedef struct FilaGeometryTranscoder FilaGeometryTranscoder;
+
+/** Describes the format of all input data that get passed to this transcoder object. */
 typedef struct FilaGeometryTranscoderConfig FilaGeometryTranscoderConfig;
+
+/**
+ * Ktx1Bundle is a structured set of opaque data blobs that can be passed straight to the GPU, such
+ * that a single bundle corresponds to a single texture object. It is well suited for storing
+ * block-compressed texture data.
+ *
+ * One bundle may be comprised of several mipmap levels, cubemap faces, and array elements. The
+ * number of blobs is immutable, and is determined as follows.
+ *
+ *     blob_count = mip_count * array_length * (cubemap ? 6 : 1)
+ *
+ * Bundles can be quickly serialized to a certain file format (see below link), but this class lives
+ * in the image lib rather than imageio because it has no dependencies, and does not support CPU
+ * decoding.
+ *
+ *     https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/
+ */
 typedef struct FilaImageKtx1Bundle FilaImageKtx1Bundle;
+
 typedef struct FilaKtxreaderKtx2Reader FilaKtxreaderKtx2Reader;
+
+/**
+ * Asynchronous Interface
+ * ======================
+ *
+ * Alternative API suitable for asynchronous transcoding of mipmap levels.
+ * If unsure that you need to use this, then don't, just call load() instead.
+ * Usage pseudocode:
+ *
+ *    auto async = reader->asyncCreate(data, size, TransferFunction::LINEAR);
+ *    mTexture = async->getTexture();
+ *    auto backgroundThread = spawnThread({ async->doTranscoding(); })
+ *    backgroundThread.wait();
+ *    async->uploadImages();
+ *    reader->asyncDestroy(async);
+ *
+ * In the documentation comments, "foreground thread" refers to the thread that the
+ * Filament Engine was created on.
+ */
 typedef struct FilaKtxreaderKtx2ReaderAsync FilaKtxreaderKtx2ReaderAsync;
+
 
 // IBLPrefilterContext::Kernel
 typedef enum FilaIBLPrefilterContextKernel {
@@ -40,6 +225,12 @@ typedef enum FilaCamutilsFov {
 } FilaCamutilsFov;
 
 // filament::camutils::Manipulator::Key
+/**
+ * Keys used to translate the camera in FREE_FLIGHT mode.
+ * FORWARD and BACKWARD dolly the camera forwards and backwards.
+ * LEFT and RIGHT strafe the camera left and right.
+ * UP and DOWN boom the camera upwards and downwards.
+ */
 typedef enum FilaCamutilsManipulatorKey {
     FILA_CAMUTILS_MANIPULATOR_KEY_FORWARD = 0,
     FILA_CAMUTILS_MANIPULATOR_KEY_LEFT = 1,
@@ -59,24 +250,88 @@ typedef enum FilaCamutilsMode {
 
 // filament::geometry::ComponentType
 typedef enum FilaGeometryComponentType {
+    /** If normalization is enabled, this maps from [-127,127] to [-1,+1] */
     FILA_GEOMETRY_COMPONENT_TYPE_BYTE = 0,
+    /** If normalization is enabled, this maps from [0,255] to [0, +1] */
     FILA_GEOMETRY_COMPONENT_TYPE_UBYTE = 1,
+    /** If normalization is enabled, this maps from [-32767,32767] to [-1,+1] */
     FILA_GEOMETRY_COMPONENT_TYPE_SHORT = 2,
+    /** If normalization is enabled, this maps from [0,65535] to [0, +1] */
     FILA_GEOMETRY_COMPONENT_TYPE_USHORT = 3,
+    /** 1 sign bit, 5 exponent bits, and 5 mantissa bits. */
     FILA_GEOMETRY_COMPONENT_TYPE_HALF = 4,
+    /** Standard 32-bit float */
     FILA_GEOMETRY_COMPONENT_TYPE_FLOAT = 5,
 } FilaGeometryComponentType;
 
 // filament::geometry::TangentSpaceMesh::Algorithm
 typedef enum FilaGeometryTangentSpaceMeshAlgorithm {
+    /**
+     * default
+     *
+     * Tries to select the best possible algorithm given the input. The corresponding algorithms
+     * are detailed in the corresponding enums.
+     * <pre>
+     *   INPUT                                  ALGORITHM
+     *   -----------------------------------------------------------
+     *   normals                                FRISVAD
+     *   positions + indices                    FLAT_SHADING
+     *   normals + uvs + positions + indices    MIKKTSPACE
+     * </pre>
+     */
     FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_DEFAULT = 0,
+    /**
+     * mikktspace
+     *
+     * **Requires**: `normals + uvs + positions + indices` <br/>
+     * **Reference**:
+     *    - Mikkelsen, M., 2008. Simulation of wrinkled surfaces revisited.
+     *    - https://github.com/mmikk/MikkTSpace
+     *    - https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#meshes-overview
+     *
+     * **Note**: Will remesh
+     */
     FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_MIKKTSPACE = 1,
+    /**
+     * Lengyel's method
+     *
+     * **Requires**: `normals + uvs + positions + indices` <br/>
+     * **Reference**: Lengyel, E., 2019. Foundations of Game Engine Development: Rendering. Terathon
+     *     Software LLC.. (Chapter 7)
+     */
     FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_LENGYEL = 2,
+    /**
+     * Hughes-Moller method
+     *
+     * **Requires**: `normals` <br/>
+     * **Reference**:
+     *     - Hughes, J.F. and Moller, T., 1999. Building an orthonormal basis from a unit
+     *       vector. journal of graphics tools, 4(4), pp.33-35.
+     *     - Parker, S.G., Bigler, J., Dietrich, A., Friedrich, H., Hoberock, J., Luebke, D.,
+     *       McAllister, D., McGuire, M., Morley, K., Robison, A. and Stich, M., 2010.
+     *       Optix: a general purpose ray tracing engine. Acm transactions on graphics (tog),
+     *       29(4), pp.1-13.
+     * **Note**: We implement the Optix variant, which is documented in the second reference above.
+     */
     FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_HUGHES_MOLLER = 3,
+    /**
+     * Frisvad's method
+     *
+     * **Requires**: `normals` <br/>
+     * **Reference**:
+     *     - Frisvad, J.R., 2012. Building an orthonormal basis from a 3D unit vector without
+     *       normalization. Journal of Graphics Tools, 16(3), pp.151-159.
+     *     - http://people.compute.dtu.dk/jerf/code/hairy/
+     */
     FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_FRISVAD = 4,
 } FilaGeometryTangentSpaceMeshAlgorithm;
 
 // filament::geometry::TangentSpaceMesh::AuxAttribute
+/**
+ * This enum specifies the auxiliary attributes of each vertex that can be provided as input.
+ * These attributes do not affect the computation of the tangent space, but they will be
+ * properly mapped when a remeshing is carried out.
+ */
 typedef enum FilaGeometryTangentSpaceMeshAuxAttribute {
     FILA_GEOMETRY_TANGENT_SPACE_MESH_AUX_ATTRIBUTE_UV1 = 0,
     FILA_GEOMETRY_TANGENT_SPACE_MESH_AUX_ATTRIBUTE_COLORS = 1,

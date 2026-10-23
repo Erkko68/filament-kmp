@@ -11,11 +11,29 @@ extern "C" {
 // filament::MultiSampleAntiAliasingOptions
 FilaMultiSampleAntiAliasingOptions* FilaMultiSampleAntiAliasingOptions_create(void);
 void FilaMultiSampleAntiAliasingOptions_destroy(FilaMultiSampleAntiAliasingOptions* self);
+/** enables or disables msaa */
 bool FilaMultiSampleAntiAliasingOptions_getEnabled(const FilaMultiSampleAntiAliasingOptions* self);
+/** enables or disables msaa */
 void FilaMultiSampleAntiAliasingOptions_setEnabled(FilaMultiSampleAntiAliasingOptions* self, bool value);
+/**
+ * sampleCount number of samples to use for multi-sampled anti-aliasing.<br>
+ *              0: treated as 1
+ *              1: no anti-aliasing
+ *              n: sample count. Effective sample could be different depending on the
+ *                 GPU capabilities.
+ */
 uint32_t FilaMultiSampleAntiAliasingOptions_getSampleCount(const FilaMultiSampleAntiAliasingOptions* self);
+/**
+ * sampleCount number of samples to use for multi-sampled anti-aliasing.<br>
+ *              0: treated as 1
+ *              1: no anti-aliasing
+ *              n: sample count. Effective sample could be different depending on the
+ *                 GPU capabilities.
+ */
 void FilaMultiSampleAntiAliasingOptions_setSampleCount(FilaMultiSampleAntiAliasingOptions* self, uint32_t value);
+/** custom resolve improves quality for HDR scenes, but may impact performance. */
 bool FilaMultiSampleAntiAliasingOptions_getCustomResolve(const FilaMultiSampleAntiAliasingOptions* self);
+/** custom resolve improves quality for HDR scenes, but may impact performance. */
 void FilaMultiSampleAntiAliasingOptions_setCustomResolve(FilaMultiSampleAntiAliasingOptions* self, bool value);
 
 

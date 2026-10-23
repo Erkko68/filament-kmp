@@ -11,7 +11,18 @@ extern "C" {
 // filamat::MaterialBuilderBase
 FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilderBase_create(void);
 void FilaFilamatMaterialBuilderBase_destroy(FilaFilamatMaterialBuilderBase* self);
+/**
+ * Initialize MaterialBuilder.
+ *
+ * init must be called first before building any materials.
+ */
 void FilaFilamatMaterialBuilderBase_init(void);
+/**
+ * Release internal MaterialBuilder resources.
+ *
+ * Call shutdown when finished building materials to release all internal resources. After
+ * calling shutdown, another call to MaterialBuilder::init must precede another material build.
+ */
 void FilaFilamatMaterialBuilderBase_shutdown(void);
 
 

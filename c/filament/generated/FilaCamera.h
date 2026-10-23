@@ -11,46 +11,350 @@ extern "C" {
 // filament::Camera
 // skipped void filament::Camera::setCustomEyeProjection(utils::Slice<const math::mat4> projection, const math::mat4 & projectionForCulling, double near, double far): .*\(.*utils::Slice.*\)
 // skipped class Frustum filament::Camera::getFrustum() const: uses filament::Frustum
+/**
+ * Returns the projection matrix from the field-of-view.
+ *
+ * @param fovInDegrees full field-of-view in degrees. 0 < \p fov < 180.
+ * @param aspect       aspect ratio \f$ \frac{width}{height} \f$. \p aspect > 0.
+ * @param near         distance in world units from the camera to the near plane. \p near > 0.
+ * @param far          distance in world units from the camera to the far plane. \p far > \p near.
+ * @param direction    direction of the \p fovInDegrees parameter.
+ *
+ * @see Fov.
+ */
 void FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far, FilaMat4* out);
+/**
+ * Returns the projection matrix from the focal length.
+ *
+ * @param focalLengthInMillimeters lens's focal length in millimeters. \p focalLength > 0.
+ * @param aspect      aspect ratio \f$ \frac{width}{height} \f$. \p aspect > 0.
+ * @param near        distance in world units from the camera to the near plane. \p near > 0.
+ * @param far         distance in world units from the camera to the far plane. \p far > \p near.
+ */
 void FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far, FilaMat4* out);
+/**
+ * Sets the projection matrix from a frustum defined by six planes.
+ *
+ * @param projection    type of #Projection to use.
+ *
+ * @param left      distance in world units from the camera to the left plane,
+ *                  at the near plane.
+ *                  Precondition: \p left != \p right.
+ *
+ * @param right     distance in world units from the camera to the right plane,
+ *                  at the near plane.
+ *                  Precondition: \p left != \p right.
+ *
+ * @param bottom    distance in world units from the camera to the bottom plane,
+ *                  at the near plane.
+ *                  Precondition: \p bottom != \p top.
+ *
+ * @param top       distance in world units from the camera to the top plane,
+ *                  at the near plane.
+ *                  Precondition: \p left != \p right.
+ *
+ * @param near      distance in world units from the camera to the near plane. The near plane's
+ *                  position in view space is z = -\p near.
+ *                  Precondition: \p near > 0 for PROJECTION::PERSPECTIVE or
+ *                                \p near != far for PROJECTION::ORTHO
+ *
+ * @param far       distance in world units from the camera to the far plane. The far plane's
+ *                  position in view space is z = -\p far.
+ *                  Precondition: \p far > near for PROJECTION::PERSPECTIVE or
+ *                                \p far != near for PROJECTION::ORTHO
+ *
+ * @see Projection, Frustum
+ */
 void FilaCamera_setProjection_Projection_double_double_double_double_double_double(FilaCamera* self, FilaCameraProjection projection, double left, double right, double bottom, double top, double near, double far);
+/**
+ * Utility to set the projection matrix from the field-of-view.
+ *
+ * @param fovInDegrees full field-of-view in degrees. 0 < \p fov < 180.
+ * @param aspect    aspect ratio \f$ \frac{width}{height} \f$. \p aspect > 0.
+ * @param near      distance in world units from the camera to the near plane. \p near > 0.
+ * @param far       distance in world units from the camera to the far plane. \p far > \p near.
+ * @param direction direction of the \p fovInDegrees parameter.
+ *
+ * @see Fov.
+ */
 void FilaCamera_setProjection_double_double_double_double_Fov(FilaCamera* self, double fovInDegrees, double aspect, double near, double far, FilaCameraFov direction);
+/**
+ * Utility to set the projection matrix from the focal length.
+ *
+ * @param focalLengthInMillimeters lens's focal length in millimeters. \p focalLength > 0.
+ * @param aspect    aspect ratio \f$ \frac{width}{height} \f$. \p aspect > 0.
+ * @param near      distance in world units from the camera to the near plane. \p near > 0.
+ * @param far       distance in world units from the camera to the far plane. \p far > \p near.
+ */
 void FilaCamera_setLensProjection(FilaCamera* self, double focalLengthInMillimeters, double aspect, double near, double far);
+/**
+ * Sets a custom projection matrix.
+ *
+ * The projection matrix must define an NDC system that must match the OpenGL convention,
+ * that is all 3 axis are mapped to [-1, 1].
+ *
+ * @param projection  custom projection matrix used for rendering and culling
+ * @param near      distance in world units from the camera to the near plane.
+ * @param far       distance in world units from the camera to the far plane. \p far != \p near.
+ */
 void FilaCamera_setCustomProjection_double_double(FilaCamera* self, const FilaMat4* projection, double near, double far);
+/**
+ * Sets the projection matrix.
+ *
+ * The projection matrices must define an NDC system that must match the OpenGL convention,
+ * that is all 3 axis are mapped to [-1, 1].
+ *
+ * @param projection  custom projection matrix used for rendering
+ * @param projectionForCulling  custom projection matrix used for culling
+ * @param near      distance in world units from the camera to the near plane.
+ * @param far       distance in world units from the camera to the far plane. \p far != \p near.
+ */
 void FilaCamera_setCustomProjection_mat4_double_double(FilaCamera* self, const FilaMat4* projection, const FilaMat4* projectionForCulling, double near, double far);
 void FilaCamera_setCustomEyeProjection(FilaCamera* self, const FilaMat4* projection, uint32_t count, const FilaMat4* projectionForCulling, double near, double far);
+/**
+ * Sets an additional matrix that scales the projection matrix.
+ *
+ * This is useful to adjust the aspect ratio of the camera independent of its projection.
+ * First, pass an aspect of 1.0 to setProjection. Then set the scaling with the desired aspect
+ * ratio:
+ *
+ *     const double aspect = width / height;
+ *
+ *     // with Fov::HORIZONTAL passed to setProjection:
+ *     camera->setScaling(double4 {1.0, aspect});
+ *
+ *     // with Fov::VERTICAL passed to setProjection:
+ *     camera->setScaling(double4 {1.0 / aspect, 1.0});
+ *
+ *
+ * By default, this is an identity matrix.
+ *
+ * @param scaling     diagonal of the 2x2 scaling matrix to be applied after the projection matrix.
+ *
+ * @see setProjection, setLensProjection, setCustomProjection
+ */
 void FilaCamera_setScaling(FilaCamera* self, const FilaDouble2* scaling);
+/**
+ * Sets an additional matrix that shifts the projection matrix.
+ * By default, this is an identity matrix.
+ *
+ * @param shift     x and y translation added to the projection matrix, specified in NDC
+ *                  coordinates, that is, if the translation must be specified in pixels,
+ *                  shift must be scaled by 1.0 / { viewport.width, viewport.height }.
+ *
+ * @see setProjection, setLensProjection, setCustomProjection
+ */
 void FilaCamera_setShift(FilaCamera* self, const FilaDouble2* shift);
+/**
+ * Returns the scaling amount used to scale the projection matrix.
+ *
+ * @return the diagonal of the scaling matrix applied after the projection matrix.
+ *
+ * @see setScaling
+ */
 void FilaCamera_getScaling(const FilaCamera* self, FilaDouble4* out);
+/**
+ * Returns the shift amount used to translate the projection matrix.
+ *
+ * @return the 2D translation x and y offsets applied after the projection matrix.
+ *
+ * @see setShift
+ */
 void FilaCamera_getShift(const FilaCamera* self, FilaDouble2* out);
+/**
+ * Returns the projection matrix used for rendering.
+ *
+ * The projection matrix used for rendering always has its far plane set to infinity. This
+ * is why it may differ from the matrix set through setProjection() or setLensProjection().
+ *
+ * @param eyeId the index of the eye to return the projection matrix for, must be
+ *              < config.stereoscopicEyeCount
+ * @return The projection matrix used for rendering
+ *
+ * @see setProjection, setLensProjection, setCustomProjection, getCullingProjectionMatrix,
+ * setCustomEyeProjection
+ */
 void FilaCamera_getProjectionMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out);
+/**
+ * Returns the projection matrix used for culling (far plane is finite).
+ *
+ * @return The projection matrix set by setProjection or setLensProjection.
+ *
+ * @see setProjection, setLensProjection, getProjectionMatrix
+ */
 void FilaCamera_getCullingProjectionMatrix(const FilaCamera* self, FilaMat4* out);
+/** Returns the frustum's near plane */
 double FilaCamera_getNear(const FilaCamera* self);
+/** Returns the frustum's far plane used for culling */
 double FilaCamera_getCullingFar(const FilaCamera* self);
+/**
+ * Sets the camera's model matrix.
+ *
+ * Helper method to set the camera's entity transform component.
+ * It has the same effect as calling:
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  engine.getTransformManager().setTransform(
+ *          engine.getTransformManager().getInstance(camera->getEntity()), model);
+ * ~~~~~~~~~~~
+ *
+ * @param modelMatrix The camera position and orientation provided as a rigid transform matrix.
+ *
+ * @note The Camera "looks" towards its -z axis
+ *
+ * @warning \p model must be a rigid transform
+ */
 void FilaCamera_setModelMatrix_mat4(FilaCamera* self, const FilaMat4* modelMatrix);
 void FilaCamera_setModelMatrix_mat4f(FilaCamera* self, const FilaMat4f* modelMatrix);
+/**
+ * Set the position of an eye relative to this Camera (head).
+ *
+ * By default, both eyes' model matrices are identity matrices.
+ *
+ * For example, to position Eye 0 3cm leftwards and Eye 1 3cm rightwards:
+ * ~~~~~~~~~~~{.cpp}
+ * const mat4 leftEye  = mat4::translation(double3{-0.03, 0.0, 0.0});
+ * const mat4 rightEye = mat4::translation(double3{ 0.03, 0.0, 0.0});
+ * camera.setEyeModelMatrix(0, leftEye);
+ * camera.setEyeModelMatrix(1, rightEye);
+ * ~~~~~~~~~~~
+ *
+ * This method is not intended to be called every frame. Instead, to update the position of the
+ * head, use Camera::setModelMatrix.
+ *
+ * @param eyeId the index of the eye to set, must be < config.stereoscopicEyeCount
+ * @param model the model matrix for an individual eye
+ */
 void FilaCamera_setEyeModelMatrix(FilaCamera* self, uint32_t eyeId, const FilaMat4* model);
+/**
+ * Sets the camera's model matrix
+ *
+ * @param eye       The position of the camera in world space.
+ * @param center    The point in world space the camera is looking at.
+ * @param up        A unit vector denoting the camera's "up" direction.
+ */
 void FilaCamera_lookAt(FilaCamera* self, const FilaDouble3* eye, const FilaDouble3* center, const FilaDouble3* up);
+/**
+ * Returns the camera's model matrix
+ *
+ * Helper method to return the camera's entity transform component.
+ * It has the same effect as calling:
+ *
+ * ~~~~~~~~~~~{.cpp}
+ *  engine.getTransformManager().getWorldTransform(
+ *          engine.getTransformManager().getInstance(camera->getEntity()));
+ * ~~~~~~~~~~~
+ *
+ * @return The camera's pose in world space as a rigid transform. Parent transforms, if any,
+ * are taken into account.
+ */
 void FilaCamera_getModelMatrix(const FilaCamera* self, FilaMat4* out);
+/** Returns the camera's view matrix (inverse of the model matrix) */
 void FilaCamera_getViewMatrix(const FilaCamera* self, FilaMat4* out);
+/**
+ * Returns the eye from view matrix for the specified eye.
+ *
+ * @param eyeId the index of the eye to return the eye from view matrix for, must be
+ *              < config.stereoscopicEyeCount
+ * @return The eye from view matrix
+ */
 void FilaCamera_getEyeFromViewMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out);
+/** Returns the camera's position in world space */
 void FilaCamera_getPosition(const FilaCamera* self, FilaDouble3* out);
+/** Returns the camera's normalized left vector */
 void FilaCamera_getLeftVector(const FilaCamera* self, FilaFloat3* out);
+/** Returns the camera's normalized up vector */
 void FilaCamera_getUpVector(const FilaCamera* self, FilaFloat3* out);
+/** Returns the camera's forward vector */
 void FilaCamera_getForwardVector(const FilaCamera* self, FilaFloat3* out);
+/** Returns the camera's field of view in degrees */
 float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* self, FilaCameraFov direction);
+/** Returns the entity representing this camera */
 FilaEntity FilaCamera_getEntity(const FilaCamera* self);
+/**
+ * Sets this camera's exposure (default is f/16, 1/125s, 100 ISO)
+ *
+ * The exposure ultimately controls the scene's brightness, just like with a real camera.
+ * The default values provide adequate exposure for a camera placed outdoors on a sunny day
+ * with the sun at the zenith.
+ *
+ * @param aperture      Aperture in f-stops, clamped between 0.5 and 64.
+ *                      A lower \p aperture value *increases* the exposure, leading to
+ *                      a brighter scene. Realistic values are between 0.95 and 32.
+ *
+ * @param shutterSpeed  Shutter speed in seconds, clamped between 1/25,000 and 60.
+ *                      A lower shutter speed increases the exposure. Realistic values are
+ *                      between 1/8000 and 30.
+ *
+ * @param sensitivity   Sensitivity in ISO, clamped between 10 and 204,800.
+ *                      A higher \p sensitivity increases the exposure. Realistic values are
+ *                      between 50 and 25600.
+ *
+ * @note
+ * With the default parameters, the scene must contain at least one Light of intensity
+ * similar to the sun (e.g.: a 100,000 lux directional light).
+ *
+ * @see LightManager, Exposure
+ */
 void FilaCamera_setExposure_float_float(FilaCamera* self, float aperture, float shutterSpeed, float sensitivity);
+/**
+ * Sets this camera's exposure directly. Calling this method will set the aperture
+ * to 1.0, the shutter speed to 1.2 and the sensitivity will be computed to match
+ * the requested exposure (for a desired exposure of 1.0, the sensitivity will be
+ * set to 100 ISO).
+ *
+ * This method is useful when trying to match the lighting of other engines or tools.
+ * Many engines/tools use unit-less light intensities, which can be matched by setting
+ * the exposure manually. This can be typically achieved by setting the exposure to
+ * 1.0.
+ */
 void FilaCamera_setExposure(FilaCamera* self, float exposure);
+/** returns this camera's aperture in f-stops */
 float FilaCamera_getAperture(const FilaCamera* self);
+/** returns this camera's shutter speed in seconds */
 float FilaCamera_getShutterSpeed(const FilaCamera* self);
+/** returns this camera's sensitivity in ISO */
 float FilaCamera_getSensitivity(const FilaCamera* self);
+/**
+ * Returns the focal length in meters [m] for a 35mm camera.
+ * Eye 0's projection matrix is used to compute the focal length.
+ */
 double FilaCamera_getFocalLength(const FilaCamera* self);
+/**
+ * Sets the camera focus distance. This is used by the Depth-of-field PostProcessing effect.
+ * @param distance Distance from the camera to the plane of focus in world units.
+ *                 Must be positive and larger than the near clipping plane.
+ */
 void FilaCamera_setFocusDistance(FilaCamera* self, float distance);
+/** Returns the focus distance in world units */
 float FilaCamera_getFocusDistance(const FilaCamera* self);
+/**
+ * Returns the inverse of a projection matrix.
+ *
+ * \param p the projection matrix to inverse
+ * \returns the inverse of the projection matrix \p p
+ */
 void FilaCamera_inverseProjection_mat4(const FilaMat4* p, FilaMat4* out);
+/**
+ * Returns the inverse of a projection matrix.
+ * @see inverseProjection(const math::mat4&)
+ */
 void FilaCamera_inverseProjection_mat4f(const FilaMat4f* p, FilaMat4f* out);
+/**
+ * Helper to compute the effective focal length taking into account the focus distance
+ *
+ * @param focalLength       focal length in any unit (e.g. [m] or [mm])
+ * @param focusDistance     focus distance in same unit as focalLength
+ * @return                  the effective focal length in same unit as focalLength
+ */
 double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance);
+/**
+ * Helper to compute the effective field-of-view taking into account the focus distance
+ *
+ * @param fovInDegrees      full field of view in degrees
+ * @param focusDistance     focus distance in meters [m]
+ * @return                  effective full field of view in degrees
+ */
 double FilaCamera_computeEffectiveFov(double fovInDegrees, double focusDistance);
 
 

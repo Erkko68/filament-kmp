@@ -1,5 +1,7 @@
 package buildlogic.apigen.c
 
+import buildlogic.apigen.cpp.CppType
+
 /** A spelling taken apart: `const char * _Nonnull` is [base] `char`, [const], [indirection] `*`. */
 internal class Shape(val base: String, val const: Boolean, val indirection: List<String>)
 
@@ -20,6 +22,8 @@ internal fun shape(spelling: String): Shape {
     if (s.startsWith("const ")) { const = true; s = s.removePrefix("const ") }
     return Shape(s.trim(), const, indirection)
 }
+
+internal fun isArray(type: CppType) = type.spelling.trim().endsWith("]")
 
 /** [spelling] as C writes it: `const Material *const *` is `const Material* const*`. */
 internal fun cSpelling(spelling: String) = NULLABILITY.replace(spelling, "").replace(Regex("""\s*\*"""), "*").replace(Regex("""\*(?=\w)"""), "* ").trim()

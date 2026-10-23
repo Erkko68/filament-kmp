@@ -11,15 +11,86 @@ extern "C" {
 // filament::gltfio::AssetLoader
 // skipped utils::NameComponentManager * filament::gltfio::AssetLoader::getNames() const
 // skipped NodeManager & filament::gltfio::AssetLoader::getNodeManager(): uses filament::gltfio::NodeManager
+/**
+ * Creates an asset loader for the given configuration, which specifies the Filament engine.
+ *
+ * The engine is held weakly, used only for the creation and destruction of Filament objects.
+ * The optional name component manager can be used to assign names to renderables.
+ * The material source specifies whether to use filamat to generate materials on the fly, or to
+ * load a small set of precompiled ubershader materials.
+ */
 FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config);
+/**
+ * Frees the loader.
+ *
+ * This does not not automatically free the cache of materials, nor
+ * does it free the entities for created assets (see destroyAsset).
+ */
 void FilaGltfioAssetLoader_destroy(FilaGltfioAssetLoader** loader);
+/**
+ * Takes a pointer to the contents of a GLB or a JSON-based glTF 2.0 file and returns an asset
+ * with one instance, or null on failure.
+ */
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes);
+/**
+ * Consumes the contents of a glTF 2.0 file and produces a primary asset with one or more
+ * instances. The primary asset has ownership over the instances.
+ *
+ * The returned instances share their textures, materials, and vertex buffers with the primary
+ * asset. However each instance has its own unique set of entities, transform components,
+ * material instances, and renderable components. Instances are freed when the primary asset is
+ * freed.
+ *
+ * Light components are not instanced, they belong only to the primary asset.
+ *
+ * Clients must use ResourceLoader to load resources on the primary asset.
+ *
+ * The entity accessor and renderable stack API in the primary asset can be used to control the
+ * union of all instances. The individual FilamentInstance objects can be used to access each
+ * instance's partition of entities.  Similarly, the Animator in the primary asset controls all
+ * instances. To animate instances individually, use FilamentInstance::getAnimator().
+ *
+ * @param bytes the contents of a glTF 2.0 file (JSON or GLB)
+ * @param numBytes the number of bytes in "bytes"
+ * @param instances destination pointer, to be populated by the requested number of instances
+ * @param numInstances requested number of instances
+ * @return the primary asset that has ownership over all instances
+ */
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createInstancedAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes, FilaGltfioFilamentInstance** instances, uint32_t numInstances);
+/**
+ * Adds a new instance to the asset.
+ *
+ * Use this with caution. It is more efficient to pre-allocate a max number of instances, and
+ * gradually add them to the scene as needed. Instances can also be "recycled" by removing and
+ * re-adding them to the scene.
+ *
+ * NOTE: destroyInstance() does not exist because gltfio favors flat arrays for storage of
+ * entity lists and instance lists, which would be slow to shift. We also wish to discourage
+ * create/destroy churn, as noted above.
+ *
+ * This cannot be called after FilamentAsset::releaseSourceData().
+ * See also AssetLoader::createInstancedAsset().
+ */
 FilaGltfioFilamentInstance* FilaGltfioAssetLoader_createInstance(FilaGltfioAssetLoader* self, FilaGltfioFilamentAsset* asset);
+/** Allows clients to enable diagnostic shading on newly-loaded assets. */
 void FilaGltfioAssetLoader_enableDiagnostics(FilaGltfioAssetLoader* self, bool enable);
+/**
+ * Destroys the given asset, all of its associated Filament objects, and all associated
+ * FilamentInstance objects.
+ *
+ * This destroys entities, components, material instances, vertex buffers, index buffers,
+ * and textures. This does not necessarily immediately free all source data, since
+ * texture decoding or GPU uploading might be underway.
+ */
 void FilaGltfioAssetLoader_destroyAsset(FilaGltfioAssetLoader* self, const FilaGltfioFilamentAsset* asset);
+/** @brief Performs a Garbage Collection sweep over all internal component managers. */
 void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self);
+/**
+ * Gets a weak reference to an array of cached materials, used internally to create material
+ * instances for assets.
+ */
 const FilaMaterial* const* FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* self);
+/** Gets the number of cached materials. */
 uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self);
 FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* self);
 

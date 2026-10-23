@@ -47,75 +47,299 @@ FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilder_asFilamatMaterialBuil
 // skipped FeatureLevel filamat::MaterialBuilder::getFeatureLevel() const
 // skipped uint32_t filamat::MaterialBuilder::getApiLevel() const
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_noSamplerValidation(FilaFilamatMaterialBuilder* self, bool enabled);
+/** Enable generation of ESSL 1.0 code in FL0 materials. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_includeEssl1(FilaFilamatMaterialBuilder* self, bool enabled);
+/** Set the name of this material. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_name(FilaFilamatMaterialBuilder* self, const char* name);
+/** Set the commandline parameters of matc. Used for debugging purpose. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_compilationParameters(FilaFilamatMaterialBuilder* self, const char* params);
+/** Set the shading model. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shading(FilaFilamatMaterialBuilder* self, FilaShading shading);
+/** Set the interpolation mode. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_interpolation(FilaFilamatMaterialBuilder* self, FilaInterpolation interpolation);
+/** Add a parameter (i.e., a uniform) to this material. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, FilaUniformType type, FilaPrecision precision);
+/** Add a parameter array to this material. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, uint32_t size, FilaUniformType type, FilaPrecision precision);
+/**
+ * Add a sampler parameter to this material.
+ *
+ * When SamplerType::SAMPLER_EXTERNAL is specified, format and precision are ignored.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional(FilaFilamatMaterialBuilder* self, const char* name, FilaSamplerType samplerType, FilaSamplerFormat format, FilaPrecision precision, bool filterable, bool multisample, const char* transformName, const FilaShaderStageFlags* stages);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_int32_t(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, int32_t defaultValue);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_float(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, float defaultValue);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_bool(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, bool defaultValue);
+/** Custom variables (all float4). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable_ParameterPrecision(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name, FilaPrecision precision);
+/**
+ * Require a specified attribute.
+ *
+ * position is always required and normal depends on the shading model.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_require(FilaFilamatMaterialBuilder* self, FilaVertexAttribute attribute);
+/** Specify the domain that this material will operate in. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialDomain(FilaFilamatMaterialBuilder* self, FilaMaterialDomain materialDomain);
+/**
+ * Set the code content of this material.
+ *
+ * Surface Domain
+ * --------------
+ *
+ * Materials in the SURFACE domain must declare a function:
+ * ~~~~~
+ * void material(inout MaterialInputs material) {
+ *     prepareMaterial(material);
+ *     material.baseColor.rgb = float3(1.0, 0.0, 0.0);
+ * }
+ * ~~~~~
+ * this function *must* call `prepareMaterial(material)` before it returns.
+ *
+ * Post-process Domain
+ * -------------------
+ *
+ * Materials in the POST_PROCESS domain must declare a function:
+ * ~~~~~
+ * void postProcess(inout PostProcessInputs postProcess) {
+ *     postProcess.color = float4(1.0);
+ * }
+ * ~~~~~
+ *
+ * @param code The source code of the material. Expected it to be all inlined. (#includes are
+ * resolved.)
+ * @param line The line number offset of the material, where 0 is the first line. Used for error
+ *             reporting
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_material(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line);
+/**
+ * Set the vertex code content of this material.
+ *
+ * Surface Domain
+ * --------------
+ *
+ * Materials in the SURFACE domain must declare a function:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * void materialVertex(inout MaterialVertexInputs material) {
+ *
+ * }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Post-process Domain
+ * -------------------
+ *
+ * Materials in the POST_PROCESS domain must declare a function:
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * void postProcessVertex(inout PostProcessVertexInputs postProcess) {
+ *
+ * }
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @param code The source code of the material. Expected it to be all inlined. (#includes are
+ * resolved.)
+ * @param line The line number offset of the material, where 0 is the first line. Used for error
+ *             reporting
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialVertex(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_quality(FilaFilamatMaterialBuilder* self, FilaShaderQuality quality);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_featureLevel(FilaFilamatMaterialBuilder* self, FilaFeatureLevel featureLevel);
+/**
+ * Set the blending mode for this material. When set to MASKED, alpha to coverage is turned on.
+ * You can override this behavior using alphaToCoverage(false).
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_blending(FilaFilamatMaterialBuilder* self, FilaBlendingMode blending);
+/** Set the blend function  for this material. blending must be et to CUSTOM. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_customBlendFunctions(FilaFilamatMaterialBuilder* self, FilaBlendFunction srcRGB, FilaBlendFunction srcA, FilaBlendFunction dstRGB, FilaBlendFunction dstA);
+/**
+ * Set the blending mode of the post-lighting color for this material.
+ * Only OPAQUE, TRANSPARENT and ADD are supported, the default is TRANSPARENT.
+ * This setting requires the material properties "postLightingColor" and
+ * "postLightingMixFactor" to be set.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_postLightingBlending(FilaFilamatMaterialBuilder* self, FilaBlendingMode blending);
+/** Set the vertex domain for this material. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_vertexDomain(FilaFilamatMaterialBuilder* self, FilaVertexDomain domain);
+/**
+ * How triangles are culled by default (doesn't affect points or lines, BACK by default).
+ * Material instances can override this.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_culling(FilaFilamatMaterialBuilder* self, FilaCullingMode culling);
+/** Enable / disable color-buffer write (enabled by default, material instances can override). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_colorWrite(FilaFilamatMaterialBuilder* self, bool enable);
+/** Enable / disable depth-buffer write (enabled by default for opaque, disabled for others, material instances can override). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_depthWrite(FilaFilamatMaterialBuilder* self, bool enable);
+/** Enable / disable depth based culling (enabled by default, material instances can override). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_depthCulling(FilaFilamatMaterialBuilder* self, bool enable);
+/** Enable / disable instanced primitives (disabled by default). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_instanced(FilaFilamatMaterialBuilder* self, bool enable);
+/**
+ * Double-sided materials don't cull faces, equivalent to culling(CullingMode::NONE).
+ * doubleSided() overrides culling() if called.
+ * When called with "false", this enables the capability for a run-time toggle.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_doubleSided(FilaFilamatMaterialBuilder* self, bool doubleSided);
+/**
+ * Any fragment with an alpha below this threshold is clipped (MASKED blending mode only).
+ * The mask threshold can also be controlled by using the float material parameter called
+ * `_maskThreshold`, or by calling
+ * @ref filament::MaterialInstance::setMaskThreshold "MaterialInstance::setMaskThreshold".
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_maskThreshold(FilaFilamatMaterialBuilder* self, float threshold);
+/**
+ * Enables or disables alpha-to-coverage. When enabled, the coverage of a fragment is based
+ * on its alpha value. This parameter is only useful when MSAA is in use. Alpha to coverage
+ * is enabled automatically when the blend mode is set to MASKED; this behavior can be
+ * overridden by calling alphaToCoverage(false).
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_alphaToCoverage(FilaFilamatMaterialBuilder* self, bool enable);
+/** The material output is multiplied by the shadowing factor (UNLIT model only). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shadowMultiplier(FilaFilamatMaterialBuilder* self, bool shadowMultiplier);
+/** This material casts transparent shadows. The blending mode must be TRANSPARENT or FADE. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_transparentShadow(FilaFilamatMaterialBuilder* self, bool transparentShadow);
+/**
+ * Enables or disables colored penumbrae for any shadows cast on this material. The material
+ * must be set on a shadow receiver for this parameter to take effect. This property is
+ * always enabled when the shading model is set to `Shading::SUBSURFACE`.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_coloredPenumbra(FilaFilamatMaterialBuilder* self, bool coloredPenumbra);
+/**
+ * Reduces specular aliasing for materials that have low roughness. Turning this feature on also
+ * helps preserve the shapes of specular highlights as an object moves away from the camera.
+ * When turned on, two float material parameters are added to control the effect:
+ * `_specularAAScreenSpaceVariance` and `_specularAAThreshold`. You can also use
+ * @ref filament::MaterialInstance::setSpecularAntiAliasingVariance
+ * "MaterialInstance::setSpecularAntiAliasingVariance" and
+ * @ref filament::MaterialInstance::setSpecularAntiAliasingThreshold
+ * "setSpecularAntiAliasingThreshold"
+ *
+ * Disabled by default.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAntiAliasing(FilaFilamatMaterialBuilder* self, bool specularAntiAliasing);
+/**
+ * Sets the screen-space variance of the filter kernel used when applying specular
+ * anti-aliasing. The default value is set to 0.15. The specified value should be between 0 and
+ * 1 and will be clamped if necessary.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAntiAliasingVariance(FilaFilamatMaterialBuilder* self, float screenSpaceVariance);
+/**
+ * Sets the clamping threshold used to suppress estimation errors when applying specular
+ * anti-aliasing. The default value is set to 0.2. The specified value should be between 0 and 1
+ * and will be clamped if necessary.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAntiAliasingThreshold(FilaFilamatMaterialBuilder* self, float threshold);
+/**
+ * Enables or disables the index of refraction (IoR) change caused by the clear coat layer when
+ * present. When the IoR changes, the base color is darkened. Disabling this feature preserves
+ * the base color as initially specified.
+ *
+ * Enabled by default.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_clearCoatIorChange(FilaFilamatMaterialBuilder* self, bool clearCoatIorChange);
+/** Enable / disable flipping of the Y coordinate of UV attributes, enabled by default. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_flipUV(FilaFilamatMaterialBuilder* self, bool flipUV);
+/** Enable / disable the cheapest linear fog, disabled by default. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_linearFog(FilaFilamatMaterialBuilder* self, bool enabled);
+/** Enable / disable shadow far attenuation, enabled by default. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shadowFarAttenuation(FilaFilamatMaterialBuilder* self, bool enabled);
+/** Enable / disable multi-bounce ambient occlusion, disabled by default on mobile. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_multiBounceAmbientOcclusion(FilaFilamatMaterialBuilder* self, bool multiBounceAO);
+/** Set the specular ambient occlusion technique. Disabled by default on mobile. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAmbientOcclusion(FilaFilamatMaterialBuilder* self, FilaSpecularAmbientOcclusion specularAO);
+/** Specify the refraction */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_refractionMode(FilaFilamatMaterialBuilder* self, FilaRefractionMode refraction);
+/** Specify the refraction type */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_refractionType(FilaFilamatMaterialBuilder* self, FilaRefractionType refractionType);
+/** Specifies how reflections should be rendered (default is DEFAULT). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_reflectionMode(FilaFilamatMaterialBuilder* self, FilaReflectionMode mode);
+/** Specifies how transparent objects should be rendered (default is DEFAULT). */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_transparencyMode(FilaFilamatMaterialBuilder* self, FilaTransparencyMode mode);
+/** Specify the stereoscopic type (default is INSTANCED) */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicType(FilaFilamatMaterialBuilder* self, FilaPlatformStereoscopicType stereoscopicType);
+/** Specify the number of eyes for stereoscopic rendering */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicEyeCount(FilaFilamatMaterialBuilder* self, uint32_t eyeCount);
+/**
+ * Enable / disable custom surface shading. Custom surface shading requires the LIT
+ * shading model. In addition, the following function must be defined in the fragment
+ * block:
+ *
+ * ~~~~~
+ * vec3 surfaceShading(const MaterialInputs materialInputs,
+ *         const ShadingData shadingData, const LightData lightData) {
+ *
+ *     return vec3(1.0); // Compute surface shading with custom BRDF, etc.
+ * }
+ * ~~~~~
+ *
+ * This function is invoked once per light. Please refer to the materials documentation
+ * for more information about the different parameters.
+ *
+ * @param customSurfaceShading Enables or disables custom surface shading
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_customSurfaceShading(FilaFilamatMaterialBuilder* self, bool customSurfaceShading);
+/**
+ * Specifies desktop vs mobile; works in concert with TargetApi to determine the shader models
+ * (used to generate code) and final output representations (spirv and/or text).
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_platform(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBasePlatform platform);
+/**
+ * Specifies OpenGL, Vulkan, or Metal.
+ * This can be called repeatedly to build for multiple APIs.
+ * Works in concert with Platform to determine the shader models (used to generate code) and
+ * final output representations (spirv and/or text).
+ * If linking against filamat_lite, only `OPENGL` is allowed.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_targetApi(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseTargetApi targetApi);
+/**
+ * Specifies the level of optimization to apply to the shaders (default is PERFORMANCE).
+ * If linking against filamat_lite, this _must_ be called with Optimization::NONE.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_optimization(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseOptimization optimization);
+/**
+ * Specifies workarounds to enable during code generation. By default, all workaround are
+ * enabled. These workarounds typically disable important optimizations and in some cases
+ * whole features.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_workarounds(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseWorkarounds workarounds);
+/** If true, will output the generated GLSL shader code to stdout. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_printShaders(FilaFilamatMaterialBuilder* self, bool printShaders);
+/**
+ * If true, this will write the raw generated GLSL for each variant to a text file in the
+ * current directory. The file will be named after the material name and the variant name. Its
+ * extension will be derived from the shader stage. For example, mymaterial_0x0e.frag,
+ * mymaterial_0x18.vert, etc.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_saveRawVariants(FilaFilamatMaterialBuilder* self, bool saveRawVariants);
+/** If true, will include debugging information in generated SPIRV. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_generateDebugInfo(FilaFilamatMaterialBuilder* self, bool generateDebugInfo);
+/** Specifies a list of variants that should be filtered out during code generation. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variantFilter(FilaFilamatMaterialBuilder* self, uint32_t variantFilter);
+/** Adds a new preprocessor macro definition to the shader code. Can be called repeatedly. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shaderDefine(FilaFilamatMaterialBuilder* self, const char* name, const char* value);
+/** Add a new fragment shader output variable. Only valid for materials in the POST_PROCESS domain. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_output(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, const char* name, int32_t location);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_enableFramebufferFetch(FilaFilamatMaterialBuilder* self);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_vertexDomainDeviceJittered(FilaFilamatMaterialBuilder* self, bool enabled);
+/**
+ * Legacy morphing uses the data in the VertexAttribute slots (\c MORPH_POSITION_0, etc) and is
+ * limited to 4 morph targets. See filament::RenderableManager::Builder::morphing().
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useLegacyMorphing(FilaFilamatMaterialBuilder* self);
+/** specify compute kernel group size */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, const FilaUint3* groupSize);
+/**
+ * Force Filament to use its default variant for depth passes. Useful if a material provides a
+ * custom vertex shader which can be skipped during depth-only passes.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self);
+/**
+ * Sets the source ASCII material (aka .mat file).
+ * The provided `source` string_view must remain valid until MaterialBuilder::build() is called.
+ */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialSource(FilaFilamatMaterialBuilder* self, const char* source);
+/** Set the (client requested) api level that the material is supposed to be compiled against. */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_setApiLevel(FilaFilamatMaterialBuilder* self, uint32_t apiLevel);
 // handwritten in manual/ FilaFilamatMaterialBuilder_build: Package filamat::MaterialBuilder::build(utils::JobSystem & jobSystem)
-//     filamat::Package by value
+//     utils::JobSystem &: utils::JobSystem
 uint32_t FilaFilamatMaterialBuilder_getAttributeDatabase(FilaFilamatMaterialBuilderAttribute* const* out, uint32_t outCapacity);
 
 

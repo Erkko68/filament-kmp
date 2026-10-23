@@ -12,13 +12,21 @@ extern "C" {
 FilaGenericToneMapper* FilaGenericToneMapper_create(float contrast, float midGrayIn, float midGrayOut, float hdrMax);
 void FilaGenericToneMapper_destroy(FilaGenericToneMapper* self);
 FilaToneMapper* FilaGenericToneMapper_asToneMapper(FilaGenericToneMapper* self);
+/** Returns the contrast of the curve as a strictly positive value. */
 float FilaGenericToneMapper_getContrast(const FilaGenericToneMapper* self);
+/** Returns the middle gray point for input values as a value between 0.0 and 1.0. */
 float FilaGenericToneMapper_getMidGrayIn(const FilaGenericToneMapper* self);
+/** Returns the middle gray point for output values as a value between 0.0 and 1.0. */
 float FilaGenericToneMapper_getMidGrayOut(const FilaGenericToneMapper* self);
+/** Returns the maximum input value that will map to output white, as a value >= 1.0. */
 float FilaGenericToneMapper_getHdrMax(const FilaGenericToneMapper* self);
+/** Sets the contrast of the curve, must be > 0.0, values in the range 0.5..2.0 are recommended. */
 void FilaGenericToneMapper_setContrast(FilaGenericToneMapper* self, float contrast);
+/** Sets the input middle gray, between 0.0 and 1.0. */
 void FilaGenericToneMapper_setMidGrayIn(FilaGenericToneMapper* self, float midGrayIn);
+/** Sets the output middle gray, between 0.0 and 1.0. */
 void FilaGenericToneMapper_setMidGrayOut(FilaGenericToneMapper* self, float midGrayOut);
+/** Defines the maximum input value that will be mapped to output white. Must be >= 1.0. */
 void FilaGenericToneMapper_setHdrMax(FilaGenericToneMapper* self, float hdrMax);
 
 

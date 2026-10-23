@@ -9,7 +9,24 @@ extern "C" {
 #endif
 
 // ktxreader::Ktx1Reader
+/**
+ * Creates a Texture object from a KTX file and populates all of its faces and miplevels.
+ *
+ * @param engine Used to create the Filament Texture
+ * @param ktx In-memory representation of a KTX file
+ * @param srgb Requests an sRGB format from the KTX file
+ * @param callback Gets called after all texture data has been uploaded to the GPU
+ * @param userdata Passed into the callback
+ */
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture_Callback_void(FilaEngine* engine, const FilaImageKtx1Bundle* ktx, bool srgb, FilaKtxreaderKtx1ReaderCallback callback, void* userdata);
+/**
+ * Creates a Texture object from a KTX bundle, populates all of its faces and miplevels,
+ * and automatically destroys the bundle after all the texture data has been uploaded.
+ *
+ * @param engine Used to create the Filament Texture
+ * @param ktx In-memory representation of a KTX file
+ * @param srgb Requests an sRGB format from the KTX file
+ */
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb);
 bool FilaKtxreaderKtx1Reader_isSrgbTextureFormat(FilaTextureFormat format);
 

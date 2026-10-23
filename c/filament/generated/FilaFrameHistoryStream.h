@@ -18,7 +18,7 @@ void FilaFrameHistoryStreamNewFramesRange_destroy(FilaFrameHistoryStreamNewFrame
 FilaFrameHistoryStream* FilaFrameHistoryStream_create(FilaRenderer* renderer);
 void FilaFrameHistoryStream_destroy(FilaFrameHistoryStream* self);
 // handwritten in manual/ FilaFrameHistoryStream_getNewFrames: NewFramesRange filament::FrameHistoryStream::getNewFrames()
-//     filament::FrameHistoryStream::NewFramesRange result: C can't create one to copy it into
+//     the generator binds it too, but manual/ declares it
 
 
 #ifdef __cplusplus

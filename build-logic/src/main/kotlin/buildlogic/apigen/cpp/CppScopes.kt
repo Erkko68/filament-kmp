@@ -2,6 +2,9 @@ package buildlogic.apigen.cpp
 
 import buildlogic.apigen.cpp.CppType.Kind
 
+/** [name] in [scope], which is empty at global scope. */
+internal fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
+
 /**
  * The names declared so far, for resolving what headers spell unqualified. Headers declare before use, so
  * registering while walking and resolving on the spot sees what the compiler saw.
@@ -88,8 +91,6 @@ internal class CppScopes {
     }
 
     private fun enclosing(scope: String) = generateSequence(scope) { s -> if (s.isEmpty()) null else s.substringBeforeLast("::", "") }
-
-    private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
 
     private companion object {
         val QUALIFIERS = Regex("""\b(const|volatile|struct|class|enum|typename|__restrict|_Nonnull|_Nullable|_Null_unspecified)\b|[*&]|\[\d*]""")

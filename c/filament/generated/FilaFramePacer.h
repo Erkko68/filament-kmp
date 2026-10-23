@@ -11,20 +11,67 @@ extern "C" {
 // filament::FramePacer::HardwareTimeline
 FilaFramePacerHardwareTimeline* FilaFramePacerHardwareTimeline_create(void);
 void FilaFramePacerHardwareTimeline_destroy(FilaFramePacerHardwareTimeline* self);
+/** The anticipated physical buffer presentation timestamp. */
 void FilaFramePacerHardwareTimeline_getExpectedPresentationTime(const FilaFramePacerHardwareTimeline* self, int64_t* out);
+/** The anticipated physical buffer presentation timestamp. */
 void FilaFramePacerHardwareTimeline_setExpectedPresentationTime(FilaFramePacerHardwareTimeline* self, int64_t value);
+/** The CPU/GPU submission completion deadline to achieve this timeline. */
 void FilaFramePacerHardwareTimeline_getDeadline(const FilaFramePacerHardwareTimeline* self, int64_t* out);
+/** The CPU/GPU submission completion deadline to achieve this timeline. */
 void FilaFramePacerHardwareTimeline_setDeadline(FilaFramePacerHardwareTimeline* self, int64_t value);
 
 // filament::FramePacer::VsyncTick
 FilaFramePacerVsyncTick* FilaFramePacerVsyncTick_create(void);
 void FilaFramePacerVsyncTick_destroy(FilaFramePacerVsyncTick* self);
+/**
+ * The hardware base VSYNC tick timestamp.
+ *
+ * On Android, this can be retrieved using `AChoreographerFrameCallbackData_getFrameTimeNanos()`
+ * or via the `frameTimeNanos` parameter in a classic `AChoreographer_vsyncCallback`.
+ */
 void FilaFramePacerVsyncTick_getBaseTime(const FilaFramePacerVsyncTick* self, int64_t* out);
+/**
+ * The hardware base VSYNC tick timestamp.
+ *
+ * On Android, this can be retrieved using `AChoreographerFrameCallbackData_getFrameTimeNanos()`
+ * or via the `frameTimeNanos` parameter in a classic `AChoreographer_vsyncCallback`.
+ */
 void FilaFramePacerVsyncTick_setBaseTime(FilaFramePacerVsyncTick* self, int64_t value);
+/**
+ * The physical hardware VSYNC period.
+ *
+ * On Android, this should typically be set to `1.0f / Display.getRefreshRate()`
+ * (converted to nanoseconds) or queried via `AChoreographer_registerRefreshRateCallback()`.
+ */
 void FilaFramePacerVsyncTick_getVsyncPeriod(const FilaFramePacerVsyncTick* self, int64_t* out);
+/**
+ * The physical hardware VSYNC period.
+ *
+ * On Android, this should typically be set to `1.0f / Display.getRefreshRate()`
+ * (converted to nanoseconds) or queried via `AChoreographer_registerRefreshRateCallback()`.
+ */
 void FilaFramePacerVsyncTick_setVsyncPeriod(FilaFramePacerVsyncTick* self, int64_t value);
+/**
+ * The physical clock time when the frame scheduling callback was entered.
+ * Used to filter out display timelines whose submission deadlines have already passed.
+ */
 void FilaFramePacerVsyncTick_getFrameScheduleTime(const FilaFramePacerVsyncTick* self, int64_t* out);
+/**
+ * The physical clock time when the frame scheduling callback was entered.
+ * Used to filter out display timelines whose submission deadlines have already passed.
+ */
 void FilaFramePacerVsyncTick_setFrameScheduleTime(FilaFramePacerVsyncTick* self, int64_t value);
+/**
+ * Slice representing the candidate hardware presentation timelines.
+ *
+ * Only populated on platforms supporting multiple timeline frames (such as Android API 33+).
+ * The timelines in this slice are guaranteed to be sorted chronologically by their
+ * expected presentation times (which is guaranteed by the Android platform).
+ *
+ * The lifetime of the underlying timeline elements in this Slice is guaranteed only for
+ * the immediate duration of the `setupFrame()` call. Do not store or reference this slice
+ * beyond that synchronous scope.
+ */
 uint32_t FilaFramePacerVsyncTick_getTimelines(const FilaFramePacerVsyncTick* self, FilaFramePacerHardwareTimeline* const* out, uint32_t outCapacity);
 // handwritten in manual/ FilaFramePacerVsyncTick_setTimelines: Timelines filament::FramePacer::VsyncTick::timelines
 //     Timelines: the struct would keep the caller's pointer
@@ -32,32 +79,230 @@ uint32_t FilaFramePacerVsyncTick_getTimelines(const FilaFramePacerVsyncTick* sel
 // filament::FramePacer::Configuration
 FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void);
 void FilaFramePacerConfiguration_destroy(FilaFramePacerConfiguration* self);
+/** The application's desired frame rendering step in Hz. */
 float FilaFramePacerConfiguration_getTargetFrameRate(const FilaFramePacerConfiguration* self);
+/** The application's desired frame rendering step in Hz. */
 void FilaFramePacerConfiguration_setTargetFrameRate(FilaFramePacerConfiguration* self, float value);
+/** Target latency duration (defaults to 33.33ms, ~2 60Hz frames) */
 void FilaFramePacerConfiguration_getLatency(const FilaFramePacerConfiguration* self, int64_t* out);
+/** Target latency duration (defaults to 33.33ms, ~2 60Hz frames) */
 void FilaFramePacerConfiguration_setLatency(FilaFramePacerConfiguration* self, int64_t value);
 
 // filament::FramePacer::Builder
 FilaFramePacerBuilder* FilaFramePacerBuilder_create(void);
 void FilaFramePacerBuilder_destroy(FilaFramePacerBuilder* self);
+/**
+ * Sets the desired frame rendering step in Hz.
+ *
+ * @param fps Target frame rate (e.g., 60.0f or 30.0f). Must be greater than 0.
+ * @return This Builder, for chaining calls.
+ */
 FilaFramePacerBuilder* FilaFramePacerBuilder_targetFrameRate(FilaFramePacerBuilder* self, float fps);
+/**
+ * Sets the required latency window in terms of time duration.
+ *
+ * The target latency is measured relative to the hardware VSYNC timestamp (VsyncTick::baseTime),
+ * as opposed to the callback entry/dispatch time. Note that the hardware VSYNC time is
+ * always equal to or in the past with respect to the actual callback dispatch time.
+ *
+ * @param latency Target latency duration (defaults to 33ms).
+ * @return This Builder, for chaining calls.
+ */
 FilaFramePacerBuilder* FilaFramePacerBuilder_latency(FilaFramePacerBuilder* self, int64_t latency);
+/**
+ * Sets the required latency window in terms of 60Hz display frames.
+ *
+ * @param frames The latency window in units of 60Hz frames (e.g. 2 frames = 33.3ms).
+ * @return This Builder, for chaining calls.
+ */
 FilaFramePacerBuilder* FilaFramePacerBuilder_latencyFrames(FilaFramePacerBuilder* self, uint32_t frames);
+/**
+ * Creates the FramePacer object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this FramePacer with.
+ * @return Pointer to the newly created FramePacer instance.
+ */
 FilaFramePacer* FilaFramePacerBuilder_build(const FilaFramePacerBuilder* self, FilaEngine* engine);
 
 // filament::FramePacer
+/**
+ * Dynamically updates the active pacing targets mid-flight (e.g., for thermal or power mitigation).
+ *
+ * @param config The new configuration targets to scale to on subsequent frames.
+ */
 void FilaFramePacer_configure(FilaFramePacer* self, const FilaFramePacerConfiguration* config);
+/**
+ * Retrieves the current configuration used by the FramePacer.
+ *
+ * @return The active configuration targets.
+ */
 void FilaFramePacer_getConfiguration(const FilaFramePacer* self, FilaFramePacerConfiguration* out);
+/**
+ * Prepares and evaluates the frame pacing state for the upcoming frame cycle.
+ *
+ * This must be called at the very beginning of the host display platform's VSYNC interrupt loop
+ * (e.g., within a VSYNC callback such as AChoreographer on Android). It evaluates whether the CPU rendering
+ * thread is ahead of the hardware pulse cadence or backlogged.
+ *
+ * @attention The memory backed by the `tick.timelines` slice is guaranteed to be valid only
+ *            during the immediate, synchronous execution of this call. Client implementations
+ *            must not store or access this slice or its underlying pointers once `setupFrame()`
+ *            returns.
+ *
+ * @param tick Polled hardware VSYNC timing telemetry and optional target presentation timelines.
+ * @return FrameStatus::ACCEPTED if approved, or the specific SKIPPED reason.
+ */
 FilaFramePacerFrameStatus FilaFramePacer_setupFrame(FilaFramePacer* self, const FilaFramePacerVsyncTick* tick);
+/**
+ * Advances the internal pacing pipeline to target an extra presentation frame in the future,
+ * without advancing the ideal cadence clock (mExpectedBaseTime).
+ *
+ * This method is explicitly designed for latency recovery (Buffer Stuffing). If the pipeline
+ * reports PacingStatus::DISPLAY_STARVING, the application may yield, OR it may choose to render
+ * an extra frame during the current Vsync callback to mechanically stuff the queue depth back
+ * to its target latency.
+ *
+ * Calling this method instantly extrapolates the presentation timestamp one target frame period
+ * into the future. The subsequent call to `applyPresentationTime` will emit this new timestamp,
+ * allowing the queue to grow without the FramePacer erroneously rejecting the next real Vsync
+ * as spurious.
+ *
+ * This method acts as a safeguard against runaway clock extrapolation. It returns true if
+ * the timestamp was successfully advanced, or false if it refused to stuff another frame
+ * because the pipeline is already at or beyond the configured target latency.
+ *
+ * \code
+ * if (pacer->setupFrame(tick) == FramePacer::FrameStatus::ACCEPTED) {
+ *     pacer->applyPresentationTime(renderer);
+ *     if (renderer->beginFrame(swapChain)) {
+ *         renderer->render(view);
+ *         renderer->endFrame();
+ *     }
+ *
+ *     // Automatically recover queue depth by stuffing an extra frame
+ *     // If the application was starved by multiple frames, it will receive DISPLAY_STARVING
+ *     // over consecutive Vsync callbacks, naturally amortizing the recovery over time.
+ *     if (pacer->getPacingStatus() == FramePacer::PacingStatus::DISPLAY_STARVING) {
+ *         if (pacer->setupExtraFrame()) {
+ *             pacer->applyPresentationTime(renderer); // Emit the future-shifted timestamp
+ *             if (renderer->beginFrame(swapChain)) {
+ *                 // Optional: advance simulation state again here
+ *                 renderer->render(view);
+ *                 renderer->endFrame();
+ *             }
+ *         }
+ *     }
+ * }
+ * \endcode
+ *
+ * @return true if the timestamp was safely advanced, false if refused to prevent over-stuffing.
+ */
 bool FilaFramePacer_setupExtraFrame(FilaFramePacer* self);
+/**
+ * Checks if the GPU rendering pipeline has fallen behind the CPU submission rate.
+ *
+ * If the GPU is delayed, this method returns true and automatically rolls back any internal
+ * cadence state advanced by `setupFrame()`. The client should skip the frame (via
+ * `Renderer::skipFrame()`) and refrain from calling `applyPresentationTime()` or `beginFrame()`.
+ *
+ * @param renderer The Filament Renderer displaying the target View.
+ * @return true if the GPU has fallen behind, false otherwise.
+ */
 bool FilaFramePacer_hasGpuFallenBehind(FilaFramePacer* self, FilaRenderer* renderer);
+/**
+ * Applies the computed Latency Offset timestamp directly onto the rendering command stream.
+ *
+ * This instructs the underlying display compositor (such as SurfaceFlinger) exactly when to latch
+ * and present the buffer, eliminating micro-stutter. This must be called before
+ * `Renderer::endFrame()`.
+ *
+ * Calling this method automatically applies the target presentation time, desired presentation
+ * time, and rendering deadline onto the target Renderer (via `Renderer::setPresentationTime`,
+ * `Renderer::setDesiredPresentationTime`, and `Renderer::setRenderingDeadline`).
+ *
+ * @param renderer The Filament Renderer displaying the target View.
+ */
 void FilaFramePacer_applyPresentationTime(const FilaFramePacer* self, FilaRenderer* renderer);
+/**
+ * Returns the target presentation timepoint computed during the most recent call to `setupFrame()`.
+ *
+ * This timestamp is highly useful for client applications to calculate deterministic,
+ * judder-free physics and animation transformations.
+ *
+ * @return The upcoming frame's expected presentation timepoint on the steady clock.
+ */
 void FilaFramePacer_getExpectedPresentationTime(const FilaFramePacer* self, int64_t* out);
+/**
+ * Returns the target rendering deadline timepoint computed during the most recent call to `setupFrame()`.
+ *
+ * This timepoint represents the absolute latest point on the steady clock by which the CPU and GPU
+ * must complete their rendering operations so that the buffer will successfully meet its
+ * display latching window.
+ *
+ * @return The upcoming frame's expected rendering deadline on the steady clock.
+ */
 void FilaFramePacer_getRenderingDeadline(const FilaFramePacer* self, int64_t* out);
+/**
+ * Returns the effective target latency in nanoseconds.
+ * Calculated as the difference between the target presentation time and the frame's base time.
+ *
+ * @return The active target latency in nanoseconds.
+ */
 void FilaFramePacer_getEffectiveLatency(const FilaFramePacer* self, int64_t* out);
+/**
+ * Returns the current flow control status of the pacing pipeline.
+ *
+ * If the pipeline is DISPLAY_STARVING, the application may choose to recover
+ * by skipping a frame to rebuild queue depth and calling resetPacing().
+ *
+ * @return The active PacingStatus.
+ */
 FilaFramePacerPacingStatus FilaFramePacer_getPacingStatus(const FilaFramePacer* self);
+/**
+ * Forces the FramePacer to abandon its relative pacing state and rigidly re-anchor
+ * to the configured target latency on the next frame.
+ *
+ * The application can call this when recovering from a dropped frame or to manually
+ * re-establish the queue depth.
+ *
+ * \code
+ * if (pacer->setupFrame(tick) == FramePacer::FrameStatus::ACCEPTED) {
+ *     // Alternatively to rendering an extra frame via setupExtraFrame(), the application
+ *     // can accept a one-frame judder and recover queue depth by resetting the pacer.
+ *     // This forces the next frame to rigidly re-anchor to the target latency.
+ *     if (pacer->getPacingStatus() == FramePacer::PacingStatus::DISPLAY_STARVING) {
+ *         pacer->resetPacing();
+ *     }
+ *
+ *     pacer->applyPresentationTime(renderer);
+ *     if (renderer->beginFrame(swapChain)) {
+ *         renderer->render(view);
+ *         renderer->endFrame();
+ *     }
+ * }
+ * \endcode
+ */
 void FilaFramePacer_resetPacing(FilaFramePacer* self);
+/**
+ * Returns the actual pacing frame rate selected during the active frame pacing cycle.
+ *
+ * If the requested target frame rate is fuzzy-matched to an active display hardware cadence
+ * (such as 60.0 FPS requested on a 59.94Hz broadcast screen), this returns the actual hardware
+ * rate (59.94 FPS).
+ *
+ * Additionally, if the requested rate exceeds the maximum refresh capability of the active
+ * physical display panel (such as 90 FPS requested on a 60Hz screen), this returns the clamped
+ * maximum display refresh rate (60 FPS).
+ *
+ * @return The active pacing frame rate in frames per second.
+ */
 float FilaFramePacer_getSelectedFrameRate(const FilaFramePacer* self);
+/**
+ * Returns whether the selected pacing frame rate is achieved exactly by the display hardware.
+ *
+ * @return true if the selected rate is an exact integer fraction of the host display platform's
+ *         refresh rate, false if non-integer ratio pacing is active (such as 45 FPS on 60Hz).
+ */
 bool FilaFramePacer_isExactFrameRateAchieved(const FilaFramePacer* self);
 
 

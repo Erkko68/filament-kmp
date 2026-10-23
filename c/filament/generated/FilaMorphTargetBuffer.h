@@ -12,22 +12,142 @@ extern "C" {
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create(void);
 void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self);
 // skipped Builder & filament::MorphTargetBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Size of the morph targets in vertex counts.
+ * @param vertexCount Number of vertex counts the morph targets can hold.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_vertexCount(FilaMorphTargetBufferBuilder* self, uint32_t vertexCount);
+/**
+ * Size of the morph targets in targets.
+ * @param count Number of targets the morph targets can hold.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTargetBufferBuilder* self, uint32_t count);
+/**
+ * Associate an optional name with this MorphTargetBuffer for debugging purposes.
+ *
+ * @param name A string to identify this MorphTargetBuffer
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_name(FilaMorphTargetBufferBuilder* self, const char* name);
+/**
+ * Enables and allocates the built-in buffer for position morphing.
+ *
+ * If enabled, `setPositionsAt` can be called to set the position data for each target.
+ * The vertex position will be morphed automatically without any further actions.
+ *
+ * @param enable true to enable, false to disable. Default is true.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable);
+/**
+ * Enables and allocates the built-in buffer for tangent/normal morphing.
+ *
+ * If enabled, `setTangentsAt` can be called to set the tangent data for each target.
+ * The vertex position will be morphed automatically without any further actions.
+ *
+ * @param enable true to enable, false to disable. Default is true.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withTangents(FilaMorphTargetBufferBuilder* self, bool enable);
+/**
+ * Enables the custom morphing pipeline.
+ *
+ * When enabled, the `morphData2`, `morphData3`, and `morphData4` helper functions are
+ * available in the vertex shader. You must provide a 2D array texture containing the morph
+ * deltas, bind it to a `sampler2DArray` uniform, and call the appropriate `morphData`
+ * function to apply the morphing to your custom attributes.
+ *
+ * Note: Unlike `withPositions` or `withTangents`, this does NOT allocate any internal
+ * storage. You are responsible for managing the morph data texture.
+ *
+ * Custom morphing can be used together with automatic position and/or tangent morphing.
+ *
+ * @param enable true to enable, false to disable. Default is false.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(FilaMorphTargetBufferBuilder* self, bool enable);
+/**
+ * Creates the MorphTargetBuffer object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this MorphTargetBuffer with.
+ *
+ * @return pointer to the newly created object.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ */
 FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(const FilaMorphTargetBufferBuilder* self, FilaEngine* engine);
 
 // filament::MorphTargetBuffer
+/**
+ * Updates positions for the given morph target.
+ *
+ * This method can only be called if the MorphTargetBuffer was built with `withPositions(true)`.
+ * This is equivalent to the float4 method, but uses 1.0 for the 4th component.
+ *
+ * @param engine Reference to the filament::Engine associated with this MorphTargetBuffer.
+ * @param targetIndex the index of morph target to be updated.
+ * @param positions pointer to at least "count" positions
+ * @param count number of float3 vectors in positions
+ * @param offset offset into the target buffer, expressed as a number of float3 vectors
+ */
 void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat3* positions, uint32_t count, uint32_t offset);
+/**
+ * Updates positions for the given morph target.
+ *
+ * This method can only be called if the MorphTargetBuffer was built with `withPositions(true)`.
+ *
+ * @param engine Reference to the filament::Engine associated with this MorphTargetBuffer.
+ * @param targetIndex the index of morph target to be updated.
+ * @param positions pointer to at least "count" positions
+ * @param count number of float4 vectors in positions
+ * @param offset offset into the target buffer, expressed as a number of float4 vectors
+ */
 void FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat4* positions, uint32_t count, uint32_t offset);
+/**
+ * Updates tangents for the given morph target.
+ *
+ * This method can only be called if the MorphTargetBuffer was built with `withTangents(true)`.
+ * These quaternions must be represented as signed shorts, where real numbers in the [-1,+1]
+ * range multiplied by 32767.
+ *
+ * @param engine Reference to the filament::Engine associated with this MorphTargetBuffer.
+ * @param targetIndex the index of morph target to be updated.
+ * @param tangents pointer to at least "count" tangents
+ * @param count number of short4 quaternions in tangents
+ * @param offset offset into the target buffer, expressed as a number of short4 vectors
+ */
 void FilaMorphTargetBuffer_setTangentsAt(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaShort4* tangents, uint32_t count, uint32_t offset);
+/**
+ * Returns the vertex count of this MorphTargetBuffer.
+ * @return The number of vertices the MorphTargetBuffer holds.
+ */
 uint32_t FilaMorphTargetBuffer_getVertexCount(const FilaMorphTargetBuffer* self);
+/**
+ * Returns the target count of this MorphTargetBuffer.
+ * @return The number of targets the MorphTargetBuffer holds.
+ */
 uint32_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* self);
+/**
+ * Returns true if this MorphTargetBuffer has a position buffer.
+ * @see Builder::withPositions
+ */
 bool FilaMorphTargetBuffer_hasPositions(const FilaMorphTargetBuffer* self);
+/**
+ * Returns true if this MorphTargetBuffer has a tangent buffer.
+ * @see Builder::withTangents
+ */
 bool FilaMorphTargetBuffer_hasTangents(const FilaMorphTargetBuffer* self);
+/**
+ * Returns true if custom morphing is enabled
+ * @see Builder::enableCustomMorphing
+ */
 bool FilaMorphTargetBuffer_isCustomMorphingEnabled(const FilaMorphTargetBuffer* self);
 
 

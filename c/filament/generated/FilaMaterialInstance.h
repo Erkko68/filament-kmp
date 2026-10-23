@@ -10,29 +10,61 @@ extern "C" {
 
 // filament::MaterialInstance
 // skipped void filament::MaterialInstance::setParameter(std::string_view name, utils::Slice<const T> values): .*\(.*utils::Slice.*\)
+/**
+ * Creates a new MaterialInstance using another MaterialInstance as a template for initialization.
+ * The new MaterialInstance is an instance of the same Material of the template instance and
+ * must be destroyed just like any other MaterialInstance.
+ *
+ * @param other A MaterialInstance to use as a template for initializing a new instance
+ * @param name  A name for the new MaterialInstance or nullptr to use the template's name
+ * @return      A new MaterialInstance
+ */
 FilaMaterialInstance* FilaMaterialInstance_duplicate(const FilaMaterialInstance* other, const char* name);
+/** @return the Material associated with this instance */
 const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance* self);
+/** @return the name associated with this instance */
 const char* FilaMaterialInstance_getName(const FilaMaterialInstance* self);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_Texture_TextureSampler(FilaMaterialInstance* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_float(FilaMaterialInstance* self, const char* name, float value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_int32_t(FilaMaterialInstance* self, const char* name, int32_t value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_uint32_t(FilaMaterialInstance* self, const char* name, uint32_t value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_int2(FilaMaterialInstance* self, const char* name, const FilaInt2* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_int3(FilaMaterialInstance* self, const char* name, const FilaInt3* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_int4(FilaMaterialInstance* self, const char* name, const FilaInt4* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_uint2(FilaMaterialInstance* self, const char* name, const FilaUint2* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_uint3(FilaMaterialInstance* self, const char* name, const FilaUint3* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_uint4(FilaMaterialInstance* self, const char* name, const FilaUint4* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_float2(FilaMaterialInstance* self, const char* name, const FilaFloat2* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_float3(FilaMaterialInstance* self, const char* name, const FilaFloat3* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_float4(FilaMaterialInstance* self, const char* name, const FilaFloat4* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_mat3f(FilaMaterialInstance* self, const char* name, const FilaMat3f* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_mat4f(FilaMaterialInstance* self, const char* name, const FilaMat4f* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_bool(FilaMaterialInstance* self, const char* name, bool value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_bool2(FilaMaterialInstance* self, const char* name, const FilaBool2* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_bool3(FilaMaterialInstance* self, const char* name, const FilaBool3* value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setParameter_bool4(FilaMaterialInstance* self, const char* name, const FilaBool4* value);
 void FilaMaterialInstance_setParameter_float_size_t(FilaMaterialInstance* self, const char* name, const float* values, uint32_t count);
 void FilaMaterialInstance_setParameter_int32_t_size_t(FilaMaterialInstance* self, const char* name, const int32_t* values, uint32_t count);
@@ -52,63 +84,266 @@ void FilaMaterialInstance_setParameter_bool_size_t(FilaMaterialInstance* self, c
 void FilaMaterialInstance_setParameter_bool2_size_t(FilaMaterialInstance* self, const char* name, const FilaBool2* values, uint32_t count);
 void FilaMaterialInstance_setParameter_bool3_size_t(FilaMaterialInstance* self, const char* name, const FilaBool3* values, uint32_t count);
 void FilaMaterialInstance_setParameter_bool4_size_t(FilaMaterialInstance* self, const char* name, const FilaBool4* values, uint32_t count);
+/** inline helper to provide the name as a null-terminated C string */
 float FilaMaterialInstance_getParameter_float(const FilaMaterialInstance* self, const char* name);
+/** inline helper to provide the name as a null-terminated C string */
 int32_t FilaMaterialInstance_getParameter_int32_t(const FilaMaterialInstance* self, const char* name);
+/** inline helper to provide the name as a null-terminated C string */
 uint32_t FilaMaterialInstance_getParameter_uint32_t(const FilaMaterialInstance* self, const char* name);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_int2(const FilaMaterialInstance* self, const char* name, FilaInt2* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_int3(const FilaMaterialInstance* self, const char* name, FilaInt3* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_int4(const FilaMaterialInstance* self, const char* name, FilaInt4* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_uint2(const FilaMaterialInstance* self, const char* name, FilaUint2* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_uint3(const FilaMaterialInstance* self, const char* name, FilaUint3* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_uint4(const FilaMaterialInstance* self, const char* name, FilaUint4* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_float2(const FilaMaterialInstance* self, const char* name, FilaFloat2* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_float3(const FilaMaterialInstance* self, const char* name, FilaFloat3* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_float4(const FilaMaterialInstance* self, const char* name, FilaFloat4* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_mat3f(const FilaMaterialInstance* self, const char* name, FilaMat3f* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_getParameter_mat4f(const FilaMaterialInstance* self, const char* name, FilaMat4f* out);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setConstant_int32_t(FilaMaterialInstance* self, const char* name, int32_t value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setConstant_float(FilaMaterialInstance* self, const char* name, float value);
+/** inline helper to provide the name as a null-terminated C string */
 void FilaMaterialInstance_setConstant_bool(FilaMaterialInstance* self, const char* name, bool value);
+/** inline helper to provide the name as a null-terminated C string */
 int32_t FilaMaterialInstance_getConstant_int32_t(const FilaMaterialInstance* self, const char* name);
+/** inline helper to provide the name as a null-terminated C string */
 float FilaMaterialInstance_getConstant_float(const FilaMaterialInstance* self, const char* name);
+/** inline helper to provide the name as a null-terminated C string */
 bool FilaMaterialInstance_getConstant_bool(const FilaMaterialInstance* self, const char* name);
+/**
+ * Asynchronously ensures that a subset of this MaterialInstance's variants are compiled.
+ *
+ * This function behaves identically to Material::compile(), but takes into account the
+ * specific constants overridden by setConstant().
+ *
+ * @param priority      Which priority queue to use, LOW or HIGH.
+ * @param variants      Variants to include to the compile command.
+ * @param handler       Handler to dispatch the callback or nullptr for the default handler
+ * @param callback      callback called on the main thread when the compilation is done on
+ *                      by backend.
+ *
+ * @see Material::compile
+ * @see setConstant
+ */
 void FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_compile_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
+/**
+ * Set-up a custom scissor rectangle; by default it is disabled.
+ *
+ * The scissor rectangle gets clipped by the View's viewport, in other words, the scissor
+ * cannot affect fragments outside of the View's Viewport.
+ *
+ * Currently the scissor is not compatible with dynamic resolution and should always be
+ * disabled when dynamic resolution is used.
+ *
+ * @param left      left coordinate of the scissor box relative to the viewport
+ * @param bottom    bottom coordinate of the scissor box relative to the viewport
+ * @param width     width of the scissor box
+ * @param height    height of the scissor box
+ *
+ * @see unsetScissor
+ * @see View::setViewport
+ * @see View::setDynamicResolutionOptions
+ */
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* self, uint32_t left, uint32_t bottom, uint32_t width, uint32_t height);
+/**
+ * Returns the scissor rectangle to its default disabled setting.
+ *
+ * Currently the scissor is not compatible with dynamic resolution and should always be
+ * disabled when dynamic resolution is used.
+ *
+ * @see View::setDynamicResolutionOptions
+ */
 void FilaMaterialInstance_unsetScissor(FilaMaterialInstance* self);
+/**
+ * Sets a polygon offset that will be applied to all renderables drawn with this material
+ * instance.
+ *
+ *  The value of the offset is scale * dz + r * constant, where dz is the change in depth
+ *  relative to the screen area of the triangle, and r is the smallest value that is guaranteed
+ *  to produce a resolvable offset for a given implementation. This offset is added before the
+ *  depth test.
+ *
+ *  @warning using a polygon offset other than zero has a significant negative performance
+ *  impact, as most implementations have to disable early depth culling. DO NOT USE unless
+ *  absolutely necessary.
+ *
+ * @param scale scale factor used to create a variable depth offset for each triangle
+ * @param constant scale factor used to create a constant depth offset for each triangle
+ */
 void FilaMaterialInstance_setPolygonOffset(FilaMaterialInstance* self, float scale, float constant);
+/**
+ * Overrides the minimum alpha value a fragment must have to not be discarded when the blend
+ * mode is MASKED. Defaults to 0.4 if it has not been set in the parent Material. The specified
+ * value should be between 0 and 1 and will be clamped if necessary.
+ */
 void FilaMaterialInstance_setMaskThreshold(FilaMaterialInstance* self, float threshold);
+/**
+ * Gets the minimum alpha value a fragment must have to not be discarded when the blend
+ * mode is MASKED
+ */
 float FilaMaterialInstance_getMaskThreshold(const FilaMaterialInstance* self);
+/**
+ * Sets the screen space variance of the filter kernel used when applying specular
+ * anti-aliasing. The default value is set to 0.15. The specified value should be between
+ * 0 and 1 and will be clamped if necessary.
+ */
 void FilaMaterialInstance_setSpecularAntiAliasingVariance(FilaMaterialInstance* self, float variance);
+/**
+ * Gets the screen space variance of the filter kernel used when applying specular
+ * anti-aliasing.
+ */
 float FilaMaterialInstance_getSpecularAntiAliasingVariance(const FilaMaterialInstance* self);
+/**
+ * Sets the clamping threshold used to suppress estimation errors when applying specular
+ * anti-aliasing. The default value is set to 0.2. The specified value should be between 0
+ * and 1 and will be clamped if necessary.
+ */
 void FilaMaterialInstance_setSpecularAntiAliasingThreshold(FilaMaterialInstance* self, float threshold);
+/**
+ * Gets the clamping threshold used to suppress estimation errors when applying specular
+ * anti-aliasing.
+ */
 float FilaMaterialInstance_getSpecularAntiAliasingThreshold(const FilaMaterialInstance* self);
+/**
+ * Enables or disables double-sided lighting if the parent Material has double-sided capability,
+ * otherwise prints a warning. If double-sided lighting is enabled, backface culling is
+ * automatically disabled.
+ */
 void FilaMaterialInstance_setDoubleSided(FilaMaterialInstance* self, bool doubleSided);
+/**
+ * Returns whether double-sided lighting is enabled when the parent Material has double-sided
+ * capability.
+ */
 bool FilaMaterialInstance_isDoubleSided(const FilaMaterialInstance* self);
+/** Specifies how transparent objects should be rendered (default is DEFAULT). */
 void FilaMaterialInstance_setTransparencyMode(FilaMaterialInstance* self, FilaTransparencyMode mode);
+/** Returns the transparency mode. */
 FilaTransparencyMode FilaMaterialInstance_getTransparencyMode(const FilaMaterialInstance* self);
+/** Overrides the default triangle culling state that was set on the material. */
 void FilaMaterialInstance_setCullingMode(FilaMaterialInstance* self, FilaCullingMode culling);
+/**
+ * Overrides the default triangle culling state that was set on the material separately for the
+ * color and shadow passes
+ */
 void FilaMaterialInstance_setCullingMode_CullingMode(FilaMaterialInstance* self, FilaCullingMode colorPassCullingMode, FilaCullingMode shadowPassCullingMode);
+/** Returns the face culling mode. */
 FilaCullingMode FilaMaterialInstance_getCullingMode(const FilaMaterialInstance* self);
+/** Returns the face culling mode for the shadow passes. */
 FilaCullingMode FilaMaterialInstance_getShadowCullingMode(const FilaMaterialInstance* self);
+/** Overrides the default color-buffer write state that was set on the material. */
 void FilaMaterialInstance_setColorWrite(FilaMaterialInstance* self, bool enable);
+/** Returns whether color write is enabled. */
 bool FilaMaterialInstance_isColorWriteEnabled(const FilaMaterialInstance* self);
+/** Overrides the default depth-buffer write state that was set on the material. */
 void FilaMaterialInstance_setDepthWrite(FilaMaterialInstance* self, bool enable);
+/** Returns whether depth write is enabled. */
 bool FilaMaterialInstance_isDepthWriteEnabled(const FilaMaterialInstance* self);
+/** Overrides the default depth testing state that was set on the material. */
 void FilaMaterialInstance_setDepthCulling(FilaMaterialInstance* self, bool enable);
+/** Overrides the default depth function state that was set on the material. */
 void FilaMaterialInstance_setDepthFunc(FilaMaterialInstance* self, FilaSamplerCompareFunc depthFunc);
+/** Returns the depth function state. */
 FilaSamplerCompareFunc FilaMaterialInstance_getDepthFunc(const FilaMaterialInstance* self);
+/** Returns whether depth culling is enabled. */
 bool FilaMaterialInstance_isDepthCullingEnabled(const FilaMaterialInstance* self);
+/** Overrides the default stencil-buffer write state that was set on the material. */
 void FilaMaterialInstance_setStencilWrite(FilaMaterialInstance* self, bool enable);
+/** Returns whether stencil write is enabled. */
 bool FilaMaterialInstance_isStencilWriteEnabled(const FilaMaterialInstance* self);
+/**
+ * Sets the stencil comparison function (default is StencilCompareFunc::A).
+ *
+ * It's possible to set separate stencil comparison functions; one for front-facing polygons,
+ * and one for back-facing polygons. The face parameter determines the comparison function(s)
+ * updated by this call.
+ */
 void FilaMaterialInstance_setStencilCompareFunction(FilaMaterialInstance* self, FilaSamplerCompareFunc func, FilaStencilFace face);
+/**
+ * Sets the stencil fail operation (default is StencilOperation::KEEP).
+ *
+ * The stencil fail operation is performed to update values in the stencil buffer when the
+ * stencil test fails.
+ *
+ * It's possible to set separate stencil fail operations; one for front-facing polygons, and one
+ * for back-facing polygons. The face parameter determines the stencil fail operation(s) updated
+ * by this call.
+ */
 void FilaMaterialInstance_setStencilOpStencilFail(FilaMaterialInstance* self, FilaStencilOperation op, FilaStencilFace face);
+/**
+ * Sets the depth fail operation (default is StencilOperation::KEEP).
+ *
+ * The depth fail operation is performed to update values in the stencil buffer when the depth
+ * test fails.
+ *
+ * It's possible to set separate depth fail operations; one for front-facing polygons, and one
+ * for back-facing polygons. The face parameter determines the depth fail operation(s) updated
+ * by this call.
+ */
 void FilaMaterialInstance_setStencilOpDepthFail(FilaMaterialInstance* self, FilaStencilOperation op, FilaStencilFace face);
+/**
+ * Sets the depth-stencil pass operation (default is StencilOperation::KEEP).
+ *
+ * The depth-stencil pass operation is performed to update values in the stencil buffer when
+ * both the stencil test and depth test pass.
+ *
+ * It's possible to set separate depth-stencil pass operations; one for front-facing polygons,
+ * and one for back-facing polygons. The face parameter determines the depth-stencil pass
+ * operation(s) updated by this call.
+ */
 void FilaMaterialInstance_setStencilOpDepthStencilPass(FilaMaterialInstance* self, FilaStencilOperation op, FilaStencilFace face);
+/**
+ * Sets the stencil reference value (default is 0).
+ *
+ * The stencil reference value is the left-hand side for stencil comparison tests. It's also
+ * used as the replacement stencil value when StencilOperation is REPLACE.
+ *
+ * It's possible to set separate stencil reference values; one for front-facing polygons, and
+ * one for back-facing polygons. The face parameter determines the reference value(s) updated by
+ * this call.
+ */
 void FilaMaterialInstance_setStencilReferenceValue(FilaMaterialInstance* self, uint32_t value, FilaStencilFace face);
+/**
+ * Sets the stencil read mask (default is 0xFF).
+ *
+ * The stencil read mask masks the bits of the values participating in the stencil comparison
+ * test- both the value read from the stencil buffer and the reference value.
+ *
+ * It's possible to set separate stencil read masks; one for front-facing polygons, and one for
+ * back-facing polygons. The face parameter determines the stencil read mask(s) updated by this
+ * call.
+ */
 void FilaMaterialInstance_setStencilReadMask(FilaMaterialInstance* self, uint32_t readMask, FilaStencilFace face);
+/**
+ * Sets the stencil write mask (default is 0xFF).
+ *
+ * The stencil write mask masks the bits in the stencil buffer updated by stencil operations.
+ *
+ * It's possible to set separate stencil write masks; one for front-facing polygons, and one for
+ * back-facing polygons. The face parameter determines the stencil write mask(s) updated by this
+ * call.
+ */
 void FilaMaterialInstance_setStencilWriteMask(FilaMaterialInstance* self, uint32_t writeMask, FilaStencilFace face);
+/**
+ * PostProcess and compute domain material instance must be commited manually. This call has
+ * no effect on surface domain materials.
+ * @param engine Filament engine
+ */
 void FilaMaterialInstance_commit(const FilaMaterialInstance* self, FilaEngine* engine);
 
 

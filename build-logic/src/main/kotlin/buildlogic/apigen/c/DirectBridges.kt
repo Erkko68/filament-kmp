@@ -1,7 +1,7 @@
 package buildlogic.apigen.c
 
-import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.Scalar
+import buildlogic.apigen.TypeTables
 
 /**
  * The bridges of a value C passes as it is, given how C++ takes it: [const], [indirection] (`*`, `&`, `&&` or none),
@@ -9,10 +9,10 @@ import buildlogic.apigen.Scalar
  * optionals and functions.
  */
 class DirectBridges internal constructor(
-    private val config: ApiGenConfig, private val names: CNames,
+    private val config: TypeTables, private val names: CNames,
     val const: Boolean, val indirection: String?, val result: Boolean, val lvalue: Boolean,
 ) {
-    private val h = config.helpers
+    private val h = names.helpers
     val byValue = indirection == null || (indirection == "&" && const)
     val c = if (const) "const " else ""
 
@@ -61,7 +61,8 @@ class DirectBridges internal constructor(
 
     /**
      * Structs never cross by value: parameters come by `const` pointer, results go out through one. C++ can't use
-     * C's storage of a SIMD type in place ([alignedMirror]): one it writes through a reference is copied in and back.
+     * C's storage of a SIMD type in place ([buildlogic.apigen.Mirror.aligned]): one it writes through a reference is
+     * copied in and back, as is an array of them by pointer, which C then passes the count of.
      */
     fun math(decl: String): CBridge {
         val name = names.type(decl)
@@ -70,20 +71,27 @@ class DirectBridges internal constructor(
             byValue -> CBridge("const $name*", { "$h::math<$decl>(*$it)" })
             result || !config.mirrors.getValue(decl).aligned -> handle(name)
             indirection == "&" -> CBridge("$name*", { "$h::InOut<$decl, $name>($it)" })
-            else -> throw Unsupported("$decl by pointer: C's mirror isn't aligned as the SIMD type is")
+            else -> CBridge("$c$name*", { "$h::Aligned<$decl, $c$name>($it, ${it}Count)" }, extra = listOf("uint32_t" to "Count"))
         }
     }
 
-    /** A value struct taken or returned by value is copied: in from a `const` pointer, out into one C created. */
-    fun record(decl: String, value: Boolean, copyable: Boolean): CBridge {
+    /**
+     * A value struct taken or returned by value is copied: in from a `const` pointer, out into one C created
+     * ([assignable]). A result by value C can't create one for, or of a class that isn't a value, moves to a copy C
+     * destroys, where it can ([owned]).
+     */
+    fun record(decl: String, value: Boolean, assignable: Boolean, owned: Boolean): CBridge {
         val name = names.type(decl)
+        val copy by lazy { CBridge("$name*", { "$h::c(new $decl($it))" }) }
         return when {
+            !value && indirection == null && result && owned -> copy
             !value && indirection == null -> throw Unsupported("$decl by value")
             !value || !byValue -> handle(name)
             !result -> CBridge("const $name*", { "*$h::cpp($it)" })
             // C can't create one to copy into; a reference's outlives the call, so C borrows it.
-            !copyable && indirection == "&" -> handle(name)
-            !copyable -> throw Unsupported("$decl result: C can't create one to copy it into")
+            !assignable && indirection == "&" -> handle(name)
+            !assignable && owned -> copy
+            !assignable -> throw Unsupported("$decl result: C can't create one to copy it into")
             else -> CBridge(name, { it }, out = true, store = { v, out -> "*$h::cpp($out) = $v;" })
         }
     }

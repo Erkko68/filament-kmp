@@ -12,13 +12,50 @@ extern "C" {
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create(uint32_t instanceCount);
 void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self);
 // skipped Builder & filament::InstanceBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
+/**
+ * Provide an initial local transform for each instance. Each local transform is relative to
+ * the transform of the associated renderable. This forms a parent-child relationship
+ * between the renderable and its instances, so adjusting the renderable's transform will
+ * -        * affect all instances.
+ *
+ * The array of math::mat4f must have length instanceCount, provided when constructing this
+ * Builder.
+ *
+ * @param localTransforms an array of math::mat4f with length instanceCount, must remain
+ *                        valid until after build() is called
+ */
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_localTransforms(FilaInstanceBufferBuilder* self, const FilaMat4f* localTransforms);
+/**
+ * Associate an optional name with this InstanceBuffer for debugging purposes.
+ *
+ * @param name A string to identify this InstanceBuffer
+ * @return This Builder, for chaining calls.
+ *
+ * @note This method should be avoided in C++ in favor of the `StaticString` overload.
+ * It is provided primarily for bindings to other languages.
+ */
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_name(FilaInstanceBufferBuilder* self, const char* name);
+/** Creates the InstanceBuffer object and returns a pointer to it. */
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine);
 
 // filament::InstanceBuffer
+/** Returns the instance count specified when building this InstanceBuffer. */
 uint32_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self);
+/**
+ * Sets the local transform for each instance. Each local transform is relative to the transform
+ * of the associated renderable. This forms a parent-child relationship between the renderable
+ * and its instances, so adjusting the renderable's transform will affect all instances.
+ *
+ * @param localTransforms an array of math::mat4f with length count, need not outlive this call
+ * @param count the number of local transforms
+ * @param offset index of the first instance to set local transforms
+ */
 void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, uint32_t count, uint32_t offset);
+/**
+ * Returns the local transform for a given instance.
+ * @param index The index of the instance.
+ * @return The local transform of the instance.
+ */
 void FilaInstanceBuffer_getLocalTransform(const FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out);
 
 

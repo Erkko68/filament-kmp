@@ -4,8 +4,7 @@ import java.math.BigInteger
 
 /**
  * A library's headers as clang sees them: every record, enum, alias and constant in the dumped namespaces,
- * keyed by qualified name. [surface] narrows it to the API: the exported classes and every type their public
- * members reach.
+ * keyed by qualified name. [scoped] narrows it to the API: what the API [headers] declare, less what [skipped] names.
  */
 class CppApi(
     val records: Map<String, CppRecord>,
@@ -16,6 +15,8 @@ class CppApi(
     val publicConstants: Set<String>,
     /** Namespace-level functions. */
     val functions: List<CppMethod>,
+    /** The API headers, relative to the include dir: what [apiRecords], [apiFunctions] and [surface] cover. */
+    val headers: Set<String> = emptySet(),
     /**
      * Regexes of the qualified names left out of the API; a name goes with everything nested in it, so `Record::.*`
      * keeps the record but none of its members. `Record::method\(Type, …\)` names one overload (by its parameters'
@@ -23,7 +24,8 @@ class CppApi(
      */
     val skipped: Set<String> = emptySet(),
 ) {
-    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, publicConstants, functions, names)
+    fun scoped(headers: Set<String>, skipped: Set<String> = emptySet()) =
+        CppApi(records, enums, aliases, constants, publicConstants, functions, headers, skipped)
 
     private val patterns = skipped.map(::Regex)
     private val skips = HashMap<String, String>()
@@ -68,18 +70,16 @@ class CppApi(
     /** The overloads of [name] as [skipped] entries spell them. */
     fun overloads(name: String) = names.filter { it.startsWith("$name(") }
 
-    /** The records API [headers] declare that code outside can name: what gets bound. */
-    fun apiRecords(headers: Set<String>) = records.values.filter { it.accessible && it.header in headers && skipReason(it.name) == null }
+    /** The records [headers] declare that code outside can name: what gets bound. */
+    val apiRecords by lazy { records.values.filter { it.accessible && it.header in headers && skipReason(it.name) == null } }
 
-    fun apiFunctions(headers: Set<String>) = functions.filter { it.header in headers && it.isApi && !it.isDeprecated && skipReason(it) == null }
+    val apiFunctions by lazy { functions.filter { it.header in headers && it.isApi && !it.isDeprecated && skipReason(it) == null } }
 
     /** The enums [surface] reaches: Kotlin declares their values by hand. */
-    fun apiEnums(headers: Set<String>) = surface(headers).mapNotNull { enums[it] }.filter { skipReason(it.name) == null }.sortedBy { it.name }
+    val apiEnums by lazy { surface.mapNotNull { enums[it] }.filter { skipReason(it.name) == null }.sortedBy { it.name } }
 
     /** The public constants of the records [surface] reaches. */
-    fun apiConstants(headers: Set<String>) = surface(headers).let { surface ->
-        publicConstants.filter { it.substringBeforeLast("::") in surface && skipReason(it) == null }.sorted()
-    }
+    val apiConstants by lazy { publicConstants.filter { it.substringBeforeLast("::") in surface && skipReason(it) == null }.sorted() }
 
     /** The names code outside spells [name] by: Texture::InternalFormat for backend::TextureFormat. */
     fun aliasesOf(name: String): Set<String> = generateSequence(setOf(name)) { names ->
@@ -87,10 +87,10 @@ class CppApi(
     }.last()
 
     /** [apiRecords] and [apiFunctions], plus their bases and every type their public members reach. */
-    fun surface(headers: Set<String>): Set<String> {
+    val surface: Set<String> by lazy {
         val seen = LinkedHashSet<String>()
-        val queue = ArrayDeque(apiRecords(headers).map { it.name })
-        apiFunctions(headers).flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).flatMap { it.withArgs() }.mapNotNull { it.decl } }
+        val queue = ArrayDeque(apiRecords.map { it.name })
+        apiFunctions.flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).flatMap { it.withArgs() }.mapNotNull { it.decl } }
         while (queue.isNotEmpty()) {
             val name = queue.removeFirst()
             if (!seen.add(name)) continue
@@ -104,7 +104,7 @@ class CppApi(
             }
             aliases[name]?.withArgs()?.mapNotNullTo(queue) { it.decl }
         }
-        return seen
+        seen
     }
 }
 
@@ -148,6 +148,8 @@ class CppRecord(
     val allocatable: Boolean,
     val copyable: Boolean,
     val declaredDestructor: Boolean = false,
+    /** The documentation comment ([DocComments]), as on methods, fields and enums. */
+    val doc: String? = null,
 ) {
     val defaultConstructible get() = constructors.any { ctor -> ctor.all { it.default != null } }
 }
@@ -173,6 +175,7 @@ class CppMethod(
     val templateParameters: List<String>? = null,
     /** The header's `#if` condition around the declaration (e.g. `UTILS_HAS_THREADING`), or null. */
     val guard: String? = null,
+    val doc: String? = null,
 ) {
     val isTemplate get() = templateParameters != null
 
@@ -183,7 +186,7 @@ class CppMethod(
                 ?.let { a -> CppType(t.spelling.replace(Regex("\\b${t.decl!!.substringAfterLast("::")}\\b"), a.spelling), a.decl, a.kind, a.args) } ?: t
         }
         return CppMethod(owner, name, header, mangled, substitute(returns), params.map { CppParam(it.name, substitute(it.type), it.default) },
-            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard)
+            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard, doc = doc)
     }
 
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +
@@ -194,9 +197,12 @@ class CppParam(val name: String, val type: CppType, val default: CppValue?) {
     override fun toString() = "$type $name" + (default?.let { " = $it" } ?: "")
 }
 
-class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean, val isDeprecated: Boolean)
+class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean, val isDeprecated: Boolean, val doc: String? = null)
 
-class CppEnum(val name: String, val header: String?, val underlying: String?, val constants: List<Pair<String, BigInteger>>)
+class CppEnum(
+    val name: String, val header: String?, val underlying: String?, val constants: List<Pair<String, BigInteger>>,
+    val doc: String? = null, val constantDocs: Map<String, String> = emptyMap(),
+)
 
 /** A default argument or field initializer, folded as far as the AST allows. */
 sealed interface CppValue {
@@ -205,7 +211,9 @@ sealed interface CppValue {
     data class EnumConstant(val enum: String, val constant: String) : CppValue { override fun toString() = "$enum::$constant" }
     /** A named constant, with its value when it's one of [CppApi.constants]. */
     data class Named(val name: String, val value: CppValue?) : CppValue { override fun toString() = "$name(=$value)" }
-    /** A braced or constructor initializer; no elements means value-initialized (zero). */
+    /** An aggregate's braced initializer: its elements in order; none means value-initialized (zero). */
     data class Aggregate(val elements: List<CppValue>) : CppValue { override fun toString() = elements.joinToString(prefix = "{", postfix = "}") }
+    /** A constructor's [arguments], braced or not, which needn't be what it stores: a quaternion takes `w` first. */
+    data class Constructed(val arguments: List<CppValue>) : CppValue { override fun toString() = arguments.joinToString(prefix = "{", postfix = "}") }
     data class Unsupported(val kind: String) : CppValue { override fun toString() = "<$kind>" }
 }

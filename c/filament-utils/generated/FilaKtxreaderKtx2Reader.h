@@ -9,17 +9,98 @@ extern "C" {
 #endif
 
 // ktxreader::Ktx2Reader::Async
+/**
+ * Retrieves the Texture object.
+ *
+ * The texture is available immediately, but does not have its miplevels ready until
+ * after doTranscoding() and the subsequent uploadImages() have been completed. The
+ * caller has ownership over this texture and is responsible for freeing it after all
+ * miplevels have been uploaded.
+ */
 FilaTexture* FilaKtxreaderKtx2ReaderAsync_getTexture(const FilaKtxreaderKtx2ReaderAsync* self);
+/**
+ * Loads all mipmaps from the KTX2 file and transcodes them to the resolved format.
+ *
+ * This does not return until all mipmaps have been transcoded. This is typically
+ * called from a background thread.
+ */
 FilaKtxreaderKtx2ReaderResult FilaKtxreaderKtx2ReaderAsync_doTranscoding(FilaKtxreaderKtx2ReaderAsync* self);
+/**
+ * Uploads pending mipmaps to the texture.
+ *
+ * This can safely be called while doTranscoding() is still working in another thread.
+ * Since this calls Texture::setImage(), it should be called from the foreground thread;
+ * see "Thread safety" in the documentation for filament::Engine.
+ */
 void FilaKtxreaderKtx2ReaderAsync_uploadImages(FilaKtxreaderKtx2ReaderAsync* self);
 
 // ktxreader::Ktx2Reader
 FilaKtxreaderKtx2Reader* FilaKtxreaderKtx2Reader_create(FilaEngine* engine, bool quiet);
 void FilaKtxreaderKtx2Reader_destroy(FilaKtxreaderKtx2Reader* self);
+/**
+ * Requests that the reader constructs Filament textures with given internal format.
+ *
+ * This MUST be called at least once before calling load().
+ *
+ * As a reminder, a basis-encoded KTX2 can be quickly transcoded to any number of formats,
+ * so you need to tell it what formats your hw supports. That's why this method exists.
+ *
+ * Call requestFormat as many times as needed; formats that are submitted early are
+ * considered higher priority.
+ *
+ * If BasisU knows a priori that the given format is not available (e.g. if the build has
+ * disabled it), the format is not added and FORMAT_UNSUPPORTED is returned.
+ *
+ * Returns FORMAT_ALREADY_REQUESTED if the given format has already been requested.
+ *
+ * Hint: BasisU supports the following uncompressed formats: RGBA8, RGB565, RGBA4.
+ */
 FilaKtxreaderKtx2ReaderResult FilaKtxreaderKtx2Reader_requestFormat(FilaKtxreaderKtx2Reader* self, FilaTextureFormat format);
+/** Removes the given format from the list, or does nothing if it hasn't been requested. */
 void FilaKtxreaderKtx2Reader_unrequestFormat(FilaKtxreaderKtx2Reader* self, FilaTextureFormat format);
+/**
+ * Attempts to create and load a Filament texture from the given KTX2 blob.
+ *
+ * If none of the requested formats can be extracted from the data, this returns null.
+ *
+ * This method iterates through the requested format list, checking each one against the
+ * platform's capabilities and its availability from the transcoder. When a suitable format
+ * is determined, it then performs lossless decompression (zstd) before transcoding the data
+ * into the final format.
+ *
+ * The transfer function specified here is used in two ways:
+ *   1) It is checked against the transfer function that was specified as metadata
+ *      in the KTX2 blob. If they do not match, this method fails.
+ *   2) It is used as a filter when determining the final internal format.
+ */
 FilaTexture* FilaKtxreaderKtx2Reader_load(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
+/**
+ * Creates a texture without starting the transcode process.
+ *
+ * This method is an alternative to load() that allows users to populate mipmap levels
+ * asynchronously. The texture object however is still created synchronously.
+ *
+ * - For a usage example, see the documentation for the Async object.
+ * - Creates a copy of the given buffer, allowing clients to free it immediately.
+ * - Returns null if none of the requested formats can be extracted from the data.
+ *
+ * This method iterates through the requested format list, checking each one against the
+ * platform's capabilities and its availability from the transcoder. When a suitable format
+ * is determined, it then performs lossless decompression (zstd) before transcoding the data
+ * into the final format.
+ *
+ * The transfer function specified here is used in two ways:
+ *   1) It is checked against the transfer function that was specified as metadata
+ *      in the KTX2 blob. If they do not match, this method fails.
+ *   2) It is used as a filter when determining the final internal format.
+ */
 FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
+/**
+ * Frees the given async object and sets it to null.
+ *
+ * This frees the original source data (i.e. the raw content of the KTX2 file) but does not
+ * free the associated Texture object. This can be done after transcoding has finished.
+ */
 void FilaKtxreaderKtx2Reader_asyncDestroy(FilaKtxreaderKtx2Reader* self, FilaKtxreaderKtx2ReaderAsync** async);
 
 

@@ -10,8 +10,33 @@ extern "C" {
 
 // filament::ToneMapper
 void FilaToneMapper_destroy(FilaToneMapper* self);
+/**
+ * Maps an open domain (or "scene referred" values) color value to display
+ * domain (or "display referred") color value. Both the input and output
+ * color values are defined in the Rec.2020 color space, with no transfer
+ * function applied ("linear Rec.2020").
+ *
+ * @param c Input color to tone map, in the Rec.2020 color space with no
+ *          transfer function applied ("linear")
+ *
+ * @return A tone mapped color in the Rec.2020 color space, with no transfer
+ *         function applied ("linear")
+ */
 void FilaToneMapper_invoke(const FilaToneMapper* self, const FilaFloat3* c, FilaFloat3* out);
+/**
+ * If true, then this function holds that f(x) = vec3(f(x.r), f(x.g), f(x.b))
+ *
+ * This may be used to indicate that the color grading's LUT only requires a
+ * 1D texture instead of a 3D texture, potentially saving a significant amount
+ * of memory and generation time.
+ */
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self);
+/**
+ * True if this tonemapper only works in low-dynamic-range.
+ *
+ * This may be used to indicate that the color grading's LUT doesn't need to be
+ * log encoded.
+ */
 bool FilaToneMapper_isLDR(const FilaToneMapper* self);
 
 

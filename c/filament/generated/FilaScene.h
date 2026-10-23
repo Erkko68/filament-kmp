@@ -11,18 +11,79 @@ extern "C" {
 // filament::Scene
 // skipped void filament::Scene::addEntities(utils::Slice<const utils::Entity> entities): .*\(.*utils::Slice.*\)
 // skipped void filament::Scene::removeEntities(utils::Slice<const utils::Entity> entities): .*\(.*utils::Slice.*\)
+/**
+ * Sets the Skybox.
+ *
+ * The Skybox is drawn last and covers all pixels not touched by geometry.
+ *
+ * @param skybox The Skybox to use to fill untouched pixels, or nullptr to unset the Skybox.
+ */
 void FilaScene_setSkybox(FilaScene* self, FilaSkybox* skybox);
+/**
+ * Returns the Skybox associated with the Scene.
+ *
+ * @return The associated Skybox, or nullptr if there is none.
+ */
 FilaSkybox* FilaScene_getSkybox(const FilaScene* self);
+/**
+ * Set the IndirectLight to use when rendering the Scene.
+ *
+ * Currently, a Scene may only have a single IndirectLight. This call replaces the current
+ * IndirectLight.
+ *
+ * @param ibl The IndirectLight to use when rendering the Scene or nullptr to unset.
+ * @see getIndirectLight
+ */
 void FilaScene_setIndirectLight(FilaScene* self, FilaIndirectLight* ibl);
+/**
+ * Get the IndirectLight or nullptr if none is set.
+ *
+ * @return the the IndirectLight or nullptr if none is set
+ * @see setIndirectLight
+ */
 FilaIndirectLight* FilaScene_getIndirectLight(const FilaScene* self);
+/**
+ * Adds an Entity to the Scene.
+ *
+ * @param entity The entity is ignored for rendering purposes if it doesn't have a Renderable or Light component.
+ *
+ * \attention
+ *  A given Entity object can only be added once to a Scene.
+ */
 void FilaScene_addEntity(FilaScene* self, FilaEntity entity);
 void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, uint32_t count);
+/**
+ * Removes the Renderable from the Scene.
+ *
+ * @param entity The Entity to remove from the Scene. If the specified
+ *                   \p entity doesn't exist, this call is ignored.
+ */
 void FilaScene_remove(FilaScene* self, FilaEntity entity);
 void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, uint32_t count);
+/** Remove all entities to the Scene. */
 void FilaScene_removeAllEntities(FilaScene* self);
+/**
+ * Returns the total number of Entities in the Scene, whether alive or not.
+ * @return Total number of Entities in the Scene.
+ */
 uint32_t FilaScene_getEntityCount(const FilaScene* self);
+/**
+ * Returns the number of active (alive) Renderable objects in the Scene.
+ *
+ * @return The number of active (alive) Renderable objects in the Scene.
+ */
 uint32_t FilaScene_getRenderableCount(const FilaScene* self);
+/**
+ * Returns the number of active (alive) Light objects in the Scene.
+ *
+ * @return The number of active (alive) Light objects in the Scene.
+ */
 uint32_t FilaScene_getLightCount(const FilaScene* self);
+/**
+ * Returns true if the given entity is in the Scene.
+ *
+ * @return Whether the given entity is in the Scene.
+ */
 bool FilaScene_hasEntity(const FilaScene* self, FilaEntity entity);
 // handwritten in manual/ FilaScene_forEach: void filament::Scene::forEach(utils::Invocable<void (utils::Entity)> && functor) const
 //     utils::Invocable<void (utils::Entity)> &&: C callbacks take at most one pointer

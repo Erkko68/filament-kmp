@@ -181,8 +181,8 @@ included. The convention plugin opts every source set in, as skiko does
 A common `external fun` compiles to a JNI `native` method on its file's facade class
 (`Scene.kt` → `io.github.erkko68.filament.SceneKt`, or the `@file:JvmName`). JNI only finds it
 under a mangled C name, so `:generateBindings`
-([`buildlogic.apigen.externals`](../../build-logic/src/main/kotlin/buildlogic/apigen/externals)) scans
-`kotlin/*/src/commonMain` for `@ExternalSymbolName` externals and writes one forwarder each:
+([`buildlogic.apigen.bindings`](../../build-logic/src/main/kotlin/buildlogic/apigen/bindings)) writes one
+forwarder for each function in `c/api-manifest.json`, which the externals are generated from:
 
 ```c
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_SceneKt_FilaScene_1addEntity(JNIEnv* env, jclass cls, jlong scene, jint entity) {

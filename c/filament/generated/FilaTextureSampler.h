@@ -17,20 +17,58 @@ FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapM
 FilaTextureSampler* FilaTextureSampler_create_CompareMode_CompareFunc(FilaSamplerCompareMode mode, FilaSamplerCompareFunc func);
 void FilaTextureSampler_destroy(FilaTextureSampler* self);
 // skipped backend::SamplerParams filament::TextureSampler::getSamplerParams() const: uses filament::backend::SamplerParams
+/**
+ * Sets the minification filter
+ * @param v Minification filter
+ */
 void FilaTextureSampler_setMinFilter(FilaTextureSampler* self, FilaSamplerMinFilter v);
+/**
+ * Sets the magnification filter
+ * @param v Magnification filter
+ */
 void FilaTextureSampler_setMagFilter(FilaTextureSampler* self, FilaSamplerMagFilter v);
+/**
+ * Sets the wrap mode for the s (horizontal) texture coordinate
+ * @param v wrap mode
+ */
 void FilaTextureSampler_setWrapModeS(FilaTextureSampler* self, FilaSamplerWrapMode v);
+/**
+ * Sets the wrap mode for the t (vertical) texture coordinate
+ * @param v wrap mode
+ */
 void FilaTextureSampler_setWrapModeT(FilaTextureSampler* self, FilaSamplerWrapMode v);
+/**
+ * Sets the wrap mode for the r (depth, for 3D textures) texture coordinate
+ * @param v wrap mode
+ */
 void FilaTextureSampler_setWrapModeR(FilaTextureSampler* self, FilaSamplerWrapMode v);
+/**
+ * This controls anisotropic filtering.
+ * @param anisotropy Amount of anisotropy, should be a power-of-two. The default is 1.
+ *                   The maximum permissible value is 128.
+ */
 void FilaTextureSampler_setAnisotropy(FilaTextureSampler* self, float anisotropy);
+/**
+ * Sets the compare mode and function.
+ * @param mode Compare mode
+ * @param func Compare function
+ */
 void FilaTextureSampler_setCompareMode(FilaTextureSampler* self, FilaSamplerCompareMode mode, FilaSamplerCompareFunc func);
+/** returns the minification filter value */
 FilaSamplerMinFilter FilaTextureSampler_getMinFilter(const FilaTextureSampler* self);
+/** returns the magnification filter value */
 FilaSamplerMagFilter FilaTextureSampler_getMagFilter(const FilaTextureSampler* self);
+/** returns the s-coordinate wrap mode (horizontal) */
 FilaSamplerWrapMode FilaTextureSampler_getWrapModeS(const FilaTextureSampler* self);
+/** returns the t-coordinate wrap mode (vertical) */
 FilaSamplerWrapMode FilaTextureSampler_getWrapModeT(const FilaTextureSampler* self);
+/** returns the r-coordinate wrap mode (depth) */
 FilaSamplerWrapMode FilaTextureSampler_getWrapModeR(const FilaTextureSampler* self);
+/** returns the anisotropy value */
 float FilaTextureSampler_getAnisotropy(const FilaTextureSampler* self);
+/** returns the compare mode */
 FilaSamplerCompareMode FilaTextureSampler_getCompareMode(const FilaTextureSampler* self);
+/** returns the compare function */
 FilaSamplerCompareFunc FilaTextureSampler_getCompareFunc(const FilaTextureSampler* self);
 
 

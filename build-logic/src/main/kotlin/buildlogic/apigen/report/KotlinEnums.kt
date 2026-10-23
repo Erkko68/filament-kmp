@@ -1,0 +1,26 @@
+package buildlogic.apigen.report
+
+import java.math.BigInteger
+
+/** Reads the entries of hand-written Kotlin enums, as far as checking them against C++'s needs. */
+internal object KotlinEnums {
+    private val ANNOTATIONS = Regex("""^(?:@\w+(?:\([^)]*\))?\s*)+""")
+    private val ENTRY = Regex("""^(\w+)\s*(?:\((.*)\))?""", RegexOption.DOT_MATCHES_ALL)
+    private val NUMBER = Regex("""(-?)(?:0[xX]([0-9a-fA-F_]+)|(\d[\d_]*))[uUL]*""")
+
+    /**
+     * What the wrappers pass C for each entry of an enum's [body]: the number it's constructed with when every entry
+     * has one (`POSITION(0)`), else its ordinal.
+     */
+    fun values(body: String): Map<String, BigInteger> {
+        // ponytail: brackets inside string arguments aren't told apart; no enum has any.
+        val entries = split(body, ',', stopAt = ';').map { ANNOTATIONS.replace(it.trim(), "") }.filter { it.isNotEmpty() }
+            .mapNotNull { ENTRY.find(it) }.map { it.groupValues[1] to split(it.groupValues[2], ',').firstOrNull()?.trim()?.let(::number) }
+        val explicit = entries.isNotEmpty() && entries.all { it.second != null }
+        return entries.mapIndexed { i, (name, value) -> name to if (explicit) value!! else i.toBigInteger() }.toMap()
+    }
+
+    private fun number(text: String) = NUMBER.matchEntire(text)?.destructured?.let { (minus, hex, decimal) ->
+        (if (hex.isNotEmpty()) BigInteger(hex.replace("_", ""), 16) else BigInteger(decimal.replace("_", ""))).let { if (minus.isEmpty()) it else -it }
+    }
+}

@@ -11,23 +11,211 @@ extern "C" {
 // filament::Engine::Config
 FilaEngineConfig* FilaEngineConfig_create(void);
 void FilaEngineConfig_destroy(FilaEngineConfig* self);
+/**
+ * Size in MiB of the low-level command buffer arena.
+ *
+ * Each new command buffer is allocated from here. If this buffer is too small the program
+ * might terminate or rendering errors might occur.
+ *
+ * This is typically set to minCommandBufferSizeMB * 3, so that up to 3 frames can be
+ * batched-up at once.
+ *
+ * This value affects the application's memory usage.
+ */
 uint32_t FilaEngineConfig_getCommandBufferSizeMB(const FilaEngineConfig* self);
+/**
+ * Size in MiB of the low-level command buffer arena.
+ *
+ * Each new command buffer is allocated from here. If this buffer is too small the program
+ * might terminate or rendering errors might occur.
+ *
+ * This is typically set to minCommandBufferSizeMB * 3, so that up to 3 frames can be
+ * batched-up at once.
+ *
+ * This value affects the application's memory usage.
+ */
 void FilaEngineConfig_setCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value);
+/**
+ * Size in MiB of the per-frame data arena.
+ *
+ * This is the main arena used for allocations when preparing a frame.
+ * e.g.: Froxel data and high-level commands are allocated from this arena.
+ *
+ * If this size is too small, the program will abort on debug builds and have undefined
+ * behavior otherwise.
+ *
+ * This value affects the application's memory usage.
+ */
 uint32_t FilaEngineConfig_getPerRenderPassArenaSizeMB(const FilaEngineConfig* self);
+/**
+ * Size in MiB of the per-frame data arena.
+ *
+ * This is the main arena used for allocations when preparing a frame.
+ * e.g.: Froxel data and high-level commands are allocated from this arena.
+ *
+ * If this size is too small, the program will abort on debug builds and have undefined
+ * behavior otherwise.
+ *
+ * This value affects the application's memory usage.
+ */
 void FilaEngineConfig_setPerRenderPassArenaSizeMB(FilaEngineConfig* self, uint32_t value);
+/**
+ * Size in MiB of the backend's handle arena.
+ *
+ * Backends will fallback to slower heap-based allocations when running out of space and
+ * log this condition.
+ *
+ * If 0, then the default value for the given platform is used
+ *
+ * This value affects the application's memory usage.
+ */
 uint32_t FilaEngineConfig_getDriverHandleArenaSizeMB(const FilaEngineConfig* self);
+/**
+ * Size in MiB of the backend's handle arena.
+ *
+ * Backends will fallback to slower heap-based allocations when running out of space and
+ * log this condition.
+ *
+ * If 0, then the default value for the given platform is used
+ *
+ * This value affects the application's memory usage.
+ */
 void FilaEngineConfig_setDriverHandleArenaSizeMB(FilaEngineConfig* self, uint32_t value);
+/**
+ * Minimum size in MiB of a low-level command buffer.
+ *
+ * This is how much space is guaranteed to be available for low-level commands when a new
+ * buffer is allocated. If this is too small, the engine might have to stall to wait for
+ * more space to become available, this situation is logged.
+ *
+ * This value does not affect the application's memory usage.
+ */
 uint32_t FilaEngineConfig_getMinCommandBufferSizeMB(const FilaEngineConfig* self);
+/**
+ * Minimum size in MiB of a low-level command buffer.
+ *
+ * This is how much space is guaranteed to be available for low-level commands when a new
+ * buffer is allocated. If this is too small, the engine might have to stall to wait for
+ * more space to become available, this situation is logged.
+ *
+ * This value does not affect the application's memory usage.
+ */
 void FilaEngineConfig_setMinCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value);
+/**
+ * Size in MiB of the per-frame high level command buffer.
+ *
+ * This buffer is related to the number of draw calls achievable within a frame, if it is
+ * too small, the program will abort on debug builds and have undefined behavior otherwise.
+ *
+ * It is allocated from the 'per-render-pass arena' above. Make sure that at least 1 MiB is
+ * left in the per-render-pass arena when deciding the size of this buffer.
+ *
+ * This value does not affect the application's memory usage.
+ */
 uint32_t FilaEngineConfig_getPerFrameCommandsSizeMB(const FilaEngineConfig* self);
+/**
+ * Size in MiB of the per-frame high level command buffer.
+ *
+ * This buffer is related to the number of draw calls achievable within a frame, if it is
+ * too small, the program will abort on debug builds and have undefined behavior otherwise.
+ *
+ * It is allocated from the 'per-render-pass arena' above. Make sure that at least 1 MiB is
+ * left in the per-render-pass arena when deciding the size of this buffer.
+ *
+ * This value does not affect the application's memory usage.
+ */
 void FilaEngineConfig_setPerFrameCommandsSizeMB(FilaEngineConfig* self, uint32_t value);
+/**
+ * Number of threads to use in Engine's JobSystem.
+ *
+ * Engine uses a utils::JobSystem to carry out parallelization of Engine workloads. This
+ * value sets the number of threads allocated for JobSystem. Configuring this value can be
+ * helpful in CPU-constrained environments where too many threads can cause contention of
+ * CPU and reduce performance.
+ *
+ * The default value is 0, which implies that the Engine will use a heuristic to determine
+ * the number of threads to use.
+ *
+ * The special value SINGLE_THREADED forces the JobSystem to be single-threaded and not use
+ * a thread pool (jobs are executed on the calling thread).
+ */
 uint32_t FilaEngineConfig_getJobSystemThreadCount(const FilaEngineConfig* self);
+/**
+ * Number of threads to use in Engine's JobSystem.
+ *
+ * Engine uses a utils::JobSystem to carry out parallelization of Engine workloads. This
+ * value sets the number of threads allocated for JobSystem. Configuring this value can be
+ * helpful in CPU-constrained environments where too many threads can cause contention of
+ * CPU and reduce performance.
+ *
+ * The default value is 0, which implies that the Engine will use a heuristic to determine
+ * the number of threads to use.
+ *
+ * The special value SINGLE_THREADED forces the JobSystem to be single-threaded and not use
+ * a thread pool (jobs are executed on the calling thread).
+ */
 void FilaEngineConfig_setJobSystemThreadCount(FilaEngineConfig* self, uint32_t value);
+/**
+ * When uploading vertex or index data, the Filament Metal backend copies data
+ * into a shared staging area before transferring it to the GPU. This setting controls
+ * the total size of the buffer used to perform these allocations.
+ *
+ * Higher values can improve performance when performing many uploads across a small
+ * number of frames.
+ *
+ * This buffer remains alive throughout the lifetime of the Engine, so this size adds to the
+ * memory footprint of the app and should be set as conservative as possible.
+ *
+ * A value of 0 disables the shared staging buffer entirely; uploads will acquire an
+ * individual buffer from a pool of shared buffers.
+ *
+ * Only respected by the Metal backend.
+ */
 uint32_t FilaEngineConfig_getMetalUploadBufferSizeBytes(const FilaEngineConfig* self);
+/**
+ * When uploading vertex or index data, the Filament Metal backend copies data
+ * into a shared staging area before transferring it to the GPU. This setting controls
+ * the total size of the buffer used to perform these allocations.
+ *
+ * Higher values can improve performance when performing many uploads across a small
+ * number of frames.
+ *
+ * This buffer remains alive throughout the lifetime of the Engine, so this size adds to the
+ * memory footprint of the app and should be set as conservative as possible.
+ *
+ * A value of 0 disables the shared staging buffer entirely; uploads will acquire an
+ * individual buffer from a pool of shared buffers.
+ *
+ * Only respected by the Metal backend.
+ */
 void FilaEngineConfig_setMetalUploadBufferSizeBytes(FilaEngineConfig* self, uint32_t value);
+/**
+ * The action to take if a Drawable cannot be acquired.
+ *
+ * Each frame rendered requires a CAMetalDrawable texture, which is
+ * presented on-screen at the completion of each frame. These are
+ * limited and provided round-robin style by the system.
+ */
 bool FilaEngineConfig_getMetalDisablePanicOnDrawableFailure(const FilaEngineConfig* self);
+/**
+ * The action to take if a Drawable cannot be acquired.
+ *
+ * Each frame rendered requires a CAMetalDrawable texture, which is
+ * presented on-screen at the completion of each frame. These are
+ * limited and provided round-robin style by the system.
+ */
 void FilaEngineConfig_setMetalDisablePanicOnDrawableFailure(FilaEngineConfig* self, bool value);
+/**
+ * Set to `true` to forcibly disable parallel shader compilation in the backend.
+ * Currently only honored by the GL and Metal backends.
+ * @deprecated use "backend.disable_parallel_shader_compile" feature flag instead
+ */
 bool FilaEngineConfig_getDisableParallelShaderCompile(const FilaEngineConfig* self);
+/**
+ * Set to `true` to forcibly disable parallel shader compilation in the backend.
+ * Currently only honored by the GL and Metal backends.
+ * @deprecated use "backend.disable_parallel_shader_compile" feature flag instead
+ */
 void FilaEngineConfig_setDisableParallelShaderCompile(FilaEngineConfig* self, bool value);
 FilaPlatformStereoscopicType FilaEngineConfig_getStereoscopicType(const FilaEngineConfig* self);
 void FilaEngineConfig_setStereoscopicType(FilaEngineConfig* self, FilaPlatformStereoscopicType value);
@@ -43,46 +231,216 @@ FilaEngineConfigShaderLanguage FilaEngineConfig_getPreferredShaderLanguage(const
 void FilaEngineConfig_setPreferredShaderLanguage(FilaEngineConfig* self, FilaEngineConfigShaderLanguage value);
 bool FilaEngineConfig_getForceGLES2Context(const FilaEngineConfig* self);
 void FilaEngineConfig_setForceGLES2Context(FilaEngineConfig* self, bool value);
+/**
+ * Assert the native window associated to a SwapChain is valid when calling makeCurrent().
+ * This is only supported for:
+ *      - PlatformEGLAndroid
+ * @deprecated use "backend.opengl.assert_native_window_is_valid" feature flag instead
+ */
 bool FilaEngineConfig_getAssertNativeWindowIsValid(const FilaEngineConfig* self);
+/**
+ * Assert the native window associated to a SwapChain is valid when calling makeCurrent().
+ * This is only supported for:
+ *      - PlatformEGLAndroid
+ * @deprecated use "backend.opengl.assert_native_window_is_valid" feature flag instead
+ */
 void FilaEngineConfig_setAssertNativeWindowIsValid(FilaEngineConfig* self, bool value);
+/** GPU context priority level. Controls GPU work scheduling and preemption. */
 FilaPlatformGpuContextPriority FilaEngineConfig_getGpuContextPriority(const FilaEngineConfig* self);
+/** GPU context priority level. Controls GPU work scheduling and preemption. */
 void FilaEngineConfig_setGpuContextPriority(FilaEngineConfig* self, FilaPlatformGpuContextPriority value);
+/**
+ * The initial size in bytes of the shared uniform buffer used for material instance
+ * batching.
+ *
+ * If the buffer runs out of space during a frame, it will be automatically reallocated
+ * with a larger capacity. Setting an appropriate initial size can help avoid runtime
+ * reallocations, which can cause a minor performance stutter, at the cost of higher
+ * initial memory usage.
+ */
 uint32_t FilaEngineConfig_getSharedUboInitialSizeInBytes(const FilaEngineConfig* self);
+/**
+ * The initial size in bytes of the shared uniform buffer used for material instance
+ * batching.
+ *
+ * If the buffer runs out of space during a frame, it will be automatically reallocated
+ * with a larger capacity. Setting an appropriate initial size can help avoid runtime
+ * reallocations, which can cause a minor performance stutter, at the cost of higher
+ * initial memory usage.
+ */
 void FilaEngineConfig_setSharedUboInitialSizeInBytes(FilaEngineConfig* self, uint32_t value);
+/**
+ * Asynchronous mode for the engine. Defines how asynchronous operations are handled.
+ * Note that selecting a non-NONE mode does not guarantee asynchronous methods are
+ * supported, as the underlying backend or the feature flag may override this configuration.
+ * Always validate availability via Engine::isAsynchronousModeEnabled() before
+ * invoking asynchronous methods.
+ */
 FilaPlatformAsynchronousMode FilaEngineConfig_getAsynchronousMode(const FilaEngineConfig* self);
+/**
+ * Asynchronous mode for the engine. Defines how asynchronous operations are handled.
+ * Note that selecting a non-NONE mode does not guarantee asynchronous methods are
+ * supported, as the underlying backend or the feature flag may override this configuration.
+ * Always validate availability via Engine::isAsynchronousModeEnabled() before
+ * invoking asynchronous methods.
+ */
 void FilaEngineConfig_setAsynchronousMode(FilaEngineConfig* self, FilaPlatformAsynchronousMode value);
+/**
+ * Capacity of the LRU cache for material definitions.
+ *
+ * A value of 0 indicates that definitions will be destroyed immediately when they are no
+ * longer referenced by any material instances or scenes. A value greater than 0 defines
+ * the maximum number of unreferenced definitions to keep alive to avoid re-compilation.
+ */
 uint32_t FilaEngineConfig_getMaterialCacheCapacity(const FilaEngineConfig* self);
+/**
+ * Capacity of the LRU cache for material definitions.
+ *
+ * A value of 0 indicates that definitions will be destroyed immediately when they are no
+ * longer referenced by any material instances or scenes. A value greater than 0 defines
+ * the maximum number of unreferenced definitions to keep alive to avoid re-compilation.
+ */
 void FilaEngineConfig_setMaterialCacheCapacity(FilaEngineConfig* self, uint32_t value);
+/**
+ * Capacity of the LRU cache for program specializations.
+ *
+ * Similar to materialCacheCapacity, but applies to the underlying shader programs generated
+ * for materials. A value of 0 means immediate destruction of unreferenced programs. A
+ * positive value caches up to that number of programs.
+ */
 uint32_t FilaEngineConfig_getProgramCacheCapacity(const FilaEngineConfig* self);
+/**
+ * Capacity of the LRU cache for program specializations.
+ *
+ * Similar to materialCacheCapacity, but applies to the underlying shader programs generated
+ * for materials. A value of 0 means immediate destruction of unreferenced programs. A
+ * positive value caches up to that number of programs.
+ */
 void FilaEngineConfig_setProgramCacheCapacity(FilaEngineConfig* self, uint32_t value);
+/**
+ * Whether a scene can contain more than one directional light.
+ *
+ * By default, and historically, only the dominant directional light (the one with the
+ * highest intensity) of a scene is evaluated. When this is enabled, up to four
+ * additional directional lights contribute lighting; they don't cast shadows and don't
+ * draw a sun's disk. Scenes with a single directional light are unaffected either way.
+ *
+ * @see LightManager
+ */
 bool FilaEngineConfig_getEnableMultipleDirectionalLights(const FilaEngineConfig* self);
+/**
+ * Whether a scene can contain more than one directional light.
+ *
+ * By default, and historically, only the dominant directional light (the one with the
+ * highest intensity) of a scene is evaluated. When this is enabled, up to four
+ * additional directional lights contribute lighting; they don't cast shadows and don't
+ * draw a sun's disk. Scenes with a single directional light are unaffected either way.
+ *
+ * @see LightManager
+ */
 void FilaEngineConfig_setEnableMultipleDirectionalLights(FilaEngineConfig* self, bool value);
 
 // filament::Engine::FeatureFlag
 FilaEngineFeatureFlag* FilaEngineFeatureFlag_create(void);
 void FilaEngineFeatureFlag_destroy(FilaEngineFeatureFlag* self);
+/** name of the feature flag */
 const char* FilaEngineFeatureFlag_getName(const FilaEngineFeatureFlag* self);
 // no FilaEngineFeatureFlag_setName: filament::Engine::FeatureFlag is only a result, and C would have to keep the pointer
+/** short description */
 const char* FilaEngineFeatureFlag_getDescription(const FilaEngineFeatureFlag* self);
 // no FilaEngineFeatureFlag_setDescription: filament::Engine::FeatureFlag is only a result, and C would have to keep the pointer
+/** pointer to the value of the flag */
 const bool* FilaEngineFeatureFlag_getValue(const FilaEngineFeatureFlag* self);
 // no FilaEngineFeatureFlag_setValue: filament::Engine::FeatureFlag is only a result, and C would have to keep the pointer
+/** whether the flag is constant after construction */
 bool FilaEngineFeatureFlag_getConstant(const FilaEngineFeatureFlag* self);
+/** whether the flag is constant after construction */
 void FilaEngineFeatureFlag_setConstant(FilaEngineFeatureFlag* self, bool value);
 
 // filament::Engine::Builder
 FilaEngineBuilder* FilaEngineBuilder_create(void);
 void FilaEngineBuilder_destroy(FilaEngineBuilder* self);
 // skipped Builder & filament::Engine::Builder::features(std::initializer_list<const char *> list)
+/**
+ * @param backend Which driver backend to use
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_backend(FilaEngineBuilder* self, FilaBackend backend);
+/**
+ * @param platform A pointer to an object that implements Platform. If this is
+ *                 provided, then this object is used to create the hardware context
+ *                 and expose platform features to it.
+ *
+ *                 If not provided (or nullptr is used), an appropriate Platform
+ *                 is created automatically.
+ *
+ *                 All methods of this interface are called from filament's
+ *                 render thread, which is different from the main thread.
+ *
+ *                 The lifetime of \p platform must exceed the lifetime of
+ *                 the Engine object.
+ *
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_platform(FilaEngineBuilder* self, FilaPlatform* platform);
+/**
+ * @param config    A pointer to optional parameters to specify memory size
+ *                  configuration options.  If nullptr, then defaults used.
+ *
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_config(FilaEngineBuilder* self, const FilaEngineConfig* config);
+/**
+ * @param sharedContext A platform-dependant context used as a shared context
+ *                      when creating filament's internal context.
+ *
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_sharedContext(FilaEngineBuilder* self, void* sharedContext);
+/**
+ * @param featureLevel The feature level at which initialize Filament.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_featureLevel(FilaEngineBuilder* self, FilaFeatureLevel featureLevel);
+/**
+ * Warning: This is an experimental API. See Engine::setPaused(bool) for caveats.
+ *
+ * @param paused Whether to start the rendering thread paused.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_paused(FilaEngineBuilder* self, bool paused);
+/**
+ * Set a feature flag value. This is the only way to set constant feature flags.
+ * @param name feature name
+ * @param value true to enable, false to disable
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_feature(FilaEngineBuilder* self, const char* name, bool value);
+/**
+ * Sets the builder used to create the default ColorGrading object.
+ * @param colorGrading Builder used to create the default color grading.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const FilaColorGradingBuilder* colorGrading);
+/**
+ * Creates the filament Engine asynchronously.
+ *
+ * @param callback  Callback called once the engine is initialized and it is safe to
+ *                  call Engine::getEngine().
+ */
 void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCallback callback, void* callbackUser);
+/**
+ * Creates an instance of Engine.
+ *
+ * @return  A pointer to the newly created Engine, or nullptr if the Engine couldn't be
+ *          created.
+ *          nullptr if the GPU driver couldn't be initialized, for instance if it doesn't
+ *          support the right version of OpenGL or OpenGL ES.
+ *
+ * @exception   utils::PostConditionPanic can be thrown if there isn't enough memory to
+ *              allocate the command buffer. If exceptions are disabled, this condition if
+ *              fatal and this function will abort.
+ */
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 
 // filament::Engine
@@ -96,11 +454,83 @@ FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 // skipped DebugRegistry & filament::Engine::getDebugRegistry(): uses filament::DebugRegistry
 // skipped bool * _Nullable filament::Engine::getFeatureFlagPtr(const char * _Nonnull name) const
 // skipped void filament::Engine::compile(backend::CompilerPriorityQueue priority, const Material * _Nonnull material, const View * _Nonnull view, FeatureState shadowReceiver, FeatureState skinning, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback): filament::Engine::compile\(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable\)
+/** Returns the list of available feature flags */
 uint32_t FilaEngine_getFeatureFlags(const FilaEngine* self, FilaEngineFeatureFlag* const* out, uint32_t outCapacity);
+/**
+ * Backward compatibility helper to create an Engine.
+ * @see Builder
+ */
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
+/**
+ * Backward compatibility helper to create an Engine asynchronously.
+ * @see Builder
+ */
 void FilaEngine_createAsync(FilaEngineCreateCallback callback, void* user, FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
+/**
+ * Retrieve an Engine* from createAsync(). This must be called from the same thread than
+ * Engine::createAsync() was called from.
+ *
+ * @param token An opaque token given in the createAsync() callback function.
+ *
+ * @return A pointer to the newly created Engine, or nullptr if the Engine couldn't be created.
+ *
+ * @exception utils::PostConditionPanic can be thrown if there isn't enough memory to
+ * allocate the command buffer. If exceptions are disabled, this condition if fatal and
+ * this function will abort.
+ */
 FilaEngine* FilaEngine_getEngine(void* token);
+/**
+ * Destroy the Engine instance and all associated resources.
+ *
+ * Engine.destroy() should be called last and after all other resources have been destroyed,
+ * it ensures all filament resources are freed.
+ *
+ * Destroy performs the following tasks:
+ * 1. Destroy all internal software and hardware resources.
+ * 2. Free all user allocated resources that are not already destroyed and logs a warning.
+ *    This indicates a "leak" in the user's code.
+ * 3. Terminate the rendering engine's thread.
+ *
+ * @param engine A pointer to the filament.Engine* to be destroyed.
+ *               \p engine is cleared upon return.
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Engine.h>
+ * using namespace filament;
+ *
+ * Engine* engine = Engine::create();
+ * Engine::destroy(&engine); // clears engine*
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * \remark
+ * This method is thread-safe.
+ */
 void FilaEngine_destroy_EnginePtr(FilaEngine** engine);
+/**
+ * Destroy the Engine instance and all associated resources.
+ *
+ * Engine.destroy() should be called last and after all other resources have been destroyed,
+ * it ensures all filament resources are freed.
+ *
+ * Destroy performs the following tasks:
+ * 1. Destroy all internal software and hardware resources.
+ * 2. Free all user allocated resources that are not already destroyed and logs a warning.
+ *    This indicates a "leak" in the user's code.
+ * 3. Terminate the rendering engine's thread.
+ *
+ * @param engine A pointer to the filament.Engine to be destroyed.
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * #include <filament/Engine.h>
+ * using namespace filament;
+ *
+ * Engine* engine = Engine::create();
+ * Engine::destroy(engine);
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * \remark
+ * This method is thread-safe.
+ */
 void FilaEngine_destroy_Engine(FilaEngine* engine);
 bool FilaEngine_destroy_BufferObject(FilaEngine* self, const FilaBufferObject* p);
 bool FilaEngine_destroy_VertexBuffer(FilaEngine* self, const FilaVertexBuffer* p);
@@ -109,6 +539,14 @@ bool FilaEngine_destroy_IndexBuffer(FilaEngine* self, const FilaIndexBuffer* p);
 bool FilaEngine_destroy_SkinningBuffer(FilaEngine* self, const FilaSkinningBuffer* p);
 bool FilaEngine_destroy_MorphTargetBuffer(FilaEngine* self, const FilaMorphTargetBuffer* p);
 bool FilaEngine_destroy_IndirectLight(FilaEngine* self, const FilaIndirectLight* p);
+/**
+ * Destroys a Material object
+ * @param p the material object to destroy
+ * @attention All MaterialInstance of the specified material must be destroyed before
+ *            destroying it.
+ * @exception utils::PreConditionPanic is thrown if some MaterialInstances remain.
+ * no-op if exceptions are disabled and some MaterialInstances remain.
+ */
 bool FilaEngine_destroy_Material(FilaEngine* self, const FilaMaterial* p);
 bool FilaEngine_destroy_MaterialInstance(FilaEngine* self, const FilaMaterialInstance* p);
 bool FilaEngine_destroy_Renderer(FilaEngine* self, const FilaRenderer* p);
@@ -123,51 +561,264 @@ bool FilaEngine_destroy_RenderTarget(FilaEngine* self, const FilaRenderTarget* p
 bool FilaEngine_destroy_View(FilaEngine* self, const FilaView* p);
 bool FilaEngine_destroy_InstanceBuffer(FilaEngine* self, const FilaInstanceBuffer* p);
 void FilaEngine_destroy_Entity(FilaEngine* self, FilaEntity e);
+/**
+ * Query the feature level supported by the selected backend.
+ *
+ * A specific feature level needs to be set before the corresponding features can be used.
+ *
+ * @return FeatureLevel supported the selected backend.
+ * @see setActiveFeatureLevel
+ */
 FilaFeatureLevel FilaEngine_getSupportedFeatureLevel(const FilaEngine* self);
+/**
+ * Activate all features of a given feature level. If an explicit feature level is not specified
+ * at Engine initialization time via Builder::featureLevel, the default feature level is
+ * FeatureLevel::FEATURE_LEVEL_0 on devices not compatible with GLES 3.0; otherwise, the default
+ * is FeatureLevel::FEATURE_LEVEL_1. The selected feature level must not be higher than the
+ * value returned by getActiveFeatureLevel() and it's not possible lower the active feature
+ * level. Additionally, it is not possible to modify the feature level at all if the Engine was
+ * initialized at FeatureLevel::FEATURE_LEVEL_0.
+ *
+ * @param featureLevel the feature level to activate. If featureLevel is lower than
+ *                     getActiveFeatureLevel(), the current (higher) feature level is kept. If
+ *                     featureLevel is higher than getSupportedFeatureLevel(), or if the engine
+ *                     was initialized at feature level 0, an exception is thrown, or the
+ *                     program is terminated if exceptions are disabled.
+ *
+ * @return the active feature level.
+ *
+ * @see Builder::featureLevel
+ * @see getSupportedFeatureLevel
+ * @see getActiveFeatureLevel
+ */
 FilaFeatureLevel FilaEngine_setActiveFeatureLevel(FilaEngine* self, FilaFeatureLevel featureLevel);
+/**
+ * Returns the currently active feature level.
+ * @return currently active feature level
+ * @see getSupportedFeatureLevel
+ * @see setActiveFeatureLevel
+ */
 FilaFeatureLevel FilaEngine_getActiveFeatureLevel(const FilaEngine* self);
+/**
+ * Queries the maximum number of GPU instances that Filament creates when automatic instancing
+ * is enabled. This value is also the limit for the number of transforms that can be stored in
+ * an InstanceBuffer. This value may depend on the device and platform, but will remain constant
+ * during the lifetime of this Engine.
+ *
+ * This value does not apply when using the instances(size_t) method on
+ * RenderableManager::Builder.
+ *
+ * @return the number of max automatic instances
+ * @see setAutomaticInstancingEnabled
+ * @see RenderableManager::Builder::instances(size_t)
+ * @see RenderableManager::Builder::instances(size_t, InstanceBuffer*)
+ */
 uint32_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self);
+/**
+ * Queries the device and platform for support of the given stereoscopic type.
+ *
+ * @return true if the given stereo rendering is supported, false otherwise
+ * @see View::setStereoscopicOptions
+ */
 bool FilaEngine_isStereoSupported(const FilaEngine* self, FilaPlatformStereoscopicType stereoscopicType);
+/**
+ * Checks if the engine is set up for asynchronous operation. If it returns true, the
+ * asynchronous versions of the APIs are available for use.
+ *
+ * @return true if the engine supports asynchronous operation.
+ */
 bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* self);
+/**
+ * Returns whether the engine has encountered an unrecoverable failure.
+ *
+ * If this returns true, the engine is in an unrecoverable state and further calls to
+ * rendering methods will fail or be ignored. Apps can use this to check for fatal
+ * errors instead of relying on exceptions.
+ *
+ * @return true if an unrecoverable failure has occurred, false otherwise.
+ */
 bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self);
+/**
+ * Retrieves the configuration settings of this Engine.
+ *
+ * This method returns the configuration object that was supplied to the Engine's
+ * Builder::config method during the creation of this Engine. If the Builder::config method was
+ * not explicitly called (or called with nullptr), this method returns the default configuration
+ * settings.
+ *
+ * @return a Config object with this Engine's configuration
+ * @see Builder::config
+ */
 void FilaEngine_getConfig(const FilaEngine* self, FilaEngineConfig* out);
+/**
+ * Returns the maximum number of stereoscopic eyes supported by Filament. The actual number of
+ * eyes rendered is set at Engine creation time with the Engine::Config::stereoscopicEyeCount
+ * setting.
+ *
+ * @return the max number of stereoscopic eyes supported
+ * @see Engine::Config::stereoscopicEyeCount
+ */
 uint32_t FilaEngine_getMaxStereoscopicEyes(void);
+/** @return EntityManager used by filament */
 FilaUtilsEntityManager* FilaEngine_getEntityManager(const FilaEngine* self);
+/** @return RenderableManager reference */
 FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* self);
+/** @return LightManager reference */
 FilaLightManager* FilaEngine_getLightManager(FilaEngine* self);
+/** @return TransformManager reference */
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* self);
+/**
+ * Helper to enable accurate translations.
+ * If you need this Engine to handle a very large world space, one way to achieve this
+ * automatically is to enable accurate translations in the TransformManager. This helper
+ * provides a convenient way of doing that.
+ * This is typically called once just after creating the Engine.
+ */
 void FilaEngine_enableAccurateTranslations(FilaEngine* self);
+/**
+ * Enables or disables automatic instancing of render primitives. Instancing of render
+ * primitives can greatly reduce CPU overhead but requires the instanced primitives to be
+ * identical (i.e. use the same geometry) and use the same MaterialInstance. If it is known
+ * that the scene doesn't contain any identical primitives, automatic instancing can have some
+ * overhead and it is then best to disable it.
+ *
+ * Disabled by default.
+ *
+ * @param enable true to enable, false to disable automatic instancing.
+ *
+ * @see RenderableManager
+ * @see MaterialInstance
+ */
 void FilaEngine_setAutomaticInstancingEnabled(FilaEngine* self, bool enable);
+/**
+ * @return true if automatic instancing is enabled, false otherwise.
+ * @see setAutomaticInstancingEnabled
+ */
 bool FilaEngine_isAutomaticInstancingEnabled(const FilaEngine* self);
+/**
+ * Creates a SwapChain from the given Operating System's native window handle.
+ *
+ * @param nativeWindow An opaque native window handle. e.g.: on Android this is an
+ *                     `ANativeWindow*`.
+ * @param flags One or more configuration flags as defined in `SwapChain`.
+ *
+ * @return A pointer to the newly created SwapChain.
+ *
+ * @see Renderer.beginFrame()
+ */
 FilaSwapChain* FilaEngine_createSwapChain_void_uint64_t(FilaEngine* self, void* nativeWindow, uint64_t flags);
+/**
+ * Creates a headless SwapChain.
+ *
+ * @param width    Width of the drawing buffer in pixels.
+ * @param height   Height of the drawing buffer in pixels.
+ * @param flags     One or more configuration flags as defined in `SwapChain`.
+ *
+ * @return A pointer to the newly created SwapChain.
+ *
+ * @see Renderer.beginFrame()
+ */
 FilaSwapChain* FilaEngine_createSwapChain_uint32_t_uint32_t_uint64_t(FilaEngine* self, uint32_t width, uint32_t height, uint64_t flags);
+/**
+ * Creates a renderer associated to this engine.
+ *
+ * A Renderer is intended to map to a *window* on screen.
+ *
+ * @return A pointer to the newly created Renderer.
+ */
 FilaRenderer* FilaEngine_createRenderer(FilaEngine* self);
+/**
+ * Creates a View.
+ *
+ * @return A pointer to the newly created View.
+ */
 FilaView* FilaEngine_createView(FilaEngine* self);
+/**
+ * Creates a Scene.
+ *
+ * @return A pointer to the newly created Scene.
+ */
 FilaScene* FilaEngine_createScene(FilaEngine* self);
+/**
+ * Creates a Camera component.
+ *
+ * @param entity Entity to add the camera component to.
+ * @return A pointer to the newly created Camera.
+ */
 FilaCamera* FilaEngine_createCamera(FilaEngine* self, FilaEntity entity);
+/**
+ * Returns the Camera component of the given entity.
+ *
+ * @param entity An entity.
+ * @return A pointer to the Camera component for this entity or nullptr if the entity didn't
+ *         have a Camera component. The pointer is valid until destroyCameraComponent()
+ *         is called or the entity itself is destroyed.
+ */
 FilaCamera* FilaEngine_getCameraComponent(FilaEngine* self, FilaEntity entity);
+/**
+ * Destroys the Camera component associated with the given entity.
+ *
+ * @param entity An entity.
+ */
 void FilaEngine_destroyCameraComponent(FilaEngine* self, FilaEntity entity);
+/**
+ * Creates a Fence.
+ *
+ * @return A pointer to the newly created Fence.
+ */
 FilaFence* FilaEngine_createFence(FilaEngine* self);
+/** Tells whether a BufferObject object is valid */
 bool FilaEngine_isValid_BufferObject(const FilaEngine* self, const FilaBufferObject* p);
+/** Tells whether an VertexBuffer object is valid */
 bool FilaEngine_isValid_VertexBuffer(const FilaEngine* self, const FilaVertexBuffer* p);
+/** Tells whether a Fence object is valid */
 bool FilaEngine_isValid_Fence(const FilaEngine* self, const FilaFence* p);
+/** Tells whether an IndexBuffer object is valid */
 bool FilaEngine_isValid_IndexBuffer(const FilaEngine* self, const FilaIndexBuffer* p);
+/** Tells whether a SkinningBuffer object is valid */
 bool FilaEngine_isValid_SkinningBuffer(const FilaEngine* self, const FilaSkinningBuffer* p);
+/** Tells whether a MorphTargetBuffer object is valid */
 bool FilaEngine_isValid_MorphTargetBuffer(const FilaEngine* self, const FilaMorphTargetBuffer* p);
+/** Tells whether an IndirectLight object is valid */
 bool FilaEngine_isValid_IndirectLight(const FilaEngine* self, const FilaIndirectLight* p);
+/** Tells whether an Material object is valid */
 bool FilaEngine_isValid_Material(const FilaEngine* self, const FilaMaterial* p);
+/**
+ * Tells whether an MaterialInstance object is valid. Use this if you already know
+ * which Material this MaterialInstance belongs to. DO NOT USE getMaterial(), this would
+ * defeat the purpose of validating the MaterialInstance.
+ */
 bool FilaEngine_isValid_Material_MaterialInstance(const FilaEngine* self, const FilaMaterial* m, const FilaMaterialInstance* p);
+/** Tells whether a Renderer object is valid */
 bool FilaEngine_isValid_Renderer(const FilaEngine* self, const FilaRenderer* p);
+/** Tells whether a Scene object is valid */
 bool FilaEngine_isValid_Scene(const FilaEngine* self, const FilaScene* p);
+/** Tells whether a SkyBox object is valid */
 bool FilaEngine_isValid_Skybox(const FilaEngine* self, const FilaSkybox* p);
+/** Tells whether a ColorGrading object is valid */
 bool FilaEngine_isValid_ColorGrading(const FilaEngine* self, const FilaColorGrading* p);
+/** Tells whether a SwapChain object is valid */
 bool FilaEngine_isValid_SwapChain(const FilaEngine* self, const FilaSwapChain* p);
+/** Tells whether a Stream object is valid */
 bool FilaEngine_isValid_Stream(const FilaEngine* self, const FilaStream* p);
+/** Tells whether a Texture object is valid */
 bool FilaEngine_isValid_Texture(const FilaEngine* self, const FilaTexture* p);
+/** Tells whether a RenderTarget object is valid */
 bool FilaEngine_isValid_RenderTarget(const FilaEngine* self, const FilaRenderTarget* p);
+/** Tells whether a View object is valid */
 bool FilaEngine_isValid_View(const FilaEngine* self, const FilaView* p);
+/** Tells whether an InstanceBuffer object is valid */
 bool FilaEngine_isValid_InstanceBuffer(const FilaEngine* self, const FilaInstanceBuffer* p);
+/**
+ * Tells whether an MaterialInstance object is valid. Use this if the Material the
+ * MaterialInstance belongs to is not known. This method can be expensive.
+ */
 bool FilaEngine_isValidExpensive(const FilaEngine* self, const FilaMaterialInstance* p);
+/**
+ * Retrieve the count of each resource tracked by Engine.
+ * This is intended for debugging.
+ * @{
+ */
 uint32_t FilaEngine_getBufferObjectCount(const FilaEngine* self);
 uint32_t FilaEngine_getViewCount(const FilaEngine* self);
 uint32_t FilaEngine_getSceneCount(const FilaEngine* self);
@@ -184,22 +835,222 @@ uint32_t FilaEngine_getTextureCount(const FilaEngine* self);
 uint32_t FilaEngine_getSkyboxeCount(const FilaEngine* self);
 uint32_t FilaEngine_getColorGradingCount(const FilaEngine* self);
 uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self);
+/**
+ * This asynchronously executes user-defined commands. The commands are queued sequentially
+ * alongside other asynchronous operations (see Texture, VertexBuffer, and IndexBuffer) and
+ * guaranteed to be executed in the exact order they were invoked.
+ *
+ * Beware of overusing this method. It shares the execution queue with other asynchronous tasks
+ * like texture updates, so flooding it can delay those critical engine tasks. The recommended
+ * practice is to use this method for resource preparation, such as asset
+ * loading(images/meshes). This facilitates an efficient chaining pattern, where subsequent
+ * asynchronous operations (e.g., creating textures/vertex buffers) can be initiated directly
+ * within the completion callback.
+ *
+ * Users can call the `Engine::cancelAsyncCall()` method with the returned ID to cancel the
+ * asynchronous call.
+ *
+ * To use this method, the engine must be configured for asynchronous operation. Otherwise,
+ * calling async method will cause the program to terminate.
+ *
+ * @param command The custom command to be executed.
+ * @param handler The handler from which `onComplete` is invoked. If null, it's called from the
+ * main thread.
+ * @param onComplete The callback function that runs once the command has finished. Its
+ *                   `AsyncCallStatus` argument reports the outcome: `COMPLETED` if the command
+ *                   ran, `CANCELED` if it never ran.
+ * @param user    The custom data that will be passed as an argument to the `onComplete`.
+ * @return A unique identifier for the asynchronous call.
+ */
 uint32_t FilaEngine_runCommandAsync(FilaEngine* self, FilaCallback command, void* commandUser, FilaCallbackHandler* handler, FilaEngineAsyncCompletionCallback onComplete, void* user);
+/**
+ * Cancel the pending asynchronous call pointed to by `id`, which is retrieved whenever you
+ * invoke a non-blocking version of method on an object, such as `Texture::setImageAsync` or
+ * `BufferObject::setBufferAsync`.
+ *
+ * Canceling does not suppress the completion callback of the call. The callback always runs
+ * exactly once, on the handler the call was given: with `backend::AsyncCallStatus::CANCELED` if
+ * the operation never ran, and with `COMPLETED` if it did. So a caller counting outstanding
+ * operations always balances out, and whatever the callback owns is still released.
+ *
+ * @param id The unique identifier for the asynchronous call to be canceled.
+ * @return Returns true upon successful cancellation. It returns false if the asynchronous
+ * operation cannot be canceled because it is currently running, has finished, or has previously
+ * been canceled.
+ */
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id);
+/**
+ * Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) and blocks until
+ * all commands to this point are executed. Note that does guarantee that the
+ * hardware is actually finished.
+ *
+ * <p>This is typically used right after destroying the <code>SwapChain</code>,
+ * in cases where a guarantee about the <code>SwapChain</code> destruction is needed in a
+ * timely fashion, such as when responding to Android's
+ * <code>android.view.SurfaceHolder.Callback.surfaceDestroyed</code></p>
+ *
+ * <p>In asynchronous mode this also waits for every asynchronous call issued before it to run.
+ * A command passed to runCommandAsync() must not wait on the engine, or this call deadlocks.</p>
+ *
+ * @note If the backend thread has encountered an unrecoverable error, this function becomes a no-op.
+ */
 void FilaEngine_flushAndWait(FilaEngine* self);
+/**
+ * Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) and blocks until
+ * all commands to this point are executed. Note that does guarantee that the
+ * hardware is actually finished.
+ *
+ * A timeout can be specified, if for some reason this flushAndWait doesn't complete before the timeout, it will
+ * return false, true otherwise.
+ *
+ * <p>This is typically used right after destroying the <code>SwapChain</code>,
+ * in cases where a guarantee about the <code>SwapChain</code> destruction is needed in a
+ * timely fashion, such as when responding to Android's
+ * <code>android.view.SurfaceHolder.Callback.surfaceDestroyed</code></p>
+ *
+ * <p>In asynchronous mode this also waits for every asynchronous call issued before it to run.
+ * A command passed to runCommandAsync() must not wait on the engine, or this call deadlocks.</p>
+ *
+ * @param timeout A timeout in nanoseconds
+ * @return true if successful, false if flushAndWait timed out, in which case it wasn't successful and commands
+ * might still be executing on both the CPU and GPU sides.
+ *
+ * @note If the backend thread has encountered an unrecoverable error, this function becomes a no-op and returns false.
+ */
 bool FilaEngine_flushAndWait_uint64_t(FilaEngine* self, uint64_t timeout);
+/**
+ * Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) but does not wait
+ * for commands to be either executed or the hardware finished.
+ *
+ * <p>This is typically used after creating a lot of objects to start draining the command
+ * queue which has a limited size.</p>
+ *
+ * @note If the backend thread has encountered an unrecoverable error, this function becomes a no-op.
+ */
 void FilaEngine_flush(FilaEngine* self);
+/**
+ * Get paused state of rendering thread.
+ *
+ * <p>Warning: This is an experimental API.
+ *
+ * @see setPaused
+ */
 bool FilaEngine_isPaused(const FilaEngine* self);
+/**
+ * Pause or resume rendering thread.
+ *
+ * <p>Warning: This is an experimental API. In particular, note the following caveats.
+ *
+ * <ul><li>
+ * Buffer callbacks will never be called as long as the rendering thread is paused.
+ * Do not rely on a buffer callback to unpause the thread.
+ * </li><li>
+ * While the rendering thread is paused, rendering commands will continue to be queued until the
+ * buffer limit is reached. When the limit is reached, the program will abort.
+ * </li></ul>
+ */
 void FilaEngine_setPaused(FilaEngine* self, bool paused);
+/**
+ * Drains the user callback message queue and immediately execute all pending callbacks.
+ *
+ * <p> Typically this should be called once per frame right after the application's vsync tick,
+ * and typically just before computing parameters (e.g. object positions) for the next frame.
+ * This is useful because otherwise callbacks will be executed by filament at a later time,
+ * which may increase latency in certain applications.</p>
+ */
 void FilaEngine_pumpMessageQueues(FilaEngine* self);
+/**
+ * Switch the command queue to unprotected mode. Protected mode can be activated via
+ * Renderer::beginFrame() using a protected SwapChain.
+ * @see Renderer
+ * @see SwapChain
+ */
 void FilaEngine_unprotected(FilaEngine* self);
+/**
+ * Returns the default Material.
+ *
+ * The default material is 80% white and uses the Material.Shading.LIT shading.
+ *
+ * @return A pointer to the default Material instance (a singleton).
+ */
 const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* self);
+/** Returns the resolved backend. */
 FilaBackend FilaEngine_getBackend(const FilaEngine* self);
+/**
+ * Invokes one iteration of the render loop, used only on single-threaded platforms.
+ *
+ * This should be called every time the windowing system needs to paint (e.g. at 60 Hz).
+ */
 void FilaEngine_execute(FilaEngine* self);
+/**
+ * Get the current time. This is a convenience function that simply returns the
+ * time in nanosecond since epoch of std::chrono::steady_clock.
+ * A possible implementation is:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *     return std::chrono::steady_clock::now().time_since_epoch().count();
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * @return current time in nanosecond since epoch of std::chrono::steady_clock.
+ * @see Renderer::beginFrame()
+ */
 void FilaEngine_getSteadyClockTimeNano(uint64_t* out);
+/**
+ * Check if a feature flag exists
+ * @param name name of the feature flag to check
+ * @return true if the feature flag exists, false otherwise
+ */
 bool FilaEngine_hasFeatureFlag(const FilaEngine* self, const char* name);
+/**
+ * Set the value of a non-constant feature flag.
+ * @param name name of the feature flag to set
+ * @param value value to set
+ * @return true if the value was set, false if the feature flag is constant or doesn't exist.
+ */
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);
+/**
+ * Retrieves the value of any feature flag.
+ * @param name name of the feature flag
+ * @return the value of the flag if it exists
+ */
 bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* out);
+/**
+ * Asynchronously ensures that the variants of the specified Material needed to render it
+ * in the provided View are compiled. This takes into account the view's features
+ * (e.g. dynamic lighting, fog, stereo, shadowing), alongside the specified shadow receiver
+ * and skinning configurations.
+ *
+ * After issuing several Engine::compile() calls in a row, it is recommended to call
+ * Engine::flush() such that the backend can start the compilation work as soon as possible.
+ * The provided callback is guaranteed to be called on the main thread after all computed
+ * variants of the material are compiled. This can take hundreds of milliseconds.
+ *
+ * If all the needed variants are already compiled, the callback will be scheduled as
+ * soon as possible, but this might take a few dozen milliseconds, corresponding to how
+ * many previous frames are enqueued in the backend.
+ *
+ * If the same variant is scheduled for compilation multiple times, the first scheduling
+ * takes precedence; later scheduling are ignored.
+ *
+ * The callback is guaranteed to be called. If the engine is destroyed while some material
+ * variants are still compiling or in the queue, these will be discarded and the corresponding
+ * callback will be called. In that case however the Material pointer passed to the callback
+ * is guaranteed to be invalid (either because it's been destroyed by the user already, or,
+ * because it's been cleaned-up by the Engine).
+ *
+ * @param priority       Which priority queue to use, LOW or HIGH.
+ * @param material       The Material to compile.
+ * @param view           The View in which the material will be rendered.
+ * @param shadowReceiver Indicates whether to compile the shadow-receiving variants.
+ *                       Pass \p utils::tribool::indeterminate to compile both permutations.
+ * @param skinning       Indicates whether to compile the skinning variants.
+ *                       Pass \p utils::tribool::indeterminate to compile both permutations.
+ * @param handler        Handler to dispatch the callback or nullptr for the default handler.
+ * @param callback       Callback called on the main thread when the compilation is done
+ *                       by the backend.
+ *
+ * @see Material::compile
+ */
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 
 

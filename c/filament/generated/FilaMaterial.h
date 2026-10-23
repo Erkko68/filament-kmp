@@ -11,21 +11,36 @@ extern "C" {
 // filament::Material::ParameterInfo
 FilaMaterialParameterInfo* FilaMaterialParameterInfo_create(void);
 void FilaMaterialParameterInfo_destroy(FilaMaterialParameterInfo* self);
+/** Name of the parameter. */
 const char* FilaMaterialParameterInfo_getName(const FilaMaterialParameterInfo* self);
 // no FilaMaterialParameterInfo_setName: filament::Material::ParameterInfo is only a result, and C would have to keep the pointer
+/** Whether the parameter is a sampler (texture). */
 bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* self);
+/** Whether the parameter is a sampler (texture). */
 void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value);
+/** Whether the parameter is a subpass type. */
 bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self);
+/** Whether the parameter is a subpass type. */
 void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, bool value);
+/** Type of the parameter if the parameter is not a sampler. */
 FilaUniformType FilaMaterialParameterInfo_getType(const FilaMaterialParameterInfo* self);
+/** Type of the parameter if the parameter is not a sampler. */
 void FilaMaterialParameterInfo_setType(FilaMaterialParameterInfo* self, FilaUniformType value);
+/** Type of the parameter if the parameter is a sampler. */
 FilaSamplerType FilaMaterialParameterInfo_getSamplerType(const FilaMaterialParameterInfo* self);
+/** Type of the parameter if the parameter is a sampler. */
 void FilaMaterialParameterInfo_setSamplerType(FilaMaterialParameterInfo* self, FilaSamplerType value);
+/** Type of the parameter if the parameter is a subpass. */
 FilaSubpassType FilaMaterialParameterInfo_getSubpassType(const FilaMaterialParameterInfo* self);
+/** Type of the parameter if the parameter is a subpass. */
 void FilaMaterialParameterInfo_setSubpassType(FilaMaterialParameterInfo* self, FilaSubpassType value);
+/** Size of the parameter when the parameter is an array. */
 uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self);
+/** Size of the parameter when the parameter is an array. */
 void FilaMaterialParameterInfo_setCount(FilaMaterialParameterInfo* self, uint32_t value);
+/** Requested precision of the parameter. */
 FilaPrecision FilaMaterialParameterInfo_getPrecision(const FilaMaterialParameterInfo* self);
+/** Requested precision of the parameter. */
 void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, FilaPrecision value);
 
 // filament::Material::Builder
@@ -33,71 +48,384 @@ FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
 // skipped Builder & filament::Material::Builder::package(utils::Slice<const uint8_t> payload): .*\(.*utils::Slice.*\)
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
+/** inline helper to provide the constant name as a null-terminated C string */
 FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value);
+/** inline helper to provide the constant name as a null-terminated C string */
 FilaMaterialBuilder* FilaMaterialBuilder_constant_float(FilaMaterialBuilder* self, const char* name, float value);
+/** inline helper to provide the constant name as a null-terminated C string */
 FilaMaterialBuilder* FilaMaterialBuilder_constant_bool(FilaMaterialBuilder* self, const char* name, bool value);
+/**
+ * Sets the quality of the indirect lights computations. This is only taken into account
+ * if this material is lit and in the surface domain. This setting will affect the
+ * IndirectLight computation if one is specified on the Scene and Spherical Harmonics
+ * are used for the irradiance.
+ *
+ * @param shBandCount Number of spherical harmonic bands. Must be 1, 2 or 3 (default).
+ * @return Reference to this Builder for chaining calls.
+ * @see IndirectLight
+ */
 FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount);
+/**
+ * Set the quality of shadow sampling. This is only taken into account
+ * if this material is lit and in the surface domain.
+ * @param quality
+ * @return
+ */
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality);
+/**
+ * Set the batching mode of the instances created from this material.
+ * @param uboBatchingMode
+ * @return
+ */
 FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, FilaMaterialUboBatchingMode uboBatchingMode);
+/**
+ * Creates the Material object and returns a pointer to it.
+ *
+ * @param engine Reference to the filament::Engine to associate this Material with.
+ *
+ * @return pointer to the newly created object or nullptr if exceptions are disabled and
+ *         an error occurred.
+ *
+ * @exception utils::PostConditionPanic if a runtime error occurred, such as running out of
+ *            memory or other resources.
+ * @exception utils::PreConditionPanic if a parameter to a builder function was invalid.
+ */
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEngine* engine);
 
 // filament::Material
 // skipped size_t filament::Material::getParameters(ParameterInfo * _Nonnull parameters, size_t count) const
 // skipped void filament::Material::setDefaultParameter(std::string_view name, utils::Slice<const T> values): .*\(.*utils::Slice.*\)
+/**
+ * Asynchronously ensures that a subset of this Material's variants are compiled. After issuing
+ * several Material::compile() calls in a row, it is recommended to call Engine::flush()
+ * such that the backend can start the compilation work as soon as possible.
+ * The provided callback is guaranteed to be called on the main thread after all specified
+ * variants of the material are compiled. This can take hundreds of milliseconds.
+ *
+ * If all the material's variants are already compiled, the callback will be scheduled as
+ * soon as possible, but this might take a few dozen millisecond, corresponding to how
+ * many previous frames are enqueued in the backend. This also varies by backend. Therefore,
+ * it is recommended to only call this method once per material shortly after creation.
+ *
+ * If the same variant is scheduled for compilation multiple times, the first scheduling
+ * takes precedence; later scheduling are ignored.
+ *
+ * caveat: A consequence is that if a variant is scheduled on the low priority queue and later
+ * scheduled again on the high priority queue, the later scheduling is ignored.
+ * Therefore, the second callback could be called before the variant is compiled.
+ * However, the first callback, if specified, will trigger as expected.
+ *
+ * The callback is guaranteed to be called. If the engine is destroyed while some material
+ * variants are still compiling or in the queue, these will be discarded and the corresponding
+ * callback will be called. In that case however the Material pointer passed to the callback
+ * is guaranteed to be invalid (either because it's been destroyed by the user already, or,
+ * because it's been cleaned-up by the Engine).
+ *
+ * UserVariantFilterMask::ALL should be used with caution. Only variants that an application
+ * needs should be included in the variants argument. For example, the STE variant is only used
+ * for stereoscopic rendering. If an application is not planning to render in stereo, this bit
+ * should be turned off to avoid unnecessary material compilations.
+ *
+ * Note that it is possible to override specialization constants on a per-MaterialInstance basis
+ * (@see MaterialInstance::setConstant). In that case, the programs compiled by a call to
+ * Material::compile() may not be reusable by that MaterialInstance. It's better to call
+ * MaterialInstance::compile() in cases where you intend to override specialization constants.
+ *
+ * @param priority      Which priority queue to use, LOW or HIGH.
+ * @param variants      Variants to include to the compile command.
+ * @param handler       Handler to dispatch the callback or nullptr for the default handler
+ * @param callback      callback called on the main thread when the compilation is done on
+ *                      by backend.
+ *
+ * @see Material::compile
+ */
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
+/**
+ * Creates a new instance of this material. Material instances should be freed using
+ * Engine::destroy(const MaterialInstance*).
+ *
+ * @param name Optional name to associate with the given material instance. If this is null,
+ * then the instance inherits the material's name.
+ *
+ * @return A pointer to the new instance.
+ */
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* self, const char* name);
+/** Returns the name of this material as a null-terminated string. */
 const char* FilaMaterial_getName(const FilaMaterial* self);
+/** Returns the shading model of this material. */
 FilaShading FilaMaterial_getShading(const FilaMaterial* self);
+/** Returns the interpolation mode of this material. This affects how variables are interpolated. */
 FilaInterpolation FilaMaterial_getInterpolation(const FilaMaterial* self);
+/** Returns the blending mode of this material. */
 FilaBlendingMode FilaMaterial_getBlendingMode(const FilaMaterial* self);
+/** Returns the vertex domain of this material. */
 FilaVertexDomain FilaMaterial_getVertexDomain(const FilaMaterial* self);
+/** Returns the material's supported variants */
 uint32_t FilaMaterial_getSupportedVariants(const FilaMaterial* self);
+/**
+ * Returns the material domain of this material.
+ * The material domain determines how the material is used.
+ */
 FilaMaterialDomain FilaMaterial_getMaterialDomain(const FilaMaterial* self);
+/** Returns the default culling mode of this material. */
 FilaCullingMode FilaMaterial_getCullingMode(const FilaMaterial* self);
+/**
+ * Returns the transparency mode of this material.
+ * This value only makes sense when the blending mode is transparent or fade.
+ */
 FilaTransparencyMode FilaMaterial_getTransparencyMode(const FilaMaterial* self);
+/** Indicates whether instances of this material will, by default, write to the color buffer. */
 bool FilaMaterial_isColorWriteEnabled(const FilaMaterial* self);
+/** Indicates whether instances of this material will, by default, write to the depth buffer. */
 bool FilaMaterial_isDepthWriteEnabled(const FilaMaterial* self);
+/** Indicates whether instances of this material will, by default, use depth testing. */
 bool FilaMaterial_isDepthCullingEnabled(const FilaMaterial* self);
+/** Indicates whether this material is double-sided. */
 bool FilaMaterial_isDoubleSided(const FilaMaterial* self);
+/** Indicates whether this material uses alpha to coverage. */
 bool FilaMaterial_isAlphaToCoverageEnabled(const FilaMaterial* self);
+/** Returns the alpha mask threshold used when the blending mode is set to masked. */
 float FilaMaterial_getMaskThreshold(const FilaMaterial* self);
+/**
+ * Indicates whether this material uses the shadowing factor as a color multiplier.
+ * This values only makes sense when the shading mode is unlit.
+ */
 bool FilaMaterial_hasShadowMultiplier(const FilaMaterial* self);
+/** Indicates whether this material has specular anti-aliasing enabled */
 bool FilaMaterial_hasSpecularAntiAliasing(const FilaMaterial* self);
+/** Returns the screen-space variance for specular-antialiasing, this value is between 0 and 1. */
 float FilaMaterial_getSpecularAntiAliasingVariance(const FilaMaterial* self);
+/** Returns the clamping threshold for specular-antialiasing, this value is between 0 and 1. */
 float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* self);
+/** Returns the list of vertex attributes required by this material. */
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* self);
+/** Returns the refraction mode used by this material. */
 FilaRefractionMode FilaMaterial_getRefractionMode(const FilaMaterial* self);
+/** Return the refraction type used by this material. */
 FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self);
+/** Returns the reflection mode used by this material. */
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self);
+/** Returns the minimum required feature level for this material. */
 FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self);
+/**
+ * Returns the number of parameters declared by this material.
+ * The returned value can be 0.
+ */
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self);
+/** Indicates whether a parameter of the given name exists on this material. */
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name);
+/** Indicates whether a parameter of the given name exists on this material. */
 bool FilaMaterial_hasParameter_string_view(const FilaMaterial* self, const char* name);
+/** Indicates whether an existing parameter is a sampler or not. */
 bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name);
+/**
+ * Returns a view of the material source (.mat which is a JSON-ish file) string,
+ * if it has been set. Otherwise, it returns a view of an empty string.
+ * The lifetime of the string_view is tied to the lifetime of the Material.
+ */
 const char* FilaMaterial_getSource(const FilaMaterial* self);
+/**
+ * Gets the name of the transform field associated for the given sampler parameter.
+ * In the case where the parameter does not have a transform name field, it will return nullptr.
+ *
+ * @param samplerName the name of the sampler parameter to query.
+ *
+ * @return If exists, the transform name value otherwise returns a nullptr.
+ */
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, const char* samplerName);
+/**
+ * Sets a texture and sampler parameters on this material's default instance.
+ *
+ * @param name The name of the material texture parameter
+ * @param texture The texture to set as parameter
+ * @param sampler The sampler to be used with this texture
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
+/**
+ * Sets the color of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material color parameter
+ * @param type Whether the color is specified in the linear or sRGB space
+ * @param color The color as a floating point red, green, blue tuple
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color);
+/**
+ * Sets the color of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material color parameter
+ * @param type Whether the color is specified in the linear or sRGB space
+ * @param color The color as a floating point red, green, blue, alpha tuple
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_float(FilaMaterial* self, const char* name, float value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_int32_t(FilaMaterial* self, const char* name, int32_t value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_uint32_t(FilaMaterial* self, const char* name, uint32_t value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_int2(FilaMaterial* self, const char* name, const FilaInt2* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_int3(FilaMaterial* self, const char* name, const FilaInt3* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_int4(FilaMaterial* self, const char* name, const FilaInt4* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_uint2(FilaMaterial* self, const char* name, const FilaUint2* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_uint3(FilaMaterial* self, const char* name, const FilaUint3* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_uint4(FilaMaterial* self, const char* name, const FilaUint4* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_float2(FilaMaterial* self, const char* name, const FilaFloat2* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_float3(FilaMaterial* self, const char* name, const FilaFloat3* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_float4(FilaMaterial* self, const char* name, const FilaFloat4* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_mat3f(FilaMaterial* self, const char* name, const FilaMat3f* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_mat4f(FilaMaterial* self, const char* name, const FilaMat4f* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_bool(FilaMaterial* self, const char* name, bool value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_bool2(FilaMaterial* self, const char* name, const FilaBool2* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_bool3(FilaMaterial* self, const char* name, const FilaBool3* value);
+/**
+ * Sets the value of the given parameter on this material's default instance.
+ *
+ * @param name The name of the material parameter
+ * @param value The value of the material parameter
+ *
+ * @see getDefaultInstance()
+ */
 void FilaMaterial_setDefaultParameter_bool4(FilaMaterial* self, const char* name, const FilaBool4* value);
 void FilaMaterial_setDefaultParameter_float_size_t(FilaMaterial* self, const char* name, const float* values, uint32_t count);
 void FilaMaterial_setDefaultParameter_int32_t_size_t(FilaMaterial* self, const char* name, const int32_t* values, uint32_t count);
@@ -117,6 +445,7 @@ void FilaMaterial_setDefaultParameter_bool_size_t(FilaMaterial* self, const char
 void FilaMaterial_setDefaultParameter_bool2_size_t(FilaMaterial* self, const char* name, const FilaBool2* values, uint32_t count);
 void FilaMaterial_setDefaultParameter_bool3_size_t(FilaMaterial* self, const char* name, const FilaBool3* values, uint32_t count);
 void FilaMaterial_setDefaultParameter_bool4_size_t(FilaMaterial* self, const char* name, const FilaBool4* values, uint32_t count);
+/** Returns this material's default instance. */
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self);
 
 

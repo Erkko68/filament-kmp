@@ -11,17 +11,61 @@ extern "C" {
 // filament::Box
 FilaBox* FilaBox_create(void);
 void FilaBox_destroy(FilaBox* self);
+/**
+ * Whether the box is empty, i.e.: its extents are zero.
+ * @return true if the extents of the box are zero
+ */
 bool FilaBox_isEmpty(const FilaBox* self);
+/**
+ * Computes the lowest coordinates corner of the box.
+ * @return center - halfExtent
+ */
 void FilaBox_getMin(const FilaBox* self, FilaFloat3* out);
+/**
+ * Computes the largest coordinates corner of the box.
+ * @return center + halfExtent
+ */
 void FilaBox_getMax(const FilaBox* self, FilaFloat3* out);
+/**
+ * Initializes the 3D box from its min / max coordinates on each axis
+ * @param min lowest coordinates corner of the box
+ * @param max largest coordinates corner of the box
+ * @return This bounding box
+ */
 FilaBox* FilaBox_set(FilaBox* self, const FilaFloat3* min, const FilaFloat3* max);
+/**
+ * Computes the bounding box of the union of two boxes
+ * @param box The box to be combined with
+ * @return The bounding box of the union of *this and box
+ */
 FilaBox* FilaBox_unionSelf(FilaBox* self, const FilaBox* box);
+/**
+ * Translates the box *to* a given center position
+ * @param tr position to translate the box to
+ * @return A box centered in \p tr with the same extent than *this
+ */
 void FilaBox_translateTo(const FilaBox* self, const FilaFloat3* tr, FilaBox* out);
+/**
+ * Computes the smallest bounding sphere of the box.
+ * @return The smallest sphere defined by its center (.xyz) and radius (.w) that contains *this
+ */
 void FilaBox_getBoundingSphere(const FilaBox* self, FilaFloat4* out);
+/**
+ * Transform a Box by a linear transform and a translation.
+ *
+ * @param m a 3x3 matrix, the linear transform
+ * @param t a float3, the translation
+ * @param box the box to transform
+ * @return the bounding box of the transformed box
+ */
 void FilaBox_transform(const FilaMat3f* m, const FilaFloat3* t, const FilaBox* box, FilaBox* out);
+/** Center of the 3D box */
 void FilaBox_getCenter(const FilaBox* self, FilaFloat3* out);
+/** Center of the 3D box */
 void FilaBox_setCenter(FilaBox* self, const FilaFloat3* value);
+/** Half extent from the center on all 3 axis */
 void FilaBox_getHalfExtent(const FilaBox* self, FilaFloat3* out);
+/** Half extent from the center on all 3 axis */
 void FilaBox_setHalfExtent(FilaBox* self, const FilaFloat3* value);
 
 

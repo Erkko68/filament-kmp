@@ -11,13 +11,21 @@ extern "C" {
 // filament::ScreenSpaceReflectionsOptions
 FilaScreenSpaceReflectionsOptions* FilaScreenSpaceReflectionsOptions_create(void);
 void FilaScreenSpaceReflectionsOptions_destroy(FilaScreenSpaceReflectionsOptions* self);
+/** ray thickness, in world units */
 float FilaScreenSpaceReflectionsOptions_getThickness(const FilaScreenSpaceReflectionsOptions* self);
+/** ray thickness, in world units */
 void FilaScreenSpaceReflectionsOptions_setThickness(FilaScreenSpaceReflectionsOptions* self, float value);
+/** bias, in world units, to prevent self-intersections */
 float FilaScreenSpaceReflectionsOptions_getBias(const FilaScreenSpaceReflectionsOptions* self);
+/** bias, in world units, to prevent self-intersections */
 void FilaScreenSpaceReflectionsOptions_setBias(FilaScreenSpaceReflectionsOptions* self, float value);
+/** maximum distance, in world units, to raycast */
 float FilaScreenSpaceReflectionsOptions_getMaxDistance(const FilaScreenSpaceReflectionsOptions* self);
+/** maximum distance, in world units, to raycast */
 void FilaScreenSpaceReflectionsOptions_setMaxDistance(FilaScreenSpaceReflectionsOptions* self, float value);
+/** stride, in texels, for samples along the ray. */
 float FilaScreenSpaceReflectionsOptions_getStride(const FilaScreenSpaceReflectionsOptions* self);
+/** stride, in texels, for samples along the ray. */
 void FilaScreenSpaceReflectionsOptions_setStride(FilaScreenSpaceReflectionsOptions* self, float value);
 bool FilaScreenSpaceReflectionsOptions_getEnabled(const FilaScreenSpaceReflectionsOptions* self);
 void FilaScreenSpaceReflectionsOptions_setEnabled(FilaScreenSpaceReflectionsOptions* self, bool value);

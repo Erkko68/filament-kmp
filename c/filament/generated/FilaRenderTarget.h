@@ -11,19 +11,109 @@ extern "C" {
 // filament::RenderTarget::Builder
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_create(void);
 void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* self);
+/**
+ * Sets a texture to a given attachment point.
+ *
+ * When using a DEPTH attachment, it is important to always disable post-processing
+ * in the View. Failing to do so will cause the DEPTH attachment to be ignored in most
+ * cases.
+ *
+ * When the intention is to keep the content of the DEPTH attachment after rendering,
+ * Usage::SAMPLEABLE must be set on the DEPTH attachment, otherwise the content of the
+ * DEPTH buffer may be discarded.
+ *
+ * @param attachment The attachment point of the texture.
+ * @param texture The associated texture object.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_texture(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTexture* texture);
+/**
+ * Sets the mipmap level for a given attachment point.
+ *
+ * @param attachment The attachment point of the texture.
+ * @param level The associated mipmap level, 0 by default.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t level);
+/**
+ * Sets the face for cubemap textures at the given attachment point.
+ *
+ * @param attachment The attachment point.
+ * @param face The associated cubemap face.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_face(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTextureCubemapFace face);
+/**
+ * Sets an index of a single layer for 2d array, cubemap array, and 3d textures at the given
+ * attachment point.
+ *
+ * For cubemap array textures, layer is translated into an array index and face according to
+ *  - index: layer / 6
+ *  - face: layer % 6
+ *
+ * @param attachment The attachment point.
+ * @param layer The associated cubemap layer.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layer);
+/**
+ * Sets the starting index of the 2d array textures for multiview at the given attachment
+ * point.
+ *
+ * This requires COLOR and DEPTH attachments (if set) to be of 2D array textures.
+ *
+ * @param attachment The attachment point.
+ * @param layerCount The number of layers used for multiview, starting from baseLayer.
+ * @param baseLayer The starting index of the 2d array texture.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layerCount, uint32_t baseLayer);
+/**
+ * Sets the number of samples used for MSAA (Multisample Anti-Aliasing).
+ *
+ * @param samples The number of samples used for multisampling.
+ * @return A reference to this Builder for chaining calls.
+ */
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* self, uint32_t samples);
+/**
+ * Creates the RenderTarget object and returns a pointer to it.
+ *
+ * @return pointer to the newly created object.
+ */
 FilaRenderTarget* FilaRenderTargetBuilder_build(const FilaRenderTargetBuilder* self, FilaEngine* engine);
 
 // filament::RenderTarget
+/**
+ * Gets the texture set on the given attachment point
+ * @param attachment Attachment point
+ * @return A Texture object or nullptr if no texture is set for this attachment point
+ */
 FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
+/**
+ * Returns the mipmap level set on the given attachment point
+ * @param attachment Attachment point
+ * @return the mipmap level set on the given attachment point
+ */
 uint32_t FilaRenderTarget_getMipLevel(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
+/**
+ * Returns the face of a cubemap set on the given attachment point
+ * @param attachment Attachment point
+ * @return A cubemap face identifier. This is only relevant if the attachment's texture is
+ * a cubemap.
+ */
 FilaTextureCubemapFace FilaRenderTarget_getFace(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
+/**
+ * Returns the texture-layer set on the given attachment point
+ * @param attachment Attachment point
+ * @return A texture layer. This is only relevant if the attachment's texture is a 3D texture.
+ */
 uint32_t FilaRenderTarget_getLayer(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment);
+/**
+ * Returns the number of color attachments usable by this instance of Engine. This method is
+ * guaranteed to return at least MIN_SUPPORTED_COLOR_ATTACHMENTS_COUNT and at most
+ * MAX_SUPPORTED_COLOR_ATTACHMENTS_COUNT.
+ * @return Number of color attachments usable in a render target.
+ */
 uint32_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* self);
 
 
