@@ -43,7 +43,7 @@ kotlin {
 
     sourceSets {
         webMain.dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+            api(libs.kotlinx.browser)
         }
         webTest {
             // The export parity test's arities, generated from c/api-manifest.json.

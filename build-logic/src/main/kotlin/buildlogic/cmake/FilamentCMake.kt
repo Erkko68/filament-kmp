@@ -46,10 +46,11 @@ fun Project.registerCApiBuild(
     sources.from(
         root.dir("c"),
         root.file("jni/CMakeLists.txt"), root.dir("jni/src/main/cpp"),
-        root.dir("android/src/androidMain/cpp"),
+        root.dir("android/src/main/cpp"),
         root.file("web/CMakeLists.txt"), root.dir("web/src/wasm"),
         bindings, libDir, root.file("include/.filament-version"),
     )
     dependsOn(target.prebuiltsTask, ":downloadIncludes", ":generateBindings")
+    usesService(cmakeBuildSlot())
     configure()
 }

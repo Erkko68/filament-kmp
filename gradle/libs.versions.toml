@@ -25,10 +25,10 @@ androidx-test-espresso = "3.7.0"
 junit = "4.13.2"
 kotlin = "2.4.20"
 kotlinx-coroutines = "1.11.0"
+kotlinx-browser = "0.5.0"
 material3 = "1.9.0"
 vanniktech-publish = "0.37.0"
 dokka = "2.2.0"
-kover = "0.9.11"
 # tar.gz extraction for the prebuilt-download tasks in build-logic (replaced the Python scripts)
 commons-compress = "1.28.0"
 binary-compatibility-validator = "0.18.2"
@@ -46,7 +46,6 @@ compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin",
 vanniktech-publish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
-kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-composeUi" }
@@ -64,6 +63,7 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -74,5 +74,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 vanniktechPublish = { id = "com.vanniktech.gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binary-compatibility-validator" }

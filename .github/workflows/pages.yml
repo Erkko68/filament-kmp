@@ -62,7 +62,7 @@ jobs:
         working-directory: samples
         # jsBrowserDistribution produces the static site under
         # samples/webApp/build/dist/js/productionExecutable/.
-        run: ./gradlew :webApp:jsBrowserDistribution --no-configuration-cache
+        run: ./gradlew :webApp:jsBrowserDistribution
 
       - uses: actions/upload-artifact@v7
         with:
@@ -114,7 +114,7 @@ jobs:
         # :kotlin:gltfio, :kotlin:filament-compose into build/dokka/html (Dokka v2).
         # The native runtimes (:jni, :desktop, :android, :web) are interop plumbing, not documented.
         # The version label comes from libVersion in gradle.properties.
-        run: ./gradlew dokkaGenerate --no-configuration-cache
+        run: ./gradlew dokkaGenerate
 
       # Releases only, so a version lands in the archive exactly once, built from its
       # tag; other events generate the docs purely to prove Dokka still works.

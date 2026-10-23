@@ -41,6 +41,11 @@ val generateEmbeddedGlb = registerEmbeddedResources(
 )
 
 kotlin {
+    // Compose UI tests on web need an executable to bundle the Skiko runtime (CMP-4906).
+    js { browser { binaries.executable() } }
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs { browser { binaries.executable() } }
+
     sourceSets {
         commonMain {
             kotlin.srcDir(generateEmbeddedMaterials)

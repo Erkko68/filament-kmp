@@ -1,7 +1,7 @@
 import buildlogic.cmake.linkFilamentCApi
+import buildlogic.platform.IOS_DEPLOYMENT_TARGET
 import buildlogic.platform.hostPlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import java.awt.GraphicsEnvironment
@@ -11,7 +11,6 @@ plugins {
     id("com.android.kotlin.multiplatform.library")
     id("filament-publish")
     id("org.jetbrains.dokka")
-    id("org.jetbrains.kotlinx.kover")
 }
 
 val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
@@ -75,19 +74,17 @@ kotlin {
         }
     }
 
-    js {
-        browser { binaries.executable() }
-    }
+    // One Karma config for every module's web tests (gradle/karma/config.d).
+    val karmaConfig = rootProject.file("gradle/karma/config.d")
+    js { browser { testTask { useKarma { useChromeHeadless(); useConfigDirectory(karmaConfig) } } } }
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-    wasmJs {
-        browser { binaries.executable() }
-    }
+    wasmJs { browser { testTask { useKarma { useChromeHeadless(); useConfigDirectory(karmaConfig) } } } }
 
     // ── JS test bootstrapping ────────────────────────────────────────────────
     // Karma needs filament-kmp.js + .wasm (built by :wasm) loaded, and the module instantiated,
     // before any test touches Filament. Stage them with the bootstrap script into every module's
-    // web test resources; each module's karma.config.d/filament-setup.js lists them.
+    // web test resources; gradle/karma/config.d/filament-setup.js lists them.
     val stagedWebAssets = layout.buildDirectory.dir("filamentWebAssets")
     val stageFilamentWebAssets = tasks.register<Sync>("stageFilamentWebAssetsForJsTest") {
         dependsOn(":web:stageFilamentWasm")
@@ -178,35 +175,12 @@ kotlin.sourceSets.named("androidDeviceTest").configure {
     }
 }
 
-// ── XCFramework + iOS native config (macOS only) ─────────────────────────────
-// iOS targets, XCFrameworks, and related native config are macOS-only: the K/N
-// compiler can't run on non-macOS hosts, and the HostManager throws on unsupported
-// hosts like linux-arm64.  Use the safe hostPlatform() helper, which reads os.name
-// and never touches HostManager.
-if (hostPlatform() == "macos") {
-    val xcfName = project.name.split("-").joinToString("") { part ->
-        part.replaceFirstChar { it.uppercaseChar() }
-    }
-    kotlin {
-        val xcf = XCFramework(xcfName)
-        listOf(
-            targets.getByName("iosArm64")          as KotlinNativeTarget,
-            targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
-        ).forEach {
-            it.binaries.framework {
-                baseName = xcfName
-                isStatic = true
-                xcf.add(this)
-            }
-        }
-
-        // iOS minimum deployment target for native binaries
-        targets.withType<KotlinNativeTarget>().configureEach {
-            if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
-                binaries.all {
-                    freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
-                }
-            }
+// ── iOS deployment target ─────────────────────────────────────────────────────
+// The test executables link the C API, built for the same minimum.
+kotlin.targets.withType<KotlinNativeTarget>().configureEach {
+    if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
+        binaries.all {
+            freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=$IOS_DEPLOYMENT_TARGET"
         }
     }
 }
@@ -226,8 +200,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimu
 }
 
 // ── Browser test-count assertion ──────────────────────────────────────────────
-// Karma retries a crashed page (browserDisconnectTolerance = 2 in each module's
-// karma.config.d) and the reporter keeps only the last attempt, so js/wasmJs
+// Karma retries a crashed page (browserDisconnectTolerance = 2 in
+// gradle/karma/config.d) and the reporter keeps only the last attempt, so js/wasmJs
 // browser tasks can drop whole suites and still exit SUCCESS. Ignored tests are
 // still written to the XML as skipped, so the suite total must equal the @Test
 // count in the sources that feed these targets.

@@ -1,8 +1,7 @@
 plugins {
-    // Versioned via the catalog: the root applies no convention plugin, so unlike the
-    // subprojects it can't resolve these version-less from the build-logic classpath.
+    // Versioned via the catalog: subprojects inherit them through the classpath loaded here,
+    // but the root itself can't resolve them version-less.
     alias(libs.plugins.dokka)
-    alias(libs.plugins.kover)
     alias(libs.plugins.binaryCompatibilityValidator)
     id("filament-root")
 }
@@ -50,21 +49,6 @@ dokka {
         version = providers.gradleProperty("libVersion").getOrElse("0.1.0-SNAPSHOT")
         olderVersionsDir = layout.buildDirectory.dir("previousDocs")
     }
-}
-
-// ── Test-coverage aggregation (Kover) ─────────────────────────────────────────
-// Each :kotlin:* module applies the Kover plugin (via the filament-kmp-module convention
-// plugin) so its test runs are instrumented; the root merges them into one report.
-// Kover measures the JVM-executed tests (the `jvm` target + Android unit tests) — that's the
-// common `expect` surface plus the JNI actuals. The js/native actuals run on their own
-// runtimes Kover can't instrument, so they're out of these numbers by construction.
-// Generate with `./gradlew koverHtmlReport` (build/reports/kover/html) or `koverXmlReport`.
-dependencies {
-    kover(project(":kotlin:filament"))
-    kover(project(":kotlin:filamat"))
-    kover(project(":kotlin:filament-utils"))
-    kover(project(":kotlin:gltfio"))
-    kover(project(":kotlin:filament-compose"))
 }
 
 // Every project (including the implicit :kotlin parent) carries valid coordinates, so nothing publishes

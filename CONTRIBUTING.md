@@ -106,7 +106,7 @@ Cutting a release is a maintainer task: see [.github/workflows/README.md](.githu
 ## Running CI (important)
 
 The full platform matrix (jvm / js / ios / android) runs **automatically on every PR** and
-on push to `main`. It's **expensive** (native prebuilts, emulators, XCFrameworks), so:
+on push to `main`. It's **expensive** (native prebuilts, emulators), so:
 
 1. Open your PR — the matrix starts on its own and re-runs on every push.
 2. **Fork PRs** are held until a maintainer clicks **"Approve and run"** (GitHub's native

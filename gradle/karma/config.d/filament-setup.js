@@ -1,20 +1,16 @@
-// Karma configuration fragment for Filament WASM tests.
+// Karma configuration fragment for every :kotlin:* module's web tests (filament-kmp-module points Karma here).
 //
-// Prepends filament-kmp.js (the Emscripten loader, built by :wasm), filament-kmp.wasm (served as a
-// static asset), and the bootstrap that waits for the module before Karma starts the suite. They
-// are staged into the test resources by stageFilamentWebAssetsForJsTest (filament-kmp-module).
+// Prepends the Emscripten loaders (filament-kmp.js, plus filamat-kmp.js where :kotlin:filamat stages it),
+// their .wasm (served as static assets), and the bootstrap that waits for the modules before Karma starts
+// the suite. They are staged into the test resources by stageFilamentWebAssetsForJsTest (filament-kmp-module).
 
 // Karma's basePath is the test package root; the staged WASM loader, binary,
 // and bootstrap end up under `kotlin/` (the JS package output dir).
 config.files = [
-    // WASM loader — must run before any Kotlin test code.
-    { pattern: 'kotlin/filament-kmp.js', watched: false, included: true, served: true, nocache: true },
-    // WASM binary — served only; filament-kmp.js fetches it next to itself.
-    // The `/base/` prefix is karma's served path for files in basePath.
-    { pattern: 'kotlin/filament-kmp.wasm', watched: false, included: false, served: true, nocache: true },
-    // filamat-kmp.wasm, the runtime material compiler (staged by stageFilamatWasm).
-    { pattern: 'kotlin/filamat-kmp.js', watched: false, included: true, served: true, nocache: true },
-    { pattern: 'kotlin/filamat-kmp.wasm', watched: false, included: false, served: true, nocache: true },
+    // WASM loaders — must run before any Kotlin test code.
+    { pattern: 'kotlin/*-kmp.js', watched: false, included: true, served: true, nocache: true },
+    // WASM binaries — served only; each loader fetches its .wasm next to itself.
+    { pattern: 'kotlin/*-kmp.wasm', watched: false, included: false, served: true, nocache: true },
     // Bootstrap: delays __karma__.loaded until Filament is ready.
     { pattern: 'kotlin/filament-karma-bootstrap.js', watched: false, included: true, served: true, nocache: true },
 ].concat(config.files || []);

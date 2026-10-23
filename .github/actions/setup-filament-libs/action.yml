@@ -45,7 +45,7 @@ runs:
       shell: bash
       run: brew install ninja
     - shell: bash
-      run: ./gradlew ${{ steps.plan.outputs.tasks }} --no-configuration-cache
+      run: ./gradlew ${{ steps.plan.outputs.tasks }}
     - if: steps.libs.outputs.cache-hit != 'true'
       uses: actions/cache/save@v6
       with:

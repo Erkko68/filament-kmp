@@ -96,44 +96,24 @@ jobs:
         with: { targets: '${{ matrix.target }}' }
       - name: Build library
         shell: bash
-        run: ./gradlew compileKotlinJvm --no-configuration-cache
+        run: ./gradlew compileKotlinJvm
       # Public-API surface guard: fails if the JVM ABI of any published :kotlin:*
       # module drifts from the committed api/ dumps (regenerate with `apiDump`).
       - name: API compatibility check
         shell: bash
-        run: ./gradlew apiCheck --no-configuration-cache
+        run: ./gradlew apiCheck
       - name: Run JVM tests
         shell: bash
         run: |
-          ./gradlew \
-            :desktop:test \
-            :kotlin:filament:jvmTest \
-            :kotlin:filamat:jvmTest \
-            :kotlin:filament-utils:jvmTest \
-            :kotlin:gltfio:jvmTest \
-            :kotlin:filament-compose:jvmTest \
-            --no-configuration-cache
+          ./gradlew :desktop:test jvmTest
       - name: Check libfilament-c needs no LLVM runtime (Linux)
         if: runner.os == 'Linux'
         run: |
           ! readelf -d desktop/build/filament-c/*/libfilament-c.so | grep -E 'NEEDED.*(libc\+\+|libunwind)'
-      # Aggregate JVM test coverage once, on the macOS runner where the real-backend (Metal)
-      # tests also run, for the highest-coverage snapshot. Report-only (non-blocking) — no
-      # threshold is enforced. js/native actuals run on runtimes Kover can't instrument.
-      - name: Coverage report
-        if: matrix.target == 'macos-arm64'
-        shell: bash
-        run: ./gradlew koverXmlReport koverHtmlReport --no-configuration-cache
-      - name: Upload coverage report
-        if: matrix.target == 'macos-arm64'
-        uses: actions/upload-artifact@v7
-        with:
-          name: kover-coverage
-          path: build/reports/kover/
       - name: Build desktop sample
         working-directory: samples
         shell: bash
-        run: ./gradlew :desktopApp:compileKotlinJvm --no-configuration-cache
+        run: ./gradlew :desktopApp:compileKotlinJvm
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -155,7 +135,7 @@ jobs:
       - uses: ./.github/actions/setup-filament-libs
         with: { targets: wasm }
       - name: Build wasm runtime
-        run: ./gradlew :web:cmakeBuild --no-configuration-cache
+        run: ./gradlew :web:cmakeBuild
       - uses: actions/upload-artifact@v7
         with:
           name: wasm-runtime
@@ -178,20 +158,13 @@ jobs:
       - uses: actions/download-artifact@v8
         with: { name: wasm-runtime, path: wasm-runtime }
       - name: Build library
-        run: ./gradlew compileKotlinJs --no-configuration-cache
+        run: ./gradlew compileKotlinJs
       - name: Run JS tests
         run: |
-          ./gradlew \
-            :kotlin:filament:jsTest \
-            :kotlin:filamat:jsTest \
-            :kotlin:filament-utils:jsTest \
-            :kotlin:gltfio:jsTest \
-            :kotlin:filament-compose:jsTest \
-            :web:jsTest \
-            --no-configuration-cache
+          ./gradlew jsTest
       - name: Build web sample
         working-directory: samples
-        run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
+        run: ./gradlew :webApp:compileKotlinJs
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -214,20 +187,13 @@ jobs:
       - uses: actions/download-artifact@v8
         with: { name: wasm-runtime, path: wasm-runtime }
       - name: Build library
-        run: ./gradlew compileKotlinWasmJs --no-configuration-cache
+        run: ./gradlew compileKotlinWasmJs
       - name: Run Wasm tests
         run: |
-          ./gradlew \
-            :kotlin:filament:wasmJsTest \
-            :kotlin:filamat:wasmJsTest \
-            :kotlin:filament-utils:wasmJsTest \
-            :kotlin:gltfio:wasmJsTest \
-            :kotlin:filament-compose:wasmJsTest \
-            :web:wasmJsTest \
-            --no-configuration-cache
+          ./gradlew wasmJsTest
       - name: Build web sample
         working-directory: samples
-        run: ./gradlew :webApp:compileKotlinWasmJs --no-configuration-cache
+        run: ./gradlew :webApp:compileKotlinWasmJs
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -259,8 +225,7 @@ jobs:
         run: |
           ./gradlew \
             compileKotlinIosArm64 \
-            compileKotlinIosSimulatorArm64 \
-            --no-configuration-cache
+            compileKotlinIosSimulatorArm64
       - name: Run iOS simulator tests
         run: |
           # bootstatus -b waits forever on a wedged simulator: give it 5 min (perl alarm; macOS has no timeout),
@@ -271,28 +236,7 @@ jobs:
             xcrun simctl boot "$DEV" || true
             perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$DEV" -b
           fi
-          ./gradlew \
-            :kotlin:filament:iosSimulatorArm64Test \
-            :kotlin:filamat:iosSimulatorArm64Test \
-            :kotlin:filament-utils:iosSimulatorArm64Test \
-            :kotlin:gltfio:iosSimulatorArm64Test \
-            :kotlin:filament-compose:iosSimulatorArm64Test \
-            "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}" \
-            --no-configuration-cache
-      - name: Assemble XCFrameworks
-        # Release-mode K/N linking of 5 modules × 2 arches is ~18 min and only verifies the
-        # distribution artifacts link — which publish.yml needs, not per-PR correctness (the
-        # sim tests + sample xcodebuild already prove iOS builds & runs). Skip on PRs; still
-        # runs on push to main and manual dispatch.
-        if: github.event_name != 'pull_request'
-        run: |
-          ./gradlew \
-            assembleFilamentXCFramework \
-            assembleFilamatXCFramework \
-            assembleFilamentUtilsXCFramework \
-            assembleGltfioXCFramework \
-            assembleFilamentComposeXCFramework \
-            --no-configuration-cache
+          ./gradlew iosSimulatorArm64Test "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}"
       - name: Build iOS sample (Simulator)
         working-directory: samples/iosApp
         run: |
@@ -325,11 +269,13 @@ jobs:
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
       # :android's pinned NDK/CMake (upstream's, see android/build.gradle.kts); its CMake tasks don't fetch them.
       - name: Install NDK + CMake
-        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.14206865" "cmake;3.22.1" > /dev/null
+        run: |
+          prop() { sed -n "s/^$1=//p" gradle.properties; }
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;$(prop ndkVersion)" "cmake;$(prop androidCmakeVersion)" > /dev/null
       - uses: ./.github/actions/setup-filament-libs
         with: { targets: 'android-arm64-v8a android-armeabi-v7a android-x86_64 android-x86' }
       - name: Build library
-        run: ./gradlew :android:assemble compileAndroidMain --no-configuration-cache
+        run: ./gradlew :android:assemble compileAndroidMain
       - name: Enable KVM (for android emulator)
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
@@ -377,13 +323,13 @@ jobs:
           disable-animations: true
           script: |
             adb logcat -v threadtime > logcat.txt &
-            ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
+            ./gradlew connectedAndroidDeviceTest
       # An emulator that dies takes its own output with it; the kernel log says whether it was killed.
       - name: Emulator post-mortem
         if: failure()
         run: sudo dmesg | grep -iE 'out of memory|oom|killed process|segfault|qemu' | tail -40 || true
       - name: Build Android sample
-        run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
+        run: ./gradlew :androidApp:assembleDebug
         working-directory: samples
       - name: Upload test reports
         if: failure()
