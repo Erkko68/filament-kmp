@@ -1,5 +1,6 @@
 package buildlogic.apigen.bindings.jni
 
+import buildlogic.apigen.c.Abi
 import buildlogic.apigen.c.CFunction
 
 /**
@@ -19,19 +20,26 @@ object JniForwarderWriter {
     }
 
     private fun forwarder(jniClass: String, fn: CFunction): String {
-        val params = fn.params.joinToString("") { (name, abi) -> ", ${TYPES.getValue(abi)} $name" }
-        val args = fn.params.joinToString { (name, abi) -> if (abi == "ptr") "(void*)(intptr_t) $name" else name }
+        val params = fn.params.joinToString("") { (name, abi) -> ", ${type(abi)} $name" }
+        val args = fn.params.joinToString { (name, abi) -> if (abi == Abi.POINTER) "(void*)(intptr_t) $name" else name }
         val call = "${fn.name}($args)"
         val body = when (fn.returns) {
-            "void" -> "$call;"
-            "ptr" -> "return (jlong)(intptr_t) $call;"
-            "bool" -> "return $call ? JNI_TRUE : JNI_FALSE;"
-            else -> "return (${TYPES.getValue(fn.returns)}) $call;"
+            Abi.VOID -> "$call;"
+            Abi.POINTER -> "return (jlong)(intptr_t) $call;"
+            Abi.BOOL -> "return $call ? JNI_TRUE : JNI_FALSE;"
+            else -> "return (${type(fn.returns)}) $call;"
         }
-        return "JNIEXPORT ${TYPES.getValue(fn.returns)} JNICALL Java_${jniClass}_${mangle(fn.name)}(JNIEnv* env, jclass cls$params) {\n    $body\n}\n\n"
+        return "JNIEXPORT ${type(fn.returns)} JNICALL Java_${jniClass}_${mangle(fn.name)}(JNIEnv* env, jclass cls$params) {\n    $body\n}\n\n"
     }
 
-    private val TYPES = mapOf("void" to "void", "ptr" to "jlong", "i64" to "jlong", "i32" to "jint", "f32" to "jfloat", "f64" to "jdouble", "bool" to "jboolean")
+    private fun type(abi: Abi) = when (abi) {
+        Abi.VOID -> "void"
+        Abi.POINTER, Abi.I64 -> "jlong"
+        Abi.I32 -> "jint"
+        Abi.F32 -> "jfloat"
+        Abi.F64 -> "jdouble"
+        Abi.BOOL -> "jboolean"
+    }
 
     // JNI name mangling: '_' → "_1", '.' → '_' (identifiers here are ASCII).
     private fun mangle(name: String) = name.replace("_", "_1").replace('.', '_')
