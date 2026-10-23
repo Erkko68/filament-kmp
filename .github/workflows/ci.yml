@@ -105,13 +105,7 @@ jobs:
       - name: Run JVM tests
         shell: bash
         run: |
-          ./gradlew \
-            :desktop:test \
-            :kotlin:filament:jvmTest \
-            :kotlin:filamat:jvmTest \
-            :kotlin:filament-utils:jvmTest \
-            :kotlin:gltfio:jvmTest \
-            :kotlin:filament-compose:jvmTest
+          ./gradlew :desktop:test jvmTest
       - name: Check libfilament-c needs no LLVM runtime (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -167,13 +161,7 @@ jobs:
         run: ./gradlew compileKotlinJs
       - name: Run JS tests
         run: |
-          ./gradlew \
-            :kotlin:filament:jsTest \
-            :kotlin:filamat:jsTest \
-            :kotlin:filament-utils:jsTest \
-            :kotlin:gltfio:jsTest \
-            :kotlin:filament-compose:jsTest \
-            :web:jsTest
+          ./gradlew jsTest
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs
@@ -202,13 +190,7 @@ jobs:
         run: ./gradlew compileKotlinWasmJs
       - name: Run Wasm tests
         run: |
-          ./gradlew \
-            :kotlin:filament:wasmJsTest \
-            :kotlin:filamat:wasmJsTest \
-            :kotlin:filament-utils:wasmJsTest \
-            :kotlin:gltfio:wasmJsTest \
-            :kotlin:filament-compose:wasmJsTest \
-            :web:wasmJsTest
+          ./gradlew wasmJsTest
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinWasmJs
@@ -254,13 +236,7 @@ jobs:
             xcrun simctl boot "$DEV" || true
             perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$DEV" -b
           fi
-          ./gradlew \
-            :kotlin:filament:iosSimulatorArm64Test \
-            :kotlin:filamat:iosSimulatorArm64Test \
-            :kotlin:filament-utils:iosSimulatorArm64Test \
-            :kotlin:gltfio:iosSimulatorArm64Test \
-            :kotlin:filament-compose:iosSimulatorArm64Test \
-            "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}"
+          ./gradlew iosSimulatorArm64Test "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}"
       - name: Build iOS sample (Simulator)
         working-directory: samples/iosApp
         run: |
@@ -347,7 +323,7 @@ jobs:
           disable-animations: true
           script: |
             adb logcat -v threadtime > logcat.txt &
-            ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest
+            ./gradlew connectedAndroidDeviceTest
       # An emulator that dies takes its own output with it; the kernel log says whether it was killed.
       - name: Emulator post-mortem
         if: failure()
