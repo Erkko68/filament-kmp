@@ -12,5 +12,5 @@ Builds `libfilament-c.so` for arm64-v8a, armeabi-v7a, x86_64 and x86 and ships i
 - **Why not `externalNativeBuild`:** AGP's native build needs the SDK and NDK just to configure, which breaks
   every host without them (e.g. the linux-arm64 CI runner). As plain tasks, nothing touches the SDK until an
   Android task runs.
-- **Android-only JNI:** `src/androidMain/cpp/FilaAndroid.cpp` + `FilaAndroid.kt` (`Surface` → `ANativeWindow`).
+- **Android-only JNI:** `src/main/cpp/FilaAndroid.cpp` + `FilaAndroid.kt` (`Surface` → `ANativeWindow`).
 - **Tests:** the `:kotlin:*` modules' `connectedAndroidDeviceTest` run the whole API on a device.

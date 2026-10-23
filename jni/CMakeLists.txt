@@ -26,7 +26,7 @@ target_link_libraries(filament-c-jni PRIVATE ${FILAMENT_LIBRARIES} ${FILAMAT_LIB
 set(seal "${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp/filament-c-jni.map")
 
 if (ANDROID)
-    target_sources(filament-c-jni PRIVATE ../android/src/androidMain/cpp/FilaAndroid.cpp)
+    target_sources(filament-c-jni PRIVATE ../android/src/main/cpp/FilaAndroid.cpp)
     target_link_libraries(filament-c-jni PRIVATE log GLESv3 EGL android jnigraphics)
     target_link_options(filament-c-jni PRIVATE
         "LINKER:--version-script=${seal}"

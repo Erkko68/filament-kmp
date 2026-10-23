@@ -1,11 +1,9 @@
 import buildlogic.cmake.CMakeBuildTask
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("multiplatform")
-    id("com.android.kotlin.multiplatform.library")
+    id("com.android.library")
     id("filament-publish")
 }
 
@@ -17,21 +15,19 @@ val ndkVersion = providers.gradleProperty("ndkVersion").get()
 val cmakeVersion = providers.gradleProperty("androidCmakeVersion").get()
 val minSdkVersion = libs.versions.android.minSdk.get().toInt()
 
-kotlin {
-    android {
-        namespace = "io.github.erkko68.filament.jni"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = minSdkVersion
-        compilerOptions {
-            jvmTarget.set(JvmTarget.fromTarget(libs.versions.android.jvmTarget.get()))
-        }
+android {
+    namespace = "io.github.erkko68.filament.jni"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig { minSdk = minSdkVersion }
+    val jvmTarget = JavaVersion.toVersion(libs.versions.android.jvmTarget.get())
+    compileOptions {
+        sourceCompatibility = jvmTarget
+        targetCompatibility = jvmTarget
     }
+}
 
-    sourceSets {
-        androidMain.dependencies {
-            api(project(":jni"))
-        }
-    }
+dependencies {
+    api(project(":jni"))
 }
 
 val sdk = androidComponents.sdkComponents.sdkDirectory
