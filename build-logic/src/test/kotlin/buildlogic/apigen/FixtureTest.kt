@@ -1,47 +1,50 @@
 package buildlogic.apigen
 
 import buildlogic.apigen.c.CManifest
+import buildlogic.apigen.cpp.modelReport
 import buildlogic.apigen.externals.bindingFiles
 import buildlogic.apigen.gaps.coverage
-import buildlogic.apigen.kotlin.kotlinExternals
-import buildlogic.apigen.kotlin.packageDir
+import buildlogic.apigen.kotlin.KotlinDeclarations
+import buildlogic.apigen.kotlin.kotlinApiSources
+import buildlogic.apigen.verify.enumCheck
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 /**
- * Runs every stage on the fixture library and compares what they write with the fixture's committed output.
- * `./gradlew -p build-logic test -Papigen.update` rewrites it; review the diff.
+ * Runs every stage on the fixture library, a project laid out like this repo, and compares what they write with the
+ * fixture's committed output. `./gradlew -p build-logic test -Papigen.update` rewrites it; review the diff.
  */
 class FixtureTest {
     @Test
     fun `every stage writes the committed output`() {
-        val project = Files.createTempDirectory("apigen-fixture").toFile()
-        FIXTURE.copyRecursively(project)
-        generate(project, Files.createTempDirectory("apigen-work").toFile())
+        val project = temporaryDir().also { FIXTURE.copyRecursively(it) }
+        generate(ApiGen(GEO_API, project, temporaryDir()), project)
         val differences = differences(project, FIXTURE)
         if (differences.isEmpty()) return
-        if (System.getProperty("apigen.update") == "true") return update(project, differences)
+        if (System.getProperty("apigen.update") == "true") return update(differences)
         fail("The generator's output isn't the fixture's (-Papigen.update rewrites it):\n" + differences.joinToString("\n") { "  ${it.message}" })
     }
 
-    private fun generate(project: File, work: File) {
-        val apiGen = ApiGen(GEO_API, project, work)
-        val writer = apiGen.writer()
-        val files = writer.write()
-        apiGen.write(files)
-        apiGen.checkCompiles(files.keys.map(apiGen.cDir::resolve))
-        val manifest = apiGen.manifest()
-        apiGen.manifestFile.writeText(manifest.json())
+    @Test
+    fun `apiVerify finds a Kotlin enum value that isn't C++'s`() {
+        val api = ApiGen(GEO_API, FIXTURE, temporaryDir()).api()
+        assertEquals(emptyList(), enumCheck(api, KotlinDeclarations(kotlinApiSources(FIXTURE.resolve("kotlin")))).wrong)
+        val wrong = KotlinDeclarations("enum class Kind(internal val value: Int) { CIRCLE(0), POLYGON(4) }")
+        assertEquals(listOf("geo::Kind::POLYGON is 5 in C++, 4 in Kotlin"), enumCheck(api, wrong).wrong)
+    }
 
-        val kotlin = apiGen.kotlinDir!!
-        val bindings = GEO_API.kotlin!!
-        bindings.packages.forEach { (module, pkg) -> kotlin.resolve(packageDir(module, pkg)).deleteRecursively() }
-        kotlinExternals(CManifest.parse(apiGen.manifestFile.readText()), GEO_API).forEach { (path, text) -> kotlin.resolve(path).write(text) }
-        project.resolve("bindings").deleteRecursively()
-        bindingFiles(manifest.headers, bindings, GEO_API.prefix).forEach { (path, text) -> project.resolve("bindings/$path").write(text) }
-        apiGen.cDir.resolve("api-coverage.txt").writeText(coverage(writer, apiGen.headers, GEO_API, kotlin).text)
+    /** What the tasks write, the glue and the model report in place of the build dir. */
+    private fun generate(apiGen: ApiGen, project: File) {
+        apiGen.generateCApi()
+        apiGen.generateKotlinExternals()
+        val bindings = project.resolve("bindings")
+        GeneratedFiles(bindings, listOf(bindings), bindingFiles(CManifest.parse(apiGen.manifestFile.readText()).headers, GEO_API.kotlin!!, GEO_API.prefix)).write()
+        val api = apiGen.api()
+        apiGen.coverageFile.writeText(coverage(api, apiGen.cApi(api).bindings, GEO_API.prefix, kotlinApiSources(apiGen.kotlinDir!!)).text)
+        project.resolve("reports/api-model.txt").write(modelReport(apiGen.model()).text)
     }
 
     private class Difference(val path: String, val actual: File?, val message: String)
@@ -65,12 +68,14 @@ class FixtureTest {
         }
     }
 
-    private fun update(project: File, differences: List<Difference>) = differences.forEach { d ->
+    private fun update(differences: List<Difference>) = differences.forEach { d ->
         val target = FIXTURE.resolve(d.path)
         if (d.actual == null) target.delete() else target.write(d.actual.readText())
     }
 
     private fun File.write(text: String) = apply { parentFile.mkdirs() }.writeText(text)
+
+    private fun temporaryDir() = Files.createTempDirectory("apigen").toFile()
 
     private companion object {
         val FIXTURE = File("src/test/fixture")

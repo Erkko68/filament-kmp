@@ -31,7 +31,7 @@ abstract class ApiGapsTask @Inject constructor(private val exec: ExecOperations)
     fun run() {
         val nm = SymbolReader(exec)
         // The API headers' exported classes make up the API; everything else in the libraries is internal.
-        val headers = apiGen().read().headerApi()
+        val headers = apiGen().model().headerApi()
         val demangler = Demangler(exec)
         val headerMethods = demangler.demangle(headers.methods)
         val undeclared = CppApiGaps.undeclared(nm.read(libraries.files), demangler.demangle(headers.declared), headers.publicClasses)

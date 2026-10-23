@@ -4,8 +4,7 @@ import java.math.BigInteger
 
 /**
  * A library's headers as clang sees them: every record, enum, alias and constant in the dumped namespaces,
- * keyed by qualified name. [surface] narrows it to the API: the exported classes and every type their public
- * members reach.
+ * keyed by qualified name. [scoped] narrows it to the API: what the API [headers] declare, less what [skipped] names.
  */
 class CppApi(
     val records: Map<String, CppRecord>,
@@ -16,6 +15,8 @@ class CppApi(
     val publicConstants: Set<String>,
     /** Namespace-level functions. */
     val functions: List<CppMethod>,
+    /** The API headers, relative to the include dir: what [apiRecords], [apiFunctions] and [surface] cover. */
+    val headers: Set<String> = emptySet(),
     /**
      * Regexes of the qualified names left out of the API; a name goes with everything nested in it, so `Record::.*`
      * keeps the record but none of its members. `Record::method\(Type, …\)` names one overload (by its parameters'
@@ -23,7 +24,8 @@ class CppApi(
      */
     val skipped: Set<String> = emptySet(),
 ) {
-    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, publicConstants, functions, names)
+    fun scoped(headers: Set<String>, skipped: Set<String> = emptySet()) =
+        CppApi(records, enums, aliases, constants, publicConstants, functions, headers, skipped)
 
     private val patterns = skipped.map(::Regex)
     private val skips = HashMap<String, String>()
@@ -68,18 +70,16 @@ class CppApi(
     /** The overloads of [name] as [skipped] entries spell them. */
     fun overloads(name: String) = names.filter { it.startsWith("$name(") }
 
-    /** The records API [headers] declare that code outside can name: what gets bound. */
-    fun apiRecords(headers: Set<String>) = records.values.filter { it.accessible && it.header in headers && skipReason(it.name) == null }
+    /** The records [headers] declare that code outside can name: what gets bound. */
+    val apiRecords by lazy { records.values.filter { it.accessible && it.header in headers && skipReason(it.name) == null } }
 
-    fun apiFunctions(headers: Set<String>) = functions.filter { it.header in headers && it.isApi && !it.isDeprecated && skipReason(it) == null }
+    val apiFunctions by lazy { functions.filter { it.header in headers && it.isApi && !it.isDeprecated && skipReason(it) == null } }
 
     /** The enums [surface] reaches: Kotlin declares their values by hand. */
-    fun apiEnums(headers: Set<String>) = surface(headers).mapNotNull { enums[it] }.filter { skipReason(it.name) == null }.sortedBy { it.name }
+    val apiEnums by lazy { surface.mapNotNull { enums[it] }.filter { skipReason(it.name) == null }.sortedBy { it.name } }
 
     /** The public constants of the records [surface] reaches. */
-    fun apiConstants(headers: Set<String>) = surface(headers).let { surface ->
-        publicConstants.filter { it.substringBeforeLast("::") in surface && skipReason(it) == null }.sorted()
-    }
+    val apiConstants by lazy { publicConstants.filter { it.substringBeforeLast("::") in surface && skipReason(it) == null }.sorted() }
 
     /** The names code outside spells [name] by: Texture::InternalFormat for backend::TextureFormat. */
     fun aliasesOf(name: String): Set<String> = generateSequence(setOf(name)) { names ->
@@ -87,10 +87,10 @@ class CppApi(
     }.last()
 
     /** [apiRecords] and [apiFunctions], plus their bases and every type their public members reach. */
-    fun surface(headers: Set<String>): Set<String> {
+    val surface: Set<String> by lazy {
         val seen = LinkedHashSet<String>()
-        val queue = ArrayDeque(apiRecords(headers).map { it.name })
-        apiFunctions(headers).flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).flatMap { it.withArgs() }.mapNotNull { it.decl } }
+        val queue = ArrayDeque(apiRecords.map { it.name })
+        apiFunctions.flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).flatMap { it.withArgs() }.mapNotNull { it.decl } }
         while (queue.isNotEmpty()) {
             val name = queue.removeFirst()
             if (!seen.add(name)) continue
@@ -104,7 +104,7 @@ class CppApi(
             }
             aliases[name]?.withArgs()?.mapNotNullTo(queue) { it.decl }
         }
-        return seen
+        seen
     }
 }
 

@@ -1,45 +1,33 @@
 package buildlogic.apigen.gaps
 
-import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.ApiGenTask
-import buildlogic.apigen.c.CApiWriter
+import buildlogic.apigen.c.Binding
+import buildlogic.apigen.c.Binding.Status
+import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.kotlin.KotlinDeclarations
 import buildlogic.apigen.kotlin.kotlinApiSources
-import buildlogic.apigen.kotlin.kotlinExternals
-import buildlogic.apigen.kotlin.packageDir
-import buildlogic.apigen.stale
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.UntrackedTask
-import java.io.File
 
 /**
- * Writes `api-coverage.txt`: each C function the C++ API calls for: bound, and a public Kotlin wrapper calls it
- * (`wrapped`) or none does yet (`unwrapped`); or why it isn't bound (`todo`, `skipped`). Then each enum value and class
- * constant of that API, which no function carries: the Kotlin API declares it (`declared`) or doesn't (`undeclared`;
- * `untyped` when it has no declaration of the enum's name). Committed, so a library bump's diff shows what changed and
- * how far it got. Warns when the committed C API or Kotlin externals aren't what the generators would write. Without
- * [buildlogic.apigen.ApiGenConfig.kotlin], a C function is just `bound`, and the values are left out.
+ * Writes `api-coverage.txt` ([coverage]). Warns when the committed C API or Kotlin externals aren't what the generators
+ * would write.
  */
 @UntrackedTask(because = "A report to diff, cheap next to reading the AST")
 abstract class ApiCoverageTask : ApiGenTask() {
     @TaskAction
     fun run() {
         val apiGen = apiGen()
-        val kotlin = apiGen.kotlinDir
-        val writer = apiGen.writer()
-        warnStale("C API", "generateCApi", apiGen.stale(writer.write()))
+        val api = apiGen.api()
+        val c = apiGen.cApi(api)
+        warnStale("C API", "generateCApi", apiGen.cFiles(c).stale())
         val manifest = apiGen.manifest()
         if (!apiGen.manifestFile.isFile || apiGen.manifestFile.readText() != manifest.json()) warnStale("C API", "generateCApi", setOf(apiGen.manifestFile.name))
-        if (kotlin != null) {
-            val packages = config.get().kotlin!!.packages
-            warnStale("Kotlin externals", "generateKotlinExternals",
-                stale(kotlin, kotlinExternals(manifest, config.get()), packages.map { (m, p) -> kotlin.resolve(packageDir(m, p)) }))
-        }
-        val report = apiGen.cDir.resolve("api-coverage.txt")
-        val coverage = coverage(writer, apiGen.headers, config.get(), kotlin)
-        report.writeText(coverage.text)
+        apiGen.kotlinDir?.let { warnStale("Kotlin externals", "generateKotlinExternals", apiGen.kotlinFiles(manifest).stale()) }
+        val coverage = coverage(api, c.bindings, config.get().prefix, apiGen.kotlinDir?.let(::kotlinApiSources))
+        apiGen.coverageFile.writeText(coverage.text)
         logger.lifecycle("API coverage: ${coverage.summary}")
-        logger.lifecycle("Report: ${report.toURI()} (git diff it to see what changed)")
+        logger.lifecycle("Report: ${apiGen.coverageFile.toURI()} (git diff it to see what changed)")
     }
 
     private fun warnStale(what: String, task: String, stale: Set<String>) {
@@ -50,28 +38,33 @@ abstract class ApiCoverageTask : ApiGenTask() {
 /** `api-coverage.txt` and its summary line. */
 internal class Coverage(val text: String, val summary: String)
 
-/** The coverage of what [writer] wrote; [kotlin] is the Kotlin modules' dir, null for a C API alone. */
-internal fun coverage(writer: CApiWriter, headers: Set<String>, config: ApiGenConfig, kotlin: File?): Coverage {
-    fun lines(status: (String) -> String) = writer.bindings.distinctBy { it.c to it.cpp }.sortedWith(compareBy({ it.c }, { it.cpp })).map { b ->
-        "${(b.gap?.substringBefore(':') ?: status(b.c)).padEnd(9)} ${b.c} = ${b.cpp}" + (b.gap?.substringAfter(": ")?.let { "  -- $it" } ?: "")
+/**
+ * Each C function the C++ API calls for: bound, and a public Kotlin wrapper calls it (`wrapped`) or none does yet
+ * (`unwrapped`); or why it isn't bound (`todo`, `skipped`). Then each enum value and class constant of that API, which
+ * no function carries: the Kotlin API declares it (`declared`) or doesn't (`undeclared`; `untyped` when it has no
+ * declaration of the enum's name). Committed, so a library bump's diff shows what changed and how far it got. Without
+ * [kotlinSources] (the hand-written Kotlin API), a C function is just `bound`, and the values are left out.
+ */
+internal fun coverage(api: CppApi, bindings: List<Binding>, prefix: String, kotlinSources: String?): Coverage {
+    fun lines(status: (String) -> String) = bindings.distinctBy { it.c to it.cpp }.sortedWith(compareBy({ it.c }, { it.cpp })).map { b ->
+        val gap = b.status == Status.TODO || b.status == Status.SKIPPED
+        "${(if (gap) b.status.name.lowercase() else status(b.c)).padEnd(9)} ${b.c} = ${b.cpp}" + (if (gap) "  -- ${b.reason}" else "")
     }
-    if (kotlin == null) {
+    if (kotlinSources == null) {
         val lines = lines { "bound" }
         val summary = summary(lines, C_STATUSES)
         return Coverage("# Generated by apiCoverage; do not edit. Each C function the C++ API calls for: bound, or why it isn't (todo, skipped).\n" +
             "# $summary\n\n" + lines.joinToString("\n", postfix = "\n"), summary)
     }
-    val sources = kotlinApiSources(kotlin)
-    val called = Regex("""\b${Regex.escape(config.prefix)}\w+""").findAll(sources).mapTo(HashSet()) { it.value }
+    val called = Regex("""\b${Regex.escape(prefix)}\w+""").findAll(kotlinSources).mapTo(HashSet()) { it.value }
     val lines = lines { if (it in called) "wrapped" else "unwrapped" }
     val summary = summary(lines, STATUSES)
-    val api = writer.api
-    val declarations = KotlinDeclarations(sources)
-    val values = (api.apiEnums(headers).flatMap { e ->
+    val declarations = KotlinDeclarations(kotlinSources)
+    val values = (api.apiEnums.flatMap { e ->
         // Kotlin names an enum as the API's alias does: Texture.InternalFormat for backend::TextureFormat.
         val scope = declarations.scope(api.aliasesOf(e.name)) ?: return@flatMap listOf("untyped" to e.name)
         e.constants.map { "${e.name}::${it.first}" }.filter { api.skipReason(it) == null }.map { declarations.status(scope, it) to it }
-    } + api.apiConstants(headers).map { c ->
+    } + api.apiConstants.map { c ->
         (declarations.scope(listOf(c.substringBeforeLast("::")))?.let { declarations.status(it, c) } ?: "untyped") to c
     }).map { (status, name) -> "${status.padEnd(10)} $name" }
     val valueSummary = summary(values, VALUE_STATUSES)

@@ -10,8 +10,8 @@ import buildlogic.apigen.cpp.CppApi
 internal class HeaderApi(val publicClasses: Set<String>, val methods: Set<String>, val declared: Set<String>)
 
 internal fun CppApi.headerApi(): HeaderApi {
-    // The backend's own exported classes (Platform, BufferDescriptor) sit outside the public headers' API.
-    val exported = records.values.filter { it.exported && !it.name.startsWith("filament::backend::") }
+    // What the API headers export: the classes other headers export (a backend's) are its internals.
+    val exported = records.values.filter { it.exported && it.header in headers }
     val methods = exported.flatMap { it.methods }
     return HeaderApi(
         exported.mapTo(HashSet()) { it.name },

@@ -1,6 +1,7 @@
 package buildlogic.apigen.c
 
 import buildlogic.apigen.ApiGenTask
+import buildlogic.apigen.c.Binding.Status
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 
@@ -12,17 +13,7 @@ import org.gradle.work.DisableCachingByDefault
 abstract class GenerateCApiTask : ApiGenTask() {
     @TaskAction
     fun generate() {
-        val apiGen = apiGen()
-        val files = apiGen.writer().write()
-        apiGen.write(files)
-        apiGen.checkCompiles(files.keys.map(apiGen.cDir::resolve))
-        apiGen.manifestFile.writeText(apiGen.manifest().json())
-        val text = files.values.joinToString("")
-        logger.lifecycle("${FUNCTION.findAll(text).count()} functions generated, ${text.split("TODO(handwritten)").size - 1} left for hand-written code")
-    }
-
-    private companion object {
-        // A definition's opening line in the forwarders.
-        val FUNCTION = Regex("""^\S.*\) \{$""", RegexOption.MULTILINE)
+        val bindings = apiGen().generateCApi().bindings
+        logger.lifecycle("${bindings.count { it.status == Status.GENERATED }} functions generated, ${bindings.count { it.status == Status.TODO }} left for hand-written code")
     }
 }

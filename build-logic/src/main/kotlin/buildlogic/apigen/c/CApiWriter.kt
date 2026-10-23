@@ -2,6 +2,7 @@ package buildlogic.apigen.c
 
 import buildlogic.apigen.ApiGenConfig
 import buildlogic.apigen.ApiHeaders
+import buildlogic.apigen.c.Binding.Status
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
 import buildlogic.apigen.cpp.CppField
@@ -11,27 +12,22 @@ import buildlogic.apigen.cpp.CppRecord
 import buildlogic.apigen.cpp.CppType
 
 /**
- * Writes the C API for what [headers] declare: per module a `Types.h` (handles, enums, math mirrors) and an
- * `Includes.hpp` of [headers], the helpers the forwarders call (`Bridge.hpp`), and per top-level class or namespace a
- * header and its C++ forwarders. What can't be bridged becomes a `TODO(handwritten)` comment where its declaration
- * would be; for one [manual] writes by hand, a note it's done.
+ * Writes the C API of [api]: per module a `Types.h` (handles, enums, math mirrors) and an `Includes.hpp` of the API
+ * headers, the helpers the forwarders call (`Bridge.hpp`), and per top-level class or namespace a header and its C++
+ * forwarders. What can't be bridged becomes a `TODO(handwritten)` comment where its declaration would be; for one
+ * [manual] writes by hand, a note it's done.
  */
 internal class CApiWriter(
-    val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val headers: Set<String>,
-    private val manual: Set<String> = emptySet(),
+    private val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val manual: Set<String> = emptySet(),
 ) {
     private val h = config.helpers
     private val names = CNames(config)
     private val bridges = CBridges(api, config, names)
-    private val rules = BindingRules(api, config, bridges, api.apiRecords(headers).mapTo(HashSet()) { it.name })
-    private val surface = api.surface(headers)
+    private val rules = BindingRules(api, config, bridges, api.apiRecords.mapTo(HashSet()) { it.name })
+    private val surface = api.surface
     private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
-    /** After [write]: each C function the C++ API calls for, bound or not. */
-    val bindings = ArrayList<Binding>()
-
-    /** C function [c] for the C++ [cpp]; [gap] is null once bound (generated or in manual/), else `todo: …` or `skipped: …`. */
-    class Binding(val c: String, val cpp: String, val gap: String?)
+    private val bindings = ArrayList<Binding>()
     private val files = LinkedHashMap<String, Section>()
     /** One generated header and its forwarders. */
     private class Section(val module: String) {
@@ -39,13 +35,12 @@ internal class CApiWriter(
         val definitions = StringBuilder()
     }
 
-    /** Generated file text by path under `c/`. */
-    fun write(): Map<String, String> {
-        api.apiRecords(headers).filter(::handled).groupBy { topLevel(it.name) }.forEach { (top, records) ->
+    fun write(): CApi {
+        api.apiRecords.filter(::handled).groupBy { topLevel(it.name) }.forEach { (top, records) ->
             val section = section(moduleOf(api.records.getValue(top).header), names.type(top))
             records.forEach { record(it, section) }
         }
-        api.apiFunctions(headers).groupBy { it.owner }.forEach { (namespace, functions) ->
+        api.apiFunctions.groupBy { it.owner }.forEach { (namespace, functions) ->
             // A dropped namespace's own functions would otherwise land in a file named by the bare prefix.
             val section = section(moduleOf(functions.first().header), names.type(namespace).takeIf { it != names.prefix } ?: "${names.prefix}${config.name}")
             section.declarations.appendLine("// $namespace")
@@ -66,7 +61,7 @@ internal class CApiWriter(
             out["$module/generated/Includes.hpp"] = includes(module)
         }
         out["$baseModule/generated/Bridge.hpp"] = bridge()
-        return out
+        return CApi(out, bindings)
     }
 
     private fun section(module: String, name: String) = files.getOrPut(name) { Section(module) }
@@ -80,7 +75,7 @@ internal class CApiWriter(
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
             skipped.forEach {
                 section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), ""))
-                bindings += Binding(names.function(record.name, "create"), "${record.name}(${spelled(it)})", "skipped: ${api.skipReason(it)}")
+                bindings += Binding(names.function(record.name, "create"), "${record.name}(${spelled(it)})", Status.SKIPPED, api.skipReason(it))
             }
             constructors.zip(suffixes(constructors.map { ctor -> ctor.map { it.type.spelling } })).forEach { (params, suffix) ->
                 val name = names.function(record.name, "create", suffix)
@@ -112,13 +107,13 @@ internal class CApiWriter(
         val (skipped, methods) = rules.methods(record).partition { api.skipReason(it, record.name) != null }
         skipped.forEach {
             section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}"))
-            bindings += Binding(names.function(record.name, it.name), signature(it), "skipped: ${api.skipReason(it, record.name)}")
+            bindings += Binding(names.function(record.name, it.name), signature(it), Status.SKIPPED, api.skipReason(it, record.name))
         }
         overloads(methods, section) { names.function(record.name, it.name, suffix = "") }
         rules.fields(record).forEach { f ->
             api.skipReason(f, record.name)?.let {
                 section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}"))
-                bindings += Binding(names.getter(record.name, f.name), "${f.type.spelling} ${record.name}::${f.name}", "skipped: $it")
+                bindings += Binding(names.getter(record.name, f.name), "${f.type.spelling} ${record.name}::${f.name}", Status.SKIPPED, it)
             } ?: field(record, f, section)
         }
         if (section.declarations.isEmpty()) return
@@ -149,7 +144,7 @@ internal class CApiWriter(
             }
             unlisted.forEach {
                 section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: functionInstantiations lists none")
-                bindings += Binding(baseName(it), "template ${signature(it)}", "todo: functionInstantiations lists none")
+                bindings += Binding(baseName(it), "template ${signature(it)}", Status.TODO, "functionInstantiations lists none")
             }
         }
     }
@@ -185,7 +180,7 @@ internal class CApiWriter(
         val setter = names.setter(record.name, field.name)
         if (rules.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
-            bindings += Binding(setter, cpp, "skipped: ${record.name} is only a result, and C would have to keep the pointer")
+            bindings += Binding(setter, cpp, Status.SKIPPED, "${record.name} is only a result, and C would have to keep the pointer")
             return
         }
         if (setter !in functionNames) emit(setter, cpp, section) {
@@ -205,13 +200,13 @@ internal class CApiWriter(
             section.declarations.appendLine("$signature;")
             val guarded = if (guard == null) "    $body" else "#if $guard\n    $body\n#else\n    $h::unavailable(\"$name\");\n#endif"
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
-            bindings += Binding(name, cpp, null)
+            bindings += Binding(name, cpp, Status.GENERATED)
         } catch (e: Unsupported) {
             // By hand as itself, or as one function per case (`_aux_float2`, … for a std::variant).
             val handwritten = manual.filter { it == name || it.startsWith("${name}_") }
             val note = if (handwritten.isNotEmpty()) "handwritten in manual/" else "TODO(handwritten)"
             section.declarations.appendLine("// $note $name: $cpp\n//     ${e.message}")
-            if (handwritten.isEmpty()) bindings += Binding(name, cpp, "todo: ${e.message}") else handwritten.forEach { bindings += Binding(it, cpp, null) }
+            if (handwritten.isEmpty()) bindings += Binding(name, cpp, Status.TODO, e.message) else handwritten.forEach { bindings += Binding(it, cpp, Status.MANUAL) }
         }
     }
 
@@ -258,7 +253,7 @@ internal class CApiWriter(
     /** The C++ headers, and the `cpp`/`c` overloads between the module's C types and C++'s (Bridge.hpp's `_TYPE` macro). */
     private fun includes(module: String): String {
         val text = StringBuilder("$banner\n#pragma once\n\n")
-        if (module == baseModule) text.append("#include \"${config.bridgeHeader ?: "Bridge.hpp"}\"\n\n").append(headers.joinToString("") { "#include <$it>\n" })
+        if (module == baseModule) text.append("#include \"${config.bridgeHeader ?: "Bridge.hpp"}\"\n\n").append(api.headers.joinToString("") { "#include <$it>\n" })
         else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
         if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
