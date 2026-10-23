@@ -279,20 +279,6 @@ jobs:
             :kotlin:filament-compose:iosSimulatorArm64Test \
             "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}" \
             --no-configuration-cache
-      - name: Assemble XCFrameworks
-        # Release-mode K/N linking of 5 modules × 2 arches is ~18 min and only verifies the
-        # distribution artifacts link — which publish.yml needs, not per-PR correctness (the
-        # sim tests + sample xcodebuild already prove iOS builds & runs). Skip on PRs; still
-        # runs on push to main and manual dispatch.
-        if: github.event_name != 'pull_request'
-        run: |
-          ./gradlew \
-            assembleFilamentXCFramework \
-            assembleFilamatXCFramework \
-            assembleFilamentUtilsXCFramework \
-            assembleGltfioXCFramework \
-            assembleFilamentComposeXCFramework \
-            --no-configuration-cache
       - name: Build iOS sample (Simulator)
         working-directory: samples/iosApp
         run: |

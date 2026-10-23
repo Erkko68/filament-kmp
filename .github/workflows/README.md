@@ -40,9 +40,6 @@ Try it locally: `printf '%s\n' c/foo.cpp | .github/scripts/ci-changes.sh -`.
 - **Manually** — *Actions → CI → Run workflow* (`workflow_dispatch`) with a `jobs` input to
   pick `all` / `jvm` / `web` / `ios` / `android`. Handy for re-checking one platform. Dispatch
   runs don't enforce the merge gate.
-- **iOS XCFramework assembly** (release-mode K/N linking, ~18 min) is skipped on PRs and runs
-  only on push to `main` / dispatch — it verifies the distribution artifacts, which `publish.yml`
-  needs. PRs still link & run iOS via the simulator tests and the sample `xcodebuild` step.
 
 ### The merge gate
 

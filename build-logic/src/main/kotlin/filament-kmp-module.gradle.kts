@@ -1,7 +1,6 @@
 import buildlogic.cmake.linkFilamentCApi
 import buildlogic.platform.hostPlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import java.awt.GraphicsEnvironment
@@ -178,35 +177,12 @@ kotlin.sourceSets.named("androidDeviceTest").configure {
     }
 }
 
-// ── XCFramework + iOS native config (macOS only) ─────────────────────────────
-// iOS targets, XCFrameworks, and related native config are macOS-only: the K/N
-// compiler can't run on non-macOS hosts, and the HostManager throws on unsupported
-// hosts like linux-arm64.  Use the safe hostPlatform() helper, which reads os.name
-// and never touches HostManager.
-if (hostPlatform() == "macos") {
-    val xcfName = project.name.split("-").joinToString("") { part ->
-        part.replaceFirstChar { it.uppercaseChar() }
-    }
-    kotlin {
-        val xcf = XCFramework(xcfName)
-        listOf(
-            targets.getByName("iosArm64")          as KotlinNativeTarget,
-            targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
-        ).forEach {
-            it.binaries.framework {
-                baseName = xcfName
-                isStatic = true
-                xcf.add(this)
-            }
-        }
-
-        // iOS minimum deployment target for native binaries
-        targets.withType<KotlinNativeTarget>().configureEach {
-            if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
-                binaries.all {
-                    freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
-                }
-            }
+// ── iOS deployment target ─────────────────────────────────────────────────────
+// The test executables link the C API, which is built for this minimum (Toolchains.kt).
+kotlin.targets.withType<KotlinNativeTarget>().configureEach {
+    if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
+        binaries.all {
+            freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
         }
     }
 }
