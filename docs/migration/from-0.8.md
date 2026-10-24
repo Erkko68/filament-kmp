@@ -1,6 +1,6 @@
 # Migrating from 0.8
 
-The next release changes how the `filament-compose` camera controllers hold the camera. The compiler finds almost
+0.9.0 changes how the `filament-compose` camera controllers hold the camera. The compiler finds almost
 every change. The ones it does not find are marked **silent** below.
 
 ## Why
