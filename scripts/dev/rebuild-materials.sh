@@ -34,8 +34,4 @@ while IFS= read -r mat; do
     "$MATC" -p all -a all -o "${mat%.mat}.filamat" "$mat"
 done < <(find kotlin samples -name '*.mat' -not -path '*/build/*')
 
-# emissive.filamat is shared with filament-compose's tests as a committed copy.
-cp kotlin/filament/src/commonTest/materials/emissive.filamat \
-   kotlin/filament-compose/src/commonTest/resources/emissive.filamat
-
 echo "Rebuilt with matc $VERSION."
