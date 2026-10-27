@@ -125,9 +125,6 @@ uint32_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint
  * @param ci              The instance of the transform component to set the local transform to.
  * @param localTransform  The local transform (i.e. relative to the parent).
  * @see getTransform()
- * @attention This operation can be slow if the hierarchy of transform is too deep, and this
- *            will be particularly bad when updating a lot of transforms. In that case,
- *            consider using openLocalTransformTransaction() / commitLocalTransformTransaction().
  */
 void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, const FilaMat4f* localTransform);
 /**
@@ -136,9 +133,6 @@ void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_
  * @param ci              The instance of the transform component to set the local transform to.
  * @param localTransform  The local transform (i.e. relative to the parent).
  * @see getTransform()
- * @attention This operation can be slow if the hierarchy of transform is too deep, and this
- *            will be particularly bad when updating a lot of transforms. In that case,
- *            consider using openLocalTransformTransaction() / commitLocalTransformTransaction().
  */
 void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, const FilaMat4* localTransform);
 /**
@@ -173,32 +167,6 @@ void FilaTransformManager_getWorldTransform(const FilaTransformManager* self, ui
  * @see setTransform()
  */
 void FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* self, uint32_t ci, FilaMat4* out);
-/**
- * Opens a local transform transaction. During a transaction, getWorldTransform() can
- * return an invalid transform until commitLocalTransformTransaction() is called. However,
- * setTransform() will perform significantly better and in constant time.
- *
- * This is useful when updating many transforms and the transform hierarchy is deep (say more
- * than 4 or 5 levels).
- *
- * @note If the local transform transaction is already open, this is a no-op.
- *
- * @see commitLocalTransformTransaction(), setTransform()
- */
-void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* self);
-/**
- * Commits the currently open local transform transaction. When this returns, calls
- * to getWorldTransform() will return the proper value.
- *
- * @attention failing to call this method when done updating the local transform will cause
- *            a lot of rendering problems. The system never closes the transaction
- *            automatically.
- *
- * @note If the local transform transaction is not open, this is a no-op.
- *
- * @see openLocalTransformTransaction(), setTransform()
- */
-void FilaTransformManager_commitLocalTransformTransaction(FilaTransformManager* self);
 
 
 #ifdef __cplusplus

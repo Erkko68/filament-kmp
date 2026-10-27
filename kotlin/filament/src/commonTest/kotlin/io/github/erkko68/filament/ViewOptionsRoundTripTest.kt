@@ -129,6 +129,9 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             boxClipping = TemporalAntiAliasingOptions.BoxClipping.NONE
             jitterPattern = TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
             varianceGamma = 1.1f; preventFlickering = true; historyReprojection = false
+            motionAdaptiveHistory = true; motionDeltaThreshold = 2f; minBoxStrength = 0.2f; minAlphaStrength = 0.4f
+            skyDepthThreshold = 0.002f; motionHoldFrames = 6f; depthDisocclusion = true
+            disocclusionDepthThreshold = 0.003f; disocclusionHistoryNeighborhood = false; exactLanczosSupport = true
         }
         view.temporalAntiAliasingOptions.run {
             assertEquals(0.12f, feedback); assertEquals(-1f, lodBias); assertEquals(0.3f, sharpness)
@@ -139,6 +142,10 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             assertEquals(TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4, jitterPattern)
             assertEquals(1.1f, varianceGamma); assertTrue(preventFlickering)
             assertEquals(false, historyReprojection)
+            assertTrue(motionAdaptiveHistory); assertEquals(2f, motionDeltaThreshold); assertEquals(0.2f, minBoxStrength)
+            assertEquals(0.4f, minAlphaStrength); assertEquals(0.002f, skyDepthThreshold); assertEquals(6f, motionHoldFrames)
+            assertTrue(depthDisocclusion); assertEquals(0.003f, disocclusionDepthThreshold)
+            assertEquals(false, disocclusionHistoryNeighborhood); assertTrue(exactLanczosSupport)
         }
     }
 

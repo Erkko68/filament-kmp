@@ -16,6 +16,9 @@ The `filament-compose` API now covers the common model-viewer path: camera moves
 
 Upgrading from 0.8? See the [migration guide](docs/migration/from-0.8.md).
 
+> [!WARNING]
+> **Recompile your materials** — `MATERIAL_VERSION` 78 → 79. Any `.filamat` you ship must be rebuilt with 1.79.0's `matc`; the engine rejects blobs from another version. The built-in `StandardMaterial`s ship recompiled.
+
 ### Added
 - **New samples**: Labels (`anchorTo`), Camera Tour (`animateTo` along `CameraPath` routes) and Capture (`capture()` over a shadow-catcher ground); Primitives switches the ambient presets and the sun's shadows, Animation shows `progress`, Duck uses `fitToSize` and Picking uses `onTap`.
 - **`onTap` on `GltfInstance`, the primitives and `Group`** (`filament-compose`): a tap on a `FilamentView` reaches the object it hits, with the world point it hit, without mapping entities by hand.
@@ -33,13 +36,21 @@ Upgrading from 0.8? See the [migration guide](docs/migration/from-0.8.md).
 - **`ColorGrading.Builder.exportLut`** (`filament`): a copy of the 3D LUT `build` generates.
 - **`RenderableManager.Builder.boneIndicesAndWeights(primitiveIndex, List<FloatArray>)`** (`filament`): any number of bone pairs per vertex.
 - **`AssetConfiguration.defaultNodeName`** (`gltfio`): the name anonymous nodes are found by.
+- **`TemporalAntiAliasingOptions` motion-adaptive history and depth disocclusion** (`filament`): `motionAdaptiveHistory`, `motionDeltaThreshold`, `minBoxStrength`, `minAlphaStrength`, `skyDepthThreshold`, `motionHoldFrames`, `depthDisocclusion`, `disocclusionDepthThreshold`, `disocclusionHistoryNeighborhood` and `exactLanczosSupport`.
+- **`Engine.Config.asynchronousFrameBudget`** (`filament`): nanoseconds of queued asynchronous operations each frame runs under `AMORTIZATION` (default 2 ms).
+- **`IndexBuffer.MAX_INDEX_COUNT`** (`filament`): the most indices an `IndexBuffer` holds (2^26 - 1).
 
 ### Changed
+- **Filament 1.79.0** upstream; `MATERIAL_VERSION` is now 79, so recompile every `.filamat` with matc 1.79.0.
+- **`TemporalAntiAliasingOptions.varianceGamma` defaults to 0.7** (`filament`, behavior-breaking), following Filament; it was 1.0, and its range is now [0.6, 1.25].
 - **The `filament-compose` API is mostly complete** (release): it changes, in small focused steps, for real pain points or badly designed areas; see [README → What may change](README.md#what-may-change).
 - **Scope and controller interfaces are sealed** (`filament-compose`): `FilamentSceneScope`, `EntityScope`, `FilamentEffectScope`, `GltfInstanceScope` and `CameraController` are implemented only by the library.
 - **Camera controllers work on `CameraState`** (`filament-compose`, **source-breaking**): bookmarks give way to `Viewpoint`s, and map's extent and flight's start-angle parameters come from the state. See the [migration guide](docs/migration/from-0.8.md).
 - **The map controller starts from the `CameraState` pose** (`filament-compose`, behavior-breaking): it no longer puts the camera top-down by itself; set `initialEye` above the target and `initialUp` to -Z.
 - **`rememberTexturedMaterialInstance` takes a nullable `Texture`** (`filament-compose`) and returns null until it loads, so it chains off `rememberTexture` without `?.let`.
+
+### Removed
+- **`TransformManager.openLocalTransformTransaction` and `commitLocalTransformTransaction`** (`filament`): deprecated no-ops in Filament 1.79.0; delete the calls.
 
 ### Fixed
 - **Hiding a `Group` turns off its lights** (`filament-compose`), as it already hid its renderables.

@@ -696,6 +696,8 @@
 {"name":"FilaEngineConfig_setSharedUboInitialSizeInBytes","returns":"void","params":[["self","ptr"],["value","i32"]]},
 {"name":"FilaEngineConfig_getAsynchronousMode","returns":"i32","params":[["self","ptr"]]},
 {"name":"FilaEngineConfig_setAsynchronousMode","returns":"void","params":[["self","ptr"],["value","i32"]]},
+{"name":"FilaEngineConfig_getAsynchronousFrameBudget","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"FilaEngineConfig_setAsynchronousFrameBudget","returns":"void","params":[["self","ptr"],["value","i64"]]},
 {"name":"FilaEngineConfig_getMaterialCacheCapacity","returns":"i32","params":[["self","ptr"]]},
 {"name":"FilaEngineConfig_setMaterialCacheCapacity","returns":"void","params":[["self","ptr"],["value","i32"]]},
 {"name":"FilaEngineConfig_getProgramCacheCapacity","returns":"i32","params":[["self","ptr"]]},
@@ -1731,7 +1733,27 @@
 {"name":"FilaTemporalAntiAliasingOptions_getPreventFlickering","returns":"bool","params":[["self","ptr"]]},
 {"name":"FilaTemporalAntiAliasingOptions_setPreventFlickering","returns":"void","params":[["self","ptr"],["value","bool"]]},
 {"name":"FilaTemporalAntiAliasingOptions_getHistoryReprojection","returns":"bool","params":[["self","ptr"]]},
-{"name":"FilaTemporalAntiAliasingOptions_setHistoryReprojection","returns":"void","params":[["self","ptr"],["value","bool"]]}
+{"name":"FilaTemporalAntiAliasingOptions_setHistoryReprojection","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold","returns":"f32","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getMinBoxStrength","returns":"f32","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setMinBoxStrength","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getMinAlphaStrength","returns":"f32","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setMinAlphaStrength","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getSkyDepthThreshold","returns":"f32","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setSkyDepthThreshold","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getMotionHoldFrames","returns":"f32","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setMotionHoldFrames","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getDepthDisocclusion","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setDepthDisocclusion","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold","returns":"f32","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold","returns":"void","params":[["self","ptr"],["value","f32"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"FilaTemporalAntiAliasingOptions_getExactLanczosSupport","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaTemporalAntiAliasingOptions_setExactLanczosSupport","returns":"void","params":[["self","ptr"],["value","bool"]]}
 ],
 "filament/generated/FilaTexture.h": [
 {"name":"FilaTextureBuilder_create","returns":"ptr","params":[]},
@@ -1826,9 +1848,7 @@
 {"name":"FilaTransformManager_getTransform","returns":"void","params":[["self","ptr"],["ci","i32"],["out","ptr"]]},
 {"name":"FilaTransformManager_getTransformAccurate","returns":"void","params":[["self","ptr"],["ci","i32"],["out","ptr"]]},
 {"name":"FilaTransformManager_getWorldTransform","returns":"void","params":[["self","ptr"],["ci","i32"],["out","ptr"]]},
-{"name":"FilaTransformManager_getWorldTransformAccurate","returns":"void","params":[["self","ptr"],["ci","i32"],["out","ptr"]]},
-{"name":"FilaTransformManager_openLocalTransformTransaction","returns":"void","params":[["self","ptr"]]},
-{"name":"FilaTransformManager_commitLocalTransformTransaction","returns":"void","params":[["self","ptr"]]}
+{"name":"FilaTransformManager_getWorldTransformAccurate","returns":"void","params":[["self","ptr"],["ci","i32"],["out","ptr"]]}
 ],
 "filament/generated/FilaUtilsEntityManager.h": [
 {"name":"FilaUtilsEntityManager_get","returns":"ptr","params":[]},

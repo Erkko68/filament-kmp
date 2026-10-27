@@ -16,6 +16,7 @@ extern "C" {
 // skipped void utils::EntityManager::registerListener(Listener * _Nonnull l): uses utils::EntityManager::Listener
 // skipped void utils::EntityManager::unregisterListener(Listener * _Nonnull l): uses utils::EntityManager::Listener
 // skipped PagedArenaBitset utils::EntityManager::getAliveEntities() const
+// skipped void utils::EntityManager::getAliveEntities(PagedArenaBitset & out) const
 // skipped void utils::EntityManager::registerWatermark(std::atomic<uint64_t> * _Nonnull watermark, utils::ImmutableCString name, const PagedArenaBitset * _Nullable entityBitset, Mutex * _Nullable entityBitsetLock)
 // skipped void utils::EntityManager::unregisterWatermark(std::atomic<uint64_t> * _Nonnull watermark)
 // skipped void utils::EntityManager::rebindWatermark(const std::atomic<uint64_t> * _Nonnull oldW, std::atomic<uint64_t> * _Nonnull newW, ImmutableCString newName, const PagedArenaBitset * _Nullable newEntityBitset, Mutex * _Nullable newEntityBitsetLock)

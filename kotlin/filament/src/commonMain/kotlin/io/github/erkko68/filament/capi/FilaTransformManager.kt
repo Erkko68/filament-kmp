@@ -69,9 +69,3 @@ internal external fun FilaTransformManager_getWorldTransform(self: NativePointer
 
 @ExternalSymbolName("FilaTransformManager_getWorldTransformAccurate")
 internal external fun FilaTransformManager_getWorldTransformAccurate(self: NativePointer, ci: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_openLocalTransformTransaction")
-internal external fun FilaTransformManager_openLocalTransformTransaction(self: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_commitLocalTransformTransaction")
-internal external fun FilaTransformManager_commitLocalTransformTransaction(self: NativePointer)

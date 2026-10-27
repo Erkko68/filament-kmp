@@ -1545,7 +1545,6 @@ typedef struct FilaToneMapper FilaToneMapper;
  * An Instance obtained from getInstance() is only valid until the next call to any of:
  *
  * - create(), destroy() or setParent() on this TransformManager,
- * - commitLocalTransformTransaction(),
  * - Renderer::endFrame() or Renderer::skipFrame(), which perform periodic maintenance.
  *
  * Instances must therefore not be kept across frames. Keep the Entity instead, and call

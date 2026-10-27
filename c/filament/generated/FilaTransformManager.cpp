@@ -92,12 +92,4 @@ void FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* 
     *out = fila::mirror<FilaMat4>(fila::cpp(self)->getWorldTransformAccurate(filament::TransformManager::Instance(ci)));
 }
 
-void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* self) {
-    fila::cpp(self)->openLocalTransformTransaction();
-}
-
-void FilaTransformManager_commitLocalTransformTransaction(FilaTransformManager* self) {
-    fila::cpp(self)->commitLocalTransformTransaction();
-}
-
 } // extern "C"

@@ -85,10 +85,7 @@ class TransformManagerTest : FilamentTestFixture() {
         assertEquals(listOf(2f, 3f, 4f), childWorld(), "detached: world is local")
         assertEquals(0, tm.getChildCount(otherInst))
 
-        // Transactions & Settings
-        tm.openLocalTransformTransaction()
-        tm.commitLocalTransformTransaction()
-
+        // Settings
         tm.isAccurateTranslationsEnabled = true
         assertTrue(tm.isAccurateTranslationsEnabled)
         tm.isAccurateTranslationsEnabled = false

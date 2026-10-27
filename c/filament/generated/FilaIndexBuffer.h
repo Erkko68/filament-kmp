@@ -14,7 +14,8 @@ void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
 // skipped Builder & filament::IndexBuffer::Builder::name(const utils::StaticString & name): filament::\w+::Builder::name\(utils::StaticString\)
 /**
  * Size of the index buffer in elements.
- * @param indexCount Number of indices the IndexBuffer can hold.
+ * @param indexCount Number of indices the IndexBuffer can hold. Must not exceed
+ *                   MAX_INDEX_COUNT (2^backend::INDEX_COUNT_BITS - 1).
  * @return A reference to this Builder for chaining calls.
  */
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount);

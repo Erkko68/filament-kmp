@@ -140,4 +140,84 @@ void FilaTemporalAntiAliasingOptions_setHistoryReprojection(FilaTemporalAntiAlia
     fila::cpp(self)->historyReprojection = value;
 }
 
+bool FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->motionAdaptiveHistory;
+}
+
+void FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory(FilaTemporalAntiAliasingOptions* self, bool value) {
+    fila::cpp(self)->motionAdaptiveHistory = value;
+}
+
+float FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->motionDeltaThreshold;
+}
+
+void FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold(FilaTemporalAntiAliasingOptions* self, float value) {
+    fila::cpp(self)->motionDeltaThreshold = value;
+}
+
+float FilaTemporalAntiAliasingOptions_getMinBoxStrength(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->minBoxStrength;
+}
+
+void FilaTemporalAntiAliasingOptions_setMinBoxStrength(FilaTemporalAntiAliasingOptions* self, float value) {
+    fila::cpp(self)->minBoxStrength = value;
+}
+
+float FilaTemporalAntiAliasingOptions_getMinAlphaStrength(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->minAlphaStrength;
+}
+
+void FilaTemporalAntiAliasingOptions_setMinAlphaStrength(FilaTemporalAntiAliasingOptions* self, float value) {
+    fila::cpp(self)->minAlphaStrength = value;
+}
+
+float FilaTemporalAntiAliasingOptions_getSkyDepthThreshold(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->skyDepthThreshold;
+}
+
+void FilaTemporalAntiAliasingOptions_setSkyDepthThreshold(FilaTemporalAntiAliasingOptions* self, float value) {
+    fila::cpp(self)->skyDepthThreshold = value;
+}
+
+float FilaTemporalAntiAliasingOptions_getMotionHoldFrames(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->motionHoldFrames;
+}
+
+void FilaTemporalAntiAliasingOptions_setMotionHoldFrames(FilaTemporalAntiAliasingOptions* self, float value) {
+    fila::cpp(self)->motionHoldFrames = value;
+}
+
+bool FilaTemporalAntiAliasingOptions_getDepthDisocclusion(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->depthDisocclusion;
+}
+
+void FilaTemporalAntiAliasingOptions_setDepthDisocclusion(FilaTemporalAntiAliasingOptions* self, bool value) {
+    fila::cpp(self)->depthDisocclusion = value;
+}
+
+float FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->disocclusionDepthThreshold;
+}
+
+void FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold(FilaTemporalAntiAliasingOptions* self, float value) {
+    fila::cpp(self)->disocclusionDepthThreshold = value;
+}
+
+bool FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->disocclusionHistoryNeighborhood;
+}
+
+void FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood(FilaTemporalAntiAliasingOptions* self, bool value) {
+    fila::cpp(self)->disocclusionHistoryNeighborhood = value;
+}
+
+bool FilaTemporalAntiAliasingOptions_getExactLanczosSupport(const FilaTemporalAntiAliasingOptions* self) {
+    return fila::cpp(self)->exactLanczosSupport;
+}
+
+void FilaTemporalAntiAliasingOptions_setExactLanczosSupport(FilaTemporalAntiAliasingOptions* self, bool value) {
+    fila::cpp(self)->exactLanczosSupport = value;
+}
+
 } // extern "C"

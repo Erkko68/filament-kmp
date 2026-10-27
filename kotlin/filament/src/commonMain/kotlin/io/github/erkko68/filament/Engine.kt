@@ -185,6 +185,11 @@ class Engine internal constructor(
          * Without threads (web) THREAD_PREFERRED falls back to AMORTIZATION, which advances only as frames render.
          */
         var asynchronousMode: AsynchronousMode = AsynchronousMode.NONE
+        /**
+         * Nanoseconds of queued asynchronous operations each frame runs under AMORTIZATION. One always runs,
+         * and one that starts within the budget finishes, so a frame can overrun it by one operation.
+         */
+        var asynchronousFrameBudget: Long = 2_000_000
         /** Unreferenced material definitions kept alive to avoid recompiling; 0 destroys them immediately. */
         var materialCacheCapacity: Int = 0
         /** Unreferenced program specializations kept alive; 0 destroys them immediately. */
@@ -216,6 +221,7 @@ class Engine internal constructor(
             FilaEngineConfig_setGpuContextPriority(c, gpuContextPriority.ordinal)
             FilaEngineConfig_setSharedUboInitialSizeInBytes(c, sharedUboInitialSizeInBytes)
             FilaEngineConfig_setAsynchronousMode(c, asynchronousMode.ordinal)
+            FilaEngineConfig_setAsynchronousFrameBudget(c, asynchronousFrameBudget)
             FilaEngineConfig_setMaterialCacheCapacity(c, materialCacheCapacity)
             FilaEngineConfig_setProgramCacheCapacity(c, programCacheCapacity)
             FilaEngineConfig_setEnableMultipleDirectionalLights(c, enableMultipleDirectionalLights)
@@ -247,6 +253,7 @@ class Engine internal constructor(
                 gpuContextPriority = GpuContextPriority.entries[FilaEngineConfig_getGpuContextPriority(c)]
                 sharedUboInitialSizeInBytes = FilaEngineConfig_getSharedUboInitialSizeInBytes(c)
                 asynchronousMode = AsynchronousMode.entries[FilaEngineConfig_getAsynchronousMode(c)]
+                asynchronousFrameBudget = LongArray(1).also { d -> d.usePinned(1) { FilaEngineConfig_getAsynchronousFrameBudget(c, it) } }[0]
                 materialCacheCapacity = FilaEngineConfig_getMaterialCacheCapacity(c)
                 programCacheCapacity = FilaEngineConfig_getProgramCacheCapacity(c)
                 enableMultipleDirectionalLights = FilaEngineConfig_getEnableMultipleDirectionalLights(c)

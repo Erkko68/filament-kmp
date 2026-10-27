@@ -19,9 +19,9 @@ void FilaTemporalAntiAliasingOptions_setFilterWidth(FilaTemporalAntiAliasingOpti
 float FilaTemporalAntiAliasingOptions_getFeedback(const FilaTemporalAntiAliasingOptions* self);
 /** history feedback, between 0 (maximum temporal AA) and 1 (no temporal AA). */
 void FilaTemporalAntiAliasingOptions_setFeedback(FilaTemporalAntiAliasingOptions* self, float value);
-/** texturing lod bias (typically -1 or -2) */
+/** texture lod bias (typically between -1.0 and 0.0) */
 float FilaTemporalAntiAliasingOptions_getLodBias(const FilaTemporalAntiAliasingOptions* self);
-/** texturing lod bias (typically -1 or -2) */
+/** texture lod bias (typically between -1.0 and 0.0) */
 void FilaTemporalAntiAliasingOptions_setLodBias(FilaTemporalAntiAliasingOptions* self, float value);
 /** post-TAA sharpen, especially useful when upscaling is true. */
 float FilaTemporalAntiAliasingOptions_getSharpness(const FilaTemporalAntiAliasingOptions* self);
@@ -63,9 +63,9 @@ void FilaTemporalAntiAliasingOptions_setBoxClipping(FilaTemporalAntiAliasingOpti
 FilaTemporalAntiAliasingOptionsJitterPattern FilaTemporalAntiAliasingOptions_getJitterPattern(const FilaTemporalAntiAliasingOptions* self);
 /** Jitter Pattern */
 void FilaTemporalAntiAliasingOptions_setJitterPattern(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsJitterPattern value);
-/** High values increases ghosting artefact, lower values increases jittering, range [0.75, 1.25] */
+/** High values increases ghosting artefact, lower values increases jittering, range [0.6, 1.25] */
 float FilaTemporalAntiAliasingOptions_getVarianceGamma(const FilaTemporalAntiAliasingOptions* self);
-/** High values increases ghosting artefact, lower values increases jittering, range [0.75, 1.25] */
+/** High values increases ghosting artefact, lower values increases jittering, range [0.6, 1.25] */
 void FilaTemporalAntiAliasingOptions_setVarianceGamma(FilaTemporalAntiAliasingOptions* self, float value);
 /** adjust the feedback dynamically to reduce flickering */
 bool FilaTemporalAntiAliasingOptions_getPreventFlickering(const FilaTemporalAntiAliasingOptions* self);
@@ -75,6 +75,46 @@ void FilaTemporalAntiAliasingOptions_setPreventFlickering(FilaTemporalAntiAliasi
 bool FilaTemporalAntiAliasingOptions_getHistoryReprojection(const FilaTemporalAntiAliasingOptions* self);
 /** whether to apply history reprojection (debug option) */
 void FilaTemporalAntiAliasingOptions_setHistoryReprojection(FilaTemporalAntiAliasingOptions* self, bool value);
+/** relaxes history rejection under low camera motion to reduce flickering on static content */
+bool FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory(const FilaTemporalAntiAliasingOptions* self);
+/** relaxes history rejection under low camera motion to reduce flickering on static content */
+void FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory(FilaTemporalAntiAliasingOptions* self, bool value);
+/** camera motion threshold in texels above which history rejection is applied at full strength */
+float FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold(const FilaTemporalAntiAliasingOptions* self);
+/** camera motion threshold in texels above which history rejection is applied at full strength */
+void FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold(FilaTemporalAntiAliasingOptions* self, float value);
+/** minimum history clamping strength when the camera is static, in (0, 1] */
+float FilaTemporalAntiAliasingOptions_getMinBoxStrength(const FilaTemporalAntiAliasingOptions* self);
+/** minimum history clamping strength when the camera is static, in (0, 1] */
+void FilaTemporalAntiAliasingOptions_setMinBoxStrength(FilaTemporalAntiAliasingOptions* self, float value);
+/** minimum history feedback scale when the camera is static, in (0, 1] */
+float FilaTemporalAntiAliasingOptions_getMinAlphaStrength(const FilaTemporalAntiAliasingOptions* self);
+/** minimum history feedback scale when the camera is static, in (0, 1] */
+void FilaTemporalAntiAliasingOptions_setMinAlphaStrength(FilaTemporalAntiAliasingOptions* self, float value);
+/** normalized depth threshold below which distant/sky pixels always use full history rejection */
+float FilaTemporalAntiAliasingOptions_getSkyDepthThreshold(const FilaTemporalAntiAliasingOptions* self);
+/** normalized depth threshold below which distant/sky pixels always use full history rejection */
+void FilaTemporalAntiAliasingOptions_setSkyDepthThreshold(FilaTemporalAntiAliasingOptions* self, float value);
+/** number of frames to maintain full history rejection after camera motion stops (0 to disable) */
+float FilaTemporalAntiAliasingOptions_getMotionHoldFrames(const FilaTemporalAntiAliasingOptions* self);
+/** number of frames to maintain full history rejection after camera motion stops (0 to disable) */
+void FilaTemporalAntiAliasingOptions_setMotionHoldFrames(FilaTemporalAntiAliasingOptions* self, float value);
+/** enables depth-based disocclusion detection to reduce ghosting around moving objects */
+bool FilaTemporalAntiAliasingOptions_getDepthDisocclusion(const FilaTemporalAntiAliasingOptions* self);
+/** enables depth-based disocclusion detection to reduce ghosting around moving objects */
+void FilaTemporalAntiAliasingOptions_setDepthDisocclusion(FilaTemporalAntiAliasingOptions* self, bool value);
+/** depth difference threshold for disocclusion detection */
+float FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold(const FilaTemporalAntiAliasingOptions* self);
+/** depth difference threshold for disocclusion detection */
+void FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold(FilaTemporalAntiAliasingOptions* self, float value);
+/** reduces false disocclusions on thin static geometry at a higher GPU cost */
+bool FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood(const FilaTemporalAntiAliasingOptions* self);
+/** reduces false disocclusions on thin static geometry at a higher GPU cost */
+void FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood(FilaTemporalAntiAliasingOptions* self, bool value);
+/** uses a wider reconstruction filter kernel for higher sharpness at 1:1 resolution, at a higher GPU cost */
+bool FilaTemporalAntiAliasingOptions_getExactLanczosSupport(const FilaTemporalAntiAliasingOptions* self);
+/** uses a wider reconstruction filter kernel for higher sharpness at 1:1 resolution, at a higher GPU cost */
+void FilaTemporalAntiAliasingOptions_setExactLanczosSupport(FilaTemporalAntiAliasingOptions* self, bool value);
 
 
 #ifdef __cplusplus

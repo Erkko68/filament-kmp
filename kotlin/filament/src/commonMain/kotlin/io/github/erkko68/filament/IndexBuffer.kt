@@ -37,7 +37,7 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
         /**
          * Sets the number of indices in this buffer.
          *
-         * @param indexCount Number of indices
+         * @param indexCount Number of indices, at most [MAX_INDEX_COUNT]
          * @return This Builder, for chaining calls
          */
         fun indexCount(indexCount: Int): Builder = apply { FilaIndexBufferBuilder_indexCount(nativeBuilder, indexCount) }
@@ -143,4 +143,9 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
      * when it wasn't built with `Builder.async()`.
      */
     val isCreationComplete: Boolean get() = FilaIndexBuffer_isCreationComplete(nativeHandle)
+
+    companion object {
+        /** The most indices an IndexBuffer holds (2^26 - 1). */
+        const val MAX_INDEX_COUNT: Int = (1 shl 26) - 1
+    }
 }

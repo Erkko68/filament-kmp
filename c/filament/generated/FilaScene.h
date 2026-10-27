@@ -47,6 +47,8 @@ FilaIndirectLight* FilaScene_getIndirectLight(const FilaScene* self);
  *
  * @param entity The entity is ignored for rendering purposes if it doesn't have a Renderable or Light component.
  *
+ * Adding an Entity that has already been destroyed with EntityManager::destroy() is a no-op.
+ *
  * \attention
  *  A given Entity object can only be added once to a Scene.
  */
@@ -63,7 +65,11 @@ void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, uint3
 /** Remove all entities to the Scene. */
 void FilaScene_removeAllEntities(FilaScene* self);
 /**
- * Returns the total number of Entities in the Scene, whether alive or not.
+ * Returns the number of Entities in the Scene.
+ *
+ * Entities destroyed with EntityManager::destroy() are removed lazily the next time a View
+ * attached to this Scene is rendered or detached; until then they may still be counted.
+ *
  * @return Total number of Entities in the Scene.
  */
 uint32_t FilaScene_getEntityCount(const FilaScene* self);
@@ -81,6 +87,10 @@ uint32_t FilaScene_getRenderableCount(const FilaScene* self);
 uint32_t FilaScene_getLightCount(const FilaScene* self);
 /**
  * Returns true if the given entity is in the Scene.
+ *
+ * Entities destroyed with EntityManager::destroy() are removed lazily the next time a View
+ * attached to this Scene is rendered or detached; until then they may still be reported as
+ * present.
  *
  * @return Whether the given entity is in the Scene.
  */
