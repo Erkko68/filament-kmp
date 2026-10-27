@@ -82,12 +82,14 @@ _GeoStats_destroy
 _GeoStyle_GetColor
 _GeoStyle_GetKind
 _GeoStyle_GetName
+_GeoStyle_GetTimeout
 _GeoStyle_GetVisible
 _GeoStyle_GetWeights
 _GeoStyle_GetWidth
 _GeoStyle_SetColor
 _GeoStyle_SetKind
 _GeoStyle_SetName
+_GeoStyle_SetTimeout
 _GeoStyle_SetVisible
 _GeoStyle_SetWeights
 _GeoStyle_SetWidth

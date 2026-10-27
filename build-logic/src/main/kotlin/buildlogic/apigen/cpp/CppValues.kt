@@ -29,12 +29,22 @@ internal class CppValues(private val scopes: CppScopes, private val constants: M
             "BinaryOperator" -> binary(expr["opcode"] as String, of(inner[0], scope), of(inner[1], scope))
             "DeclRefExpr" -> reference(expr["referencedDecl"] as Map<*, *>, scope)
             "InitListExpr" -> Aggregate(inner.map { of(it, scope) })
-            // A list-initialized object keeps its arguments; any other construction converts its single argument.
-            "CXXConstructExpr", "CXXTemporaryObjectExpr" ->
-                if (expr["list"] == true || inner.size != 1) Constructed(inner.map { of(it, scope) }) else of(inner.single(), scope)
+            // A list-initialized object keeps its arguments; any other construction converts its single argument,
+            // keeping its value unless it's another class's object (milliseconds(2) becomes 2'000'000 nanoseconds).
+            "CXXConstructExpr", "CXXTemporaryObjectExpr" -> when {
+                expr["list"] == true || inner.size != 1 -> Constructed(inner.map { of(it, scope) })
+                converts(expr, inner.single()) -> Unsupported("conversion from ${typeOf(inner.single())}")
+                else -> of(inner.single(), scope)
+            }
             "CallExpr" -> callee(inner.first()).let { if (it.startsWith("__builtin_huge_val")) Literal("inf") else Unsupported("call $it") }
             else -> Unsupported(kind)
         }
+    }
+
+    /** Whether [argument] is an object of a class other than the one [construction] makes. */
+    private fun converts(construction: Map<*, *>, argument: Map<*, *>): Boolean {
+        val type = typeOf(argument).removePrefix("const ")
+        return type != typeOf(construction) && type != "std::nullptr_t" && ("::" in type || '<' in type)
     }
 
     private fun callee(expr: Map<*, *>): String =

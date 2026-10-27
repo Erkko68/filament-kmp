@@ -120,7 +120,9 @@
 {"name":"GeoStyle_GetName","returns":"ptr","params":[["self","ptr"]]},
 {"name":"GeoStyle_SetName","returns":"void","params":[["self","ptr"],["value","ptr"]]},
 {"name":"GeoStyle_GetVisible","returns":"bool","params":[["self","ptr"]]},
-{"name":"GeoStyle_SetVisible","returns":"void","params":[["self","ptr"],["value","bool"]]}
+{"name":"GeoStyle_SetVisible","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"GeoStyle_GetTimeout","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"GeoStyle_SetTimeout","returns":"void","params":[["self","ptr"],["value","i64"]]}
 ],
 "geo/manual/GeoCanvasManual.h": [
 {"name":"GeoCanvas_Adopt","returns":"void","params":[["self","ptr"],["shape","ptr"]]},

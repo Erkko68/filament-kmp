@@ -3,6 +3,7 @@
 #include <geo/Base.h>
 #include <geo/Math.h>
 
+#include <chrono>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -29,6 +30,8 @@ struct Style {
     // The struct keeps the pointer: its setter interns C's string.
     const char* mName = nullptr;
     bool mVisible = true;
+    // Converted to nanoseconds: 2'000'000, not 2.
+    std::chrono::nanoseconds mTimeout = std::chrono::milliseconds(2);
 
     // Reads mWidth already, so the field gets no getter of its own.
     float GetWidth() const { return mWidth; }

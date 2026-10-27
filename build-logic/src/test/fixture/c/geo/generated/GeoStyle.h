@@ -24,6 +24,8 @@ const char* GeoStyle_GetName(const GeoStyle* self);
 void GeoStyle_SetName(GeoStyle* self, const char* value);
 bool GeoStyle_GetVisible(const GeoStyle* self);
 void GeoStyle_SetVisible(GeoStyle* self, bool value);
+void GeoStyle_GetTimeout(const GeoStyle* self, int64_t* out);
+void GeoStyle_SetTimeout(GeoStyle* self, int64_t value);
 
 
 #ifdef __cplusplus

@@ -27,6 +27,7 @@ class Style(var visible: Boolean = true) {
     var color: FloatArray = floatArrayOf(1f, 0f, 0f)
     var weights = FloatArray(3)
     var name: String? = null
+    var timeout: Long = 2_000_000
 
     // Its own scope: not Style's.
     class Stroke { var width: Float = 9f }

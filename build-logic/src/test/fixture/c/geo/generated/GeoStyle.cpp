@@ -60,4 +60,12 @@ void GeoStyle_SetVisible(GeoStyle* self, bool value) {
     geo_c::cpp(self)->mVisible = value;
 }
 
+void GeoStyle_GetTimeout(const GeoStyle* self, int64_t* out) {
+    *out = (geo_c::cpp(self)->mTimeout).count();
+}
+
+void GeoStyle_SetTimeout(GeoStyle* self, int64_t value) {
+    geo_c::cpp(self)->mTimeout = std::chrono::nanoseconds(value);
+}
+
 } // extern "C"

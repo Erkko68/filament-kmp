@@ -18,7 +18,10 @@ val GEO_API = ApiGenConfig(
     ),
     naming = Naming(memberPrefix = "^m(?=[A-Z])"),
     types = TypeTables(
-        scalars = mapOf("geo::Handle" to Scalar("GeoHandle", "geo::Handle::fromId({})", "({}).getId()", layout = true)),
+        scalars = mapOf(
+            "geo::Handle" to Scalar("GeoHandle", "geo::Handle::fromId({})", "({}).getId()", layout = true),
+            "std::chrono::nanoseconds" to Scalar("int64_t", "std::chrono::nanoseconds({})", "({}).count()"),
+        ),
         mirrors = mapOf(
             "geo::math::float2" to Mirror("float", 2),
             "geo::math::float3" to Mirror("float", 3),
