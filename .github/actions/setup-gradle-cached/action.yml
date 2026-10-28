@@ -6,7 +6,7 @@ description: |
 runs:
   using: composite
   steps:
-    - uses: gradle/actions/setup-gradle@v4
+    - uses: gradle/actions/setup-gradle@v6
       # PRs/feature branches are read-only by default (cache-read-only); only main writes.
       with:
         # Compact the Gradle user home before tar-and-upload so the cache reflects only
