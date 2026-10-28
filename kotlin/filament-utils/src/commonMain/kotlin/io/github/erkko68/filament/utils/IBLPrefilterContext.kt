@@ -22,7 +22,7 @@ import io.github.erkko68.filament.utils.capi.*
  * ```
  */
 class IBLPrefilterContext(engine: Engine) : AutoCloseable {
-    internal val nativeHandle = FilaIBLPrefilterContext_create(engine.nativeObject)
+    internal var nativeHandle = FilaIBLPrefilterContext_create(engine.nativeObject)
 
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
@@ -35,20 +35,26 @@ class IBLPrefilterContext(engine: Engine) : AutoCloseable {
     }
 
     /** Destroys all GPU resources created during initialization. */
-    fun destroy() = FilaIBLPrefilterContext_destroy(nativeHandle)
+    fun destroy() {
+        if (nativeHandle != NullPointer) FilaIBLPrefilterContext_destroy(nativeHandle)
+        nativeHandle = NullPointer
+    }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()
 
     /** Converts an equirectangular image to a cubemap. */
     class EquirectangularToCubemap(context: IBLPrefilterContext, config: Config = Config()) : AutoCloseable {
-        private val nativeHandle = config.useNative { FilaIBLPrefilterContextEquirectangularToCubemap_create_Config(context.nativeHandle, it) }
+        private var nativeHandle = config.useNative { FilaIBLPrefilterContextEquirectangularToCubemap_create_Config(context.nativeHandle, it) }
 
         /** @property mirror mirror the source horizontally */
         class Config(var mirror: Boolean = true)
 
         /** Destroys all GPU resources created during initialization. */
-        fun destroy() = FilaIBLPrefilterContextEquirectangularToCubemap_destroy(nativeHandle)
+        fun destroy() {
+            if (nativeHandle != NullPointer) FilaIBLPrefilterContextEquirectangularToCubemap_destroy(nativeHandle)
+            nativeHandle = NullPointer
+        }
 
         /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
         override fun close() = destroy()
@@ -78,7 +84,7 @@ class IBLPrefilterContext(engine: Engine) : AutoCloseable {
 
     /** Generates an irradiance cubemap. An instance is needed per filter configuration. */
     class IrradianceFilter(context: IBLPrefilterContext, config: Config = Config()) : AutoCloseable {
-        private val nativeHandle = config.useNative { FilaIBLPrefilterContextIrradianceFilter_create_Config(context.nativeHandle, it) }
+        private var nativeHandle = config.useNative { FilaIBLPrefilterContextIrradianceFilter_create_Config(context.nativeHandle, it) }
 
         /**
          * Filter configuration.
@@ -104,7 +110,10 @@ class IBLPrefilterContext(engine: Engine) : AutoCloseable {
         )
 
         /** Destroys all GPU resources created during initialization. */
-        fun destroy() = FilaIBLPrefilterContextIrradianceFilter_destroy(nativeHandle)
+        fun destroy() {
+            if (nativeHandle != NullPointer) FilaIBLPrefilterContextIrradianceFilter_destroy(nativeHandle)
+            nativeHandle = NullPointer
+        }
 
         /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
         override fun close() = destroy()
@@ -154,7 +163,7 @@ class IBLPrefilterContext(engine: Engine) : AutoCloseable {
 
     /** Generates a prefiltered (specular) cubemap. An instance is needed per filter configuration. */
     class SpecularFilter(context: IBLPrefilterContext, config: Config = Config()) : AutoCloseable {
-        private val nativeHandle = config.useNative { FilaIBLPrefilterContextSpecularFilter_create_Config(context.nativeHandle, it) }
+        private var nativeHandle = config.useNative { FilaIBLPrefilterContextSpecularFilter_create_Config(context.nativeHandle, it) }
 
         /**
          * Filter configuration.
@@ -181,7 +190,10 @@ class IBLPrefilterContext(engine: Engine) : AutoCloseable {
         )
 
         /** Destroys all GPU resources created during initialization. */
-        fun destroy() = FilaIBLPrefilterContextSpecularFilter_destroy(nativeHandle)
+        fun destroy() {
+            if (nativeHandle != NullPointer) FilaIBLPrefilterContextSpecularFilter_destroy(nativeHandle)
+            nativeHandle = NullPointer
+        }
 
         /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
         override fun close() = destroy()

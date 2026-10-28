@@ -8,7 +8,7 @@ import io.github.erkko68.filament.interop.*
 /**
  * The surface orientation helper can be used to populate Filament-style TANGENTS buffers.
  */
-class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: NativePointer) : AutoCloseable {
+class SurfaceOrientation @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) : AutoCloseable {
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
@@ -186,7 +186,10 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
     }
 
     /** Destroys this SurfaceOrientation. */
-    fun destroy() = FilaGeometrySurfaceOrientation_destroy(nativeHandle)
+    fun destroy() {
+        if (nativeHandle != NullPointer) FilaGeometrySurfaceOrientation_destroy(nativeHandle)
+        nativeHandle = NullPointer
+    }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

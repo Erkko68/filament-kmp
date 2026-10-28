@@ -14,7 +14,7 @@ import io.github.erkko68.filament.utils.capi.*
  * @param quiet don't log errors
  */
 class Ktx2Reader(engine: Engine, quiet: Boolean = false) : AutoCloseable {
-    internal val nativeHandle = FilaKtxreaderKtx2Reader_create(engine.nativeObject, quiet)
+    internal var nativeHandle = FilaKtxreaderKtx2Reader_create(engine.nativeObject, quiet)
 
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
@@ -33,7 +33,10 @@ class Ktx2Reader(engine: Engine, quiet: Boolean = false) : AutoCloseable {
     enum class TransferFunction { LINEAR, sRGB }
 
     /** Frees the reader and its transcoding cache. */
-    fun destroy() = FilaKtxreaderKtx2Reader_destroy(nativeHandle)
+    fun destroy() {
+        if (nativeHandle != NullPointer) FilaKtxreaderKtx2Reader_destroy(nativeHandle)
+        nativeHandle = NullPointer
+    }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

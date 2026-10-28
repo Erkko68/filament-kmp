@@ -60,7 +60,7 @@ class MaterialProvider @InternalFilamentApi constructor(internal var nativeHandl
 
     /** Frees the provider itself; cached materials survive unless [destroyMaterials] was called. */
     fun destroy() {
-        FilaGltfioMaterialProvider_destroy(nativeHandle)
+        if (nativeHandle != NullPointer) FilaGltfioMaterialProvider_destroy(nativeHandle)
         nativeHandle = NullPointer
     }
 
@@ -78,7 +78,7 @@ class TextureProvider @InternalFilamentApi constructor(internal var nativeHandle
     val nativeObject: NativePointer get() = nativeHandle
 
     fun destroy() {
-        FilaGltfioTextureProvider_destroy(nativeHandle)
+        if (nativeHandle != NullPointer) FilaGltfioTextureProvider_destroy(nativeHandle)
         nativeHandle = NullPointer
     }
 

@@ -49,7 +49,7 @@ enum class Fov { VERTICAL, HORIZONTAL }
  *
  * @see Bookmark
  */
-class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: NativePointer) : AutoCloseable {
+class Manipulator @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) : AutoCloseable {
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
@@ -156,7 +156,8 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
 
     /** Destroys the manipulator and releases all resources. */
     fun destroy() {
-        FilaCamutilsManipulator_destroy(nativeHandle)
+        if (nativeHandle != NullPointer) FilaCamutilsManipulator_destroy(nativeHandle)
+        nativeHandle = NullPointer
         raycast?.let { (binding, user) -> FilaCamutilsRaycast_destroy(binding); Callbacks.release(user) }
         raycast = null
     }
@@ -255,7 +256,7 @@ class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Na
  * @see Manipulator.currentBookmark
  * @see Manipulator.jumpToBookmark
  */
-class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: NativePointer) : AutoCloseable {
+class Bookmark @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) : AutoCloseable {
     internal constructor() : this(FilaCamutilsBookmark_create())
 
     /** The native bookmark, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
@@ -263,7 +264,10 @@ class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: Nativ
     val nativeObject: NativePointer get() = nativeHandle
 
     /** Frees the bookmark. */
-    fun destroy() = FilaCamutilsBookmark_destroy(nativeHandle)
+    fun destroy() {
+        if (nativeHandle != NullPointer) FilaCamutilsBookmark_destroy(nativeHandle)
+        nativeHandle = NullPointer
+    }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()
