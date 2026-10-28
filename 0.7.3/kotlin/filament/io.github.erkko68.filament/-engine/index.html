@@ -1,0 +1,1235 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Engine</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament/-engine/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.7.3"><span class="versions-dropdown-button-text">0.7.3</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.3"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.7.3</span></a><a href="../../../../older/0.6.0/kotlin/filament/io.github.erkko68.filament/-engine/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.6.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/commonMain">common</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/webMain">web</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/commonMain" data-filter=":kotlin:filament/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/webMain" data-filter=":kotlin:filament/webMain">
+                                <span class="checkbox--icon"></span>
+                                web
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament::io.github.erkko68.filament/Engine///PointingToDeclaration//-156239448">
+  <div class="breadcrumbs"><a href="../../index.html">filament</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament</a><span class="delimiter">/</span><span class="current">Engine</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Engine</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Engine</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-auto-closeable/index.html">AutoCloseable</a></div><p class="paragraph">Engine is Filament's main entry-point.</p><p class="paragraph">An Engine instance keeps track of all resources created by the user and manages the rendering thread as well as the hardware renderer.</p><p class="paragraph">To use Filament, an Engine instance must be created first using <code class="lang-kotlin">Engine.create()</code>. Engine essentially represents (or is associated with) a hardware context (e.g., an OpenGL ES context or a Vulkan device).</p><p class="paragraph">Rendering typically happens in an operating system's window (which can be fullscreen), which is managed by a Renderer.</p><p class="paragraph">A typical Filament render loop looks like this:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val engine = Engine.create()!!<br>val swapChain = engine.createSwapChain(nativeWindow)<br>val renderer = engine.createRenderer()<br>val scene = engine.createScene()<br>val view = engine.createView()<br><br>view.setScene(scene)<br><br>while (!quit) {<br>    // Wait for VSYNC and user input events<br>    if (renderer.beginFrame(swapChain)) {<br>        renderer.render(view)<br>        renderer.endFrame()<br>    }<br>}<br><br>engine.destroy(view)<br>engine.destroy(scene)<br>engine.destroy(renderer)<br>engine.destroy(swapChain)<br>Engine.destroy(engine)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1585144976%2FConstructors%2F-156239448" anchor-label="Engine" id="1585144976%2FConstructors%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-engine.html"><span><span>Engine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1585144976%2FConstructors%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">nativeHandle<span class="token operator">: </span><a href="../../io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="1561515142%2FClasslikes%2F-156239448" anchor-label="AsynchronousMode" id="1561515142%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-asynchronous-mode/index.html"><span>Asynchronous</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1561515142%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-asynchronous-mode/index.html">AsynchronousMode</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-asynchronous-mode/index.html">Engine.AsynchronousMode</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">How the engine handles asynchronous operations.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-981760995%2FClasslikes%2F-156239448" anchor-label="Backend" id="-981760995%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-backend/index.html"><span><span>Backend</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-981760995%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-backend/index.html">Backend</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-backend/index.html">Engine.Backend</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Rendering backend selection.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1170276106%2FClasslikes%2F-156239448" anchor-label="Builder" id="-1170276106%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder/index.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1170276106%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-builder/index.html">Builder</a></div><div class="brief "><p class="paragraph">Builder for creating and configuring an Engine instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1445764773%2FClasslikes%2F-156239448" anchor-label="Companion" id="1445764773%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1445764773%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1148113%2FClasslikes%2F-156239448" anchor-label="Config" id="-1148113%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-config/index.html"><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1148113%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-config/index.html">Config</a></div><div class="brief "><p class="paragraph">Advanced parameters for customizing Engine initialization.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1403793681%2FClasslikes%2F-156239448" anchor-label="FeatureFlag" id="-1403793681%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-feature-flag/index.html"><span>Feature</span><wbr><span><span>Flag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1403793681%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-feature-flag/index.html">FeatureFlag</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>constant<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A feature flag: a last-resort switch for a faulty feature, set when the Engine is built and, unless <a href="../../../../kotlin/filament/io.github.erkko68.filament/-engine/-feature-flag/--root--.html">constant</a>, at any time with <a href="set-feature-flag.html">setFeatureFlag</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-37796413%2FClasslikes%2F-156239448" anchor-label="FeatureLevel" id="-37796413%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-feature-level/index.html"><span>Feature</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-37796413%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-feature-level/index.html">FeatureLevel</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-feature-level/index.html">Engine.FeatureLevel</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Backend feature levels control available rendering capabilities and performance characteristics.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-70290090%2FClasslikes%2F-156239448" anchor-label="FeatureState" id="-70290090%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-feature-state/index.html"><span>Feature</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-70290090%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-feature-state/index.html">FeatureState</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-feature-state/index.html">Engine.FeatureState</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">A tri-state for <a href="compile.html">compile</a>'s shadow-receiver and skinning variants.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1613468694%2FClasslikes%2F-156239448" anchor-label="GpuContextPriority" id="-1613468694%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-gpu-context-priority/index.html"><span>Gpu</span><wbr><span>Context</span><wbr><span><span>Priority</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1613468694%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-gpu-context-priority/index.html">GpuContextPriority</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-gpu-context-priority/index.html">Engine.GpuContextPriority</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">GPU context priority, a hint to the driver for work scheduling and preemption.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2138382860%2FClasslikes%2F-156239448" anchor-label="StereoscopicType" id="-2138382860%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-stereoscopic-type/index.html"><span>Stereoscopic</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2138382860%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-stereoscopic-type/index.html">StereoscopicType</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-stereoscopic-type/index.html">Engine.StereoscopicType</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Stereoscopic rendering technique for VR and 3D displays.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1913553832%2FClasslikes%2F-156239448" anchor-label="Token" id="-1913553832%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-token/index.html"><span><span>Token</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1913553832%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-token/index.html">Token</a></div><div class="brief "><p class="paragraph">The opaque token <a href="-builder/build.html">Builder.build</a>'s callback gets, for <a href="-companion/get-engine.html">getEngine</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1657507480%2FProperties%2F-156239448" anchor-label="activeFeatureLevel" id="-1657507480%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="active-feature-level.html"><span>active</span><wbr><span>Feature</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1657507480%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="active-feature-level.html">activeFeatureLevel</a><span class="token operator">: </span><a href="-feature-level/index.html">Engine.FeatureLevel</a></div><div class="brief "><p class="paragraph">The currently active feature level.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2034796938%2FProperties%2F-156239448" anchor-label="backend" id="2034796938%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="backend.html"><span><span>backend</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2034796938%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="backend.html">backend</a><span class="token operator">: </span><a href="-backend/index.html">Engine.Backend</a></div><div class="brief "><p class="paragraph">The rendering backend being used by this Engine.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1398347346%2FProperties%2F-156239448" anchor-label="bufferObjectCount" id="-1398347346%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="buffer-object-count.html"><span>buffer</span><wbr><span>Object</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1398347346%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="buffer-object-count.html">bufferObjectCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1518225561%2FProperties%2F-811833570" anchor-label="canvas" id="-1518225561%2FProperties%2F-811833570" data-filterable-set=":kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../canvas.html"><span><span>canvas</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1518225561%2FProperties%2F-811833570"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-active="" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="index.html">Engine</a><span class="token punctuation">.</span><a href="../canvas.html">canvas</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/org.w3c.dom/-h-t-m-l-canvas-element/index.html">HTMLCanvasElement</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The canvas this engine renders into.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-122306432%2FProperties%2F-156239448" anchor-label="colorGradingCount" id="-122306432%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="color-grading-count.html"><span>color</span><wbr><span>Grading</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-122306432%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="color-grading-count.html">colorGradingCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1428492474%2FProperties%2F-156239448" anchor-label="config" id="1428492474%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="config.html"><span><span>config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1428492474%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="config.html">config</a><span class="token operator">: </span><a href="-config/index.html">Engine.Config</a></div><div class="brief "><p class="paragraph">The configuration this Engine was built with.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1371826966%2FProperties%2F-156239448" anchor-label="defaultMaterial" id="1371826966%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="default-material.html"><span>default</span><wbr><span><span>Material</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1371826966%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="default-material.html">defaultMaterial</a><span class="token operator">: </span><a href="../-material/index.html">Material</a></div><div class="brief "><p class="paragraph">The default Material: 80% white, lit. Owned by the Engine.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1962454484%2FProperties%2F-156239448" anchor-label="entityManager" id="1962454484%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="entity-manager.html"><span>entity</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1962454484%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="entity-manager.html">entityManager</a><span class="token operator">: </span><a href="../-entity-manager/index.html">EntityManager</a></div><div class="brief "><p class="paragraph">The EntityManager for creating and managing entities.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1098339711%2FProperties%2F-156239448" anchor-label="hasUnrecoverableFailure" id="1098339711%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-unrecoverable-failure.html"><span>has</span><wbr><span>Unrecoverable</span><wbr><span><span>Failure</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1098339711%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="has-unrecoverable-failure.html">hasUnrecoverableFailure</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the Engine is in an unrecoverable failure state (e.g. the GPU device was lost). Once true, the Engine must be destroyed and recreated.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="894897439%2FProperties%2F-156239448" anchor-label="indexBufferCount" id="894897439%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index-buffer-count.html"><span>index</span><wbr><span>Buffer</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="894897439%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="index-buffer-count.html">indexBufferCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-486948971%2FProperties%2F-156239448" anchor-label="indirectLightCount" id="-486948971%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="indirect-light-count.html"><span>indirect</span><wbr><span>Light</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-486948971%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="indirect-light-count.html">indirectLightCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1987610492%2FProperties%2F-156239448" anchor-label="instanceBufferCount" id="-1987610492%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="instance-buffer-count.html"><span>instance</span><wbr><span>Buffer</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1987610492%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="instance-buffer-count.html">instanceBufferCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-135153998%2FProperties%2F-156239448" anchor-label="isAsynchronousModeEnabled" id="-135153998%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-asynchronous-mode-enabled.html"><span>is</span><wbr><span>Asynchronous</span><wbr><span>Mode</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-135153998%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-asynchronous-mode-enabled.html">isAsynchronousModeEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether asynchronous operations can be used (see <a href="-config/asynchronous-mode.html">Config.asynchronousMode</a>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1239142286%2FProperties%2F-156239448" anchor-label="isAutomaticInstancingEnabled" id="1239142286%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-automatic-instancing-enabled.html"><span>is</span><wbr><span>Automatic</span><wbr><span>Instancing</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1239142286%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-automatic-instancing-enabled.html">isAutomaticInstancingEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the engine batches identical renderables into instanced draw calls.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-468615676%2FProperties%2F-156239448" anchor-label="isPaused" id="-468615676%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-paused.html"><span>is</span><wbr><span><span>Paused</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-468615676%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../-platform-gap/index.html"><span class="token annotation builtin">PlatformGap</span></a><span class="token punctuation">(</span><span>platforms<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../-filament-platform/-w-e-b/index.html">FilamentPlatform.WEB</a></span><wbr><span class="token punctuation">]</span><span class="token punctuation">, </span></span><wbr><span>behavior<span class="token operator"> = </span><span class="breakable-word"><span class="token string">"state is only tracked locally — Filament's pause needs threads, which the wasm build doesn't have, so it has no effect on rendering."</span></span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">var </span><a href="is-paused.html">isPaused</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the render thread is paused. Set to pause or resume it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2083952876%2FProperties%2F-156239448" anchor-label="isValid" id="2083952876%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-valid.html"><span>is</span><wbr><span><span>Valid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2083952876%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-valid.html">isValid</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether this Engine hasn't been destroyed.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1232050011%2FProperties%2F-156239448" anchor-label="lightManager" id="-1232050011%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="light-manager.html"><span>light</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1232050011%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="light-manager.html">lightManager</a><span class="token operator">: </span><a href="../-light-manager/index.html">LightManager</a></div><div class="brief "><p class="paragraph">The LightManager for managing light components.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1862759862%2FProperties%2F-156239448" anchor-label="materialCount" id="1862759862%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-count.html"><span>material</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1862759862%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="material-count.html">materialCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1456471719%2FProperties%2F-156239448" anchor-label="maxAutomaticInstances" id="1456471719%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-automatic-instances.html"><span>max</span><wbr><span>Automatic</span><wbr><span><span>Instances</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1456471719%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="max-automatic-instances.html">maxAutomaticInstances</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">The maximum number of instances automatic instancing batches together.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="181549638%2FProperties%2F-156239448" anchor-label="morphTargetBufferCount" id="181549638%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="morph-target-buffer-count.html"><span>morph</span><wbr><span>Target</span><wbr><span>Buffer</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="181549638%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="morph-target-buffer-count.html">morphTargetBufferCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="352624902%2FProperties%2F-156239448" anchor-label="nativeObject" id="352624902%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="native-object.html"><span>native</span><wbr><span><span>Object</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="352624902%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="native-object.html">nativeObject</a><span class="token operator">: </span><a href="../../io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></div><div class="brief "><p class="paragraph">The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1932396191%2FProperties%2F-156239448" anchor-label="renderableManager" id="-1932396191%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="renderable-manager.html"><span>renderable</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1932396191%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="renderable-manager.html">renderableManager</a><span class="token operator">: </span><a href="../-renderable-manager/index.html">RenderableManager</a></div><div class="brief "><p class="paragraph">The RenderableManager for managing renderable components.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1398183638%2FProperties%2F-156239448" anchor-label="renderTargetCount" id="1398183638%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="render-target-count.html"><span>render</span><wbr><span>Target</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1398183638%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="render-target-count.html">renderTargetCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1342669753%2FProperties%2F-156239448" anchor-label="sceneCount" id="1342669753%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scene-count.html"><span>scene</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1342669753%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="scene-count.html">sceneCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1230570080%2FProperties%2F-156239448" anchor-label="skinningBufferCount" id="-1230570080%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="skinning-buffer-count.html"><span>skinning</span><wbr><span>Buffer</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1230570080%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="skinning-buffer-count.html">skinningBufferCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="201589704%2FProperties%2F-156239448" anchor-label="skyboxeCount" id="201589704%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="skyboxe-count.html"><span>skyboxe</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="201589704%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="skyboxe-count.html">skyboxeCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="138236559%2FProperties%2F-156239448" anchor-label="streamCount" id="138236559%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-count.html"><span>stream</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="138236559%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="stream-count.html">streamCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="719169890%2FProperties%2F-156239448" anchor-label="supportedFeatureLevel" id="719169890%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="supported-feature-level.html"><span>supported</span><wbr><span>Feature</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="719169890%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="supported-feature-level.html">supportedFeatureLevel</a><span class="token operator">: </span><a href="-feature-level/index.html">Engine.FeatureLevel</a></div><div class="brief "><p class="paragraph">The highest feature level supported by this backend.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1633654043%2FProperties%2F-156239448" anchor-label="swapChainCount" id="1633654043%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="swap-chain-count.html"><span>swap</span><wbr><span>Chain</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1633654043%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="swap-chain-count.html">swapChainCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="226523208%2FProperties%2F-156239448" anchor-label="textureCount" id="226523208%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="texture-count.html"><span>texture</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="226523208%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="texture-count.html">textureCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="153964411%2FProperties%2F-156239448" anchor-label="transformManager" id="153964411%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transform-manager.html"><span>transform</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="153964411%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="transform-manager.html">transformManager</a><span class="token operator">: </span><a href="../-transform-manager/index.html">TransformManager</a></div><div class="brief "><p class="paragraph">The TransformManager for managing entity transforms.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="716709459%2FProperties%2F-156239448" anchor-label="vertexBufferCount" id="716709459%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vertex-buffer-count.html"><span>vertex</span><wbr><span>Buffer</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="716709459%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="vertex-buffer-count.html">vertexBufferCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1464151244%2FProperties%2F-156239448" anchor-label="viewCount" id="-1464151244%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="view-count.html"><span>view</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1464151244%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="view-count.html">viewCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="282708764%2FFunctions%2F-156239448" anchor-label="cancelAsyncCall" id="282708764%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cancel-async-call.html"><span>cancel</span><wbr><span>Async</span><wbr><span><span>Call</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="282708764%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cancel-async-call.html"><span class="token function">cancelAsyncCall</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Cancels the async call <a href="cancel-async-call.html">id</a> (<a href="run-command-async.html">runCommandAsync</a>, <code class="lang-kotlin">setBufferAsync</code>, <code class="lang-kotlin">setBufferAtAsync</code>, <code class="lang-kotlin">setImageAsync</code>…). Its completion callback still runs, with <a href="../-async-call-status/-c-a-n-c-e-l-e-d/index.html">AsyncCallStatus.CANCELED</a>. False if it's running, done or already canceled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="906301158%2FFunctions%2F-156239448" anchor-label="close" id="906301158%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="close.html"><span><span>close</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="906301158%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="close.html"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Same as <a href="destroy.html">destroy</a>; lets this be used with <code class="lang-kotlin">use { }</code> and try-with-resources.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1422158860%2FFunctions%2F-156239448" anchor-label="compile" id="1422158860%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="compile.html"><span><span>compile</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1422158860%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="compile.html"><span class="token function">compile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">priority<span class="token operator">: </span><a href="../-material/-compiler-priority-queue/index.html">Material.CompilerPriorityQueue</a><span class="token punctuation">, </span></span><span class="parameter ">material<span class="token operator">: </span><a href="../-material/index.html">Material</a><span class="token punctuation">, </span></span><span class="parameter ">view<span class="token operator">: </span><a href="../-view/index.html">View</a><span class="token punctuation">, </span></span><span class="parameter ">shadowReceiver<span class="token operator">: </span><a href="-feature-state/index.html">Engine.FeatureState</a><span class="token punctuation">, </span></span><span class="parameter ">skinning<span class="token operator">: </span><a href="-feature-state/index.html">Engine.FeatureState</a><span class="token punctuation">, </span></span><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="../-material/index.html">Material</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Asynchronously compiles the variants of <a href="compile.html">material</a> needed to render it in <a href="compile.html">view</a>, taking into account the view's features (lighting, fog, stereo, shadowing) and <a href="compile.html">shadowReceiver</a> and <a href="compile.html">skinning</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-153622983%2FFunctions%2F-156239448" anchor-label="createCamera" id="-153622983%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-camera.html"><span>create</span><wbr><span><span>Camera</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-153622983%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-camera.html"><span class="token function">createCamera</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">entity<span class="token operator">: </span><a href="../-entity/index.html">Entity</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-camera/index.html">Camera</a></div><div class="brief "><p class="paragraph">Creates a Camera component on <a href="create-camera.html">entity</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1780273623%2FFunctions%2F-156239448" anchor-label="createFence" id="-1780273623%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-fence.html"><span>create</span><wbr><span><span>Fence</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1780273623%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-fence.html"><span class="token function">createFence</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-fence/index.html">Fence</a></div><div class="brief "><p class="paragraph">Creates a Fence.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2139466307%2FFunctions%2F-156239448" anchor-label="createRenderer" id="-2139466307%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-renderer.html"><span>create</span><wbr><span><span>Renderer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2139466307%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-renderer.html"><span class="token function">createRenderer</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-renderer/index.html">Renderer</a></div><div class="brief "><p class="paragraph">Creates a Renderer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1261081134%2FFunctions%2F-156239448" anchor-label="createScene" id="1261081134%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-scene.html"><span>create</span><wbr><span><span>Scene</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1261081134%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-scene.html"><span class="token function">createScene</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-scene/index.html">Scene</a></div><div class="brief "><p class="paragraph">Creates a Scene.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="267882334%2FFunctions%2F-156239448" anchor-label="createSwapChain" id="267882334%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-swap-chain.html"><span>create</span><wbr><span>Swap</span><wbr><span><span>Chain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="267882334%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-swap-chain.html"><span class="token function">createSwapChain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">surface<span class="token operator">: </span><a href="../-native-surface/index.html">NativeSurface</a><span class="token punctuation">, </span></span><span class="parameter ">flags<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-swap-chain/index.html">SwapChain</a></div><div class="brief "><p class="paragraph">Creates a SwapChain rendering into a native display surface.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-swap-chain.html"><span class="token function">createSwapChain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">width<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">height<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">flags<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-swap-chain/index.html">SwapChain</a></div><div class="brief "><p class="paragraph">Creates an offscreen SwapChain of the given size.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1936717925%2FFunctions%2F-156239448" anchor-label="createView" id="-1936717925%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-view.html"><span>create</span><wbr><span><span>View</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1936717925%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-view.html"><span class="token function">createView</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-view/index.html">View</a></div><div class="brief "><p class="paragraph">Creates a View.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="890097565%2FFunctions%2F-156239448" anchor-label="destroy" id="890097565%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="destroy.html"><span><span>destroy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="890097565%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">bufferObject<span class="token operator">: </span><a href="../-buffer-object/index.html">BufferObject</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a BufferObject.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">colorGrading<span class="token operator">: </span><a href="../-color-grading/index.html">ColorGrading</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a ColorGrading.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fence<span class="token operator">: </span><a href="../-fence/index.html">Fence</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Fence.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">framePacer<span class="token operator">: </span><a href="../-frame-pacer/index.html">FramePacer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a FramePacer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">indexBuffer<span class="token operator">: </span><a href="../-index-buffer/index.html">IndexBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys an IndexBuffer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">indirectLight<span class="token operator">: </span><a href="../-indirect-light/index.html">IndirectLight</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys an IndirectLight.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instanceBuffer<span class="token operator">: </span><a href="../-instance-buffer/index.html">InstanceBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys an InstanceBuffer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">material<span class="token operator">: </span><a href="../-material/index.html">Material</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Material; its instances must be destroyed first.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">materialInstance<span class="token operator">: </span><a href="../-material-instance/index.html">MaterialInstance</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a MaterialInstance.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">morphTargetBuffer<span class="token operator">: </span><a href="../-morph-target-buffer/index.html">MorphTargetBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a MorphTargetBuffer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">renderTarget<span class="token operator">: </span><a href="../-render-target/index.html">RenderTarget</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a RenderTarget.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">renderer<span class="token operator">: </span><a href="../-renderer/index.html">Renderer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Renderer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scene<span class="token operator">: </span><a href="../-scene/index.html">Scene</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Scene.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinningBuffer<span class="token operator">: </span><a href="../-skinning-buffer/index.html">SkinningBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a SkinningBuffer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skybox<span class="token operator">: </span><a href="../-skybox/index.html">Skybox</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Skybox.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">stream<span class="token operator">: </span><a href="../-stream/index.html">Stream</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Stream.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">swapChain<span class="token operator">: </span><a href="../-swap-chain/index.html">SwapChain</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a SwapChain, and releases the native window it rendered into.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">texture<span class="token operator">: </span><a href="../-texture/index.html">Texture</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a Texture.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vertexBuffer<span class="token operator">: </span><a href="../-vertex-buffer/index.html">VertexBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a VertexBuffer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">view<span class="token operator">: </span><a href="../-view/index.html">View</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Destroys a View.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy.html"><span class="token function">destroy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">entity<span class="token operator">: </span><a href="../-entity/index.html">Entity</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Destroys every Filament component of <a href="destroy.html">entity</a>; the entity itself is the EntityManager's.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1034214812%2FFunctions%2F-156239448" anchor-label="destroyCameraComponent" id="1034214812%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="destroy-camera-component.html"><span>destroy</span><wbr><span>Camera</span><wbr><span><span>Component</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1034214812%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="destroy-camera-component.html"><span class="token function">destroyCameraComponent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">entity<span class="token operator">: </span><a href="../-entity/index.html">Entity</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Destroys the Camera component of <a href="destroy-camera-component.html">entity</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1908887741%2FFunctions%2F-156239448" anchor-label="enableAccurateTranslations" id="-1908887741%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enable-accurate-translations.html"><span>enable</span><wbr><span>Accurate</span><wbr><span><span>Translations</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1908887741%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="enable-accurate-translations.html"><span class="token function">enableAccurateTranslations</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enables high-precision world-space translations, for better numerical stability with large translations.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="275621833%2FFunctions%2F-156239448" anchor-label="execute" id="275621833%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="execute.html"><span><span>execute</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="275621833%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="execute.html"><span class="token function">execute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Runs the engine's pending work on this thread, for platforms without a render thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-495110310%2FFunctions%2F-156239448" anchor-label="flush" id="-495110310%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flush.html"><span><span>flush</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-495110310%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="flush.html"><span class="token function">flush</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) without blocking.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-882654931%2FFunctions%2F-156239448" anchor-label="flushAndWait" id="-882654931%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flush-and-wait.html"><span>flush</span><wbr><span>And</span><wbr><span><span>Wait</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-882654931%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="flush-and-wait.html"><span class="token function">flushAndWait</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Blocks until all pending commands have been executed by the GPU.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="flush-and-wait.html"><span class="token function">flushAndWait</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Blocks until all pending commands have been executed by the GPU, or <a href="flush-and-wait.html">timeout</a> nanoseconds pass.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="832058744%2FFunctions%2F-156239448" anchor-label="getCameraComponent" id="832058744%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-camera-component.html"><span>get</span><wbr><span>Camera</span><wbr><span><span>Component</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="832058744%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-camera-component.html"><span class="token function">getCameraComponent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">entity<span class="token operator">: </span><a href="../-entity/index.html">Entity</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-camera/index.html">Camera</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The Camera component of <a href="get-camera-component.html">entity</a>, or null if it has none.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-471581420%2FFunctions%2F-156239448" anchor-label="getFeatureFlag" id="-471581420%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-feature-flag.html"><span>get</span><wbr><span>Feature</span><wbr><span><span>Flag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-471581420%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-feature-flag.html"><span class="token function">getFeatureFlag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">A feature flag's value, or null if it doesn't exist.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="880339671%2FFunctions%2F-156239448" anchor-label="getFeatureFlags" id="880339671%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-feature-flags.html"><span>get</span><wbr><span>Feature</span><wbr><span><span>Flags</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="880339671%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-feature-flags.html"><span class="token function">getFeatureFlags</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-feature-flag/index.html">Engine.FeatureFlag</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The feature flags this Engine knows.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="300333648%2FFunctions%2F-156239448" anchor-label="hasFeatureFlag" id="300333648%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-feature-flag.html"><span>has</span><wbr><span>Feature</span><wbr><span><span>Flag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="300333648%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="has-feature-flag.html"><span class="token function">hasFeatureFlag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether a feature flag named <a href="has-feature-flag.html">name</a> exists.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-939867948%2FFunctions%2F-156239448" anchor-label="isStereoSupported" id="-939867948%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-stereo-supported.html"><span>is</span><wbr><span>Stereo</span><wbr><span><span>Supported</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-939867948%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-stereo-supported.html"><span class="token function">isStereoSupported</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">stereoscopicType<span class="token operator">: </span><a href="-stereoscopic-type/index.html">Engine.StereoscopicType</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether this Engine supports <a href="is-stereo-supported.html">stereoscopicType</a> rendering.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1323818449%2FFunctions%2F-156239448" anchor-label="isValid" id="1323818449%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-valid.html"><span>is</span><wbr><span><span>Valid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1323818449%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">bufferObject<span class="token operator">: </span><a href="../-buffer-object/index.html">BufferObject</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">bufferObject</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">colorGrading<span class="token operator">: </span><a href="../-color-grading/index.html">ColorGrading</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">colorGrading</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fence<span class="token operator">: </span><a href="../-fence/index.html">Fence</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">fence</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">indexBuffer<span class="token operator">: </span><a href="../-index-buffer/index.html">IndexBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">indexBuffer</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">indirectLight<span class="token operator">: </span><a href="../-indirect-light/index.html">IndirectLight</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">indirectLight</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instanceBuffer<span class="token operator">: </span><a href="../-instance-buffer/index.html">InstanceBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">instanceBuffer</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">material<span class="token operator">: </span><a href="../-material/index.html">Material</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">material</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">morphTargetBuffer<span class="token operator">: </span><a href="../-morph-target-buffer/index.html">MorphTargetBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">morphTargetBuffer</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">renderTarget<span class="token operator">: </span><a href="../-render-target/index.html">RenderTarget</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">renderTarget</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">renderer<span class="token operator">: </span><a href="../-renderer/index.html">Renderer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">renderer</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scene<span class="token operator">: </span><a href="../-scene/index.html">Scene</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">scene</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinningBuffer<span class="token operator">: </span><a href="../-skinning-buffer/index.html">SkinningBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">skinningBuffer</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skybox<span class="token operator">: </span><a href="../-skybox/index.html">Skybox</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">skybox</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">stream<span class="token operator">: </span><a href="../-stream/index.html">Stream</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">stream</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">swapChain<span class="token operator">: </span><a href="../-swap-chain/index.html">SwapChain</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">swapChain</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">texture<span class="token operator">: </span><a href="../-texture/index.html">Texture</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">texture</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vertexBuffer<span class="token operator">: </span><a href="../-vertex-buffer/index.html">VertexBuffer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">vertexBuffer</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">view<span class="token operator">: </span><a href="../-view/index.html">View</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">view</a> is a live object of this Engine.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid.html"><span class="token function">isValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">material<span class="token operator">: </span><a href="../-material/index.html">Material</a><span class="token punctuation">, </span></span><span class="parameter ">materialInstance<span class="token operator">: </span><a href="../-material-instance/index.html">MaterialInstance</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid.html">materialInstance</a> is a live instance of <a href="is-valid.html">material</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1685757064%2FFunctions%2F-156239448" anchor-label="isValidExpensive" id="-1685757064%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-valid-expensive.html"><span>is</span><wbr><span>Valid</span><wbr><span><span>Expensive</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1685757064%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-valid-expensive.html"><span class="token function">isValidExpensive</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">materialInstance<span class="token operator">: </span><a href="../-material-instance/index.html">MaterialInstance</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether <a href="is-valid-expensive.html">materialInstance</a> is a live instance of any of this Engine's materials; slower than <a href="is-valid.html">isValid</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-418009955%2FFunctions%2F-156239448" anchor-label="pumpMessageQueues" id="-418009955%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pump-message-queues.html"><span>pump</span><wbr><span>Message</span><wbr><span><span>Queues</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-418009955%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="pump-message-queues.html"><span class="token function">pumpMessageQueues</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Runs the pending user callbacks now instead of later, e.g. once per frame after the vsync tick.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1491496304%2FFunctions%2F-156239448" anchor-label="runCommandAsync" id="-1491496304%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run-command-async.html"><span>run</span><wbr><span>Command</span><wbr><span><span>Async</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1491496304%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="run-command-async.html"><span class="token function">runCommandAsync</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">command<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">onComplete<span class="token operator">: </span><span class="token punctuation">(</span><a href="../-async-call-status/index.html">AsyncCallStatus</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Queues <a href="run-command-async.html">command</a> to run asynchronously, in order with the other async calls (texture and buffer uploads), and returns an ID for <a href="cancel-async-call.html">cancelAsyncCall</a>. Meant for resource preparation such as asset loading; flooding it delays those uploads. <a href="run-command-async.html">onComplete</a> runs once on the main thread (see <a href="pump-message-queues.html">pumpMessageQueues</a>): <a href="../-async-call-status/-c-o-m-p-l-e-t-e-d/index.html">AsyncCallStatus.COMPLETED</a> if <a href="run-command-async.html">command</a> ran, <a href="../-async-call-status/-c-a-n-c-e-l-e-d/index.html">AsyncCallStatus.CANCELED</a> if it never did. Needs <a href="is-asynchronous-mode-enabled.html">isAsynchronousModeEnabled</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1887449767%2FFunctions%2F-156239448" anchor-label="setActiveFeatureLevel" id="-1887449767%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-active-feature-level.html"><span>set</span><wbr><span>Active</span><wbr><span>Feature</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1887449767%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-active-feature-level.html"><span class="token function">setActiveFeatureLevel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">featureLevel<span class="token operator">: </span><a href="-feature-level/index.html">Engine.FeatureLevel</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-feature-level/index.html">Engine.FeatureLevel</a></div><div class="brief "><p class="paragraph">Activates <a href="set-active-feature-level.html">featureLevel</a>, at most <a href="supported-feature-level.html">supportedFeatureLevel</a>; a level can't be lowered once activated.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-414328580%2FFunctions%2F-156239448" anchor-label="setFeatureFlag" id="-414328580%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-feature-flag.html"><span>set</span><wbr><span>Feature</span><wbr><span><span>Flag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-414328580%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-feature-flag.html"><span class="token function">setFeatureFlag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Sets a feature flag; constant flags can only be set on the <a href="-builder/index.html">Builder</a>. @return false if it doesn't exist or is constant.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1957853815%2FFunctions%2F-156239448" anchor-label="unprotected" id="-1957853815%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unprotected.html"><span><span>unprotected</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1957853815%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unprotected.html"><span class="token function">unprotected</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Switches the command queue to unprotected mode, after a frame on a protected SwapChain.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
