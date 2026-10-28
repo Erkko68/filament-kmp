@@ -10,6 +10,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Fixed
+- **`close()`/`destroy()` is safe to call twice** on every `AutoCloseable` wrapper (`ToneMapper`, `Ktx2Reader`, `IBLPrefilterContext`, `Manipulator`, …); a second call used to free the native object again.
+
 ## [0.9.0] — 2026-10-23
 
 The `filament-compose` API now covers the common model-viewer path: camera moves, taps that reach the object they hit, screen-anchored labels, capture, material variants and built-in lighting. It is mostly complete from here on and changes only in small, focused steps; see [README → What may change](README.md#what-may-change). Feedback is still very welcome in the [API feedback discussion](https://github.com/Erkko68/filament-kmp/discussions/204).
