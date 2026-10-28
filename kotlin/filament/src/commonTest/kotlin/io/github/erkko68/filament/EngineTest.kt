@@ -16,9 +16,10 @@ import kotlin.test.assertTrue
 class EngineTest {
     @Test
     fun testConfigIsReportedBackByTheEngine() {
-        val config = Engine.Config().apply { resourceAllocatorCacheMaxAge = 7 }
+        val config = Engine.Config().apply { resourceAllocatorCacheMaxAge = 7; asynchronousFrameBudget = 5_000_000 }
         Engine.Builder().backend(Engine.Backend.NOOP).config(config).build()!!.use { engine ->
             assertEquals(7, engine.config.resourceAllocatorCacheMaxAge)
+            assertEquals(5_000_000, engine.config.asynchronousFrameBudget)
         }
     }
 
@@ -39,6 +40,7 @@ class EngineTest {
         assertEquals(cpp.resourceAllocatorCacheMaxAge, kotlin.resourceAllocatorCacheMaxAge)
         assertEquals(cpp.sharedUboInitialSizeInBytes, kotlin.sharedUboInitialSizeInBytes)
         assertEquals(cpp.asynchronousMode, kotlin.asynchronousMode)
+        assertEquals(cpp.asynchronousFrameBudget, kotlin.asynchronousFrameBudget)
         assertEquals(cpp.materialCacheCapacity, kotlin.materialCacheCapacity)
         assertEquals(cpp.programCacheCapacity, kotlin.programCacheCapacity)
     }

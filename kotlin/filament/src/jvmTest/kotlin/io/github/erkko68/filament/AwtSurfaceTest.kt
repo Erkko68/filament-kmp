@@ -10,6 +10,10 @@ import kotlin.test.assertTrue
 
 /** The one test that hands Filament a live desktop window: an AWT canvas, cleared to red and read back. */
 class AwtSurfaceTest : RealBackendFixture() {
+    // Metal drops a frame it has no drawable for, as while the window comes up, instead of panicking.
+    override fun createEngine(): Engine? =
+        Engine.create(config = Engine.Config().apply { metalDisablePanicOnDrawableFailure = true })
+
     @Test
     fun rendersIntoAnAwtCanvas() {
         Assume.assumeFalse("no display", GraphicsEnvironment.isHeadless())
@@ -40,27 +44,26 @@ class AwtSurfaceTest : RealBackendFixture() {
             viewport = Viewport(0, 0, width, height)
         }
         try {
-            val pixels = ByteArray(4)
-            var read = false
-            val pbd = Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) { read = true }
-            // The first frames can be skipped while the window comes up.
-            var rendered = false
+            fun isRed(c: List<Int>) = c[0] > 200 && c[1] < 50 && c[2] < 50
+            // Frames are skipped or dropped while the window comes up: render until one reads back.
+            var rgb: List<Int>? = null
             for (attempt in 0 until 50) {
                 if (renderer.beginFrame(swapChain, 0L)) {
+                    val pixels = ByteArray(4)
+                    var read = false
+                    val pbd = Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) { read = true }
                     renderer.render(view)
                     renderer.readPixels(width / 2, height / 2, 1, 1, pbd)
                     renderer.endFrame()
-                    rendered = true
-                    break
+                    var tries = 0
+                    while (!read && tries++ < 20) engine.flushAndWait()
+                    if (read) rgb = pixels.take(3).map { it.toInt() and 0xFF }
+                    if (rgb != null && isRed(rgb)) break
                 }
                 Thread.sleep(20)
             }
-            assertTrue(rendered, "no frame was accepted by the window's swap chain")
-            var tries = 0
-            while (!read && tries++ < 20) engine.flushAndWait()
-            assertTrue(read, "the frame was never read back")
-            val (r, g, b) = pixels.map { it.toInt() and 0xFF }
-            assertTrue(r > 200 && g < 50 && b < 50, "expected the red clear colour, got ($r, $g, $b)")
+            assertTrue(rgb != null, "no frame was read back from the window's swap chain")
+            assertTrue(isRed(rgb), "expected the red clear colour, got $rgb")
         } finally {
             engine.destroy(swapChain)
             engine.flushAndWait()

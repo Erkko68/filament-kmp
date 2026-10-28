@@ -622,6 +622,7 @@ public final class io/github/erkko68/filament/Engine$Config {
 	public static final field SINGLE_THREADED I
 	public fun <init> ()V
 	public final fun getAssertNativeWindowIsValid ()Z
+	public final fun getAsynchronousFrameBudget ()J
 	public final fun getAsynchronousMode ()Lio/github/erkko68/filament/Engine$AsynchronousMode;
 	public final fun getCommandBufferSizeMB ()I
 	public final fun getDisableHandleUseAfterFreeCheck ()Z
@@ -645,6 +646,7 @@ public final class io/github/erkko68/filament/Engine$Config {
 	public final fun getStereoscopicEyeCount ()I
 	public final fun getStereoscopicType ()Lio/github/erkko68/filament/Engine$StereoscopicType;
 	public final fun setAssertNativeWindowIsValid (Z)V
+	public final fun setAsynchronousFrameBudget (J)V
 	public final fun setAsynchronousMode (Lio/github/erkko68/filament/Engine$AsynchronousMode;)V
 	public final fun setCommandBufferSizeMB (I)V
 	public final fun setDisableHandleUseAfterFreeCheck (Z)V
@@ -1028,6 +1030,8 @@ public final class io/github/erkko68/filament/GuardBandOptions {
 }
 
 public final class io/github/erkko68/filament/IndexBuffer {
+	public static final field Companion Lio/github/erkko68/filament/IndexBuffer$Companion;
+	public static final field MAX_INDEX_COUNT I
 	public fun <init> (J)V
 	public final fun getIndexCount ()I
 	public final fun getNativeObject ()J
@@ -1048,6 +1052,9 @@ public final class io/github/erkko68/filament/IndexBuffer$Builder {
 	public final fun build (Lio/github/erkko68/filament/Engine;)Lio/github/erkko68/filament/IndexBuffer;
 	public final fun indexCount (I)Lio/github/erkko68/filament/IndexBuffer$Builder;
 	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/IndexBuffer$Builder;
+}
+
+public final class io/github/erkko68/filament/IndexBuffer$Companion {
 }
 
 public final class io/github/erkko68/filament/IndexBuffer$IndexType : java/lang/Enum {
@@ -2272,7 +2279,11 @@ public final class io/github/erkko68/filament/TemporalAntiAliasingOptions {
 	public fun <init> ()V
 	public final fun getBoxClipping ()Lio/github/erkko68/filament/TemporalAntiAliasingOptions$BoxClipping;
 	public final fun getBoxType ()Lio/github/erkko68/filament/TemporalAntiAliasingOptions$BoxType;
+	public final fun getDepthDisocclusion ()Z
+	public final fun getDisocclusionDepthThreshold ()F
+	public final fun getDisocclusionHistoryNeighborhood ()Z
 	public final fun getEnabled ()Z
+	public final fun getExactLanczosSupport ()Z
 	public final fun getFeedback ()F
 	public final fun getFilterHistory ()Z
 	public final fun getFilterInput ()Z
@@ -2280,14 +2291,24 @@ public final class io/github/erkko68/filament/TemporalAntiAliasingOptions {
 	public final fun getHistoryReprojection ()Z
 	public final fun getJitterPattern ()Lio/github/erkko68/filament/TemporalAntiAliasingOptions$JitterPattern;
 	public final fun getLodBias ()F
+	public final fun getMinAlphaStrength ()F
+	public final fun getMinBoxStrength ()F
+	public final fun getMotionAdaptiveHistory ()Z
+	public final fun getMotionDeltaThreshold ()F
+	public final fun getMotionHoldFrames ()F
 	public final fun getPreventFlickering ()Z
 	public final fun getSharpness ()F
+	public final fun getSkyDepthThreshold ()F
 	public final fun getUpscaling ()F
 	public final fun getUseYCoCg ()Z
 	public final fun getVarianceGamma ()F
 	public final fun setBoxClipping (Lio/github/erkko68/filament/TemporalAntiAliasingOptions$BoxClipping;)V
 	public final fun setBoxType (Lio/github/erkko68/filament/TemporalAntiAliasingOptions$BoxType;)V
+	public final fun setDepthDisocclusion (Z)V
+	public final fun setDisocclusionDepthThreshold (F)V
+	public final fun setDisocclusionHistoryNeighborhood (Z)V
 	public final fun setEnabled (Z)V
+	public final fun setExactLanczosSupport (Z)V
 	public final fun setFeedback (F)V
 	public final fun setFilterHistory (Z)V
 	public final fun setFilterInput (Z)V
@@ -2295,8 +2316,14 @@ public final class io/github/erkko68/filament/TemporalAntiAliasingOptions {
 	public final fun setHistoryReprojection (Z)V
 	public final fun setJitterPattern (Lio/github/erkko68/filament/TemporalAntiAliasingOptions$JitterPattern;)V
 	public final fun setLodBias (F)V
+	public final fun setMinAlphaStrength (F)V
+	public final fun setMinBoxStrength (F)V
+	public final fun setMotionAdaptiveHistory (Z)V
+	public final fun setMotionDeltaThreshold (F)V
+	public final fun setMotionHoldFrames (F)V
 	public final fun setPreventFlickering (Z)V
 	public final fun setSharpness (F)V
+	public final fun setSkyDepthThreshold (F)V
 	public final fun setUpscaling (F)V
 	public final fun setUseYCoCg (Z)V
 	public final fun setVarianceGamma (F)V
@@ -2782,7 +2809,6 @@ public final class io/github/erkko68/filament/TransferFunction$Companion {
 
 public final class io/github/erkko68/filament/TransformManager {
 	public fun <init> (J)V
-	public final fun commitLocalTransformTransaction ()V
 	public final fun create (II)V
 	public final fun create (II[D)V
 	public final fun create (II[F)V
@@ -2807,7 +2833,6 @@ public final class io/github/erkko68/filament/TransformManager {
 	public static synthetic fun getWorldTransformAccurate$default (Lio/github/erkko68/filament/TransformManager;I[DILjava/lang/Object;)[D
 	public final fun hasComponent (I)Z
 	public final fun isAccurateTranslationsEnabled ()Z
-	public final fun openLocalTransformTransaction ()V
 	public final fun setAccurateTranslationsEnabled (Z)V
 	public final fun setParent (II)V
 	public final fun setTransform (I[D)V

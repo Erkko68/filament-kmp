@@ -31,6 +31,8 @@ abstract class DownloadPrebuiltsTask : DefaultTask() {
         if (stampFile.isFile && stampFile.readText().trim() == stamp) return
 
         outDir.listFiles()?.forEach { it.deleteRecursively() }
+        // A source build of this target left include/ beside lib/; its uberarchive.h would shadow the release's.
+        outDir.resolveSibling("include").deleteRecursively()
         val tarball = ArchiveCache.filamentRelease(cacheDir.get().asFile, version, asset, logger)
         val count = if (path.startsWith("xcf:")) {
             TarExtraction.extractXcframeworkSlice(tarball, path.removePrefix("xcf:"), outDir)

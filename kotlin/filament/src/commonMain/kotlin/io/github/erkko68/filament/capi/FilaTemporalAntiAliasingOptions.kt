@@ -105,3 +105,63 @@ internal external fun FilaTemporalAntiAliasingOptions_getHistoryReprojection(sel
 
 @ExternalSymbolName("FilaTemporalAntiAliasingOptions_setHistoryReprojection")
 internal external fun FilaTemporalAntiAliasingOptions_setHistoryReprojection(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory")
+internal external fun FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory")
+internal external fun FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold")
+internal external fun FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold(self: NativePointer): Float
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold")
+internal external fun FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold(self: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getMinBoxStrength")
+internal external fun FilaTemporalAntiAliasingOptions_getMinBoxStrength(self: NativePointer): Float
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setMinBoxStrength")
+internal external fun FilaTemporalAntiAliasingOptions_setMinBoxStrength(self: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getMinAlphaStrength")
+internal external fun FilaTemporalAntiAliasingOptions_getMinAlphaStrength(self: NativePointer): Float
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setMinAlphaStrength")
+internal external fun FilaTemporalAntiAliasingOptions_setMinAlphaStrength(self: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getSkyDepthThreshold")
+internal external fun FilaTemporalAntiAliasingOptions_getSkyDepthThreshold(self: NativePointer): Float
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setSkyDepthThreshold")
+internal external fun FilaTemporalAntiAliasingOptions_setSkyDepthThreshold(self: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getMotionHoldFrames")
+internal external fun FilaTemporalAntiAliasingOptions_getMotionHoldFrames(self: NativePointer): Float
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setMotionHoldFrames")
+internal external fun FilaTemporalAntiAliasingOptions_setMotionHoldFrames(self: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getDepthDisocclusion")
+internal external fun FilaTemporalAntiAliasingOptions_getDepthDisocclusion(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setDepthDisocclusion")
+internal external fun FilaTemporalAntiAliasingOptions_setDepthDisocclusion(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold")
+internal external fun FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold(self: NativePointer): Float
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold")
+internal external fun FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold(self: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood")
+internal external fun FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood")
+internal external fun FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_getExactLanczosSupport")
+internal external fun FilaTemporalAntiAliasingOptions_getExactLanczosSupport(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaTemporalAntiAliasingOptions_setExactLanczosSupport")
+internal external fun FilaTemporalAntiAliasingOptions_setExactLanczosSupport(self: NativePointer, value: Boolean)

@@ -417,6 +417,16 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
                 varianceGamma = FilaTemporalAntiAliasingOptions_getVarianceGamma(o)
                 preventFlickering = FilaTemporalAntiAliasingOptions_getPreventFlickering(o)
                 historyReprojection = FilaTemporalAntiAliasingOptions_getHistoryReprojection(o)
+                motionAdaptiveHistory = FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory(o)
+                motionDeltaThreshold = FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold(o)
+                minBoxStrength = FilaTemporalAntiAliasingOptions_getMinBoxStrength(o)
+                minAlphaStrength = FilaTemporalAntiAliasingOptions_getMinAlphaStrength(o)
+                skyDepthThreshold = FilaTemporalAntiAliasingOptions_getSkyDepthThreshold(o)
+                motionHoldFrames = FilaTemporalAntiAliasingOptions_getMotionHoldFrames(o)
+                depthDisocclusion = FilaTemporalAntiAliasingOptions_getDepthDisocclusion(o)
+                disocclusionDepthThreshold = FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold(o)
+                disocclusionHistoryNeighborhood = FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood(o)
+                exactLanczosSupport = FilaTemporalAntiAliasingOptions_getExactLanczosSupport(o)
             }
         }
         set(value) = withHandle({ FilaTemporalAntiAliasingOptions_create() }, { FilaTemporalAntiAliasingOptions_destroy(it) }) { o ->
@@ -435,6 +445,16 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
             FilaTemporalAntiAliasingOptions_setVarianceGamma(o, value.varianceGamma)
             FilaTemporalAntiAliasingOptions_setPreventFlickering(o, value.preventFlickering)
             FilaTemporalAntiAliasingOptions_setHistoryReprojection(o, value.historyReprojection)
+            FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory(o, value.motionAdaptiveHistory)
+            FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold(o, value.motionDeltaThreshold)
+            FilaTemporalAntiAliasingOptions_setMinBoxStrength(o, value.minBoxStrength)
+            FilaTemporalAntiAliasingOptions_setMinAlphaStrength(o, value.minAlphaStrength)
+            FilaTemporalAntiAliasingOptions_setSkyDepthThreshold(o, value.skyDepthThreshold)
+            FilaTemporalAntiAliasingOptions_setMotionHoldFrames(o, value.motionHoldFrames)
+            FilaTemporalAntiAliasingOptions_setDepthDisocclusion(o, value.depthDisocclusion)
+            FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold(o, value.disocclusionDepthThreshold)
+            FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood(o, value.disocclusionHistoryNeighborhood)
+            FilaTemporalAntiAliasingOptions_setExactLanczosSupport(o, value.exactLanczosSupport)
             FilaView_setTemporalAntiAliasingOptions(nativeHandle, o)
         }
 

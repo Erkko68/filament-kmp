@@ -608,7 +608,7 @@ class TemporalAntiAliasingOptions {
      */
     var enabled: Boolean = false
     /**
-     * Texturing LOD bias (typically -1 or -2). Default: -1.0.
+     * Texture LOD bias (typically between -1.0 and 0.0). Default: -1.0.
      */
     var lodBias: Float = -1.0f
     /**
@@ -648,10 +648,10 @@ class TemporalAntiAliasingOptions {
      */
     var jitterPattern: JitterPattern = JitterPattern.HALTON_23_X16
     /**
-     * High values increase ghosting artifacts, lower values increase jittering, range [0.75, 1.25].
-     * Default: 1.0.
+     * High values increase ghosting artifacts, lower values increase jittering, range [0.6, 1.25].
+     * Default: 0.7.
      */
-    var varianceGamma: Float = 1.0f
+    var varianceGamma: Float = 0.7f
     /**
      * Adjust the feedback dynamically to reduce flickering. Default: false.
      */
@@ -660,6 +660,46 @@ class TemporalAntiAliasingOptions {
      * Whether to apply history reprojection (debug option). Default: true.
      */
     var historyReprojection: Boolean = true
+    /**
+     * Relax history rejection under low camera motion, to reduce flickering on static content. Default: false.
+     */
+    var motionAdaptiveHistory: Boolean = false
+    /**
+     * Camera motion in texels above which history rejection applies at full strength. Default: 1.0.
+     */
+    var motionDeltaThreshold: Float = 1.0f
+    /**
+     * Minimum history clamping strength while the camera is static, in (0, 1]. Default: 0.1.
+     */
+    var minBoxStrength: Float = 0.1f
+    /**
+     * Minimum history feedback scale while the camera is static, in (0, 1]. Default: 0.3.
+     */
+    var minAlphaStrength: Float = 0.3f
+    /**
+     * Normalized depth below which distant/sky pixels always use full history rejection. Default: 0.001.
+     */
+    var skyDepthThreshold: Float = 0.001f
+    /**
+     * Frames to keep full history rejection after camera motion stops; 0 disables it. Default: 12.
+     */
+    var motionHoldFrames: Float = 12.0f
+    /**
+     * Detect disocclusion from depth, to reduce ghosting around moving objects. Default: false.
+     */
+    var depthDisocclusion: Boolean = false
+    /**
+     * Depth difference threshold for disocclusion detection. Default: 0.001.
+     */
+    var disocclusionDepthThreshold: Float = 0.001f
+    /**
+     * Reduce false disocclusions on thin static geometry, at a higher GPU cost. Default: true.
+     */
+    var disocclusionHistoryNeighborhood: Boolean = true
+    /**
+     * Use a wider reconstruction kernel for more sharpness at 1:1 resolution, at a higher GPU cost. Default: false.
+     */
+    var exactLanczosSupport: Boolean = false
 }
 
 /**

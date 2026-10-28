@@ -5,6 +5,7 @@ struct geo::Style
   field float[3] mWeights = {}
   field const char * mName = nullptr
   field bool mVisible = true
+  field std::chrono::nanoseconds{ext:std::chrono::nanoseconds} mTimeout = <conversion from const std::chrono::duration<long long, std::ratio<1, 1000>>>
   float geo::Style::GetWidth() const
 struct geo::Stats
   field const char * mLabel = nullptr
@@ -115,3 +116,4 @@ function static void geo::Reset()
 ## Unresolved types
 
 ## Unsupported defaults
+<conversion from const std::chrono::duration<long long, std::ratio<1, 1000>>>  in geo::Style.mTimeout

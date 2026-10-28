@@ -45,3 +45,9 @@ internal external fun GeoStyle_GetVisible(self: NativePointer): Boolean
 
 @ExternalSymbolName("GeoStyle_SetVisible")
 internal external fun GeoStyle_SetVisible(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("GeoStyle_GetTimeout")
+internal external fun GeoStyle_GetTimeout(self: NativePointer, out: NativePointer)
+
+@ExternalSymbolName("GeoStyle_SetTimeout")
+internal external fun GeoStyle_SetTimeout(self: NativePointer, value: Long)

@@ -564,7 +564,8 @@ FilaLightManagerBuilder* FilaLightManagerBuilder_shadowOptions(FilaLightManagerB
  *
  * @note
  * In some situations it can be useful to have a light in the scene that doesn't
- * actually emit light, but does cast shadows.
+ * actually emit light, but does cast shadows. To cast shadows with light casting
+ * disabled, you need to use the material `shadowMultiplier` property.
  */
 FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* self, bool enable);
 /**

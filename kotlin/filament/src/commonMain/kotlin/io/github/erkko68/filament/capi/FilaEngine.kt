@@ -130,6 +130,12 @@ internal external fun FilaEngineConfig_getAsynchronousMode(self: NativePointer):
 @ExternalSymbolName("FilaEngineConfig_setAsynchronousMode")
 internal external fun FilaEngineConfig_setAsynchronousMode(self: NativePointer, value: Int)
 
+@ExternalSymbolName("FilaEngineConfig_getAsynchronousFrameBudget")
+internal external fun FilaEngineConfig_getAsynchronousFrameBudget(self: NativePointer, out: NativePointer)
+
+@ExternalSymbolName("FilaEngineConfig_setAsynchronousFrameBudget")
+internal external fun FilaEngineConfig_setAsynchronousFrameBudget(self: NativePointer, value: Long)
+
 @ExternalSymbolName("FilaEngineConfig_getMaterialCacheCapacity")
 internal external fun FilaEngineConfig_getMaterialCacheCapacity(self: NativePointer): Int
 

@@ -72,3 +72,11 @@ JNIEXPORT void JNICALL Java_geo_capi_GeoStyleKt_GeoStyle_1SetVisible(JNIEnv* env
     GeoStyle_SetVisible((void*)(intptr_t) self, value);
 }
 
+JNIEXPORT void JNICALL Java_geo_capi_GeoStyleKt_GeoStyle_1GetTimeout(JNIEnv* env, jclass cls, jlong self, jlong out) {
+    GeoStyle_GetTimeout((void*)(intptr_t) self, (void*)(intptr_t) out);
+}
+
+JNIEXPORT void JNICALL Java_geo_capi_GeoStyleKt_GeoStyle_1SetTimeout(JNIEnv* env, jclass cls, jlong self, jlong value) {
+    GeoStyle_SetTimeout((void*)(intptr_t) self, value);
+}
+

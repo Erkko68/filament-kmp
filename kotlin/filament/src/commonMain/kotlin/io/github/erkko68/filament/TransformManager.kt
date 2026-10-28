@@ -33,7 +33,7 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      *
      * @param e An Entity.
      * @return The component's Instance, or 0 if it has none. Valid only until the next create, destroy, setParent,
-     *   commitLocalTransformTransaction, or Renderer.endFrame/skipFrame: keep the Entity, not the Instance.
+     *   or Renderer.endFrame/skipFrame: keep the Entity, not the Instance.
      */
     fun getInstance(e: Entity): EntityInstance = FilaTransformManager_getInstance(nativeHandle, e)
 
@@ -159,13 +159,4 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
     /** Double-precision [getWorldTransform]. */
     fun getWorldTransformAccurate(ci: EntityInstance, out: DoubleArray = DoubleArray(16)): DoubleArray =
         out.also { o -> o.usePinned(16) { FilaTransformManager_getWorldTransformAccurate(nativeHandle, ci, it) } }
-
-    /**
-     * Opens a local transform transaction: [setTransform] then doesn't update world transforms
-     * until [commitLocalTransformTransaction], which is faster when setting many of them.
-     */
-    fun openLocalTransformTransaction() = FilaTransformManager_openLocalTransformTransaction(nativeHandle)
-
-    /** Commits the local transform transaction and updates all world transforms. */
-    fun commitLocalTransformTransaction() = FilaTransformManager_commitLocalTransformTransaction(nativeHandle)
 }

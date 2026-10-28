@@ -189,7 +189,7 @@ scripts/dev/rebuild-materials.sh
 ```
 
 The script pulls `matc` out of the release tarball cached by step 3, recompiles every `.mat` in the
-repo in place and syncs the shared `emissive.filamat` copy. Commit the refreshed blobs; the embed
+repo in place. Commit the refreshed blobs; the embed
 tasks pick them up on the next build. `StandardMaterialLifecycleTest` (Tier-B) fails to build a
 material if a blob is stale or corrupt.
 

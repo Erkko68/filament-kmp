@@ -1,4 +1,4 @@
-// Source for emissive.filamat (also copied to filament-compose commonTest resources).
+// Source for emissive.filamat.
 // Recompile on every filaVersion bump — see docs/internals/upgrading-filament.md:
 //   matc -p all -a all -o emissive.filamat emissive.mat
 

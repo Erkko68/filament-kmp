@@ -172,6 +172,14 @@ void FilaEngineConfig_setAsynchronousMode(FilaEngineConfig* self, FilaPlatformAs
     fila::cpp(self)->asynchronousMode = static_cast<filament::backend::Platform::AsynchronousMode>(value);
 }
 
+void FilaEngineConfig_getAsynchronousFrameBudget(const FilaEngineConfig* self, int64_t* out) {
+    *out = (fila::cpp(self)->asynchronousFrameBudget).count();
+}
+
+void FilaEngineConfig_setAsynchronousFrameBudget(FilaEngineConfig* self, int64_t value) {
+    fila::cpp(self)->asynchronousFrameBudget = std::chrono::nanoseconds(value);
+}
+
 uint32_t FilaEngineConfig_getMaterialCacheCapacity(const FilaEngineConfig* self) {
     return fila::cpp(self)->materialCacheCapacity;
 }
