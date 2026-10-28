@@ -15,7 +15,7 @@ import io.github.erkko68.filament.utils.capi.*
  * If the chosen algorithm didn't remesh the input ([remeshed]), use the data you provided instead of
  * querying it back. Getting positions or UVs that weren't provided as input aborts.
  */
-class TangentSpaceMesh @InternalFilamentApi constructor(internal val nativeHandle: NativePointer) : AutoCloseable {
+class TangentSpaceMesh @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) : AutoCloseable {
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
@@ -141,7 +141,7 @@ class TangentSpaceMesh @InternalFilamentApi constructor(internal val nativeHandl
     }
 
     /** Frees the mesh. */
-    fun destroy() = FilaGeometryTangentSpaceMesh_destroy(nativeHandle)
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGeometryTangentSpaceMesh_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

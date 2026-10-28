@@ -15,6 +15,13 @@ expect class NativePointer
 expect val NullPointer: NativePointer
 
 /** True on web: wasm has no threads, so nothing may block waiting on Filament's driver. */
+/** Runs [destroy] on a live handle and returns [NullPointer]; `h = h.destroyOnce { ... }` is safe to repeat. */
+@InternalFilamentApi
+inline fun NativePointer.destroyOnce(destroy: (NativePointer) -> Unit): NativePointer {
+    if (this != NullPointer) destroy(this)
+    return NullPointer
+}
+
 @InternalFilamentApi
 expect val singleThreaded: Boolean
 

@@ -31,7 +31,7 @@ import io.github.erkko68.filament.interop.*
  *
  * Custom tone mapping operators can be created by subclassing ToneMapper.
  */
-open class ToneMapper(internal val nativeHandle: NativePointer) : AutoCloseable {
+open class ToneMapper(internal var nativeHandle: NativePointer) : AutoCloseable {
     /**
      * Maps an open domain (or "scene referred") color value to a display domain (or "display
      * referred") color value. Both are in the Rec.2020 color space, with no transfer function
@@ -57,7 +57,7 @@ open class ToneMapper(internal val nativeHandle: NativePointer) : AutoCloseable 
     val isLDR: Boolean get() = FilaToneMapper_isLDR(nativeHandle)
 
     /** Destroys the native tone mapper. ColorGrading.Builder only uses it during build(), so it can be closed afterwards. */
-    override fun close() = FilaToneMapper_destroy(nativeHandle)
+    override fun close() { nativeHandle = nativeHandle.destroyOnce { FilaToneMapper_destroy(it) } }
 
     /**
      * Linear tone mapping operator that returns the input color clamped to

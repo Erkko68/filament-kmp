@@ -37,7 +37,7 @@ enum class ComponentType {
  * Signed normalized data follows Vulkan and OpenGL ES 3.0+: a byte of -127 maps exactly to -1.
  */
 class Transcoder(config: Config) : AutoCloseable {
-    internal val nativeHandle: NativePointer = config.useNative { FilaGeometryTranscoder_create(it) }
+    internal var nativeHandle: NativePointer = config.useNative { FilaGeometryTranscoder_create(it) }
     // The layout C reads [invoke]'s source with, kept to check its length.
     private val itemBytes = config.componentCount * config.componentType.bytes
     private val strideBytes = config.inputStrideBytes
@@ -60,7 +60,7 @@ class Transcoder(config: Config) : AutoCloseable {
     )
 
     /** Frees the transcoder. */
-    fun destroy() = FilaGeometryTranscoder_destroy(nativeHandle)
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGeometryTranscoder_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

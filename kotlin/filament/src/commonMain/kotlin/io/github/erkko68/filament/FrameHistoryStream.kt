@@ -34,8 +34,5 @@ class FrameHistoryStream(private val renderer: Renderer) : AutoCloseable {
         }
     }
 
-    override fun close() {
-        FilaFrameHistoryStream_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    override fun close() { nativeHandle = nativeHandle.destroyOnce { FilaFrameHistoryStream_destroy(it) } }
 }

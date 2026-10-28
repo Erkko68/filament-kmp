@@ -59,10 +59,7 @@ class MaterialProvider @InternalFilamentApi constructor(internal var nativeHandl
     fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilaGltfioMaterialProvider_needsDummyData(nativeHandle, attrib.value)
 
     /** Frees the provider itself; cached materials survive unless [destroyMaterials] was called. */
-    fun destroy() {
-        FilaGltfioMaterialProvider_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGltfioMaterialProvider_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }`. */
     override fun close() = destroy()
@@ -77,10 +74,7 @@ class TextureProvider @InternalFilamentApi constructor(internal var nativeHandle
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
-    fun destroy() {
-        FilaGltfioTextureProvider_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGltfioTextureProvider_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }`. */
     override fun close() = destroy()
