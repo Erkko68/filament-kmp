@@ -156,8 +156,7 @@ class Manipulator @InternalFilamentApi constructor(internal var nativeHandle: Na
 
     /** Destroys the manipulator and releases all resources. */
     fun destroy() {
-        if (nativeHandle != NullPointer) FilaCamutilsManipulator_destroy(nativeHandle)
-        nativeHandle = NullPointer
+        nativeHandle = nativeHandle.destroyOnce { FilaCamutilsManipulator_destroy(it) }
         raycast?.let { (binding, user) -> FilaCamutilsRaycast_destroy(binding); Callbacks.release(user) }
         raycast = null
     }
@@ -264,10 +263,7 @@ class Bookmark @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     val nativeObject: NativePointer get() = nativeHandle
 
     /** Frees the bookmark. */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaCamutilsBookmark_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaCamutilsBookmark_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

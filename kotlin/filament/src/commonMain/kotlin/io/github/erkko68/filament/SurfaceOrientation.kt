@@ -186,10 +186,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal var nativeHan
     }
 
     /** Destroys this SurfaceOrientation. */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaGeometrySurfaceOrientation_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGeometrySurfaceOrientation_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

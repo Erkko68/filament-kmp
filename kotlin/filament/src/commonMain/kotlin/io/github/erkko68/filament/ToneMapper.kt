@@ -57,10 +57,7 @@ open class ToneMapper(internal var nativeHandle: NativePointer) : AutoCloseable 
     val isLDR: Boolean get() = FilaToneMapper_isLDR(nativeHandle)
 
     /** Destroys the native tone mapper. ColorGrading.Builder only uses it during build(), so it can be closed afterwards. */
-    override fun close() {
-        if (nativeHandle != NullPointer) FilaToneMapper_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    override fun close() { nativeHandle = nativeHandle.destroyOnce { FilaToneMapper_destroy(it) } }
 
     /**
      * Linear tone mapping operator that returns the input color clamped to

@@ -33,10 +33,7 @@ class Ktx2Reader(engine: Engine, quiet: Boolean = false) : AutoCloseable {
     enum class TransferFunction { LINEAR, sRGB }
 
     /** Frees the reader and its transcoding cache. */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaKtxreaderKtx2Reader_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaKtxreaderKtx2Reader_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

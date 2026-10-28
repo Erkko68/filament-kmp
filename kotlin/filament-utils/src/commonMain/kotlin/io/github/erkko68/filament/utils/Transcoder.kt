@@ -60,10 +60,7 @@ class Transcoder(config: Config) : AutoCloseable {
     )
 
     /** Frees the transcoder. */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaGeometryTranscoder_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGeometryTranscoder_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

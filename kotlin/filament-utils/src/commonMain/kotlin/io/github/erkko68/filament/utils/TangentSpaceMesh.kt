@@ -141,10 +141,7 @@ class TangentSpaceMesh @InternalFilamentApi constructor(internal var nativeHandl
     }
 
     /** Frees the mesh. */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaGeometryTangentSpaceMesh_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGeometryTangentSpaceMesh_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

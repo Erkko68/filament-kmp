@@ -3113,6 +3113,7 @@ public final class io/github/erkko68/filament/interop/Callbacks {
 }
 
 public final class io/github/erkko68/filament/interop/InteropKt {
+	public static final fun destroyOnce (JLkotlin/jvm/functions/Function1;)J
 	public static final fun interopScope (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun requireElements (II)V
 	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;Ljava/lang/String;)J

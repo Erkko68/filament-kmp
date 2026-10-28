@@ -63,10 +63,7 @@ class ResourceLoader(config: ResourceConfiguration) : AutoCloseable {
      * calls `Renderer.render()`, because the loader listens to buffer callbacks to know when
      * CPU-side data blobs can be freed.
      */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaGltfioResourceLoader_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaGltfioResourceLoader_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()

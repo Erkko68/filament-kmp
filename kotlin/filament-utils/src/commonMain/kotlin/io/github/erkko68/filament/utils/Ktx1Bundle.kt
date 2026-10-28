@@ -28,10 +28,7 @@ class Ktx1Bundle @InternalFilamentApi constructor(nativeHandle: NativePointer) :
     val nativeObject: NativePointer get() = nativeHandle
 
     /** Frees the bundle, unless [Ktx1Reader.createTexture] took it. */
-    fun destroy() {
-        if (nativeHandle != NullPointer) FilaImageKtx1Bundle_destroy(nativeHandle)
-        nativeHandle = NullPointer
-    }
+    fun destroy() { nativeHandle = nativeHandle.destroyOnce { FilaImageKtx1Bundle_destroy(it) } }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()
