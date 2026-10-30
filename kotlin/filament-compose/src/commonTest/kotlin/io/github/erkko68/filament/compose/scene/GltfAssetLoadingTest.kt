@@ -1,12 +1,21 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.unit.dp
+import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.testutils.TestGlb
+import io.github.erkko68.filament.compose.testutils.IgnoreWithoutViewInterop
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
+import io.github.erkko68.filament.compose.testutils.manyNodesGlb
+import io.github.erkko68.filament.compose.testutils.renderFrames
+import io.github.erkko68.filament.compose.testutils.withEngine
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
@@ -47,6 +56,27 @@ class GltfAssetLoadingTest {
             waitForIdle()
         }
         return predicate()
+    }
+
+    /**
+     * asyncBeginLoad writes all its commands in one native call, and a real backend still draining earlier ones leaves
+     * less than the 6 MiB command stream free: this load overflows it unless the stream is empty first. Nothing is drawn.
+     */
+    @OptIn(ExperimentalTestApi::class)
+    @IgnoreWithoutViewInterop
+    @Test
+    fun aLargeAssetDoesNotOverflowTheCommandStream() = withEngine(Engine.Backend.DEFAULT) { engine, setContent ->
+        val glb = manyNodesGlb(9_000)
+        var asset: GltfAsset? = null
+        setContent {
+            FilamentSceneView(Modifier.size(64.dp), engine = engine) {
+                val loaded = rememberGltfAsset { glb }
+                asset = loaded
+                GltfInstance(asset = loaded, visible = false)
+            }
+        }
+        assertTrue(pumpUntil { asset?.isReady == true }, "the large asset should finish loading")
+        renderFrames(engine, 2)
     }
 
     /** The whole arc: null while loading, then a ready asset whose instance populates the scene. */

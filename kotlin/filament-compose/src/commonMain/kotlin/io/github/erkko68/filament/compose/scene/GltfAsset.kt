@@ -157,6 +157,9 @@ internal fun rememberGltfAsset(
         // front because asyncBeginLoad reports a missing file on desktop only; elsewhere it loads what it has.
         // (data: URIs are listed too, but gltfio decodes those itself.)
         val external = gltfAsset.filamentAsset.resourceUris.filterNot { it.startsWith("data:") }
+        // asyncBeginLoad writes the whole upload in one call, about 600 bytes per primitive, and can't flush partway:
+        // the command stream must be empty first, or commands still queued leave too little room and it overflows.
+        engine.flushAndWait()
         if (external.isNotEmpty() || !resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)) {
             gltfAsset.releaseResourceLoader()
             gltfAsset.failed = true
@@ -168,6 +171,7 @@ internal fun rememberGltfAsset(
             )
             return@LaunchedEffect
         }
+        engine.flush()
         while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
             resourceLoader.asyncUpdateLoad()
             gltfAsset.progress = resourceLoader.asyncGetLoadProgress()
@@ -216,6 +220,9 @@ internal fun rememberGltfAsset(
  *
  * Each [GltfInstance] created from the returned asset lives until the asset is destroyed
  * (when this call leaves composition) — see [GltfAsset].
+ *
+ * The upload must fit the engine's command stream in one go, or Filament aborts: about 9,700 primitives by default. For
+ * more, pass an engine from `Engine.create` with a larger `Engine.Config.minCommandBufferSizeMB` and `commandBufferSizeMB`.
  *
  * @param key Reloads the asset when this value changes. Defaults to [Unit] for static assets.
  * @param onError Invoked once if [load] throws, the bytes don't parse, or their resources can't be loaded.

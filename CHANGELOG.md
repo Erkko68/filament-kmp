@@ -11,6 +11,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ## [Unreleased]
 
 ### Fixed
+- **Large glTF models no longer overflow Filament's command stream** (`filament-compose`): `rememberGltfAsset` empties the stream before uploading, which fixes an abort with `Backend CommandStream overflow`. An upload must still fit the stream, about 9,700 primitives by default: for more, raise `minCommandBufferSizeMB` and `commandBufferSizeMB` in the `Engine.Config` of a hoisted engine.
 - **`close()`/`destroy()` is safe to call twice** on every `AutoCloseable` wrapper (`ToneMapper`, `Ktx2Reader`, `IBLPrefilterContext`, `Manipulator`, …); a second call used to free the native object again.
 
 ## [0.9.0] — 2026-10-23
