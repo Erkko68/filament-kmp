@@ -146,6 +146,8 @@ internal fun rememberGltfAsset(
     }
 
     LaunchedEffect(gltfAsset) {
+        // createAsset ran in this composition: start the upload on the next frame, so one frame doesn't pay for both.
+        withFrameNanos { }
         val resourceLoader = ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true))
         gltfAsset.resourceLoader = resourceLoader
         gltfAsset.textureProviders = listOf(createStbProvider(engine), createKtx2Provider(engine)).also { (stb, ktx2) ->

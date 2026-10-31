@@ -8,11 +8,14 @@
 extern "C" {
 #endif
 
-// Decodes Radiance HDR bytes into a mipmapped 2D texture of internalFormat; NULL if they don't decode.
-FilaTexture* FilaHDRLoader_createTexture(FilaEngine* engine, const void* buffer, uint32_t size, FilaTextureFormat internalFormat);
+// Decodes into a FilaDecodedImage, which needs no Engine: these can run on any thread. NULL if the bytes don't decode.
+void* FilaTextureLoader_decode(const void* buffer, uint32_t size);
+void* FilaHDRLoader_decode(const void* buffer, uint32_t size);
 
-// Decodes PNG/JPEG/... bytes into a mipmapped RGBA8 (or SRGB8_A8) 2D texture; NULL if they don't decode.
-FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffer, uint32_t size, bool srgb);
+// Uploads a decoded image into a mipmapped 2D texture of internalFormat, and frees the image; NULL if that fails.
+FilaTexture* FilaDecodedImage_createTexture(void* image, FilaEngine* engine, FilaTextureFormat internalFormat);
+
+void FilaDecodedImage_destroy(void* image);
 
 #ifdef __cplusplus
 }

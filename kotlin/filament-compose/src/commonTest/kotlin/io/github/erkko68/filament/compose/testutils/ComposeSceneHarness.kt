@@ -25,6 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 /**
  * Sets scene [content] as the active composition, wrapping it in the three composition locals that
@@ -129,6 +131,21 @@ fun withUiThreadFilamentScene(
         engine.flushAndWait()
         Engine.destroy(engine)
     }
+}
+
+/**
+ * Steps frames until [done] holds, false if it never does. Decoding runs on real threads, so the limit is time:
+ * a count of frames can pass in milliseconds, before a decode's thread has even been scheduled.
+ */
+@OptIn(ExperimentalTestApi::class)
+fun ComposeUiTest.framesUntil(done: () -> Boolean): Boolean {
+    val start = TimeSource.Monotonic.markNow()
+    while (!done()) {
+        if (start.elapsedNow() > 10.seconds) return false
+        mainClock.advanceTimeByFrame()
+        waitForIdle()
+    }
+    return true
 }
 
 /**

@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -10,14 +11,27 @@ import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.testutils.GraphicsReady
 import io.github.erkko68.filament.compose.testutils.TestKtx
 import io.github.erkko68.filament.compose.testutils.awaitGraphicsReady
+import io.github.erkko68.filament.compose.testutils.framesUntil
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 
 /**
  * The async loaders ([rememberHdrEnvironment], [rememberTexture]): bytes arrive from an effect, then
@@ -29,22 +43,13 @@ class EnvironmentLoadingTest {
     fun awaitGraphics(): GraphicsReady = awaitGraphicsReady()
 
     @OptIn(ExperimentalTestApi::class)
-    private fun ComposeUiTest.frameUntil(done: () -> Boolean) {
-        repeat(50) {
-            if (done()) return
-            mainClock.advanceTimeByFrame()
-            waitForIdle()
-        }
-        assertTrue(done(), "the async load never finished")
-    }
+    private fun ComposeUiTest.frameUntil(done: () -> Boolean) = assertTrue(framesUntil(done = done), "the async load never finished")
 
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun hdrEnvironmentPrefiltersIntoReflectionsAndSkybox() = withUiThreadFilamentScene { setContent, engine, _ ->
-        // A flat 1×1 Radiance image: header, blank line, resolution, one RGBE pixel.
-        val hdr = "#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y 1 +X 1\n".encodeToByteArray() + byteArrayOf(-128, 64, 32, -127)
         var environment: Environment? = null
-        setContent { environment = rememberHdrEnvironment(engine = engine, hdr = { hdr }) }
+        setContent { environment = rememberHdrEnvironment(engine = engine, hdr = { ONE_PIXEL_HDR }) }
         frameUntil { environment?.reflections != null }
 
         val reflections = assertNotNull(environment?.reflections)
@@ -52,6 +57,23 @@ class EnvironmentLoadingTest {
         setContent {}
         waitForIdle()
         assertTrue(!engine.isValid(reflections) && !engine.isValid(sky), "disposal destroys the textures")
+    }
+
+    /** The textures are handed back with the prefilter only queued: nothing may wait for the backend to run it. */
+    @OptIn(ExperimentalTestApi::class, DelicateCoroutinesApi::class)
+    @Test
+    fun hdrEnvironmentDoesNotWaitForTheBackend() = withUiThreadFilamentScene { setContent, engine, _ ->
+        engine.isPaused = true // whatever waits now, waits for ever
+        val watchdog = GlobalScope.launch(Dispatchers.Default) { delay(3_000); engine.isPaused = false } // so it fails, not hangs
+        var environment: Environment? = null
+        setContent { environment = rememberHdrEnvironment(engine = engine, hdr = { ONE_PIXEL_HDR }) }
+        frameUntil { environment?.reflections != null }
+        val waited = watchdog.isCompleted
+        watchdog.cancel()
+        engine.isPaused = false
+        setContent {}
+        waitForIdle()
+        assertFalse(waited, "the prefilter blocked until the backend ran it")
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -169,6 +191,29 @@ class EnvironmentLoadingTest {
         assertEquals(emptyList(), errors)
     }
 
+    /** A load cancelled while it runs loses its result to withContext; that result must still be closed. */
+    @OptIn(ExperimentalTestApi::class, ExperimentalAtomicApi::class)
+    @Test
+    fun aResultDiscardedByCancellationIsStillClosed() = withUiThreadFilamentScene { setContent, _, _ ->
+        val gate = CompletableDeferred<Unit>()
+        val started = AtomicInt(0)
+        val closed = AtomicInt(0)
+        setContent {
+            produceState<AutoCloseable?>(null) {
+                loadOwned(onError = null, load = { ByteArray(0) }) {
+                    started.incrementAndFetch()
+                    withContext(NonCancellable) { gate.await() } // outlasts the cancellation, as a blocking decode does
+                    AutoCloseable { closed.incrementAndFetch() }
+                }
+            }
+        }
+        frameUntil { started.load() == 1 }
+        setContent {}
+        waitForIdle()
+        gate.complete(Unit)
+        frameUntil { closed.load() == 1 }
+    }
+
     /** A KTX environment without a skybox loader has no skybox, and a material arriving late is still owned. */
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -191,6 +236,9 @@ class EnvironmentLoadingTest {
     }
 
     private companion object {
+        /** A flat 1×1 Radiance image: header, blank line, resolution, one RGBE pixel. */
+        val ONE_PIXEL_HDR = "#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y 1 +X 1\n".encodeToByteArray() + byteArrayOf(-128, 64, 32, -127)
+
         /** A 1×1 opaque red RGBA PNG. */
         val ONE_PIXEL_PNG = byteArrayOf(
             -119, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21,

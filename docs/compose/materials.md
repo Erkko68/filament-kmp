@@ -109,6 +109,13 @@ tolerates it: `rememberMaterialInstance` passes the null through and primitives 
 render until the material arrives — no unwrapping needed. The underlying `Material` is destroyed
 automatically when the composable leaves the composition.
 
+Loaders run `load` on the caller's thread, and `Res.readBytes` reads the whole file before it
+returns. For a very large file, move the read yourself, and keep Filament objects out of that block:
+
+```kotlin
+val asset = rememberGltfAsset { withContext(Dispatchers.Default) { Res.readBytes("files/big.glb") } }
+```
+
 ### 4. Parameterise per instance
 
 A single compiled `Material` can back any number of `MaterialInstance`s, each with different parameter values. Parameter names come from the `parameters: [ ... ]` block of your `.mat` source:
