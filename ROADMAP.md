@@ -107,6 +107,7 @@ wrap on every OS, and the web path joins the same model.
 ### Track these
 
 - **skiko: Graphite modules and AWT** — [#1245](https://github.com/JetBrains/skiko/pull/1245), [#1266](https://github.com/JetBrains/skiko/pull/1266), [#1301](https://github.com/JetBrains/skiko/pull/1301), [releases](https://github.com/JetBrains/skiko/releases)
+- **skiko #1274 — GLX → EGL on Linux** — https://github.com/JetBrains/skiko/pull/1274 (breaks the GLX target; plan in [Linux GPU Frame Sharing](docs/internals/linux-gpu-sharing.md))
 - **JetBrains internship — Graphite backend support in Skiko** — https://internship.jetbrains.com/projects/1686
 - **SKIKO-549 — Vulkan bindings** — https://youtrack.jetbrains.com/issue/SKIKO-549/Vulkan-bindings
 - **compose-jb #382 — Expose skiko's renderApi** — https://github.com/JetBrains/compose-multiplatform/issues/382
