@@ -4,8 +4,14 @@ package io.github.erkko68.filament.utils.capi
 import io.github.erkko68.filament.interop.ExternalSymbolName
 import io.github.erkko68.filament.interop.NativePointer
 
-@ExternalSymbolName("FilaHDRLoader_createTexture")
-internal external fun FilaHDRLoader_createTexture(engine: NativePointer, buffer: NativePointer, size: Int, internalFormat: Int): NativePointer
+@ExternalSymbolName("FilaTextureLoader_decode")
+internal external fun FilaTextureLoader_decode(buffer: NativePointer, size: Int): NativePointer
 
-@ExternalSymbolName("FilaTextureLoader_loadTexture")
-internal external fun FilaTextureLoader_loadTexture(engine: NativePointer, buffer: NativePointer, size: Int, srgb: Boolean): NativePointer
+@ExternalSymbolName("FilaHDRLoader_decode")
+internal external fun FilaHDRLoader_decode(buffer: NativePointer, size: Int): NativePointer
+
+@ExternalSymbolName("FilaDecodedImage_createTexture")
+internal external fun FilaDecodedImage_createTexture(image: NativePointer, engine: NativePointer, internalFormat: Int): NativePointer
+
+@ExternalSymbolName("FilaDecodedImage_destroy")
+internal external fun FilaDecodedImage_destroy(image: NativePointer)

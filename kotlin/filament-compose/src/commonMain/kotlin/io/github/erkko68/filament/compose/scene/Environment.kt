@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProduceStateScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -12,11 +13,17 @@ import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.internal.rememberOwned
 import io.github.erkko68.filament.compose.noFilamentEngine
+import io.github.erkko68.filament.interop.singleThreaded
+import io.github.erkko68.filament.utils.DecodedImage
 import io.github.erkko68.filament.utils.HDRLoader
 import io.github.erkko68.filament.utils.IBLPrefilterContext
 import io.github.erkko68.filament.utils.Ktx1Bundle
 import io.github.erkko68.filament.utils.Ktx1Reader
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.withContext
 
 /**
  * A loaded image-based-lighting environment, from [rememberKtxEnvironment] (pre-baked KTX) or
@@ -160,22 +167,20 @@ fun rememberHdrEnvironment(
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     hdr: suspend () -> ByteArray,
 ): Environment {
-    val hdrBytes by produceState<ByteArray?>(null, key) {
-        value = loadOrReport(onError, hdr)
+    // Decoded off the main thread; the prefilter stays on it, since it needs the engine.
+    val image by produceState<DecodedImage?>(null, key, format, engine) {
+        loadOwned(onError, hdr) { bytes ->
+            HDRLoader.decode(bytes) ?: throw IllegalArgumentException("Failed to decode HDR — not a valid equirectangular HDR image")
+        }
     }
-    val prefiltered = hdrBytes?.let { bytes ->
-        // Decode the HDR and run the GPU prefilter once per (engine, bytes, format). The work is
-        // enqueued on the command stream, not blocking, so composition stays responsive.
-        val textures = rememberOwned(engine, bytes, format, create = { prefilterHdr(engine, bytes, format) }) {
+    val prefiltered = image?.let { decoded ->
+        // Kept as long as the environment: destroying it waits for the backend, seconds on a slow GPU, and that
+        // has only just been given the prefilter.
+        val context = rememberOwned(engine, create = { IBLPrefilterContext(engine) }) { it.destroy() }
+        rememberOwned(engine, decoded, create = { prefilterHdr(engine, context, decoded, format) }) {
             engine.destroy(it.reflections)
             engine.destroy(it.skybox)
         }
-        if (textures == null) {
-            LaunchedEffect(bytes) {
-                onError?.invoke(IllegalArgumentException("Failed to decode HDR — not a valid equirectangular HDR image"))
-            }
-        }
-        textures
     }
 
     return remember(prefiltered) { Environment(prefiltered?.reflections, null, prefiltered?.skybox) }
@@ -185,14 +190,13 @@ fun rememberHdrEnvironment(
 private class PrefilteredHdr(val skybox: Texture, val reflections: Texture)
 
 /**
- * Decodes equirectangular HDR [bytes] and prefilters them into an environment cubemap (skybox)
- * and a prefiltered specular cubemap (IBL reflections). Returns null if the bytes don't decode.
- * The transient equirect texture and the prefilter GPU state are destroyed before returning; the
- * two returned textures are owned by the caller.
+ * Prefilters a decoded equirectangular HDR [image] into an environment cubemap (skybox)
+ * and a prefiltered specular cubemap (IBL reflections). Returns null if it can't be uploaded.
+ * The transient equirect texture and the filters are destroyed before returning; the two
+ * returned textures are owned by the caller.
  */
-private fun prefilterHdr(engine: Engine, bytes: ByteArray, format: Texture.InternalFormat): PrefilteredHdr? {
-    val equirect = HDRLoader.createTexture(engine, bytes, format) ?: return null
-    val context = IBLPrefilterContext(engine)
+private fun prefilterHdr(engine: Engine, context: IBLPrefilterContext, image: DecodedImage, format: Texture.InternalFormat): PrefilteredHdr? {
+    val equirect = image.createTexture(engine, format) ?: return null
     val toCubemap = IBLPrefilterContext.EquirectangularToCubemap(context)
     val specular = IBLPrefilterContext.SpecularFilter(context)
     try {
@@ -204,12 +208,11 @@ private fun prefilterHdr(engine: Engine, bytes: ByteArray, format: Texture.Inter
         // ordered teardown is safe; the kept textures (skybox, reflections) outlive these filters.
         specular.destroy()
         toCubemap.destroy()
-        context.destroy()
         engine.destroy(equirect)
     }
 }
 
-private suspend fun loadOrReport(onError: ((Throwable) -> Unit)?, load: suspend () -> ByteArray): ByteArray? =
+private suspend fun <T> loadOrReport(onError: ((Throwable) -> Unit)?, load: suspend () -> T): T? =
     try {
         load()
     } catch (e: CancellationException) {
@@ -218,3 +221,25 @@ private suspend fun loadOrReport(onError: ((Throwable) -> Unit)?, load: suspend 
         onError?.invoke(e)
         null
     }
+
+/**
+ * Runs [load] on the caller's thread and [decode] off it, so a slow decode can't drop frames; web has no other thread.
+ * The result holds native memory: it's closed once this producer is cancelled, delivered or not.
+ */
+internal suspend fun <T : AutoCloseable> ProduceStateScope<T?>.loadOwned(
+    onError: ((Throwable) -> Unit)?,
+    load: suspend () -> ByteArray,
+    decode: suspend (ByteArray) -> T,
+) {
+    var decoded: T? = null
+    try {
+        value = loadOrReport(onError) {
+            val bytes = load()
+            // Kept from inside the block: withContext discards what a cancelled block returns.
+            withContext(if (singleThreaded) EmptyCoroutineContext else Dispatchers.Default) { decode(bytes).also { decoded = it } }
+        }
+        awaitCancellation()
+    } finally {
+        decoded?.close()
+    }
+}

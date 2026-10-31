@@ -8,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /** Each reader turns file bytes into a Filament texture of the right size and format. */
@@ -77,6 +78,40 @@ class TextureReadersTest : UtilsTestFixture() {
         engine.destroy(texture)
         assertEquals(1 to 1, size)
         assertEquals(Texture.InternalFormat.RGB16F, format)
+    }
+
+    /** decode needs no engine; the upload that follows picks the format from the texture's use. */
+    @Test
+    fun decodedImagesUploadOnce() {
+        val texture = assertNotNull(TextureLoader.createTexture(engine, assertNotNull(TextureLoader.decode(ONE_PIXEL_PNG)), TextureLoader.TextureType.COLOR))
+        val size = texture.getWidth(0)
+        val format = texture.format
+        val data = assertNotNull(TextureLoader.createTexture(engine, assertNotNull(TextureLoader.decode(ONE_PIXEL_PNG)), TextureLoader.TextureType.DATA))
+        val dataFormat = data.format
+
+        val image = assertNotNull(TextureLoader.decode(ONE_PIXEL_PNG))
+        val uploaded = assertNotNull(image.createTexture(engine, Texture.InternalFormat.RGBA8))
+        val second = image.createTexture(engine, Texture.InternalFormat.RGBA8)
+        image.close() // already taken: must not free twice
+
+        val dropped = assertNotNull(TextureLoader.decode(ONE_PIXEL_PNG))
+        dropped.close()
+        dropped.close()
+        val afterClose = dropped.createTexture(engine, Texture.InternalFormat.RGBA8)
+
+        engine.flushAndWait()
+        listOf(texture, data, uploaded).forEach(engine::destroy)
+        assertEquals(1, size)
+        assertEquals(Texture.InternalFormat.SRGB8_A8, format)
+        assertEquals(Texture.InternalFormat.RGBA8, dataFormat)
+        assertNull(second)
+        assertNull(afterClose)
+    }
+
+    @Test
+    fun undecodableBytesDecodeToNull() {
+        assertNull(TextureLoader.decode(byteArrayOf(1, 2, 3)))
+        assertNull(HDRLoader.decode(byteArrayOf(1, 2, 3)))
     }
 
     @Test

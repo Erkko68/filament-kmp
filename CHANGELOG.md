@@ -10,7 +10,12 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **Loading a screen stalls the UI far less** (`filament-compose`, except on web): a model, material, four textures and an HDR environment landing together went from 122 ms to 24 ms on desktop (Metal).
+- **`rememberTexture` and `rememberHdrEnvironment` decode off the main thread, in parallel** (`filament-compose`, except on web): a 4K PNG stalls the UI for under 1 ms instead of 170 ms, and on desktop and iOS four 2K textures are ready three times sooner.
+
 ### Fixed
+- **`rememberHdrEnvironment` no longer blocks until the backend has finished the prefilter** (`filament-compose`): the first load stalled the UI for 1.4 s on an Android emulator, now one frame or less.
 - **`close()`/`destroy()` is safe to call twice** on every `AutoCloseable` wrapper (`ToneMapper`, `Ktx2Reader`, `IBLPrefilterContext`, `Manipulator`, …); a second call used to free the native object again.
 
 ## [0.9.0] — 2026-10-23

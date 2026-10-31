@@ -12,6 +12,7 @@ import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.internal.rememberOwned
+import io.github.erkko68.filament.utils.DecodedImage
 import io.github.erkko68.filament.utils.TextureLoader
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -117,41 +118,16 @@ fun rememberTexture(
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     load: suspend () -> ByteArray,
 ): Texture? {
-    val bytes by produceState<ByteArray?>(initialValue = null, key) {
-        value = try {
-            load()
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            onError?.invoke(e)
-            null
+    // Decoded off the main thread, the slow part; only the upload runs in composition.
+    val image by produceState<DecodedImage?>(null, key, type, engine) {
+        loadOwned(onError, load) { bytes ->
+            TextureLoader.decode(bytes)
+                ?: throw IllegalArgumentException("Failed to decode image — unsupported or corrupt data for this platform")
         }
     }
-    return bytes?.let { rememberTexture(engine, it, type, onError) }
-}
-
-/** Sync overload used internally by the suspend-lambda version. See [rememberMaterial]. */
-@Composable
-internal fun rememberTexture(
-    engine: Engine,
-    bytes: ByteArray,
-    type: TextureLoader.TextureType = TextureLoader.TextureType.COLOR,
-    onError: ((Throwable) -> Unit)? = null,
-): Texture? {
-    val texture = rememberOwned(engine, bytes, type, create = {
-        TextureLoader.loadTexture(engine, bytes, type)
-    }) { engine.destroy(it) }
-
-    if (texture == null) {
-        LaunchedEffect(bytes, type) {
-            onError?.invoke(
-                IllegalArgumentException("Failed to decode image — unsupported or corrupt data for this platform"),
-            )
-        }
-        return null
+    return image?.let { decoded ->
+        rememberOwned(engine, decoded, create = { TextureLoader.createTexture(engine, decoded, type) }) { engine.destroy(it) }
     }
-
-    return texture
 }
 
 /**

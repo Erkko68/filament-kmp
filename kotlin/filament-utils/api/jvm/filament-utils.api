@@ -203,6 +203,12 @@ public final class io/github/erkko68/filament/utils/ComponentType : java/lang/En
 	public static fun values ()[Lio/github/erkko68/filament/utils/ComponentType;
 }
 
+public final class io/github/erkko68/filament/utils/DecodedImage : java/lang/AutoCloseable {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun createTexture (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/Texture$InternalFormat;)Lio/github/erkko68/filament/Texture;
+}
+
 public final class io/github/erkko68/filament/utils/Float2 {
 	public fun <init> ()V
 	public fun <init> (F)V
@@ -472,6 +478,7 @@ public final class io/github/erkko68/filament/utils/Fov : java/lang/Enum {
 public final class io/github/erkko68/filament/utils/HDRLoader {
 	public static final field INSTANCE Lio/github/erkko68/filament/utils/HDRLoader;
 	public final fun createTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/Texture$InternalFormat;)Lio/github/erkko68/filament/Texture;
+	public final fun decode ([B)Lio/github/erkko68/filament/utils/DecodedImage;
 }
 
 public final class io/github/erkko68/filament/utils/Half : java/lang/Comparable {
@@ -1775,6 +1782,8 @@ public final class io/github/erkko68/filament/utils/TangentSpaceMesh$Builder {
 
 public final class io/github/erkko68/filament/utils/TextureLoader {
 	public static final field INSTANCE Lio/github/erkko68/filament/utils/TextureLoader;
+	public final fun createTexture (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/utils/DecodedImage;Lio/github/erkko68/filament/utils/TextureLoader$TextureType;)Lio/github/erkko68/filament/Texture;
+	public final fun decode ([B)Lio/github/erkko68/filament/utils/DecodedImage;
 	public final fun loadTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/TextureLoader$TextureType;)Lio/github/erkko68/filament/Texture;
 }
 

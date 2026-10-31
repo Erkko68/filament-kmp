@@ -305,8 +305,10 @@
 {"name":"FilaImageKtx1Bundle_getMetadata","returns":"ptr","params":[["self","ptr"],["key","ptr"],["valueSize","ptr"]]}
 ],
 "filament-utils/manual/FilaUtilsManual.h": [
-{"name":"FilaHDRLoader_createTexture","returns":"ptr","params":[["engine","ptr"],["buffer","ptr"],["size","i32"],["internalFormat","i32"]]},
-{"name":"FilaTextureLoader_loadTexture","returns":"ptr","params":[["engine","ptr"],["buffer","ptr"],["size","i32"],["srgb","bool"]]}
+{"name":"FilaTextureLoader_decode","returns":"ptr","params":[["buffer","ptr"],["size","i32"]]},
+{"name":"FilaHDRLoader_decode","returns":"ptr","params":[["buffer","ptr"],["size","i32"]]},
+{"name":"FilaDecodedImage_createTexture","returns":"ptr","params":[["image","ptr"],["engine","ptr"],["internalFormat","i32"]]},
+{"name":"FilaDecodedImage_destroy","returns":"void","params":[["image","ptr"]]}
 ],
 "filament/generated/FilaACESLegacyToneMapper.h": [
 {"name":"FilaACESLegacyToneMapper_create","returns":"ptr","params":[]},
