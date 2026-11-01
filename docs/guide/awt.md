@@ -46,7 +46,7 @@ See [Using the Engine Without Compose](engine.md).
 
 ## Rules
 
-**Threading.** Filament objects belong to the thread that created the `Engine`
+**Threading.** Drive Filament from the thread that created the `Engine`
 ([Threading model](platform-notes.md#threading-model)). In an AWT app the natural choice is the
 event dispatch thread. Create the engine in `EventQueue.invokeLater` and drive frames from a
 `javax.swing.Timer`, which fires on that thread. A dedicated render thread also works, as long as
