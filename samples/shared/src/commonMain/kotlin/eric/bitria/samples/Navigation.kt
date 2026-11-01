@@ -18,4 +18,5 @@ sealed class Screen {
     data object HDREnvironment : Screen()
     data object Transparent : Screen()
     data object RuntimeMaterial : Screen()
+    data object Particles : Screen()
 }

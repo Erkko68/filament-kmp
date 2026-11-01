@@ -1,0 +1,49 @@
+// Additive camera-facing quads, one per instance, with no vertex attributes. Each particle is read
+// from `particles`, an RGBA32F texture: column = instance, row 0 = xyz + size, row 1 = rgba.
+//
+// Compile (all backends, all features):
+//   matc -p all -a all -o particles.filamat particles.mat
+
+material {
+    name : Particles,
+    shadingModel : unlit,
+    blending : add,
+    instanced : true,
+    culling : none,
+    variantFilter : [ skinning, shadowReceiver, vsm ],
+    parameters : [
+        { type : sampler2d, name : particles, precision : high }
+    ],
+    variables : [
+        quadUv,
+        tint
+    ]
+}
+
+vertex {
+    void materialVertex(inout MaterialVertexInputs material) {
+        const vec2 corners[6] = vec2[6](
+            vec2(-0.5, -0.5), vec2(0.5, -0.5), vec2(-0.5, 0.5),
+            vec2( 0.5, -0.5), vec2(0.5,  0.5), vec2(-0.5, 0.5));
+        vec2 corner = corners[getVertexIndex()];
+
+        int i = getInstanceIndex();
+        vec4 positionSize = texelFetch(materialParams_particles, ivec2(i, 0), 0);
+        material.tint = texelFetch(materialParams_particles, ivec2(i, 1), 0);
+        material.quadUv = vec4(corner + 0.5, 0.0, 0.0);
+
+        mat4 view = getWorldFromViewMatrix();
+        vec4 center = getWorldFromModelMatrix() * vec4(positionSize.xyz, 1.0);
+        material.worldPosition = center + (view[0] * corner.x + view[1] * corner.y) * positionSize.w;
+    }
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        float distance = length(variable_quadUv.xy - 0.5) * 2.0;
+        float falloff = 1.0 - smoothstep(0.0, 1.0, distance);
+        // Alpha 0: additive sparks must not make a transparent view opaque.
+        material.baseColor = vec4(variable_tint.rgb * variable_tint.a * falloff, 0.0);
+    }
+}

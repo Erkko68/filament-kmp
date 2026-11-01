@@ -14,6 +14,7 @@ import eric.bitria.samples.scenes.HDREnvironmentScene
 import eric.bitria.samples.scenes.KTXEnvironmentScene
 import eric.bitria.samples.scenes.LightingScene
 import eric.bitria.samples.scenes.LabelsScene
+import eric.bitria.samples.scenes.ParticlesScene
 import eric.bitria.samples.scenes.PickingScene
 import eric.bitria.samples.scenes.PrimitivesScene
 import eric.bitria.samples.scenes.SolarScene
@@ -43,6 +44,7 @@ fun App() {
             Screen.HDREnvironment -> HDREnvironmentScene(onBack = { screen = Screen.Home })
             Screen.Transparent -> TransparentScene(onBack = { screen = Screen.Home })
             Screen.RuntimeMaterial -> RuntimeMaterialScene(onBack = { screen = Screen.Home })
+            Screen.Particles -> ParticlesScene(onBack = { screen = Screen.Home })
         }
     }
 }
