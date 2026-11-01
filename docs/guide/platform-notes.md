@@ -191,8 +191,19 @@ Filament reports errors two ways, and the bindings keep both:
 
 ## Threading model
 
-All Filament objects are **bound to the thread that created the Engine**. The Compose DSL ensures all calls happen on the UI thread automatically. If you use the raw API:
+The `Engine` isn't thread-safe: **calls on one engine must never overlap**. Overlapping calls crash. `EntityManager` is the exception, as it's thread-safe.
 
-- Create the `Engine` on the UI thread.
-- Call all `engine.*` methods from the UI thread.
-- Long-running asset preparation (decoding images, parsing glTF) can happen on a background thread; only the final GPU upload (`ResourceLoader`, `Texture.setImage`) must be on the engine thread.
+Some calls also need the thread that created the `Engine`, because they use its `JobSystem`. From any other thread they abort with "This thread has not been adopted":
+
+- `Renderer.render` and `renderStandaloneView`
+- `ColorGrading.Builder.build`
+- `ResourceLoader.loadResources`, `asyncBeginLoad` and `asyncUpdateLoad`
+- `recomputeBoundingBoxes`
+- IBL prefilter runs
+
+`Engine.destroy` needs that thread too. Everything else tested on Filament 1.79.0 ran from another thread, one call at a time, but that isn't a promise from upstream.
+
+The Compose DSL makes all its calls on the main thread, which is why heavy loads stall the UI ([Performance limits](../compose/scope.md#performance-limits)). If you use the raw API:
+
+- Create the `Engine` on one thread, and make every Filament call from it. It can be the UI thread or a render thread of your own.
+- Do slow work that needs no engine on a background thread, such as reading files and decoding images, and hand the result to the engine's thread.

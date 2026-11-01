@@ -13,7 +13,8 @@ Use this path when you are:
 - rendering into a surface you already own (`SurfaceView`, `CAMetalLayer`, an LWJGL/GLFW window, a `<canvas>`),
 - rendering **headless** — thumbnails, product shots, server-side image generation, tests,
 - writing an engine/game loop that isn't driven by a UI framework,
-- porting existing Filament code (C++ or Android) to other targets.
+- porting existing Filament code (C++ or Android) to other targets,
+- keeping Filament off the UI thread, because stalls while loading matter to your app (see [Performance limits](../compose/scope.md#performance-limits)).
 
 ```kotlin
 // build.gradle.kts — no Compose plugin required
