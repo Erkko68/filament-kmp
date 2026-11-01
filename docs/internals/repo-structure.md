@@ -57,6 +57,7 @@ flowchart TB
     - `filament-compose` — Compose Multiplatform UI integration layer (see [Compose docs](../compose/README.md)).
 
 - **`prebuilts/`**: Filament's static libraries per target (`prebuilts/<id>/lib`, ids from `FilamentTarget`: `ios-arm64`, `macos-arm64`, `android-arm64-v8a`, `wasm`, …), fetched by the `prebuilts_<id>` tasks: a download from the upstream GitHub release, or a build from the release's source for targets upstream ships none for (`wasm`, `windows-arm64`). The matching public headers land in `include/` via `downloadIncludes`. Git-ignored.
+- **`filament/`**: submodule of upstream Filament, pinned to the `filaVersion` tag. Reference only: the build never reads it, and CI doesn't check it out.
 
 - **`samples/`**: Multiplatform example applications for Android, iOS, Desktop (JVM), and Web.
 

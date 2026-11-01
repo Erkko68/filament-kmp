@@ -18,8 +18,6 @@
 *.log
 .DS_Store
 **/.DS_Store
-# Upstream Filament clone kept by scripts/dev/upgrade-diff.sh
-scripts/dev/.filament-src-cache/
 kotlin-js-store/
 # Emscripten SDK installed by the setupEmsdk task
 /.emsdk/
