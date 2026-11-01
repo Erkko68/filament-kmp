@@ -63,21 +63,16 @@ natives. If your project declares three targets, you download three targets' art
 The one exception is the **JVM/Desktop native runtime**. `filament-jni-desktop` defaults to depending
 on all five desktop runtime jars (`macos-arm64`, `linux-x64`, `linux-arm64`, `windows-x64`,
 `windows-arm64`, ~13 MB each), so that a plain `./gradlew run` works on any developer machine
-with zero configuration. Two ways to narrow it to the one you need — worth doing before
-building an installer, since `jpackage` / Compose Desktop bundle the whole runtime classpath:
+with zero configuration. Declare your os/arch and Gradle picks that platform's jar alone — worth
+doing before building an installer, since `jpackage` / Compose Desktop bundle the whole runtime
+classpath:
 
 ```kotlin
-// Option A — declare your os/arch and Gradle picks the matching variant automatically.
 configurations.matching { it.isCanBeResolved }.configureEach {
     attributes {
         attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, objects.named(OperatingSystemFamily.MACOS))
         attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, objects.named(MachineArchitecture.ARM64))
     }
-}
-
-// Option B — depend on one platform runtime directly; it excludes its siblings.
-dependencies {
-    implementation("io.github.erkko68.filament:filament-jni-runtime-macos-arm64:0.X.0")
 }
 ```
 

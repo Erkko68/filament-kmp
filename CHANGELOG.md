@@ -19,6 +19,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Fixed
 - **`rememberHdrEnvironment` no longer blocks until the backend has finished the prefilter** (`filament-compose`): the first load stalled the UI for 1.4 s on an Android emulator, now one frame or less.
 - **`close()`/`destroy()` is safe to call twice** on every `AutoCloseable` wrapper (`ToneMapper`, `Ktx2Reader`, `IBLPrefilterContext`, `Manipulator`, …); a second call used to free the native object again.
+- **Narrowing the desktop runtime to one platform works on ARM64** (`filament-jni-desktop`): the `OperatingSystemFamily` + `MachineArchitecture` attributes were ignored on macOS, Linux and Windows ARM64. Depending on a `filament-jni-runtime-*` jar directly never narrowed anything; those jars no longer pull the loader.
 
 ## [0.9.0] — 2026-10-23
 

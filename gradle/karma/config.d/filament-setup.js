@@ -1,4 +1,4 @@
-// Karma configuration fragment for every :kotlin:* module's web tests (filament-kmp-module points Karma here).
+// Karma configuration fragment for the web tests of every :kotlin:* module (filament-kmp-module points Karma here) and :web.
 //
 // Prepends the Emscripten loaders (filament-kmp.js, plus filamat-kmp.js where :kotlin:filamat stages it),
 // their .wasm (served as static assets), and the bootstrap that waits for the modules before Karma starts

@@ -35,9 +35,11 @@ tasks.register<Sync>("stageFilamatWasm") {
 }
 
 kotlin {
-    js { browser() }
+    // The Karma config of the :kotlin:* modules; nothing here needs its bootstrap, so none is staged.
+    val karmaConfig = rootProject.file("gradle/karma/config.d")
+    js { browser { testTask { useKarma { useChromeHeadless(); useConfigDirectory(karmaConfig) } } } }
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs { browser() }
+    wasmJs { browser { testTask { useKarma { useChromeHeadless(); useConfigDirectory(karmaConfig) } } } }
 
     applyDefaultHierarchyTemplate()
 

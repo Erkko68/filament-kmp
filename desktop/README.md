@@ -34,9 +34,4 @@ configurations.matching { it.isCanBeResolved }.configureEach {
 ```
 
 Packaged desktop apps (jpackage / Compose Desktop distributions) bundle the whole runtime classpath, so
-per-platform installers should set these attributes, or depend on one runtime jar directly (it pulls the
-loader and excludes its siblings):
-
-```kotlin
-implementation("io.github.erkko68.filament:filament-jni-runtime-macos-arm64:<version>")
-```
+per-platform installers should set these attributes.

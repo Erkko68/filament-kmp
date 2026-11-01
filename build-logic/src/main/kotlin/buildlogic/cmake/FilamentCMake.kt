@@ -35,7 +35,7 @@ fun Project.registerCApiBuild(
         "-DFILAMENT_PLATFORM=${target.cmakePlatform}",
         "-DFILAMENT_INCLUDE_DIR=${root.dir("include").asFile.invariantSeparatorsPath}",
     )
-    arguments.add(libDir.map { "-DFILAMENT_LIB_DIR=${it.asFile.invariantSeparatorsPath}" })
+    arguments.add("-DFILAMENT_LIB_DIR=${libDir.asFile.invariantSeparatorsPath}")
     arguments.add(bindings.map { "-DFILA_BINDINGS_DIR=${it.asFile.invariantSeparatorsPath}" })
     arguments.addAll(target.toolchainArguments(root))
     if (target == FilamentTarget.WASM) {
