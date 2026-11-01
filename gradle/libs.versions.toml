@@ -2,14 +2,12 @@
 agp = "9.4.1"
 android-compileSdk = "37"
 android-minSdk = "24"
-android-targetSdk = "36"
 # Android bytecode level — the conventional Android target; higher values break inlining
 # for consumers compiling at 11 (issue #1).
 android-jvmTarget = "11"
 # Desktop jvm() bytecode floor (Compose Desktop needs 17).
 jvm-target = "17"
 androidx-activity = "1.13.0"
-annotations = "26.1.0"
 composeMultiplatform = "1.12.2"
 # androidx Compose UI version that composeMultiplatform resolves to on Android — keep in sync with
 # composeMultiplatform (used only for the Android-only ui-test-manifest, which JetBrains Compose
@@ -24,7 +22,6 @@ androidx-test-ext-junit = "1.3.0"
 androidx-test-espresso = "3.7.0"
 junit = "4.13.2"
 kotlin = "2.4.21"
-kotlinx-coroutines = "1.11.0"
 kotlinx-browser = "0.5.0"
 material3 = "1.9.0"
 vanniktech-publish = "0.37.0"
@@ -34,10 +31,8 @@ commons-compress = "1.28.0"
 binary-compatibility-validator = "0.18.2"
 
 [libraries]
-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 # Gradle plugin artifacts (consumed by buildSrc convention plugins)
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
@@ -61,8 +56,6 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMul
 compose-uiTest = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "composeMultiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 
 [plugins]
@@ -71,7 +64,5 @@ androidLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref 
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-vanniktechPublish = { id = "com.vanniktech.gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binary-compatibility-validator" }

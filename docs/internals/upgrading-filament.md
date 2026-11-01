@@ -38,10 +38,11 @@ time, Native calls the C symbol directly, and web finds it in the wasm exports.
 
 ```sh
 # 1. Scope the change (tags optional: defaults to filaVersion → latest upstream release)
-scripts/dev/upgrade-diff.sh --summary                    # then re-run without --summary on hot areas
+scripts/upgrade-diff.sh                              # reads the filament submodule
 
 # 2. Bump the version
-#    edit gradle.properties -> filaVersion=<new>
+#    edit gradle.properties -> filaVersion=<new>, then pin the submodule to the same tag
+git -C filament checkout v<new> && git add filament
 
 # 3. Refresh prebuilts (version-stamped: redone automatically on a version bump)
 ./gradlew prebuilts prebuilts_wasm                       # libs + headers at <new>; wasm is a source build (slow)
@@ -51,10 +52,10 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 ./gradlew apiCoverage                                    # then git diff c/api-coverage.txt: what's new, bound, unbound, undeclared
 
 # 5. Adapt the Kotlin API (per-layer recipe below), update tests
-scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
+scripts/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
 
 # 6. Verify
-scripts/dev/run-tests.sh                                 # jvm + js + wasm + ios + android
+scripts/run-tests.sh                                 # jvm + js + wasm + ios + android
 ```
 
 ---
@@ -64,31 +65,37 @@ scripts/dev/run-tests.sh                                 # jvm + js + wasm + ios
 ### 1. Scope the diff
 
 ```sh
-scripts/dev/upgrade-diff.sh --summary                 # filaVersion → latest upstream release
-scripts/dev/upgrade-diff.sh v1.71.6 --summary         # filaVersion → explicit tag
-scripts/dev/upgrade-diff.sh v1.71.5 v1.71.6 --summary # explicit old and new
+scripts/upgrade-diff.sh                  # filaVersion → latest upstream release
+scripts/upgrade-diff.sh v1.71.6          # filaVersion → explicit tag
+scripts/upgrade-diff.sh v1.71.5 v1.71.6  # explicit old and new
 ```
 
-The report opens with a **HIGHLIGHTS** section that extracts the historically surprising
-bits so they can't be missed in a big diff: the `MATERIAL_VERSION` bump, `CONFIG_MAX_*`
-changes, feature-flag additions/default flips, and added/removed Android Java classes.
+The script reads upstream from the `filament` submodule. It's reference only: nothing builds from
+it and CI doesn't check it out, so a fresh clone needs it fetched first (about 2 GB):
 
-Below that, it diffs the upstream tree between the two tags across every surface that drives our bindings:
-public C++ headers, backend headers, **Android Java sources**, material/engine enums,
-feature-flag defaults, and `RELEASE_NOTES.md`. First run clones upstream into
-`scripts/dev/.filament-src-cache/` (~200 MB, gitignored); later runs reuse it.
+```sh
+git submodule update --init --filter=blob:none filament
+```
 
-Start with `--summary` to see *which files* changed, then re-run **without** `--summary` on the
-interesting areas for full unified diffs. Pay particular attention to:
+The report lists what can't be left to the compiler, then the files changed on every surface that
+drives our bindings. Read full diffs with plain git:
+
+```sh
+git -C filament diff v1.71.5..v1.71.6 -- filament/include
+```
+
+Pay particular attention to:
 
 - **Public C++ headers** — the source of truth. Anything added here is generated in step 4;
   what matters now is renames, removals and changed defaults, which break or silently change
-  the Kotlin wrappers. (The Android Java diff is context only: the Kotlin API follows C++.)
+  the Kotlin wrappers.
 - **`MATERIAL_VERSION`** (in `MaterialEnums.h`) — any change means every shipped `.filamat` must
   be recompiled with the new `matc`.
 - **`CONFIG_MAX_INSTANCES`** and other WebGL workaround constants — relevant to the
   "uniform buffer too small" class of bugs.
-- **`FeatureFlagManager.h`** defaults — silent behavior flips between releases.
+- **Feature flags** (`FeatureFlagManager.h`) — silent behavior flips between releases.
+- **Toolchain pins** — upstream's emsdk, NDK and CMake versions (`build/common/versions`) that differ
+  from `gradle.properties`.
 - **`RELEASE_NOTES.md`** — often the only place behavior-only changes (no API delta) are written
   down.
 
@@ -98,6 +105,12 @@ Edit [`gradle.properties`](../../gradle.properties):
 
 ```properties
 filaVersion=1.71.6
+```
+
+Then move the `filament` submodule to the same tag, so it keeps matching the version we ship:
+
+```sh
+git -C filament checkout v1.71.6 && git add filament
 ```
 
 ### 3. Refresh the prebuilts
@@ -114,8 +127,8 @@ linker-error class) can no longer happen silently.
 `prebuilts/` is gitignored, so deleting it is safe. Upstream publishes no wasm (or windows-arm64)
 static libraries, so those `prebuilts_<id>` tasks build them from the release's source tarball
 (`BuildFromSourceTask`: host tools, then the Emscripten build with `libfilamat`). CI caches the result
-per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and `build/common/versions` for new
-NDK/CMake versions, and bump `emsdkVersion`, `ndkVersion` and `androidCmakeVersion` in `gradle.properties` to match.
+per `filaVersion`. If step 1 reported different toolchain pins, bump `emsdkVersion`, `ndkVersion` and
+`androidCmakeVersion` in `gradle.properties` to match.
 
 ### 4. Regenerate and audit
 
@@ -185,7 +198,7 @@ including the two that live outside `filament-compose` (the `emissive` test mate
 `textured` sample material):
 
 ```sh
-scripts/dev/rebuild-materials.sh
+scripts/rebuild-materials.sh
 ```
 
 The script pulls `matc` out of the release tarball cached by step 3, recompiles every `.mat` in the
@@ -196,9 +209,9 @@ material if a blob is stale or corrupt.
 ### 7. Verify
 
 ```sh
-scripts/dev/run-tests.sh                 # everything the host supports
+scripts/run-tests.sh                 # everything the host supports
 # or scope it:
-scripts/dev/run-tests.sh jvm js          # specific targets
+scripts/run-tests.sh jvm js          # specific targets
 ```
 
 The matrix that actually matters per binding path:
@@ -232,6 +245,7 @@ Finally, walk the samples on each platform — silent renderer behavior changes 
 | Platform actuals (surfaces, loading) | `kotlin/<module>/src/{android,jvm,native,web}Main/.../*.kt` |
 | Filament libs / headers | `prebuilts/<id>/lib/` (downloaded, or source-built for `wasm`/`windows-arm64`), `include/` (gitignored) |
 | Version | `gradle.properties` → `filaVersion` |
+| Upstream source, for reference | `filament/` (submodule, pinned to the `filaVersion` tag) |
 
 See also: [`scripts/README.md`](../../scripts/README.md) (script reference),
 [`web/README.md`](../../web/README.md) (web bindings),

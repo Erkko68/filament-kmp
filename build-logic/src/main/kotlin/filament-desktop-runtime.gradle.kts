@@ -24,14 +24,6 @@ extensions.configure<JavaPluginExtension> {
 val hostNativesDependencies = configurations.dependencyScope("hostNativesDependencies")
 val hostNatives = configurations.resolvable("hostNatives") { extendsFrom(hostNativesDependencies.get()) }
 dependencies {
-    // Standalone: this jar alone pulls the loader, minus the sibling platforms :desktop defaults to.
-    // Excluded under both the local project names and the published artifact ids.
-    "api"(project(":desktop")) {
-        FilamentTarget.desktop.filter { it != target }.forEach { other ->
-            exclude(group = project.group.toString(), module = "runtime-${other.id}")
-            exclude(group = project.group.toString(), module = "filament-jni-runtime-${other.id}")
-        }
-    }
     if (target == FilamentTarget.host()) add(hostNativesDependencies.name, project(":desktop", "hostNatives"))
 }
 

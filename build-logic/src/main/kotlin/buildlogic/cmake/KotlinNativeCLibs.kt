@@ -41,7 +41,7 @@ fun KotlinNativeTarget.linkFilamentCApi(project: Project, module: String) {
     val writeDef = project.tasks.register("cinteropDef${module.capitalized()}${name.capitalized()}") {
         val text = listOf(
             "staticLibraries = ${archives.joinToString(" ") { "lib$it.a" }}",
-            "libraryPaths = ${cLibDir.get().asFile.path} ${libDir.get().asFile.path}",
+            "libraryPaths = ${cLibDir.get().asFile.path} ${libDir.asFile.path}",
             "linkerOpts = $IOS_LINKER_OPTS",
         ).joinToString("\n", postfix = "\n")
         inputs.property("text", text)

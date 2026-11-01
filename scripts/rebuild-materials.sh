@@ -4,13 +4,13 @@
 # filaVersion bump whose
 # MATERIAL_VERSION changed — the engine rejects blobs built by another version.
 #
-# Usage: scripts/dev/rebuild-materials.sh
+# Usage: scripts/rebuild-materials.sh
 #
 # matc comes from the release tarball already cached by ./gradlew prebuilts.
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 VERSION="$(sed -n 's/^filaVersion=//p' gradle.properties)"

@@ -2,7 +2,7 @@ package buildlogic.platform
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.provider.Provider
+import org.gradle.nativeplatform.MachineArchitecture
 
 /**
  * Every native target the C API is built for, and where its Filament static libraries come from:
@@ -40,7 +40,7 @@ enum class FilamentTarget(val id: String, val release: Pair<String, String>?) {
     val osFamily: String get() = id.substringBefore('-')
 
     /** Gradle's MachineArchitecture of a desktop target. */
-    val machineArchitecture: String get() = if (id.endsWith("arm64")) "arm64" else "x86-64"
+    val machineArchitecture: String get() = if (id.endsWith("arm64")) MachineArchitecture.ARM64 else MachineArchitecture.X86_64
 
     companion object {
         val desktop = listOf(MACOS_ARM64, LINUX_X64, LINUX_ARM64, WINDOWS_X64, WINDOWS_ARM64)
@@ -61,13 +61,6 @@ const val IOS_DEPLOYMENT_TARGET = "15.0"
 /** Name of the root task that fills `prebuilts/<id>/lib`. */
 val FilamentTarget.prebuiltsTask: String get() = ":prebuilts_$id"
 
-/**
- * Directory holding [target]'s static libraries: `prebuilts/<id>/lib`, or `$FILAMENT_PREBUILTS_DIR/<id>/lib`
- * to link a locally built Filament instead.
- */
-fun Project.filamentLibDir(target: FilamentTarget): Provider<Directory> {
-    val root = rootProject.layout.projectDirectory
-    return providers.environmentVariable("FILAMENT_PREBUILTS_DIR")
-        .map { root.dir(it).dir("${target.id}/lib") }
-        .orElse(root.dir("prebuilts/${target.id}/lib"))
-}
+/** Directory holding [target]'s static libraries. */
+fun Project.filamentLibDir(target: FilamentTarget): Directory =
+    rootProject.layout.projectDirectory.dir("prebuilts/${target.id}/lib")
