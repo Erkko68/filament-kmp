@@ -16,7 +16,7 @@ classify() {
         # Nothing to build.
         *.md|docs/*|LICENSE*|.github/ISSUE_TEMPLATE/*|.github/dependabot.yml) ;;
         .github/workflows/pages.yml|.github/workflows/publish.yml|.github/workflows/status-*) ;;
-        scripts/dev/*) ;;
+        scripts/*) ;;
         # c/ is the C API every target builds; build-logic drives all of them.
         c/*|build-logic/*) all ;;
         desktop/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;

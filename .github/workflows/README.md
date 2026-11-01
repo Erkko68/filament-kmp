@@ -18,7 +18,7 @@ The `changes` job maps the PR's (or push's) changed files to platforms with
 
 | Changed | Runs |
 | :--- | :--- |
-| `*.md`, `docs/`, other workflows, `scripts/dev/*` | nothing (only `ci-gate`, so the PR still gets a status) |
+| `*.md`, `docs/`, other workflows, `scripts/*` | nothing (only `ci-gate`, so the PR still gets a status) |
 | `c/`, `build-logic/` | everything |
 | `desktop/`, `kotlin/*/src/jvm*`, `kotlin/*/api/`, `samples/desktopApp/` | jvm |
 | `jni/`, `kotlin/*/src/jniMain/` | jvm, android |

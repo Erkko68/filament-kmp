@@ -7,13 +7,13 @@ Getting Filament itself (release downloads, source builds for `wasm`/`windows-ar
 headers) is Gradle's job: the `prebuilts`, `prebuilts_<id>`, `setupEmsdk` and `downloadIncludes` tasks from
 [`build-logic/…/buildlogic/prebuilts`](../build-logic/src/main/kotlin/buildlogic/prebuilts).
 
-## `dev/` — manual developer utilities
+## Developer utilities
 
 | Script | Purpose |
 | :--- | :--- |
-| [`dev/upgrade-diff.sh`](dev/upgrade-diff.sh) | Reports what changed upstream between two Filament tags that this repo has to react to: `MATERIAL_VERSION`, `CONFIG_MAX_*`, feature flags, toolchain pins that differ from `gradle.properties`, the release notes, and a file list of the surfaces our bindings depend on. Tags optional: no args = `filaVersion` → latest upstream release; one arg = `filaVersion` → that tag. Run on every `filaVersion` bump. Reads the `filament` submodule; full diffs are a `git -C filament diff` away. |
-| [`dev/rebuild-materials.sh`](dev/rebuild-materials.sh) | Recompiles every committed `.filamat` with the `matc` of the current `filaVersion` (pulled from the release tarball cached by `./gradlew prebuilts`). Run whenever `MATERIAL_VERSION` changes — the engine rejects blobs built by another version. |
-| [`dev/run-tests.sh`](dev/run-tests.sh) | Runs the test suite across every KMP target this repo supports (JVM, JS, wasm, iOS simulator, Android), one Gradle task at a time. Mirrors what [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) does on CI. Boots a simulator for ios, and the first available AVD if no device is attached for android. Pass `jvm`/`js`/`wasm`/`ios`/`android` (any combination) to scope; or `--no-<target>` to skip one. iOS is skipped automatically off macOS. |
+| [`upgrade-diff.sh`](upgrade-diff.sh) | Reports what changed upstream between two Filament tags that this repo has to react to: `MATERIAL_VERSION`, `CONFIG_MAX_*`, feature flags, toolchain pins that differ from `gradle.properties`, the release notes, and a file list of the surfaces our bindings depend on. Tags optional: no args = `filaVersion` → latest upstream release; one arg = `filaVersion` → that tag. Run on every `filaVersion` bump. Reads the `filament` submodule; full diffs are a `git -C filament diff` away. |
+| [`rebuild-materials.sh`](rebuild-materials.sh) | Recompiles every committed `.filamat` with the `matc` of the current `filaVersion` (pulled from the release tarball cached by `./gradlew prebuilts`). Run whenever `MATERIAL_VERSION` changes — the engine rejects blobs built by another version. |
+| [`run-tests.sh`](run-tests.sh) | Runs the test suite across every KMP target this repo supports (JVM, JS, wasm, iOS simulator, Android), one Gradle task at a time. Mirrors what [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) does on CI. Boots a simulator for ios, and the first available AVD if no device is attached for android. Pass `jvm`/`js`/`wasm`/`ios`/`android` (any combination) to scope; or `--no-<target>` to skip one. iOS is skipped automatically off macOS. |
 
 ## First-time setup
 
@@ -33,12 +33,12 @@ scoping the diff, refreshing prebuilts, the per-layer recipe for adding/removing
 surface, and verification. The short version:
 
 ```sh
-scripts/dev/upgrade-diff.sh                           # 1. scope: filaVersion → latest upstream
+scripts/upgrade-diff.sh                           # 1. scope: filaVersion → latest upstream
 #                                                       2. bump filaVersion in gradle.properties, pin the filament submodule to the tag
 ./gradlew prebuilts prebuilts_wasm                    # 3. refresh prebuilts (version-stamped: redone on bump)
 ./gradlew generateCApi generateKotlinExternals       # 4. regenerate, review the diff
 ./gradlew apiGaps                                     #    C++ API missing from the bindings (build/reports/api-gaps.txt)
-scripts/dev/rebuild-materials.sh                      #    recompile .filamat when MATERIAL_VERSION changed
+scripts/rebuild-materials.sh                      #    recompile .filamat when MATERIAL_VERSION changed
 #                                                       5. adapt the Kotlin API + update tests (see the doc)
-scripts/dev/run-tests.sh                               # 6. verify jvm + js + wasm + ios + android
+scripts/run-tests.sh                               # 6. verify jvm + js + wasm + ios + android
 ```

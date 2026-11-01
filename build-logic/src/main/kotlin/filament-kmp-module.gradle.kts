@@ -189,7 +189,7 @@ kotlin.targets.withType<KotlinNativeTarget>().configureEach {
 // Kotlin/Native runs simulator tests in `--standalone` mode by default, which has
 // no graphics context — Filament's Metal driver then can't obtain a device and
 // aborts. Run inside a booted simulator instead (like Android needs an emulator).
-// The device must be booted beforehand; scripts/dev/run-tests.sh handles that.
+// The device must be booted beforehand; scripts/run-tests.sh handles that.
 // Override the device with -PiosSimulatorDevice="<name>".
 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {
     standalone.set(false)

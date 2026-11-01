@@ -4,7 +4,7 @@
 # Reads the filament submodule, which is reference only: nothing builds from it.
 #
 # Usage:
-#   scripts/dev/upgrade-diff.sh [<old-tag>] [<new-tag>]
+#   scripts/upgrade-diff.sh [<old-tag>] [<new-tag>]
 #
 # Tags are optional:
 #   no tags     — old = filaVersion from gradle.properties, new = latest upstream release.
@@ -18,7 +18,7 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FILAMENT_DIR="$REPO_ROOT/filament"
 
 # Paths the bindings depend on, relative to the Filament repo root.

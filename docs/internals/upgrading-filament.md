@@ -38,7 +38,7 @@ time, Native calls the C symbol directly, and web finds it in the wasm exports.
 
 ```sh
 # 1. Scope the change (tags optional: defaults to filaVersion → latest upstream release)
-scripts/dev/upgrade-diff.sh                              # reads the filament submodule
+scripts/upgrade-diff.sh                              # reads the filament submodule
 
 # 2. Bump the version
 #    edit gradle.properties -> filaVersion=<new>, then pin the submodule to the same tag
@@ -52,10 +52,10 @@ git -C filament checkout v<new> && git add filament
 ./gradlew apiCoverage                                    # then git diff c/api-coverage.txt: what's new, bound, unbound, undeclared
 
 # 5. Adapt the Kotlin API (per-layer recipe below), update tests
-scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
+scripts/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
 
 # 6. Verify
-scripts/dev/run-tests.sh                                 # jvm + js + wasm + ios + android
+scripts/run-tests.sh                                 # jvm + js + wasm + ios + android
 ```
 
 ---
@@ -65,9 +65,9 @@ scripts/dev/run-tests.sh                                 # jvm + js + wasm + ios
 ### 1. Scope the diff
 
 ```sh
-scripts/dev/upgrade-diff.sh                  # filaVersion → latest upstream release
-scripts/dev/upgrade-diff.sh v1.71.6          # filaVersion → explicit tag
-scripts/dev/upgrade-diff.sh v1.71.5 v1.71.6  # explicit old and new
+scripts/upgrade-diff.sh                  # filaVersion → latest upstream release
+scripts/upgrade-diff.sh v1.71.6          # filaVersion → explicit tag
+scripts/upgrade-diff.sh v1.71.5 v1.71.6  # explicit old and new
 ```
 
 The script reads upstream from the `filament` submodule. It's reference only: nothing builds from
@@ -198,7 +198,7 @@ including the two that live outside `filament-compose` (the `emissive` test mate
 `textured` sample material):
 
 ```sh
-scripts/dev/rebuild-materials.sh
+scripts/rebuild-materials.sh
 ```
 
 The script pulls `matc` out of the release tarball cached by step 3, recompiles every `.mat` in the
@@ -209,9 +209,9 @@ material if a blob is stale or corrupt.
 ### 7. Verify
 
 ```sh
-scripts/dev/run-tests.sh                 # everything the host supports
+scripts/run-tests.sh                 # everything the host supports
 # or scope it:
-scripts/dev/run-tests.sh jvm js          # specific targets
+scripts/run-tests.sh jvm js          # specific targets
 ```
 
 The matrix that actually matters per binding path:
