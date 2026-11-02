@@ -33,6 +33,7 @@ private val ENTRIES = listOf(
     "Environment (HDR)" to Screen.HDREnvironment,
     "Transparency (GLB)" to Screen.Transparent,
     "Runtime Material (filamat)" to Screen.RuntimeMaterial,
+    "Particles" to Screen.Particles,
 )
 
 @Composable
