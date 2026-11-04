@@ -124,6 +124,12 @@ internal external fun FilaView_setGuardBandOptions(self: NativePointer, options:
 @ExternalSymbolName("FilaView_getGuardBandOptions")
 internal external fun FilaView_getGuardBandOptions(self: NativePointer, out: NativePointer)
 
+@ExternalSymbolName("FilaView_setMotionVectorsOptions")
+internal external fun FilaView_setMotionVectorsOptions(self: NativePointer, options: NativePointer)
+
+@ExternalSymbolName("FilaView_getMotionVectorsOptions")
+internal external fun FilaView_getMotionVectorsOptions(self: NativePointer, out: NativePointer)
+
 @ExternalSymbolName("FilaView_setMultiSampleAntiAliasingOptions")
 internal external fun FilaView_setMultiSampleAntiAliasingOptions(self: NativePointer, options: NativePointer)
 

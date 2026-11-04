@@ -293,6 +293,23 @@ void FilaView_setGuardBandOptions(FilaView* self, const FilaGuardBandOptions* op
  */
 void FilaView_getGuardBandOptions(const FilaView* self, FilaGuardBandOptions* out);
 /**
+ * Enables or disables the motion vectors pass. Disabled by default.
+ *
+ * Motion vectors are only generated when post-processing is enabled, stereo is disabled,
+ * the engine runs at feature level 1 or higher and the device supports RG16F render
+ * targets; otherwise this setting has no effect.
+ *
+ * @param options motion vectors options
+ * @see MotionVectorsOptions
+ */
+void FilaView_setMotionVectorsOptions(FilaView* self, const FilaMotionVectorsOptions* options);
+/**
+ * Returns the motion vectors options.
+ *
+ * @return motion vectors options
+ */
+void FilaView_getMotionVectorsOptions(const FilaView* self, FilaMotionVectorsOptions* out);
+/**
  * Enables or disable multi-sample antialiasing (MSAA). Disabled by default.
  * Note that MSAA is a post-processing effect, and post-processing is disabled at FL0.
  * If the feature level is set to 0, values passed to this function are ignored.
