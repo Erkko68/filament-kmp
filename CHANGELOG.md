@@ -12,8 +12,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Added
 - **New sample**: Particles, a CPU-simulated spark fountain drawn with instancing and a float data texture.
+- **`View.motionVectorsOptions`** (`filament`): a motion vectors pass TAA uses to reproject moving objects, cutting ghosting; off by default.
+- **`UserVariantFilterBit.MOTION_VECTORS`** (`filament`): filters the new motion vectors variants; `ALL` is now `0x1FF`.
 
 ### Changed
+- **Filament 1.80.0** upstream; `MATERIAL_VERSION` is now 80, so recompile every `.filamat` with matc 1.80.0.
 - **Loading a screen stalls the UI far less** (`filament-compose`, except on web): a model, material, four textures and an HDR environment landing together went from 122 ms to 24 ms on desktop (Metal).
 - **`rememberTexture` and `rememberHdrEnvironment` decode off the main thread, in parallel** (`filament-compose`, except on web): a 4K PNG stalls the UI for under 1 ms instead of 170 ms, and on desktop and iOS four 2K textures are ready three times sooner.
 

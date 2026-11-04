@@ -1007,6 +1007,20 @@ typedef struct FilaMorphTargetBuffer FilaMorphTargetBuffer;
 typedef struct FilaMorphTargetBufferBuilder FilaMorphTargetBufferBuilder;
 
 /**
+ * Options for the motion vectors pass.
+ *
+ * Motion vectors are generated only when post-processing is enabled, stereo is disabled,
+ * the engine runs at feature level 1 or higher and the device supports RG16F render targets.
+ * They capture the rigid motion of renderables (TransformManager and InstanceBuffer transforms)
+ * and of the camera. Skinning/morphing deformation and the VIEW/DEVICE vertex domains are not
+ * captured.
+ * TAA uses motion vectors automatically when they are enabled.
+ *
+ * @see View::setMotionVectorsOptions
+ */
+typedef struct FilaMotionVectorsOptions FilaMotionVectorsOptions;
+
+/**
  * Options for Multi-Sample Anti-aliasing (MSAA)
  * @see #setMultiSampleAntiAliasingOptions
  */
@@ -1854,8 +1868,9 @@ typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientat
  * This group is aimed at standard usage for applications, renderers, and game systems.
  * - **Entity Creation**: Methods like @p create() and @p create(size_t, Entity*) allocate new or recycled Entity
  *   identities.
- * - **Entity Destruction**: Methods like @p destroy(Entity) and @p destroy(size_t, Entity*) logically kill entities,
- *   instantly advancing the active timeline.
+ * - **Entity Destruction**: Methods like @p destroy(Entity) and @p destroy(size_t, Entity*) immediately mark entities
+ *   as dead (for @p isAlive()) and batch timeline and change-callback notifications until the internal buffer fills,
+ *   @p flushNotifications() is called, or @p advanceEpoch() seals the epoch.
  * - **Queries & Hooks**: Mechanisms to query logical presence (@p isAlive()) or subscribe to global destruction
  *   notifications via @p registerChangeCallback().
  *
@@ -2381,7 +2396,9 @@ typedef enum FilaUserVariantFilterBit {
     FILA_USER_VARIANT_FILTER_BIT_SSR = 64,
     /** Instanced stereo rendering */
     FILA_USER_VARIANT_FILTER_BIT_STE = 128,
-    FILA_USER_VARIANT_FILTER_BIT_ALL = 255,
+    /** Motion vectors */
+    FILA_USER_VARIANT_FILTER_BIT_MOTION_VECTORS = 256,
+    FILA_USER_VARIANT_FILTER_BIT_ALL = 511,
 } FilaUserVariantFilterBit;
 
 // filament::VertexAttribute

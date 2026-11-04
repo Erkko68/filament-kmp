@@ -164,6 +164,14 @@ void FilaView_getGuardBandOptions(const FilaView* self, FilaGuardBandOptions* ou
     *fila::cpp(out) = fila::cpp(self)->getGuardBandOptions();
 }
 
+void FilaView_setMotionVectorsOptions(FilaView* self, const FilaMotionVectorsOptions* options) {
+    fila::cpp(self)->setMotionVectorsOptions(*fila::cpp(options));
+}
+
+void FilaView_getMotionVectorsOptions(const FilaView* self, FilaMotionVectorsOptions* out) {
+    *fila::cpp(out) = fila::cpp(self)->getMotionVectorsOptions();
+}
+
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* self, const FilaMultiSampleAntiAliasingOptions* options) {
     fila::cpp(self)->setMultiSampleAntiAliasingOptions(*fila::cpp(options));
 }
