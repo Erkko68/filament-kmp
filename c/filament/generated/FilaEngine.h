@@ -1053,8 +1053,8 @@ bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* o
 /**
  * Asynchronously ensures that the variants of the specified Material needed to render it
  * in the provided View are compiled. This takes into account the view's features
- * (e.g. dynamic lighting, fog, stereo, shadowing), alongside the specified shadow receiver
- * and skinning configurations.
+ * (e.g. dynamic lighting, fog, stereo, shadowing, motion vectors), alongside the specified
+ * shadow receiver and skinning configurations.
  *
  * After issuing several Engine::compile() calls in a row, it is recommended to call
  * Engine::flush() such that the backend can start the compilation work as soon as possible.

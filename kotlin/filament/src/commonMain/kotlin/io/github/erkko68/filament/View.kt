@@ -561,6 +561,22 @@ class View @InternalFilamentApi constructor(internal var nativeHandle: NativePoi
         }
 
     /**
+     * Motion vectors pass, used by TAA to reduce ghosting on moving objects. Disabled by default.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
+    var motionVectorsOptions: MotionVectorsOptions
+        get() = withHandle({ FilaMotionVectorsOptions_create() }, { FilaMotionVectorsOptions_destroy(it) }) { o ->
+            FilaView_getMotionVectorsOptions(nativeHandle, o)
+            MotionVectorsOptions().apply {
+                enabled = FilaMotionVectorsOptions_getEnabled(o)
+            }
+        }
+        set(value) = withHandle({ FilaMotionVectorsOptions_create() }, { FilaMotionVectorsOptions_destroy(it) }) { o ->
+            FilaMotionVectorsOptions_setEnabled(o, value.enabled)
+            FilaView_setMotionVectorsOptions(nativeHandle, o)
+        }
+
+    /**
      * Stereoscopic (VR) rendering configuration; must be set before the first frame.
      * The getter returns a snapshot — mutate it and assign back to apply.
      */

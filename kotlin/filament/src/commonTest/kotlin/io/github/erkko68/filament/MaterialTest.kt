@@ -16,7 +16,7 @@ class MaterialTest : FilamentTestFixture() {
     @Test
     fun testUserVariantFlagsMakeUpAll() {
         val bits = with(UserVariantFilterBit) {
-            listOf(DIRECTIONAL_LIGHTING, DYNAMIC_LIGHTING, SHADOW_RECEIVER, SKINNING, FOG, VSM, SSR, STE)
+            listOf(DIRECTIONAL_LIGHTING, DYNAMIC_LIGHTING, SHADOW_RECEIVER, SKINNING, FOG, VSM, SSR, STE, MOTION_VECTORS)
         }
         assertEquals(bits.size, bits.distinct().size)
         assertEquals(UserVariantFilterBit.ALL, bits.fold(0) { acc, b -> acc or b })

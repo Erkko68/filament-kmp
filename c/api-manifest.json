@@ -1377,6 +1377,12 @@
 {"name":"FilaMorphTargetBuffer_hasTangents","returns":"bool","params":[["self","ptr"]]},
 {"name":"FilaMorphTargetBuffer_isCustomMorphingEnabled","returns":"bool","params":[["self","ptr"]]}
 ],
+"filament/generated/FilaMotionVectorsOptions.h": [
+{"name":"FilaMotionVectorsOptions_create","returns":"ptr","params":[]},
+{"name":"FilaMotionVectorsOptions_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"FilaMotionVectorsOptions_getEnabled","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaMotionVectorsOptions_setEnabled","returns":"void","params":[["self","ptr"],["value","bool"]]}
+],
 "filament/generated/FilaMultiSampleAntiAliasingOptions.h": [
 {"name":"FilaMultiSampleAntiAliasingOptions_create","returns":"ptr","params":[]},
 {"name":"FilaMultiSampleAntiAliasingOptions_destroy","returns":"void","params":[["self","ptr"]]},
@@ -1926,6 +1932,8 @@
 {"name":"FilaView_getScreenSpaceReflectionsOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"FilaView_setGuardBandOptions","returns":"void","params":[["self","ptr"],["options","ptr"]]},
 {"name":"FilaView_getGuardBandOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"FilaView_setMotionVectorsOptions","returns":"void","params":[["self","ptr"],["options","ptr"]]},
+{"name":"FilaView_getMotionVectorsOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"FilaView_setMultiSampleAntiAliasingOptions","returns":"void","params":[["self","ptr"],["options","ptr"]]},
 {"name":"FilaView_getMultiSampleAntiAliasingOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"FilaView_setColorGrading","returns":"void","params":[["self","ptr"],["colorGrading","ptr"]]},

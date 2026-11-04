@@ -75,6 +75,11 @@ class ViewTest : FilamentTestFixture() {
         view.dynamicResolutionOptions = DynamicResolutionOptions().apply { enabled = true; minScale = floatArrayOf(1f, 1f); maxScale = floatArrayOf(1f, 1f) }
         assertTrue(view.dynamicResolutionOptions.enabled)
 
+        // Stored as given; the pass itself is gated on post-processing, FL1 and RG16F.
+        assertFalse(view.motionVectorsOptions.enabled)
+        view.motionVectorsOptions = MotionVectorsOptions().apply { enabled = true }
+        assertTrue(view.motionVectorsOptions.enabled)
+
         // View Boolean Flags
         view.isFrustumCullingEnabled = true
         assertTrue(view.isFrustumCullingEnabled)
