@@ -3,8 +3,8 @@ name: CI
 # One workflow per platform. Each job does setup + the native build ONCE, then runs
 # build → test → sample as sequential steps that reuse those outputs (the samples/ build
 # is a composite includeBuild of this repo, so its tasks reuse the incremental outputs
-# already produced earlier in the same job). Replaces the old build.yml/test.yml/samples.yml,
-# which each rebuilt the library from scratch per concern, per platform.
+# already produced earlier in the same job). iOS is the exception: its sample links a whole
+# framework, so it builds in its own job next to the tests.
 #
 # Path-filtered: the `changes` job maps the changed files to platforms (jvm / web / ios / android)
 # and only those jobs run; docs-only changes run nothing but `ci-gate`, which still reports, so a PR
@@ -99,9 +99,11 @@ jobs:
         run: ./gradlew compileKotlinJvm
       # Public-API surface guard: fails if the JVM ABI of any published :kotlin:*
       # module drifts from the committed api/ dumps (regenerate with `apiDump`).
+      # The dump is the same on every host, so one runner checks it; plain `apiCheck`
+      # would also build the iOS klibs on macOS, which have no dump to compare.
       - name: API compatibility check
-        shell: bash
-        run: ./gradlew apiCheck
+        if: matrix.target == 'linux-x64'
+        run: ./gradlew jvmApiCheck
       - name: Run JVM tests
         shell: bash
         run: |
@@ -114,6 +116,10 @@ jobs:
         working-directory: samples
         shell: bash
         run: ./gradlew :desktopApp:compileKotlinJvm
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -165,6 +171,10 @@ jobs:
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -194,6 +204,10 @@ jobs:
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinWasmJs
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -237,6 +251,30 @@ jobs:
             perl -e 'alarm 300; exec @ARGV' xcrun simctl bootstatus "$DEV" -b
           fi
           ./gradlew iosSimulatorArm64Test "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}"
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-test-reports
+          path: kotlin/*/build/reports/tests/
+
+  # The sample's framework link takes as long as the tests, so it runs beside them, not after.
+  ios-sample:
+    needs: changes
+    if: needs.changes.outputs.ios == 'true'
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with: { java-version: '17', distribution: 'temurin' }
+      - uses: ./.github/actions/setup-gradle-cached
+      # Same targets as the ios job, so both share one cache entry.
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: 'ios-arm64 ios-simulator-arm64' }
       - name: Build iOS sample (Simulator)
         working-directory: samples/iosApp
         run: |
@@ -249,12 +287,6 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             build
-      - name: Upload test reports
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: ios-test-reports
-          path: kotlin/*/build/reports/tests/
 
   android:
     needs: changes
@@ -331,6 +363,10 @@ jobs:
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug
         working-directory: samples
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -344,7 +380,7 @@ jobs:
   # passing; a failed or cancelled job (or a failed filter) fails it.
   ci-gate:
     if: always()
-    needs: [changes, jvm, web-runtime, js, wasm, ios, android]
+    needs: [changes, jvm, web-runtime, js, wasm, ios, ios-sample, android]
     runs-on: ubuntu-latest
     steps:
       - run: echo "Results = ${{ join(needs.*.result, ' ') }}"
