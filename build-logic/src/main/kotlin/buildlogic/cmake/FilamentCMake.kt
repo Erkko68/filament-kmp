@@ -1,5 +1,6 @@
 package buildlogic.cmake
 
+import buildlogic.apigen.bindings.GenerateBindingsTask
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.emsdkEnvironment
 import buildlogic.platform.filamentLibDir
@@ -7,6 +8,7 @@ import buildlogic.platform.prebuiltsTask
 import buildlogic.platform.resolveCmake
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 
 /**
@@ -22,7 +24,7 @@ fun Project.registerCApiBuild(
     group = "filament"
     description = "Builds the Fila* C API for ${target.id}."
     val root = rootProject.layout.projectDirectory
-    val bindings = rootProject.layout.buildDirectory.dir("generated/bindings")
+    val bindings = rootProject.tasks.named<GenerateBindingsTask>("generateBindings").flatMap { it.outputDir }
     val libDir = filamentLibDir(target)
 
     cmake.set(resolveCmake())

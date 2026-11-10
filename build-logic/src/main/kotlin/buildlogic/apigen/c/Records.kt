@@ -16,14 +16,16 @@ import buildlogic.apigen.cpp.CppType.Kind
 internal class Records(
     private val api: CppApi, private val config: TypeTables, private val names: CNames, private val templates: Templates, private val bound: Set<String>,
 ) {
+    /** The API's functions and public methods. */
+    private val apiMethods = api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }
+    private val constructorParams = api.records.values.flatMap { it.constructors }
+
     /** Records the API's functions and constructors take. */
-    private val parameterTypes = (api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.params }
-        .plus(api.records.values.flatMap { it.constructors })
+    private val parameterTypes = (apiMethods.map { it.params } + constructorParams)
         .flatMap { params -> params.flatMap { it.type.withArgs() }.mapNotNull { it.decl } }.toSet()
 
     /** Records the API hands out by value, as results and fields: C destroys the copies it gets of the ones that aren't values. */
-    private val resultTypes = ((api.functions + api.records.values.flatMap { r -> r.methods.filter { it.isPublic && it.isApi } }).map { it.returns } +
-        api.records.values.flatMap { r -> r.fields.filter { it.isPublic }.map { it.type } })
+    private val resultTypes = (apiMethods.map { it.returns } + api.records.values.flatMap { r -> r.fields.filter { it.isPublic }.map { it.type } })
         .filter { shape(it.spelling).indirection.isEmpty() }
         .mapNotNullTo(HashSet()) { t -> t.decl?.let { generateSequence(it) { d -> api.aliases[d]?.decl }.last() } }
 
@@ -32,7 +34,7 @@ internal class Records(
      * are only results.
      */
     private val inputRecords = run {
-        val params = (api.functions + api.records.values.flatMap { it.methods }).flatMap { it.params } + api.records.values.flatMap { it.constructors.flatten() }
+        val params = apiMethods.flatMap { it.params } + constructorParams.flatten()
         val taken = params.map { it.type }
             .filter { t -> shape(t.spelling).let { it.const || it.indirection.lastOrNull().let { i -> i == null || i == "&&" } } }
             .mapNotNullTo(HashSet()) { it.decl }
@@ -89,13 +91,13 @@ internal class Records(
     private fun ancestors(record: CppRecord): List<CppRecord> = record.bases.mapNotNull { api.records[it] }.flatMap { listOf(it) + ancestors(it) }
 
     /**
-     * The methods C binds, its twins' too. Not deprecated ones, nor overloads only literals call; a const overload's
-     * non-const twin takes the same C arguments and covers both. Nor overrides of a [bound] upcast base's methods, nor a
+     * The methods C binds, its twins' too. Not deprecated ones; a const overload's non-const twin takes the same C
+     * arguments and covers both. Nor overrides of a [bound] upcast base's methods, nor a
      * `(name, nameLength, …)` overload of a `(name, …)` one: C calls those through the base and the C string.
      */
     fun methods(record: CppRecord): List<CppMethod> {
         val all = (record.methods + twins(record).flatMap { it.methods })
-            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in config.literalOnly } }
+            .filter { m -> m.isPublic && m.isApi && !m.isDeprecated }
         val bases = upcasts(record).filter { it.name in bound }
         val signatures = all.mapTo(HashSet()) { m -> m.name to m.params.map { passed(it.type.spelling) } }
         return all.filterNot { m -> m.isOverride && bases.any { b -> b.methods.any { it.name == m.name } } || lengthOverload(m, signatures) }

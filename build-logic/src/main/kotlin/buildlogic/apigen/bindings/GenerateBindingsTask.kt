@@ -1,7 +1,6 @@
 package buildlogic.apigen.bindings
 
 import buildlogic.apigen.ApiGenTask
-import buildlogic.apigen.c.CManifest
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.CacheableTask
@@ -30,11 +29,5 @@ abstract class GenerateBindingsTask : ApiGenTask() {
     @get:OutputDirectory abstract val outputDir: DirectoryProperty
 
     @TaskAction
-    fun generate() {
-        val out = outputDir.get().asFile.apply { deleteRecursively() }
-        val headers = CManifest.parse(manifest.get().asFile.readText()).headers
-        bindingFiles(headers, config.get().kotlin!!, config.get().c.prefix).forEach { (path, text) ->
-            out.resolve(path).apply { parentFile.mkdirs() }.writeText(text)
-        }
-    }
+    fun generate() = apiGen().generateBindings(outputDir.get().asFile)
 }

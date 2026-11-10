@@ -1,4 +1,4 @@
-import buildlogic.cmake.linkFilamentCApi
+import buildlogic.filament.linkFilamentCApi
 import buildlogic.platform.IOS_DEPLOYMENT_TARGET
 import buildlogic.platform.hostPlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget

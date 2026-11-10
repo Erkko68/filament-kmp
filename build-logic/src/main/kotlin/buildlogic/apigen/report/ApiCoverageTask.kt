@@ -19,7 +19,7 @@ abstract class ApiCoverageTask : ApiGenTask() {
         val manifest = apiGen.manifest()
         if (!apiGen.manifestFile.isFile || apiGen.manifestFile.readText() != manifest.json()) warnStale("C API", "generateCApi", setOf(apiGen.manifestFile.name))
         apiGen.kotlinDir?.let { warnStale("Kotlin externals", "generateKotlinExternals", apiGen.kotlinFiles(manifest).stale()) }
-        val coverage = coverage(api, c.bindings, config.get().c.prefix, apiGen.kotlinDir?.let(::kotlinApiSources))
+        val coverage = apiGen.coverage(api, c)
         apiGen.coverageFile.writeText(coverage.text)
         logger.lifecycle("API coverage: ${coverage.summary}")
         logger.lifecycle("Report: ${apiGen.coverageFile.toURI()} (git diff it to see what changed)")

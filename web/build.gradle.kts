@@ -1,3 +1,4 @@
+import buildlogic.apigen.bindings.GenerateBindingsTask
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -49,7 +50,7 @@ kotlin {
         }
         webTest {
             // The export parity test's arities, generated from c/api-manifest.json.
-            kotlin.srcDir(files(rootProject.layout.buildDirectory.dir("generated/bindings/webTest")).builtBy(":generateBindings"))
+            kotlin.srcDir(rootProject.tasks.named<GenerateBindingsTask>("generateBindings").flatMap { it.outputDir.dir("webTest") })
             resources.srcDir(stageFilamentWasm)
             dependencies {
                 implementation(kotlin("test"))

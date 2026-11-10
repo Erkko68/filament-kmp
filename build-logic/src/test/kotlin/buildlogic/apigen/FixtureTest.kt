@@ -1,10 +1,6 @@
 package buildlogic.apigen
 
-import buildlogic.apigen.bindings.bindingFiles
-import buildlogic.apigen.c.CManifest
-import buildlogic.apigen.cpp.modelReport
 import buildlogic.apigen.report.KotlinDeclarations
-import buildlogic.apigen.report.coverage
 import buildlogic.apigen.report.defaultsCheck
 import buildlogic.apigen.report.enumCheck
 import buildlogic.apigen.report.kotlinApiSources
@@ -58,11 +54,9 @@ class FixtureTest {
     private fun generate(apiGen: ApiGen, project: File) {
         apiGen.generateCApi()
         apiGen.generateKotlinExternals()
-        val bindings = project.resolve("bindings")
-        GeneratedFiles(bindings, listOf(bindings), bindingFiles(CManifest.parse(apiGen.manifestFile.readText()).headers, GEO_API.kotlin!!, GEO_API.c.prefix)).write()
-        val api = apiGen.api()
-        apiGen.coverageFile.writeText(coverage(api, apiGen.cApi(api).bindings, GEO_API.c.prefix, kotlinApiSources(apiGen.kotlinDir!!)).text)
-        project.resolve("reports/api-model.txt").write(modelReport(apiGen.model()).text)
+        apiGen.generateBindings(project.resolve("bindings"))
+        apiGen.coverageFile.writeText(apiGen.coverage().text)
+        project.resolve("reports/api-model.txt").write(apiGen.modelReport().text)
     }
 
     private class Difference(val path: String, val actual: File?, val message: String)

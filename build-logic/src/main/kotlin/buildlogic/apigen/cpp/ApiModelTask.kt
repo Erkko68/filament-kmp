@@ -13,7 +13,7 @@ abstract class ApiModelTask : ApiGenTask() {
 
     @TaskAction
     fun run() {
-        val model = modelReport(apiGen().model())
+        val model = apiGen().modelReport()
         val file = report.get().asFile
         file.writeText(model.text)
         logger.lifecycle(model.summary)

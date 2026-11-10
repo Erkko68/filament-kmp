@@ -15,7 +15,6 @@
 {"name":"FilaFilamatMaterialBuilderAttribute_getAttributeName","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getDefineName","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getName","returns":"ptr","params":[["self","ptr"]]},
-{"name":"FilaFilamatMaterialBuilderAttribute_setName","returns":"void","params":[["self","ptr"],["value","ptr"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getType","returns":"i32","params":[["self","ptr"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_setType","returns":"void","params":[["self","ptr"],["value","i32"]]},
 {"name":"FilaFilamatMaterialBuilderAttribute_getLocation","returns":"i32","params":[["self","ptr"]]},

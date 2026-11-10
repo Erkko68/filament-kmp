@@ -12,12 +12,11 @@ import java.math.BigDecimal
  * and named constants by name, an aggregate's elements one by one; not what a constructor makes of its arguments.
  */
 internal fun defaultsCheck(api: CppApi, declarations: KotlinDeclarations, naming: Naming): Check {
-    val prefix = Regex(naming.memberPrefix.ifEmpty { "$^" })
     var checked = 0
     val wrong = api.surface.mapNotNull { api.records[it] }.flatMap { record ->
         val defaults = declarations.defaults(record.name) ?: return@flatMap emptyList()
         record.fields.filter { it.isPublic && !it.isDeprecated && it.default != null }.mapNotNull { field ->
-            val name = prefix.replace(field.name, "").let { if (it == field.name) it else it.replaceFirstChar(Char::lowercaseChar) }
+            val name = naming.property(field.name).let { if (it == field.name) it else it.replaceFirstChar(Char::lowercaseChar) }
             val kotlin = defaults[name] ?: return@mapNotNull null
             val same = matches(field.default!!, kotlin) ?: return@mapNotNull null
             checked++

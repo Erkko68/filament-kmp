@@ -975,8 +975,6 @@ typedef struct FilaMaterialParameterInfo FilaMaterialParameterInfo;
  */
 typedef struct FilaMaterialInstance FilaMaterialInstance;
 
-typedef struct FilaMaterialInstanceStringLiteral FilaMaterialInstanceStringLiteral;
-
 /**
  * A container for vertex morphing data that supports both automatic and manual morphing.
  *

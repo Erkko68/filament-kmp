@@ -9,7 +9,15 @@ extern "C" {
 #endif
 
 // filament::MaterialInstance
+// skipped void filament::MaterialInstance::setParameter(const StringLiteral name, const T & value): .*\(.*filament::MaterialInstance::StringLiteral.*\)
+// skipped void filament::MaterialInstance::setParameter(const StringLiteral name, const T * _Nonnull values, const size_t count): .*\(.*filament::MaterialInstance::StringLiteral.*\)
 // skipped void filament::MaterialInstance::setParameter(std::string_view name, utils::Slice<const T> values): .*\(.*utils::Slice.*\)
+// skipped void filament::MaterialInstance::setParameter(const StringLiteral name, const Texture * _Nullable texture, const TextureSampler & sampler): .*\(.*filament::MaterialInstance::StringLiteral.*\)
+// skipped void filament::MaterialInstance::setParameter(const StringLiteral name, const RgbType type, const math::float3 color): .*\(.*filament::MaterialInstance::StringLiteral.*\)
+// skipped void filament::MaterialInstance::setParameter(const StringLiteral name, const RgbaType type, const math::float4 color): .*\(.*filament::MaterialInstance::StringLiteral.*\)
+// skipped T filament::MaterialInstance::getParameter(const StringLiteral name) const: .*\(.*filament::MaterialInstance::StringLiteral.*\)
+// skipped void filament::MaterialInstance::setConstant(const StringLiteral name, T value): .*\(.*filament::MaterialInstance::StringLiteral.*\)
+// skipped T filament::MaterialInstance::getConstant(const StringLiteral name) const: .*\(.*filament::MaterialInstance::StringLiteral.*\)
 /**
  * Creates a new MaterialInstance using another MaterialInstance as a template for initialization.
  * The new MaterialInstance is an instance of the same Material of the template instance and

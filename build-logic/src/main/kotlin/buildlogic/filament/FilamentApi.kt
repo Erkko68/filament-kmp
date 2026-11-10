@@ -1,9 +1,12 @@
 package buildlogic.filament
 
 import buildlogic.apigen.ApiGenConfig
+import buildlogic.apigen.ApiGenTask
 import buildlogic.apigen.CBindings
 import buildlogic.apigen.CustomBridges
 import buildlogic.apigen.Instantiations
+import buildlogic.apigen.Instantiations.Companion.each
+import buildlogic.apigen.bindings.GenerateBindingsTask
 import buildlogic.apigen.KotlinBindings
 import buildlogic.apigen.Mirror
 import buildlogic.apigen.Naming
@@ -23,6 +26,7 @@ import buildlogic.platform.filamentLibDir
 import buildlogic.platform.hostPlatform
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 
 // Everything the generator (buildlogic.apigen) is told about Filament: its config, the bridges no table expresses,
 // and the tasks that need Filament's libraries.
@@ -37,8 +41,6 @@ private val CONSTANT_TYPES = listOf("int32_t", "float", "bool")
 private val READABLE_PARAMETER_TYPES = listOf("float", "int32_t", "uint32_t") +
     math("int2", "int3", "int4", "uint2", "uint3", "uint4", "float2", "float3", "float4", "mat3f", "mat4f")
 private val PARAMETER_TYPES = READABLE_PARAMETER_TYPES + listOf("bool") + math("bool2", "bool3", "bool4")
-
-private fun each(parameter: String, types: List<String>) = types.map { mapOf(parameter to it) }
 
 private val VECTOR_ELEMENTS = mapOf(
     "float" to "float", "double" to "double", "half" to "uint16_t", "int" to "int32_t", "uint" to "uint32_t", "short" to "int16_t",
@@ -98,11 +100,10 @@ internal val FILAMENT_API = ApiGenConfig(
             "utils::Entity" to Scalar("FilaEntity", "utils::Entity::import({})", "utils::Entity::smuggle({})", layout = true),
         ),
         mirrors = MIRRORS,
-        sequences = setOf("utils::FixedCapacityVector", "utils::Slice"),
+        sequences = setOf("utils::FixedCapacityVector"),
         views = setOf("utils::Slice"),
         // Only literals make a StaticString; fila::staticString makes one because everything taking it copies it.
         strings = mapOf("utils::CString" to "utils::CString", "utils::ImmutableCString" to "utils::ImmutableCString", "utils::StaticString" to "fila::staticString"),
-        literalOnly = setOf("filament::MaterialInstance::StringLiteral"),
         custom = FilamentBridges,
     ),
     templates = Instantiations(
@@ -207,8 +208,9 @@ private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "c
 /** The generator's tasks for Filament, and `apiGaps`, which reads Filament's libraries. */
 fun Project.registerFilamentApiGen() {
     registerApiGenTasks(FILAMENT_API)
-    // Reading the headers fetches them first: after a filaVersion bump, the new version's.
-    listOf("apiModel", "generateCApi", "apiCoverage", "apiVerify").forEach { tasks.named(it) { dependsOn("downloadIncludes") } }
+    // Reading the headers fetches them first: after a filaVersion bump, the new version's. generateBindings reads only
+    // the committed manifest, so every native build runs it without them.
+    tasks.withType<ApiGenTask>().configureEach { if (this !is GenerateBindingsTask) dependsOn("downloadIncludes") }
 
     if (hostPlatform() == "windows") return // nm can't read MSVC objects
     val target = FilamentTarget.host()
@@ -219,7 +221,7 @@ fun Project.registerFilamentApiGen() {
         buildDir.set(layout.buildDirectory.dir("cmake/api-gaps"))
         outputDir.set(layout.buildDirectory.dir("filament-c/api-gaps"))
         arguments.add("-DJNI_HOME=${System.getProperty("java.home").replace('\\', '/')}")
-        targets.addAll(PACKAGES.keys.map { "fila-$it" })
+        targets.addAll(PACKAGES.keys.map { "fila-$it" }) // c/CMakeLists.txt's object library per module
     }
 
     tasks.register<ApiGapsTask>("apiGaps") {

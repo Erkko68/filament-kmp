@@ -27,7 +27,6 @@ val GEO_API = ApiGenConfig(
             "geo::math::float3" to Mirror("float", 3),
             "geo::math::float4" to Mirror("float", 4, aligned = true),
         ),
-        sequences = setOf("geo::Span"),
         views = setOf("geo::Span"),
         refs = RefCounting(pointers = mapOf("geo::Ref" to false), targets = setOf("geo::RefTarget"), get = "get", addRef = "addRef", release = "release"),
         results = setOf("geo::Result"),
