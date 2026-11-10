@@ -1,5 +1,5 @@
 import buildlogic.apigen.bindings.GenerateBindingsTask
-import buildlogic.cmake.registerCApiBuild
+import buildlogic.filament.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 

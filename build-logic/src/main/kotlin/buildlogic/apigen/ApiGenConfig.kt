@@ -43,8 +43,11 @@ data class Sources(
 data class CBindings(
     /** What every C name starts with: `Fila`. */
     val prefix: String,
-    /** The C++ namespace of the helpers the forwarders call (the generated `Bridge.hpp`), and of the handle casts. */
-    val helpers: String,
+    /**
+     * The C++ namespace of the helpers the forwarders call (the generated `Bridge.hpp`), and of the handle casts;
+     * not the library's own.
+     */
+    val helpers: String = prefix.lowercase(),
     /** Namespaces C names leave out, as every name would repeat them. */
     val droppedNamespaces: Set<String> = emptySet(),
     /**
@@ -123,11 +126,10 @@ data class KotlinBindings(
     val packages: Map<String, String>,
     /** The package declaring `ExternalSymbolName` and `NativePointer`. */
     val interop: String,
-    /** The wasm runtime the exports go to, and the package of its `WASM_ARITIES` parity table. */
-    val wasmRuntime: String,
+    /** The wasm runtimes, each exporting the C modules it links: `"filament-kmp" to listOf("filament", "gltfio")`. */
+    val wasmRuntimes: Map<String, List<String>>,
+    /** The package of the generated `WASM_ARITIES` table the web parity test reads. */
     val wasmPackage: String,
-    /** The Kotlin modules whose wasm exports go to a runtime of their own. */
-    val wasmRuntimes: Map<String, String> = emptyMap(),
     val dir: String = "kotlin",
 ) : Serializable
 

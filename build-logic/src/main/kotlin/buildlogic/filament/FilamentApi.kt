@@ -20,7 +20,6 @@ import buildlogic.apigen.c.shape
 import buildlogic.apigen.cpp.CppType
 import buildlogic.apigen.registerApiGenTasks
 import buildlogic.apigen.report.ApiGapsTask
-import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.filamentLibDir
 import buildlogic.platform.hostPlatform
@@ -74,7 +73,6 @@ internal val FILAMENT_API = ApiGenConfig(
     ),
     c = CBindings(
         prefix = "Fila",
-        helpers = "fila",
         droppedNamespaces = setOf("filament", "backend", "math"),
         bridgeHeader = "../manual/FilaBridge.hpp",
         typedefs = listOf("typedef int32_t FilaEntity;"),
@@ -131,9 +129,9 @@ internal val FILAMENT_API = ApiGenConfig(
     kotlin = KotlinBindings(
         packages = PACKAGES,
         interop = "io.github.erkko68.filament.interop",
-        wasmRuntime = "filament-kmp",
+        // As web/CMakeLists.txt links them: the engine modules share pointers; the material compiler is optional.
+        wasmRuntimes = mapOf("filament-kmp" to listOf("filament", "filament-utils", "gltfio"), "filamat-kmp" to listOf("filamat")),
         wasmPackage = "io.github.erkko68.filament.wasm",
-        wasmRuntimes = mapOf("filamat" to "filamat-kmp"),
     ),
 )
 

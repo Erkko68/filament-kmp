@@ -42,9 +42,8 @@ val GEO_API = ApiGenConfig(
     kotlin = KotlinBindings(
         packages = mapOf("geo" to "geo.capi", "geo-io" to "geo.io.capi"),
         interop = "geo.interop",
-        wasmRuntime = "geo",
+        wasmRuntimes = mapOf("geo" to listOf("geo"), "geo-io" to listOf("geo-io")),
         wasmPackage = "geo.wasm",
-        wasmRuntimes = mapOf("geo-io" to "geo-io"),
     ),
 )
 

@@ -9,7 +9,7 @@
 //   apiGaps           the Filament API nothing binds yet (build/reports/api-gaps.txt)
 
 import buildlogic.filament.registerFilamentApiGen
-import buildlogic.cmake.registerCApiBuild
+import buildlogic.filament.registerCApiBuild
 import buildlogic.cmake.cmakeBuildSlot
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.hostPlatform

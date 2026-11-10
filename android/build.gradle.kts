@@ -1,5 +1,5 @@
 import buildlogic.cmake.CMakeBuildTask
-import buildlogic.cmake.registerCApiBuild
+import buildlogic.filament.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 
 plugins {

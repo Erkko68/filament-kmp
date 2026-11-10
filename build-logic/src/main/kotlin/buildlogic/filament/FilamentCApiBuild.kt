@@ -1,6 +1,9 @@
-package buildlogic.cmake
+package buildlogic.filament
 
 import buildlogic.apigen.bindings.GenerateBindingsTask
+import buildlogic.cmake.CMakeBuildTask
+import buildlogic.cmake.cmakeBuildSlot
+import buildlogic.cmake.toolchainArguments
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.emsdkEnvironment
 import buildlogic.platform.filamentLibDir

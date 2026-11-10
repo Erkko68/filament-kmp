@@ -18,7 +18,7 @@ import org.gradle.api.tasks.TaskAction
  * jni/<Header>.c                     JNI forwarders, compiled into the desktop and Android images
  * wasm/<runtime>-exports.txt         -sEXPORTED_FUNCTIONS of each wasm runtime
  * wasm/<runtime>-types.js            bool/float/int64 tables for the runtime's `--post-js`
- * webTest/WasmArities.kt             the default runtime's export arities, for the web parity test
+ * webTest/WasmArities.kt             each runtime's export arities, for the web parity test
  * ```
  */
 @CacheableTask

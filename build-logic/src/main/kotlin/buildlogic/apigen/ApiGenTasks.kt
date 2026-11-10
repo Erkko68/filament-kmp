@@ -11,24 +11,10 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.register
 
 /**
- * Registers the API generator for the library [config] describes, C++ headers → C → Kotlin, one package per stage:
- *
- * ```
- * ApiGenConfig  what the generator is told about the library
- * ApiHeaders    api-headers.txt: which headers are API, and the C module each goes to
- * ApiGen        the stages, each reading what the one before wrote; no Gradle
- * cpp/          clang's AST of those headers → CppApi model         apiModel        (report)
- * c/            CppApi → c/<module>/generated; the functions those and
- *               c/<module>/manual declare → c/api-manifest.json     generateCApi    (committed)
- * kotlin/       api-manifest.json → Kotlin externals                generateKotlinExternals (committed)
- * bindings/     api-manifest.json → JNI forwarders, wasm tables     generateBindings (build/)
- * report/       what C++ the C and Kotlin APIs bind, by C function     apiCoverage (committed report)
- *               C++ API the C API's objects don't call                 apiGaps  (report; the library's build registers it)
- *               hand-written Kotlin enums and defaults are C++'s       apiVerify (fails)
- * ```
- *
- * The Kotlin stages are registered when the config has [ApiGenConfig.kotlin]. generateKotlinExternals runs
- * generateCApi first, so a manual header's new function reaches Kotlin in one run.
+ * Registers the API generator's tasks for the library [config] describes (README.md lists them by stage). The Kotlin
+ * stages are registered when the config has [ApiGenConfig.kotlin]. generateKotlinExternals runs generateCApi first,
+ * so a manual header's new function reaches Kotlin in one run. `apiGaps` needs the library's binaries, so the
+ * library's build registers it.
  */
 fun Project.registerApiGenTasks(config: ApiGenConfig) {
     val root = layout.projectDirectory

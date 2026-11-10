@@ -1,4 +1,4 @@
-import buildlogic.cmake.registerCApiBuild
+import buildlogic.filament.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import org.gradle.nativeplatform.MachineArchitecture
 import org.gradle.nativeplatform.OperatingSystemFamily
