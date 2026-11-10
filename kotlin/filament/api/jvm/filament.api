@@ -563,7 +563,6 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun isValid (Lio/github/erkko68/filament/View;)Z
 	public final fun isValidExpensive (Lio/github/erkko68/filament/MaterialInstance;)Z
 	public final fun pumpMessageQueues ()V
-	public final fun resetBackendState ()V
 	public final fun runCommandAsync (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)I
 	public static synthetic fun runCommandAsync$default (Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
 	public final fun setActiveFeatureLevel (Lio/github/erkko68/filament/Engine$FeatureLevel;)Lio/github/erkko68/filament/Engine$FeatureLevel;

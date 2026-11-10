@@ -21,21 +21,20 @@ Filament renders into a `SwapChain` backed by a `CAMetalLayer` that is embedded 
 
 ---
 
-## 2. A Texture on Compose's WebGL Context (Web)
+## 2. Offscreen Canvas Copied into a Compose Texture (Web)
 
-Compose for Web draws its whole UI with Skia on one WebGL2 canvas. `rememberFilamentEngine()` creates the Filament `Engine` on that same context instead of one of its own, so a view needs no surface at all:
+A Filament `Engine` is bound to a single WebGL context, on its own offscreen canvas, so a `FilamentView` cannot own a GPU surface. Compose for Web draws its whole UI with Skia on another WebGL canvas. Each frame crosses from one to the other on the GPU:
 
-1. **A Compose render target per view**: `rememberWebGLRenderTarget` gives each `FilamentView` a texture that Skia has adopted as an image, sized to the composable.
-2. **Filament renders into it**: the texture is imported into Filament and attached to a `RenderTarget` set on the `View`.
-3. **Display**: an ordinary `Image` draws the target's painter. No copy, no DOM element.
-4. **State hand-over**: Skia and Filament each cache the context's GL state. After every Filament run Skia's state is marked stale, and a queued `Engine.resetBackendState()` makes Filament drop its own before it runs again.
+1. **Render**: the view renders into the top-left corner of the engine's canvas (`View.viewport`), which grows to the largest view.
+2. **Copy**: in the same task, `texSubImage2D` uploads that corner of the canvas into a texture of Compose's context — a `WebGLRenderTarget` from `rememberWebGLRenderTarget`, which Skia has adopted as an image. The browser copies canvas to texture without a CPU readback.
+3. **Display**: an ordinary `Image` draws the target's painter, flipped vertically because the copy keeps the canvas's top-down rows.
 
-A view scrolled or clipped out of sight stops rendering.
+Any engine works, and Filament never touches Compose's GL state. A view scrolled or clipped out of sight stops rendering.
 
 ### Trade-offs
 
-- **Pros**: no per-frame copy; the view is a real Compose layer (see [Layering & Stacking](#layering--stacking)).
-- **Cons**: the engine must be the one from `rememberFilamentEngine()` — an engine on its own canvas can't draw into Compose (a `FilamentView` given one throws). It relies on Compose's experimental `WebGLRenderTarget` API (Compose Multiplatform 1.13+). A flush Filament does by itself when its command buffer fills (a very large load) happens outside the hand-over.
+- **Pros**: the view is a real Compose layer (see [Layering & Stacking](#layering--stacking)); several independent views share one engine; no DOM elements, no hole punch.
+- **Cons**: one canvas-to-texture copy per view per frame. It relies on Compose's experimental `WebGLRenderTarget` API (Compose Multiplatform 1.13+).
 
 For Filament outside Compose on web, see [Rendering into a Canvas](../guide/web.md).
 
@@ -95,7 +94,7 @@ opaque garbage. Each platform then needs its own surface change:
 | :--- | :--- |
 | **Android** | `SurfaceView` → `TextureView` with `isOpaque = false`; swapchain gets `CONFIG_TRANSPARENT`. A `TextureView` composites in the view hierarchy rather than owning a hardware layer, so it costs more than the opaque path. |
 | **iOS** | `CAMetalLayer.opaque = false`, swapchain gets `CONFIG_TRANSPARENT`, and the interop view is `placedAsOverlay` — as a normal interop view Compose punches a hole for it and erases whatever was drawn behind. |
-| **Web** | Nothing: the render target's texture is premultiplied RGBA, drawn through Compose like any image. |
+| **Web** | Nothing per view: the copy keeps premultiplied alpha and Compose draws it like any image. `Engine.create` always requests `alpha: true` on the WebGL context — it defaults to `alpha: false`, which forces every frame opaque regardless of blend mode. |
 | **JVM / Desktop** | The readback image switches from `OPAQUE` to `PREMUL` alpha (GPU-shared frames are premultiplied already); the rest of the path already composites through Compose. |
 
 The surface type and its swapchain flags are fixed when the platform view is created, so toggling
@@ -108,7 +107,7 @@ not a scene property — two views of one scene can differ.
 
 ## Future Direction
 
-The stacking limitation on Android and iOS is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way web and the desktop's experimental GPU-sharing path already do. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch workaround. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
+The stacking limitation on Android and iOS is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way the desktop's experimental GPU-sharing path already does. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch workaround. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
 
 ## Summary
 
@@ -116,5 +115,5 @@ The stacking limitation on Android and iOS is a consequence of today's surface/c
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Android** | Native `SurfaceView` + SwapChain | None | On top only | No | `TextureView`, `CONFIG_TRANSPARENT` |
 | **iOS** | Native `CAMetalLayer` + SwapChain | None | On top only | No | non-opaque layer, `placedAsOverlay` |
-| **Web** | Texture on Compose's WebGL context → Skia image | None | Above or below | Yes | nothing extra |
+| **Web** | Offscreen canvas → texture on Compose's WebGL context → Skia image | GPU canvas→texture | Above or below | Yes | `alpha: true` context |
 | **JVM / Desktop** | Offscreen SwapChain → Skia `Image` | GPU→CPU every frame (GPU-side with the experimental opt-in) | Above or below | Yes | `PREMUL` readback |

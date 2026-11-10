@@ -2025,9 +2025,6 @@
 {"name":"FilaColorGradingBuilder_exportLut","returns":"void","params":[["self","ptr"],["callback","ptr"],["callbackUser","ptr"]]},
 {"name":"FilaColorGradingLut_getData","returns":"ptr","params":[["lut","ptr"],["outInfo","ptr"]]}
 ],
-"filament/manual/FilaEngineManual.h": [
-{"name":"FilaEngine_resetBackendState","returns":"void","params":[["self","ptr"]]}
-],
 "filament/manual/FilaFrameHistoryStreamManual.h": [
 {"name":"FilaFrameHistoryStream_getNewFrames","returns":"i32","params":[["self","ptr"],["out","ptr"],["missingBefore","ptr"],["outCapacity","i32"]]}
 ],

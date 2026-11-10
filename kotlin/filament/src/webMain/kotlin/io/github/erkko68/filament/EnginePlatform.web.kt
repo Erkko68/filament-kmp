@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.interop.NativePointer
-import io.github.erkko68.filament.wasm.adoptGlContext
 import io.github.erkko68.filament.wasm.createGlContext
 import io.github.erkko68.filament.wasm.fila
 import io.github.erkko68.filament.wasm.releaseGlContext
@@ -17,13 +16,7 @@ internal class WebEnginePlatform(
     private val glContext: Int,
     // Only the hidden canvas we allocated is ours to tear down; a caller's canvas outlives us.
     private val ownsCanvas: Boolean,
-    // A context adopted from another renderer (e.g. Compose's) is only unregistered, never lost.
-    val ownsContext: Boolean = true,
 ) : EnginePlatform {
-    var onExecuted: (() -> Unit)? = null
-
-    override fun executed() { onExecuted?.invoke() }
-
     override fun makeCurrent() {
         if (glContext != 0 && current != glContext) {
             fila.GL.makeContextCurrent(glContext)
@@ -33,7 +26,7 @@ internal class WebEnginePlatform(
 
     override fun release() {
         if (glContext != 0) {
-            if (ownsContext) canvas?.let { fila.releaseGlContext(it, glContext) } else fila.GL.deleteContext(glContext)
+            canvas?.let { fila.releaseGlContext(it, glContext) }
             if (current == glContext) current = 0
         }
         if (ownsCanvas) canvas?.remove()
@@ -45,17 +38,8 @@ internal class WebEnginePlatform(
     }
 }
 
-/**
- * The shared context is the [HTMLCanvasElement] to render into, or a live [WebGLRenderingContext] to adopt;
- * without one a hidden canvas is made.
- */
+/** The shared context is the [HTMLCanvasElement] to render into; without one a hidden canvas is made. */
 internal actual fun enginePlatform(backend: Engine.Backend, sharedContext: Any?): EnginePlatform {
-    val adopted = (sharedContext as? JsAny)?.takeIf { isWebGl2Context(it) }
-    if (adopted != null && backend != Engine.Backend.NOOP) {
-        val handle = fila.adoptGlContext(adopted)
-        WebEnginePlatform.current = handle
-        return WebEnginePlatform(canvasOf(adopted), handle, ownsCanvas = false, ownsContext = false)
-    }
     // WebGL is the only GPU backend in the wasm build: DEFAULT and OPENGL both mean it.
     val gpu = backend != Engine.Backend.NOOP
     val given = sharedContext as? HTMLCanvasElement
@@ -82,7 +66,3 @@ private fun hiddenCanvas(): HTMLCanvasElement =
         style.top = "0"
         document.body?.appendChild(this)
     }
-
-private fun isWebGl2Context(value: JsAny): Boolean = js("typeof WebGL2RenderingContext !== 'undefined' && value instanceof WebGL2RenderingContext")
-
-private fun canvasOf(gl: JsAny): HTMLCanvasElement = js("gl.canvas")

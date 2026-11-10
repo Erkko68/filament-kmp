@@ -6,36 +6,32 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.webgl.WebGLRenderTarget
 import androidx.compose.ui.platform.webgl.rememberWebGLRenderTarget
 import androidx.compose.ui.unit.IntSize
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.NativeSurface
-import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.Renderer
-import io.github.erkko68.filament.SwapChain
-import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.Viewport
 import io.github.erkko68.filament.canvas
-import io.github.erkko68.filament.sharesContext
-import io.github.erkko68.filament.wasm.fila
-import io.github.erkko68.filament.wasm.registerGlTexture
-import io.github.erkko68.filament.wasm.unregisterGlTexture
+import org.khronos.webgl.WebGLRenderingContext
+import org.khronos.webgl.WebGLTexture
+import org.w3c.dom.HTMLCanvasElement
 
 /**
- * Filament draws into a Compose [WebGLRenderTarget], on Compose's own WebGL context, and an [Image] shows
- * it: the view is an ordinary Compose layer, alpha included. The engine must have adopted that context,
- * as the one from `rememberFilamentEngine` has.
+ * On web an engine is bound to one WebGL context, on its own offscreen canvas, so a view cannot own a
+ * surface. Each view renders into the top-left corner of that canvas, and the browser copies it, on the
+ * GPU, into a texture of Compose's context that an [Image] shows: the view is an ordinary Compose layer.
  */
 @Composable
 internal actual fun FilamentSurface(
@@ -49,11 +45,6 @@ internal actual fun FilamentSurface(
 ) {
     var size by remember { mutableStateOf(IntSize(1, 1)) }
     var onScreen by remember { mutableStateOf(true) }
-    // Null without a Compose window on a WebGL2 canvas (a headless test host): the view stays empty.
-    val target = rememberWebGLRenderTarget(size)
-    check(target == null || engine.sharesContext) {
-        "On web a FilamentView renders on Compose's WebGL context: use the engine from rememberFilamentEngine()"
-    }
     val layout = modifier.onGloballyPositioned {
         onScreen = !it.boundsInWindow().isEmpty
         val now = it.size
@@ -62,90 +53,56 @@ internal actual fun FilamentSurface(
             onResize(now.width.toDouble() / now.height.toDouble())
         }
     }
-    if (target == null) {
+    // Null without a Compose window on a WebGL2 canvas (a headless test host): the view stays empty.
+    val target = rememberWebGLRenderTarget(size)
+    val canvas = engine.canvas
+    if (target == null || canvas == null) {
         Box(layout)
         return
     }
 
-    val binding = remember(target, engine, view) { TargetBinding(engine, view, target) }
-    DisposableEffect(binding) { onDispose { binding.destroy() } }
+    // The canvas is shared by every view of the engine and the browser never clears it: always clear.
+    SideEffect {
+        renderer.clearOptions = Renderer.ClearOptions().apply {
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+            clear = true
+        }
+    }
+    val swapChain = rememberOwned(engine, canvas, create = { engine.createSwapChain(NativeSurface(canvas)) }) { engine.destroy(it) }
 
-    val gate = rememberPausedFrameGate(renderingEnabled, 1, binding, size)
+    val gate = rememberPausedFrameGate(renderingEnabled, 1, target, size)
     // A view scrolled or clipped out of sight isn't drawn: don't render it either.
     FilamentRenderLoop(onScreen && gate.loopEnabled(renderingEnabled)) {
         var rendered = false
-        target.render { rendered = binding.renderFrame(renderer) }
+        target.render {
+            val (w, h) = target.size
+            if (canvas.width < w || canvas.height < h) {
+                canvas.width = maxOf(canvas.width, w)
+                canvas.height = maxOf(canvas.height, h)
+            }
+            // Filament's origin is bottom-left; the copy below takes the canvas's top-left corner.
+            view.viewport = Viewport(0, canvas.height - h, w, h)
+            if (renderer.beginFrame(swapChain, Engine.steadyClockTimeNano)) {
+                renderer.render(view)
+                renderer.endFrame()
+                copyCanvas(target.webGLContext, target.webGlTexture, canvas, w, h)
+                rendered = true
+            }
+        }
         if (rendered) gate.delivered(paused = !renderingEnabled)
     }
 
     Box(layout) {
-        Image(target.painter, contentDescription = null, contentScale = ContentScale.FillBounds, modifier = Modifier.fillMaxSize())
+        // The copy keeps the canvas's rows top-down and Compose reads its texture bottom-up: flip it.
+        Image(target.painter, contentDescription = null, contentScale = ContentScale.FillBounds, modifier = Modifier.fillMaxSize().scale(1f, -1f))
     }
 }
 
-/** The Filament side of a [WebGLRenderTarget]: its texture imported as a [RenderTarget] for [view]. */
-private class TargetBinding(private val engine: Engine, private val view: View, private val target: WebGLRenderTarget) {
-    private val swapChain: SwapChain = engine.createSwapChain(NativeSurface(checkNotNull(engine.canvas)))
-    private var generation = -1
-    private var textureId = 0
-    private var color: Texture? = null
-    private var depth: Texture? = null
-    private var renderTarget: RenderTarget? = null
-
-    init {
-        // Compose replaces its texture on resize: let go of the import first.
-        target.onTextureWillBeInvalidated = ::release
-    }
-
-    /** Whether a frame was rendered; Filament skips one when the GPU is behind. */
-    fun renderFrame(renderer: Renderer): Boolean {
-        if (generation != target.generation) attach()
-        val began = renderer.beginFrame(swapChain, Engine.steadyClockTimeNano)
-        if (began) {
-            renderer.render(view)
-            renderer.endFrame()
-        }
-        // Skia uses the context next: queued first, so Filament's next run drops its cached GL state.
-        engine.resetBackendState()
-        return began
-    }
-
-    private fun attach() {
-        release()
-        val (w, h) = target.size
-        textureId = fila.registerGlTexture(target.webGlTexture)
-        val color = Texture.Builder().width(w).height(h).levels(1).sampler(Texture.Sampler.SAMPLER_2D)
-            .format(Texture.InternalFormat.RGBA8)
-            .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
-            .import(textureId.toLong()).build(engine)
-        val depth = Texture.Builder().width(w).height(h).levels(1).sampler(Texture.Sampler.SAMPLER_2D)
-            .format(Texture.InternalFormat.DEPTH24).usage(Texture.Usage.DEPTH_ATTACHMENT).build(engine)
-        val rt = RenderTarget.Builder()
-            .texture(RenderTarget.AttachmentPoint.COLOR, color)
-            .texture(RenderTarget.AttachmentPoint.DEPTH, depth)
-            .build(engine)
-        this.color = color
-        this.depth = depth
-        renderTarget = rt
-        view.renderTarget = rt
-        view.viewport = Viewport(0, 0, w, h)
-        generation = target.generation
-    }
-
-    private fun release() {
-        renderTarget?.let { view.renderTarget = null; engine.destroy(it) }
-        color?.let(engine::destroy)
-        depth?.let(engine::destroy)
-        if (textureId != 0) fila.unregisterGlTexture(textureId)
-        renderTarget = null; color = null; depth = null; textureId = 0
-        generation = -1
-    }
-
-    fun destroy() {
-        target.onTextureWillBeInvalidated = null
-        release()
-        engine.destroy(swapChain)
-        // Runs the destroys now; the engine's onExecuted resyncs Compose's GL state.
-        engine.flushAndWait()
-    }
-}
+// Copies the top-left [w]×[h] of [source], a canvas of another context, into [texture]; alpha stays premultiplied.
+private fun copyCanvas(gl: WebGLRenderingContext, texture: WebGLTexture, source: HTMLCanvasElement, w: Int, h: Int): Unit = js("""{
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+}""")
