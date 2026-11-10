@@ -2,36 +2,46 @@
 
 package io.github.erkko68.filament.compose.internal
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.webgl.rememberWebGLRenderTarget
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.node.Ref
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.roundToIntRect
+import androidx.compose.ui.viewinterop.HtmlElementView
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.NativeSurface
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.View
-import io.github.erkko68.filament.Viewport
-import io.github.erkko68.filament.canvas
-import org.khronos.webgl.WebGLRenderingContext
-import org.khronos.webgl.WebGLTexture
+import kotlinx.browser.document
+import kotlinx.browser.window
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
+import kotlin.math.roundToInt
 
 /**
- * On web an engine is bound to one WebGL context, on its own offscreen canvas, so a view cannot own a
- * surface. Each view renders into the top-left corner of that canvas, and the browser copies it, on the
- * GPU, into a texture of Compose's context that an [Image] shows: the view is an ordinary Compose layer.
+ * Web has one WebGL context per engine, so all views share [WebViewCompositor], which renders each
+ * into the offscreen engine canvas and blits its slice onto a per-view 2D canvas. This surface owns
+ * that 2D canvas, hosts it through Compose HTML interop, and reports its window-space bounds to the
+ * compositor. The per-view [renderer] is unused here.
+ *
+ * Stacking depends on [transparent]. Opaque: the canvas sits *behind* the Compose canvas, revealed
+ * by a hole punched in it — so Compose content behind the view is erased. Transparent: the canvas
+ * sits *in front* with no hole punch, and its own alpha composites over the Compose UI (which is
+ * why Compose content drawn above the view shows through, rather than covering it).
  */
 @Composable
 internal actual fun FilamentSurface(
@@ -43,66 +53,71 @@ internal actual fun FilamentSurface(
     renderingEnabled: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
-    var size by remember { mutableStateOf(IntSize(1, 1)) }
-    var onScreen by remember { mutableStateOf(true) }
-    val layout = modifier.onGloballyPositioned {
-        onScreen = !it.boundsInWindow().isEmpty
-        val now = it.size
-        if (now.width > 0 && now.height > 0 && now != size) {
-            size = now
-            onResize(now.width.toDouble() / now.height.toDouble())
-        }
-    }
-    // Null without a Compose window on a WebGL2 canvas (a headless test host): the view stays empty.
-    val target = rememberWebGLRenderTarget(size)
-    val canvas = engine.canvas
-    if (target == null || canvas == null) {
-        Box(layout)
-        return
-    }
+    val target = remember { document.createElement("canvas") as HTMLCanvasElement }
+    // Owned, so a discarded composition unregisters too: the compositor must never draw a destroyed view.
+    val entry = rememberOwned(engine, view, target, dependsOn = listOf(view), create = {
+        WebViewCompositor.of(engine).register(view, target)
+    }) { WebViewCompositor.of(engine).unregister(it) }
 
-    // The canvas is shared by every view of the engine and the browser never clears it: always clear.
+    // Keep a mutable ref so the size callback always dispatches to the latest lambda.
+    val onResizeRef = remember { Ref<(Double) -> Unit>() }
+    SideEffect { onResizeRef.value = onResize }
+
     SideEffect {
-        renderer.clearOptions = Renderer.ClearOptions().apply {
-            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
-            clear = true
-        }
-    }
-    val swapChain = rememberOwned(engine, canvas, create = { engine.createSwapChain(NativeSurface(canvas)) }) { engine.destroy(it) }
-
-    val gate = rememberPausedFrameGate(renderingEnabled, 1, target, size)
-    // A view scrolled or clipped out of sight isn't drawn: don't render it either.
-    FilamentRenderLoop(onScreen && gate.loopEnabled(renderingEnabled)) {
-        var rendered = false
-        target.render {
-            val (w, h) = target.size
-            if (canvas.width < w || canvas.height < h) {
-                canvas.width = maxOf(canvas.width, w)
-                canvas.height = maxOf(canvas.height, h)
-            }
-            // Filament's origin is bottom-left; the copy below takes the canvas's top-left corner.
-            view.viewport = Viewport(0, canvas.height - h, w, h)
-            if (renderer.beginFrame(swapChain, Engine.steadyClockTimeNano)) {
-                renderer.render(view)
-                renderer.endFrame()
-                copyCanvas(target.webGLContext, target.webGlTexture, canvas, w, h)
-                rendered = true
-            }
-        }
-        if (rendered) gate.delivered(paused = !renderingEnabled)
+        entry.paused = !renderingEnabled
+        if (renderingEnabled) entry.shownPaused = false
     }
 
-    Box(layout) {
-        // The copy keeps the canvas's rows top-down and Compose reads its texture bottom-up: flip it.
-        Image(target.painter, contentDescription = null, contentScale = ContentScale.FillBounds, modifier = Modifier.fillMaxSize().scale(1f, -1f))
+    var lastSize by remember { mutableStateOf(IntSize.Zero) }
+
+    Box(
+        modifier = modifier.onGloballyPositioned { coords ->
+            val pos = coords.positionInWindow()
+            val size = coords.size
+            val left = pos.x.roundToInt()
+            val top = pos.y.roundToInt()
+            entry.rect = IntRect(left, top, left + size.width, top + size.height)
+            entry.visible = coords.boundsInWindow().roundToIntRect()
+
+            if (size != lastSize) {
+                lastSize = size
+                entry.shownPaused = false // a resized view shows its scene at the new size
+                if (size.width > 0 && size.height > 0) {
+                    onResizeRef.value?.invoke(size.width.toDouble() / size.height.toDouble())
+                }
+            }
+        }
+    ) {
+        // factory runs once, so the stacking set up below is fixed at creation — key() rebuilds it
+        // when transparency is toggled.
+        key(transparent) {
+            HtmlElementView(factory = {
+                val container = document.createElement("div") as HTMLElement
+                container.style.width = "100%"
+                container.style.height = "100%"
+                if (transparent) container.style.setProperty("pointer-events", "none")
+                window.requestAnimationFrame {
+                    (container.parentElement as? HTMLElement)?.let { parent ->
+                        parent.style.zIndex = if (transparent) "1" else "-1"
+                        if (transparent) parent.style.setProperty("pointer-events", "none")
+                    }
+                }
+                if (target.parentNode !== container) {
+                    target.style.position = "absolute"
+                    target.style.left = "0"
+                    target.style.top = "0"
+                    target.style.width = "100%"
+                    target.style.height = "100%"
+                    container.appendChild(target)
+                }
+                container
+            }, modifier = Modifier.fillMaxSize().let { m ->
+                // The hole-punch is what reveals a canvas placed behind the Compose canvas; in front
+                // it would just erase the Compose UI we want to show through.
+                if (transparent) m else m.drawBehind {
+                    drawRect(color = Color.Transparent, blendMode = BlendMode.Clear)
+                }
+            }, update = {})
+        }
     }
 }
-
-// Copies the top-left [w]×[h] of [source], a canvas of another context, into [texture]; alpha stays premultiplied.
-private fun copyCanvas(gl: WebGLRenderingContext, texture: WebGLTexture, source: HTMLCanvasElement, w: Int, h: Int): Unit = js("""{
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, source);
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-}""")

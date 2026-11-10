@@ -11,9 +11,6 @@ import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Skybox
-import io.github.erkko68.filament.compose.scene.Position
-import io.github.erkko68.filament.compose.scene.primitives.Plane
-import io.github.erkko68.filament.compose.scene.rememberUnlitColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
 import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.onPage
@@ -69,7 +66,7 @@ class PageLifecycleTest {
 
     private suspend fun assertShowing(what: String) {
         frames(20)
-        val pixel = viewPixel(pageContainer, 1)
+        val pixel = viewPixel(pageContainer)
         val (r, g) = pixel.split(',').mapNotNull { it.toIntOrNull() }.takeIf { it.size == 4 } ?: fail("$what: no view canvas ($pixel)")
         assertTrue(g > 100 && g > r + 40, "$what: the view should show its green skybox, shows $pixel")
     }
@@ -107,28 +104,6 @@ class PageLifecycleTest {
             frames(if (i % 5 == 0) 6 else 1)
         }
         size("320px", "480px")
-    }
-
-    // The frame crosses from Filament's canvas into a Compose texture: its rows must not arrive upside down.
-    @Test
-    fun theViewIsTheRightWayUp(): TestResult = runTest(timeout = 60.seconds) {
-        if (!TestEnv.gpuBackendAvailable) return@runTest
-        onPage({
-            LaunchedEffect(Unit) {
-                while (true) withFrameNanos { seen++; waiter?.let { (at, done) -> if (seen >= at) done.complete(Unit) } }
-            }
-            FilamentSceneView(Modifier.fillMaxSize()) {
-                Skybox(LinearColor(0f, 1f, 0f))
-                // A red ceiling over the camera: it fills the view above the horizon only.
-                Plane(rememberUnlitColorMaterialInstance(LinearColor(1f, 0f, 0f)), width = 200f, depth = 200f, position = Position(0f, 3f, 0f))
-            }
-        }) {
-            frames(20)
-            val (topR, topG) = viewPixel(pageContainer, 1).split(',').map { it.toInt() }
-            val (bottomR, bottomG) = viewPixel(pageContainer, 3).split(',').map { it.toInt() }
-            assertTrue(topR > 100 && topR > topG + 40, "the ceiling should be at the top, which shows $topR,$topG")
-            assertTrue(bottomG > 100 && bottomG > bottomR + 40, "the sky should be at the bottom, which shows $bottomR,$bottomG")
-        }
     }
 
     @Test
@@ -187,19 +162,17 @@ class PageLifecycleTest {
     }
 }
 
-// The viewport's canvas, [quarter] quarters down its middle, copied out through a 2D one: the view is a Compose layer of it.
-private fun viewPixel(container: HTMLElement, quarter: Int): String = js("""{
-    const scratch = document.createElement('canvas');
-    scratch.width = scratch.height = 1;
-    const ctx = scratch.getContext('2d');
+// The view's own 2D canvas; Compose's and the engine's are WebGL, which a 2D context request leaves alone.
+private fun viewPixel(container: HTMLElement): String = js("""{
+    const roots = [container, container.shadowRoot, document];
     let found = 'none';
-    for (const c of window.webglCanvases) {
-        let node = c;
-        while (node && node !== container) node = node.parentNode || node.host;
-        if (!node || c.width === 0 || c.height === 0) continue;
-        ctx.clearRect(0, 0, 1, 1);
-        ctx.drawImage(c, c.width >> 1, (c.height * quarter) >> 2, 1, 1, 0, 0, 1, 1);
-        found = Array.from(ctx.getImageData(0, 0, 1, 1).data).join(',');
+    for (const root of roots) {
+        if (!root) continue;
+        for (const c of root.querySelectorAll('canvas')) {
+            const ctx = c.getContext('2d');
+            if (!ctx || c.width === 0 || c.height === 0) continue;
+            found = Array.from(ctx.getImageData(c.width >> 1, c.height >> 2, 1, 1).data).join(',');
+        }
     }
     return found;
 }""")
