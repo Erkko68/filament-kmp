@@ -11,9 +11,12 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ## [Unreleased]
 
 ### Added
+- **A web engine can adopt another renderer's WebGL2 context** (`filament`): `Engine.create(sharedContext = gl)`, with `Engine.resetBackendState()` to resync GL state.
 - **New sample**: Particles, a CPU-simulated spark fountain drawn with instancing and a float data texture.
 
 ### Changed
+- **`FilamentView` on web is a real Compose layer** (`filament-compose`): it renders on Compose's own WebGL context, so views stack, clip and fade like any composable and the per-frame canvas copy is gone. Needs Compose Multiplatform 1.13 and the engine from `rememberFilamentEngine()`; for your own canvas see [Rendering into a Canvas](docs/guide/web.md).
+- **Compose Multiplatform 1.13.0-beta02** (`filament-compose`): desktop GPU-to-GPU frame sharing follows skiko 0.156's internals.
 - **Loading a screen stalls the UI far less** (`filament-compose`, except on web): a model, material, four textures and an HDR environment landing together went from 122 ms to 24 ms on desktop (Metal).
 - **`rememberTexture` and `rememberHdrEnvironment` decode off the main thread, in parallel** (`filament-compose`, except on web): a 4K PNG stalls the UI for under 1 ms instead of 170 ms, and on desktop and iOS four 2K textures are ready three times sooner.
 

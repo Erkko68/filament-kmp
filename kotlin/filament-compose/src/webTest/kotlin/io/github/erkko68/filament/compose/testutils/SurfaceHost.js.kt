@@ -32,7 +32,22 @@ internal val pageContainer: HTMLElement by lazy {
 
 // One viewport for every test: a viewport is never disposed, and each holds a WebGL context.
 @OptIn(ExperimentalComposeUiApi::class)
-private val viewport by lazy { ComposeViewport(pageContainer) { key(run) { slot() } } }
+private val viewport by lazy {
+    keepDrawingBuffers()
+    ComposeViewport(pageContainer) { key(run) { slot() } }
+}
+
+// A WebGL canvas forgets its pixels once composited; tests read the viewport's back at any time. Compose's
+// canvas sits in a closed shadow root, so it is also remembered here, as `window.webglCanvases`.
+private fun keepDrawingBuffers(): Unit = js("""{
+    const get = HTMLCanvasElement.prototype.getContext;
+    window.webglCanvases = new Set();
+    HTMLCanvasElement.prototype.getContext = function (type, attrs) {
+        if (type !== 'webgl2') return get.call(this, type, attrs);
+        window.webglCanvases.add(this);
+        return get.call(this, type, Object.assign({}, attrs, { preserveDrawingBuffer: true }));
+    };
+}""")
 
 /** Shows [content] in the page's viewport while [body] runs. */
 internal suspend fun onPage(content: @Composable () -> Unit, body: suspend () -> Unit) {
@@ -46,8 +61,7 @@ internal suspend fun onPage(content: @Composable () -> Unit, body: suspend () ->
     }
 }
 
-// A real viewport on the page: Compose's test host has no DOM container, so an HtmlElementView cannot be
-// composed in it.
+// A real viewport on the page: Compose's test host has no canvas for a view to share a WebGL context with.
 actual fun surfaceTest(frames: Int, content: @Composable (frame: Int) -> Unit): TestResult = runTest(timeout = 30.seconds) {
     val done = CompletableDeferred<Unit>()
     onPage({

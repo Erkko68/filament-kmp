@@ -21,21 +21,23 @@ Filament renders into a `SwapChain` backed by a `CAMetalLayer` that is embedded 
 
 ---
 
-## 2. Offscreen Canvas + Per-View Blit (Web)
+## 2. A Texture on Compose's WebGL Context (Web)
 
-A Filament `Engine` is bound to a single WebGL context/canvas, so each `FilamentView` cannot own its own GPU surface. The JVM-style CPU readback (below) would stall on web, where `Renderer.readPixels` only completes after the browser runs more frames.
+Compose for Web draws its whole UI with Skia on one WebGL2 canvas. `rememberFilamentEngine()` creates the Filament `Engine` on that same context instead of one of its own, so a view needs no surface at all:
 
-Instead, all views of one engine share a `WebViewCompositor`:
+1. **A Compose render target per view**: `rememberWebGLRenderTarget` gives each `FilamentView` a texture that Skia has adopted as an image, sized to the composable.
+2. **Filament renders into it**: the texture is imported into Filament and attached to a `RenderTarget` set on the `View`.
+3. **Display**: an ordinary `Image` draws the target's painter. No copy, no DOM element.
+4. **State hand-over**: Skia and Filament each cache the context's GL state. After every Filament run Skia's state is marked stale, and a queued `Engine.resetBackendState()` makes Filament drop its own before it runs again.
 
-1. **One offscreen render buffer**: the engine's `HTMLCanvasElement` (`engine.canvas`) stays off-screen and is sized to span every view's window rect.
-2. **One frame, many viewports**: each registered view is rendered into its own region of that canvas via `View.viewport` (Compose top-left origin is flipped to Filament's bottom-left).
-3. **GPU-side blit**: each view's region is copied onto that view's own 2D `<canvas>` with `ctx.drawImage(engineCanvas, …)` — a canvas-to-canvas copy that reads straight from the WebGL canvas (no CPU readback). The blit runs in the same `requestAnimationFrame` tick as the render, before the browser clears the GL drawing buffer.
-4. **Display**: each per-view 2D canvas is injected into the DOM through a `WebElementView` container `<div>` and pushed behind the Compose canvas (`zIndex: -1`). A transparent hole punched in the Compose layer (`BlendMode.Clear`) reveals it. The interop path is required — a plain DOM sibling canvas is *not* revealed by the hole-punch.
+A view scrolled or clipped out of sight stops rendering.
 
 ### Trade-offs
 
-- **Pros**: Multiple independent views from one shared engine/scene; the copy stays on the GPU.
-- **Cons**: One canvas-to-canvas copy per view per frame; views display behind Compose and cannot be stacked over one another (see [Layering & Stacking](#layering--stacking)).
+- **Pros**: no per-frame copy; the view is a real Compose layer (see [Layering & Stacking](#layering--stacking)).
+- **Cons**: the engine must be the one from `rememberFilamentEngine()` — an engine on its own canvas can't draw into Compose (a `FilamentView` given one throws). It relies on Compose's experimental `WebGLRenderTarget` API (Compose Multiplatform 1.13+). A flush Filament does by itself when its command buffer fills (a very large load) happens outside the hand-over.
+
+For Filament outside Compose on web, see [Rendering into a Canvas](../guide/web.md).
 
 ---
 
@@ -73,16 +75,16 @@ The snapshot is a GPU-side copy, and the CPU waits for it before Filament reuses
 
 How a `FilamentView` composites against the rest of the UI follows directly from its strategy:
 
-- **JVM / Desktop** — the 3D output is an ordinary Skia `Image` drawn into the Compose scene. It participates in the Compose draw order like any other content, so Compose widgets can sit above *or* below it, and multiple `FilamentView`s can be freely stacked and interleaved with other Compose UI. Full integration.
-- **Android, iOS, Web** — the 3D output lives in a native/DOM surface that sits **behind** the Compose layer and is revealed by a transparent hole. Compose UI can be drawn **on top** of a view, but you cannot place opaque Compose content *behind* it, and two `FilamentView`s cannot be stacked over one another (each owns a separate surface on the same plane — whichever is on top hides the other). Side-by-side / non-overlapping views (e.g. a split view) work correctly.
+- **JVM / Desktop, Web** — the 3D output is an ordinary Skia image drawn into the Compose scene. It participates in the Compose draw order like any other content, so Compose widgets can sit above *or* below it, it follows clips, alpha and `graphicsLayer` transforms, and multiple `FilamentView`s can be freely stacked and interleaved with other Compose UI. Full integration.
+- **Android, iOS** — the 3D output lives in a native surface that sits **behind** the Compose layer and is revealed by a transparent hole. Compose UI can be drawn **on top** of a view, but you cannot place opaque Compose content *behind* it, and two `FilamentView`s cannot be stacked over one another (each owns a separate surface on the same plane — whichever is on top hides the other). Side-by-side / non-overlapping views (e.g. a split view) work correctly.
 
-In short: desktop offers full layering because the frame is a texture inside Compose; the other platforms can only render the 3D plane *below* Compose.
+In short: desktop and web offer full layering because the frame is a texture inside Compose; Android and iOS can only render the 3D plane *below* Compose.
 
 ## Transparency
 
 `FilamentView(transparent = true)` (and the same parameter on `FilamentSceneView`) makes the view's
-background alpha-0 so Compose content **behind** it shows through — the one case where Android, iOS
-and Web escape the "3D plane below Compose" rule above, because the surface moves in front and
+background alpha-0 so Compose content **behind** it shows through — the one case where Android and iOS
+escape the "3D plane below Compose" rule above, because the surface moves in front and
 composites by alpha instead of being revealed by a hole punch.
 
 It sets `BlendMode.TRANSLUCENT` plus a `clear = true`, alpha-0 `ClearOptions` — the default
@@ -93,20 +95,20 @@ opaque garbage. Each platform then needs its own surface change:
 | :--- | :--- |
 | **Android** | `SurfaceView` → `TextureView` with `isOpaque = false`; swapchain gets `CONFIG_TRANSPARENT`. A `TextureView` composites in the view hierarchy rather than owning a hardware layer, so it costs more than the opaque path. |
 | **iOS** | `CAMetalLayer.opaque = false`, swapchain gets `CONFIG_TRANSPARENT`, and the interop view is `placedAsOverlay` — as a normal interop view Compose punches a hole for it and erases whatever was drawn behind. |
-| **Web** | The per-view 2D canvas moves *in front* of the Compose canvas (`zIndex: 1`, `pointer-events: none`) with no hole punch, and the blit `clearRect`s first so the view's own alpha survives. `Engine.create` also always requests `alpha: true` on the WebGL context — it defaults to `alpha: false`, which forces every frame opaque regardless of blend mode. |
+| **Web** | Nothing: the render target's texture is premultiplied RGBA, drawn through Compose like any image. |
 | **JVM / Desktop** | The readback image switches from `OPAQUE` to `PREMUL` alpha (GPU-shared frames are premultiplied already); the rest of the path already composites through Compose. |
 
 The surface type and its swapchain flags are fixed when the platform view is created, so toggling
 `transparent` at runtime rebuilds the surface (via `key(transparent)`) rather than mutating it.
 
-Two consequences worth knowing: on Android/iOS/Web the surface is now on top, so Compose content
+Two consequences worth knowing: on Android/iOS the surface is now on top, so Compose content
 drawn *above* the view in the layout shows **through** it rather than covering it (draw the
 foreground UI as part of the scene, or accept the see-through). And transparency is per-view state,
 not a scene property — two views of one scene can differ.
 
 ## Future Direction
 
-The stacking limitation on Android, iOS, and Web is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile, **WebGPU** on the web — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way the desktop's experimental GPU-sharing path already hands Skia a Filament texture. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch and per-view blit workarounds. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
+The stacking limitation on Android and iOS is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way web and the desktop's experimental GPU-sharing path already do. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch workaround. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
 
 ## Summary
 
@@ -114,5 +116,5 @@ The stacking limitation on Android, iOS, and Web is a consequence of today's sur
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Android** | Native `SurfaceView` + SwapChain | None | On top only | No | `TextureView`, `CONFIG_TRANSPARENT` |
 | **iOS** | Native `CAMetalLayer` + SwapChain | None | On top only | No | non-opaque layer, `placedAsOverlay` |
-| **Web** | Offscreen canvas + per-view `drawImage` blit | GPU canvas→canvas | On top only | No (side-by-side OK) | canvas in front, `alpha: true` context |
+| **Web** | Texture on Compose's WebGL context → Skia image | None | Above or below | Yes | nothing extra |
 | **JVM / Desktop** | Offscreen SwapChain → Skia `Image` | GPU→CPU every frame (GPU-side with the experimental opt-in) | Above or below | Yes | `PREMUL` readback |

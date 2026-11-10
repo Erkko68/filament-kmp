@@ -5,8 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.canvas
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.LinearColor
@@ -21,7 +19,6 @@ import kotlinx.browser.window
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import kotlin.test.Test
@@ -30,14 +27,13 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * What the page does to a view on its own: its container resized, hidden, or taken out of the document, the
- * tab losing focus, the zoom changing. None of it goes through the composition; the view must still be
- * showing its scene afterwards.
+ * What the page does to a view on its own: its container resized or hidden, the tab losing focus, the zoom
+ * changing. None of it goes through the composition; the view must still be showing its scene afterwards.
+ * Taking the container out of the document isn't here: Compose disposes the viewport when that happens.
  */
 class PageLifecycleTest {
     private var seen = 0
     private var waiter: Pair<Int, CompletableDeferred<Unit>>? = null
-    private var engine: Engine? = null
 
     // runTest skips delays: real time passes only in frames.
     private suspend fun frames(n: Int) {
@@ -51,7 +47,7 @@ class PageLifecycleTest {
         LaunchedEffect(Unit) {
             while (true) withFrameNanos { seen++; waiter?.let { (at, done) -> if (seen >= at) done.complete(Unit) } }
         }
-        val engine = rememberFilamentEngine().also { engine = it }
+        val engine = rememberFilamentEngine()
         FilamentSceneView(
             Modifier.fillMaxSize(),
             engine = engine,
@@ -87,7 +83,6 @@ class PageLifecycleTest {
                     body(surface)
                 }
             } finally {
-                if (pageContainer.parentNode == null) document.body!!.appendChild(pageContainer)
                 pageContainer.style.display = ""
                 size("400px", "600px")
             }
@@ -132,26 +127,6 @@ class PageLifecycleTest {
     }
 
     @Test
-    fun containerTakenOutOfTheDocumentAndPutBack() = bothSurfaces { surface ->
-        repeat(3) {
-            pageContainer.remove()
-            frames(8)
-            document.body!!.appendChild(pageContainer)
-            size("${380 - 30 * it}px", "600px")
-            assertShowing("$surface back in the document ${it + 1}")
-        }
-    }
-
-    @Test
-    fun pausedContainerTakenOutOfTheDocumentAndPutBack() = bothSurfaces(renderingEnabled = false) { surface ->
-        pageContainer.remove()
-        frames(8)
-        document.body!!.appendChild(pageContainer)
-        size("300px", "600px")
-        assertShowing("$surface back in the document")
-    }
-
-    @Test
     fun tabBlurredAndZoomed() = bothSurfaces { surface ->
         try {
             repeat(3) {
@@ -170,41 +145,24 @@ class PageLifecycleTest {
             window.dispatchEvent(Event("resize"))
         }
     }
-
-    // The browser takes a WebGL context away on its own: a GPU process restart, too many contexts, a backgrounded tab.
-    // Filament doesn't rebuild its resources on a restored context, so the view stays blank: surviving is the assertion.
-    @Test
-    fun glContextLostAndRestored() = bothSurfaces { _ ->
-        val canvas = engine!!.canvas!!
-        assertTrue(loseContext(canvas, restore = false), "WEBGL_lose_context should be available")
-        frames(20)
-        loseContext(canvas, restore = true)
-        frames(30)
-    }
 }
 
-// The view's own 2D canvas; Compose's and the engine's are WebGL, which a 2D context request leaves alone.
+// The viewport's canvas, copied out through a 2D one: Filament draws into a Compose layer of it.
 private fun viewPixel(container: HTMLElement): String = js("""{
-    const roots = [container, container.shadowRoot, document];
+    const scratch = document.createElement('canvas');
+    scratch.width = scratch.height = 1;
+    const ctx = scratch.getContext('2d');
     let found = 'none';
-    for (const root of roots) {
-        if (!root) continue;
-        for (const c of root.querySelectorAll('canvas')) {
-            const ctx = c.getContext('2d');
-            if (!ctx || c.width === 0 || c.height === 0) continue;
-            found = Array.from(ctx.getImageData(c.width >> 1, c.height >> 2, 1, 1).data).join(',');
-        }
+    for (const c of window.webglCanvases) {
+        let node = c;
+        while (node && node !== container) node = node.parentNode || node.host;
+        if (!node || c.width === 0 || c.height === 0) continue;
+        ctx.clearRect(0, 0, 1, 1);
+        ctx.drawImage(c, c.width >> 1, c.height >> 2, 1, 1, 0, 0, 1, 1);
+        found = Array.from(ctx.getImageData(0, 0, 1, 1).data).join(',');
     }
     return found;
 }""")
 
 private fun setDevicePixelRatio(ratio: Double): Unit =
     js("Object.defineProperty(window, 'devicePixelRatio', { value: ratio, configurable: true })")
-
-private fun loseContext(canvas: HTMLCanvasElement, restore: Boolean): Boolean = js("""{
-    const gl = canvas.getContext('webgl2');
-    canvas.__lose = canvas.__lose || (gl && gl.getExtension('WEBGL_lose_context'));
-    if (!canvas.__lose) return false;
-    if (restore) canvas.__lose.restoreContext(); else canvas.__lose.loseContext();
-    return true;
-}""")
