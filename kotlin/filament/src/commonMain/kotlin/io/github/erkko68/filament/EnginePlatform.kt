@@ -10,6 +10,9 @@ internal interface EnginePlatform {
     /** Makes this engine's graphics context current before driving it. */
     fun makeCurrent() {}
 
+    /** Called after a call that ran the engine's pending graphics commands. */
+    fun executed() {}
+
     /** Releases what [enginePlatform] set up, once the engine is destroyed. */
     fun release() {}
 }

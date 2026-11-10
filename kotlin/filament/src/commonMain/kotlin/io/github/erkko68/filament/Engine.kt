@@ -606,6 +606,7 @@ class Engine internal constructor(
         platform.makeCurrent()
         // Single-threaded wasm flushes synchronously and rejects a non-zero timeout.
         if (singleThreaded) FilaEngine_flushAndWait_uint64_t(nativeHandle, 0L) else FilaEngine_flushAndWait(nativeHandle)
+        platform.executed()
     }
     /**
      * Blocks until all pending commands have been executed by the GPU, or [timeout] nanoseconds pass.
@@ -614,10 +615,10 @@ class Engine internal constructor(
      */
     fun flushAndWait(timeout: Long): Boolean {
         platform.makeCurrent()
-        return FilaEngine_flushAndWait_uint64_t(nativeHandle, if (singleThreaded) 0L else timeout)
+        return FilaEngine_flushAndWait_uint64_t(nativeHandle, if (singleThreaded) 0L else timeout).also { platform.executed() }
     }
     /** Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) without blocking. */
-    fun flush() { platform.makeCurrent(); FilaEngine_flush(nativeHandle) }
+    fun flush() { platform.makeCurrent(); FilaEngine_flush(nativeHandle); platform.executed() }
     // Filament's pause needs threads (setPaused panics on single-threaded wasm): tracked locally there.
     private var paused = false
     /** Whether the render thread is paused. Set to pause or resume it. */
@@ -653,7 +654,9 @@ class Engine internal constructor(
     /** The default Material: 80% white, lit. Owned by the Engine. */
     val defaultMaterial: Material get() = Material(FilaEngine_getDefaultMaterial(nativeHandle))
     /** Runs the engine's pending work on this thread, for platforms without a render thread. */
-    fun execute() { platform.makeCurrent(); FilaEngine_execute(nativeHandle) }
+    fun execute() { platform.makeCurrent(); FilaEngine_execute(nativeHandle); platform.executed() }
+    /** WebGL only: forgets the GL state Filament cached, after another renderer used the context. No-op elsewhere. */
+    fun resetBackendState() { platform.makeCurrent(); FilaEngine_resetBackendState(nativeHandle) }
 
     /** The feature flags this Engine knows. */
     fun getFeatureFlags(): List<FeatureFlag> {

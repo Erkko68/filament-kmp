@@ -15,6 +15,29 @@ fun FilamentModule.createGlContext(canvas: HTMLCanvasElement, alpha: Boolean = f
     return handle
 }
 
+/** Registers a WebGL2 context another renderer created (e.g. Compose's) and makes it current. */
+fun FilamentModule.adoptGlContext(context: JsAny): Int {
+    enableCompressedTextures(context)
+    val handle = GL.registerContext(context, glAttributes(alpha = true))
+    GL.makeContextCurrent(handle)
+    return handle
+}
+
+/** Registers [texture] (a WebGLTexture of the current context) with Emscripten: the id `Texture.Builder.import` takes. */
+fun FilamentModule.registerGlTexture(texture: JsAny): Int = registerTexture(GL, texture)
+
+fun FilamentModule.unregisterGlTexture(id: Int): Unit = unregisterTexture(GL, id)
+
+private fun registerTexture(gl: EmscriptenGL, texture: JsAny): Int = js("{ const id = gl.getNewId(gl.textures); texture.name = id; gl.textures[id] = texture; return id; }")
+
+private fun unregisterTexture(gl: EmscriptenGL, id: Int): Unit = js("{ gl.textures[id] = null; }")
+
+private fun enableCompressedTextures(gl: JsAny): Unit = js("""{
+    ['WEBGL_compressed_texture_s3tc', 'WEBGL_compressed_texture_s3tc_srgb',
+     'WEBGL_compressed_texture_astc', 'WEBGL_compressed_texture_etc']
+        .forEach(function (e) { gl.getExtension(e); });
+}""")
+
 private fun glAttributes(alpha: Boolean): JsAny =
     js("({ majorVersion: 2, minorVersion: 0, antialias: false, depth: true, alpha: alpha })")
 
