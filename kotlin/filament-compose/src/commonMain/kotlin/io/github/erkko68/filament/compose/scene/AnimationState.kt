@@ -87,6 +87,13 @@ class AnimationState internal constructor(
     /** True while a single-track cross-fade transition is in progress. Read-only. */
     val isTransitioning: Boolean get() = _transitioning.value
 
+    private val _finished = mutableStateOf(false)
+    /**
+     * True once the single-track animation, not looping, has played to its end (its start, at a negative [speed]):
+     * the moment to go back to another clip. False while [loop], and again after a new [animationIndex] or a [seek] away.
+     */
+    val isFinished: Boolean get() = _finished.value
+
     /** The weighted track mixer for the blend-tree path. Add tracks with [rememberAnimationTrack];
      *  while it has tracks it drives playback and [animationIndex] is inert. */
     val mixer: AnimationMixer = AnimationMixer()
@@ -136,11 +143,14 @@ class AnimationState internal constructor(
         val ci = currentIndex
         if (ci == null || ci !in 0 until count) {
             _transitioning.value = false // nothing plays, so nothing fades
+            _finished.value = false
             return
         }
 
         val duration = animator.getAnimationDuration(ci)
-        currentTime = wrap(currentTime + dt * speed, duration, loop)
+        val next = currentTime + dt * speed
+        currentTime = wrap(next, duration, loop)
+        _finished.value = finished(next, duration, speed, loop)
         animator.applyAnimation(ci, currentTime)
 
         if (blend < 1f) {
@@ -277,7 +287,7 @@ class AnimationTrack internal constructor(
         get() = if (_duration.floatValue > 0f) (_time.floatValue / _duration.floatValue).coerceIn(0f, 1f) else 0f
 
     private val _finished = mutableStateOf(false)
-    /** True once a non-looping track has reached the end of its clip. Always false while [loop]. */
+    /** True once a non-looping track has reached the end of its clip (its start, at a negative [speed]). Always false while [loop]. */
     val isFinished: Boolean get() = _finished.value
 
     /** Resets this track's clock to [time] seconds. */
@@ -287,9 +297,13 @@ class AnimationTrack internal constructor(
         _duration.floatValue = duration
         val next = _time.floatValue + dt * speed
         _time.floatValue = wrap(next, duration, loop)
-        _finished.value = !loop && duration > 0f && next >= duration
+        _finished.value = finished(next, duration, speed, loop)
     }
 }
+
+// Whether a one-shot clip at [t] has run out in the direction it plays.
+private fun finished(t: Float, duration: Float, speed: Float, loop: Boolean): Boolean =
+    !loop && duration > 0f && if (speed < 0f) t <= 0f else t >= duration
 
 private fun wrap(t: Float, duration: Float, loop: Boolean): Float = when {
     duration <= 0f -> t

@@ -284,7 +284,7 @@ GltfInstance(asset = character, animationState = animation)
 ```
 
 You can read it back during composition — `animation.time`, `animation.progress` and
-`animation.isTransitioning` are snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration`
+`animation.isTransitioning` are snapshot state, as is `animation.isFinished` (a `loop = false` clip has played to its end) — and tweak `speed`, `loop`, and `crossFadeDuration`
 live. Pass the same state to several instances of one asset and they play in step. Set `animation.isPaused = true` to freeze playback and `animation.seek(seconds)` to scrub: a
 paused state holds the pose at the time you seek to.
 

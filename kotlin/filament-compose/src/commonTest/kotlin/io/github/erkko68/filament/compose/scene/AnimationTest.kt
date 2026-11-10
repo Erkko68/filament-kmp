@@ -115,6 +115,43 @@ class AnimationTest : ComposeTestFixture() {
         assertFalse(state.isTransitioning)
     }
 
+    /** A one-shot reports its end, forwards and backwards, so the app can move on to the next clip. */
+    @Test
+    fun aOneShotFinishesAtTheEndItPlaysTowards() = withFox { _, animator ->
+        val state = AnimationState(1, initialSpeed = 1f, initialCrossFadeDuration = 0f, initialLoop = false)
+        val duration = animator.getAnimationDuration(1)
+        state.apply(animator, duration / 2f)
+        assertFalse(state.isFinished)
+        state.apply(animator, duration)
+        assertTrue(state.isFinished)
+        assertEquals(duration, state.time, 1e-5f)
+
+        // Backwards from the end: finished at the start.
+        state.speed = -1f
+        state.apply(animator, duration / 2f)
+        assertFalse(state.isFinished)
+        state.apply(animator, duration)
+        assertTrue(state.isFinished)
+        assertEquals(0f, state.time)
+
+        // A new clip starts over, and a looping one never finishes.
+        state.speed = 1f
+        state.animationIndex = 2
+        state.apply(animator, 0.1f)
+        assertFalse(state.isFinished)
+        state.loop = true
+        state.apply(animator, 100f)
+        assertFalse(state.isFinished)
+
+        // A track playing backwards finishes at its start too.
+        val mixer = AnimationMixer()
+        val back = mixer.addTrack(1, speed = -1f, loop = false, time = duration / 2f)
+        mixer.apply(animator, 0.01f)
+        assertFalse(back.isFinished)
+        mixer.apply(animator, duration)
+        assertTrue(back.isFinished)
+    }
+
     /** Two instances sharing a state each apply it every frame: the clock must advance once, not twice. */
     @Test
     fun aStateSharedBetweenInstancesAdvancesOncePerFrame() = withFox { _, animator ->

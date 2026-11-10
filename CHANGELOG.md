@@ -13,6 +13,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Added
 - **New sample**: Particles, a CPU-simulated spark fountain drawn with instancing and a float data texture.
 
+- **`AnimationState.isFinished`** (`filament-compose`): true once a `loop = false` clip has played to its end, to return to another clip.
+
 ### Changed
 - **Loading a screen stalls the UI far less** (`filament-compose`, except on web): a model, material, four textures and an HDR environment landing together went from 122 ms to 24 ms on desktop (Metal).
 - **`rememberTexture` and `rememberHdrEnvironment` decode off the main thread, in parallel** (`filament-compose`, except on web): a 4K PNG stalls the UI for under 1 ms instead of 170 ms, and on desktop and iOS four 2K textures are ready three times sooner.
@@ -22,6 +24,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Fixed
 - **`rememberHdrEnvironment` no longer blocks until the backend has finished the prefilter** (`filament-compose`): the first load stalled the UI for 1.4 s on an Android emulator, now one frame or less.
 - **`AnimationState.seek` right after a new `animationIndex` seeks the new clip** (`filament-compose`): it was reset to 0 on the next frame; `isTransitioning` also clears when the index goes null mid-fade.
+- **`AnimationTrack.isFinished` works at a negative `speed`** (`filament-compose`): a one-shot playing backwards finishes at its start.
 - **A flight camera stops when its view loses keyboard focus** (`filament-compose`): a key held at that moment kept the camera flying.
 - **A `CameraState` swapped into a laid-out `FilamentView` gets its aspect and size at once** (`filament-compose`): it rendered stretched, and `worldToScreen` returned null, until the next resize.
 - **`FilamentEffect` re-runs when its scene's engine changes** (`filament-compose`), and a `FilamentViewState` passed to two views fails with a clear error instead of going null under the one still on screen.
