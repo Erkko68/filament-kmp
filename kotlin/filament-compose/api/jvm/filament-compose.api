@@ -168,6 +168,7 @@ public final class io/github/erkko68/filament/compose/scene/AnimationState {
 	public final fun getProgress ()F
 	public final fun getSpeed ()F
 	public final fun getTime ()F
+	public final fun isFinished ()Z
 	public final fun isPaused ()Z
 	public final fun isTransitioning ()Z
 	public final fun seek (F)V

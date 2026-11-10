@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -495,6 +496,8 @@ fun Modifier.flightGestures(controller: FlightCameraController): Modifier =
     this
         .onSizeChanged { controller.manipulator.setViewport(it.width, it.height) }
         .focusRequester(controller.focusRequester)
+        // The key-up of a key held while focus leaves goes elsewhere: without this the camera flies on.
+        .onFocusChanged { if (!it.isFocused) Manipulator.Key.entries.forEach(controller.manipulator::keyUp) }
         .focusable()
         .onKeyEvent { event ->
             val manipKey = when (event.key) {

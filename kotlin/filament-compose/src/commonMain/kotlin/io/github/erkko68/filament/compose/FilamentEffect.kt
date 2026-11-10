@@ -43,7 +43,8 @@ fun FilamentSceneScope.FilamentEffect(
 
     val scope = remember(engine, scene) { FilamentEffectScopeImpl(engine, scene) }
 
-    DisposableEffect(keys = keys) {
+    // Keyed on the scope too: what the block built on a replaced engine or scene is gone with it.
+    DisposableEffect(scope, *keys) {
         scope.disposeAction = null
         scope.frameAction = null
         scope.block()
