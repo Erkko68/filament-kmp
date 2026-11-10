@@ -7,7 +7,7 @@ tasks (a release download, or a source build for `wasm`/`windows-arm64`) and cac
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
-| [`ci.yml`](ci.yml) | **push to `main`** and **every PR**, path-filtered per platform; **manual dispatch** (job picker) | One job per platform (jvm matrix / js / wasm / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs; the iOS sample is the exception and builds in a parallel `ios-sample` job, because its framework link takes as long as the tests. A failed job lists its failed tests in the run summary. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
+| [`ci.yml`](ci.yml) | **push to `main`** and **every PR**, path-filtered per platform; **manual dispatch** (job picker) | One job per platform (jvm matrix / js / wasm / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. A failed job lists its failed tests in the run summary. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
 | [`pages.yml`](pages.yml) | PRs touching build config (see its `paths:` filter) / **published release** / manual dispatch | Builds the `webApp` sample's production webpack bundle and the Dokka API docs. PRs only validate; a **published release** (or dispatch) deploys both to GitHub Pages (docs under `/api`), and a release also archives that version's docs on the orphan `docs-archive` branch for re-publishing under `/api/older/<version>` — see [Versioned API docs](#versioned-api-docs). |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central, then cuts the matching GitHub release with that version's CHANGELOG section as its notes. See [Releasing](#releasing) below. |
 
@@ -23,7 +23,7 @@ The `changes` job maps the PR's (or push's) changed files to platforms with
 | `desktop/`, `kotlin/*/src/jvm*`, `kotlin/*/api/`, `samples/desktopApp/` | jvm |
 | `jni/`, `kotlin/*/src/jniMain/` | jvm, android |
 | `web/`, `kotlin/*/src/{web,js,wasmJs}*`, `samples/webApp/` | web-runtime → js + wasm |
-| `kotlin/*/src/{native,ios}*`, `samples/iosApp/` | ios, ios-sample |
+| `kotlin/*/src/{native,ios}*`, `samples/iosApp/` | ios |
 | `android/`, `kotlin/*/src/android*`, `samples/androidApp/` | android |
 | anything else (`commonMain`, Gradle files, `ci.yml`, …) | everything |
 
