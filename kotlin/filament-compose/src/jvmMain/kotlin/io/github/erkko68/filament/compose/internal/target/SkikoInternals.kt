@@ -4,13 +4,12 @@ import java.awt.Container
 import java.awt.Window
 import org.jetbrains.skiko.SkiaLayer
 
-// ponytail: skiko exposes neither its redrawer nor its DirectContext; drop once Compose does.
+// ponytail: skiko exposes neither its renderer nor its DirectContext; drop once Compose does.
+// Reflects skiko 0.156 internals (Compose 1.13): the redrawers of 0.150 became renderers behind a FrameDriver.
 
-/** The redrawer skiko draws [window] with (`SkiaLayer.redrawerManager.redrawer`), or null before it exists. */
-internal fun skikoRedrawer(window: Window?): Any? {
-    val layer = window?.findSkiaLayer() ?: return null
-    return layer.field("redrawerManager")!!.field("redrawer")
-}
+/** The renderer skiko draws [layer] with (`frameDriverManager.current.producer.renderer`), or null before it exists. */
+internal fun skikoRenderer(layer: SkiaLayer): Any? =
+    layer.field("frameDriverManager")!!.field("current")?.field("producer")!!.field("renderer")
 
 internal fun Container.findSkiaLayer(): SkiaLayer? {
     if (this is SkiaLayer) return this

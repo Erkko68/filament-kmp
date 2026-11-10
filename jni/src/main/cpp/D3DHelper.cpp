@@ -44,8 +44,8 @@ constexpr char const* INTEROP_EXTENSIONS[] = {
         VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
 };
 
-// ponytail: skiko 0.150's DirectXDevice (directXRedrawer.cc) starts with its HWND and a
-// GrD3DBackendContext, whose first members are the adapter and device. Both are checked before use.
+// ponytail: skiko 0.156's DirectXDevice (directXRenderer.cc) starts with its HWND, adapter and device.
+// Both are checked before use.
 struct SkikoDirectXDevice {
     HWND hWnd;
     IDXGIAdapter1* adapter;
@@ -450,7 +450,7 @@ private:
 
 } // namespace
 
-// A platform on skiko's GPU, from Direct3DRedrawer.device and its layer's HWND (to check skiko's
+// A platform on skiko's GPU, from Direct3DRenderer.device and its layer's HWND (to check skiko's
 // layout); 0 if skiko's device doesn't look as expected.
 D3D_JNI(jlong, nCreatePlatform)(JNIEnv*, jclass, jlong skikoDevice, jlong hwnd) {
     auto* skiko = (SkikoDirectXDevice*) skikoDevice;

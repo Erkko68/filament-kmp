@@ -109,8 +109,8 @@ internal object GpuFrameSharing {
         row("Java") { "${System.getProperty("java.version")} (${System.getProperty("java.vendor")})" }
         row("skiko") { org.jetbrains.skiko.Version.skiko }
         row("Compose renderer") { window?.findSkiaLayer()?.renderApi }
-        row("skiko redrawer") { skikoRedrawer(window)?.javaClass?.simpleName }
-        row("GPU") { skikoRedrawer(window)?.let { it.javaClass.getMethod("getRenderInfo").invoke(it) }?.toString()?.trim()?.replace("\n", "; ") }
+        row("skiko renderer") { window?.findSkiaLayer()?.let(::skikoRenderer)?.javaClass?.simpleName }
+        row("GPU") { window?.findSkiaLayer()?.let(::skikoRenderer)?.let { it.javaClass.getMethod("getRenderInfo").invoke(it) }?.toString()?.trim()?.replace("\n", "; ") }
         row("Filament backend") { engine?.takeIf { it.isValid }?.backend }
         appendLine("-".repeat(80))
         append(error.stackTraceToString())
