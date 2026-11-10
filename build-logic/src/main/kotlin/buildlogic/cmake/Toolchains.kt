@@ -6,7 +6,7 @@ import buildlogic.platform.IOS_DEPLOYMENT_TARGET
 import org.gradle.api.file.Directory
 
 /** CMake toolchain arguments per target. Android's come from :android, which knows the SDK's NDK. */
-internal fun FilamentTarget.toolchainArguments(root: Directory): List<String> = when (this) {
+fun FilamentTarget.toolchainArguments(root: Directory): List<String> = when (this) {
     IOS_ARM64 -> ios("iphoneos")
     IOS_SIMULATOR_ARM64 -> ios("iphonesimulator")
     MACOS_ARM64 -> listOf("-DCMAKE_OSX_SYSROOT=macosx", "-DCMAKE_OSX_ARCHITECTURES=arm64")

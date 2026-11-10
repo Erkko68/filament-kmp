@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class ExportParityTest {
     @Test
     fun everyExternalIsExportedWithMatchingArity(): Promise<JsAny?> = loadFilament().then { m ->
-        val mismatches = WASM_ARITIES.filter { (name, arity) -> exportArity(m, name) != arity }
+        val mismatches = WASM_ARITIES.getValue("filament-kmp").filter { (name, arity) -> exportArity(m, name) != arity }
             .map { (name, arity) -> "$name: expected $arity, wasm ${exportArity(m, name)}" }
         assertEquals(emptyList(), mismatches)
         null

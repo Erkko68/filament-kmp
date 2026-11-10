@@ -22,7 +22,7 @@ reads the manifest, not the C++, so a hand-written C function gets its external 
 
 1. The config:
    - `sources`: the include dir, and the clang `-ast-dump-filter`s covering the API (`ns::` for a whole namespace).
-   - `c`: the C prefix, the C++ namespace of the forwarders' helpers, the namespaces C names leave out, and the
+   - `c`: the C prefix, the namespaces C names leave out, and the
      library's own bridge header and typedefs.
    - `naming`: how the library names things, which the generated names follow: `memberPrefix` for `mField`, and the
      verbs of its getters and setters.
@@ -30,7 +30,8 @@ reads the manifest, not the C++, so a hand-written C function gets its external 
      containers and strings, reference counting, value-or-error results, and a `CustomBridges` object for what no
      table expresses.
    - `templates`: the class and function template instantiations C binds.
-   - `kotlin`: the package of each module's externals, the interop package, the wasm runtimes; null for a C API alone.
+   - `kotlin`: the package of each module's externals, the interop package, the wasm runtimes and the modules each
+     links; null for a C API alone.
 2. `c/api-headers.txt`:
 
    ```

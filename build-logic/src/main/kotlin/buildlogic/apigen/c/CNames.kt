@@ -8,7 +8,6 @@ internal class CNames(private val c: CBindings, private val naming: Naming) {
     val prefix = c.prefix
     /** The C++ namespace of the forwarders' helpers. */
     val helpers = c.helpers
-    private val memberPrefix = Regex(naming.memberPrefix.ifEmpty { "$^" })
 
     /** Template arguments aren't part of the name: C binds one instantiation of a template. */
     fun type(qualified: String) = prefix + qualified.split("::").filter { it !in c.droppedNamespaces }
@@ -23,7 +22,7 @@ internal class CNames(private val c: CBindings, private val naming: Naming) {
     fun setter(owner: String, field: String) = accessor(owner, naming.setter, field)
 
     private fun accessor(owner: String, verb: String, field: String) =
-        "${type(owner)}_$verb${memberPrefix.replace(field, "").replaceFirstChar(Char::uppercaseChar)}"
+        "${type(owner)}_$verb${naming.property(field).replaceFirstChar(Char::uppercaseChar)}"
 
     fun enumConstant(enum: String, constant: String) = "${upperSnake(type(enum))}_${upperSnake(constant)}"
 

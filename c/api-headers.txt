@@ -71,8 +71,9 @@ geometry/SurfaceOrientation.h
 # 1.77.2's utils::Slice twins of the pointer + count overloads C binds, and its FeatureState twin of compile's tribool.
 -.*\(.*utils::Slice.*\)
 -filament::Engine::compile\(filament::backend::CompilerPriorityQueue, filament::Material, filament::View, filament::Engine::FeatureState, filament::Engine::FeatureState, filament::backend::CallbackHandler, utils::Invocable\)
-# Only literals make a StaticString; name(ImmutableCString) copies C's string.
+# Only literals make a StaticString or a StringLiteral; the ImmutableCString and const char* overloads copy C's string.
 -filament::\w+::Builder::name\(utils::StaticString\)
+-.*\(.*filament::MaterialInstance::StringLiteral.*\)
 # Not in the Kotlin API: compressed pixel buffers, Platform's device info and timestamps, the frame-scheduled callback's
 # flags; BASE_LEVEL is 0.
 -filament::backend::CompressedPixelDataType

@@ -1,13 +1,17 @@
 package buildlogic.apigen
 
+import buildlogic.apigen.bindings.bindingFiles
 import buildlogic.apigen.c.CApi
 import buildlogic.apigen.c.CApiWriter
 import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppApiReader
 import buildlogic.apigen.cpp.clang
+import buildlogic.apigen.cpp.modelReport as reportModel
 import buildlogic.apigen.kotlin.kotlinExternals
 import buildlogic.apigen.kotlin.packageDir
+import buildlogic.apigen.report.coverage as reportCoverage
+import buildlogic.apigen.report.kotlinApiSources
 import java.io.File
 
 /**
@@ -78,6 +82,16 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
 
     /** Writes the externals of the committed manifest. */
     fun generateKotlinExternals() = kotlinFiles(CManifest.parse(manifestFile.readText())).write()
+
+    /** The bindings stage: writes each platform's glue of the committed manifest under [outDir], replacing it. */
+    fun generateBindings(outDir: File) {
+        val bindings = checkNotNull(config.kotlin) { "The config has no Kotlin bindings" }
+        GeneratedFiles(outDir, listOf(outDir), bindingFiles(CManifest.parse(manifestFile.readText()).headers, bindings, config.c.prefix)).write()
+    }
+
+    /** The report stages: `api-coverage.txt`'s content for [api] and its C API [c], and the C++ model's report. */
+    fun coverage(api: CppApi = api(), c: CApi = cApi(api)) = reportCoverage(api, c.bindings, config.c.prefix, kotlinDir?.let(::kotlinApiSources))
+    fun modelReport() = reportModel(model())
 
     /**
      * Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers,

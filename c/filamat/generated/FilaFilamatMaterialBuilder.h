@@ -22,7 +22,7 @@ void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttri
 uint32_t FilaFilamatMaterialBuilderAttribute_getAttributeName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity);
 uint32_t FilaFilamatMaterialBuilderAttribute_getDefineName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity);
 const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMaterialBuilderAttribute* self);
-void FilaFilamatMaterialBuilderAttribute_setName(FilaFilamatMaterialBuilderAttribute* self, const char* value);
+// no FilaFilamatMaterialBuilderAttribute_setName: filamat::MaterialBuilder::Attribute is only a result, and C would have to keep the pointer
 FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self);
 void FilaFilamatMaterialBuilderAttribute_setType(FilaFilamatMaterialBuilderAttribute* self, FilaUniformType value);
 FilaVertexAttribute FilaFilamatMaterialBuilderAttribute_getLocation(const FilaFilamatMaterialBuilderAttribute* self);

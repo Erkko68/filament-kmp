@@ -43,8 +43,11 @@ data class Sources(
 data class CBindings(
     /** What every C name starts with: `Fila`. */
     val prefix: String,
-    /** The C++ namespace of the helpers the forwarders call (the generated `Bridge.hpp`), and of the handle casts. */
-    val helpers: String,
+    /**
+     * The C++ namespace of the helpers the forwarders call (the generated `Bridge.hpp`), and of the handle casts;
+     * not the library's own.
+     */
+    val helpers: String = prefix.lowercase(),
     /** Namespaces C names leave out, as every name would repeat them. */
     val droppedNamespaces: Set<String> = emptySet(),
     /**
@@ -66,7 +69,10 @@ data class Naming(
     /** The verbs of a field's accessors, named as the library names methods. */
     val getter: String = "Get",
     val setter: String = "Set",
-) : Serializable
+) : Serializable {
+    /** [field] without its [memberPrefix]: what its accessors, and a Kotlin property, are named after. */
+    fun property(field: String) = if (memberPrefix.isEmpty()) field else field.replaceFirst(Regex(memberPrefix), "")
+}
 
 /** How the library's own types cross into C, beyond the builtins, std types and records the generator bridges itself. */
 data class TypeTables(
@@ -76,19 +82,17 @@ data class TypeTables(
     val mirrors: Map<String, Mirror> = emptyMap(),
     /** The library's containers C passes as an array and its count, besides `std::vector` and `std::array`. */
     val sequences: Set<String> = emptySet(),
-    /** The [sequences] that only view their elements (a span): a result's outlive the call, and a struct can't keep one. */
+    /** Sequences that only view their elements (a span): a result's outlive the call, and a struct can't keep one. */
     val views: Set<String> = emptySet(),
     /** The library's string types, each with the spelling that constructs one from a `const char*`. */
     val strings: Map<String, String> = emptyMap(),
-    /** String types only literals convert to; overloads taking `const char*` cover them. */
-    val literalOnly: Set<String> = emptySet(),
     val refs: RefCounting? = null,
     /** Value-or-error types: [CBindings.bridgeHeader] declares `result(r, error, capacity, convert)` for them. */
     val results: Set<String> = emptySet(),
     /** The bridges no table expresses. */
     val custom: CustomBridges = NoCustomBridges,
 ) : Serializable {
-    internal val allSequences get() = sequences + STD_SEQUENCES
+    internal val allSequences get() = sequences + views + STD_SEQUENCES
     internal val allStrings get() = STD_STRINGS + strings
 
     private companion object {
@@ -106,7 +110,12 @@ data class Instantiations(
      * defaults. C names them by the types that tell them apart, like overloads.
      */
     val functions: Map<String, List<Map<String, String>>> = emptyMap(),
-) : Serializable
+) : Serializable {
+    companion object {
+        /** One instantiation per argument of [parameter]: `each("T", listOf("float", "int32_t"))`. */
+        fun each(parameter: String, arguments: List<String>) = arguments.map { mapOf(parameter to it) }
+    }
+}
 
 /**
  * The Kotlin externals of the C API, and the JNI and wasm glue made from them. [dir] holds a Kotlin module per C module,
@@ -117,11 +126,10 @@ data class KotlinBindings(
     val packages: Map<String, String>,
     /** The package declaring `ExternalSymbolName` and `NativePointer`. */
     val interop: String,
-    /** The wasm runtime the exports go to, and the package of its `WASM_ARITIES` parity table. */
-    val wasmRuntime: String,
+    /** The wasm runtimes, each exporting the C modules it links: `"filament-kmp" to listOf("filament", "gltfio")`. */
+    val wasmRuntimes: Map<String, List<String>>,
+    /** The package of the generated `WASM_ARITIES` table the web parity test reads. */
     val wasmPackage: String,
-    /** The Kotlin modules whose wasm exports go to a runtime of their own. */
-    val wasmRuntimes: Map<String, String> = emptyMap(),
     val dir: String = "kotlin",
 ) : Serializable
 

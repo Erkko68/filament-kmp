@@ -18,13 +18,14 @@ internal fun bindingFiles(headers: Map<String, List<CFunction>>, bindings: Kotli
         out["jni/$name.c"] = JniForwarderWriter.write("$name.kt", jvmClass, functions, headers.keys)
     }
 
-    // A Kotlin module is named as its C module.
-    val byRuntime = headers.entries.groupBy({ bindings.wasmRuntimes[it.key.substringBefore('/')] ?: bindings.wasmRuntime }) { it.value }
+    val runtimeOf = bindings.wasmRuntimes.flatMap { (runtime, modules) -> modules.map { it to runtime } }.toMap()
+    check(runtimeOf.keys == bindings.packages.keys) { "wasmRuntimes must cover the modules ${bindings.packages.keys}, once each" }
+    val byRuntime = headers.entries.groupBy({ runtimeOf.getValue(it.key.substringBefore('/')) }) { it.value }
         .mapValues { (_, functions) -> functions.flatten().distinctBy { it.name }.sortedBy { it.name } }
     byRuntime.forEach { (runtime, functions) ->
         out["wasm/$runtime-exports.txt"] = WasmExportListWriter.write(functions)
         out["wasm/$runtime-types.js"] = WasmTypeTableWriter.write(functions, prefix)
     }
-    out["webTest/WasmArities.kt"] = WasmArityTableWriter.write(byRuntime[bindings.wasmRuntime].orEmpty(), bindings.wasmPackage)
+    out["webTest/WasmArities.kt"] = WasmArityTableWriter.write(byRuntime, bindings.wasmPackage)
     return out
 }
