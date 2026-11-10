@@ -23,7 +23,7 @@ internal object D3DEngines {
         }
         val skiko = SkikoD3D.find(window) ?: unavailable("Compose isn't rendering this window with Direct3D")
         val platform = D3DHelper.nCreatePlatform(skiko.devicePtr, skiko.hwnd)
-        check(platform != 0L) { "skiko's Direct3DRedrawer.device doesn't have the expected native layout" }
+        check(platform != 0L) { "skiko's Direct3DRenderer.device doesn't have the expected native layout" }
         val handle = D3DHelper.nCreateEngine(platform)
         if (handle == 0L) {
             D3DHelper.nDestroyPlatform(platform)

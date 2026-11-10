@@ -37,6 +37,24 @@ Instead, all views of one engine share a `WebViewCompositor`:
 - **Pros**: Multiple independent views from one shared engine/scene; the copy stays on the GPU.
 - **Cons**: One canvas-to-canvas copy per view per frame; views display behind Compose and cannot be stacked over one another (see [Layering & Stacking](#layering--stacking)).
 
+### Alternatives tried
+
+Compose 1.13 added `WebGLRenderTarget`, a texture of Compose's own WebGL context that an `Image` can show. Feeding it Filament's frame would make the view an ordinary Compose layer, with full stacking. Two ways were built and dropped (November 2026, Filament on WebGL2):
+
+- **Copy the engine canvas into the Compose texture** (`texSubImage2D` once per frame). Fast in Chrome, too slow in Safari, which blocks on the upload:
+
+  | Per frame, 3420×1782 view, Apple M4 | Chrome 157 (2390×1788) | Safari 27.2 |
+  | :--- | :--- | :--- |
+  | `drawImage` to a 2D canvas (the compositor) | — | 0.3 ms, 56–60 fps |
+  | `texSubImage2D` from the WebGL canvas | ≤ 0.2 ms, 60 fps | 16 ms, 31 fps |
+  | `texSubImage2D` from a `VideoFrame` of the canvas | — | 20 ms, 28–30 fps |
+  | `texSubImage2D` from a 2D canvas drawn from it | — | 17 ms, 30 fps |
+
+  Every source costs Safari the same, so the cost is the texture upload itself, and it grows with the view's pixel count. Headless Chrome (SwiftShader) doesn't show it.
+- **Run the engine on Compose's WebGL context** (no copy). Both renderers cache GL state, so each must resync after the other draws, and only an engine created for that context can render: too fragile an API.
+
+Revisit when Safari gains a fast upload path, or with WebGPU (see [Future Direction](#future-direction)).
+
 ---
 
 ## 3. Offscreen Texture into Skia (JVM / Desktop)

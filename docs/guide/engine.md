@@ -76,7 +76,7 @@ scene.addEntity(sun)
 | Android | `Surface` | `SurfaceView`'s `SurfaceHolder.surface`, or a `TextureView`'s `SurfaceTexture` |
 | iOS (Kotlin/Native) | `COpaquePointer?` | a `CAMetalLayer` you added to your `UIView` |
 | JVM / Desktop | a `java.awt.Canvas`, or a `Long` (or `Int`) — a raw `HWND`, X11 `Window`, `NSView*` or `CAMetalLayer*` | an AWT/Swing window; LWJGL: `glfwGetWin32Window` / `glfwGetX11Window` / `glfwGetCocoaWindow` |
-| Web (JS / Wasm) | `HTMLCanvasElement` | `document.getElementById("canvas")` |
+| Web (JS / Wasm) | `HTMLCanvasElement` | `document.getElementById("canvas")`; see [Rendering into a Canvas](web.md) |
 
 Android, iOS and web hand you a first-class surface object, so those are straightforward.
 On the **JVM you bring your own window**: a `java.awt.Canvas` in an AWT or Swing window (or a

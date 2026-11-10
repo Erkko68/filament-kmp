@@ -2,24 +2,23 @@ package io.github.erkko68.filament.compose.internal.target.glx
 
 import io.github.erkko68.filament.compose.internal.target.field
 import io.github.erkko68.filament.compose.internal.target.findSkiaLayer
+import io.github.erkko68.filament.compose.internal.target.skikoRenderer
 import io.github.erkko68.filament.jni.GlxHelper
 import java.awt.Window
 import org.jetbrains.skia.DirectContext
 
 /**
- * skiko's OpenGL state for one window (`LinuxOpenGLRedrawer`). Its GLX context is created with the
- * redrawer, and only textures in its share group can be wrapped on Compose's [DirectContext].
+ * skiko's OpenGL state for one window (`LinuxOpenGLRenderer`). Its GLX context is created with the
+ * renderer, and only textures in its share group can be wrapped on Compose's [DirectContext].
  */
-// ponytail: reflects skiko 0.150 internals (LinuxOpenGLRedrawer.context / contextHandler,
+// ponytail: reflects skiko 0.156 internals (LinuxOpenGLRenderer.context / glContext,
 // SkiaLayer.backedLayer). Drop once Compose exposes its context.
-internal class SkikoGlx private constructor(redrawer: Any, private val canvas: Any) {
-    private val contextHandler: Any = redrawer.field("contextHandler")!!
-
+internal class SkikoGlx private constructor(private val redrawer: Any, private val canvas: Any) {
     /** skiko's `GLXContext`; Filament's engine must be created sharing it. */
     val glxContext: Long = GlxHelper.nSkikoContext(redrawer.field("context") as Long)
 
     /** Null until skiko's first frame creates it. */
-    val context: DirectContext? get() = contextHandler.field("context") as DirectContext?
+    val context: DirectContext? get() = redrawer.field("glContext") as DirectContext?
 
     /**
      * Runs [block] with skiko's GL context current, holding the AWT drawing-surface lock skiko also
@@ -42,8 +41,8 @@ internal class SkikoGlx private constructor(redrawer: Any, private val canvas: A
     companion object {
         fun find(window: Window?): SkikoGlx? {
             val layer = window?.findSkiaLayer() ?: return null
-            val redrawer = layer.field("redrawerManager")!!.field("redrawer") ?: return null
-            if (redrawer.javaClass.simpleName != "LinuxOpenGLRedrawer") return null
+            val redrawer = skikoRenderer(layer) ?: return null
+            if (redrawer.javaClass.simpleName != "LinuxOpenGLRenderer") return null
             return SkikoGlx(redrawer, layer.field("backedLayer")!!)
         }
     }

@@ -30,9 +30,9 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * What the page does to a view on its own: its container resized, hidden, or taken out of the document, the
- * tab losing focus, the zoom changing. None of it goes through the composition; the view must still be
- * showing its scene afterwards.
+ * What the page does to a view on its own: its container resized or hidden, the tab losing focus, the zoom
+ * changing. None of it goes through the composition; the view must still be showing its scene afterwards.
+ * Taking the container out of the document isn't here: Compose disposes the viewport when that happens.
  */
 class PageLifecycleTest {
     private var seen = 0
@@ -87,7 +87,6 @@ class PageLifecycleTest {
                     body(surface)
                 }
             } finally {
-                if (pageContainer.parentNode == null) document.body!!.appendChild(pageContainer)
                 pageContainer.style.display = ""
                 size("400px", "600px")
             }
@@ -129,26 +128,6 @@ class PageLifecycleTest {
             size("${300 + 40 * it}px", "500px") // resized while hidden
             assertShowing("$surface shown again ${it + 1}")
         }
-    }
-
-    @Test
-    fun containerTakenOutOfTheDocumentAndPutBack() = bothSurfaces { surface ->
-        repeat(3) {
-            pageContainer.remove()
-            frames(8)
-            document.body!!.appendChild(pageContainer)
-            size("${380 - 30 * it}px", "600px")
-            assertShowing("$surface back in the document ${it + 1}")
-        }
-    }
-
-    @Test
-    fun pausedContainerTakenOutOfTheDocumentAndPutBack() = bothSurfaces(renderingEnabled = false) { surface ->
-        pageContainer.remove()
-        frames(8)
-        document.body!!.appendChild(pageContainer)
-        size("300px", "600px")
-        assertShowing("$surface back in the document")
     }
 
     @Test
