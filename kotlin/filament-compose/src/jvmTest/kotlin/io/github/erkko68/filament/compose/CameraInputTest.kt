@@ -1,10 +1,13 @@
 package io.github.erkko68.filament.compose
 
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
@@ -91,6 +94,29 @@ class CameraInputTest : ComposeTestFixture() {
             frames(5)
             onNodeWithTag("view").performKeyInput { keyUp(Key.X) }
             assertEquals(before, cam.eye)
+        }
+    }
+
+    /** The key-up of a key held while focus moves away never reaches the view: the camera must stop anyway. */
+    @Test
+    fun flightKeysAreReleasedWhenFocusLeaves() {
+        val cam = cameraAt(Position(0f, 0f, 0f), Position(0f, 0f, -1f))
+        val elsewhere = FocusRequester()
+        withFilamentScene(engine, scene) { _ ->
+            setContent {
+                val flight = rememberFlightCameraController(cam, moveDamping = 0f)
+                Box(Modifier.testTag("view").size(400.dp).flightGestures(flight))
+                Box(Modifier.size(10.dp).focusRequester(elsewhere).focusable())
+            }
+            waitForIdle()
+            onNodeWithTag("view").performKeyInput { keyDown(Key.W) }
+            frames(5)
+            runOnUiThread { elsewhere.requestFocus() }
+            frames(2)
+            val rest = cam.eye
+            assertTrue(rest.z < 0f, "W should have flown forward first")
+            frames(5)
+            assertEquals(rest, cam.eye, "losing focus should stop the camera")
         }
     }
 

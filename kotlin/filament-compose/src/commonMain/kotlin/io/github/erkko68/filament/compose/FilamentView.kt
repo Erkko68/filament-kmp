@@ -6,6 +6,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.node.Ref
+import androidx.compose.ui.unit.IntSize
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.BlendMode
 import io.github.erkko68.filament.View
@@ -107,9 +109,13 @@ fun FilamentView(
 
     ApplyPostProcessing(postProcessing, view, engine)
 
+    // Sizes reach the states on a resize only: one swapped in later takes them from here.
+    val layoutSize = remember { Ref<IntSize>() }
+
     // Expose the live View/Renderer through the hoisted handle.
     DisposableEffect(viewState, view, renderer) {
         viewState.attach(engine, view, renderer)
+        layoutSize.value?.let { viewState.layoutSize = it }
         onDispose { viewState.detach() }
     }
 
@@ -117,6 +123,9 @@ fun FilamentView(
     // attach() throws if the state is already bound to another view — one CameraState per view.
     DisposableEffect(cameraState, camera) {
         cameraState.attach(camera)
+        layoutSize.value?.let { cameraState.layoutSize = it }
+        val viewport = view.viewport
+        if (viewport.width > 0 && viewport.height > 0) cameraState.aspect = viewport.width.toDouble() / viewport.height
         onDispose { cameraState.detach(camera) }
     }
 
@@ -147,7 +156,7 @@ fun FilamentView(
     val tapModifier = if (tapTargets.isEmpty) Modifier else Modifier.pickOnTap(viewState, dispatchTap)
 
     FilamentSurface(
-        modifier = modifier.onSizeChanged { viewState.layoutSize = it; cameraState.layoutSize = it }.then(tapModifier),
+        modifier = modifier.onSizeChanged { layoutSize.value = it; viewState.layoutSize = it; cameraState.layoutSize = it }.then(tapModifier),
         engine   = engine,
         renderer = renderer,
         view     = view,

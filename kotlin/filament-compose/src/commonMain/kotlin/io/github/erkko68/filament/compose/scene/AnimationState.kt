@@ -93,6 +93,7 @@ class AnimationState internal constructor(
 
     /** Moves the single-track clock to [time] seconds; playback carries on from there, or holds it while paused. */
     fun seek(time: Float) {
+        switchClip() // a seek after a new animationIndex is for that clip, not the outgoing one
         _time.floatValue = time
         currentTime = time
     }
@@ -119,18 +120,24 @@ class AnimationState internal constructor(
         else applySingle(animator, animator.animationCount, dt)
     }
 
-    private fun applySingle(animator: Animator, count: Int, dt: Float) {
-        // A change to animationIndex starts a cross-fade from the outgoing clip.
-        if (animationIndex != currentIndex) {
-            previousIndex = currentIndex
-            previousTime = currentTime
-            currentIndex = animationIndex
-            currentTime = 0f
-            blend = if (crossFadeDuration > 0f && previousIndex != null) 0f else 1f
-        }
+    // A change to animationIndex starts a cross-fade from the outgoing clip.
+    private fun switchClip() {
+        if (animationIndex == currentIndex) return
+        previousIndex = currentIndex
+        previousTime = currentTime
+        currentIndex = animationIndex
+        currentTime = 0f
+        blend = if (crossFadeDuration > 0f && previousIndex != null) 0f else 1f
+    }
 
-        val ci = currentIndex ?: return
-        if (ci !in 0 until count) return
+    private fun applySingle(animator: Animator, count: Int, dt: Float) {
+        switchClip()
+
+        val ci = currentIndex
+        if (ci == null || ci !in 0 until count) {
+            _transitioning.value = false // nothing plays, so nothing fades
+            return
+        }
 
         val duration = animator.getAnimationDuration(ci)
         currentTime = wrap(currentTime + dt * speed, duration, loop)

@@ -18,6 +18,11 @@ import io.github.erkko68.filament.compose.scene.Bloom
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.ColorGrade
 import io.github.erkko68.filament.compose.scene.DirectionalLight
+import io.github.erkko68.filament.compose.scene.Direction
+import io.github.erkko68.filament.compose.scene.Exposure
+import io.github.erkko68.filament.compose.scene.LensScaling
+import io.github.erkko68.filament.compose.scene.LensShift
+import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.PostProcessing
@@ -32,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -92,8 +98,12 @@ class FilamentViewTest {
         try {
             var engine by mutableStateOf(first)
             val viewState = FilamentViewState()
+            val effectEngines = ArrayList<Engine>()
             setContent {
-                FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState) { DirectionalLight() }
+                FilamentSceneView(Modifier.size(64.dp), engine = engine, viewState = viewState) {
+                    DirectionalLight()
+                    FilamentEffect { effectEngines += this.engine }
+                }
             }
             repeat(3) { mainClock.advanceTimeByFrame() }
             val firstView = assertNotNull(viewState.view)
@@ -102,6 +112,7 @@ class FilamentViewTest {
             repeat(5) { mainClock.advanceTimeByFrame() }
             assertTrue(viewState.view != null && viewState.view !== firstView, "the view is rebuilt on the new engine")
             assertTrue(other.isValid(assertNotNull(viewState.view)), "the view belongs to the new engine")
+            assertEquals(listOf(first, other), effectEngines, "an effect runs again on the new engine")
 
             setContent {}
             mainClock.advanceTimeByFrame()
@@ -223,6 +234,49 @@ class FilamentViewTest {
         assertEquals(view.viewport.width to view.viewport.height, captured.width to captured.height)
         assertEquals(0, viewState.pendingReadbacks)
     }
+
+    /** Sizes reach a camera state on a resize; one handed to a view already laid out has to get them too. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun aCameraStateSwappedInTakesTheViewsShape() = withEngine { engine, setContent ->
+        val first = cameraState()
+        val second = cameraState()
+        var cam by mutableStateOf(first)
+        setContent {
+            FilamentSceneView(Modifier.size(128.dp, 64.dp), engine = engine, cameraState = cam) { DirectionalLight() }
+        }
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        assertEquals(2.0, first.aspect, 1e-6)
+        val centre = assertNotNull(first.worldToScreen(Position(0f)))
+
+        cam = second
+        repeat(3) { mainClock.advanceTimeByFrame() }
+        assertEquals(2.0, second.aspect, 1e-6)
+        assertEquals(centre, second.worldToScreen(Position(0f)))
+    }
+
+    /** Two views on one state would leave it pointing at whichever attached last: refused, like a shared CameraState. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun aViewStateTakesOneViewAtATime() = withEngine { engine, _ ->
+        runOnUiThread {
+            val state = FilamentViewState()
+            val view = engine.createView()
+            val renderer = engine.createRenderer()
+            state.attach(engine, view, renderer)
+            assertFailsWith<IllegalStateException> { state.attach(engine, view, renderer) }
+            state.detach()
+            state.attach(engine, view, renderer)
+            engine.destroy(view)
+            engine.destroy(renderer)
+        }
+    }
+
+    private fun cameraState() = CameraState(
+        initialEye = Position(0f, 1f, 10f), initialTarget = Position(0f), initialUp = Direction.Up,
+        initialProjection = Projection.Perspective(), initialExposure = Exposure(), initialFocusDistance = 10f,
+        initialShift = LensShift.None, initialScaling = LensScaling.Identity,
+    )
 
     /** A view keeps the scene it was created for alive, so one handed another scene has to be a new view. */
     @OptIn(ExperimentalTestApi::class)

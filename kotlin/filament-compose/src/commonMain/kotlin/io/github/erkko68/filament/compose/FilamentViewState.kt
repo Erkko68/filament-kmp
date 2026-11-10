@@ -124,6 +124,10 @@ class FilamentViewState internal constructor() {
     internal var layoutSize = IntSize.Zero
 
     internal fun attach(engine: Engine, view: View, renderer: Renderer) {
+        check(this.view == null) {
+            "This FilamentViewState is already attached to another FilamentView. Each view needs its own: " +
+                "sharing one would leave view, pick() and capture() pointing at whichever attached last."
+        }
         this.engine = engine
         this.view = view
         this.renderer = renderer

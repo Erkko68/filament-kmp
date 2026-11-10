@@ -97,6 +97,24 @@ class AnimationTest : ComposeTestFixture() {
         assertEquals(0.5f, state.time, 1e-5f) // playback carries on from the seek
     }
 
+    /** `animationIndex = walk; seek(t)` before the next frame: the seek is for the new clip, and still fades in. */
+    @Test
+    fun aSeekRightAfterANewIndexLandsOnTheNewClip() = withFox { _, animator ->
+        val state = AnimationState(0, initialSpeed = 1f, initialCrossFadeDuration = 0.5f, initialLoop = true)
+        state.apply(animator, 0.2f)
+
+        state.animationIndex = 1
+        state.seek(0.3f)
+        state.apply(animator, 0.1f)
+        assertEquals(0.4f, state.time, 1e-5f)
+        assertTrue(state.isTransitioning)
+
+        // No clip mid-fade: nothing is fading any more.
+        state.animationIndex = null
+        state.apply(animator, 0.1f)
+        assertFalse(state.isTransitioning)
+    }
+
     /** Two instances sharing a state each apply it every frame: the clock must advance once, not twice. */
     @Test
     fun aStateSharedBetweenInstancesAdvancesOncePerFrame() = withFox { _, animator ->

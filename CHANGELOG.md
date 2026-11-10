@@ -21,6 +21,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Fixed
 - **`rememberHdrEnvironment` no longer blocks until the backend has finished the prefilter** (`filament-compose`): the first load stalled the UI for 1.4 s on an Android emulator, now one frame or less.
+- **`AnimationState.seek` right after a new `animationIndex` seeks the new clip** (`filament-compose`): it was reset to 0 on the next frame; `isTransitioning` also clears when the index goes null mid-fade.
+- **A flight camera stops when its view loses keyboard focus** (`filament-compose`): a key held at that moment kept the camera flying.
+- **A `CameraState` swapped into a laid-out `FilamentView` gets its aspect and size at once** (`filament-compose`): it rendered stretched, and `worldToScreen` returned null, until the next resize.
+- **`FilamentEffect` re-runs when its scene's engine changes** (`filament-compose`), and a `FilamentViewState` passed to two views fails with a clear error instead of going null under the one still on screen.
 - **`close()`/`destroy()` is safe to call twice** on every `AutoCloseable` wrapper (`ToneMapper`, `Ktx2Reader`, `IBLPrefilterContext`, `Manipulator`, …); a second call used to free the native object again.
 - **Narrowing the desktop runtime to one platform works on ARM64** (`filament-jni-desktop`): the `OperatingSystemFamily` + `MachineArchitecture` attributes were ignored on macOS, Linux and Windows ARM64. Depending on a `filament-jni-runtime-*` jar directly never narrowed anything; those jars no longer pull the loader.
 
