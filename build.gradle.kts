@@ -8,8 +8,8 @@ plugins {
 
 // ── Public-API surface guard (binary-compatibility-validator) ─────────────────
 // `apiDump` records each published :kotlin:* module's public JVM ABI under
-// <module>/api/; `apiCheck` (wired into `check`, so it runs on CI) fails on any
-// undeclared change. Regenerate the dumps deliberately when the API changes.
+// <module>/api/; `jvmApiCheck` (run on CI) fails on any undeclared change.
+// Regenerate the dumps deliberately when the API changes.
 // Klib (native/js) validation is left off for now: dumps would differ by CI host
 // (Linux runners can't build the iOS klibs). The JVM dump already covers the
 // common `expect` surface.

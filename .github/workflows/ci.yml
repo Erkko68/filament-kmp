@@ -99,9 +99,11 @@ jobs:
         run: ./gradlew compileKotlinJvm
       # Public-API surface guard: fails if the JVM ABI of any published :kotlin:*
       # module drifts from the committed api/ dumps (regenerate with `apiDump`).
+      # The dump is the same on every host, so one runner checks it; plain `apiCheck`
+      # would also build the iOS klibs on macOS, which have no dump to compare.
       - name: API compatibility check
-        shell: bash
-        run: ./gradlew apiCheck
+        if: matrix.target == 'linux-x64'
+        run: ./gradlew jvmApiCheck
       - name: Run JVM tests
         shell: bash
         run: |
@@ -114,6 +116,10 @@ jobs:
         working-directory: samples
         shell: bash
         run: ./gradlew :desktopApp:compileKotlinJvm
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -165,6 +171,10 @@ jobs:
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -194,6 +204,10 @@ jobs:
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinWasmJs
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -249,6 +263,10 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             build
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
@@ -331,6 +349,10 @@ jobs:
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug
         working-directory: samples
+      - name: Summarize failed tests
+        if: failure()
+        shell: bash
+        run: .github/scripts/test-summary.sh
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7
