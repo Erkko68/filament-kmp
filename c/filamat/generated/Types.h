@@ -43,9 +43,7 @@ extern "C" {
  */
 typedef struct FilaFilamatMaterialBuilder FilaFilamatMaterialBuilder;
 
-/** @endcond */
 typedef struct FilaFilamatMaterialBuilderAttribute FilaFilamatMaterialBuilderAttribute;
-
 typedef struct FilaFilamatMaterialBuilderPreprocessorDefine FilaFilamatMaterialBuilderPreprocessorDefine;
 typedef struct FilaFilamatMaterialBuilderBase FilaFilamatMaterialBuilderBase;
 typedef struct FilaFilamatPackage FilaFilamatPackage;

@@ -607,6 +607,9 @@ class MaterialBuilder() {
     /** Uses Filament's default depth variant, skipping a custom vertex shader in depth-only passes. */
     fun useDefaultDepthVariant(): MaterialBuilder = op { FilaFilamatMaterialBuilder_useDefaultDepthVariant(it) }
 
+    /** Marks this as Filament's built-in default material, so its package carries the shared depth and motion vectors variants. */
+    fun isDefaultMaterial(isDefault: Boolean = true): MaterialBuilder = op { FilaFilamatMaterialBuilder_isDefaultMaterial(it, isDefault) }
+
     /** Records the material's `.mat` source in the package. */
     fun materialSource(source: String): MaterialBuilder = apply { materialSource = source }
 

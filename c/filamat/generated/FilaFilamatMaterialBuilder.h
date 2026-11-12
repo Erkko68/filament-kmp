@@ -33,10 +33,10 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_create(void);
 void FilaFilamatMaterialBuilder_destroy(FilaFilamatMaterialBuilder* self);
 FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilder_asFilamatMaterialBuilderBase(FilaFilamatMaterialBuilder* self);
 // skipped MaterialBuilder & filamat::MaterialBuilder::buffer(filament::BufferInterfaceBlock bib)
-// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, SamplerFormat format, ParameterPrecision precision, const char * name)
-// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, SamplerFormat format, const char * name)
-// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, ParameterPrecision precision, const char * name)
-// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, const char * name)
+// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, SamplerFormat format, ParameterPrecision precision, const char * _Nonnull name)
+// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, SamplerFormat format, const char * _Nonnull name)
+// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, ParameterPrecision precision, const char * _Nonnull name)
+// skipped MaterialBuilder & filamat::MaterialBuilder::subpass(SubpassType subpassType, const char * _Nonnull name)
 // skipped std::string filamat::MaterialBuilder::peek(filament::backend::ShaderStage stage, const CodeGenParams & params, const PropertyList & properties)
 // skipped bool filamat::MaterialBuilder::hasSamplerType(SamplerType samplerType) const
 // skipped size_t filamat::MaterialBuilder::getParameterCount() const
@@ -331,6 +331,11 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMate
  * custom vertex shader which can be skipped during depth-only passes.
  */
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self);
+/**
+ * Marks this material as Filament's built-in default material, ensuring that shared depth and
+ * motion vectors variants are emitted into its package.
+ */
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_isDefaultMaterial(FilaFilamatMaterialBuilder* self, bool isDefault);
 /**
  * Sets the source ASCII material (aka .mat file).
  * The provided `source` string_view must remain valid until MaterialBuilder::build() is called.

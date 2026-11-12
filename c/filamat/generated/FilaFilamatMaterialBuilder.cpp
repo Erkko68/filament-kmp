@@ -340,6 +340,10 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(Fi
     return fila::c(&fila::cpp(self)->useDefaultDepthVariant());
 }
 
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_isDefaultMaterial(FilaFilamatMaterialBuilder* self, bool isDefault) {
+    return fila::c(&fila::cpp(self)->isDefaultMaterial(isDefault));
+}
+
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialSource(FilaFilamatMaterialBuilder* self, const char* source) {
     return fila::c(&fila::cpp(self)->materialSource(std::string_view(source)));
 }

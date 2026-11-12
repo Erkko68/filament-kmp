@@ -35,6 +35,22 @@ class MaterialProviderTest : GltfioTestFixture() {
         assertEquals(1, getNumUvSets(uvmap))
     }
 
+    /** Upstream 1.80.1: an in-range retroreflection texcoord gets a UV set; one past UvMap drops the texture and resets to 0. */
+    @Test
+    fun constrainMaterialHandlesRetroreflectionTexcoords() {
+        val uvmap: UvMap = Array(UV_MAP_SIZE) { UvSet.UNUSED }
+        val key = MaterialKey(hasRetroreflection = true, hasRetroreflectionTexture = true, retroreflectionUV = 1)
+        constrainMaterial(key, uvmap)
+        assertEquals(UvSet.UV0, uvmap[1])
+        assertTrue(key.hasRetroreflectionTexture)
+
+        val outOfRange = MaterialKey(hasRetroreflectionTexture = true, retroreflectionUV = UV_MAP_SIZE + 1)
+        constrainMaterial(outOfRange, uvmap)
+        assertFalse(outOfRange.hasRetroreflectionTexture)
+        assertEquals(0, outOfRange.retroreflectionUV)
+        assertTrue(MaterialKey(hasRetroreflection = true).also { constrainMaterial(it, uvmap) }.hasRetroreflection)
+    }
+
     /** The ubershaders read UV0 unconditionally, so gltfio pads meshes without it. */
     @Test
     fun ubershadersNeedDummyTexcoordsOnly() {

@@ -95,12 +95,17 @@ bool FilaGltfioMaterialKey_getHasSpecularTexture(const FilaGltfioMaterialKey* se
 void FilaGltfioMaterialKey_setHasSpecularTexture(FilaGltfioMaterialKey* self, bool value);
 bool FilaGltfioMaterialKey_getHasSpecularColorTexture(const FilaGltfioMaterialKey* self);
 void FilaGltfioMaterialKey_setHasSpecularColorTexture(FilaGltfioMaterialKey* self, bool value);
-// skipped filament::gltfio::MaterialKey::padding
+bool FilaGltfioMaterialKey_getHasRetroreflection(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasRetroreflection(FilaGltfioMaterialKey* self, bool value);
 uint32_t FilaGltfioMaterialKey_getSpecularTextureUV(const FilaGltfioMaterialKey* self);
 void FilaGltfioMaterialKey_setSpecularTextureUV(FilaGltfioMaterialKey* self, uint32_t value);
 uint32_t FilaGltfioMaterialKey_getSpecularColorTextureUV(const FilaGltfioMaterialKey* self);
 void FilaGltfioMaterialKey_setSpecularColorTextureUV(FilaGltfioMaterialKey* self, uint32_t value);
-// skipped filament::gltfio::MaterialKey::padding2
+bool FilaGltfioMaterialKey_getHasRetroreflectionTexture(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasRetroreflectionTexture(FilaGltfioMaterialKey* self, bool value);
+uint32_t FilaGltfioMaterialKey_getRetroreflectionUV(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setRetroreflectionUV(FilaGltfioMaterialKey* self, uint32_t value);
+// skipped filament::gltfio::MaterialKey::padding
 
 
 #ifdef __cplusplus

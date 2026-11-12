@@ -50,13 +50,21 @@ void FilaGltfioAnimator_applyCrossFade(FilaGltfioAnimator* self, uint32_t previo
  * NOTE: this operation is independent of \c animation.
  */
 void FilaGltfioAnimator_resetBoneMatrices(FilaGltfioAnimator* self);
-/** Returns the number of \c animation definitions in the glTF asset. */
+/**
+ * Returns the number of \c animation definitions in the glTF asset.
+ *
+ * This is zero when the asset's animations failed validation, in which case they are all
+ * disabled.
+ */
 uint32_t FilaGltfioAnimator_getAnimationCount(const FilaGltfioAnimator* self);
-/** Returns the duration of the specified glTF \c animation in seconds. */
+/**
+ * Returns the duration of the specified glTF \c animation in seconds, or zero if
+ * animationIndex is out of range.
+ */
 float FilaGltfioAnimator_getAnimationDuration(const FilaGltfioAnimator* self, uint32_t animationIndex);
 /**
  * Returns a weak reference to the string name of the specified \c animation, or an
- * empty string if none was specified.
+ * empty string if none was specified or if animationIndex is out of range.
  */
 const char* FilaGltfioAnimator_getAnimationName(const FilaGltfioAnimator* self, uint32_t animationIndex);
 

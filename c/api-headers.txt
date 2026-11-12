@@ -94,7 +94,6 @@ gltfio/*.h
 -filament::gltfio::TextureProvider::.*
 -filament::gltfio::processShaderString
 -filament::gltfio::MaterialKey::padding
--filament::gltfio::MaterialKey::padding2
 -filament::gltfio::NodeManager
 -filament::gltfio::TrsTransformManager
 # Lives in libgltfio (JIT via filamat), which only desktop prebuilds; every platform links gltfio_core.

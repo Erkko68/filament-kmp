@@ -129,6 +129,9 @@ typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;
  * \struct MaterialKey MaterialProvider.h gltfio/MaterialProvider.h
  * \brief Small POD structure that specifies the requirements for a glTF material.
  * \note This key is processed by MurmurHashFn so please make padding explicit.
+ * \note All texture coordinate index fields (*UV) represent indices into UvMap and must be strictly
+ *       less than UvMapSize (8). Caller-constructed keys with unvalidated UV indices should be
+ *       passed through constrainMaterial() before being used to index UvMap.
  */
 typedef struct FilaGltfioMaterialKey FilaGltfioMaterialKey;
 
