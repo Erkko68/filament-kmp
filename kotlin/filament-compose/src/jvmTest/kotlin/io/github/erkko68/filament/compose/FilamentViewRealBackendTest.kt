@@ -36,6 +36,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.junit.Assume.assumeTrue
 
 /**
  * What needs a real backend: the frame a view shows, and what a pick hits (NOOP answers every pick with no
@@ -61,9 +62,15 @@ class FilamentViewRealBackendTest {
     @Test
     fun captureMatchesTheViewTopToBottom() = captureMatchesTheView(Engine.Backend.DEFAULT)
 
-    /** OpenGL too, which web and Android run on and the CI hosts with a GPU don't. */
+    /**
+     * OpenGL too, which web and Android run on. Opt-in with FILAMENT_TEST_OPENGL=1: Filament aborts the process where
+     * it can't create a GL context, as on CI's macOS VMs.
+     */
     @Test
-    fun captureMatchesTheViewTopToBottomOnOpenGl() = captureMatchesTheView(Engine.Backend.OPENGL)
+    fun captureMatchesTheViewTopToBottomOnOpenGl() {
+        assumeTrue("set FILAMENT_TEST_OPENGL=1 to run on OpenGL", System.getenv("FILAMENT_TEST_OPENGL") == "1")
+        captureMatchesTheView(Engine.Backend.OPENGL)
+    }
 
     @OptIn(ExperimentalTestApi::class)
     private fun captureMatchesTheView(backend: Engine.Backend) = withEngine(backend) { engine, setContent ->
