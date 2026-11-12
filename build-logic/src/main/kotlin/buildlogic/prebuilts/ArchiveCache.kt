@@ -2,6 +2,7 @@ package buildlogic.prebuilts
 
 import org.gradle.api.logging.Logger
 import java.io.File
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URI
 import java.nio.file.Files
@@ -40,7 +41,12 @@ object ArchiveCache {
             conn.readTimeout = 120_000
             conn.instanceFollowRedirects = true
             conn.inputStream.use { input -> tmp.outputStream().use { input.copyTo(it, 1 shl 16) } }
-            Files.move(tmp.toPath(), cached.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            // ATOMIC_MOVE: REPLACE_EXISTING alone unlinks the target first, which a parallel reader can hit.
+            try {
+                Files.move(tmp.toPath(), cached.toPath(), StandardCopyOption.ATOMIC_MOVE)
+            } catch (e: IOException) {
+                if (!cached.exists()) throw e // Windows won't replace a file another task has open; theirs is the same.
+            }
         } finally {
             tmp.delete()
         }
