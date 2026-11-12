@@ -4,14 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -107,28 +106,8 @@ fun TransparentScene() {
             )
         }
 
-        // Controls overlay
-        Card(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(24.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = if (transparent) "Transparency Enabled" else "Opaque Mode",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Switch(
-                    checked = transparent,
-                    onCheckedChange = { transparent = it }
-                )
-            }
+        ControlPanel {
+            FilterChip(selected = transparent, onClick = { transparent = !transparent }, label = { Text("Transparent view") })
         }
     }
 }

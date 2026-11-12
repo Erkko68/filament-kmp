@@ -1,12 +1,7 @@
 package eric.bitria.samples.scenes
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,10 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.compose.FilamentSceneView
@@ -30,8 +22,8 @@ import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
-import io.github.erkko68.filament.compose.scene.primitives.Sphere
 import io.github.erkko68.filament.compose.scene.Skybox
+import io.github.erkko68.filament.compose.scene.primitives.Sphere
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberMaterial
 import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
@@ -105,20 +97,11 @@ fun RuntimeMaterialScene() {
             )
             Sphere(material = rememberMaterialInstance(material), radius = 1f)
         }
-        Column(
-            modifier = Modifier.align(Alignment.BottomCenter).padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(status, color = Color.White, style = MaterialTheme.typography.bodyMedium)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                PATTERNS.forEachIndexed { i, (label, _) ->
-                    FilterChip(
-                        selected = i == selected,
-                        onClick = { selected = i; status = "Compiling…" },
-                        label = { Text(label) },
-                    )
-                }
+        ControlPanel {
+            Text(status, style = MaterialTheme.typography.bodyMedium)
+            ChoiceRow(PATTERNS.indices.toList(), selected, label = { PATTERNS[it].first }) {
+                selected = it
+                status = "Compiling…"
             }
         }
     }

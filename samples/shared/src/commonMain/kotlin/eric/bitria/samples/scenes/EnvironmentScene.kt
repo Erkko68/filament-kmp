@@ -1,11 +1,9 @@
 package eric.bitria.samples.scenes
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Slider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -115,9 +113,9 @@ private fun EnvironmentSceneContent(
             cameraState = cameraState,
         )
 
-        Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(24.dp)) {
-            Text("Source: $source   ·   IBL intensity: ${intensity.toInt()}")
-            Slider(value = intensity, onValueChange = { intensity = it }, valueRange = 0f..80_000f)
+        ControlPanel {
+            Text("Source: $source", style = MaterialTheme.typography.labelLarge)
+            LabeledSlider("IBL ${intensity.toInt()}", intensity, 0f..80_000f) { intensity = it }
         }
     }
 }

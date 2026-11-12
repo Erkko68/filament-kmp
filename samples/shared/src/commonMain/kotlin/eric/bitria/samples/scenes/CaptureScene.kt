@@ -3,11 +3,15 @@ package eric.bitria.samples.scenes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,11 +68,17 @@ fun CaptureScene() {
             Plane(rememberShadowCatcherMaterialInstance(), width = 10f, depth = 10f, castShadows = false)
         }
 
-        Column(Modifier.align(Alignment.TopEnd).padding(16.dp), horizontalAlignment = Alignment.End) {
-            Button(onClick = { scope.launch { shot = viewState.capture() } }) { Text("Capture") }
-            shot?.let {
-                Image(it, "capture", Modifier.padding(top = 8.dp).width(240.dp).border(2.dp, Color.White).background(Color.Black))
-                Text("${it.width}×${it.height}", color = Color.White)
+        shot?.let {
+            Image(
+                it, "capture",
+                Modifier.align(Alignment.TopEnd).windowInsetsPadding(WindowInsets.safeDrawing).padding(12.dp)
+                    .width(200.dp).border(2.dp, Color.White).background(Color.Black),
+            )
+        }
+        ControlPanel {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(onClick = { scope.launch { shot = viewState.capture() } }) { Text("Capture") }
+                shot?.let { Text("${it.width}×${it.height}") }
             }
         }
     }

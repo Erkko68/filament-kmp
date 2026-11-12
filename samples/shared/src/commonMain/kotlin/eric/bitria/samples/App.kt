@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -25,6 +25,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -78,7 +79,8 @@ private val SAMPLES = listOf(
 /** Wide windows keep the sample list beside the scene; narrow ones open it from a menu button. */
 @Composable
 fun App() {
-    MaterialTheme {
+    // Dark, so controls read over the scenes' dark backgrounds.
+    MaterialTheme(colorScheme = darkColorScheme()) {
         var current by remember { mutableStateOf(SAMPLES.first()) }
         val drawer = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
@@ -105,6 +107,7 @@ fun App() {
                         key(current) { current.content() }
                         if (!wide) {
                             MenuButton(
+                                title = current.title,
                                 onClick = { scope.launch { drawer.open() } },
                                 modifier = Modifier.align(Alignment.TopStart),
                             )
@@ -139,15 +142,16 @@ private fun SampleList(current: Sample, onSelect: (Sample) -> Unit) {
     }
 }
 
-/** Hamburger drawn from three bars; the samples don't pull in an icon library. */
+/** Hamburger (three bars; the samples don't pull in an icon library) and the open sample's name. */
 @Composable
-private fun MenuButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    FilledTonalIconButton(
+private fun MenuButton(title: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    FilledTonalButton(
         onClick = onClick,
         modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing).padding(8.dp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             repeat(3) { Box(Modifier.size(18.dp, 2.dp).background(LocalContentColor.current)) }
         }
+        Text(title, modifier = Modifier.padding(start = 12.dp))
     }
 }
