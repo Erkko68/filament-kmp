@@ -25,6 +25,8 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder {
 	public final fun includeEssl1 (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun instanced (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun interpolation (Lio/github/erkko68/filament/filamat/MaterialBuilder$Interpolation;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun isDefaultMaterial (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun isDefaultMaterial$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;ZILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun linearFog (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun maskThreshold (F)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun material (Ljava/lang/String;I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
