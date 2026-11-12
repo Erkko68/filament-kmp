@@ -31,6 +31,7 @@ Filament 1.80.1, and `filament-compose` screens load with far less UI stall: tex
 - **Upstream Filament is a `filament` submodule** (build): reference only, the build doesn't use it. `upgrade-diff.sh` reads it, reports toolchain pin changes, and drops the private clone, `--summary`, `--output` and the Android Java diff.
 
 ### Fixed
+- **`FilamentViewState.capture()` is upright on OpenGL** (`filament-compose`): on web and Android it came back upside down.
 - **`rememberHdrEnvironment` no longer blocks until the backend has finished the prefilter** (`filament-compose`): the first load stalled the UI for 1.4 s on an Android emulator, now one frame or less.
 - **`AnimationState.seek` right after a new `animationIndex` seeks the new clip** (`filament-compose`): it was reset to 0 on the next frame; `isTransitioning` also clears when the index goes null mid-fade.
 - **`AnimationTrack.isFinished` works at a negative `speed`** (`filament-compose`): a one-shot playing backwards finishes at its start.

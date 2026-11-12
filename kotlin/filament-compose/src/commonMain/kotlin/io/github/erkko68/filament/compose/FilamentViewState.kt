@@ -86,8 +86,6 @@ class FilamentViewState internal constructor() {
         val target = RenderTarget.Builder().texture(RenderTarget.AttachmentPoint.COLOR, color)
             .texture(RenderTarget.AttachmentPoint.DEPTH, depth).build(e)
         val pixels = ByteArray(width * height * 4)
-        // OpenGL reads rows bottom-up, the other backends top-down.
-        val bottomUp = e.backend == Engine.Backend.OPENGL
         val answered = readback()
         val previous = v.renderTarget
         v.renderTarget = target
@@ -100,7 +98,7 @@ class FilamentViewState internal constructor() {
                 e.destroy(color)
                 e.destroy(depth)
                 answered()
-                if (done.isActive) done.resume(imageBitmapOf(width, height, if (bottomUp) pixels.flippedRows(width * 4) else pixels))
+                if (done.isActive) done.resume(imageBitmapOf(width, height, pixels))
             })
         }
     }
@@ -142,10 +140,6 @@ class FilamentViewState internal constructor() {
     }
 }
 
-private fun ByteArray.flippedRows(rowBytes: Int): ByteArray {
-    val rows = size / rowBytes
-    return ByteArray(size).also { out -> for (row in 0 until rows) copyInto(out, (rows - 1 - row) * rowBytes, row * rowBytes, (row + 1) * rowBytes) }
-}
 
 /** Creates and remembers a [FilamentViewState]. */
 @Composable
