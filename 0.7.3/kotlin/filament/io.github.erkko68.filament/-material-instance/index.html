@@ -1,0 +1,775 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MaterialInstance</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament/-material-instance/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.7.3"><span class="versions-dropdown-button-text">0.7.3</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.3"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.7.3</span></a><a href="../../../../older/0.6.0/kotlin/filament/io.github.erkko68.filament/-material-instance/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.6.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/commonMain" data-filter=":kotlin:filament/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament::io.github.erkko68.filament/MaterialInstance///PointingToDeclaration//-156239448">
+  <div class="breadcrumbs"><a href="../../index.html">filament</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament</a><span class="delimiter">/</span><span class="current">MaterialInstance</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Material</span><wbr><span><span>Instance</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">MaterialInstance</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">nativeHandle<span class="token operator">: </span><a href="../../io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">MaterialInstance customizes the parameters of a Material for per-object rendering.</p><p class="paragraph">Each Material can spawn multiple MaterialInstances with different parameter values (colors, textures, numeric uniforms, etc.). Changes to a MaterialInstance only affect renderables using that specific instance, not the Material or other instances.</p><p class="paragraph"><strong>Creating and destroying:</strong> Create instances via Material.createInstance() and destroy with Engine.destroy(instance). You can duplicate an existing instance using the companion object's duplicate() method.</p><p class="paragraph"><strong>Setting parameters:</strong> Use setParameter() overloads to set uniforms (booleans, floats, vectors, matrices, textures). Parameter names and types must match those defined in the material. Array parameters are also supported via setParameter(name, element, array, offset, count) variants.</p><p class="paragraph"><strong>Rendering state customization:</strong> Each MaterialInstance can override per-instance rendering behavior:</p><ul><li><p class="paragraph">Scissor rectangle for pixel-perfect clipping</p></li><li><p class="paragraph">Polygon offset for depth artifacts</p></li><li><p class="paragraph">Culling mode (override material's cull setting)</p></li><li><p class="paragraph">Depth test configuration</p></li><li><p class="paragraph">Stencil test and operations</p></li><li><p class="paragraph">Color and depth write masks</p></li></ul><p class="paragraph">These settings override the Material's defaults.</p><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-material/index.html"><span><span>Material</span></span></a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-material/create-instance.html"><span>Material.</span><wbr><span>create</span><wbr><span><span>Instance</span></span></a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1695280016%2FConstructors%2F-156239448" anchor-label="MaterialInstance" id="1695280016%2FConstructors%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-material-instance.html"><span>Material</span><wbr><span><span>Instance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1695280016%2FConstructors%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">nativeHandle<span class="token operator">: </span><a href="../../io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="-1642737513%2FClasslikes%2F-156239448" anchor-label="BooleanElement" id="-1642737513%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-boolean-element/index.html"><span>Boolean</span><wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1642737513%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-boolean-element/index.html">BooleanElement</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-boolean-element/index.html">MaterialInstance.BooleanElement</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Element types for boolean parameter arrays.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1195567819%2FClasslikes%2F-156239448" anchor-label="Companion" id="1195567819%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1195567819%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1743344971%2FClasslikes%2F-156239448" anchor-label="FloatElement" id="1743344971%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-float-element/index.html"><span>Float</span><wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1743344971%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-float-element/index.html">FloatElement</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-float-element/index.html">MaterialInstance.FloatElement</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Element types for floating-point parameter arrays.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2011299166%2FClasslikes%2F-156239448" anchor-label="IntElement" id="2011299166%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-int-element/index.html"><span>Int</span><wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2011299166%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-int-element/index.html">IntElement</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-int-element/index.html">MaterialInstance.IntElement</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Element types for integer parameter arrays.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1803206334%2FClasslikes%2F-156239448" anchor-label="StencilFace" id="1803206334%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-stencil-face/index.html"><span>Stencil</span><wbr><span><span>Face</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1803206334%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-stencil-face/index.html">StencilFace</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Which face(s) the stencil operation applies to.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-439393120%2FClasslikes%2F-156239448" anchor-label="StencilOperation" id="-439393120%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-stencil-operation/index.html"><span>Stencil</span><wbr><span><span>Operation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-439393120%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-stencil-operation/index.html">StencilOperation</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-stencil-operation/index.html">MaterialInstance.StencilOperation</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Stencil test operation determines how the stencil buffer is modified.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="197064373%2FClasslikes%2F-156239448" anchor-label="UIntElement" id="197064373%2FClasslikes%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-u-int-element/index.html"><span>UInt</span><wbr><span><span>Element</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="197064373%2FClasslikes%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-u-int-element/index.html">UIntElement</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-u-int-element/index.html">MaterialInstance.UIntElement</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Element types for unsigned integer parameter arrays, passed as <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a> bit patterns.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="642240561%2FProperties%2F-156239448" anchor-label="cullingMode" id="642240561%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="culling-mode.html"><span>culling</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="642240561%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="culling-mode.html">cullingMode</a><span class="token operator">: </span><a href="../-material/-culling-mode/index.html">Material.CullingMode</a></div><div class="brief "><p class="paragraph">Gets/sets the face culling mode, for both the color and shadow passes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1296661309%2FProperties%2F-156239448" anchor-label="depthFunc" id="1296661309%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="depth-func.html"><span>depth</span><wbr><span><span>Func</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1296661309%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="depth-func.html">depthFunc</a><span class="token operator">: </span><a href="../-texture-sampler/-compare-func/index.html">TextureSampler.CompareFunc</a></div><div class="brief "><p class="paragraph">Gets/sets the depth function.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-225279031%2FProperties%2F-156239448" anchor-label="isColorWriteEnabled" id="-225279031%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-color-write-enabled.html"><span>is</span><wbr><span>Color</span><wbr><span>Write</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-225279031%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-color-write-enabled.html">isColorWriteEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets/sets whether color write is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1600664122%2FProperties%2F-156239448" anchor-label="isDepthCullingEnabled" id="1600664122%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-depth-culling-enabled.html"><span>is</span><wbr><span>Depth</span><wbr><span>Culling</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1600664122%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-depth-culling-enabled.html">isDepthCullingEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets/sets whether depth culling (depth testing) is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-134708119%2FProperties%2F-156239448" anchor-label="isDepthWriteEnabled" id="-134708119%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-depth-write-enabled.html"><span>is</span><wbr><span>Depth</span><wbr><span>Write</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-134708119%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-depth-write-enabled.html">isDepthWriteEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets/sets whether depth write is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1390928590%2FProperties%2F-156239448" anchor-label="isDoubleSided" id="-1390928590%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-double-sided.html"><span>is</span><wbr><span>Double</span><wbr><span><span>Sided</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1390928590%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-double-sided.html">isDoubleSided</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets/sets whether double-sided lighting is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-479516464%2FProperties%2F-156239448" anchor-label="isStencilWriteEnabled" id="-479516464%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-stencil-write-enabled.html"><span>is</span><wbr><span>Stencil</span><wbr><span>Write</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-479516464%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-stencil-write-enabled.html">isStencilWriteEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gets/sets whether stencil write is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1503789051%2FProperties%2F-156239448" anchor-label="maskThreshold" id="-1503789051%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mask-threshold.html"><span>mask</span><wbr><span><span>Threshold</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1503789051%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="mask-threshold.html">maskThreshold</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets/sets the alpha mask threshold for masked blending mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1600372175%2FProperties%2F-156239448" anchor-label="material" id="1600372175%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material.html"><span><span>material</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1600372175%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="material.html">material</a><span class="token operator">: </span><a href="../-material/index.html">Material</a></div><div class="brief "><p class="paragraph">The Material associated with this instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1985238379%2FProperties%2F-156239448" anchor-label="name" id="1985238379%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="name.html"><span><span>name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1985238379%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The name associated with this instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1496573152%2FProperties%2F-156239448" anchor-label="nativeObject" id="-1496573152%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="native-object.html"><span>native</span><wbr><span><span>Object</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1496573152%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="native-object.html">nativeObject</a><span class="token operator">: </span><a href="../../io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></div><div class="brief "><p class="paragraph">The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="707447857%2FProperties%2F-156239448" anchor-label="shadowCullingMode" id="707447857%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-culling-mode.html"><span>shadow</span><wbr><span>Culling</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="707447857%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="shadow-culling-mode.html">shadowCullingMode</a><span class="token operator">: </span><a href="../-material/-culling-mode/index.html">Material.CullingMode</a></div><div class="brief "><p class="paragraph">The face culling mode for the shadow passes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1924122704%2FProperties%2F-156239448" anchor-label="specularAntiAliasingThreshold" id="1924122704%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="specular-anti-aliasing-threshold.html"><span>specular</span><wbr><span>Anti</span><wbr><span>Aliasing</span><wbr><span><span>Threshold</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1924122704%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="specular-anti-aliasing-threshold.html">specularAntiAliasingThreshold</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets/sets the clamping threshold used to suppress estimation errors when applying specular anti-aliasing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="917209102%2FProperties%2F-156239448" anchor-label="specularAntiAliasingVariance" id="917209102%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="specular-anti-aliasing-variance.html"><span>specular</span><wbr><span>Anti</span><wbr><span>Aliasing</span><wbr><span><span>Variance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="917209102%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="specular-anti-aliasing-variance.html">specularAntiAliasingVariance</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets/sets the screen space variance of the filter kernel used when applying specular anti-aliasing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-832878757%2FProperties%2F-156239448" anchor-label="transparencyMode" id="-832878757%2FProperties%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transparency-mode.html"><span>transparency</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-832878757%2FProperties%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="transparency-mode.html">transparencyMode</a><span class="token operator">: </span><a href="../-material/-transparency-mode/index.html">Material.TransparencyMode</a></div><div class="brief "><p class="paragraph">Gets/sets the transparency rendering mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="311999606%2FFunctions%2F-156239448" anchor-label="commit" id="311999606%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="commit.html"><span><span>commit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="311999606%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="commit.html"><span class="token function">commit</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">engine<span class="token operator">: </span><a href="../-engine/index.html">Engine</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Uploads this instance's pending parameter changes. The engine does this for every instance it renders; call it for instances only used outside of rendering, e.g. by compute.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-779953278%2FFunctions%2F-156239448" anchor-label="compile" id="-779953278%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="compile.html"><span><span>compile</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-779953278%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="compile.html"><span class="token function">compile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">priority<span class="token operator">: </span><a href="../-material/-compiler-priority-queue/index.html">Material.CompilerPriorityQueue</a><span class="token punctuation">, </span></span><span class="parameter ">variants<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>UserVariantFilterBit.ALL<span class="token punctuation">, </span></span><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="index.html">MaterialInstance</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Asynchronously ensures that a subset of this MaterialInstance's variants are compiled, taking its specialization constants into account.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1432788508%2FFunctions%2F-156239448" anchor-label="getConstantBoolean" id="1432788508%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-constant-boolean.html"><span>get</span><wbr><span>Constant</span><wbr><span><span>Boolean</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1432788508%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-constant-boolean.html"><span class="token function">getConstantBoolean</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns the boolean value of a specialization constant.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-856454000%2FFunctions%2F-156239448" anchor-label="getConstantFloat" id="-856454000%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-constant-float.html"><span>get</span><wbr><span>Constant</span><wbr><span><span>Float</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-856454000%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-constant-float.html"><span class="token function">getConstantFloat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Returns the float value of a specialization constant.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-676820189%2FFunctions%2F-156239448" anchor-label="getConstantInt" id="-676820189%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-constant-int.html"><span>get</span><wbr><span>Constant</span><wbr><span><span>Int</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-676820189%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-constant-int.html"><span class="token function">getConstantInt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the integer value of a specialization constant.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1651369124%2FFunctions%2F-156239448" anchor-label="getParameter" id="-1651369124%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-parameter.html"><span>get</span><wbr><span><span>Parameter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1651369124%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-parameter.html"><span class="token function">getParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-float-element/index.html">MaterialInstance.FloatElement</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Gets the value of a float parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-parameter.html"><span class="token function">getParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-int-element/index.html">MaterialInstance.IntElement</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></div><div class="brief "><p class="paragraph">Gets the value of an integer parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-parameter.html"><span class="token function">getParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-u-int-element/index.html">MaterialInstance.UIntElement</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></div><div class="brief "><p class="paragraph">Gets the value of an unsigned integer parameter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1650041191%2FFunctions%2F-156239448" anchor-label="setConstant" id="1650041191%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-constant.html"><span>set</span><wbr><span><span>Constant</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1650041191%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-constant.html"><span class="token function">setConstant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-constant.html"><span class="token function">setConstant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><br><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-constant.html"><span class="token function">setConstant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the value of a specialization constant, overriding the Material's. Panics if the constant doesn't exist or has another type. Compiles new programs when the value changes, so prefer <a href="../-material/-builder/constant.html">Material.Builder.constant</a> where the value is known up front.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1954276398%2FFunctions%2F-156239448" anchor-label="setCullingMode" id="-1954276398%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-culling-mode.html"><span>set</span><wbr><span>Culling</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1954276398%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-culling-mode.html"><span class="token function">setCullingMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">colorPassCullingMode<span class="token operator">: </span><a href="../-material/-culling-mode/index.html">Material.CullingMode</a><span class="token punctuation">, </span></span><span class="parameter ">shadowPassCullingMode<span class="token operator">: </span><a href="../-material/-culling-mode/index.html">Material.CullingMode</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets different culling modes for color and shadow passes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-682824476%2FFunctions%2F-156239448" anchor-label="setParameter" id="-682824476%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-parameter.html"><span>set</span><wbr><span><span>Parameter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-682824476%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a boolean parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a float parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an integer parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an unsigned integer parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">texture<span class="token operator">: </span><a href="../-texture/index.html">Texture</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">sampler<span class="token operator">: </span><a href="../-texture-sampler/index.html">TextureSampler</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a texture parameter with sampler configuration.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 2-component boolean vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 2-component float vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 2-component integer vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 2-component unsigned integer vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 3-component boolean vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 3-component float vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 3-component integer vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 3-component unsigned integer vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-boolean-element/index.html">MaterialInstance.BooleanElement</a><span class="token punctuation">, </span></span><span class="parameter ">v<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean-array/index.html">BooleanArray</a><span class="token punctuation">, </span></span><span class="parameter ">offset<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">count<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a parameter from a boolean array.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-float-element/index.html">MaterialInstance.FloatElement</a><span class="token punctuation">, </span></span><span class="parameter ">v<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">offset<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">count<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a parameter from a float array.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-int-element/index.html">MaterialInstance.IntElement</a><span class="token punctuation">, </span></span><span class="parameter ">v<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a><span class="token punctuation">, </span></span><span class="parameter ">offset<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">count<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a parameter from an integer array.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">element<span class="token operator">: </span><a href="-u-int-element/index.html">MaterialInstance.UIntElement</a><span class="token punctuation">, </span></span><span class="parameter ">v<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a><span class="token punctuation">, </span></span><span class="parameter ">offset<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">count<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a parameter from an unsigned integer array.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="../-rgb-type/index.html">RgbType</a><span class="token punctuation">, </span></span><span class="parameter ">r<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">g<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">b<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an RGB color parameter, converted to linear from <a href="set-parameter.html">type</a>'s space.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">w<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 4-component boolean vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">w<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 4-component float vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">w<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 4-component integer vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a><span class="token punctuation">, </span></span><span class="parameter ">y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a><span class="token punctuation">, </span></span><span class="parameter ">z<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a><span class="token punctuation">, </span></span><span class="parameter ">w<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-int/index.html">UInt</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a 4-component unsigned integer vector parameter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-parameter.html"><span class="token function">setParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">type<span class="token operator">: </span><a href="../-rgba-type/index.html">RgbaType</a><span class="token punctuation">, </span></span><span class="parameter ">r<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">g<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">b<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">a<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an RGBA color parameter, converted to linear from <a href="set-parameter.html">type</a>'s space.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-133305164%2FFunctions%2F-156239448" anchor-label="setPolygonOffset" id="-133305164%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-polygon-offset.html"><span>set</span><wbr><span>Polygon</span><wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-133305164%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-polygon-offset.html"><span class="token function">setPolygonOffset</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scale<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">constant<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a polygon offset that will be applied to all renderables drawn with this material instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1895446749%2FFunctions%2F-156239448" anchor-label="setScissor" id="-1895446749%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-scissor.html"><span>set</span><wbr><span><span>Scissor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1895446749%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-scissor.html"><span class="token function">setScissor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">left<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">bottom<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">width<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">height<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set-up a custom scissor rectangle; by default it is disabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="762077311%2FFunctions%2F-156239448" anchor-label="setStencilCompareFunction" id="762077311%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-compare-function.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Compare</span><wbr><span><span>Function</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="762077311%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-compare-function.html"><span class="token function">setStencilCompareFunction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">func<span class="token operator">: </span><a href="../-texture-sampler/-compare-func/index.html">TextureSampler.CompareFunc</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the stencil comparison function (default is A, always).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1821339523%2FFunctions%2F-156239448" anchor-label="setStencilOpDepthFail" id="-1821339523%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-op-depth-fail.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Op</span><wbr><span>Depth</span><wbr><span><span>Fail</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1821339523%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-op-depth-fail.html"><span class="token function">setStencilOpDepthFail</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">op<span class="token operator">: </span><a href="-stencil-operation/index.html">MaterialInstance.StencilOperation</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the depth fail operation (default is KEEP).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-753478672%2FFunctions%2F-156239448" anchor-label="setStencilOpDepthStencilPass" id="-753478672%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-op-depth-stencil-pass.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Op</span><wbr><span>Depth</span><wbr><span>Stencil</span><wbr><span><span>Pass</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-753478672%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-op-depth-stencil-pass.html"><span class="token function">setStencilOpDepthStencilPass</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">op<span class="token operator">: </span><a href="-stencil-operation/index.html">MaterialInstance.StencilOperation</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the depth-stencil pass operation (default is KEEP).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2073333284%2FFunctions%2F-156239448" anchor-label="setStencilOpStencilFail" id="2073333284%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-op-stencil-fail.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Op</span><wbr><span>Stencil</span><wbr><span><span>Fail</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2073333284%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-op-stencil-fail.html"><span class="token function">setStencilOpStencilFail</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">op<span class="token operator">: </span><a href="-stencil-operation/index.html">MaterialInstance.StencilOperation</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the stencil fail operation (default is KEEP).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1662282505%2FFunctions%2F-156239448" anchor-label="setStencilReadMask" id="1662282505%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-read-mask.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Read</span><wbr><span><span>Mask</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1662282505%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-read-mask.html"><span class="token function">setStencilReadMask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">readMask<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the stencil read mask (default is 0xFF).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-261233147%2FFunctions%2F-156239448" anchor-label="setStencilReferenceValue" id="-261233147%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-reference-value.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Reference</span><wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-261233147%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-reference-value.html"><span class="token function">setStencilReferenceValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the stencil reference value (default is 0).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1887567490%2FFunctions%2F-156239448" anchor-label="setStencilWriteMask" id="1887567490%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-stencil-write-mask.html"><span>set</span><wbr><span>Stencil</span><wbr><span>Write</span><wbr><span><span>Mask</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1887567490%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-stencil-write-mask.html"><span class="token function">setStencilWriteMask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">writeMask<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">face<span class="token operator">: </span><a href="-stencil-face/index.html">MaterialInstance.StencilFace</a><span class="token operator"> = </span>StencilFace.FRONT_AND_BACK</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the stencil write mask (default is 0xFF).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="527229827%2FFunctions%2F-156239448" anchor-label="unsetScissor" id="527229827%2FFunctions%2F-156239448" data-filterable-set=":kotlin:filament/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unset-scissor.html"><span>unset</span><wbr><span><span>Scissor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="527229827%2FFunctions%2F-156239448"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unset-scissor.html"><span class="token function">unsetScissor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Disables the scissor box test; rendering is not restricted to any region.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

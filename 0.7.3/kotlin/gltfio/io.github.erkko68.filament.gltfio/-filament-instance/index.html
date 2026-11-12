@@ -1,0 +1,471 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>FilamentInstance</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.gltfio/-filament-instance/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="0.7.3"><span class="versions-dropdown-button-text">0.7.3</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.7.3"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">0.7.3</span></a><a href="../../../../older/0.6.0/kotlin/gltfio/io.github.erkko68.filament.gltfio/-filament-instance/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="0.6.0"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">0.6.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:gltfio/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:gltfio/commonMain" data-filter=":kotlin:gltfio/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="gltfio::io.github.erkko68.filament.gltfio/FilamentInstance///PointingToDeclaration//1682861519">
+  <div class="breadcrumbs"><a href="../../index.html">gltfio</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament.gltfio</a><span class="delimiter">/</span><span class="current">FilamentInstance</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Filament</span><wbr><span><span>Instance</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">FilamentInstance</a></div><p class="paragraph">FilamentInstance provides access to a hierarchy of entities instanced from a glTF asset.</p><p class="paragraph">Every entity has a TransformManager component. Some entities also have Name or Renderable components. Instances share material and geometry data with the parent FilamentAsset but maintain independent entity hierarchies, transforms, and animation states.</p><p class="paragraph"><strong>Key features:</strong></p><ul><li><p class="paragraph">Independent entity tree for each instance</p></li><li><p class="paragraph">Skeletal animation via getAnimator() (independent per-instance or shared from asset)</p></li><li><p class="paragraph">Material variant switching via applyMaterialVariant()</p></li><li><p class="paragraph">Skin/skeleton access for joint manipulation</p></li><li><p class="paragraph">Independent bounding box and transform root</p></li></ul><p class="paragraph"><strong>Animation ownership:</strong> Each instance has its own Animator, but it can also be obtained from the parent FilamentAsset. Using the asset's animator means all instances share the same animation frame; using instance animators allows independent control.</p><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-filament-asset/index.html"><span>Filament</span><wbr><span><span>Asset</span></span></a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-animator/index.html"><span><span>Animator</span></span></a></div></span></div><div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-asset-loader/index.html"><span>Asset</span><wbr><span><span>Loader</span></span></a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="110384852%2FConstructors%2F1682861519" anchor-label="FilamentInstance" id="110384852%2FConstructors%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-filament-instance.html"><span>Filament</span><wbr><span><span>Instance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="110384852%2FConstructors%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Create a new FilamentInstance.</p></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">nativeHandle<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="167431385%2FProperties%2F1682861519" anchor-label="animator" id="167431385%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="animator.html"><span><span>animator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="167431385%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="animator.html">animator</a><span class="token operator">: </span><a href="../-animator/index.html">Animator</a></div><div class="brief "><p class="paragraph">Returns the animation engine for this instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-880099446%2FProperties%2F1682861519" anchor-label="asset" id="-880099446%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="asset.html"><span><span>asset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-880099446%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="asset.html">asset</a><span class="token operator">: </span><a href="../-filament-asset/index.html">FilamentAsset</a></div><div class="brief "><p class="paragraph">Gets the <a href="../-filament-asset/index.html">FilamentAsset</a> that owns this instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1521532141%2FProperties%2F1682861519" anchor-label="boundingBox" id="-1521532141%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bounding-box.html"><span>bounding</span><wbr><span><span>Box</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1521532141%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="bounding-box.html">boundingBox</a><span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-aabb/index.html">Aabb</a></div><div class="brief "><p class="paragraph">Gets the axis-aligned bounding box from the min/max values in the glTF accessors, transformed for this instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1632172351%2FProperties%2F1682861519" anchor-label="entities" id="1632172351%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="entities.html"><span><span>entities</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1632172351%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="entities.html">entities</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></div><div class="brief "><p class="paragraph">Gets the entities of this instance, one per glTF node. All have a Transform component; some also have a Renderable or Name component.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1596282546%2FProperties%2F1682861519" anchor-label="entityCount" id="-1596282546%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="entity-count.html"><span>entity</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1596282546%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="entity-count.html">entityCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the number of entities returned by <a href="entities.html">entities</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1410169415%2FProperties%2F1682861519" anchor-label="materialInstanceCount" id="1410169415%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-instance-count.html"><span>material</span><wbr><span>Instance</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1410169415%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="material-instance-count.html">materialInstanceCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-319697981%2FProperties%2F1682861519" anchor-label="materialInstances" id="-319697981%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-instances.html"><span>material</span><wbr><span><span>Instances</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-319697981%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="material-instances.html">materialInstances</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-material-instance/index.html">MaterialInstance</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets all material instances of this instance. These are already bound to renderables.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="434574383%2FProperties%2F1682861519" anchor-label="materialVariantCount" id="434574383%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="material-variant-count.html"><span>material</span><wbr><span>Variant</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="434574383%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="material-variant-count.html">materialVariantCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the number of material variants declared in the asset.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-515603734%2FProperties%2F1682861519" anchor-label="nativeObject" id="-515603734%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="native-object.html"><span>native</span><wbr><span><span>Object</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-515603734%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="native-object.html">nativeObject</a><span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament.interop/-native-pointer/index.html">NativePointer</a></div><div class="brief "><p class="paragraph">The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="473571518%2FProperties%2F1682861519" anchor-label="root" id="473571518%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="root.html"><span><span>root</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="473571518%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="root.html">root</a><span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-entity/index.html">Entity</a></div><div class="brief "><p class="paragraph">Gets the transform root entity of this instance, which has no matching glTF node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1493630120%2FProperties%2F1682861519" anchor-label="skinCount" id="1493630120%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="skin-count.html"><span>skin</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1493630120%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="skin-count.html">skinCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the number of skins declared in the asset.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="117619950%2FFunctions%2F1682861519" anchor-label="applyMaterialVariant" id="117619950%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="apply-material-variant.html"><span>apply</span><wbr><span>Material</span><wbr><span><span>Variant</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="117619950%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="apply-material-variant.html"><span class="token function">applyMaterialVariant</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">variantIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Applies the material variant at <a href="apply-material-variant.html">variantIndex</a> to all primitives in this instance. Ignored if the index is out of bounds.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1137824193%2FFunctions%2F1682861519" anchor-label="attachSkin" id="1137824193%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="attach-skin.html"><span>attach</span><wbr><span><span>Skin</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1137824193%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="attach-skin.html"><span class="token function">attachSkin</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">target<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-entity/index.html">Entity</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Attaches the given skin to the given node entity, which must have an associated mesh with BONE_INDICES and BONE_WEIGHTS attributes. No-op if the skin index or target is invalid.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="709326326%2FFunctions%2F1682861519" anchor-label="detachMaterialInstances" id="709326326%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="detach-material-instances.html"><span>detach</span><wbr><span>Material</span><wbr><span><span>Instances</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="709326326%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="detach-material-instances.html"><span class="token function">detachMaterialInstances</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Releases ownership of the material instances so they outlive the asset; the client destroys them.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-612119665%2FFunctions%2F1682861519" anchor-label="detachSkin" id="-612119665%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="detach-skin.html"><span>detach</span><wbr><span><span>Skin</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-612119665%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="detach-skin.html"><span class="token function">detachSkin</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">target<span class="token operator">: </span><a href="../../../../kotlin/filament/io.github.erkko68.filament/-entity/index.html">Entity</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Detaches the given skin from the given node entity. No-op if skin index or target is invalid.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="864986650%2FFunctions%2F1682861519" anchor-label="getInverseBindMatricesAt" id="864986650%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-inverse-bind-matrices-at.html"><span>get</span><wbr><span>Inverse</span><wbr><span>Bind</span><wbr><span>Matrices</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="864986650%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-inverse-bind-matrices-at.html"><span class="token function">getInverseBindMatricesAt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Gets the inverse bind matrices of the skin at <a href="get-inverse-bind-matrices-at.html">skinIndex</a>: 16 column-major floats per joint.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="660974186%2FFunctions%2F1682861519" anchor-label="getJointCountAt" id="660974186%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-joint-count-at.html"><span>get</span><wbr><span>Joint</span><wbr><span>Count</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="660974186%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-joint-count-at.html"><span class="token function">getJointCountAt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Gets the number of joints in the skin at <a href="get-joint-count-at.html">skinIndex</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1737105946%2FFunctions%2F1682861519" anchor-label="getJointsAt" id="-1737105946%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-joints-at.html"><span>get</span><wbr><span>Joints</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1737105946%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-joints-at.html"><span class="token function">getJointsAt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></div><div class="brief "><p class="paragraph">Gets the joint entities of the skin at <a href="get-joints-at.html">skinIndex</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1365090421%2FFunctions%2F1682861519" anchor-label="getMaterialVariantName" id="-1365090421%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-material-variant-name.html"><span>get</span><wbr><span>Material</span><wbr><span>Variant</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1365090421%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-material-variant-name.html"><span class="token function">getMaterialVariantName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">variantIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets the name of the material variant at <a href="get-material-variant-name.html">variantIndex</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1530939143%2FFunctions%2F1682861519" anchor-label="getSkinNameAt" id="1530939143%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-skin-name-at.html"><span>get</span><wbr><span>Skin</span><wbr><span>Name</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1530939143%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-skin-name-at.html"><span class="token function">getSkinNameAt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">skinIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets the name of the skin at <a href="get-skin-name-at.html">skinIndex</a>, or null if it has none.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1689715087%2FFunctions%2F1682861519" anchor-label="recomputeBoundingBoxes" id="1689715087%2FFunctions%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="recompute-bounding-boxes.html"><span>recompute</span><wbr><span>Bounding</span><wbr><span><span>Boxes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1689715087%2FFunctions%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="recompute-bounding-boxes.html"><span class="token function">recomputeBoundingBoxes</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Recomputes <a href="bounding-box.html">boundingBox</a> from the current joint and morph state, for skinned or morphed meshes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
