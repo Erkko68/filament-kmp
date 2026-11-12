@@ -46,7 +46,7 @@ class GpuFrameSharingTest : ComposeTestFixture() {
         resetSession()
     }
 
-    private class FakeTarget(override val bottomUp: Boolean, private val failsAtFrame: Int = Int.MAX_VALUE, private val failsToClose: Boolean = false) : OffscreenTarget {
+    private class FakeTarget(private val failsAtFrame: Int = Int.MAX_VALUE, private val failsToClose: Boolean = false) : OffscreenTarget {
         var frames = 0
         var closed = 0
         override fun renderFrame(renderer: Renderer, view: View, frameTimeNanos: Long): Image? {
@@ -117,13 +117,12 @@ class GpuFrameSharingTest : ComposeTestFixture() {
     fun aTargetFailingMidFrameIsReplacedByReadback() {
         val renderer = engine.createRenderer()
         val view = engine.createView()
-        val gpu = FakeTarget(bottomUp = true, failsAtFrame = 3)
+        val gpu = FakeTarget(failsAtFrame = 3)
         val readbacks = mutableListOf<FakeTarget>()
-        val target = FallbackOffscreenTarget(gpu, null, engine) { FakeTarget(bottomUp = false).also { readbacks += it } }
+        val target = FallbackOffscreenTarget(gpu, null, engine) { FakeTarget().also { readbacks += it } }
 
         repeat(2) { target.renderFrame(renderer, view, 0L) }
         assertEquals(2, gpu.frames)
-        assertTrue(target.bottomUp)
         assertTrue(readbacks.isEmpty(), "no readback target while the GPU path works")
 
         // The frame that fails is still rendered, by the readback that takes over.
@@ -131,7 +130,6 @@ class GpuFrameSharingTest : ComposeTestFixture() {
         val readback = readbacks.single()
         assertEquals(1, readback.frames)
         assertEquals(1, gpu.closed)
-        assertFalse(target.bottomUp, "row order follows the target now in use")
         assertFalse(GpuFrameSharing.enabled)
 
         repeat(3) { target.renderFrame(renderer, view, 0L) }
@@ -150,18 +148,17 @@ class GpuFrameSharingTest : ComposeTestFixture() {
     fun otherViewsFollowAFailureAndASecondFailureToCloseIsSurvived() {
         val renderer = engine.createRenderer()
         val view = engine.createView()
-        val failing = FakeTarget(bottomUp = true, failsAtFrame = 1, failsToClose = true)
-        val healthy = FakeTarget(bottomUp = true)
-        val first = FallbackOffscreenTarget(failing, null, engine) { FakeTarget(bottomUp = false) }
+        val failing = FakeTarget(failsAtFrame = 1, failsToClose = true)
+        val healthy = FakeTarget()
+        val first = FallbackOffscreenTarget(failing, null, engine) { FakeTarget() }
         var healthyReadback: FakeTarget? = null
-        val second = FallbackOffscreenTarget(healthy, null, engine) { FakeTarget(bottomUp = false).also { healthyReadback = it } }
+        val second = FallbackOffscreenTarget(healthy, null, engine) { FakeTarget().also { healthyReadback = it } }
 
         second.renderFrame(renderer, view, 0L)
         assertEquals(1, healthy.frames)
 
         first.renderFrame(renderer, view, 0L) // fails, and fails to close: still replaced
         assertEquals(1, failing.closed)
-        assertFalse(first.bottomUp)
 
         second.renderFrame(renderer, view, 0L)
         assertEquals(1, healthy.frames, "a working target is retired too once sharing is off")

@@ -39,9 +39,6 @@ internal class ReadbackOffscreenTarget(
     private val inFlight = AtomicInteger(0)
     private val newest = AtomicReference<Image?>(null)
 
-    // OpenGL delivers readPixels rows bottom-up.
-    override val bottomUp: Boolean = engine.backend == Engine.Backend.OPENGL
-
     override fun renderFrame(renderer: Renderer, view: View, frameTimeNanos: Long): Image? {
         val image = newest.getAndSet(null)
         if (inFlight.get() >= MAX_IN_FLIGHT) {

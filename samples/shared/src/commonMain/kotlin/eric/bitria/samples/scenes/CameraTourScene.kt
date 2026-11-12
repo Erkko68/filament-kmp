@@ -4,22 +4,14 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,9 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
@@ -91,7 +81,7 @@ private val PATHS = listOf(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun CameraTourScene(onBack: () -> Unit) {
+fun CameraTourScene() {
     val cameraState = rememberCameraState(
         initialEye        = HOME.eye,
         initialTarget     = HOME.target,
@@ -152,44 +142,18 @@ fun CameraTourScene(onBack: () -> Unit) {
             Cube(rememberColorMaterialInstance(LinearColor(0.90f, 0.25f, 0.30f)), position = Position(0f, 0.25f, 2.5f), size = 0.5f)
             Plane(rememberColorMaterialInstance(LinearColor(0.28f, 0.30f, 0.36f)), position = Position(0f, -0.01f, 0f), width = 14f, depth = 14f)
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.Black.copy(alpha = 0.45f))
-                .windowInsetsPadding(WindowInsets.safeDrawing)
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+        ControlPanel {
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
-                    onClick = { touring = !touring },
-                    colors = if (touring) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
-                ) { Text(if (touring) "Stop tour" else "Tour") }
+                FilterChip(selected = touring, onClick = { touring = !touring }, label = { Text("Tour") })
                 stops.forEach { (name, stop) ->
-                    OutlinedButton(onClick = { touring = false; fly(stop()) }) { Text(name) }
+                    AssistChip(onClick = { touring = false; fly(stop()) }, label = { Text(name) })
                 }
-                OutlinedButton(onClick = { touring = false; fly(HOME) }) { Text("Home") }
-                OutlinedButton(onClick = { saved = cameraState.viewpoint }) { Text("Save view") }
-                OutlinedButton(onClick = { touring = false; fly(saved) }) { Text("Saved view") }
+                AssistChip(onClick = { touring = false; fly(HOME) }, label = { Text("Home") })
+                AssistChip(onClick = { saved = cameraState.viewpoint }, label = { Text("Save view") })
+                AssistChip(onClick = { touring = false; fly(saved) }, label = { Text("Go to saved") })
             }
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TRANSITIONS.forEach { choice ->
-                    Button(
-                        onClick = { transition = choice },
-                        colors = if (transition == choice) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
-                    ) { Text(choice.first) }
-                }
-            }
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                PATHS.forEach { choice ->
-                    Button(
-                        onClick = { path = choice },
-                        colors = if (path == choice) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
-                    ) { Text(choice.first) }
-                }
-            }
+            ChoiceRow(TRANSITIONS, transition, label = { it.first }, title = "Timing") { transition = it }
+            ChoiceRow(PATHS, path, label = { it.first }, title = "Path") { path = it }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

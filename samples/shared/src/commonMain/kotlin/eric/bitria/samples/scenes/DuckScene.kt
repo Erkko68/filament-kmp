@@ -3,7 +3,6 @@ package eric.bitria.samples.scenes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
@@ -23,7 +22,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun DuckScene(onBack: () -> Unit) {
+fun DuckScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 2f, 5f),
         initialTarget     = Position(0f),
@@ -49,6 +48,5 @@ fun DuckScene(onBack: () -> Unit) {
                 fitToSize = 2f,
             )
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

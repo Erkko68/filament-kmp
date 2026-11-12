@@ -36,6 +36,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.junit.Assume.assumeTrue
 
 /**
  * What needs a real backend: the frame a view shows, and what a pick hits (NOOP answers every pick with no
@@ -58,9 +59,21 @@ class FilamentViewRealBackendTest {
     }
 
     /** capture() is what the view shows, rows in screen order: red above the centre, blue below, as on screen. */
-    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun captureMatchesTheViewTopToBottom() = withEngine(Engine.Backend.DEFAULT) { engine, setContent ->
+    fun captureMatchesTheViewTopToBottom() = captureMatchesTheView(Engine.Backend.DEFAULT)
+
+    /**
+     * OpenGL too, which web and Android run on. Opt-in with FILAMENT_TEST_OPENGL=1: Filament aborts the process where
+     * it can't create a GL context, as on CI's macOS VMs.
+     */
+    @Test
+    fun captureMatchesTheViewTopToBottomOnOpenGl() {
+        assumeTrue("set FILAMENT_TEST_OPENGL=1 to run on OpenGL", System.getenv("FILAMENT_TEST_OPENGL") == "1")
+        captureMatchesTheView(Engine.Backend.OPENGL)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    private fun captureMatchesTheView(backend: Engine.Backend) = withEngine(backend) { engine, setContent ->
         val viewState = FilamentViewState()
         setContent {
             FilamentSceneView(Modifier.testTag("view").size(64.dp), engine = engine, viewState = viewState,
@@ -81,11 +94,11 @@ class FilamentViewRealBackendTest {
         val screen = onNodeWithTag("view").captureToImage().toPixelMap()
 
         // 10 away under the default 45° vertical lens the view spans ±4.14 in y: the cubes' centres sit at 26% and 74%.
-        for (pixels in listOf(captured, screen)) {
+        for ((name, pixels) in listOf("capture" to captured, "screen" to screen)) {
             val top = pixels[pixels.width / 2, pixels.height * 26 / 100]
             val bottom = pixels[pixels.width / 2, pixels.height * 74 / 100]
-            assertTrue(top.red > 0.6f && top.blue < 0.2f, "the red cube should be above the centre, got $top")
-            assertTrue(bottom.blue > 0.6f && bottom.red < 0.2f, "the blue cube should be below the centre, got $bottom")
+            assertTrue(top.red > 0.6f && top.blue < 0.2f, "$name: the red cube should be above the centre, got $top")
+            assertTrue(bottom.blue > 0.6f && bottom.red < 0.2f, "$name: the blue cube should be below the centre, got $bottom")
         }
     }
 

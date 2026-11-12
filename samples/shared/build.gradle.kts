@@ -50,7 +50,6 @@ kotlin {
             api(libs.filament.compose)
             api(libs.utils)
             api(libs.gltfio)
-            implementation(libs.navigation.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

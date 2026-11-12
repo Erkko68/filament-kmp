@@ -1,17 +1,10 @@
 package eric.bitria.samples.scenes
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,35 +12,32 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraController
-import io.github.erkko68.filament.compose.scene.LinearColor
-import io.github.erkko68.filament.compose.scene.DirectionalLight
-import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Direction
+import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.GltfInstance
+import io.github.erkko68.filament.compose.scene.LightIntensity
+import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.PointLight
 import io.github.erkko68.filament.compose.scene.Position
-import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.ShadowConfig
 import io.github.erkko68.filament.compose.scene.Shadows
+import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.SpotCone
 import io.github.erkko68.filament.compose.scene.SpotLight
 import io.github.erkko68.filament.compose.scene.primitives.Plane
-import io.github.erkko68.filament.compose.scene.Skybox
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.math.cos
 import kotlin.math.sin
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 private enum class LightKind { Directional, Point, Spot }
 
@@ -59,7 +49,7 @@ private enum class LightKind { Directional, Point, Spot }
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun LightingScene(onBack: () -> Unit) {
+fun LightingScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 3f, 7f),
         initialTarget     = Position(0f, 1f, 0f),
@@ -119,55 +109,17 @@ fun LightingScene(onBack: () -> Unit) {
             GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") })
         }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.Black.copy(alpha = 0.45f))
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                LightKind.entries.forEach { k ->
-                    val selected = k == kind
-                    Button(
-                        onClick = { kind = k },
-                        colors = if (selected) ButtonDefaults.buttonColors()
-                                 else ButtonDefaults.outlinedButtonColors(),
-                    ) { Text(k.name) }
-                }
-            }
+        ControlPanel {
+            ChoiceRow(LightKind.entries, kind, label = { it.name }) { kind = it }
             LabeledSlider("Intensity", intensity, 0f..1f) { intensity = it }
+            if (kind != LightKind.Point) LabeledSlider("Azimuth", azimuth, 0f..6.28f) { azimuth = it }
+            if (kind == LightKind.Spot) LabeledSlider("Cone", coneOuter, 0.15f..1.4f) { coneOuter = it }
             if (kind != LightKind.Point) {
-                LabeledSlider("Azimuth", azimuth, 0f..6.28f) { azimuth = it }
-            }
-            if (kind == LightKind.Spot) {
-                LabeledSlider("Cone", coneOuter, 0.15f..1.4f) { coneOuter = it }
-            }
-            if (kind != LightKind.Point) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Shadows", color = Color.White)
-                    Switch(checked = shadows, onCheckedChange = { shadows = it })
-                    Text("Soft (PCSS)", color = Color.White)
-                    Switch(checked = soft, onCheckedChange = { soft = it }, enabled = shadows)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected = shadows, onClick = { shadows = !shadows }, label = { Text("Shadows") })
+                    FilterChip(selected = soft, onClick = { soft = !soft }, enabled = shadows, label = { Text("Soft (PCSS)") })
                 }
             }
         }
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
-    }
-}
-
-@Composable
-private fun LabeledSlider(
-    label: String,
-    value: Float,
-    range: ClosedFloatingPointRange<Float>,
-    onValueChange: (Float) -> Unit,
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(label, color = Color.White, modifier = Modifier.padding(end = 12.dp))
-        Slider(value = value, onValueChange = onValueChange, valueRange = range)
     }
 }

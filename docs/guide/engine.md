@@ -19,9 +19,9 @@ Use this path when you are:
 ```kotlin
 // build.gradle.kts — no Compose plugin required
 commonMain.dependencies {
-    implementation("io.github.erkko68.filament:filament:0.9.0")
-    implementation("io.github.erkko68.filament:gltfio:0.9.0")        // optional
-    implementation("io.github.erkko68.filament:filament-utils:0.9.0") // optional
+    implementation("io.github.erkko68.filament:filament:0.10.0")
+    implementation("io.github.erkko68.filament:gltfio:0.10.0")        // optional
+    implementation("io.github.erkko68.filament:filament-utils:0.10.0") // optional
 }
 ```
 
@@ -141,8 +141,7 @@ Two things that bite:
 
 - **Render a few frames before the one you keep.** Shader compilation and the shadow /
   post-processing passes need a frame or two to settle; the very first frame can be blank.
-- **Row order is backend-dependent.** Metal delivers rows top-down, OpenGL bottom-up.
-  Flip according to `engine.backend` if you're writing a PNG.
+- **Rows run top-down** on every backend, as a PNG expects; no flip needed.
 
 The same pattern drives this repo's own rendering tests — see
 [`FrameProbe`](../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/FrameProbe.kt)

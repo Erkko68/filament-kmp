@@ -64,9 +64,8 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
 
     /**
      * Renders [frames] frames (a few, so program compilation and shadow-map passes
-     * settle) and reads the last one back as RGBA8. Row order is backend-dependent:
-     * Metal delivers rows top-down, OpenGL bottom-up (GL convention) — pinned by
-     * FrameSemanticsTest.readPixelsRowOrderMatchesBackendConvention.
+     * settle) and reads the last one back as RGBA8, rows top-down on every backend
+     * (FrameSemanticsTest.readPixelsRowsRunTopDown).
      * Returns null only if the backend never delivered the async readback.
      */
     fun renderAndRead(frames: Int = 3): ByteArray? {

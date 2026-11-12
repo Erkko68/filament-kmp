@@ -10,8 +10,15 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-11-12
+
+Filament 1.80.1, and `filament-compose` screens load with far less UI stall: textures and HDR environments decode off the main thread.
+
+> [!WARNING]
+> **Recompile your materials** — `MATERIAL_VERSION` 79 → 80. Any `.filamat` you ship must be rebuilt with 1.80.1's `matc`; the engine rejects blobs from another version. The built-in `StandardMaterial`s ship recompiled.
+
 ### Added
-- **New sample**: Particles, a CPU-simulated spark fountain drawn with instancing and a float data texture.
+- **Samples**: a new Particles sample (instancing and a float data texture); the app opens straight into a scene and switches samples from a side menu.
 - **`View.motionVectorsOptions`** (`filament`): a motion vectors pass TAA uses to reproject moving objects, cutting ghosting; off by default.
 - **`UserVariantFilterBit.MOTION_VECTORS`** (`filament`): filters the new motion vectors variants; `ALL` is now `0x1FF`.
 - **`MaterialKey` retroreflection fields** (`gltfio`) and **`MaterialBuilder.isDefaultMaterial`** (`filamat`), new in Filament 1.80.1.
@@ -21,10 +28,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Filament 1.80.1** upstream; `MATERIAL_VERSION` is now 80, so recompile every `.filamat` with matc 1.80.1.
 - **Loading a screen stalls the UI far less** (`filament-compose`, except on web): a model, material, four textures and an HDR environment landing together went from 122 ms to 24 ms on desktop.
 - **`rememberTexture` and `rememberHdrEnvironment` decode off the main thread, in parallel** (`filament-compose`, except on web): a 4K PNG stalls the UI for under 1 ms instead of 170 ms, and on desktop and iOS four 2K textures are ready three times sooner.
-
 - **Upstream Filament is a `filament` submodule** (build): reference only, the build doesn't use it. `upgrade-diff.sh` reads it, reports toolchain pin changes, and drops the private clone, `--summary`, `--output` and the Android Java diff.
 
 ### Fixed
+- **Upright on OpenGL** (`filament-compose`): `capture()` came back upside down on web and Android, and so did a desktop `FilamentView` on OpenGL.
 - **`rememberHdrEnvironment` no longer blocks until the backend has finished the prefilter** (`filament-compose`): the first load stalled the UI for 1.4 s on an Android emulator, now one frame or less.
 - **`AnimationState.seek` right after a new `animationIndex` seeks the new clip** (`filament-compose`): it was reset to 0 on the next frame; `isTransitioning` also clears when the index goes null mid-fade.
 - **`AnimationTrack.isFinished` works at a negative `speed`** (`filament-compose`): a one-shot playing backwards finishes at its start.
@@ -644,7 +651,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.9.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/Erkko68/filament-kmp/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/Erkko68/filament-kmp/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/Erkko68/filament-kmp/compare/0.7.3...0.8.0
 [0.7.3]: https://github.com/Erkko68/filament-kmp/compare/0.7.2...0.7.3

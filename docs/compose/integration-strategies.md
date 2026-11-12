@@ -48,7 +48,7 @@ Compose Desktop has no public API to embed a native surface inside its Skia canv
 1. **Readable headless SwapChain**: Filament renders into a swap chain created with the `READABLE` config flag.
 2. **Readback into Skia memory**: `Renderer.readPixels` writes each frame straight into a fresh block of Skia-managed memory (`Data`), with no intermediate `ByteArray`. Up to two readbacks are in flight, keeping the copy pipelined with rendering; completion may fire on Filament's backend thread and hands the newest frame to the UI thread atomically.
 3. **Skia Image**: the `Data` overload of `Image.makeRaster` wraps the pixels without copying them. The image keeps its memory alive, so a frame outlives the swap chain that produced it (e.g. across a resize).
-4. **Row order**: `readPixels` row order is backend-dependent (Metal top-down, OpenGL bottom-up), so the draw flips vertically on OpenGL (pinned by the `readPixelsRowOrderMatchesBackendConvention` Tier C test).
+4. **Row order**: `readPixels` rows run top-down on every backend, so the frame is drawn as read (pinned by the `readPixelsRowsRunTopDown` Tier C test).
 
 ### Experimental: GPU-to-GPU frame sharing
 

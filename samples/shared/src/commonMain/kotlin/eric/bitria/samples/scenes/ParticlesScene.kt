@@ -3,7 +3,6 @@ package eric.bitria.samples.scenes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.Material
@@ -138,7 +137,7 @@ private fun FilamentSceneScope.Fountain(material: Material) {
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ParticlesScene(onBack: () -> Unit) {
+fun ParticlesScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 2.5f, 7f),
         initialTarget     = Position(0f, 1f, 0f),
@@ -164,6 +163,5 @@ fun ParticlesScene(onBack: () -> Unit) {
             )
             rememberMaterial { Res.readBytes("files/materials/particles.filamat") }?.let { Fountain(it) }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
