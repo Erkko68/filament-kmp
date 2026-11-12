@@ -19,9 +19,6 @@ internal interface OffscreenTarget : AutoCloseable {
      * current one. The caller owns the returned [Image]; it outlives this target.
      */
     fun renderFrame(renderer: Renderer, view: View, frameTimeNanos: Long): Image?
-
-    /** Whether the returned images' rows run bottom-up, so they must be drawn flipped. */
-    val bottomUp: Boolean get() = false
 }
 
 internal fun OffscreenTarget(engine: Engine, window: Window?, width: Int, height: Int, transparent: Boolean): OffscreenTarget {
@@ -49,8 +46,6 @@ internal class FallbackOffscreenTarget(
     private val readback: () -> OffscreenTarget,
 ) : OffscreenTarget {
     private var onGpu = true
-
-    override val bottomUp: Boolean get() = current.bottomUp
 
     override fun renderFrame(renderer: Renderer, view: View, frameTimeNanos: Long): Image? {
         if (onGpu && !GpuFrameSharing.enabled) fallBack()

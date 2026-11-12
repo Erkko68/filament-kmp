@@ -141,8 +141,7 @@ Two things that bite:
 
 - **Render a few frames before the one you keep.** Shader compilation and the shadow /
   post-processing passes need a frame or two to settle; the very first frame can be blank.
-- **Row order is backend-dependent.** Metal delivers rows top-down, OpenGL bottom-up.
-  Flip according to `engine.backend` if you're writing a PNG.
+- **Rows run top-down** on every backend, as a PNG expects; no flip needed.
 
 The same pattern drives this repo's own rendering tests — see
 [`FrameProbe`](../../kotlin/filament/src/commonTest/kotlin/io/github/erkko68/filament/testutils/FrameProbe.kt)

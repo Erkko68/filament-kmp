@@ -7,7 +7,6 @@ import io.github.erkko68.filament.testsupport.meanAbsoluteDifference
 import io.github.erkko68.filament.testsupport.regionStats
 import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -113,14 +112,11 @@ class FrameSemanticsTest : RealBackendFixture() {
     }
 
     /**
-     * Pins the readPixels row order, which is backend-dependent: Metal delivers rows
-     * top-down, OpenGL bottom-up (GL convention). The JVM compose surface keys its
-     * vertical flip off this. The caster is shifted to world +Z — screen top, since the
-     * camera looks down -Y with up = +Z — so the convention decides which rows it fills.
-     * Vulkan/WebGPU are unverified; running there makes this test pin them too.
+     * readPixels rows run top-down on every backend, which the JVM compose surface and capture() rely on.
+     * The caster is shifted to world +Z — screen top, since the camera looks down -Y with up = +Z.
      */
     @Test
-    fun readPixelsRowOrderMatchesBackendConvention() = withProbe { engine, probe ->
+    fun readPixelsRowsRunTopDown() = withProbe { engine, probe ->
         // Caster at y=1, cz=0.8 spans z 0.3..1.3; visible half-extent at that height is
         // tan(22.5°)·4 ≈ 1.66, so it covers screen-y fractions ≈ 0.59..0.89 of the top half.
         litScene(engine, probe, shadows = false, casterCz = 0.8f)
@@ -132,11 +128,8 @@ class FrameSemanticsTest : RealBackendFixture() {
         val lowIsRed = lowRows.meanR > lowRows.meanB * 1.5
         assertTrue(highIsRed != lowIsRed, "ambiguous readback: high=$highRows low=$lowRows")
 
-        val expectTopDown = engine.backend == Engine.Backend.METAL
-        assertEquals(
-            expectTopDown, lowIsRed,
-            "readPixels row order changed for ${engine.backend}: high=$highRows low=$lowRows",
-        )
+        // Renderer.h: rows run top-down on every backend; the GL driver flips glReadPixels' bottom-up rows.
+        assertTrue(lowIsRed, "readPixels rows should run top-down on ${engine.backend}: high=$highRows low=$lowRows")
     }
 
     private fun assertShadowPresent(pixels: ByteArray, probe: FrameProbe, technique: String) {

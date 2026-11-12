@@ -61,7 +61,7 @@ class FilamentViewRealBackendTest {
     @Test
     fun captureMatchesTheViewTopToBottom() = captureMatchesTheView(Engine.Backend.DEFAULT)
 
-    /** GL reads a render target back in a different row order than a swap chain; web and Android run on it. */
+    /** OpenGL too, which web and Android run on and the CI hosts with a GPU don't. */
     @Test
     fun captureMatchesTheViewTopToBottomOnOpenGl() = captureMatchesTheView(Engine.Backend.OPENGL)
 
@@ -87,9 +87,7 @@ class FilamentViewRealBackendTest {
         val screen = onNodeWithTag("view").captureToImage().toPixelMap()
 
         // 10 away under the default 45° vertical lens the view spans ±4.14 in y: the cubes' centres sit at 26% and 74%.
-        // ponytail: a desktop view on OpenGL shows upside down (its readback flips once too often); only capture is checked there.
-        val images = if (backend == Engine.Backend.OPENGL) listOf("capture" to captured) else listOf("capture" to captured, "screen" to screen)
-        for ((name, pixels) in images) {
+        for ((name, pixels) in listOf("capture" to captured, "screen" to screen)) {
             val top = pixels[pixels.width / 2, pixels.height * 26 / 100]
             val bottom = pixels[pixels.width / 2, pixels.height * 74 / 100]
             assertTrue(top.red > 0.6f && top.blue < 0.2f, "$name: the red cube should be above the centre, got $top")
