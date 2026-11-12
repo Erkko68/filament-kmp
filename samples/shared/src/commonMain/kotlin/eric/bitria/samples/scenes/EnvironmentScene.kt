@@ -38,14 +38,14 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun KTXEnvironmentScene(onBack: () -> Unit) {
+fun KTXEnvironmentScene() {
     val engine = rememberFilamentEngine()
     val environment = rememberKtxEnvironment(
         engine = engine,
         ibl    = { Res.readBytes("files/environment/lightroom_ibl.ktx") },
         skybox = { Res.readBytes("files/environment/lightroom_skybox.ktx") },
     )
-    EnvironmentSceneContent(onBack, engine, environment, source = "KTX (baked)")
+    EnvironmentSceneContent(engine, environment, source = "KTX (baked)")
 }
 
 /**
@@ -54,7 +54,7 @@ fun KTXEnvironmentScene(onBack: () -> Unit) {
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun HDREnvironmentScene(onBack: () -> Unit) {
+fun HDREnvironmentScene() {
     val engine = rememberFilamentEngine()
     // Surface a failed decode via onError and show a notice instead of an empty scene.
     var failed by remember { mutableStateOf(false) }
@@ -65,21 +65,19 @@ fun HDREnvironmentScene(onBack: () -> Unit) {
 
     if (failed) {
         UnsupportedNotice(
-            onBack = onBack,
             message = "Couldn't decode the HDR environment. " +
                 "See the KTX environment sample for a pre-baked equivalent.",
         )
     } else {
-        EnvironmentSceneContent(onBack, engine, environment, source = "HDR (runtime)")
+        EnvironmentSceneContent(engine, environment, source = "HDR (runtime)")
     }
 }
 
-/** Centered message + back button shown when a sample can't run on the current platform. */
+/** Centered message shown when a sample can't run on the current platform. */
 @Composable
-private fun UnsupportedNotice(onBack: () -> Unit, message: String) {
+private fun UnsupportedNotice(message: String) {
     Box(Modifier.fillMaxSize()) {
         Text(message, Modifier.align(Alignment.Center).padding(32.dp))
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
 
@@ -90,7 +88,6 @@ private fun UnsupportedNotice(onBack: () -> Unit, message: String) {
  */
 @Composable
 private fun EnvironmentSceneContent(
-    onBack: () -> Unit,
     engine: Engine,
     environment: Environment,
     source: String,
@@ -122,7 +119,5 @@ private fun EnvironmentSceneContent(
             Text("Source: $source   ·   IBL intensity: ${intensity.toInt()}")
             Slider(value = intensity, onValueChange = { intensity = it }, valueRange = 0f..80_000f)
         }
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

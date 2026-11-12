@@ -59,7 +59,7 @@ private enum class LightKind { Directional, Point, Spot }
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun LightingScene(onBack: () -> Unit) {
+fun LightingScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 3f, 7f),
         initialTarget     = Position(0f, 1f, 0f),
@@ -154,8 +154,6 @@ fun LightingScene(onBack: () -> Unit) {
                 }
             }
         }
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
 

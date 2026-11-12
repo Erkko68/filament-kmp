@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
@@ -53,7 +52,7 @@ private val PLANETS = listOf(
  * on its own axis. Every animated transform is just `time` plugged into `sin`/`cos`.
  */
 @Composable
-fun SolarScene(onBack: () -> Unit) {
+fun SolarScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 4f, 9f),
         initialTarget     = Position(0f, 0f, 0f),
@@ -119,6 +118,5 @@ fun SolarScene(onBack: () -> Unit) {
                 }
             }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

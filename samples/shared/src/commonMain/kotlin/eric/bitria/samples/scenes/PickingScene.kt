@@ -42,7 +42,7 @@ private val DUCK_POSITIONS = listOf(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun PickingScene(onBack: () -> Unit) {
+fun PickingScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 4f, 5f),
         initialTarget     = Position(0f, 0f, 0f),
@@ -72,7 +72,6 @@ fun PickingScene(onBack: () -> Unit) {
                 )
             }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
         Text(
             text     = if (lastTapped >= 0) "Duck #${lastTapped + 1}" else "Tap a duck",
             style    = MaterialTheme.typography.titleMedium,

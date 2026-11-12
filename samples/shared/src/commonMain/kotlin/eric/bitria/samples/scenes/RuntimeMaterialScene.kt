@@ -77,7 +77,7 @@ private fun compile(engine: Engine, pattern: String): Pair<ByteArray, Long> {
 }
 
 @Composable
-fun RuntimeMaterialScene(onBack: () -> Unit) {
+fun RuntimeMaterialScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 0f, 4f),
         initialTarget     = Position(0f, 0f, 0f),
@@ -105,7 +105,6 @@ fun RuntimeMaterialScene(onBack: () -> Unit) {
             )
             Sphere(material = rememberMaterialInstance(material), radius = 1f)
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
         Column(
             modifier = Modifier.align(Alignment.BottomCenter).padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

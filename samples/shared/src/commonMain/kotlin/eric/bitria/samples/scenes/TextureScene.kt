@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.TextureSampler
@@ -33,7 +32,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun TextureScene(onBack: () -> Unit) {
+fun TextureScene() {
     val engine = rememberFilamentEngine()
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 0f, 3f),
@@ -74,6 +73,5 @@ fun TextureScene(onBack: () -> Unit) {
                 Sphere(material = instance, radius = 1f)
             }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

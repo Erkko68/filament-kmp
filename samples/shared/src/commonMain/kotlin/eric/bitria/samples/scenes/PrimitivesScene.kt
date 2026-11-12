@@ -45,7 +45,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 
 @Composable
-fun PrimitivesScene(onBack: () -> Unit) {
+fun PrimitivesScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 2.5f, 6f),
         initialTarget     = Position(0f, 0.5f, 0f),
@@ -103,7 +103,6 @@ fun PrimitivesScene(onBack: () -> Unit) {
                 colors = if (sun) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
             ) { Text("Sun") }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
 

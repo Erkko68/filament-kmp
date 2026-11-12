@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun SplitViewScene(onBack: () -> Unit) {
+fun SplitViewScene() {
     val leftCamera = rememberCameraState(
         initialEye        = Position(0f, 2f, 5f),
         initialTarget     = Position(0f, 0.5f, 0f),
@@ -98,7 +98,6 @@ fun SplitViewScene(onBack: () -> Unit) {
                 )
             }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
 

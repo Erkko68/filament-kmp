@@ -91,7 +91,7 @@ private val PATHS = listOf(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun CameraTourScene(onBack: () -> Unit) {
+fun CameraTourScene() {
     val cameraState = rememberCameraState(
         initialEye        = HOME.eye,
         initialTarget     = HOME.target,
@@ -190,6 +190,5 @@ fun CameraTourScene(onBack: () -> Unit) {
                 }
             }
         }
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

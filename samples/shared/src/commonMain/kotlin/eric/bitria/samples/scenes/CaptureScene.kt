@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 /** `FilamentViewState.capture()` shown beside the live view, over a shadow-catcher ground that shows only the shadows. */
 @Composable
-fun CaptureScene(onBack: () -> Unit) {
+fun CaptureScene() {
     val cameraState = rememberCameraState(initialEye = Position(0f, 2f, 6f), initialTarget = Position(0f, 0.8f, 0f))
     val viewState = rememberFilamentViewState()
     val scope = rememberCoroutineScope()
@@ -71,7 +71,5 @@ fun CaptureScene(onBack: () -> Unit) {
                 Text("${it.width}×${it.height}", color = Color.White)
             }
         }
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

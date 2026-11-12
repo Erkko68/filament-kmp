@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun TransparentScene(onBack: () -> Unit) {
+fun TransparentScene() {
     var transparent by remember { mutableStateOf(true) }
 
     val cameraState = rememberCameraState(
@@ -130,7 +130,5 @@ fun TransparentScene(onBack: () -> Unit) {
                 )
             }
         }
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

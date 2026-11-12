@@ -50,7 +50,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun AnimationScene(onBack: () -> Unit) {
+fun AnimationScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 1.2f, 3.2f),
         initialTarget     = Position(0f, 0.8f, 0f),
@@ -128,7 +128,5 @@ fun AnimationScene(onBack: () -> Unit) {
                 modifier = Modifier.align(Alignment.Center).padding(horizontal = 64.dp).fillMaxWidth(),
             )
         }
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }

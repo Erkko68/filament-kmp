@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -37,7 +36,7 @@ private val CYLINDER = Position( 0f, 0.6f, -2f)
 
 /** Compose UI pinned to 3D points with `Modifier.anchorTo`: orbit and the labels follow their objects. */
 @Composable
-fun LabelsScene(onBack: () -> Unit) {
+fun LabelsScene() {
     val cameraState = rememberCameraState(
         initialEye        = Position(0f, 2.5f, 6f),
         initialTarget     = Position(0f, 0.5f, 0f),
@@ -65,8 +64,6 @@ fun LabelsScene(onBack: () -> Unit) {
         Label("Cube", Modifier.anchorTo(cameraState, Position(CUBE.x, 1.3f, CUBE.z)))
         Label("Sphere", Modifier.anchorTo(cameraState, Position(SPHERE.x, 1.3f, SPHERE.z)))
         Label("Cylinder", Modifier.anchorTo(cameraState, Position(CYLINDER.x, 1.6f, CYLINDER.z)))
-
-        BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
 
