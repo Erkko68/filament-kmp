@@ -140,6 +140,7 @@ class MaterialBuilderTest : FilamatTestFixture() {
             .shadowFarAttenuation(true)
             .vertexDomainDeviceJittered(true)
             .useDefaultDepthVariant()
+            .isDefaultMaterial()
             .stereoscopicType(Engine.StereoscopicType.INSTANCED)
             .stereoscopicEyeCount(2)
             .workarounds(MaterialBuilder.Workarounds.NONE)

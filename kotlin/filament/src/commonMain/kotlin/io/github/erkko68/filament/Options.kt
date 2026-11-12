@@ -813,6 +813,17 @@ class GuardBandOptions {
 }
 
 /**
+ * Options for the motion vectors pass, which TAA uses to reproject moving objects.
+ *
+ * Generated only with post-processing on, stereo off, feature level 1+ and RG16F render target support.
+ * Captures rigid renderable and camera motion; skinning, morphing and the VIEW/DEVICE vertex domains are not.
+ */
+class MotionVectorsOptions {
+    /** Enables the motion vectors pass. Default: false. */
+    var enabled: Boolean = false
+}
+
+/**
  * Options for stereoscopic (multi-eye) rendering.
  *
  * Used for VR and other multi-view rendering scenarios.

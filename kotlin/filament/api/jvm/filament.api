@@ -1687,6 +1687,12 @@ public final class io/github/erkko68/filament/MorphTargetBuffer$Builder {
 	public static synthetic fun withTangents$default (Lio/github/erkko68/filament/MorphTargetBuffer$Builder;ZILjava/lang/Object;)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 }
 
+public final class io/github/erkko68/filament/MotionVectorsOptions {
+	public fun <init> ()V
+	public final fun getEnabled ()Z
+	public final fun setEnabled (Z)V
+}
+
 public final class io/github/erkko68/filament/MultiSampleAntiAliasingOptions {
 	public fun <init> ()V
 	public final fun getCustomResolve ()Z
@@ -2845,6 +2851,7 @@ public final class io/github/erkko68/filament/UserVariantFilterBit {
 	public static final field DYNAMIC_LIGHTING I
 	public static final field FOG I
 	public static final field INSTANCE Lio/github/erkko68/filament/UserVariantFilterBit;
+	public static final field MOTION_VECTORS I
 	public static final field SHADOW_RECEIVER I
 	public static final field SKINNING I
 	public static final field SSR I
@@ -2970,6 +2977,7 @@ public final class io/github/erkko68/filament/View {
 	public final fun getHasCamera ()Z
 	public final fun getLastDynamicResolutionScale ()[F
 	public final fun getMaterialGlobal (I)[F
+	public final fun getMotionVectorsOptions ()Lio/github/erkko68/filament/MotionVectorsOptions;
 	public final fun getMultiSampleAntiAliasingOptions ()Lio/github/erkko68/filament/MultiSampleAntiAliasingOptions;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getNativeObject ()J
@@ -3013,6 +3021,7 @@ public final class io/github/erkko68/filament/View {
 	public final fun setGuardBandOptions (Lio/github/erkko68/filament/GuardBandOptions;)V
 	public final fun setLayerEnabled (IZ)V
 	public final fun setMaterialGlobal (I[F)V
+	public final fun setMotionVectorsOptions (Lio/github/erkko68/filament/MotionVectorsOptions;)V
 	public final fun setMultiSampleAntiAliasingOptions (Lio/github/erkko68/filament/MultiSampleAntiAliasingOptions;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setPostProcessingEnabled (Z)V

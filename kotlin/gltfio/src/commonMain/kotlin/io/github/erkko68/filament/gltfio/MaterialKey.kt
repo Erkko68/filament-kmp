@@ -108,6 +108,12 @@ data class MaterialKey(
     var specularTextureUV: Int = 0,
     /** glTF texcoord set index for the specular color texture. */
     var specularColorTextureUV: Int = 0,
+    /** Retroreflection is enabled (`KHR_materials_retroreflection`). */
+    var hasRetroreflection: Boolean = false,
+    /** A retroreflection texture is bound. */
+    var hasRetroreflectionTexture: Boolean = false,
+    /** glTF texcoord set index for the retroreflection texture. */
+    var retroreflectionUV: Int = 0,
 ) {
     /** [hasMetallicRoughnessTexture] under its specular-glossiness name: the same bit in C++'s union. */
     var hasSpecularGlossinessTexture: Boolean
@@ -201,6 +207,9 @@ internal fun MaterialKey.writeTo(k: NativePointer) {
     FilaGltfioMaterialKey_setHasSpecularColorTexture(k, hasSpecularColorTexture)
     FilaGltfioMaterialKey_setSpecularTextureUV(k, specularTextureUV)
     FilaGltfioMaterialKey_setSpecularColorTextureUV(k, specularColorTextureUV)
+    FilaGltfioMaterialKey_setHasRetroreflection(k, hasRetroreflection)
+    FilaGltfioMaterialKey_setHasRetroreflectionTexture(k, hasRetroreflectionTexture)
+    FilaGltfioMaterialKey_setRetroreflectionUV(k, retroreflectionUV)
 }
 
 @PublishedApi
@@ -247,4 +256,7 @@ internal fun MaterialKey.readFrom(k: NativePointer) {
     hasSpecularColorTexture = FilaGltfioMaterialKey_getHasSpecularColorTexture(k)
     specularTextureUV = FilaGltfioMaterialKey_getSpecularTextureUV(k)
     specularColorTextureUV = FilaGltfioMaterialKey_getSpecularColorTextureUV(k)
+    hasRetroreflection = FilaGltfioMaterialKey_getHasRetroreflection(k)
+    hasRetroreflectionTexture = FilaGltfioMaterialKey_getHasRetroreflectionTexture(k)
+    retroreflectionUV = FilaGltfioMaterialKey_getRetroreflectionUV(k)
 }

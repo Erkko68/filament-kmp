@@ -348,6 +348,14 @@ void FilaGltfioMaterialKey_setHasSpecularColorTexture(FilaGltfioMaterialKey* sel
     fila::cpp(self)->hasSpecularColorTexture = value;
 }
 
+bool FilaGltfioMaterialKey_getHasRetroreflection(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(self)->hasRetroreflection;
+}
+
+void FilaGltfioMaterialKey_setHasRetroreflection(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(self)->hasRetroreflection = value;
+}
+
 uint32_t FilaGltfioMaterialKey_getSpecularTextureUV(const FilaGltfioMaterialKey* self) {
     return static_cast<uint32_t>(fila::cpp(self)->specularTextureUV);
 }
@@ -362,6 +370,22 @@ uint32_t FilaGltfioMaterialKey_getSpecularColorTextureUV(const FilaGltfioMateria
 
 void FilaGltfioMaterialKey_setSpecularColorTextureUV(FilaGltfioMaterialKey* self, uint32_t value) {
     fila::cpp(self)->specularColorTextureUV = static_cast<uint8_t>(value);
+}
+
+bool FilaGltfioMaterialKey_getHasRetroreflectionTexture(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(self)->hasRetroreflectionTexture;
+}
+
+void FilaGltfioMaterialKey_setHasRetroreflectionTexture(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(self)->hasRetroreflectionTexture = value;
+}
+
+uint32_t FilaGltfioMaterialKey_getRetroreflectionUV(const FilaGltfioMaterialKey* self) {
+    return static_cast<uint32_t>(fila::cpp(self)->retroreflectionUV);
+}
+
+void FilaGltfioMaterialKey_setRetroreflectionUV(FilaGltfioMaterialKey* self, uint32_t value) {
+    fila::cpp(self)->retroreflectionUV = static_cast<uint8_t>(value);
 }
 
 } // extern "C"

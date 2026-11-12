@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.1"
 android-compileSdk = "37"
 android-minSdk = "24"
 # Android bytecode level — the conventional Android target; higher values break inlining

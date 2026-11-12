@@ -262,6 +262,12 @@ internal external fun FilaGltfioMaterialKey_getHasSpecularColorTexture(self: Nat
 @ExternalSymbolName("FilaGltfioMaterialKey_setHasSpecularColorTexture")
 internal external fun FilaGltfioMaterialKey_setHasSpecularColorTexture(self: NativePointer, value: Boolean)
 
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasRetroreflection")
+internal external fun FilaGltfioMaterialKey_getHasRetroreflection(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasRetroreflection")
+internal external fun FilaGltfioMaterialKey_setHasRetroreflection(self: NativePointer, value: Boolean)
+
 @ExternalSymbolName("FilaGltfioMaterialKey_getSpecularTextureUV")
 internal external fun FilaGltfioMaterialKey_getSpecularTextureUV(self: NativePointer): Int
 
@@ -273,3 +279,15 @@ internal external fun FilaGltfioMaterialKey_getSpecularColorTextureUV(self: Nati
 
 @ExternalSymbolName("FilaGltfioMaterialKey_setSpecularColorTextureUV")
 internal external fun FilaGltfioMaterialKey_setSpecularColorTextureUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasRetroreflectionTexture")
+internal external fun FilaGltfioMaterialKey_getHasRetroreflectionTexture(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasRetroreflectionTexture")
+internal external fun FilaGltfioMaterialKey_setHasRetroreflectionTexture(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getRetroreflectionUV")
+internal external fun FilaGltfioMaterialKey_getRetroreflectionUV(self: NativePointer): Int
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setRetroreflectionUV")
+internal external fun FilaGltfioMaterialKey_setRetroreflectionUV(self: NativePointer, value: Int)

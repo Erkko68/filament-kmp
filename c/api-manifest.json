@@ -88,6 +88,7 @@
 {"name":"FilaFilamatMaterialBuilder_useLegacyMorphing","returns":"ptr","params":[["self","ptr"]]},
 {"name":"FilaFilamatMaterialBuilder_groupSize","returns":"ptr","params":[["self","ptr"],["groupSize","ptr"]]},
 {"name":"FilaFilamatMaterialBuilder_useDefaultDepthVariant","returns":"ptr","params":[["self","ptr"]]},
+{"name":"FilaFilamatMaterialBuilder_isDefaultMaterial","returns":"ptr","params":[["self","ptr"],["isDefault","bool"]]},
 {"name":"FilaFilamatMaterialBuilder_materialSource","returns":"ptr","params":[["self","ptr"],["source","ptr"]]},
 {"name":"FilaFilamatMaterialBuilder_setApiLevel","returns":"ptr","params":[["self","ptr"],["apiLevel","i32"]]},
 {"name":"FilaFilamatMaterialBuilder_getAttributeDatabase","returns":"i32","params":[["out","ptr"],["outCapacity","i32"]]}
@@ -1377,6 +1378,12 @@
 {"name":"FilaMorphTargetBuffer_hasTangents","returns":"bool","params":[["self","ptr"]]},
 {"name":"FilaMorphTargetBuffer_isCustomMorphingEnabled","returns":"bool","params":[["self","ptr"]]}
 ],
+"filament/generated/FilaMotionVectorsOptions.h": [
+{"name":"FilaMotionVectorsOptions_create","returns":"ptr","params":[]},
+{"name":"FilaMotionVectorsOptions_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"FilaMotionVectorsOptions_getEnabled","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaMotionVectorsOptions_setEnabled","returns":"void","params":[["self","ptr"],["value","bool"]]}
+],
 "filament/generated/FilaMultiSampleAntiAliasingOptions.h": [
 {"name":"FilaMultiSampleAntiAliasingOptions_create","returns":"ptr","params":[]},
 {"name":"FilaMultiSampleAntiAliasingOptions_destroy","returns":"void","params":[["self","ptr"]]},
@@ -1926,6 +1933,8 @@
 {"name":"FilaView_getScreenSpaceReflectionsOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"FilaView_setGuardBandOptions","returns":"void","params":[["self","ptr"],["options","ptr"]]},
 {"name":"FilaView_getGuardBandOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
+{"name":"FilaView_setMotionVectorsOptions","returns":"void","params":[["self","ptr"],["options","ptr"]]},
+{"name":"FilaView_getMotionVectorsOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"FilaView_setMultiSampleAntiAliasingOptions","returns":"void","params":[["self","ptr"],["options","ptr"]]},
 {"name":"FilaView_getMultiSampleAntiAliasingOptions","returns":"void","params":[["self","ptr"],["out","ptr"]]},
 {"name":"FilaView_setColorGrading","returns":"void","params":[["self","ptr"],["colorGrading","ptr"]]},
@@ -2235,10 +2244,16 @@
 {"name":"FilaGltfioMaterialKey_setHasSpecularTexture","returns":"void","params":[["self","ptr"],["value","bool"]]},
 {"name":"FilaGltfioMaterialKey_getHasSpecularColorTexture","returns":"bool","params":[["self","ptr"]]},
 {"name":"FilaGltfioMaterialKey_setHasSpecularColorTexture","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"FilaGltfioMaterialKey_getHasRetroreflection","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaGltfioMaterialKey_setHasRetroreflection","returns":"void","params":[["self","ptr"],["value","bool"]]},
 {"name":"FilaGltfioMaterialKey_getSpecularTextureUV","returns":"i32","params":[["self","ptr"]]},
 {"name":"FilaGltfioMaterialKey_setSpecularTextureUV","returns":"void","params":[["self","ptr"],["value","i32"]]},
 {"name":"FilaGltfioMaterialKey_getSpecularColorTextureUV","returns":"i32","params":[["self","ptr"]]},
-{"name":"FilaGltfioMaterialKey_setSpecularColorTextureUV","returns":"void","params":[["self","ptr"],["value","i32"]]}
+{"name":"FilaGltfioMaterialKey_setSpecularColorTextureUV","returns":"void","params":[["self","ptr"],["value","i32"]]},
+{"name":"FilaGltfioMaterialKey_getHasRetroreflectionTexture","returns":"bool","params":[["self","ptr"]]},
+{"name":"FilaGltfioMaterialKey_setHasRetroreflectionTexture","returns":"void","params":[["self","ptr"],["value","bool"]]},
+{"name":"FilaGltfioMaterialKey_getRetroreflectionUV","returns":"i32","params":[["self","ptr"]]},
+{"name":"FilaGltfioMaterialKey_setRetroreflectionUV","returns":"void","params":[["self","ptr"],["value","i32"]]}
 ],
 "gltfio/generated/FilaGltfioMaterialProvider.h": [
 {"name":"FilaGltfioMaterialProvider_destroy","returns":"void","params":[["self","ptr"]]},

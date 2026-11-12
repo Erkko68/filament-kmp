@@ -1,12 +1,12 @@
 name: Setup Gradle (cached)
 description: |
-  Wraps gradle/actions/setup-gradle@v4 with our cache size/scope tuning.
+  Wraps gradle/actions/setup-gradle@v6 with our cache size/scope tuning.
   Single source of truth — change cache policy here, not in every workflow.
 
 runs:
   using: composite
   steps:
-    - uses: gradle/actions/setup-gradle@v4
+    - uses: gradle/actions/setup-gradle@v6
       # PRs/feature branches are read-only by default (cache-read-only); only main writes.
       with:
         # Compact the Gradle user home before tar-and-upload so the cache reflects only

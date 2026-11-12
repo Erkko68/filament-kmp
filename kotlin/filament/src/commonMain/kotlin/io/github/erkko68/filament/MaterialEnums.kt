@@ -55,6 +55,8 @@ object UserVariantFilterBit {
     const val SSR: Int = 0x40
     /** Instanced stereo rendering */
     const val STE: Int = 0x80
+    /** Motion vectors */
+    const val MOTION_VECTORS: Int = 0x100
     /** All variants */
-    const val ALL: Int = 0xFF
+    const val ALL: Int = 0x1FF
 }

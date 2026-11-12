@@ -10,6 +10,13 @@ extern "C" {
 
 // filament::gltfio
 uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
+/**
+ * Validates and constrains a MaterialKey in-place to enforce Filament's UV set limits,
+ * populating the given UvMap with the 1-based UV set mapping (0 means unused).
+ *
+ * Any out-of-bounds texture coordinate indices (*UV >= UvMapSize) are logged as errors,
+ * reset to 0, and their corresponding texture flags (has*Texture) are disabled.
+ */
 void FilaGltfio_constrainMaterial(FilaGltfioMaterialKey* key, FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
 /**
  * Creates a material provider that loads a small set of pre-built materials.

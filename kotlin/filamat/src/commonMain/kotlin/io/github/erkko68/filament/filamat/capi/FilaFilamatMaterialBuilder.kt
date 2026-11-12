@@ -256,6 +256,9 @@ internal external fun FilaFilamatMaterialBuilder_groupSize(self: NativePointer, 
 @ExternalSymbolName("FilaFilamatMaterialBuilder_useDefaultDepthVariant")
 internal external fun FilaFilamatMaterialBuilder_useDefaultDepthVariant(self: NativePointer): NativePointer
 
+@ExternalSymbolName("FilaFilamatMaterialBuilder_isDefaultMaterial")
+internal external fun FilaFilamatMaterialBuilder_isDefaultMaterial(self: NativePointer, isDefault: Boolean): NativePointer
+
 @ExternalSymbolName("FilaFilamatMaterialBuilder_materialSource")
 internal external fun FilaFilamatMaterialBuilder_materialSource(self: NativePointer, source: NativePointer): NativePointer
 
