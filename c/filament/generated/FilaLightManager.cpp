@@ -13,19 +13,19 @@ void FilaLightManagerShadowOptionsVsm_destroy(FilaLightManagerShadowOptionsVsm* 
 }
 
 bool FilaLightManagerShadowOptionsVsm_getElvsm(const FilaLightManagerShadowOptionsVsm* self) {
-    return fila::cpp(self)->elvsm;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptionsVsm_getElvsm", self))->elvsm;
 }
 
 void FilaLightManagerShadowOptionsVsm_setElvsm(FilaLightManagerShadowOptionsVsm* self, bool value) {
-    fila::cpp(self)->elvsm = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptionsVsm_setElvsm", self))->elvsm = value;
 }
 
 float FilaLightManagerShadowOptionsVsm_getBlurWidth(const FilaLightManagerShadowOptionsVsm* self) {
-    return fila::cpp(self)->blurWidth;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptionsVsm_getBlurWidth", self))->blurWidth;
 }
 
 void FilaLightManagerShadowOptionsVsm_setBlurWidth(FilaLightManagerShadowOptionsVsm* self, float value) {
-    fila::cpp(self)->blurWidth = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptionsVsm_setBlurWidth", self))->blurWidth = value;
 }
 
 FilaLightManagerShadowOptions* FilaLightManagerShadowOptions_create(void) {
@@ -37,191 +37,191 @@ void FilaLightManagerShadowOptions_destroy(FilaLightManagerShadowOptions* self) 
 }
 
 uint32_t FilaLightManagerShadowOptions_getMapSize(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->mapSize;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getMapSize", self))->mapSize;
 }
 
 void FilaLightManagerShadowOptions_setMapSize(FilaLightManagerShadowOptions* self, uint32_t value) {
-    fila::cpp(self)->mapSize = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setMapSize", self))->mapSize = value;
 }
 
 uint32_t FilaLightManagerShadowOptions_getShadowCascades(const FilaLightManagerShadowOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->shadowCascades);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getShadowCascades", self))->shadowCascades);
 }
 
 void FilaLightManagerShadowOptions_setShadowCascades(FilaLightManagerShadowOptions* self, uint32_t value) {
-    fila::cpp(self)->shadowCascades = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setShadowCascades", self))->shadowCascades = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaLightManagerShadowOptions_getCascadeSplitPositions(const FilaLightManagerShadowOptions* self, float* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->cascadeSplitPositions, outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getCascadeSplitPositions", self))->cascadeSplitPositions, outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
 }
 
 void FilaLightManagerShadowOptions_setCascadeSplitPositions(FilaLightManagerShadowOptions* self, const float* value, uint32_t valueCount) {
-    fila::assign(fila::cpp(self)->cascadeSplitPositions, fila::items(valueCount, [&](uint32_t i) { return value[i]; }));
+    fila::assign(fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setCascadeSplitPositions", self))->cascadeSplitPositions, fila::items(valueCount, [&](uint32_t i) { return value[i]; }));
 }
 
 float FilaLightManagerShadowOptions_getConstantBias(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->constantBias;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getConstantBias", self))->constantBias;
 }
 
 void FilaLightManagerShadowOptions_setConstantBias(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->constantBias = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setConstantBias", self))->constantBias = value;
 }
 
 float FilaLightManagerShadowOptions_getNormalBias(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->normalBias;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getNormalBias", self))->normalBias;
 }
 
 void FilaLightManagerShadowOptions_setNormalBias(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->normalBias = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setNormalBias", self))->normalBias = value;
 }
 
 float FilaLightManagerShadowOptions_getShadowFar(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->shadowFar;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getShadowFar", self))->shadowFar;
 }
 
 void FilaLightManagerShadowOptions_setShadowFar(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->shadowFar = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setShadowFar", self))->shadowFar = value;
 }
 
 float FilaLightManagerShadowOptions_getShadowNearHint(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->shadowNearHint;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getShadowNearHint", self))->shadowNearHint;
 }
 
 void FilaLightManagerShadowOptions_setShadowNearHint(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->shadowNearHint = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setShadowNearHint", self))->shadowNearHint = value;
 }
 
 float FilaLightManagerShadowOptions_getShadowFarHint(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->shadowFarHint;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getShadowFarHint", self))->shadowFarHint;
 }
 
 void FilaLightManagerShadowOptions_setShadowFarHint(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->shadowFarHint = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setShadowFarHint", self))->shadowFarHint = value;
 }
 
 bool FilaLightManagerShadowOptions_getStable(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->stable;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getStable", self))->stable;
 }
 
 void FilaLightManagerShadowOptions_setStable(FilaLightManagerShadowOptions* self, bool value) {
-    fila::cpp(self)->stable = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setStable", self))->stable = value;
 }
 
 bool FilaLightManagerShadowOptions_getLispsm(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->lispsm;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getLispsm", self))->lispsm;
 }
 
 void FilaLightManagerShadowOptions_setLispsm(FilaLightManagerShadowOptions* self, bool value) {
-    fila::cpp(self)->lispsm = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setLispsm", self))->lispsm = value;
 }
 
 float FilaLightManagerShadowOptions_getPolygonOffsetConstant(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->polygonOffsetConstant;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getPolygonOffsetConstant", self))->polygonOffsetConstant;
 }
 
 void FilaLightManagerShadowOptions_setPolygonOffsetConstant(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->polygonOffsetConstant = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setPolygonOffsetConstant", self))->polygonOffsetConstant = value;
 }
 
 float FilaLightManagerShadowOptions_getPolygonOffsetSlope(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->polygonOffsetSlope;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getPolygonOffsetSlope", self))->polygonOffsetSlope;
 }
 
 void FilaLightManagerShadowOptions_setPolygonOffsetSlope(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->polygonOffsetSlope = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setPolygonOffsetSlope", self))->polygonOffsetSlope = value;
 }
 
 bool FilaLightManagerShadowOptions_getScreenSpaceContactShadows(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->screenSpaceContactShadows;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getScreenSpaceContactShadows", self))->screenSpaceContactShadows;
 }
 
 void FilaLightManagerShadowOptions_setScreenSpaceContactShadows(FilaLightManagerShadowOptions* self, bool value) {
-    fila::cpp(self)->screenSpaceContactShadows = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setScreenSpaceContactShadows", self))->screenSpaceContactShadows = value;
 }
 
 uint32_t FilaLightManagerShadowOptions_getStepCount(const FilaLightManagerShadowOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->stepCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getStepCount", self))->stepCount);
 }
 
 void FilaLightManagerShadowOptions_setStepCount(FilaLightManagerShadowOptions* self, uint32_t value) {
-    fila::cpp(self)->stepCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setStepCount", self))->stepCount = static_cast<uint8_t>(value);
 }
 
 float FilaLightManagerShadowOptions_getMaxShadowDistance(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->maxShadowDistance;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getMaxShadowDistance", self))->maxShadowDistance;
 }
 
 void FilaLightManagerShadowOptions_setMaxShadowDistance(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->maxShadowDistance = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setMaxShadowDistance", self))->maxShadowDistance = value;
 }
 
 void FilaLightManagerShadowOptions_getVsm(const FilaLightManagerShadowOptions* self, FilaLightManagerShadowOptionsVsm* out) {
-    *fila::cpp(out) = fila::cpp(self)->vsm;
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getVsm", self))->vsm;
 }
 
 void FilaLightManagerShadowOptions_setVsm(FilaLightManagerShadowOptions* self, const FilaLightManagerShadowOptionsVsm* value) {
-    fila::cpp(self)->vsm = *fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setVsm", self))->vsm = *fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setVsm", value));
 }
 
 float FilaLightManagerShadowOptions_getShadowBulbRadius(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->shadowBulbRadius;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getShadowBulbRadius", self))->shadowBulbRadius;
 }
 
 void FilaLightManagerShadowOptions_setShadowBulbRadius(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->shadowBulbRadius = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setShadowBulbRadius", self))->shadowBulbRadius = value;
 }
 
 void FilaLightManagerShadowOptions_getTransform(const FilaLightManagerShadowOptions* self, FilaQuatf* out) {
-    *out = fila::mirror<FilaQuatf>(fila::cpp(self)->transform);
+    *out = fila::mirror<FilaQuatf>(fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getTransform", self))->transform);
 }
 
 void FilaLightManagerShadowOptions_setTransform(FilaLightManagerShadowOptions* self, const FilaQuatf* value) {
-    fila::cpp(self)->transform = fila::math<filament::math::quatf>(*value);
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setTransform", self))->transform = fila::math<filament::math::quatf>(*FILA_NONNULL("FilaLightManagerShadowOptions_setTransform", value));
 }
 
 float FilaLightManagerShadowOptions_getPenumbraScale(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->penumbraScale;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getPenumbraScale", self))->penumbraScale;
 }
 
 void FilaLightManagerShadowOptions_setPenumbraScale(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->penumbraScale = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setPenumbraScale", self))->penumbraScale = value;
 }
 
 float FilaLightManagerShadowOptions_getPenumbraRatioScale(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->penumbraRatioScale;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getPenumbraRatioScale", self))->penumbraRatioScale;
 }
 
 void FilaLightManagerShadowOptions_setPenumbraRatioScale(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->penumbraRatioScale = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setPenumbraRatioScale", self))->penumbraRatioScale = value;
 }
 
 float FilaLightManagerShadowOptions_getMaxPenumbraRatio(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->maxPenumbraRatio;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getMaxPenumbraRatio", self))->maxPenumbraRatio;
 }
 
 void FilaLightManagerShadowOptions_setMaxPenumbraRatio(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->maxPenumbraRatio = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setMaxPenumbraRatio", self))->maxPenumbraRatio = value;
 }
 
 float FilaLightManagerShadowOptions_getMaxSearchRadius(const FilaLightManagerShadowOptions* self) {
-    return fila::cpp(self)->maxSearchRadius;
+    return fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_getMaxSearchRadius", self))->maxSearchRadius;
 }
 
 void FilaLightManagerShadowOptions_setMaxSearchRadius(FilaLightManagerShadowOptions* self, float value) {
-    fila::cpp(self)->maxSearchRadius = value;
+    fila::cpp(FILA_NONNULL("FilaLightManagerShadowOptions_setMaxSearchRadius", self))->maxSearchRadius = value;
 }
 
 void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint32_t cascades) {
-    filament::LightManager::ShadowCascades::computeUniformSplits(splitPositions, static_cast<uint8_t>(cascades));
+    filament::LightManager::ShadowCascades::computeUniformSplits(FILA_NONNULL("FilaLightManagerShadowCascades_computeUniformSplits", splitPositions), static_cast<uint8_t>(cascades));
 }
 
 void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint32_t cascades, float near, float far) {
-    filament::LightManager::ShadowCascades::computeLogSplits(splitPositions, static_cast<uint8_t>(cascades), near, far);
+    filament::LightManager::ShadowCascades::computeLogSplits(FILA_NONNULL("FilaLightManagerShadowCascades_computeLogSplits", splitPositions), static_cast<uint8_t>(cascades), near, far);
 }
 
 void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint32_t cascades, float near, float far, float lambda) {
-    filament::LightManager::ShadowCascades::computePracticalSplits(splitPositions, static_cast<uint8_t>(cascades), near, far, lambda);
+    filament::LightManager::ShadowCascades::computePracticalSplits(FILA_NONNULL("FilaLightManagerShadowCascades_computePracticalSplits", splitPositions), static_cast<uint8_t>(cascades), near, far, lambda);
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType type) {
@@ -233,219 +233,219 @@ void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self) {
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, uint32_t channel, bool enable) {
-    return fila::c(&fila::cpp(self)->lightChannel(static_cast<unsigned int>(channel), enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_lightChannel", self))->lightChannel(static_cast<unsigned int>(channel), enable));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->castShadows(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_castShadows", self))->castShadows(enable));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* self, const FilaLightManagerShadowOptions* options) {
-    return fila::c(&fila::cpp(self)->shadowOptions(*fila::cpp(options)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_shadowOptions", self))->shadowOptions(*fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_shadowOptions", options))));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->castLight(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_castLight", self))->castLight(enable));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_position(FilaLightManagerBuilder* self, const FilaFloat3* position) {
-    return fila::c(&fila::cpp(self)->position(fila::math<filament::math::float3>(*position)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_position", self))->position(fila::math<filament::math::float3>(*FILA_NONNULL("FilaLightManagerBuilder_position", position))));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_direction(FilaLightManagerBuilder* self, const FilaFloat3* direction) {
-    return fila::c(&fila::cpp(self)->direction(fila::math<filament::math::float3>(*direction)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_direction", self))->direction(fila::math<filament::math::float3>(*FILA_NONNULL("FilaLightManagerBuilder_direction", direction))));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_color(FilaLightManagerBuilder* self, const FilaFloat3* color) {
-    return fila::c(&fila::cpp(self)->color(fila::math<filament::math::float3>(*color)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_color", self))->color(fila::math<filament::math::float3>(*FILA_NONNULL("FilaLightManagerBuilder_color", color))));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* self, float intensity) {
-    return fila::c(&fila::cpp(self)->intensity(intensity));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_intensity", self))->intensity(intensity));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensity_float(FilaLightManagerBuilder* self, float watts, float efficiency) {
-    return fila::c(&fila::cpp(self)->intensity(watts, efficiency));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_intensity_float", self))->intensity(watts, efficiency));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_intensityCandela(FilaLightManagerBuilder* self, float intensity) {
-    return fila::c(&fila::cpp(self)->intensityCandela(intensity));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_intensityCandela", self))->intensityCandela(intensity));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_falloff(FilaLightManagerBuilder* self, float radius) {
-    return fila::c(&fila::cpp(self)->falloff(radius));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_falloff", self))->falloff(radius));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_spotLightCone(FilaLightManagerBuilder* self, float inner, float outer) {
-    return fila::c(&fila::cpp(self)->spotLightCone(inner, outer));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_spotLightCone", self))->spotLightCone(inner, outer));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunAngularRadius(FilaLightManagerBuilder* self, float angularRadiusDeg) {
-    return fila::c(&fila::cpp(self)->sunAngularRadius(angularRadiusDeg));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_sunAngularRadius", self))->sunAngularRadius(angularRadiusDeg));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloSize(FilaLightManagerBuilder* self, float haloSize) {
-    return fila::c(&fila::cpp(self)->sunHaloSize(haloSize));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_sunHaloSize", self))->sunHaloSize(haloSize));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_sunHaloFalloff(FilaLightManagerBuilder* self, float haloFalloff) {
-    return fila::c(&fila::cpp(self)->sunHaloFalloff(haloFalloff));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_sunHaloFalloff", self))->sunHaloFalloff(haloFalloff));
 }
 
 FilaLightManagerBuilderResult FilaLightManagerBuilder_build(const FilaLightManagerBuilder* self, FilaEngine* engine, FilaEntity entity) {
-    return static_cast<FilaLightManagerBuilderResult>(fila::cpp(self)->build(*fila::cpp(engine), utils::Entity::import(entity)));
+    return static_cast<FilaLightManagerBuilderResult>(fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaLightManagerBuilder_build", engine)), utils::Entity::import(entity)));
 }
 
 uint32_t FilaLightManager_getComponentCount(const FilaLightManager* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getComponentCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaLightManager_getComponentCount", self))->getComponentCount());
 }
 
 bool FilaLightManager_hasComponent(const FilaLightManager* self, FilaEntity e) {
-    return fila::cpp(self)->hasComponent(utils::Entity::import(e));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_hasComponent", self))->hasComponent(utils::Entity::import(e));
 }
 
 bool FilaLightManager_empty(const FilaLightManager* self) {
-    return fila::cpp(self)->empty();
+    return fila::cpp(FILA_NONNULL("FilaLightManager_empty", self))->empty();
 }
 
 FilaEntity FilaLightManager_getEntity(const FilaLightManager* self, uint32_t i) {
-    return utils::Entity::smuggle(fila::cpp(self)->getEntity(filament::LightManager::Instance(i)));
+    return utils::Entity::smuggle(fila::cpp(FILA_NONNULL("FilaLightManager_getEntity", self))->getEntity(filament::LightManager::Instance(i)));
 }
 
 uint32_t FilaLightManager_getAllEntities(const FilaLightManager* self, FilaEntity* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->getAllEntities(), outCapacity, [&](auto& x, uint32_t i) { out[i] = utils::Entity::smuggle(x); });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaLightManager_getAllEntities", self))->getAllEntities(), outCapacity, [&](auto& x, uint32_t i) { out[i] = utils::Entity::smuggle(x); });
 }
 
 uint32_t FilaLightManager_getInstance(const FilaLightManager* self, FilaEntity e) {
-    return fila::cpp(self)->getInstance(utils::Entity::import(e)).asValue();
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getInstance", self))->getInstance(utils::Entity::import(e)).asValue();
 }
 
 void FilaLightManager_destroy(FilaLightManager* self, FilaEntity e) {
-    fila::cpp(self)->destroy(utils::Entity::import(e));
+    fila::cpp(FILA_NONNULL("FilaLightManager_destroy", self))->destroy(utils::Entity::import(e));
 }
 
 FilaLightManagerType FilaLightManager_getType(const FilaLightManager* self, uint32_t i) {
-    return static_cast<FilaLightManagerType>(fila::cpp(self)->getType(filament::LightManager::Instance(i)));
+    return static_cast<FilaLightManagerType>(fila::cpp(FILA_NONNULL("FilaLightManager_getType", self))->getType(filament::LightManager::Instance(i)));
 }
 
 bool FilaLightManager_isDirectional(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->isDirectional(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_isDirectional", self))->isDirectional(filament::LightManager::Instance(i));
 }
 
 bool FilaLightManager_isPointLight(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->isPointLight(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_isPointLight", self))->isPointLight(filament::LightManager::Instance(i));
 }
 
 bool FilaLightManager_isSpotLight(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->isSpotLight(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_isSpotLight", self))->isSpotLight(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setLightChannel(FilaLightManager* self, uint32_t i, uint32_t channel, bool enable) {
-    fila::cpp(self)->setLightChannel(filament::LightManager::Instance(i), static_cast<unsigned int>(channel), enable);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setLightChannel", self))->setLightChannel(filament::LightManager::Instance(i), static_cast<unsigned int>(channel), enable);
 }
 
 bool FilaLightManager_getLightChannel(const FilaLightManager* self, uint32_t i, uint32_t channel) {
-    return fila::cpp(self)->getLightChannel(filament::LightManager::Instance(i), static_cast<unsigned int>(channel));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getLightChannel", self))->getLightChannel(filament::LightManager::Instance(i), static_cast<unsigned int>(channel));
 }
 
 void FilaLightManager_setPosition(FilaLightManager* self, uint32_t i, const FilaFloat3* position) {
-    fila::cpp(self)->setPosition(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*position));
+    fila::cpp(FILA_NONNULL("FilaLightManager_setPosition", self))->setPosition(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*FILA_NONNULL("FilaLightManager_setPosition", position)));
 }
 
 void FilaLightManager_getPosition(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getPosition(filament::LightManager::Instance(i)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaLightManager_getPosition", self))->getPosition(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setDirection(FilaLightManager* self, uint32_t i, const FilaFloat3* direction) {
-    fila::cpp(self)->setDirection(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*direction));
+    fila::cpp(FILA_NONNULL("FilaLightManager_setDirection", self))->setDirection(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*FILA_NONNULL("FilaLightManager_setDirection", direction)));
 }
 
 void FilaLightManager_getDirection(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getDirection(filament::LightManager::Instance(i)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaLightManager_getDirection", self))->getDirection(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setColor(FilaLightManager* self, uint32_t i, const FilaFloat3* color) {
-    fila::cpp(self)->setColor(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*color));
+    fila::cpp(FILA_NONNULL("FilaLightManager_setColor", self))->setColor(filament::LightManager::Instance(i), fila::math<filament::math::float3>(*FILA_NONNULL("FilaLightManager_setColor", color)));
 }
 
 void FilaLightManager_getColor(const FilaLightManager* self, uint32_t i, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getColor(filament::LightManager::Instance(i)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaLightManager_getColor", self))->getColor(filament::LightManager::Instance(i)));
 }
 
 void FilaLightManager_setIntensity(FilaLightManager* self, uint32_t i, float intensity) {
-    fila::cpp(self)->setIntensity(filament::LightManager::Instance(i), intensity);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setIntensity", self))->setIntensity(filament::LightManager::Instance(i), intensity);
 }
 
 void FilaLightManager_setIntensity_float(FilaLightManager* self, uint32_t i, float watts, float efficiency) {
-    fila::cpp(self)->setIntensity(filament::LightManager::Instance(i), watts, efficiency);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setIntensity_float", self))->setIntensity(filament::LightManager::Instance(i), watts, efficiency);
 }
 
 void FilaLightManager_setIntensityCandela(FilaLightManager* self, uint32_t i, float intensity) {
-    fila::cpp(self)->setIntensityCandela(filament::LightManager::Instance(i), intensity);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setIntensityCandela", self))->setIntensityCandela(filament::LightManager::Instance(i), intensity);
 }
 
 float FilaLightManager_getIntensity(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getIntensity(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getIntensity", self))->getIntensity(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setFalloff(FilaLightManager* self, uint32_t i, float radius) {
-    fila::cpp(self)->setFalloff(filament::LightManager::Instance(i), radius);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setFalloff", self))->setFalloff(filament::LightManager::Instance(i), radius);
 }
 
 float FilaLightManager_getFalloff(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getFalloff(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getFalloff", self))->getFalloff(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setSpotLightCone(FilaLightManager* self, uint32_t i, float inner, float outer) {
-    fila::cpp(self)->setSpotLightCone(filament::LightManager::Instance(i), inner, outer);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setSpotLightCone", self))->setSpotLightCone(filament::LightManager::Instance(i), inner, outer);
 }
 
 float FilaLightManager_getSpotLightOuterCone(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getSpotLightOuterCone(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getSpotLightOuterCone", self))->getSpotLightOuterCone(filament::LightManager::Instance(i));
 }
 
 float FilaLightManager_getSpotLightInnerCone(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getSpotLightInnerCone(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getSpotLightInnerCone", self))->getSpotLightInnerCone(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setSunAngularRadius(FilaLightManager* self, uint32_t i, float angularRadius) {
-    fila::cpp(self)->setSunAngularRadius(filament::LightManager::Instance(i), angularRadius);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setSunAngularRadius", self))->setSunAngularRadius(filament::LightManager::Instance(i), angularRadius);
 }
 
 float FilaLightManager_getSunAngularRadius(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getSunAngularRadius(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getSunAngularRadius", self))->getSunAngularRadius(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setSunHaloSize(FilaLightManager* self, uint32_t i, float haloSize) {
-    fila::cpp(self)->setSunHaloSize(filament::LightManager::Instance(i), haloSize);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setSunHaloSize", self))->setSunHaloSize(filament::LightManager::Instance(i), haloSize);
 }
 
 float FilaLightManager_getSunHaloSize(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getSunHaloSize(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getSunHaloSize", self))->getSunHaloSize(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setSunHaloFalloff(FilaLightManager* self, uint32_t i, float haloFalloff) {
-    fila::cpp(self)->setSunHaloFalloff(filament::LightManager::Instance(i), haloFalloff);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setSunHaloFalloff", self))->setSunHaloFalloff(filament::LightManager::Instance(i), haloFalloff);
 }
 
 float FilaLightManager_getSunHaloFalloff(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->getSunHaloFalloff(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_getSunHaloFalloff", self))->getSunHaloFalloff(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_getShadowOptions(const FilaLightManager* self, uint32_t i, FilaLightManagerShadowOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getShadowOptions(filament::LightManager::Instance(i));
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaLightManager_getShadowOptions", self))->getShadowOptions(filament::LightManager::Instance(i));
 }
 
 void FilaLightManager_setShadowOptions(FilaLightManager* self, uint32_t i, const FilaLightManagerShadowOptions* options) {
-    fila::cpp(self)->setShadowOptions(filament::LightManager::Instance(i), *fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaLightManager_setShadowOptions", self))->setShadowOptions(filament::LightManager::Instance(i), *fila::cpp(FILA_NONNULL("FilaLightManager_setShadowOptions", options)));
 }
 
 void FilaLightManager_setShadowCaster(FilaLightManager* self, uint32_t i, bool shadowCaster) {
-    fila::cpp(self)->setShadowCaster(filament::LightManager::Instance(i), shadowCaster);
+    fila::cpp(FILA_NONNULL("FilaLightManager_setShadowCaster", self))->setShadowCaster(filament::LightManager::Instance(i), shadowCaster);
 }
 
 bool FilaLightManager_isShadowCaster(const FilaLightManager* self, uint32_t i) {
-    return fila::cpp(self)->isShadowCaster(filament::LightManager::Instance(i));
+    return fila::cpp(FILA_NONNULL("FilaLightManager_isShadowCaster", self))->isShadowCaster(filament::LightManager::Instance(i));
 }
 
 } // extern "C"

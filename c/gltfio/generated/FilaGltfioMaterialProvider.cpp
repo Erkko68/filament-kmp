@@ -9,27 +9,27 @@ void FilaGltfioMaterialProvider_destroy(FilaGltfioMaterialProvider* self) {
 }
 
 FilaMaterialInstance* FilaGltfioMaterialProvider_createMaterialInstance(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label, const char* extras) {
-    return fila::c(fila::cpp(self)->createMaterialInstance(fila::cpp(config), fila::updated(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); }, [&](auto x, uint32_t i) { uvmap[i] = static_cast<FilaGltfioUvSet>(x); }), label, extras));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioMaterialProvider_createMaterialInstance", self))->createMaterialInstance(fila::cpp(config), fila::updated(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); }, [&](auto x, uint32_t i) { uvmap[i] = static_cast<FilaGltfioUvSet>(x); }), label, extras));
 }
 
 FilaMaterial* FilaGltfioMaterialProvider_getMaterial(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label) {
-    return fila::c(fila::cpp(self)->getMaterial(fila::cpp(config), fila::updated(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); }, [&](auto x, uint32_t i) { uvmap[i] = static_cast<FilaGltfioUvSet>(x); }), label));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioMaterialProvider_getMaterial", self))->getMaterial(fila::cpp(config), fila::updated(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); }, [&](auto x, uint32_t i) { uvmap[i] = static_cast<FilaGltfioUvSet>(x); }), label));
 }
 
 const FilaMaterial* const* FilaGltfioMaterialProvider_getMaterials(const FilaGltfioMaterialProvider* self) {
-    return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(self)->getMaterials());
+    return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialProvider_getMaterials", self))->getMaterials());
 }
 
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getMaterialsCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialProvider_getMaterialsCount", self))->getMaterialsCount());
 }
 
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self) {
-    fila::cpp(self)->destroyMaterials();
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialProvider_destroyMaterials", self))->destroyMaterials();
 }
 
 bool FilaGltfioMaterialProvider_needsDummyData(const FilaGltfioMaterialProvider* self, FilaVertexAttribute attrib) {
-    return fila::cpp(self)->needsDummyData(static_cast<filament::VertexAttribute>(attrib));
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialProvider_needsDummyData", self))->needsDummyData(static_cast<filament::VertexAttribute>(attrib));
 }
 
 } // extern "C"

@@ -18,7 +18,10 @@ class CBridge(
     val extra: List<Pair<String, String>> = emptyList(),
     /** A typedef its C spelling needs, by C name: a callback's function pointer type. */
     val typedef: Pair<String, String>? = null,
-)
+) {
+    /** This bridge of a parameter, converting [guard] of the C argument. */
+    fun guarded(guard: (String) -> String) = CBridge(c, { convert(guard(it)) }, out, store, { field, v -> assign(field, guard(v)) }, extra, typedef)
+}
 
 /** Why a declaration stays hand-written; the generator leaves a comment saying so instead of code. */
 class Unsupported(reason: String) : Exception(reason)

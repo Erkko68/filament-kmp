@@ -17,11 +17,11 @@ FilaToneMapper* FilaAgxToneMapper_asToneMapper(FilaAgxToneMapper* self) {
 }
 
 FilaAgxToneMapperAgxLook FilaAgxToneMapper_getLook(const FilaAgxToneMapper* self) {
-    return static_cast<FilaAgxToneMapperAgxLook>(fila::cpp(self)->look);
+    return static_cast<FilaAgxToneMapperAgxLook>(fila::cpp(FILA_NONNULL("FilaAgxToneMapper_getLook", self))->look);
 }
 
 void FilaAgxToneMapper_setLook(FilaAgxToneMapper* self, FilaAgxToneMapperAgxLook value) {
-    fila::cpp(self)->look = static_cast<filament::AgxToneMapper::AgxLook>(value);
+    fila::cpp(FILA_NONNULL("FilaAgxToneMapper_setLook", self))->look = static_cast<filament::AgxToneMapper::AgxLook>(value);
 }
 
 } // extern "C"

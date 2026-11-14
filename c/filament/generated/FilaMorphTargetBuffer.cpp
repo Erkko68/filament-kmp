@@ -13,63 +13,63 @@ void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self) {
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_vertexCount(FilaMorphTargetBufferBuilder* self, uint32_t vertexCount) {
-    return fila::c(&fila::cpp(self)->vertexCount(static_cast<size_t>(vertexCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_vertexCount", self))->vertexCount(static_cast<size_t>(vertexCount)));
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTargetBufferBuilder* self, uint32_t count) {
-    return fila::c(&fila::cpp(self)->count(static_cast<size_t>(count)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_count", self))->count(static_cast<size_t>(count)));
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_name(FilaMorphTargetBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_name", self))->name(utils::ImmutableCString(name)));
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->withPositions(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_withPositions", self))->withPositions(enable));
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withTangents(FilaMorphTargetBufferBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->withTangents(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_withTangents", self))->withTangents(enable));
 }
 
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(FilaMorphTargetBufferBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->enableCustomMorphing(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_enableCustomMorphing", self))->enableCustomMorphing(enable));
 }
 
 FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(const FilaMorphTargetBufferBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaMorphTargetBufferBuilder_build", engine))));
 }
 
 void FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat3* positions, uint32_t count, uint32_t offset) {
-    fila::cpp(self)->setPositionsAt(*fila::cpp(engine), static_cast<size_t>(targetIndex), fila::cpp(positions), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t", self))->setPositionsAt(*fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t", engine)), static_cast<size_t>(targetIndex), fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setPositionsAt_float3_size_t_size_t", positions)), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaFloat4* positions, uint32_t count, uint32_t offset) {
-    fila::cpp(self)->setPositionsAt(*fila::cpp(engine), static_cast<size_t>(targetIndex), fila::cpp(positions), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t", self))->setPositionsAt(*fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t", engine)), static_cast<size_t>(targetIndex), fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setPositionsAt_float4_size_t_size_t", positions)), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaMorphTargetBuffer_setTangentsAt(FilaMorphTargetBuffer* self, FilaEngine* engine, uint32_t targetIndex, const FilaShort4* tangents, uint32_t count, uint32_t offset) {
-    fila::cpp(self)->setTangentsAt(*fila::cpp(engine), static_cast<size_t>(targetIndex), fila::cpp(tangents), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setTangentsAt", self))->setTangentsAt(*fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setTangentsAt", engine)), static_cast<size_t>(targetIndex), fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_setTangentsAt", tangents)), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 uint32_t FilaMorphTargetBuffer_getVertexCount(const FilaMorphTargetBuffer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getVertexCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_getVertexCount", self))->getVertexCount());
 }
 
 uint32_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_getCount", self))->getCount());
 }
 
 bool FilaMorphTargetBuffer_hasPositions(const FilaMorphTargetBuffer* self) {
-    return fila::cpp(self)->hasPositions();
+    return fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_hasPositions", self))->hasPositions();
 }
 
 bool FilaMorphTargetBuffer_hasTangents(const FilaMorphTargetBuffer* self) {
-    return fila::cpp(self)->hasTangents();
+    return fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_hasTangents", self))->hasTangents();
 }
 
 bool FilaMorphTargetBuffer_isCustomMorphingEnabled(const FilaMorphTargetBuffer* self) {
-    return fila::cpp(self)->isCustomMorphingEnabled();
+    return fila::cpp(FILA_NONNULL("FilaMorphTargetBuffer_isCustomMorphingEnabled", self))->isCustomMorphingEnabled();
 }
 
 } // extern "C"

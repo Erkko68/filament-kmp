@@ -13,27 +13,27 @@ void FilaViewPickingQueryResult_destroy(FilaViewPickingQueryResult* self) {
 }
 
 FilaEntity FilaViewPickingQueryResult_getRenderable(const FilaViewPickingQueryResult* self) {
-    return utils::Entity::smuggle(fila::cpp(self)->renderable);
+    return utils::Entity::smuggle(fila::cpp(FILA_NONNULL("FilaViewPickingQueryResult_getRenderable", self))->renderable);
 }
 
 void FilaViewPickingQueryResult_setRenderable(FilaViewPickingQueryResult* self, FilaEntity value) {
-    fila::cpp(self)->renderable = utils::Entity::import(value);
+    fila::cpp(FILA_NONNULL("FilaViewPickingQueryResult_setRenderable", self))->renderable = utils::Entity::import(value);
 }
 
 float FilaViewPickingQueryResult_getDepth(const FilaViewPickingQueryResult* self) {
-    return fila::cpp(self)->depth;
+    return fila::cpp(FILA_NONNULL("FilaViewPickingQueryResult_getDepth", self))->depth;
 }
 
 void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float value) {
-    fila::cpp(self)->depth = value;
+    fila::cpp(FILA_NONNULL("FilaViewPickingQueryResult_setDepth", self))->depth = value;
 }
 
 void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->fragCoords);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaViewPickingQueryResult_getFragCoords", self))->fragCoords);
 }
 
 void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, const FilaFloat3* value) {
-    fila::cpp(self)->fragCoords = fila::math<filament::math::float3>(*value);
+    fila::cpp(FILA_NONNULL("FilaViewPickingQueryResult_setFragCoords", self))->fragCoords = fila::math<filament::math::float3>(*FILA_NONNULL("FilaViewPickingQueryResult_setFragCoords", value));
 }
 
 FilaViewPickingQuery* FilaViewPickingQuery_create(void) {
@@ -45,323 +45,323 @@ void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self) {
 }
 
 void FilaView_setName(FilaView* self, const char* name) {
-    fila::cpp(self)->setName(name);
+    fila::cpp(FILA_NONNULL("FilaView_setName", self))->setName(FILA_NONNULL("FilaView_setName", name));
 }
 
 const char* FilaView_getName(const FilaView* self) {
-    return fila::cpp(self)->getName();
+    return fila::cpp(FILA_NONNULL("FilaView_getName", self))->getName();
 }
 
 void FilaView_setScene(FilaView* self, FilaScene* scene) {
-    fila::cpp(self)->setScene(fila::cpp(scene));
+    fila::cpp(FILA_NONNULL("FilaView_setScene", self))->setScene(fila::cpp(scene));
 }
 
 FilaScene* FilaView_getScene(FilaView* self) {
-    return fila::c(fila::cpp(self)->getScene());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaView_getScene", self))->getScene());
 }
 
 void FilaView_setRenderTarget(FilaView* self, FilaRenderTarget* renderTarget) {
-    fila::cpp(self)->setRenderTarget(fila::cpp(renderTarget));
+    fila::cpp(FILA_NONNULL("FilaView_setRenderTarget", self))->setRenderTarget(fila::cpp(renderTarget));
 }
 
 FilaRenderTarget* FilaView_getRenderTarget(const FilaView* self) {
-    return fila::c(fila::cpp(self)->getRenderTarget());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaView_getRenderTarget", self))->getRenderTarget());
 }
 
 void FilaView_setViewport(FilaView* self, const FilaViewport* viewport) {
-    fila::cpp(self)->setViewport(*fila::cpp(viewport));
+    fila::cpp(FILA_NONNULL("FilaView_setViewport", self))->setViewport(*fila::cpp(FILA_NONNULL("FilaView_setViewport", viewport)));
 }
 
 void FilaView_getViewport(const FilaView* self, FilaViewport* out) {
-    *fila::cpp(out) = fila::cpp(self)->getViewport();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getViewport", self))->getViewport();
 }
 
 void FilaView_setCamera(FilaView* self, FilaCamera* camera) {
-    fila::cpp(self)->setCamera(fila::cpp(camera));
+    fila::cpp(FILA_NONNULL("FilaView_setCamera", self))->setCamera(fila::cpp(camera));
 }
 
 bool FilaView_hasCamera(const FilaView* self) {
-    return fila::cpp(self)->hasCamera();
+    return fila::cpp(FILA_NONNULL("FilaView_hasCamera", self))->hasCamera();
 }
 
 FilaCamera* FilaView_getCamera(FilaView* self) {
-    return fila::c(&fila::cpp(self)->getCamera());
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaView_getCamera", self))->getCamera());
 }
 
 void FilaView_setChannelDepthClearEnabled(FilaView* self, uint32_t channel, bool enabled) {
-    fila::cpp(self)->setChannelDepthClearEnabled(static_cast<uint8_t>(channel), enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setChannelDepthClearEnabled", self))->setChannelDepthClearEnabled(static_cast<uint8_t>(channel), enabled);
 }
 
 bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint32_t channel) {
-    return fila::cpp(self)->isChannelDepthClearEnabled(static_cast<uint8_t>(channel));
+    return fila::cpp(FILA_NONNULL("FilaView_isChannelDepthClearEnabled", self))->isChannelDepthClearEnabled(static_cast<uint8_t>(channel));
 }
 
 void FilaView_setBlendMode(FilaView* self, FilaBlendMode blendMode) {
-    fila::cpp(self)->setBlendMode(static_cast<filament::BlendMode>(blendMode));
+    fila::cpp(FILA_NONNULL("FilaView_setBlendMode", self))->setBlendMode(static_cast<filament::BlendMode>(blendMode));
 }
 
 FilaBlendMode FilaView_getBlendMode(const FilaView* self) {
-    return static_cast<FilaBlendMode>(fila::cpp(self)->getBlendMode());
+    return static_cast<FilaBlendMode>(fila::cpp(FILA_NONNULL("FilaView_getBlendMode", self))->getBlendMode());
 }
 
 void FilaView_setVisibleLayers(FilaView* self, uint32_t select, uint32_t values) {
-    fila::cpp(self)->setVisibleLayers(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
+    fila::cpp(FILA_NONNULL("FilaView_setVisibleLayers", self))->setVisibleLayers(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
 void FilaView_setLayerEnabled(FilaView* self, uint32_t layer, bool enabled) {
-    fila::cpp(self)->setLayerEnabled(static_cast<size_t>(layer), enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setLayerEnabled", self))->setLayerEnabled(static_cast<size_t>(layer), enabled);
 }
 
 uint32_t FilaView_getVisibleLayers(const FilaView* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getVisibleLayers());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaView_getVisibleLayers", self))->getVisibleLayers());
 }
 
 void FilaView_setShadowingEnabled(FilaView* self, bool enabled) {
-    fila::cpp(self)->setShadowingEnabled(enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setShadowingEnabled", self))->setShadowingEnabled(enabled);
 }
 
 bool FilaView_isShadowingEnabled(const FilaView* self) {
-    return fila::cpp(self)->isShadowingEnabled();
+    return fila::cpp(FILA_NONNULL("FilaView_isShadowingEnabled", self))->isShadowingEnabled();
 }
 
 void FilaView_setScreenSpaceRefractionEnabled(FilaView* self, bool enabled) {
-    fila::cpp(self)->setScreenSpaceRefractionEnabled(enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setScreenSpaceRefractionEnabled", self))->setScreenSpaceRefractionEnabled(enabled);
 }
 
 bool FilaView_isScreenSpaceRefractionEnabled(const FilaView* self) {
-    return fila::cpp(self)->isScreenSpaceRefractionEnabled();
+    return fila::cpp(FILA_NONNULL("FilaView_isScreenSpaceRefractionEnabled", self))->isScreenSpaceRefractionEnabled();
 }
 
 void FilaView_setAntiAliasing(FilaView* self, FilaAntiAliasing type) {
-    fila::cpp(self)->setAntiAliasing(static_cast<filament::AntiAliasing>(type));
+    fila::cpp(FILA_NONNULL("FilaView_setAntiAliasing", self))->setAntiAliasing(static_cast<filament::AntiAliasing>(type));
 }
 
 FilaAntiAliasing FilaView_getAntiAliasing(const FilaView* self) {
-    return static_cast<FilaAntiAliasing>(fila::cpp(self)->getAntiAliasing());
+    return static_cast<FilaAntiAliasing>(fila::cpp(FILA_NONNULL("FilaView_getAntiAliasing", self))->getAntiAliasing());
 }
 
 void FilaView_setTemporalAntiAliasingOptions(FilaView* self, const FilaTemporalAntiAliasingOptions* options) {
-    fila::cpp(self)->setTemporalAntiAliasingOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setTemporalAntiAliasingOptions", self))->setTemporalAntiAliasingOptions(*fila::cpp(FILA_NONNULL("FilaView_setTemporalAntiAliasingOptions", options)));
 }
 
 void FilaView_getTemporalAntiAliasingOptions(const FilaView* self, FilaTemporalAntiAliasingOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getTemporalAntiAliasingOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getTemporalAntiAliasingOptions", self))->getTemporalAntiAliasingOptions();
 }
 
 void FilaView_setScreenSpaceReflectionsOptions(FilaView* self, const FilaScreenSpaceReflectionsOptions* options) {
-    fila::cpp(self)->setScreenSpaceReflectionsOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setScreenSpaceReflectionsOptions", self))->setScreenSpaceReflectionsOptions(*fila::cpp(FILA_NONNULL("FilaView_setScreenSpaceReflectionsOptions", options)));
 }
 
 void FilaView_getScreenSpaceReflectionsOptions(const FilaView* self, FilaScreenSpaceReflectionsOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getScreenSpaceReflectionsOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getScreenSpaceReflectionsOptions", self))->getScreenSpaceReflectionsOptions();
 }
 
 void FilaView_setGuardBandOptions(FilaView* self, const FilaGuardBandOptions* options) {
-    fila::cpp(self)->setGuardBandOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setGuardBandOptions", self))->setGuardBandOptions(*fila::cpp(FILA_NONNULL("FilaView_setGuardBandOptions", options)));
 }
 
 void FilaView_getGuardBandOptions(const FilaView* self, FilaGuardBandOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getGuardBandOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getGuardBandOptions", self))->getGuardBandOptions();
 }
 
 void FilaView_setMotionVectorsOptions(FilaView* self, const FilaMotionVectorsOptions* options) {
-    fila::cpp(self)->setMotionVectorsOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setMotionVectorsOptions", self))->setMotionVectorsOptions(*fila::cpp(FILA_NONNULL("FilaView_setMotionVectorsOptions", options)));
 }
 
 void FilaView_getMotionVectorsOptions(const FilaView* self, FilaMotionVectorsOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getMotionVectorsOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getMotionVectorsOptions", self))->getMotionVectorsOptions();
 }
 
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* self, const FilaMultiSampleAntiAliasingOptions* options) {
-    fila::cpp(self)->setMultiSampleAntiAliasingOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setMultiSampleAntiAliasingOptions", self))->setMultiSampleAntiAliasingOptions(*fila::cpp(FILA_NONNULL("FilaView_setMultiSampleAntiAliasingOptions", options)));
 }
 
 void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* self, FilaMultiSampleAntiAliasingOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getMultiSampleAntiAliasingOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getMultiSampleAntiAliasingOptions", self))->getMultiSampleAntiAliasingOptions();
 }
 
 void FilaView_setColorGrading(FilaView* self, FilaColorGrading* colorGrading) {
-    fila::cpp(self)->setColorGrading(fila::cpp(colorGrading));
+    fila::cpp(FILA_NONNULL("FilaView_setColorGrading", self))->setColorGrading(fila::cpp(colorGrading));
 }
 
 const FilaColorGrading* FilaView_getColorGrading(const FilaView* self) {
-    return fila::c(fila::cpp(self)->getColorGrading());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaView_getColorGrading", self))->getColorGrading());
 }
 
 void FilaView_setAmbientOcclusionOptions(FilaView* self, const FilaAmbientOcclusionOptions* options) {
-    fila::cpp(self)->setAmbientOcclusionOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setAmbientOcclusionOptions", self))->setAmbientOcclusionOptions(*fila::cpp(FILA_NONNULL("FilaView_setAmbientOcclusionOptions", options)));
 }
 
 void FilaView_getAmbientOcclusionOptions(const FilaView* self, FilaAmbientOcclusionOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getAmbientOcclusionOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getAmbientOcclusionOptions", self))->getAmbientOcclusionOptions();
 }
 
 void FilaView_setBloomOptions(FilaView* self, const FilaBloomOptions* options) {
-    fila::cpp(self)->setBloomOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setBloomOptions", self))->setBloomOptions(*fila::cpp(FILA_NONNULL("FilaView_setBloomOptions", options)));
 }
 
 void FilaView_getBloomOptions(const FilaView* self, FilaBloomOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getBloomOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getBloomOptions", self))->getBloomOptions();
 }
 
 void FilaView_setFogOptions(FilaView* self, const FilaFogOptions* options) {
-    fila::cpp(self)->setFogOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setFogOptions", self))->setFogOptions(*fila::cpp(FILA_NONNULL("FilaView_setFogOptions", options)));
 }
 
 void FilaView_getFogOptions(const FilaView* self, FilaFogOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getFogOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getFogOptions", self))->getFogOptions();
 }
 
 void FilaView_setDepthOfFieldOptions(FilaView* self, const FilaDepthOfFieldOptions* options) {
-    fila::cpp(self)->setDepthOfFieldOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setDepthOfFieldOptions", self))->setDepthOfFieldOptions(*fila::cpp(FILA_NONNULL("FilaView_setDepthOfFieldOptions", options)));
 }
 
 void FilaView_getDepthOfFieldOptions(const FilaView* self, FilaDepthOfFieldOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getDepthOfFieldOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getDepthOfFieldOptions", self))->getDepthOfFieldOptions();
 }
 
 void FilaView_setVignetteOptions(FilaView* self, const FilaVignetteOptions* options) {
-    fila::cpp(self)->setVignetteOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setVignetteOptions", self))->setVignetteOptions(*fila::cpp(FILA_NONNULL("FilaView_setVignetteOptions", options)));
 }
 
 void FilaView_getVignetteOptions(const FilaView* self, FilaVignetteOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getVignetteOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getVignetteOptions", self))->getVignetteOptions();
 }
 
 void FilaView_setDithering(FilaView* self, FilaDithering dithering) {
-    fila::cpp(self)->setDithering(static_cast<filament::Dithering>(dithering));
+    fila::cpp(FILA_NONNULL("FilaView_setDithering", self))->setDithering(static_cast<filament::Dithering>(dithering));
 }
 
 FilaDithering FilaView_getDithering(const FilaView* self) {
-    return static_cast<FilaDithering>(fila::cpp(self)->getDithering());
+    return static_cast<FilaDithering>(fila::cpp(FILA_NONNULL("FilaView_getDithering", self))->getDithering());
 }
 
 void FilaView_setDynamicResolutionOptions(FilaView* self, const FilaDynamicResolutionOptions* options) {
-    fila::cpp(self)->setDynamicResolutionOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setDynamicResolutionOptions", self))->setDynamicResolutionOptions(*fila::cpp(FILA_NONNULL("FilaView_setDynamicResolutionOptions", options)));
 }
 
 void FilaView_getDynamicResolutionOptions(const FilaView* self, FilaDynamicResolutionOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getDynamicResolutionOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getDynamicResolutionOptions", self))->getDynamicResolutionOptions();
 }
 
 void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out) {
-    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->getLastDynamicResolutionScale());
+    *out = fila::mirror<FilaFloat2>(fila::cpp(FILA_NONNULL("FilaView_getLastDynamicResolutionScale", self))->getLastDynamicResolutionScale());
 }
 
 void FilaView_setRenderQuality(FilaView* self, const FilaRenderQuality* renderQuality) {
-    fila::cpp(self)->setRenderQuality(*fila::cpp(renderQuality));
+    fila::cpp(FILA_NONNULL("FilaView_setRenderQuality", self))->setRenderQuality(*fila::cpp(FILA_NONNULL("FilaView_setRenderQuality", renderQuality)));
 }
 
 void FilaView_getRenderQuality(const FilaView* self, FilaRenderQuality* out) {
-    *fila::cpp(out) = fila::cpp(self)->getRenderQuality();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getRenderQuality", self))->getRenderQuality();
 }
 
 void FilaView_setDynamicLightingOptions(FilaView* self, float zLightNear, float zLightFar) {
-    fila::cpp(self)->setDynamicLightingOptions(zLightNear, zLightFar);
+    fila::cpp(FILA_NONNULL("FilaView_setDynamicLightingOptions", self))->setDynamicLightingOptions(zLightNear, zLightFar);
 }
 
 void FilaView_setGridSize(FilaView* self, double size) {
-    fila::cpp(self)->setGridSize(size);
+    fila::cpp(FILA_NONNULL("FilaView_setGridSize", self))->setGridSize(size);
 }
 
 double FilaView_getGridSize(const FilaView* self) {
-    return fila::cpp(self)->getGridSize();
+    return fila::cpp(FILA_NONNULL("FilaView_getGridSize", self))->getGridSize();
 }
 
 double FilaView_getEffectiveGridSize(const FilaView* self) {
-    return fila::cpp(self)->getEffectiveGridSize();
+    return fila::cpp(FILA_NONNULL("FilaView_getEffectiveGridSize", self))->getEffectiveGridSize();
 }
 
 void FilaView_setShadowType(FilaView* self, FilaShadowType shadow) {
-    fila::cpp(self)->setShadowType(static_cast<filament::ShadowType>(shadow));
+    fila::cpp(FILA_NONNULL("FilaView_setShadowType", self))->setShadowType(static_cast<filament::ShadowType>(shadow));
 }
 
 FilaShadowType FilaView_getShadowType(const FilaView* self) {
-    return static_cast<FilaShadowType>(fila::cpp(self)->getShadowType());
+    return static_cast<FilaShadowType>(fila::cpp(FILA_NONNULL("FilaView_getShadowType", self))->getShadowType());
 }
 
 void FilaView_setVsmShadowOptions(FilaView* self, const FilaVsmShadowOptions* options) {
-    fila::cpp(self)->setVsmShadowOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setVsmShadowOptions", self))->setVsmShadowOptions(*fila::cpp(FILA_NONNULL("FilaView_setVsmShadowOptions", options)));
 }
 
 void FilaView_getVsmShadowOptions(const FilaView* self, FilaVsmShadowOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getVsmShadowOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getVsmShadowOptions", self))->getVsmShadowOptions();
 }
 
 void FilaView_setSoftShadowOptions(FilaView* self, const FilaSoftShadowOptions* options) {
-    fila::cpp(self)->setSoftShadowOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setSoftShadowOptions", self))->setSoftShadowOptions(*fila::cpp(FILA_NONNULL("FilaView_setSoftShadowOptions", options)));
 }
 
 void FilaView_getSoftShadowOptions(const FilaView* self, FilaSoftShadowOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getSoftShadowOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getSoftShadowOptions", self))->getSoftShadowOptions();
 }
 
 void FilaView_setPostProcessingEnabled(FilaView* self, bool enabled) {
-    fila::cpp(self)->setPostProcessingEnabled(enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setPostProcessingEnabled", self))->setPostProcessingEnabled(enabled);
 }
 
 bool FilaView_isPostProcessingEnabled(const FilaView* self) {
-    return fila::cpp(self)->isPostProcessingEnabled();
+    return fila::cpp(FILA_NONNULL("FilaView_isPostProcessingEnabled", self))->isPostProcessingEnabled();
 }
 
 void FilaView_setFrontFaceWindingInverted(FilaView* self, bool inverted) {
-    fila::cpp(self)->setFrontFaceWindingInverted(inverted);
+    fila::cpp(FILA_NONNULL("FilaView_setFrontFaceWindingInverted", self))->setFrontFaceWindingInverted(inverted);
 }
 
 bool FilaView_isFrontFaceWindingInverted(const FilaView* self) {
-    return fila::cpp(self)->isFrontFaceWindingInverted();
+    return fila::cpp(FILA_NONNULL("FilaView_isFrontFaceWindingInverted", self))->isFrontFaceWindingInverted();
 }
 
 void FilaView_setTransparentPickingEnabled(FilaView* self, bool enabled) {
-    fila::cpp(self)->setTransparentPickingEnabled(enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setTransparentPickingEnabled", self))->setTransparentPickingEnabled(enabled);
 }
 
 bool FilaView_isTransparentPickingEnabled(const FilaView* self) {
-    return fila::cpp(self)->isTransparentPickingEnabled();
+    return fila::cpp(FILA_NONNULL("FilaView_isTransparentPickingEnabled", self))->isTransparentPickingEnabled();
 }
 
 void FilaView_setStencilBufferEnabled(FilaView* self, bool enabled) {
-    fila::cpp(self)->setStencilBufferEnabled(enabled);
+    fila::cpp(FILA_NONNULL("FilaView_setStencilBufferEnabled", self))->setStencilBufferEnabled(enabled);
 }
 
 bool FilaView_isStencilBufferEnabled(const FilaView* self) {
-    return fila::cpp(self)->isStencilBufferEnabled();
+    return fila::cpp(FILA_NONNULL("FilaView_isStencilBufferEnabled", self))->isStencilBufferEnabled();
 }
 
 void FilaView_setStereoscopicOptions(FilaView* self, const FilaStereoscopicOptions* options) {
-    fila::cpp(self)->setStereoscopicOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaView_setStereoscopicOptions", self))->setStereoscopicOptions(*fila::cpp(FILA_NONNULL("FilaView_setStereoscopicOptions", options)));
 }
 
 void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getStereoscopicOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaView_getStereoscopicOptions", self))->getStereoscopicOptions();
 }
 
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling) {
-    fila::cpp(self)->setFrustumCullingEnabled(culling);
+    fila::cpp(FILA_NONNULL("FilaView_setFrustumCullingEnabled", self))->setFrustumCullingEnabled(culling);
 }
 
 bool FilaView_isFrustumCullingEnabled(const FilaView* self) {
-    return fila::cpp(self)->isFrustumCullingEnabled();
+    return fila::cpp(FILA_NONNULL("FilaView_isFrustumCullingEnabled", self))->isFrustumCullingEnabled();
 }
 
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value) {
-    fila::cpp(self)->setMaterialGlobal(index, fila::math<filament::math::float4>(*value));
+    fila::cpp(FILA_NONNULL("FilaView_setMaterialGlobal", self))->setMaterialGlobal(index, fila::math<filament::math::float4>(*FILA_NONNULL("FilaView_setMaterialGlobal", value)));
 }
 
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out) {
-    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->getMaterialGlobal(index));
+    *out = fila::mirror<FilaFloat4>(fila::cpp(FILA_NONNULL("FilaView_getMaterialGlobal", self))->getMaterialGlobal(index));
 }
 
 FilaEntity FilaView_getFogEntity(const FilaView* self) {
-    return utils::Entity::smuggle(fila::cpp(self)->getFogEntity());
+    return utils::Entity::smuggle(fila::cpp(FILA_NONNULL("FilaView_getFogEntity", self))->getFogEntity());
 }
 
 int32_t FilaView_getVisibleRenderableCount(const FilaView* self) {
-    return fila::cpp(self)->getVisibleRenderableCount();
+    return fila::cpp(FILA_NONNULL("FilaView_getVisibleRenderableCount", self))->getVisibleRenderableCount();
 }
 
 void FilaView_clearFrameHistory(FilaView* self, FilaEngine* engine) {
-    fila::cpp(self)->clearFrameHistory(*fila::cpp(engine));
+    fila::cpp(FILA_NONNULL("FilaView_clearFrameHistory", self))->clearFrameHistory(*fila::cpp(FILA_NONNULL("FilaView_clearFrameHistory", engine)));
 }
 
 } // extern "C"

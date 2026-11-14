@@ -13,19 +13,19 @@ void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorklo
 }
 
 void FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(const FilaFramePipelineEstimatorWorkload* self, int64_t* out) {
-    *out = (fila::cpp(self)->idealFrameDuration).count();
+    *out = (fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorWorkload_getIdealFrameDuration", self))->idealFrameDuration).count();
 }
 
 void FilaFramePipelineEstimatorWorkload_setIdealFrameDuration(FilaFramePipelineEstimatorWorkload* self, int64_t value) {
-    fila::cpp(self)->idealFrameDuration = std::chrono::nanoseconds(value);
+    fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorWorkload_setIdealFrameDuration", self))->idealFrameDuration = std::chrono::nanoseconds(value);
 }
 
 float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self) {
-    return fila::cpp(self)->idealFrameRate;
+    return fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorWorkload_getIdealFrameRate", self))->idealFrameRate;
 }
 
 void FilaFramePipelineEstimatorWorkload_setIdealFrameRate(FilaFramePipelineEstimatorWorkload* self, float value) {
-    fila::cpp(self)->idealFrameRate = value;
+    fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorWorkload_setIdealFrameRate", self))->idealFrameRate = value;
 }
 
 FilaFramePipelineEstimatorPacingSizing* FilaFramePipelineEstimatorPacingSizing_create(void) {
@@ -37,19 +37,19 @@ void FilaFramePipelineEstimatorPacingSizing_destroy(FilaFramePipelineEstimatorPa
 }
 
 uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFramePipelineEstimatorPacingSizing* self) {
-    return fila::cpp(self)->latencyFrames;
+    return fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorPacingSizing_getLatencyFrames", self))->latencyFrames;
 }
 
 void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value) {
-    fila::cpp(self)->latencyFrames = value;
+    fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorPacingSizing_setLatencyFrames", self))->latencyFrames = value;
 }
 
 void FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(const FilaFramePipelineEstimatorPacingSizing* self, int64_t* out) {
-    *out = (fila::cpp(self)->safeDelayDuration).count();
+    *out = (fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration", self))->safeDelayDuration).count();
 }
 
 void FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration(FilaFramePipelineEstimatorPacingSizing* self, int64_t value) {
-    fila::cpp(self)->safeDelayDuration = std::chrono::nanoseconds(value);
+    fila::cpp(FILA_NONNULL("FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration", self))->safeDelayDuration = std::chrono::nanoseconds(value);
 }
 
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile) {
@@ -57,19 +57,19 @@ double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPerc
 }
 
 void FilaFramePipelineEstimator_estimateWorkload_TargetPercentile(const FilaRendererFrameInfo* const* history, uint32_t historyCount, FilaFramePipelineEstimatorTargetPercentile targetPercentile, FilaFramePipelineEstimatorWorkload* out) {
-    *fila::cpp(out) = filament::FramePipelineEstimator::estimateWorkload(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(history[i]); }), static_cast<filament::FramePipelineEstimator::TargetPercentile>(targetPercentile));
+    *fila::cpp(out) = filament::FramePipelineEstimator::estimateWorkload(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(FILA_NONNULL("FilaFramePipelineEstimator_estimateWorkload_TargetPercentile", history[i])); }), static_cast<filament::FramePipelineEstimator::TargetPercentile>(targetPercentile));
 }
 
 void FilaFramePipelineEstimator_estimateWorkload_double(const FilaRendererFrameInfo* const* history, uint32_t historyCount, double zScore, FilaFramePipelineEstimatorWorkload* out) {
-    *fila::cpp(out) = filament::FramePipelineEstimator::estimateWorkload(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(history[i]); }), zScore);
+    *fila::cpp(out) = filament::FramePipelineEstimator::estimateWorkload(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(FILA_NONNULL("FilaFramePipelineEstimator_estimateWorkload_double", history[i])); }), zScore);
 }
 
 void FilaFramePipelineEstimator_estimatePacing_TargetPercentile(const FilaRendererFrameInfo* const* history, uint32_t historyCount, int64_t pacingPeriod, FilaFramePipelineEstimatorTargetPercentile targetPercentile, FilaFramePipelineEstimatorPacingSizing* out) {
-    *fila::cpp(out) = filament::FramePipelineEstimator::estimatePacing(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(history[i]); }), std::chrono::nanoseconds(pacingPeriod), static_cast<filament::FramePipelineEstimator::TargetPercentile>(targetPercentile));
+    *fila::cpp(out) = filament::FramePipelineEstimator::estimatePacing(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(FILA_NONNULL("FilaFramePipelineEstimator_estimatePacing_TargetPercentile", history[i])); }), std::chrono::nanoseconds(pacingPeriod), static_cast<filament::FramePipelineEstimator::TargetPercentile>(targetPercentile));
 }
 
 void FilaFramePipelineEstimator_estimatePacing_double(const FilaRendererFrameInfo* const* history, uint32_t historyCount, int64_t pacingPeriod, double zScore, FilaFramePipelineEstimatorPacingSizing* out) {
-    *fila::cpp(out) = filament::FramePipelineEstimator::estimatePacing(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(history[i]); }), std::chrono::nanoseconds(pacingPeriod), zScore);
+    *fila::cpp(out) = filament::FramePipelineEstimator::estimatePacing(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(FILA_NONNULL("FilaFramePipelineEstimator_estimatePacing_double", history[i])); }), std::chrono::nanoseconds(pacingPeriod), zScore);
 }
 
 } // extern "C"

@@ -13,27 +13,27 @@ void FilaMultiSampleAntiAliasingOptions_destroy(FilaMultiSampleAntiAliasingOptio
 }
 
 bool FilaMultiSampleAntiAliasingOptions_getEnabled(const FilaMultiSampleAntiAliasingOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaMultiSampleAntiAliasingOptions_getEnabled", self))->enabled;
 }
 
 void FilaMultiSampleAntiAliasingOptions_setEnabled(FilaMultiSampleAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaMultiSampleAntiAliasingOptions_setEnabled", self))->enabled = value;
 }
 
 uint32_t FilaMultiSampleAntiAliasingOptions_getSampleCount(const FilaMultiSampleAntiAliasingOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->sampleCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaMultiSampleAntiAliasingOptions_getSampleCount", self))->sampleCount);
 }
 
 void FilaMultiSampleAntiAliasingOptions_setSampleCount(FilaMultiSampleAntiAliasingOptions* self, uint32_t value) {
-    fila::cpp(self)->sampleCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaMultiSampleAntiAliasingOptions_setSampleCount", self))->sampleCount = static_cast<uint8_t>(value);
 }
 
 bool FilaMultiSampleAntiAliasingOptions_getCustomResolve(const FilaMultiSampleAntiAliasingOptions* self) {
-    return fila::cpp(self)->customResolve;
+    return fila::cpp(FILA_NONNULL("FilaMultiSampleAntiAliasingOptions_getCustomResolve", self))->customResolve;
 }
 
 void FilaMultiSampleAntiAliasingOptions_setCustomResolve(FilaMultiSampleAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->customResolve = value;
+    fila::cpp(FILA_NONNULL("FilaMultiSampleAntiAliasingOptions_setCustomResolve", self))->customResolve = value;
 }
 
 } // extern "C"

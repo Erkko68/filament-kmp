@@ -13,95 +13,95 @@ void GeoCanvas_destroy(GeoCanvas* self) {
 }
 
 void GeoCanvas_Add_Shape(GeoCanvas* self, GeoShape* shape) {
-    geo_c::cpp(self)->Add(geo_c::cpp(shape));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Add_Shape", self))->Add(geo_c::cpp(shape));
 }
 
 void GeoCanvas_Add_vector(GeoCanvas* self, GeoShape* const* shapes, uint32_t shapesCount) {
-    geo_c::cpp(self)->Add(geo_c::items(shapesCount, [&](uint32_t i) { return geo_c::cpp(shapes[i]); }));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Add_vector", self))->Add(geo_c::items(shapesCount, [&](uint32_t i) { return geo_c::cpp(shapes[i]); }));
 }
 
 uint32_t GeoCanvas_GetCount(const GeoCanvas* self) {
-    return static_cast<uint32_t>(geo_c::cpp(self)->GetCount());
+    return static_cast<uint32_t>(geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetCount", self))->GetCount());
 }
 
 uint32_t GeoCanvas_GetIds(const GeoCanvas* self, uint32_t* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->GetIds(), outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetIds", self))->GetIds(), outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
 }
 
 GeoHandle GeoCanvas_GetHandle(const GeoCanvas* self) {
-    return (geo_c::cpp(self)->GetHandle()).getId();
+    return (geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetHandle", self))->GetHandle()).getId();
 }
 
 void GeoCanvas_SetHandle(GeoCanvas* self, GeoHandle handle) {
-    geo_c::cpp(self)->SetHandle(geo::Handle::fromId(handle));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_SetHandle", self))->SetHandle(geo::Handle::fromId(handle));
 }
 
 GeoHandle* GeoCanvas_GetHandles(GeoCanvas* self) {
-    return reinterpret_cast<GeoHandle*>(geo_c::cpp(self)->GetHandles());
+    return reinterpret_cast<GeoHandle*>(geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetHandles", self))->GetHandles());
 }
 
 void GeoCanvas_GetLayers(const GeoCanvas* self, GeoLayers* out) {
-    *out = static_cast<GeoLayers>(geo_c::cpp(self)->GetLayers());
+    *out = static_cast<GeoLayers>(geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetLayers", self))->GetLayers());
 }
 
 void GeoCanvas_SetLayers(GeoCanvas* self, GeoLayers layers) {
-    geo_c::cpp(self)->SetLayers(static_cast<geo::Layers>(layers));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_SetLayers", self))->SetLayers(static_cast<geo::Layers>(layers));
 }
 
 void GeoCanvas_SetListener(GeoCanvas* self, GeoListener listener, void* listenerUser) {
-    geo_c::cpp(self)->SetListener(listener ? geo::Listener([=](auto a0, auto a1) { listener(geo_c::c(a0), a1, listenerUser); }) : nullptr);
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_SetListener", self))->SetListener(listener ? geo::Listener([=](auto a0, auto a1) { listener(geo_c::c(a0), a1, listenerUser); }) : nullptr);
 }
 
 void GeoCanvas_Track(GeoCanvas* self, GeoTracker tracker, void* user) {
-    geo_c::cpp(self)->Track(tracker ? geo::Tracker([=](auto a0, auto a1) { tracker(a0, a1); }) : nullptr, user);
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Track", self))->Track(tracker ? geo::Tracker([=](auto a0, auto a1) { tracker(a0, a1); }) : nullptr, user);
 }
 
 void GeoCanvas_Visit(const GeoCanvas* self, GeoVisitor visitor, void* user) {
-    geo_c::cpp(self)->Visit(visitor, user);
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Visit", self))->Visit(visitor, user);
 }
 
 void GeoCanvas_Upload(GeoCanvas* self, void* blob, uint32_t blobSize, GeoBlobCallback blobCallback, void* blobUser) {
-    geo_c::cpp(self)->Upload(geo::Blob(blob, blobSize, blobCallback, blobUser));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Upload", self))->Upload(geo::Blob(blob, blobSize, blobCallback, blobUser));
 }
 
 GeoShape* GeoCanvas_Load(GeoCanvas* self, const char* path, char* outError, uint32_t outErrorCapacity) {
-    return geo_c::result(geo_c::cpp(self)->Load(path), outError, outErrorCapacity, [&](auto& v) { return geo_c::c(geo_c::retain(v)); });
+    return geo_c::result(geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Load", self))->Load(path), outError, outErrorCapacity, [&](auto& v) { return geo_c::c(geo_c::retain(v)); });
 }
 
 bool GeoCanvas_Measure(const GeoCanvas* self, GeoMathFloat3* out, char* outError, uint32_t outErrorCapacity) {
-    return geo_c::result(geo_c::cpp(self)->Measure(), outError, outErrorCapacity, [&](auto& v) { *out = geo_c::mirror<GeoMathFloat3>(v); return true; });
+    return geo_c::result(geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Measure", self))->Measure(), outError, outErrorCapacity, [&](auto& v) { *out = geo_c::mirror<GeoMathFloat3>(v); return true; });
 }
 
 void GeoCanvas_SetBackground(GeoCanvas* self, const float* rgba, uint32_t rgbaCount) {
-    geo_c::cpp(self)->SetBackground(geo_c::items(rgbaCount, [&](uint32_t i) { return rgba[i]; }));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_SetBackground", self))->SetBackground(geo_c::items(rgbaCount, [&](uint32_t i) { return rgba[i]; }));
 }
 
 void GeoCanvas_Fill(const GeoCanvas* self, float* rgba, uint32_t rgbaCount) {
-    geo_c::cpp(self)->Fill(geo_c::updated(rgbaCount, [&](uint32_t i) { return rgba[i]; }, [&](auto x, uint32_t i) { rgba[i] = x; }));
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_Fill", self))->Fill(geo_c::updated(rgbaCount, [&](uint32_t i) { return rgba[i]; }, [&](auto x, uint32_t i) { rgba[i] = x; }));
 }
 
 GeoBox* GeoCanvas_GetBox(GeoCanvas* self) {
-    return geo_c::c(&geo_c::cpp(self)->GetBox());
+    return geo_c::c(&geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetBox", self))->GetBox());
 }
 
 void GeoCanvas_SetValue_float(GeoCanvas* self, const char* name, float value) {
-    geo_c::cpp(self)->SetValue<float>(name, value);
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_SetValue_float", self))->SetValue<float>(name, value);
 }
 
 void GeoCanvas_SetValue_int32_t(GeoCanvas* self, const char* name, int32_t value) {
-    geo_c::cpp(self)->SetValue<int32_t>(name, value);
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_SetValue_int32_t", self))->SetValue<int32_t>(name, value);
 }
 
 float GeoCanvas_GetValue_float(const GeoCanvas* self, const char* name) {
-    return geo_c::cpp(self)->GetValue<float>(name);
+    return geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetValue_float", self))->GetValue<float>(name);
 }
 
 int32_t GeoCanvas_GetValue_int32_t(const GeoCanvas* self, const char* name) {
-    return geo_c::cpp(self)->GetValue<int32_t>(name);
+    return geo_c::cpp(GEO_C_NONNULL("GeoCanvas_GetValue_int32_t", self))->GetValue<int32_t>(name);
 }
 
 void GeoCanvas_invoke(GeoCanvas* self, float time) {
-    geo_c::cpp(self)->operator()(time);
+    geo_c::cpp(GEO_C_NONNULL("GeoCanvas_invoke", self))->operator()(time);
 }
 
 } // extern "C"

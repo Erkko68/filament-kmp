@@ -13,151 +13,151 @@ void FilaCamera_projection_double_double_double_double(double focalLengthInMilli
 }
 
 void FilaCamera_setProjection_Projection_double_double_double_double_double_double(FilaCamera* self, FilaCameraProjection projection, double left, double right, double bottom, double top, double near, double far) {
-    fila::cpp(self)->setProjection(static_cast<filament::Camera::Projection>(projection), left, right, bottom, top, near, far);
+    fila::cpp(FILA_NONNULL("FilaCamera_setProjection_Projection_double_double_double_double_double_double", self))->setProjection(static_cast<filament::Camera::Projection>(projection), left, right, bottom, top, near, far);
 }
 
 void FilaCamera_setProjection_double_double_double_double_Fov(FilaCamera* self, double fovInDegrees, double aspect, double near, double far, FilaCameraFov direction) {
-    fila::cpp(self)->setProjection(fovInDegrees, aspect, near, far, static_cast<filament::Camera::Fov>(direction));
+    fila::cpp(FILA_NONNULL("FilaCamera_setProjection_double_double_double_double_Fov", self))->setProjection(fovInDegrees, aspect, near, far, static_cast<filament::Camera::Fov>(direction));
 }
 
 void FilaCamera_setLensProjection(FilaCamera* self, double focalLengthInMillimeters, double aspect, double near, double far) {
-    fila::cpp(self)->setLensProjection(focalLengthInMillimeters, aspect, near, far);
+    fila::cpp(FILA_NONNULL("FilaCamera_setLensProjection", self))->setLensProjection(focalLengthInMillimeters, aspect, near, far);
 }
 
 void FilaCamera_setCustomProjection_double_double(FilaCamera* self, const FilaMat4* projection, double near, double far) {
-    fila::cpp(self)->setCustomProjection(fila::math<filament::math::mat4>(*projection), near, far);
+    fila::cpp(FILA_NONNULL("FilaCamera_setCustomProjection_double_double", self))->setCustomProjection(fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_setCustomProjection_double_double", projection)), near, far);
 }
 
 void FilaCamera_setCustomProjection_mat4_double_double(FilaCamera* self, const FilaMat4* projection, const FilaMat4* projectionForCulling, double near, double far) {
-    fila::cpp(self)->setCustomProjection(fila::math<filament::math::mat4>(*projection), fila::math<filament::math::mat4>(*projectionForCulling), near, far);
+    fila::cpp(FILA_NONNULL("FilaCamera_setCustomProjection_mat4_double_double", self))->setCustomProjection(fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_setCustomProjection_mat4_double_double", projection)), fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_setCustomProjection_mat4_double_double", projectionForCulling)), near, far);
 }
 
 void FilaCamera_setCustomEyeProjection(FilaCamera* self, const FilaMat4* projection, uint32_t count, const FilaMat4* projectionForCulling, double near, double far) {
-    fila::cpp(self)->setCustomEyeProjection(fila::cpp(projection), static_cast<size_t>(count), fila::math<filament::math::mat4>(*projectionForCulling), near, far);
+    fila::cpp(FILA_NONNULL("FilaCamera_setCustomEyeProjection", self))->setCustomEyeProjection(fila::cpp(FILA_NONNULL("FilaCamera_setCustomEyeProjection", projection)), static_cast<size_t>(count), fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_setCustomEyeProjection", projectionForCulling)), near, far);
 }
 
 void FilaCamera_setScaling(FilaCamera* self, const FilaDouble2* scaling) {
-    fila::cpp(self)->setScaling(fila::math<filament::math::double2>(*scaling));
+    fila::cpp(FILA_NONNULL("FilaCamera_setScaling", self))->setScaling(fila::math<filament::math::double2>(*FILA_NONNULL("FilaCamera_setScaling", scaling)));
 }
 
 void FilaCamera_setShift(FilaCamera* self, const FilaDouble2* shift) {
-    fila::cpp(self)->setShift(fila::math<filament::math::double2>(*shift));
+    fila::cpp(FILA_NONNULL("FilaCamera_setShift", self))->setShift(fila::math<filament::math::double2>(*FILA_NONNULL("FilaCamera_setShift", shift)));
 }
 
 void FilaCamera_getScaling(const FilaCamera* self, FilaDouble4* out) {
-    *out = fila::mirror<FilaDouble4>(fila::cpp(self)->getScaling());
+    *out = fila::mirror<FilaDouble4>(fila::cpp(FILA_NONNULL("FilaCamera_getScaling", self))->getScaling());
 }
 
 void FilaCamera_getShift(const FilaCamera* self, FilaDouble2* out) {
-    *out = fila::mirror<FilaDouble2>(fila::cpp(self)->getShift());
+    *out = fila::mirror<FilaDouble2>(fila::cpp(FILA_NONNULL("FilaCamera_getShift", self))->getShift());
 }
 
 void FilaCamera_getProjectionMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out) {
-    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getProjectionMatrix(static_cast<uint8_t>(eyeId)));
+    *out = fila::mirror<FilaMat4>(fila::cpp(FILA_NONNULL("FilaCamera_getProjectionMatrix", self))->getProjectionMatrix(static_cast<uint8_t>(eyeId)));
 }
 
 void FilaCamera_getCullingProjectionMatrix(const FilaCamera* self, FilaMat4* out) {
-    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getCullingProjectionMatrix());
+    *out = fila::mirror<FilaMat4>(fila::cpp(FILA_NONNULL("FilaCamera_getCullingProjectionMatrix", self))->getCullingProjectionMatrix());
 }
 
 double FilaCamera_getNear(const FilaCamera* self) {
-    return fila::cpp(self)->getNear();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getNear", self))->getNear();
 }
 
 double FilaCamera_getCullingFar(const FilaCamera* self) {
-    return fila::cpp(self)->getCullingFar();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getCullingFar", self))->getCullingFar();
 }
 
 void FilaCamera_setModelMatrix_mat4(FilaCamera* self, const FilaMat4* modelMatrix) {
-    fila::cpp(self)->setModelMatrix(fila::math<filament::math::mat4>(*modelMatrix));
+    fila::cpp(FILA_NONNULL("FilaCamera_setModelMatrix_mat4", self))->setModelMatrix(fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_setModelMatrix_mat4", modelMatrix)));
 }
 
 void FilaCamera_setModelMatrix_mat4f(FilaCamera* self, const FilaMat4f* modelMatrix) {
-    fila::cpp(self)->setModelMatrix(fila::math<filament::math::mat4f>(*modelMatrix));
+    fila::cpp(FILA_NONNULL("FilaCamera_setModelMatrix_mat4f", self))->setModelMatrix(fila::math<filament::math::mat4f>(*FILA_NONNULL("FilaCamera_setModelMatrix_mat4f", modelMatrix)));
 }
 
 void FilaCamera_setEyeModelMatrix(FilaCamera* self, uint32_t eyeId, const FilaMat4* model) {
-    fila::cpp(self)->setEyeModelMatrix(static_cast<uint8_t>(eyeId), fila::math<filament::math::mat4>(*model));
+    fila::cpp(FILA_NONNULL("FilaCamera_setEyeModelMatrix", self))->setEyeModelMatrix(static_cast<uint8_t>(eyeId), fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_setEyeModelMatrix", model)));
 }
 
 void FilaCamera_lookAt(FilaCamera* self, const FilaDouble3* eye, const FilaDouble3* center, const FilaDouble3* up) {
-    fila::cpp(self)->lookAt(fila::math<filament::math::double3>(*eye), fila::math<filament::math::double3>(*center), fila::math<filament::math::double3>(*up));
+    fila::cpp(FILA_NONNULL("FilaCamera_lookAt", self))->lookAt(fila::math<filament::math::double3>(*FILA_NONNULL("FilaCamera_lookAt", eye)), fila::math<filament::math::double3>(*FILA_NONNULL("FilaCamera_lookAt", center)), fila::math<filament::math::double3>(*FILA_NONNULL("FilaCamera_lookAt", up)));
 }
 
 void FilaCamera_getModelMatrix(const FilaCamera* self, FilaMat4* out) {
-    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getModelMatrix());
+    *out = fila::mirror<FilaMat4>(fila::cpp(FILA_NONNULL("FilaCamera_getModelMatrix", self))->getModelMatrix());
 }
 
 void FilaCamera_getViewMatrix(const FilaCamera* self, FilaMat4* out) {
-    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getViewMatrix());
+    *out = fila::mirror<FilaMat4>(fila::cpp(FILA_NONNULL("FilaCamera_getViewMatrix", self))->getViewMatrix());
 }
 
 void FilaCamera_getEyeFromViewMatrix(const FilaCamera* self, uint32_t eyeId, FilaMat4* out) {
-    *out = fila::mirror<FilaMat4>(fila::cpp(self)->getEyeFromViewMatrix(static_cast<uint8_t>(eyeId)));
+    *out = fila::mirror<FilaMat4>(fila::cpp(FILA_NONNULL("FilaCamera_getEyeFromViewMatrix", self))->getEyeFromViewMatrix(static_cast<uint8_t>(eyeId)));
 }
 
 void FilaCamera_getPosition(const FilaCamera* self, FilaDouble3* out) {
-    *out = fila::mirror<FilaDouble3>(fila::cpp(self)->getPosition());
+    *out = fila::mirror<FilaDouble3>(fila::cpp(FILA_NONNULL("FilaCamera_getPosition", self))->getPosition());
 }
 
 void FilaCamera_getLeftVector(const FilaCamera* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getLeftVector());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaCamera_getLeftVector", self))->getLeftVector());
 }
 
 void FilaCamera_getUpVector(const FilaCamera* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getUpVector());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaCamera_getUpVector", self))->getUpVector());
 }
 
 void FilaCamera_getForwardVector(const FilaCamera* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getForwardVector());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaCamera_getForwardVector", self))->getForwardVector());
 }
 
 float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* self, FilaCameraFov direction) {
-    return fila::cpp(self)->getFieldOfViewInDegrees(static_cast<filament::Camera::Fov>(direction));
+    return fila::cpp(FILA_NONNULL("FilaCamera_getFieldOfViewInDegrees", self))->getFieldOfViewInDegrees(static_cast<filament::Camera::Fov>(direction));
 }
 
 FilaEntity FilaCamera_getEntity(const FilaCamera* self) {
-    return utils::Entity::smuggle(fila::cpp(self)->getEntity());
+    return utils::Entity::smuggle(fila::cpp(FILA_NONNULL("FilaCamera_getEntity", self))->getEntity());
 }
 
 void FilaCamera_setExposure_float_float(FilaCamera* self, float aperture, float shutterSpeed, float sensitivity) {
-    fila::cpp(self)->setExposure(aperture, shutterSpeed, sensitivity);
+    fila::cpp(FILA_NONNULL("FilaCamera_setExposure_float_float", self))->setExposure(aperture, shutterSpeed, sensitivity);
 }
 
 void FilaCamera_setExposure(FilaCamera* self, float exposure) {
-    fila::cpp(self)->setExposure(exposure);
+    fila::cpp(FILA_NONNULL("FilaCamera_setExposure", self))->setExposure(exposure);
 }
 
 float FilaCamera_getAperture(const FilaCamera* self) {
-    return fila::cpp(self)->getAperture();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getAperture", self))->getAperture();
 }
 
 float FilaCamera_getShutterSpeed(const FilaCamera* self) {
-    return fila::cpp(self)->getShutterSpeed();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getShutterSpeed", self))->getShutterSpeed();
 }
 
 float FilaCamera_getSensitivity(const FilaCamera* self) {
-    return fila::cpp(self)->getSensitivity();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getSensitivity", self))->getSensitivity();
 }
 
 double FilaCamera_getFocalLength(const FilaCamera* self) {
-    return fila::cpp(self)->getFocalLength();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getFocalLength", self))->getFocalLength();
 }
 
 void FilaCamera_setFocusDistance(FilaCamera* self, float distance) {
-    fila::cpp(self)->setFocusDistance(distance);
+    fila::cpp(FILA_NONNULL("FilaCamera_setFocusDistance", self))->setFocusDistance(distance);
 }
 
 float FilaCamera_getFocusDistance(const FilaCamera* self) {
-    return fila::cpp(self)->getFocusDistance();
+    return fila::cpp(FILA_NONNULL("FilaCamera_getFocusDistance", self))->getFocusDistance();
 }
 
 void FilaCamera_inverseProjection_mat4(const FilaMat4* p, FilaMat4* out) {
-    *out = fila::mirror<FilaMat4>(filament::Camera::inverseProjection(fila::math<filament::math::mat4>(*p)));
+    *out = fila::mirror<FilaMat4>(filament::Camera::inverseProjection(fila::math<filament::math::mat4>(*FILA_NONNULL("FilaCamera_inverseProjection_mat4", p))));
 }
 
 void FilaCamera_inverseProjection_mat4f(const FilaMat4f* p, FilaMat4f* out) {
-    *out = fila::mirror<FilaMat4f>(filament::Camera::inverseProjection(fila::math<filament::math::mat4f>(*p)));
+    *out = fila::mirror<FilaMat4f>(filament::Camera::inverseProjection(fila::math<filament::math::mat4f>(*FILA_NONNULL("FilaCamera_inverseProjection_mat4f", p))));
 }
 
 double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance) {

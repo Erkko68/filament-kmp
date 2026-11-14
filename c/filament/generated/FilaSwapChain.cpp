@@ -5,35 +5,35 @@
 extern "C" {
 
 bool FilaSwapChain_isProtectedContentSupported(const FilaEngine* engine) {
-    return filament::SwapChain::isProtectedContentSupported(*fila::cpp(engine));
+    return filament::SwapChain::isProtectedContentSupported(*fila::cpp(FILA_NONNULL("FilaSwapChain_isProtectedContentSupported", engine)));
 }
 
 bool FilaSwapChain_isSRGBSwapChainSupported(const FilaEngine* engine) {
-    return filament::SwapChain::isSRGBSwapChainSupported(*fila::cpp(engine));
+    return filament::SwapChain::isSRGBSwapChainSupported(*fila::cpp(FILA_NONNULL("FilaSwapChain_isSRGBSwapChainSupported", engine)));
 }
 
 bool FilaSwapChain_isMSAASwapChainSupported(const FilaEngine* engine, uint32_t samples) {
-    return filament::SwapChain::isMSAASwapChainSupported(*fila::cpp(engine), samples);
+    return filament::SwapChain::isMSAASwapChainSupported(*fila::cpp(FILA_NONNULL("FilaSwapChain_isMSAASwapChainSupported", engine)), samples);
 }
 
 int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self) {
-    return [](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }(fila::cpp(self)->isFrameRateChangeSupported());
+    return [](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }(fila::cpp(FILA_NONNULL("FilaSwapChain_isFrameRateChangeSupported", self))->isFrameRateChangeSupported());
 }
 
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy) {
-    fila::cpp(self)->setFrameRate(frameRate, static_cast<filament::backend::Platform::FrameRateCompatibility>(compatibility), static_cast<filament::backend::Platform::ChangeFrameRateStrategy>(strategy));
+    fila::cpp(FILA_NONNULL("FilaSwapChain_setFrameRate", self))->setFrameRate(frameRate, static_cast<filament::backend::Platform::FrameRateCompatibility>(compatibility), static_cast<filament::backend::Platform::ChangeFrameRateStrategy>(strategy));
 }
 
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* self) {
-    return fila::cpp(self)->getNativeWindow();
+    return fila::cpp(FILA_NONNULL("FilaSwapChain_getNativeWindow", self))->getNativeWindow();
 }
 
 bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* self) {
-    return fila::cpp(self)->isFrameScheduledCallbackSet();
+    return fila::cpp(FILA_NONNULL("FilaSwapChain_isFrameScheduledCallbackSet", self))->isFrameScheduledCallbackSet();
 }
 
 void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* self, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->setFrameCompletedCallback(fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
+    fila::cpp(FILA_NONNULL("FilaSwapChain_setFrameCompletedCallback", self))->setFrameCompletedCallback(fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 } // extern "C"

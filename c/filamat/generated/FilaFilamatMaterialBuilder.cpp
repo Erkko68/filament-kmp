@@ -13,19 +13,19 @@ void FilaFilamatMaterialBuilderPreprocessorDefine_destroy(FilaFilamatMaterialBui
 }
 
 const char* FilaFilamatMaterialBuilderPreprocessorDefine_getName(const FilaFilamatMaterialBuilderPreprocessorDefine* self) {
-    return (fila::cpp(self)->name).c_str();
+    return (fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderPreprocessorDefine_getName", self))->name).c_str();
 }
 
 void FilaFilamatMaterialBuilderPreprocessorDefine_setName(FilaFilamatMaterialBuilderPreprocessorDefine* self, const char* value) {
-    fila::cpp(self)->name = std::string(value);
+    fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderPreprocessorDefine_setName", self))->name = std::string(value);
 }
 
 const char* FilaFilamatMaterialBuilderPreprocessorDefine_getValue(const FilaFilamatMaterialBuilderPreprocessorDefine* self) {
-    return (fila::cpp(self)->value).c_str();
+    return (fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderPreprocessorDefine_getValue", self))->value).c_str();
 }
 
 void FilaFilamatMaterialBuilderPreprocessorDefine_setValue(FilaFilamatMaterialBuilderPreprocessorDefine* self, const char* value) {
-    fila::cpp(self)->value = std::string(value);
+    fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderPreprocessorDefine_setValue", self))->value = std::string(value);
 }
 
 FilaFilamatMaterialBuilderAttribute* FilaFilamatMaterialBuilderAttribute_create(void) {
@@ -37,31 +37,31 @@ void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttri
 }
 
 uint32_t FilaFilamatMaterialBuilderAttribute_getAttributeName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->getAttributeName(), outCapacity, [&](char x, uint32_t i) { out[i] = x; });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_getAttributeName", self))->getAttributeName(), outCapacity, [&](char x, uint32_t i) { out[i] = x; });
 }
 
 uint32_t FilaFilamatMaterialBuilderAttribute_getDefineName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->getDefineName(), outCapacity, [&](char x, uint32_t i) { out[i] = x; });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_getDefineName", self))->getDefineName(), outCapacity, [&](char x, uint32_t i) { out[i] = x; });
 }
 
 const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMaterialBuilderAttribute* self) {
-    return (fila::cpp(self)->name).data();
+    return (fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_getName", self))->name).data();
 }
 
 FilaUniformType FilaFilamatMaterialBuilderAttribute_getType(const FilaFilamatMaterialBuilderAttribute* self) {
-    return static_cast<FilaUniformType>(fila::cpp(self)->type);
+    return static_cast<FilaUniformType>(fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_getType", self))->type);
 }
 
 void FilaFilamatMaterialBuilderAttribute_setType(FilaFilamatMaterialBuilderAttribute* self, FilaUniformType value) {
-    fila::cpp(self)->type = static_cast<filament::backend::UniformType>(value);
+    fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_setType", self))->type = static_cast<filament::backend::UniformType>(value);
 }
 
 FilaVertexAttribute FilaFilamatMaterialBuilderAttribute_getLocation(const FilaFilamatMaterialBuilderAttribute* self) {
-    return static_cast<FilaVertexAttribute>(fila::cpp(self)->location);
+    return static_cast<FilaVertexAttribute>(fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_getLocation", self))->location);
 }
 
 void FilaFilamatMaterialBuilderAttribute_setLocation(FilaFilamatMaterialBuilderAttribute* self, FilaVertexAttribute value) {
-    fila::cpp(self)->location = static_cast<filament::VertexAttribute>(value);
+    fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilderAttribute_setLocation", self))->location = static_cast<filament::VertexAttribute>(value);
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_create(void) {
@@ -77,279 +77,279 @@ FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilder_asFilamatMaterialBuil
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_noSamplerValidation(FilaFilamatMaterialBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->noSamplerValidation(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_noSamplerValidation", self))->noSamplerValidation(enabled));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_includeEssl1(FilaFilamatMaterialBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->includeEssl1(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_includeEssl1", self))->includeEssl1(enabled));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_name(FilaFilamatMaterialBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(name));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_name", self))->name(FILA_NONNULL("FilaFilamatMaterialBuilder_name", name)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_compilationParameters(FilaFilamatMaterialBuilder* self, const char* params) {
-    return fila::c(&fila::cpp(self)->compilationParameters(params));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_compilationParameters", self))->compilationParameters(FILA_NONNULL("FilaFilamatMaterialBuilder_compilationParameters", params)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shading(FilaFilamatMaterialBuilder* self, FilaShading shading) {
-    return fila::c(&fila::cpp(self)->shading(static_cast<filament::Shading>(shading)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_shading", self))->shading(static_cast<filament::Shading>(shading)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_interpolation(FilaFilamatMaterialBuilder* self, FilaInterpolation interpolation) {
-    return fila::c(&fila::cpp(self)->interpolation(static_cast<filament::Interpolation>(interpolation)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_interpolation", self))->interpolation(static_cast<filament::Interpolation>(interpolation)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, FilaUniformType type, FilaPrecision precision) {
-    return fila::c(&fila::cpp(self)->parameter(name, static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision", self))->parameter(FILA_NONNULL("FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision", name), static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, uint32_t size, FilaUniformType type, FilaPrecision precision) {
-    return fila::c(&fila::cpp(self)->parameter(name, static_cast<size_t>(size), static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision", self))->parameter(FILA_NONNULL("FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision", name), static_cast<size_t>(size), static_cast<filament::backend::UniformType>(type), static_cast<filament::backend::Precision>(precision)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional(FilaFilamatMaterialBuilder* self, const char* name, FilaSamplerType samplerType, FilaSamplerFormat format, FilaPrecision precision, bool filterable, bool multisample, const char* transformName, const FilaShaderStageFlags* stages) {
-    return fila::c(&fila::cpp(self)->parameter(name, static_cast<filament::backend::SamplerType>(samplerType), static_cast<filament::backend::SamplerFormat>(format), static_cast<filament::backend::Precision>(precision), filterable, multisample, transformName, fila::optional(stages, [&](auto v) { return static_cast<filament::backend::ShaderStageFlags>(v); })));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional", self))->parameter(FILA_NONNULL("FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional", name), static_cast<filament::backend::SamplerType>(samplerType), static_cast<filament::backend::SamplerFormat>(format), static_cast<filament::backend::Precision>(precision), filterable, multisample, transformName, fila::optional(stages, [&](auto v) { return static_cast<filament::backend::ShaderStageFlags>(v); })));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_int32_t(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, int32_t defaultValue) {
-    return fila::c(&fila::cpp(self)->constant<int32_t>(name, static_cast<filament::backend::ConstantType>(type), defaultValue));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_constant_int32_t", self))->constant<int32_t>(FILA_NONNULL("FilaFilamatMaterialBuilder_constant_int32_t", name), static_cast<filament::backend::ConstantType>(type), defaultValue));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_float(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, float defaultValue) {
-    return fila::c(&fila::cpp(self)->constant<float>(name, static_cast<filament::backend::ConstantType>(type), defaultValue));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_constant_float", self))->constant<float>(FILA_NONNULL("FilaFilamatMaterialBuilder_constant_float", name), static_cast<filament::backend::ConstantType>(type), defaultValue));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_bool(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, bool defaultValue) {
-    return fila::c(&fila::cpp(self)->constant<bool>(name, static_cast<filament::backend::ConstantType>(type), defaultValue));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_constant_bool", self))->constant<bool>(FILA_NONNULL("FilaFilamatMaterialBuilder_constant_bool", name), static_cast<filament::backend::ConstantType>(type), defaultValue));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name) {
-    return fila::c(&fila::cpp(self)->variable(static_cast<filamat::MaterialBuilder::Variable>(v), name));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_variable", self))->variable(static_cast<filamat::MaterialBuilder::Variable>(v), FILA_NONNULL("FilaFilamatMaterialBuilder_variable", name)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable_ParameterPrecision(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name, FilaPrecision precision) {
-    return fila::c(&fila::cpp(self)->variable(static_cast<filamat::MaterialBuilder::Variable>(v), name, static_cast<filament::backend::Precision>(precision)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_variable_ParameterPrecision", self))->variable(static_cast<filamat::MaterialBuilder::Variable>(v), FILA_NONNULL("FilaFilamatMaterialBuilder_variable_ParameterPrecision", name), static_cast<filament::backend::Precision>(precision)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_require(FilaFilamatMaterialBuilder* self, FilaVertexAttribute attribute) {
-    return fila::c(&fila::cpp(self)->require(static_cast<filament::VertexAttribute>(attribute)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_require", self))->require(static_cast<filament::VertexAttribute>(attribute)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialDomain(FilaFilamatMaterialBuilder* self, FilaMaterialDomain materialDomain) {
-    return fila::c(&fila::cpp(self)->materialDomain(static_cast<filament::MaterialDomain>(materialDomain)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_materialDomain", self))->materialDomain(static_cast<filament::MaterialDomain>(materialDomain)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_material(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line) {
-    return fila::c(&fila::cpp(self)->material(code, static_cast<size_t>(line)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_material", self))->material(FILA_NONNULL("FilaFilamatMaterialBuilder_material", code), static_cast<size_t>(line)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialVertex(FilaFilamatMaterialBuilder* self, const char* code, uint32_t line) {
-    return fila::c(&fila::cpp(self)->materialVertex(code, static_cast<size_t>(line)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_materialVertex", self))->materialVertex(FILA_NONNULL("FilaFilamatMaterialBuilder_materialVertex", code), static_cast<size_t>(line)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_quality(FilaFilamatMaterialBuilder* self, FilaShaderQuality quality) {
-    return fila::c(&fila::cpp(self)->quality(static_cast<filament::ShaderQuality>(quality)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_quality", self))->quality(static_cast<filament::ShaderQuality>(quality)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_featureLevel(FilaFilamatMaterialBuilder* self, FilaFeatureLevel featureLevel) {
-    return fila::c(&fila::cpp(self)->featureLevel(static_cast<filament::backend::FeatureLevel>(featureLevel)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_featureLevel", self))->featureLevel(static_cast<filament::backend::FeatureLevel>(featureLevel)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_blending(FilaFilamatMaterialBuilder* self, FilaBlendingMode blending) {
-    return fila::c(&fila::cpp(self)->blending(static_cast<filament::BlendingMode>(blending)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_blending", self))->blending(static_cast<filament::BlendingMode>(blending)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_customBlendFunctions(FilaFilamatMaterialBuilder* self, FilaBlendFunction srcRGB, FilaBlendFunction srcA, FilaBlendFunction dstRGB, FilaBlendFunction dstA) {
-    return fila::c(&fila::cpp(self)->customBlendFunctions(static_cast<filament::backend::BlendFunction>(srcRGB), static_cast<filament::backend::BlendFunction>(srcA), static_cast<filament::backend::BlendFunction>(dstRGB), static_cast<filament::backend::BlendFunction>(dstA)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_customBlendFunctions", self))->customBlendFunctions(static_cast<filament::backend::BlendFunction>(srcRGB), static_cast<filament::backend::BlendFunction>(srcA), static_cast<filament::backend::BlendFunction>(dstRGB), static_cast<filament::backend::BlendFunction>(dstA)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_postLightingBlending(FilaFilamatMaterialBuilder* self, FilaBlendingMode blending) {
-    return fila::c(&fila::cpp(self)->postLightingBlending(static_cast<filament::BlendingMode>(blending)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_postLightingBlending", self))->postLightingBlending(static_cast<filament::BlendingMode>(blending)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_vertexDomain(FilaFilamatMaterialBuilder* self, FilaVertexDomain domain) {
-    return fila::c(&fila::cpp(self)->vertexDomain(static_cast<filament::VertexDomain>(domain)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_vertexDomain", self))->vertexDomain(static_cast<filament::VertexDomain>(domain)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_culling(FilaFilamatMaterialBuilder* self, FilaCullingMode culling) {
-    return fila::c(&fila::cpp(self)->culling(static_cast<filament::backend::CullingMode>(culling)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_culling", self))->culling(static_cast<filament::backend::CullingMode>(culling)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_colorWrite(FilaFilamatMaterialBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->colorWrite(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_colorWrite", self))->colorWrite(enable));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_depthWrite(FilaFilamatMaterialBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->depthWrite(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_depthWrite", self))->depthWrite(enable));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_depthCulling(FilaFilamatMaterialBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->depthCulling(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_depthCulling", self))->depthCulling(enable));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_instanced(FilaFilamatMaterialBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->instanced(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_instanced", self))->instanced(enable));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_doubleSided(FilaFilamatMaterialBuilder* self, bool doubleSided) {
-    return fila::c(&fila::cpp(self)->doubleSided(doubleSided));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_doubleSided", self))->doubleSided(doubleSided));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_maskThreshold(FilaFilamatMaterialBuilder* self, float threshold) {
-    return fila::c(&fila::cpp(self)->maskThreshold(threshold));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_maskThreshold", self))->maskThreshold(threshold));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_alphaToCoverage(FilaFilamatMaterialBuilder* self, bool enable) {
-    return fila::c(&fila::cpp(self)->alphaToCoverage(enable));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_alphaToCoverage", self))->alphaToCoverage(enable));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shadowMultiplier(FilaFilamatMaterialBuilder* self, bool shadowMultiplier) {
-    return fila::c(&fila::cpp(self)->shadowMultiplier(shadowMultiplier));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_shadowMultiplier", self))->shadowMultiplier(shadowMultiplier));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_transparentShadow(FilaFilamatMaterialBuilder* self, bool transparentShadow) {
-    return fila::c(&fila::cpp(self)->transparentShadow(transparentShadow));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_transparentShadow", self))->transparentShadow(transparentShadow));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_coloredPenumbra(FilaFilamatMaterialBuilder* self, bool coloredPenumbra) {
-    return fila::c(&fila::cpp(self)->coloredPenumbra(coloredPenumbra));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_coloredPenumbra", self))->coloredPenumbra(coloredPenumbra));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAntiAliasing(FilaFilamatMaterialBuilder* self, bool specularAntiAliasing) {
-    return fila::c(&fila::cpp(self)->specularAntiAliasing(specularAntiAliasing));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_specularAntiAliasing", self))->specularAntiAliasing(specularAntiAliasing));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAntiAliasingVariance(FilaFilamatMaterialBuilder* self, float screenSpaceVariance) {
-    return fila::c(&fila::cpp(self)->specularAntiAliasingVariance(screenSpaceVariance));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_specularAntiAliasingVariance", self))->specularAntiAliasingVariance(screenSpaceVariance));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAntiAliasingThreshold(FilaFilamatMaterialBuilder* self, float threshold) {
-    return fila::c(&fila::cpp(self)->specularAntiAliasingThreshold(threshold));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_specularAntiAliasingThreshold", self))->specularAntiAliasingThreshold(threshold));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_clearCoatIorChange(FilaFilamatMaterialBuilder* self, bool clearCoatIorChange) {
-    return fila::c(&fila::cpp(self)->clearCoatIorChange(clearCoatIorChange));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_clearCoatIorChange", self))->clearCoatIorChange(clearCoatIorChange));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_flipUV(FilaFilamatMaterialBuilder* self, bool flipUV) {
-    return fila::c(&fila::cpp(self)->flipUV(flipUV));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_flipUV", self))->flipUV(flipUV));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_linearFog(FilaFilamatMaterialBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->linearFog(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_linearFog", self))->linearFog(enabled));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shadowFarAttenuation(FilaFilamatMaterialBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->shadowFarAttenuation(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_shadowFarAttenuation", self))->shadowFarAttenuation(enabled));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_multiBounceAmbientOcclusion(FilaFilamatMaterialBuilder* self, bool multiBounceAO) {
-    return fila::c(&fila::cpp(self)->multiBounceAmbientOcclusion(multiBounceAO));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_multiBounceAmbientOcclusion", self))->multiBounceAmbientOcclusion(multiBounceAO));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_specularAmbientOcclusion(FilaFilamatMaterialBuilder* self, FilaSpecularAmbientOcclusion specularAO) {
-    return fila::c(&fila::cpp(self)->specularAmbientOcclusion(static_cast<filament::SpecularAmbientOcclusion>(specularAO)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_specularAmbientOcclusion", self))->specularAmbientOcclusion(static_cast<filament::SpecularAmbientOcclusion>(specularAO)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_refractionMode(FilaFilamatMaterialBuilder* self, FilaRefractionMode refraction) {
-    return fila::c(&fila::cpp(self)->refractionMode(static_cast<filament::RefractionMode>(refraction)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_refractionMode", self))->refractionMode(static_cast<filament::RefractionMode>(refraction)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_refractionType(FilaFilamatMaterialBuilder* self, FilaRefractionType refractionType) {
-    return fila::c(&fila::cpp(self)->refractionType(static_cast<filament::RefractionType>(refractionType)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_refractionType", self))->refractionType(static_cast<filament::RefractionType>(refractionType)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_reflectionMode(FilaFilamatMaterialBuilder* self, FilaReflectionMode mode) {
-    return fila::c(&fila::cpp(self)->reflectionMode(static_cast<filament::ReflectionMode>(mode)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_reflectionMode", self))->reflectionMode(static_cast<filament::ReflectionMode>(mode)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_transparencyMode(FilaFilamatMaterialBuilder* self, FilaTransparencyMode mode) {
-    return fila::c(&fila::cpp(self)->transparencyMode(static_cast<filament::TransparencyMode>(mode)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_transparencyMode", self))->transparencyMode(static_cast<filament::TransparencyMode>(mode)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicType(FilaFilamatMaterialBuilder* self, FilaPlatformStereoscopicType stereoscopicType) {
-    return fila::c(&fila::cpp(self)->stereoscopicType(static_cast<filament::backend::Platform::StereoscopicType>(stereoscopicType)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_stereoscopicType", self))->stereoscopicType(static_cast<filament::backend::Platform::StereoscopicType>(stereoscopicType)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_stereoscopicEyeCount(FilaFilamatMaterialBuilder* self, uint32_t eyeCount) {
-    return fila::c(&fila::cpp(self)->stereoscopicEyeCount(static_cast<uint8_t>(eyeCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_stereoscopicEyeCount", self))->stereoscopicEyeCount(static_cast<uint8_t>(eyeCount)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_customSurfaceShading(FilaFilamatMaterialBuilder* self, bool customSurfaceShading) {
-    return fila::c(&fila::cpp(self)->customSurfaceShading(customSurfaceShading));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_customSurfaceShading", self))->customSurfaceShading(customSurfaceShading));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_platform(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBasePlatform platform) {
-    return fila::c(&fila::cpp(self)->platform(static_cast<filamat::MaterialBuilderBase::Platform>(platform)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_platform", self))->platform(static_cast<filamat::MaterialBuilderBase::Platform>(platform)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_targetApi(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseTargetApi targetApi) {
-    return fila::c(&fila::cpp(self)->targetApi(static_cast<filamat::MaterialBuilderBase::TargetApi>(targetApi)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_targetApi", self))->targetApi(static_cast<filamat::MaterialBuilderBase::TargetApi>(targetApi)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_optimization(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseOptimization optimization) {
-    return fila::c(&fila::cpp(self)->optimization(static_cast<filamat::MaterialBuilderBase::Optimization>(optimization)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_optimization", self))->optimization(static_cast<filamat::MaterialBuilderBase::Optimization>(optimization)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_workarounds(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderBaseWorkarounds workarounds) {
-    return fila::c(&fila::cpp(self)->workarounds(static_cast<filamat::MaterialBuilderBase::Workarounds>(workarounds)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_workarounds", self))->workarounds(static_cast<filamat::MaterialBuilderBase::Workarounds>(workarounds)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_printShaders(FilaFilamatMaterialBuilder* self, bool printShaders) {
-    return fila::c(&fila::cpp(self)->printShaders(printShaders));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_printShaders", self))->printShaders(printShaders));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_saveRawVariants(FilaFilamatMaterialBuilder* self, bool saveRawVariants) {
-    return fila::c(&fila::cpp(self)->saveRawVariants(saveRawVariants));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_saveRawVariants", self))->saveRawVariants(saveRawVariants));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_generateDebugInfo(FilaFilamatMaterialBuilder* self, bool generateDebugInfo) {
-    return fila::c(&fila::cpp(self)->generateDebugInfo(generateDebugInfo));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_generateDebugInfo", self))->generateDebugInfo(generateDebugInfo));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variantFilter(FilaFilamatMaterialBuilder* self, uint32_t variantFilter) {
-    return fila::c(&fila::cpp(self)->variantFilter(variantFilter));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_variantFilter", self))->variantFilter(variantFilter));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shaderDefine(FilaFilamatMaterialBuilder* self, const char* name, const char* value) {
-    return fila::c(&fila::cpp(self)->shaderDefine(name, value));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_shaderDefine", self))->shaderDefine(FILA_NONNULL("FilaFilamatMaterialBuilder_shaderDefine", name), FILA_NONNULL("FilaFilamatMaterialBuilder_shaderDefine", value)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_output(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariableQualifier qualifier, FilaFilamatMaterialBuilderOutputTarget target, FilaPrecision precision, FilaFilamatMaterialBuilderOutputType type, const char* name, int32_t location) {
-    return fila::c(&fila::cpp(self)->output(static_cast<filamat::MaterialBuilder::VariableQualifier>(qualifier), static_cast<filamat::MaterialBuilder::OutputTarget>(target), static_cast<filament::backend::Precision>(precision), static_cast<filamat::MaterialBuilder::OutputType>(type), name, static_cast<int>(location)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_output", self))->output(static_cast<filamat::MaterialBuilder::VariableQualifier>(qualifier), static_cast<filamat::MaterialBuilder::OutputTarget>(target), static_cast<filament::backend::Precision>(precision), static_cast<filamat::MaterialBuilder::OutputType>(type), FILA_NONNULL("FilaFilamatMaterialBuilder_output", name), static_cast<int>(location)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_enableFramebufferFetch(FilaFilamatMaterialBuilder* self) {
-    return fila::c(&fila::cpp(self)->enableFramebufferFetch());
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_enableFramebufferFetch", self))->enableFramebufferFetch());
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_vertexDomainDeviceJittered(FilaFilamatMaterialBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->vertexDomainDeviceJittered(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_vertexDomainDeviceJittered", self))->vertexDomainDeviceJittered(enabled));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useLegacyMorphing(FilaFilamatMaterialBuilder* self) {
-    return fila::c(&fila::cpp(self)->useLegacyMorphing());
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_useLegacyMorphing", self))->useLegacyMorphing());
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_groupSize(FilaFilamatMaterialBuilder* self, const FilaUint3* groupSize) {
-    return fila::c(&fila::cpp(self)->groupSize(fila::math<filament::math::uint3>(*groupSize)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_groupSize", self))->groupSize(fila::math<filament::math::uint3>(*FILA_NONNULL("FilaFilamatMaterialBuilder_groupSize", groupSize))));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_useDefaultDepthVariant(FilaFilamatMaterialBuilder* self) {
-    return fila::c(&fila::cpp(self)->useDefaultDepthVariant());
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_useDefaultDepthVariant", self))->useDefaultDepthVariant());
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_isDefaultMaterial(FilaFilamatMaterialBuilder* self, bool isDefault) {
-    return fila::c(&fila::cpp(self)->isDefaultMaterial(isDefault));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_isDefaultMaterial", self))->isDefaultMaterial(isDefault));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_materialSource(FilaFilamatMaterialBuilder* self, const char* source) {
-    return fila::c(&fila::cpp(self)->materialSource(std::string_view(source)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_materialSource", self))->materialSource(std::string_view(source)));
 }
 
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_setApiLevel(FilaFilamatMaterialBuilder* self, uint32_t apiLevel) {
-    return fila::c(&fila::cpp(self)->setApiLevel(apiLevel));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFilamatMaterialBuilder_setApiLevel", self))->setApiLevel(apiLevel));
 }
 
 uint32_t FilaFilamatMaterialBuilder_getAttributeDatabase(FilaFilamatMaterialBuilderAttribute* const* out, uint32_t outCapacity) {

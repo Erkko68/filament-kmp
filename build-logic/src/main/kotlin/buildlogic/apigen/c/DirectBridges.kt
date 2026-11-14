@@ -51,7 +51,7 @@ class DirectBridges internal constructor(
         return when {
             indirection == "*" -> CBridge("$c$base*", { it })
             result -> CBridge("$base*", { "&$it" })
-            else -> CBridge("$base*", { "*$it" })
+            else -> CBridge("$base*", { "*${names.nonNull(it)}" })
         }
     }
 
@@ -70,9 +70,9 @@ class DirectBridges internal constructor(
         val name = names.type(decl)
         return when {
             byValue && result -> CBridge(name, { "$h::mirror<$name>($it)" }, out = true)
-            byValue -> CBridge("const $name*", { "$h::math<$decl>(*$it)" })
+            byValue -> CBridge("const $name*", { "$h::math<$decl>(*${names.nonNull(it)})" })
             result || !config.mirrors.getValue(decl).aligned -> handle(name)
-            indirection == "&" -> CBridge("$name*", { "$h::InOut<$decl, $name>($it)" })
+            indirection == "&" -> CBridge("$name*", { "$h::InOut<$decl, $name>(${names.nonNull(it)})" })
             else -> CBridge("$c$name*", { "$h::Aligned<$decl, $c$name>($it, ${it}Count)" }, extra = listOf("uint32_t" to "Count"))
         }
     }
@@ -89,7 +89,7 @@ class DirectBridges internal constructor(
             !value && indirection == null && result && owned -> copy
             !value && indirection == null -> throw Unsupported("$decl by value")
             !value || !byValue -> handle(name)
-            !result -> CBridge("const $name*", { "*$h::cpp($it)" })
+            !result -> CBridge("const $name*", { "*$h::cpp(${names.nonNull(it)})" })
             // C can't create one to copy into; a reference's outlives the call, so C borrows it.
             !assignable && indirection == "&" -> handle(name)
             !assignable && owned -> copy
@@ -106,13 +106,13 @@ class DirectBridges internal constructor(
         val cType = "$c$cName*"
         val address = if (indirection == "*") "" else "&"
         return if (result) CBridge(cType, { "reinterpret_cast<$cType>($address$it)" })
-        else CBridge(cType, { (if (indirection == "*") "" else "*") + "reinterpret_cast<$c$cppName*>($it)" })
+        else CBridge(cType, { if (indirection == "*") "reinterpret_cast<$c$cppName*>($it)" else "*reinterpret_cast<$c$cppName*>(${names.nonNull(it)})" })
     }
 
     /** A pointer to a record's handle or a math mirror, converted by the `cpp`/`c` overloads. */
     private fun handle(cName: String): CBridge {
         val ref = indirection != "*"
         return if (result) CBridge("$c$cName*", { "$h::c(${if (ref) "&" else ""}$it)" })
-        else CBridge("$c$cName*", { "${if (ref) "*" else ""}$h::cpp($it)" })
+        else CBridge("$c$cName*", { if (ref) "*$h::cpp(${names.nonNull(it)})" else "$h::cpp($it)" })
     }
 }

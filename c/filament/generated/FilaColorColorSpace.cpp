@@ -5,7 +5,7 @@
 extern "C" {
 
 FilaColorColorSpace* FilaColorColorSpace_create(const FilaColorPrimaries* primaries, const FilaColorTransferFunction* transferFunction, const FilaFloat2* whitePoint) {
-    return fila::c(new filament::color::ColorSpace(*fila::cpp(primaries), *fila::cpp(transferFunction), fila::math<filament::math::float2>(*whitePoint)));
+    return fila::c(new filament::color::ColorSpace(*fila::cpp(FILA_NONNULL("FilaColorColorSpace_create", primaries)), *fila::cpp(FILA_NONNULL("FilaColorColorSpace_create", transferFunction)), fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorColorSpace_create", whitePoint))));
 }
 
 void FilaColorColorSpace_destroy(FilaColorColorSpace* self) {
@@ -13,15 +13,15 @@ void FilaColorColorSpace_destroy(FilaColorColorSpace* self) {
 }
 
 void FilaColorColorSpace_getPrimaries(const FilaColorColorSpace* self, FilaColorPrimaries* out) {
-    *fila::cpp(out) = fila::cpp(self)->getPrimaries();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaColorColorSpace_getPrimaries", self))->getPrimaries();
 }
 
 const FilaColorTransferFunction* FilaColorColorSpace_getTransferFunction(const FilaColorColorSpace* self) {
-    return fila::c(&fila::cpp(self)->getTransferFunction());
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorColorSpace_getTransferFunction", self))->getTransferFunction());
 }
 
 void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out) {
-    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->getWhitePoint());
+    *out = fila::mirror<FilaFloat2>(fila::cpp(FILA_NONNULL("FilaColorColorSpace_getWhitePoint", self))->getWhitePoint());
 }
 
 } // extern "C"

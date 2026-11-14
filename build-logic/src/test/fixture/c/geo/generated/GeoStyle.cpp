@@ -13,59 +13,59 @@ void GeoStyle_destroy(GeoStyle* self) {
 }
 
 float GeoStyle_GetWidth(const GeoStyle* self) {
-    return geo_c::cpp(self)->GetWidth();
+    return geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetWidth", self))->GetWidth();
 }
 
 void GeoStyle_SetWidth(GeoStyle* self, float value) {
-    geo_c::cpp(self)->mWidth = value;
+    geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetWidth", self))->mWidth = value;
 }
 
 GeoKind GeoStyle_GetKind(const GeoStyle* self) {
-    return static_cast<GeoKind>(geo_c::cpp(self)->mKind);
+    return static_cast<GeoKind>(geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetKind", self))->mKind);
 }
 
 void GeoStyle_SetKind(GeoStyle* self, GeoKind value) {
-    geo_c::cpp(self)->mKind = static_cast<geo::Kind>(value);
+    geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetKind", self))->mKind = static_cast<geo::Kind>(value);
 }
 
 void GeoStyle_GetColor(const GeoStyle* self, GeoMathFloat3* out) {
-    *out = geo_c::mirror<GeoMathFloat3>(geo_c::cpp(self)->mColor);
+    *out = geo_c::mirror<GeoMathFloat3>(geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetColor", self))->mColor);
 }
 
 void GeoStyle_SetColor(GeoStyle* self, const GeoMathFloat3* value) {
-    geo_c::cpp(self)->mColor = geo_c::math<geo::math::float3>(*value);
+    geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetColor", self))->mColor = geo_c::math<geo::math::float3>(*GEO_C_NONNULL("GeoStyle_SetColor", value));
 }
 
 uint32_t GeoStyle_GetWeights(const GeoStyle* self, float* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->mWeights, outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetWeights", self))->mWeights, outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
 }
 
 void GeoStyle_SetWeights(GeoStyle* self, const float* value, uint32_t valueCount) {
-    geo_c::assign(geo_c::cpp(self)->mWeights, geo_c::items(valueCount, [&](uint32_t i) { return value[i]; }));
+    geo_c::assign(geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetWeights", self))->mWeights, geo_c::items(valueCount, [&](uint32_t i) { return value[i]; }));
 }
 
 const char* GeoStyle_GetName(const GeoStyle* self) {
-    return geo_c::cpp(self)->mName;
+    return geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetName", self))->mName;
 }
 
 void GeoStyle_SetName(GeoStyle* self, const char* value) {
-    geo_c::cpp(self)->mName = value ? decltype(geo_c::cpp(self)->mName)(geo_c::intern(value)) : decltype(geo_c::cpp(self)->mName)();
+    geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetName", self))->mName = value ? decltype(geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetName", self))->mName)(geo_c::intern(value)) : decltype(geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetName", self))->mName)();
 }
 
 bool GeoStyle_GetVisible(const GeoStyle* self) {
-    return geo_c::cpp(self)->mVisible;
+    return geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetVisible", self))->mVisible;
 }
 
 void GeoStyle_SetVisible(GeoStyle* self, bool value) {
-    geo_c::cpp(self)->mVisible = value;
+    geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetVisible", self))->mVisible = value;
 }
 
 void GeoStyle_GetTimeout(const GeoStyle* self, int64_t* out) {
-    *out = (geo_c::cpp(self)->mTimeout).count();
+    *out = (geo_c::cpp(GEO_C_NONNULL("GeoStyle_GetTimeout", self))->mTimeout).count();
 }
 
 void GeoStyle_SetTimeout(GeoStyle* self, int64_t value) {
-    geo_c::cpp(self)->mTimeout = std::chrono::nanoseconds(value);
+    geo_c::cpp(GEO_C_NONNULL("GeoStyle_SetTimeout", self))->mTimeout = std::chrono::nanoseconds(value);
 }
 
 } // extern "C"

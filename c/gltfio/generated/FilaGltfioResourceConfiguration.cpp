@@ -13,19 +13,19 @@ void FilaGltfioResourceConfiguration_destroy(FilaGltfioResourceConfiguration* se
 }
 
 FilaEngine* FilaGltfioResourceConfiguration_getEngine(const FilaGltfioResourceConfiguration* self) {
-    return fila::c(fila::cpp(self)->engine);
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioResourceConfiguration_getEngine", self))->engine);
 }
 
 void FilaGltfioResourceConfiguration_setEngine(FilaGltfioResourceConfiguration* self, FilaEngine* value) {
-    fila::cpp(self)->engine = fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaGltfioResourceConfiguration_setEngine", self))->engine = fila::cpp(value);
 }
 
 bool FilaGltfioResourceConfiguration_getNormalizeSkinningWeights(const FilaGltfioResourceConfiguration* self) {
-    return fila::cpp(self)->normalizeSkinningWeights;
+    return fila::cpp(FILA_NONNULL("FilaGltfioResourceConfiguration_getNormalizeSkinningWeights", self))->normalizeSkinningWeights;
 }
 
 void FilaGltfioResourceConfiguration_setNormalizeSkinningWeights(FilaGltfioResourceConfiguration* self, bool value) {
-    fila::cpp(self)->normalizeSkinningWeights = value;
+    fila::cpp(FILA_NONNULL("FilaGltfioResourceConfiguration_setNormalizeSkinningWeights", self))->normalizeSkinningWeights = value;
 }
 
 } // extern "C"

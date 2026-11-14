@@ -13,83 +13,83 @@ void FilaCamutilsManipulatorBuilder_destroy(FilaCamutilsManipulatorBuilder* self
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_viewport(FilaCamutilsManipulatorBuilder* self, int32_t width, int32_t height) {
-    return fila::c(&fila::cpp(self)->viewport(static_cast<int>(width), static_cast<int>(height)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_viewport", self))->viewport(static_cast<int>(width), static_cast<int>(height)));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_targetPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
-    return fila::c(&fila::cpp(self)->targetPosition(x, y, z));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_targetPosition", self))->targetPosition(x, y, z));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_upVector(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
-    return fila::c(&fila::cpp(self)->upVector(x, y, z));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_upVector", self))->upVector(x, y, z));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_zoomSpeed(FilaCamutilsManipulatorBuilder* self, float val) {
-    return fila::c(&fila::cpp(self)->zoomSpeed(val));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_zoomSpeed", self))->zoomSpeed(val));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitHomePosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
-    return fila::c(&fila::cpp(self)->orbitHomePosition(x, y, z));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_orbitHomePosition", self))->orbitHomePosition(x, y, z));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y) {
-    return fila::c(&fila::cpp(self)->orbitSpeed(x, y));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_orbitSpeed", self))->orbitSpeed(x, y));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDirection(FilaCamutilsManipulatorBuilder* self, FilaCamutilsFov fov) {
-    return fila::c(&fila::cpp(self)->fovDirection(static_cast<filament::camutils::Fov>(fov)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_fovDirection", self))->fovDirection(static_cast<filament::camutils::Fov>(fov)));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDegrees(FilaCamutilsManipulatorBuilder* self, float degrees) {
-    return fila::c(&fila::cpp(self)->fovDegrees(degrees));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_fovDegrees", self))->fovDegrees(degrees));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_farPlane(FilaCamutilsManipulatorBuilder* self, float distance) {
-    return fila::c(&fila::cpp(self)->farPlane(distance));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_farPlane", self))->farPlane(distance));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapExtent(FilaCamutilsManipulatorBuilder* self, float worldWidth, float worldHeight) {
-    return fila::c(&fila::cpp(self)->mapExtent(worldWidth, worldHeight));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_mapExtent", self))->mapExtent(worldWidth, worldHeight));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapMinDistance(FilaCamutilsManipulatorBuilder* self, float mindist) {
-    return fila::c(&fila::cpp(self)->mapMinDistance(mindist));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_mapMinDistance", self))->mapMinDistance(mindist));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
-    return fila::c(&fila::cpp(self)->flightStartPosition(x, y, z));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_flightStartPosition", self))->flightStartPosition(x, y, z));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartOrientation(FilaCamutilsManipulatorBuilder* self, float pitch, float yaw) {
-    return fila::c(&fila::cpp(self)->flightStartOrientation(pitch, yaw));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_flightStartOrientation", self))->flightStartOrientation(pitch, yaw));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed(FilaCamutilsManipulatorBuilder* self, float maxSpeed) {
-    return fila::c(&fila::cpp(self)->flightMaxMoveSpeed(maxSpeed));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed", self))->flightMaxMoveSpeed(maxSpeed));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightSpeedSteps(FilaCamutilsManipulatorBuilder* self, int32_t steps) {
-    return fila::c(&fila::cpp(self)->flightSpeedSteps(static_cast<int>(steps)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_flightSpeedSteps", self))->flightSpeedSteps(static_cast<int>(steps)));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightPanSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y) {
-    return fila::c(&fila::cpp(self)->flightPanSpeed(x, y));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_flightPanSpeed", self))->flightPanSpeed(x, y));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMoveDamping(FilaCamutilsManipulatorBuilder* self, float damping) {
-    return fila::c(&fila::cpp(self)->flightMoveDamping(damping));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_flightMoveDamping", self))->flightMoveDamping(damping));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_groundPlane(FilaCamutilsManipulatorBuilder* self, float a, float b, float c, float d) {
-    return fila::c(&fila::cpp(self)->groundPlane(a, b, c, d));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_groundPlane", self))->groundPlane(a, b, c, d));
 }
 
 FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_panning(FilaCamutilsManipulatorBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->panning(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_panning", self))->panning(enabled));
 }
 
 FilaCamutilsManipulator* FilaCamutilsManipulatorBuilder_build(FilaCamutilsManipulatorBuilder* self, FilaCamutilsMode mode) {
-    return fila::c(fila::cpp(self)->build(static_cast<filament::camutils::Mode>(mode)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaCamutilsManipulatorBuilder_build", self))->build(static_cast<filament::camutils::Mode>(mode)));
 }
 
 void FilaCamutilsManipulator_destroy(FilaCamutilsManipulator* self) {
@@ -97,63 +97,63 @@ void FilaCamutilsManipulator_destroy(FilaCamutilsManipulator* self) {
 }
 
 FilaCamutilsMode FilaCamutilsManipulator_getMode(const FilaCamutilsManipulator* self) {
-    return static_cast<FilaCamutilsMode>(fila::cpp(self)->getMode());
+    return static_cast<FilaCamutilsMode>(fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_getMode", self))->getMode());
 }
 
 void FilaCamutilsManipulator_setViewport(FilaCamutilsManipulator* self, int32_t width, int32_t height) {
-    fila::cpp(self)->setViewport(static_cast<int>(width), static_cast<int>(height));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_setViewport", self))->setViewport(static_cast<int>(width), static_cast<int>(height));
 }
 
 void FilaCamutilsManipulator_getLookAt(const FilaCamutilsManipulator* self, FilaFloat3* eyePosition, FilaFloat3* targetPosition, FilaFloat3* upward) {
-    fila::cpp(self)->getLookAt(fila::cpp(eyePosition), fila::cpp(targetPosition), fila::cpp(upward));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_getLookAt", self))->getLookAt(fila::cpp(eyePosition), fila::cpp(targetPosition), fila::cpp(upward));
 }
 
 bool FilaCamutilsManipulator_raycast(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* result) {
-    return fila::cpp(self)->raycast(static_cast<int>(x), static_cast<int>(y), fila::cpp(result));
+    return fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_raycast", self))->raycast(static_cast<int>(x), static_cast<int>(y), fila::cpp(result));
 }
 
 void FilaCamutilsManipulator_getRay(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* origin, FilaFloat3* dir) {
-    fila::cpp(self)->getRay(static_cast<int>(x), static_cast<int>(y), fila::cpp(origin), fila::cpp(dir));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_getRay", self))->getRay(static_cast<int>(x), static_cast<int>(y), fila::cpp(origin), fila::cpp(dir));
 }
 
 void FilaCamutilsManipulator_grabBegin(FilaCamutilsManipulator* self, int32_t x, int32_t y, bool strafe) {
-    fila::cpp(self)->grabBegin(static_cast<int>(x), static_cast<int>(y), strafe);
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_grabBegin", self))->grabBegin(static_cast<int>(x), static_cast<int>(y), strafe);
 }
 
 void FilaCamutilsManipulator_grabUpdate(FilaCamutilsManipulator* self, int32_t x, int32_t y) {
-    fila::cpp(self)->grabUpdate(static_cast<int>(x), static_cast<int>(y));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_grabUpdate", self))->grabUpdate(static_cast<int>(x), static_cast<int>(y));
 }
 
 void FilaCamutilsManipulator_grabEnd(FilaCamutilsManipulator* self) {
-    fila::cpp(self)->grabEnd();
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_grabEnd", self))->grabEnd();
 }
 
 void FilaCamutilsManipulator_keyDown(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key) {
-    fila::cpp(self)->keyDown(static_cast<filament::camutils::Manipulator<float>::Key>(key));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_keyDown", self))->keyDown(static_cast<filament::camutils::Manipulator<float>::Key>(key));
 }
 
 void FilaCamutilsManipulator_keyUp(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key) {
-    fila::cpp(self)->keyUp(static_cast<filament::camutils::Manipulator<float>::Key>(key));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_keyUp", self))->keyUp(static_cast<filament::camutils::Manipulator<float>::Key>(key));
 }
 
 void FilaCamutilsManipulator_scroll(FilaCamutilsManipulator* self, int32_t x, int32_t y, float scrolldelta) {
-    fila::cpp(self)->scroll(static_cast<int>(x), static_cast<int>(y), scrolldelta);
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_scroll", self))->scroll(static_cast<int>(x), static_cast<int>(y), scrolldelta);
 }
 
 void FilaCamutilsManipulator_update(FilaCamutilsManipulator* self, float deltaTime) {
-    fila::cpp(self)->update(deltaTime);
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_update", self))->update(deltaTime);
 }
 
 void FilaCamutilsManipulator_getCurrentBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out) {
-    *fila::cpp(out) = fila::cpp(self)->getCurrentBookmark();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_getCurrentBookmark", self))->getCurrentBookmark();
 }
 
 void FilaCamutilsManipulator_getHomeBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out) {
-    *fila::cpp(out) = fila::cpp(self)->getHomeBookmark();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_getHomeBookmark", self))->getHomeBookmark();
 }
 
 void FilaCamutilsManipulator_jumpToBookmark(FilaCamutilsManipulator* self, const FilaCamutilsBookmark* bookmark) {
-    fila::cpp(self)->jumpToBookmark(*fila::cpp(bookmark));
+    fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_jumpToBookmark", self))->jumpToBookmark(*fila::cpp(FILA_NONNULL("FilaCamutilsManipulator_jumpToBookmark", bookmark)));
 }
 
 } // extern "C"

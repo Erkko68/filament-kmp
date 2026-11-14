@@ -13,11 +13,11 @@ void GeoIoLoader_destroy(GeoIoLoader* self) {
 }
 
 GeoIoFormat GeoIoLoader_GetFormat(const GeoIoLoader* self) {
-    return static_cast<GeoIoFormat>(geo_c::cpp(self)->GetFormat());
+    return static_cast<GeoIoFormat>(geo_c::cpp(GEO_C_NONNULL("GeoIoLoader_GetFormat", self))->GetFormat());
 }
 
 GeoShape* GeoIoLoader_Load(GeoIoLoader* self, const char* path) {
-    return geo_c::c(geo_c::retain(geo_c::cpp(self)->Load(path)));
+    return geo_c::c(geo_c::retain(geo_c::cpp(GEO_C_NONNULL("GeoIoLoader_Load", self))->Load(path)));
 }
 
 } // extern "C"

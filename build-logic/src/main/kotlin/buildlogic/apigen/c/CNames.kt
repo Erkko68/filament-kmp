@@ -8,6 +8,9 @@ internal class CNames(private val c: CBindings, private val naming: Naming) {
     val prefix = c.prefix
     /** The C++ namespace of the forwarders' helpers. */
     val helpers = c.helpers
+    /** The `Bridge.hpp` macro guarding a pointer C++ reads through; [CApiWriter] gives it the function's name. */
+    val nonNull = "${helpers.uppercase()}_NONNULL"
+    fun nonNull(pointer: String) = "$nonNull($pointer)"
 
     /** Template arguments aren't part of the name: C binds one instantiation of a template. */
     fun type(qualified: String) = prefix + qualified.split("::").filter { it !in c.droppedNamespaces }

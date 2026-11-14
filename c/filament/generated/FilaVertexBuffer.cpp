@@ -13,63 +13,63 @@ void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* self) {
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* self, uint32_t bufferCount) {
-    return fila::c(&fila::cpp(self)->bufferCount(static_cast<uint8_t>(bufferCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_bufferCount", self))->bufferCount(static_cast<uint8_t>(bufferCount)));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_vertexCount(FilaVertexBufferBuilder* self, uint32_t vertexCount) {
-    return fila::c(&fila::cpp(self)->vertexCount(vertexCount));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_vertexCount", self))->vertexCount(vertexCount));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->enableBufferObjects(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_enableBufferObjects", self))->enableBufferObjects(enabled));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaElementType attributeType, uint32_t byteOffset, uint32_t byteStride) {
-    return fila::c(&fila::cpp(self)->attribute(static_cast<filament::VertexAttribute>(attribute), static_cast<uint8_t>(bufferIndex), static_cast<filament::backend::ElementType>(attributeType), byteOffset, static_cast<uint8_t>(byteStride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_attribute", self))->attribute(static_cast<filament::VertexAttribute>(attribute), static_cast<uint8_t>(bufferIndex), static_cast<filament::backend::ElementType>(attributeType), byteOffset, static_cast<uint8_t>(byteStride)));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, bool normalized) {
-    return fila::c(&fila::cpp(self)->normalized(static_cast<filament::VertexAttribute>(attribute), normalized));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_normalized", self))->normalized(static_cast<filament::VertexAttribute>(attribute), normalized));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* self, bool enabled) {
-    return fila::c(&fila::cpp(self)->advancedSkinning(enabled));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_advancedSkinning", self))->advancedSkinning(enabled));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_name(FilaVertexBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_name", self))->name(utils::ImmutableCString(name)));
 }
 
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_async(FilaVertexBufferBuilder* self, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user) {
-    return fila::c(&fila::cpp(self)->async(fila::cpp(handler), callback ? filament::VertexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_async", self))->async(fila::cpp(handler), callback ? filament::VertexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
 }
 
 FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaVertexBufferBuilder_build", engine))));
 }
 
 uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getVertexCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaVertexBuffer_getVertexCount", self))->getVertexCount());
 }
 
 void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
-    fila::cpp(self)->setBufferAt(*fila::cpp(engine), static_cast<uint8_t>(bufferIndex), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+    fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferAt", self))->setBufferAt(*fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferAt", engine)), static_cast<uint8_t>(bufferIndex), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
 }
 
 uint32_t FilaVertexBuffer_setBufferAtAsync(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user) {
-    return fila::cpp(self)->setBufferAtAsync(*fila::cpp(engine), static_cast<uint8_t>(bufferIndex), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset, fila::cpp(handler), callback ? filament::VertexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
+    return fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferAtAsync", self))->setBufferAtAsync(*fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferAtAsync", engine)), static_cast<uint8_t>(bufferIndex), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset, fila::cpp(handler), callback ? filament::VertexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
 void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject) {
-    fila::cpp(self)->setBufferObjectAt(*fila::cpp(engine), static_cast<uint8_t>(bufferIndex), fila::cpp(bufferObject));
+    fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferObjectAt", self))->setBufferObjectAt(*fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferObjectAt", engine)), static_cast<uint8_t>(bufferIndex), fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferObjectAt", bufferObject)));
 }
 
 uint32_t FilaVertexBuffer_setBufferObjectAtAsync(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject, FilaCallbackHandler* handler, FilaVertexBufferAsyncCompletionCallback callback, void* user) {
-    return fila::cpp(self)->setBufferObjectAtAsync(*fila::cpp(engine), static_cast<uint8_t>(bufferIndex), fila::cpp(bufferObject), fila::cpp(handler), callback ? filament::VertexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
+    return fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferObjectAtAsync", self))->setBufferObjectAtAsync(*fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferObjectAtAsync", engine)), static_cast<uint8_t>(bufferIndex), fila::cpp(FILA_NONNULL("FilaVertexBuffer_setBufferObjectAtAsync", bufferObject)), fila::cpp(handler), callback ? filament::VertexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
 bool FilaVertexBuffer_isCreationComplete(const FilaVertexBuffer* self) {
-    return fila::cpp(self)->isCreationComplete();
+    return fila::cpp(FILA_NONNULL("FilaVertexBuffer_isCreationComplete", self))->isCreationComplete();
 }
 
 } // extern "C"

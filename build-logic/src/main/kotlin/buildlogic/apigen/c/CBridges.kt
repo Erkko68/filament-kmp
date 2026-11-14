@@ -20,7 +20,10 @@ internal class CBridges(
     val callbackTypes = sortedMapOf<String, String>()
 
     /** [type] as a parameter: [CBridge.convert] turns the C argument into C++'s. */
-    fun param(type: CppType, stored: Boolean = false) = of(type, result = false, stored = stored)
+    fun param(type: CppType, stored: Boolean = false) = of(type, result = false, stored = stored).let { bridge ->
+        // A pointer C++ declares `_Nonnull`, which C passes as it is.
+        if (NONNULL in type.spelling.substringAfterLast('*') && bridge.c.endsWith("*") && bridge.extra.isEmpty()) bridge.guarded(names::nonNull) else bridge
+    }
 
     /**
      * [type] as the value a field setter stores. The field keeps it past the call, so a C string it would only borrow
@@ -256,3 +259,5 @@ internal class CBridges(
         return CBridge(name, { it })
     }
 }
+
+private const val NONNULL = "_Nonnull"

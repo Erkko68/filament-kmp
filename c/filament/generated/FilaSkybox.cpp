@@ -13,47 +13,47 @@ void FilaSkyboxBuilder_destroy(FilaSkyboxBuilder* self) {
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_environment(FilaSkyboxBuilder* self, FilaTexture* cubemap) {
-    return fila::c(&fila::cpp(self)->environment(fila::cpp(cubemap)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_environment", self))->environment(fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_environment", cubemap))));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_showSun(FilaSkyboxBuilder* self, bool show) {
-    return fila::c(&fila::cpp(self)->showSun(show));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_showSun", self))->showSun(show));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* self, float envIntensity) {
-    return fila::c(&fila::cpp(self)->intensity(envIntensity));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_intensity", self))->intensity(envIntensity));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, const FilaFloat4* color) {
-    return fila::c(&fila::cpp(self)->color(fila::math<filament::math::float4>(*color)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_color", self))->color(fila::math<filament::math::float4>(*FILA_NONNULL("FilaSkyboxBuilder_color", color))));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t priority) {
-    return fila::c(&fila::cpp(self)->priority(static_cast<uint8_t>(priority)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_priority", self))->priority(static_cast<uint8_t>(priority)));
 }
 
 FilaSkybox* FilaSkyboxBuilder_build(const FilaSkyboxBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaSkyboxBuilder_build", engine))));
 }
 
 void FilaSkybox_setColor(FilaSkybox* self, const FilaFloat4* color) {
-    fila::cpp(self)->setColor(fila::math<filament::math::float4>(*color));
+    fila::cpp(FILA_NONNULL("FilaSkybox_setColor", self))->setColor(fila::math<filament::math::float4>(*FILA_NONNULL("FilaSkybox_setColor", color)));
 }
 
 void FilaSkybox_setLayerMask(FilaSkybox* self, uint32_t select, uint32_t values) {
-    fila::cpp(self)->setLayerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
+    fila::cpp(FILA_NONNULL("FilaSkybox_setLayerMask", self))->setLayerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
 uint32_t FilaSkybox_getLayerMask(const FilaSkybox* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getLayerMask());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaSkybox_getLayerMask", self))->getLayerMask());
 }
 
 float FilaSkybox_getIntensity(const FilaSkybox* self) {
-    return fila::cpp(self)->getIntensity();
+    return fila::cpp(FILA_NONNULL("FilaSkybox_getIntensity", self))->getIntensity();
 }
 
 const FilaTexture* FilaSkybox_getTexture(const FilaSkybox* self) {
-    return fila::c(fila::cpp(self)->getTexture());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaSkybox_getTexture", self))->getTexture());
 }
 
 } // extern "C"

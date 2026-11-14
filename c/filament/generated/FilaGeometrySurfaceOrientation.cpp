@@ -13,39 +13,39 @@ void FilaGeometrySurfaceOrientationBuilder_destroy(FilaGeometrySurfaceOrientatio
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_vertexCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t vertexCount) {
-    return fila::c(&fila::cpp(self)->vertexCount(static_cast<size_t>(vertexCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_vertexCount", self))->vertexCount(static_cast<size_t>(vertexCount)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_normals(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->normals(fila::cpp(arg0), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_normals", self))->normals(fila::cpp(arg0), static_cast<size_t>(stride)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_tangents(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat4* arg0, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->tangents(fila::cpp(arg0), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_tangents", self))->tangents(fila::cpp(arg0), static_cast<size_t>(stride)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_uvs(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat2* arg0, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->uvs(fila::cpp(arg0), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_uvs", self))->uvs(fila::cpp(arg0), static_cast<size_t>(stride)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_positions(FilaGeometrySurfaceOrientationBuilder* self, const FilaFloat3* arg0, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->positions(fila::cpp(arg0), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_positions", self))->positions(fila::cpp(arg0), static_cast<size_t>(stride)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangleCount(FilaGeometrySurfaceOrientationBuilder* self, uint32_t triangleCount) {
-    return fila::c(&fila::cpp(self)->triangleCount(static_cast<size_t>(triangleCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_triangleCount", self))->triangleCount(static_cast<size_t>(triangleCount)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_uint3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUint3* arg0) {
-    return fila::c(&fila::cpp(self)->triangles(fila::cpp(arg0)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_triangles_uint3", self))->triangles(fila::cpp(arg0)));
 }
 
 FilaGeometrySurfaceOrientationBuilder* FilaGeometrySurfaceOrientationBuilder_triangles_ushort3(FilaGeometrySurfaceOrientationBuilder* self, const FilaUshort3* arg0) {
-    return fila::c(&fila::cpp(self)->triangles(fila::cpp(arg0)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_triangles_ushort3", self))->triangles(fila::cpp(arg0)));
 }
 
 FilaGeometrySurfaceOrientation* FilaGeometrySurfaceOrientationBuilder_build(FilaGeometrySurfaceOrientationBuilder* self) {
-    return fila::c(fila::cpp(self)->build());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientationBuilder_build", self))->build());
 }
 
 void FilaGeometrySurfaceOrientation_destroy(FilaGeometrySurfaceOrientation* self) {
@@ -53,19 +53,19 @@ void FilaGeometrySurfaceOrientation_destroy(FilaGeometrySurfaceOrientation* self
 }
 
 uint32_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getVertexCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientation_getVertexCount", self))->getVertexCount());
 }
 
 void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out_, uint32_t quatCount, uint32_t stride) {
-    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t", self))->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
 }
 
 void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out_, uint32_t quatCount, uint32_t stride) {
-    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t", self))->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
 }
 
 void FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuath* out_, uint32_t quatCount, uint32_t stride) {
-    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t", self))->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
 }
 
 } // extern "C"

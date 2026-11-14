@@ -13,19 +13,19 @@ void GeoEdge_destroy(GeoEdge* self) {
 }
 
 GeoEdge* GeoEdge_Clone(const GeoEdge* self) {
-    return geo_c::c((geo_c::cpp(self)->Clone()).release());
+    return geo_c::c((geo_c::cpp(GEO_C_NONNULL("GeoEdge_Clone", self))->Clone()).release());
 }
 
 void GeoEdge_Merge(GeoEdge* self, GeoEdge* other) {
-    geo_c::cpp(self)->Merge(std::unique_ptr<geo::Edge>(geo_c::cpp(other)));
+    geo_c::cpp(GEO_C_NONNULL("GeoEdge_Merge", self))->Merge(std::unique_ptr<geo::Edge>(geo_c::cpp(other)));
 }
 
 uint32_t GeoEdge_GetBytes(const GeoEdge* self, uint8_t* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->GetBytes(), outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoEdge_GetBytes", self))->GetBytes(), outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
 }
 
 void GeoEdge_SetBytes(GeoEdge* self, const uint8_t* bytes, uint32_t bytesCount) {
-    geo_c::cpp(self)->SetBytes(geo_c::items(bytesCount, [&](uint32_t i) { return bytes[i]; }));
+    geo_c::cpp(GEO_C_NONNULL("GeoEdge_SetBytes", self))->SetBytes(geo_c::items(bytesCount, [&](uint32_t i) { return bytes[i]; }));
 }
 
 } // extern "C"

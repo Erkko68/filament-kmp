@@ -13,51 +13,51 @@ void FilaVsmShadowOptions_destroy(FilaVsmShadowOptions* self) {
 }
 
 uint32_t FilaVsmShadowOptions_getAnisotropy(const FilaVsmShadowOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->anisotropy);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_getAnisotropy", self))->anisotropy);
 }
 
 void FilaVsmShadowOptions_setAnisotropy(FilaVsmShadowOptions* self, uint32_t value) {
-    fila::cpp(self)->anisotropy = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_setAnisotropy", self))->anisotropy = static_cast<uint8_t>(value);
 }
 
 bool FilaVsmShadowOptions_getMipmapping(const FilaVsmShadowOptions* self) {
-    return fila::cpp(self)->mipmapping;
+    return fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_getMipmapping", self))->mipmapping;
 }
 
 void FilaVsmShadowOptions_setMipmapping(FilaVsmShadowOptions* self, bool value) {
-    fila::cpp(self)->mipmapping = value;
+    fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_setMipmapping", self))->mipmapping = value;
 }
 
 uint32_t FilaVsmShadowOptions_getMsaaSamples(const FilaVsmShadowOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->msaaSamples);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_getMsaaSamples", self))->msaaSamples);
 }
 
 void FilaVsmShadowOptions_setMsaaSamples(FilaVsmShadowOptions* self, uint32_t value) {
-    fila::cpp(self)->msaaSamples = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_setMsaaSamples", self))->msaaSamples = static_cast<uint8_t>(value);
 }
 
 bool FilaVsmShadowOptions_getHighPrecision(const FilaVsmShadowOptions* self) {
-    return fila::cpp(self)->highPrecision;
+    return fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_getHighPrecision", self))->highPrecision;
 }
 
 void FilaVsmShadowOptions_setHighPrecision(FilaVsmShadowOptions* self, bool value) {
-    fila::cpp(self)->highPrecision = value;
+    fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_setHighPrecision", self))->highPrecision = value;
 }
 
 float FilaVsmShadowOptions_getMinVarianceScale(const FilaVsmShadowOptions* self) {
-    return fila::cpp(self)->minVarianceScale;
+    return fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_getMinVarianceScale", self))->minVarianceScale;
 }
 
 void FilaVsmShadowOptions_setMinVarianceScale(FilaVsmShadowOptions* self, float value) {
-    fila::cpp(self)->minVarianceScale = value;
+    fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_setMinVarianceScale", self))->minVarianceScale = value;
 }
 
 float FilaVsmShadowOptions_getLightBleedReduction(const FilaVsmShadowOptions* self) {
-    return fila::cpp(self)->lightBleedReduction;
+    return fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_getLightBleedReduction", self))->lightBleedReduction;
 }
 
 void FilaVsmShadowOptions_setLightBleedReduction(FilaVsmShadowOptions* self, float value) {
-    fila::cpp(self)->lightBleedReduction = value;
+    fila::cpp(FILA_NONNULL("FilaVsmShadowOptions_setLightBleedReduction", self))->lightBleedReduction = value;
 }
 
 } // extern "C"

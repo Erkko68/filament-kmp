@@ -5,7 +5,7 @@
 extern "C" {
 
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture_Callback_void(FilaEngine* engine, const FilaImageKtx1Bundle* ktx, bool srgb, FilaKtxreaderKtx1ReaderCallback callback, void* userdata) {
-    return fila::c(ktxreader::Ktx1Reader::createTexture(fila::cpp(engine), *fila::cpp(ktx), srgb, callback, userdata));
+    return fila::c(ktxreader::Ktx1Reader::createTexture(fila::cpp(engine), *fila::cpp(FILA_NONNULL("FilaKtxreaderKtx1Reader_createTexture_Callback_void", ktx)), srgb, callback, userdata));
 }
 
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb) {

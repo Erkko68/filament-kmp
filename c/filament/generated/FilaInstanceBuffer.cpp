@@ -13,27 +13,27 @@ void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self) {
 }
 
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_localTransforms(FilaInstanceBufferBuilder* self, const FilaMat4f* localTransforms) {
-    return fila::c(&fila::cpp(self)->localTransforms(fila::cpp(localTransforms)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaInstanceBufferBuilder_localTransforms", self))->localTransforms(fila::cpp(localTransforms)));
 }
 
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_name(FilaInstanceBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaInstanceBufferBuilder_name", self))->name(utils::ImmutableCString(name)));
 }
 
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaInstanceBufferBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaInstanceBufferBuilder_build", engine))));
 }
 
 uint32_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getInstanceCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaInstanceBuffer_getInstanceCount", self))->getInstanceCount());
 }
 
 void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, uint32_t count, uint32_t offset) {
-    fila::cpp(self)->setLocalTransforms(fila::cpp(localTransforms), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(FILA_NONNULL("FilaInstanceBuffer_setLocalTransforms", self))->setLocalTransforms(fila::cpp(FILA_NONNULL("FilaInstanceBuffer_setLocalTransforms", localTransforms)), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaInstanceBuffer_getLocalTransform(const FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out) {
-    *out = fila::mirror<FilaMat4f>(fila::cpp(self)->getLocalTransform(static_cast<size_t>(index)));
+    *out = fila::mirror<FilaMat4f>(fila::cpp(FILA_NONNULL("FilaInstanceBuffer_getLocalTransform", self))->getLocalTransform(static_cast<size_t>(index)));
 }
 
 } // extern "C"

@@ -13,71 +13,71 @@ void FilaIndirectLightBuilder_destroy(FilaIndirectLightBuilder* self) {
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_reflections(FilaIndirectLightBuilder* self, const FilaTexture* cubemap) {
-    return fila::c(&fila::cpp(self)->reflections(fila::cpp(cubemap)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_reflections", self))->reflections(fila::cpp(cubemap)));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_uint8_t_float3(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh) {
-    return fila::c(&fila::cpp(self)->irradiance(static_cast<uint8_t>(bands), fila::cpp(sh)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_irradiance_uint8_t_float3", self))->irradiance(static_cast<uint8_t>(bands), fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_irradiance_uint8_t_float3", sh))));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_Texture(FilaIndirectLightBuilder* self, const FilaTexture* cubemap) {
-    return fila::c(&fila::cpp(self)->irradiance(fila::cpp(cubemap)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_irradiance_Texture", self))->irradiance(fila::cpp(cubemap)));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh) {
-    return fila::c(&fila::cpp(self)->radiance(static_cast<uint8_t>(bands), fila::cpp(sh)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_radiance", self))->radiance(static_cast<uint8_t>(bands), fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_radiance", sh))));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_intensity(FilaIndirectLightBuilder* self, float envIntensity) {
-    return fila::c(&fila::cpp(self)->intensity(envIntensity));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_intensity", self))->intensity(envIntensity));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBuilder* self, const FilaMat3f* rotation) {
-    return fila::c(&fila::cpp(self)->rotation(fila::math<filament::math::mat3f>(*rotation)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_rotation", self))->rotation(fila::math<filament::math::mat3f>(*FILA_NONNULL("FilaIndirectLightBuilder_rotation", rotation))));
 }
 
 FilaIndirectLight* FilaIndirectLightBuilder_build(const FilaIndirectLightBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaIndirectLightBuilder_build", engine))));
 }
 
 void FilaIndirectLight_setIntensity(FilaIndirectLight* self, float intensity) {
-    fila::cpp(self)->setIntensity(intensity);
+    fila::cpp(FILA_NONNULL("FilaIndirectLight_setIntensity", self))->setIntensity(intensity);
 }
 
 float FilaIndirectLight_getIntensity(const FilaIndirectLight* self) {
-    return fila::cpp(self)->getIntensity();
+    return fila::cpp(FILA_NONNULL("FilaIndirectLight_getIntensity", self))->getIntensity();
 }
 
 void FilaIndirectLight_setRotation(FilaIndirectLight* self, const FilaMat3f* rotation) {
-    fila::cpp(self)->setRotation(fila::math<filament::math::mat3f>(*rotation));
+    fila::cpp(FILA_NONNULL("FilaIndirectLight_setRotation", self))->setRotation(fila::math<filament::math::mat3f>(*FILA_NONNULL("FilaIndirectLight_setRotation", rotation)));
 }
 
 void FilaIndirectLight_getRotation(const FilaIndirectLight* self, FilaMat3f* out) {
-    *out = fila::mirror<FilaMat3f>(fila::cpp(self)->getRotation());
+    *out = fila::mirror<FilaMat3f>(fila::cpp(FILA_NONNULL("FilaIndirectLight_getRotation", self))->getRotation());
 }
 
 const FilaTexture* FilaIndirectLight_getReflectionsTexture(const FilaIndirectLight* self) {
-    return fila::c(fila::cpp(self)->getReflectionsTexture());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIndirectLight_getReflectionsTexture", self))->getReflectionsTexture());
 }
 
 const FilaTexture* FilaIndirectLight_getIrradianceTexture(const FilaIndirectLight* self) {
-    return fila::c(fila::cpp(self)->getIrradianceTexture());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIndirectLight_getIrradianceTexture", self))->getIrradianceTexture());
 }
 
 void FilaIndirectLight_getDirectionEstimate_float3(const FilaFloat3* sh, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(filament::IndirectLight::getDirectionEstimate(fila::cpp(sh)));
+    *out = fila::mirror<FilaFloat3>(filament::IndirectLight::getDirectionEstimate(fila::cpp(FILA_NONNULL("FilaIndirectLight_getDirectionEstimate_float3", sh))));
 }
 
 void FilaIndirectLight_getDirectionEstimate(const FilaIndirectLight* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->getDirectionEstimate());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaIndirectLight_getDirectionEstimate", self))->getDirectionEstimate());
 }
 
 void FilaIndirectLight_getColorEstimate_float3(const FilaFloat3* sh, const FilaFloat3* direction, FilaFloat4* out) {
-    *out = fila::mirror<FilaFloat4>(filament::IndirectLight::getColorEstimate(fila::cpp(sh), fila::math<filament::math::float3>(*direction)));
+    *out = fila::mirror<FilaFloat4>(filament::IndirectLight::getColorEstimate(fila::cpp(FILA_NONNULL("FilaIndirectLight_getColorEstimate_float3", sh)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaIndirectLight_getColorEstimate_float3", direction))));
 }
 
 void FilaIndirectLight_getColorEstimate(const FilaIndirectLight* self, const FilaFloat3* direction, FilaFloat4* out) {
-    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->getColorEstimate(fila::math<filament::math::float3>(*direction)));
+    *out = fila::mirror<FilaFloat4>(fila::cpp(FILA_NONNULL("FilaIndirectLight_getColorEstimate", self))->getColorEstimate(fila::math<filament::math::float3>(*FILA_NONNULL("FilaIndirectLight_getColorEstimate", direction))));
 }
 
 } // extern "C"

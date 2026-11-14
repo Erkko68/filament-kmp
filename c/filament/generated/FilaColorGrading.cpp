@@ -13,83 +13,83 @@ void FilaColorGradingBuilder_destroy(FilaColorGradingBuilder* self) {
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_quality(FilaColorGradingBuilder* self, FilaColorGradingQualityLevel qualityLevel) {
-    return fila::c(&fila::cpp(self)->quality(static_cast<filament::ColorGrading::QualityLevel>(qualityLevel)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_quality", self))->quality(static_cast<filament::ColorGrading::QualityLevel>(qualityLevel)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_format(FilaColorGradingBuilder* self, FilaColorGradingLutFormat format) {
-    return fila::c(&fila::cpp(self)->format(static_cast<filament::ColorGrading::LutFormat>(format)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_format", self))->format(static_cast<filament::ColorGrading::LutFormat>(format)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* self, uint32_t dim) {
-    return fila::c(&fila::cpp(self)->dimensions(static_cast<uint8_t>(dim)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_dimensions", self))->dimensions(static_cast<uint8_t>(dim)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* self, const FilaToneMapper* toneMapper) {
-    return fila::c(&fila::cpp(self)->toneMapper(fila::cpp(toneMapper)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_toneMapper", self))->toneMapper(fila::cpp(toneMapper)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_luminanceScaling(FilaColorGradingBuilder* self, bool luminanceScaling) {
-    return fila::c(&fila::cpp(self)->luminanceScaling(luminanceScaling));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_luminanceScaling", self))->luminanceScaling(luminanceScaling));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_gamutMapping(FilaColorGradingBuilder* self, bool gamutMapping) {
-    return fila::c(&fila::cpp(self)->gamutMapping(gamutMapping));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_gamutMapping", self))->gamutMapping(gamutMapping));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_exposure(FilaColorGradingBuilder* self, float exposure) {
-    return fila::c(&fila::cpp(self)->exposure(exposure));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_exposure", self))->exposure(exposure));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_nightAdaptation(FilaColorGradingBuilder* self, float adaptation) {
-    return fila::c(&fila::cpp(self)->nightAdaptation(adaptation));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_nightAdaptation", self))->nightAdaptation(adaptation));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_whiteBalance(FilaColorGradingBuilder* self, float temperature, float tint) {
-    return fila::c(&fila::cpp(self)->whiteBalance(temperature, tint));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_whiteBalance", self))->whiteBalance(temperature, tint));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_channelMixer(FilaColorGradingBuilder* self, const FilaFloat3* outRed, const FilaFloat3* outGreen, const FilaFloat3* outBlue) {
-    return fila::c(&fila::cpp(self)->channelMixer(fila::math<filament::math::float3>(*outRed), fila::math<filament::math::float3>(*outGreen), fila::math<filament::math::float3>(*outBlue)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_channelMixer", self))->channelMixer(fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_channelMixer", outRed)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_channelMixer", outGreen)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_channelMixer", outBlue))));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_shadowsMidtonesHighlights(FilaColorGradingBuilder* self, const FilaFloat4* shadows, const FilaFloat4* midtones, const FilaFloat4* highlights, const FilaFloat4* ranges) {
-    return fila::c(&fila::cpp(self)->shadowsMidtonesHighlights(fila::math<filament::math::float4>(*shadows), fila::math<filament::math::float4>(*midtones), fila::math<filament::math::float4>(*highlights), fila::math<filament::math::float4>(*ranges)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_shadowsMidtonesHighlights", self))->shadowsMidtonesHighlights(fila::math<filament::math::float4>(*FILA_NONNULL("FilaColorGradingBuilder_shadowsMidtonesHighlights", shadows)), fila::math<filament::math::float4>(*FILA_NONNULL("FilaColorGradingBuilder_shadowsMidtonesHighlights", midtones)), fila::math<filament::math::float4>(*FILA_NONNULL("FilaColorGradingBuilder_shadowsMidtonesHighlights", highlights)), fila::math<filament::math::float4>(*FILA_NONNULL("FilaColorGradingBuilder_shadowsMidtonesHighlights", ranges))));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_slopeOffsetPower(FilaColorGradingBuilder* self, const FilaFloat3* slope, const FilaFloat3* offset, const FilaFloat3* power) {
-    return fila::c(&fila::cpp(self)->slopeOffsetPower(fila::math<filament::math::float3>(*slope), fila::math<filament::math::float3>(*offset), fila::math<filament::math::float3>(*power)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_slopeOffsetPower", self))->slopeOffsetPower(fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_slopeOffsetPower", slope)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_slopeOffsetPower", offset)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_slopeOffsetPower", power))));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* self, float contrast) {
-    return fila::c(&fila::cpp(self)->contrast(contrast));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_contrast", self))->contrast(contrast));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* self, float vibrance) {
-    return fila::c(&fila::cpp(self)->vibrance(vibrance));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_vibrance", self))->vibrance(vibrance));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* self, float saturation) {
-    return fila::c(&fila::cpp(self)->saturation(saturation));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_saturation", self))->saturation(saturation));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, const FilaFloat3* shadowGamma, const FilaFloat3* midPoint, const FilaFloat3* highlightScale) {
-    return fila::c(&fila::cpp(self)->curves(fila::math<filament::math::float3>(*shadowGamma), fila::math<filament::math::float3>(*midPoint), fila::math<filament::math::float3>(*highlightScale)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_curves", self))->curves(fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_curves", shadowGamma)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_curves", midPoint)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_curves", highlightScale))));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* self, const FilaFloat3* data, uint32_t dataCount, uint32_t dimension) {
-    return fila::c(&fila::cpp(self)->customLut(fila::items(dataCount, [&](uint32_t i) { return fila::math<filament::math::float3>(*(data + i)); }), static_cast<uint8_t>(dimension)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_customLut", self))->customLut(fila::items(dataCount, [&](uint32_t i) { return fila::math<filament::math::float3>(*FILA_NONNULL("FilaColorGradingBuilder_customLut", (data + i))); }), static_cast<uint8_t>(dimension)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace) {
-    return fila::c(&fila::cpp(self)->outputColorSpace(*fila::cpp(colorSpace)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_outputColorSpace", self))->outputColorSpace(*fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_outputColorSpace", colorSpace))));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* self, bool fastMath) {
-    return fila::c(&fila::cpp(self)->fastMath(fastMath));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_fastMath", self))->fastMath(fastMath));
 }
 
 FilaColorGrading* FilaColorGradingBuilder_build(const FilaColorGradingBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaColorGradingBuilder_build", engine))));
 }
 
 } // extern "C"

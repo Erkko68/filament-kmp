@@ -13,19 +13,19 @@ void FilaFramePacerHardwareTimeline_destroy(FilaFramePacerHardwareTimeline* self
 }
 
 void FilaFramePacerHardwareTimeline_getExpectedPresentationTime(const FilaFramePacerHardwareTimeline* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->expectedPresentationTime).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(FILA_NONNULL("FilaFramePacerHardwareTimeline_getExpectedPresentationTime", self))->expectedPresentationTime).time_since_epoch()).count();
 }
 
 void FilaFramePacerHardwareTimeline_setExpectedPresentationTime(FilaFramePacerHardwareTimeline* self, int64_t value) {
-    fila::cpp(self)->expectedPresentationTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(FILA_NONNULL("FilaFramePacerHardwareTimeline_setExpectedPresentationTime", self))->expectedPresentationTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 void FilaFramePacerHardwareTimeline_getDeadline(const FilaFramePacerHardwareTimeline* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->deadline).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(FILA_NONNULL("FilaFramePacerHardwareTimeline_getDeadline", self))->deadline).time_since_epoch()).count();
 }
 
 void FilaFramePacerHardwareTimeline_setDeadline(FilaFramePacerHardwareTimeline* self, int64_t value) {
-    fila::cpp(self)->deadline = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(FILA_NONNULL("FilaFramePacerHardwareTimeline_setDeadline", self))->deadline = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 FilaFramePacerVsyncTick* FilaFramePacerVsyncTick_create(void) {
@@ -37,31 +37,31 @@ void FilaFramePacerVsyncTick_destroy(FilaFramePacerVsyncTick* self) {
 }
 
 void FilaFramePacerVsyncTick_getBaseTime(const FilaFramePacerVsyncTick* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->baseTime).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_getBaseTime", self))->baseTime).time_since_epoch()).count();
 }
 
 void FilaFramePacerVsyncTick_setBaseTime(FilaFramePacerVsyncTick* self, int64_t value) {
-    fila::cpp(self)->baseTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_setBaseTime", self))->baseTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 void FilaFramePacerVsyncTick_getVsyncPeriod(const FilaFramePacerVsyncTick* self, int64_t* out) {
-    *out = (fila::cpp(self)->vsyncPeriod).count();
+    *out = (fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_getVsyncPeriod", self))->vsyncPeriod).count();
 }
 
 void FilaFramePacerVsyncTick_setVsyncPeriod(FilaFramePacerVsyncTick* self, int64_t value) {
-    fila::cpp(self)->vsyncPeriod = std::chrono::nanoseconds(value);
+    fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_setVsyncPeriod", self))->vsyncPeriod = std::chrono::nanoseconds(value);
 }
 
 void FilaFramePacerVsyncTick_getFrameScheduleTime(const FilaFramePacerVsyncTick* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->frameScheduleTime).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_getFrameScheduleTime", self))->frameScheduleTime).time_since_epoch()).count();
 }
 
 void FilaFramePacerVsyncTick_setFrameScheduleTime(FilaFramePacerVsyncTick* self, int64_t value) {
-    fila::cpp(self)->frameScheduleTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_setFrameScheduleTime", self))->frameScheduleTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 uint32_t FilaFramePacerVsyncTick_getTimelines(const FilaFramePacerVsyncTick* self, FilaFramePacerHardwareTimeline* const* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->timelines, outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaFramePacerVsyncTick_getTimelines", self))->timelines, outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
 }
 
 FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void) {
@@ -73,19 +73,19 @@ void FilaFramePacerConfiguration_destroy(FilaFramePacerConfiguration* self) {
 }
 
 float FilaFramePacerConfiguration_getTargetFrameRate(const FilaFramePacerConfiguration* self) {
-    return fila::cpp(self)->targetFrameRate;
+    return fila::cpp(FILA_NONNULL("FilaFramePacerConfiguration_getTargetFrameRate", self))->targetFrameRate;
 }
 
 void FilaFramePacerConfiguration_setTargetFrameRate(FilaFramePacerConfiguration* self, float value) {
-    fila::cpp(self)->targetFrameRate = value;
+    fila::cpp(FILA_NONNULL("FilaFramePacerConfiguration_setTargetFrameRate", self))->targetFrameRate = value;
 }
 
 void FilaFramePacerConfiguration_getLatency(const FilaFramePacerConfiguration* self, int64_t* out) {
-    *out = (fila::cpp(self)->latency).count();
+    *out = (fila::cpp(FILA_NONNULL("FilaFramePacerConfiguration_getLatency", self))->latency).count();
 }
 
 void FilaFramePacerConfiguration_setLatency(FilaFramePacerConfiguration* self, int64_t value) {
-    fila::cpp(self)->latency = std::chrono::nanoseconds(value);
+    fila::cpp(FILA_NONNULL("FilaFramePacerConfiguration_setLatency", self))->latency = std::chrono::nanoseconds(value);
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_create(void) {
@@ -97,71 +97,71 @@ void FilaFramePacerBuilder_destroy(FilaFramePacerBuilder* self) {
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_targetFrameRate(FilaFramePacerBuilder* self, float fps) {
-    return fila::c(&fila::cpp(self)->targetFrameRate(fps));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFramePacerBuilder_targetFrameRate", self))->targetFrameRate(fps));
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_latency(FilaFramePacerBuilder* self, int64_t latency) {
-    return fila::c(&fila::cpp(self)->latency(std::chrono::nanoseconds(latency)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFramePacerBuilder_latency", self))->latency(std::chrono::nanoseconds(latency)));
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_latencyFrames(FilaFramePacerBuilder* self, uint32_t frames) {
-    return fila::c(&fila::cpp(self)->latencyFrames(frames));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaFramePacerBuilder_latencyFrames", self))->latencyFrames(frames));
 }
 
 FilaFramePacer* FilaFramePacerBuilder_build(const FilaFramePacerBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaFramePacerBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaFramePacerBuilder_build", engine))));
 }
 
 void FilaFramePacer_configure(FilaFramePacer* self, const FilaFramePacerConfiguration* config) {
-    fila::cpp(self)->configure(*fila::cpp(config));
+    fila::cpp(FILA_NONNULL("FilaFramePacer_configure", self))->configure(*fila::cpp(FILA_NONNULL("FilaFramePacer_configure", config)));
 }
 
 void FilaFramePacer_getConfiguration(const FilaFramePacer* self, FilaFramePacerConfiguration* out) {
-    *fila::cpp(out) = fila::cpp(self)->getConfiguration();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaFramePacer_getConfiguration", self))->getConfiguration();
 }
 
 FilaFramePacerFrameStatus FilaFramePacer_setupFrame(FilaFramePacer* self, const FilaFramePacerVsyncTick* tick) {
-    return static_cast<FilaFramePacerFrameStatus>(fila::cpp(self)->setupFrame(*fila::cpp(tick)));
+    return static_cast<FilaFramePacerFrameStatus>(fila::cpp(FILA_NONNULL("FilaFramePacer_setupFrame", self))->setupFrame(*fila::cpp(FILA_NONNULL("FilaFramePacer_setupFrame", tick))));
 }
 
 bool FilaFramePacer_setupExtraFrame(FilaFramePacer* self) {
-    return fila::cpp(self)->setupExtraFrame();
+    return fila::cpp(FILA_NONNULL("FilaFramePacer_setupExtraFrame", self))->setupExtraFrame();
 }
 
 bool FilaFramePacer_hasGpuFallenBehind(FilaFramePacer* self, FilaRenderer* renderer) {
-    return fila::cpp(self)->hasGpuFallenBehind(fila::cpp(renderer));
+    return fila::cpp(FILA_NONNULL("FilaFramePacer_hasGpuFallenBehind", self))->hasGpuFallenBehind(fila::cpp(FILA_NONNULL("FilaFramePacer_hasGpuFallenBehind", renderer)));
 }
 
 void FilaFramePacer_applyPresentationTime(const FilaFramePacer* self, FilaRenderer* renderer) {
-    fila::cpp(self)->applyPresentationTime(fila::cpp(renderer));
+    fila::cpp(FILA_NONNULL("FilaFramePacer_applyPresentationTime", self))->applyPresentationTime(fila::cpp(FILA_NONNULL("FilaFramePacer_applyPresentationTime", renderer)));
 }
 
 void FilaFramePacer_getExpectedPresentationTime(const FilaFramePacer* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->getExpectedPresentationTime()).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(FILA_NONNULL("FilaFramePacer_getExpectedPresentationTime", self))->getExpectedPresentationTime()).time_since_epoch()).count();
 }
 
 void FilaFramePacer_getRenderingDeadline(const FilaFramePacer* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->getRenderingDeadline()).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(FILA_NONNULL("FilaFramePacer_getRenderingDeadline", self))->getRenderingDeadline()).time_since_epoch()).count();
 }
 
 void FilaFramePacer_getEffectiveLatency(const FilaFramePacer* self, int64_t* out) {
-    *out = (fila::cpp(self)->getEffectiveLatency()).count();
+    *out = (fila::cpp(FILA_NONNULL("FilaFramePacer_getEffectiveLatency", self))->getEffectiveLatency()).count();
 }
 
 FilaFramePacerPacingStatus FilaFramePacer_getPacingStatus(const FilaFramePacer* self) {
-    return static_cast<FilaFramePacerPacingStatus>(fila::cpp(self)->getPacingStatus());
+    return static_cast<FilaFramePacerPacingStatus>(fila::cpp(FILA_NONNULL("FilaFramePacer_getPacingStatus", self))->getPacingStatus());
 }
 
 void FilaFramePacer_resetPacing(FilaFramePacer* self) {
-    fila::cpp(self)->resetPacing();
+    fila::cpp(FILA_NONNULL("FilaFramePacer_resetPacing", self))->resetPacing();
 }
 
 float FilaFramePacer_getSelectedFrameRate(const FilaFramePacer* self) {
-    return fila::cpp(self)->getSelectedFrameRate();
+    return fila::cpp(FILA_NONNULL("FilaFramePacer_getSelectedFrameRate", self))->getSelectedFrameRate();
 }
 
 bool FilaFramePacer_isExactFrameRateAchieved(const FilaFramePacer* self) {
-    return fila::cpp(self)->isExactFrameRateAchieved();
+    return fila::cpp(FILA_NONNULL("FilaFramePacer_isExactFrameRateAchieved", self))->isExactFrameRateAchieved();
 }
 
 } // extern "C"

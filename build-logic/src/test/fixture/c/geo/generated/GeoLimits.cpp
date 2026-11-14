@@ -13,19 +13,19 @@ void GeoLimits_destroy(GeoLimits* self) {
 }
 
 float GeoLimits_GetMin(const GeoLimits* self) {
-    return geo_c::cpp(self)->mMin;
+    return geo_c::cpp(GEO_C_NONNULL("GeoLimits_GetMin", self))->mMin;
 }
 
 void GeoLimits_SetMin(GeoLimits* self, float value) {
-    geo_c::cpp(self)->mMin = value;
+    geo_c::cpp(GEO_C_NONNULL("GeoLimits_SetMin", self))->mMin = value;
 }
 
 float GeoLimits_GetMax(const GeoLimits* self) {
-    return geo_c::cpp(self)->mMax;
+    return geo_c::cpp(GEO_C_NONNULL("GeoLimits_GetMax", self))->mMax;
 }
 
 void GeoLimits_SetMax(GeoLimits* self, float value) {
-    geo_c::cpp(self)->mMax = value;
+    geo_c::cpp(GEO_C_NONNULL("GeoLimits_SetMax", self))->mMax = value;
 }
 
 } // extern "C"

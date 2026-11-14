@@ -9,11 +9,11 @@ GeoCircle* GeoCircle_create(float radius) {
 }
 
 void GeoCircle_addRef(const GeoCircle* self) {
-    geo_c::cpp(self)->addRef();
+    geo_c::cpp(GEO_C_NONNULL("GeoCircle_addRef", self))->addRef();
 }
 
 void GeoCircle_release(const GeoCircle* self) {
-    geo_c::cpp(self)->release();
+    geo_c::cpp(GEO_C_NONNULL("GeoCircle_release", self))->release();
 }
 
 GeoShape* GeoCircle_asShape(GeoCircle* self) {

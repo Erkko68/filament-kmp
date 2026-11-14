@@ -13,35 +13,35 @@ void FilaSoftShadowOptions_destroy(FilaSoftShadowOptions* self) {
 }
 
 float FilaSoftShadowOptions_getPenumbraScale(const FilaSoftShadowOptions* self) {
-    return fila::cpp(self)->penumbraScale;
+    return fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_getPenumbraScale", self))->penumbraScale;
 }
 
 void FilaSoftShadowOptions_setPenumbraScale(FilaSoftShadowOptions* self, float value) {
-    fila::cpp(self)->penumbraScale = value;
+    fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_setPenumbraScale", self))->penumbraScale = value;
 }
 
 float FilaSoftShadowOptions_getPenumbraRatioScale(const FilaSoftShadowOptions* self) {
-    return fila::cpp(self)->penumbraRatioScale;
+    return fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_getPenumbraRatioScale", self))->penumbraRatioScale;
 }
 
 void FilaSoftShadowOptions_setPenumbraRatioScale(FilaSoftShadowOptions* self, float value) {
-    fila::cpp(self)->penumbraRatioScale = value;
+    fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_setPenumbraRatioScale", self))->penumbraRatioScale = value;
 }
 
 float FilaSoftShadowOptions_getMaxPenumbraRatio(const FilaSoftShadowOptions* self) {
-    return fila::cpp(self)->maxPenumbraRatio;
+    return fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_getMaxPenumbraRatio", self))->maxPenumbraRatio;
 }
 
 void FilaSoftShadowOptions_setMaxPenumbraRatio(FilaSoftShadowOptions* self, float value) {
-    fila::cpp(self)->maxPenumbraRatio = value;
+    fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_setMaxPenumbraRatio", self))->maxPenumbraRatio = value;
 }
 
 float FilaSoftShadowOptions_getMaxSearchRadius(const FilaSoftShadowOptions* self) {
-    return fila::cpp(self)->maxSearchRadius;
+    return fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_getMaxSearchRadius", self))->maxSearchRadius;
 }
 
 void FilaSoftShadowOptions_setMaxSearchRadius(FilaSoftShadowOptions* self, float value) {
-    fila::cpp(self)->maxSearchRadius = value;
+    fila::cpp(FILA_NONNULL("FilaSoftShadowOptions_setMaxSearchRadius", self))->maxSearchRadius = value;
 }
 
 } // extern "C"

@@ -13,19 +13,19 @@ void FilaIBLPrefilterContextEquirectangularToCubemapConfig_destroy(FilaIBLPrefil
 }
 
 bool FilaIBLPrefilterContextEquirectangularToCubemapConfig_getMirror(const FilaIBLPrefilterContextEquirectangularToCubemapConfig* self) {
-    return fila::cpp(self)->mirror;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextEquirectangularToCubemapConfig_getMirror", self))->mirror;
 }
 
 void FilaIBLPrefilterContextEquirectangularToCubemapConfig_setMirror(FilaIBLPrefilterContextEquirectangularToCubemapConfig* self, bool value) {
-    fila::cpp(self)->mirror = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextEquirectangularToCubemapConfig_setMirror", self))->mirror = value;
 }
 
 FilaIBLPrefilterContextEquirectangularToCubemap* FilaIBLPrefilterContextEquirectangularToCubemap_create(FilaIBLPrefilterContext* context) {
-    return fila::c(new IBLPrefilterContext::EquirectangularToCubemap(*fila::cpp(context)));
+    return fila::c(new IBLPrefilterContext::EquirectangularToCubemap(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextEquirectangularToCubemap_create", context))));
 }
 
 FilaIBLPrefilterContextEquirectangularToCubemap* FilaIBLPrefilterContextEquirectangularToCubemap_create_Config(FilaIBLPrefilterContext* context, const FilaIBLPrefilterContextEquirectangularToCubemapConfig* config) {
-    return fila::c(new IBLPrefilterContext::EquirectangularToCubemap(*fila::cpp(context), *fila::cpp(config)));
+    return fila::c(new IBLPrefilterContext::EquirectangularToCubemap(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextEquirectangularToCubemap_create_Config", context)), *fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextEquirectangularToCubemap_create_Config", config))));
 }
 
 void FilaIBLPrefilterContextEquirectangularToCubemap_destroy(FilaIBLPrefilterContextEquirectangularToCubemap* self) {
@@ -33,7 +33,7 @@ void FilaIBLPrefilterContextEquirectangularToCubemap_destroy(FilaIBLPrefilterCon
 }
 
 FilaTexture* FilaIBLPrefilterContextEquirectangularToCubemap_invoke(FilaIBLPrefilterContextEquirectangularToCubemap* self, FilaTexture* equirectangular, FilaTexture* outCubemap) {
-    return fila::c(fila::cpp(self)->operator()(fila::cpp(equirectangular), fila::cpp(outCubemap)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextEquirectangularToCubemap_invoke", self))->operator()(fila::cpp(equirectangular), fila::cpp(outCubemap)));
 }
 
 FilaIBLPrefilterContextIrradianceFilterConfig* FilaIBLPrefilterContextIrradianceFilterConfig_create(void) {
@@ -45,19 +45,19 @@ void FilaIBLPrefilterContextIrradianceFilterConfig_destroy(FilaIBLPrefilterConte
 }
 
 uint32_t FilaIBLPrefilterContextIrradianceFilterConfig_getSampleCount(const FilaIBLPrefilterContextIrradianceFilterConfig* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->sampleCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterConfig_getSampleCount", self))->sampleCount);
 }
 
 void FilaIBLPrefilterContextIrradianceFilterConfig_setSampleCount(FilaIBLPrefilterContextIrradianceFilterConfig* self, uint32_t value) {
-    fila::cpp(self)->sampleCount = static_cast<uint16_t>(value);
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterConfig_setSampleCount", self))->sampleCount = static_cast<uint16_t>(value);
 }
 
 FilaIBLPrefilterContextKernel FilaIBLPrefilterContextIrradianceFilterConfig_getKernel(const FilaIBLPrefilterContextIrradianceFilterConfig* self) {
-    return static_cast<FilaIBLPrefilterContextKernel>(fila::cpp(self)->kernel);
+    return static_cast<FilaIBLPrefilterContextKernel>(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterConfig_getKernel", self))->kernel);
 }
 
 void FilaIBLPrefilterContextIrradianceFilterConfig_setKernel(FilaIBLPrefilterContextIrradianceFilterConfig* self, FilaIBLPrefilterContextKernel value) {
-    fila::cpp(self)->kernel = static_cast<IBLPrefilterContext::Kernel>(value);
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterConfig_setKernel", self))->kernel = static_cast<IBLPrefilterContext::Kernel>(value);
 }
 
 FilaIBLPrefilterContextIrradianceFilterOptions* FilaIBLPrefilterContextIrradianceFilterOptions_create(void) {
@@ -69,43 +69,43 @@ void FilaIBLPrefilterContextIrradianceFilterOptions_destroy(FilaIBLPrefilterCont
 }
 
 float FilaIBLPrefilterContextIrradianceFilterOptions_getHdrLinear(const FilaIBLPrefilterContextIrradianceFilterOptions* self) {
-    return fila::cpp(self)->hdrLinear;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_getHdrLinear", self))->hdrLinear;
 }
 
 void FilaIBLPrefilterContextIrradianceFilterOptions_setHdrLinear(FilaIBLPrefilterContextIrradianceFilterOptions* self, float value) {
-    fila::cpp(self)->hdrLinear = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_setHdrLinear", self))->hdrLinear = value;
 }
 
 float FilaIBLPrefilterContextIrradianceFilterOptions_getHdrMax(const FilaIBLPrefilterContextIrradianceFilterOptions* self) {
-    return fila::cpp(self)->hdrMax;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_getHdrMax", self))->hdrMax;
 }
 
 void FilaIBLPrefilterContextIrradianceFilterOptions_setHdrMax(FilaIBLPrefilterContextIrradianceFilterOptions* self, float value) {
-    fila::cpp(self)->hdrMax = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_setHdrMax", self))->hdrMax = value;
 }
 
 float FilaIBLPrefilterContextIrradianceFilterOptions_getLodOffset(const FilaIBLPrefilterContextIrradianceFilterOptions* self) {
-    return fila::cpp(self)->lodOffset;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_getLodOffset", self))->lodOffset;
 }
 
 void FilaIBLPrefilterContextIrradianceFilterOptions_setLodOffset(FilaIBLPrefilterContextIrradianceFilterOptions* self, float value) {
-    fila::cpp(self)->lodOffset = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_setLodOffset", self))->lodOffset = value;
 }
 
 bool FilaIBLPrefilterContextIrradianceFilterOptions_getGenerateMipmap(const FilaIBLPrefilterContextIrradianceFilterOptions* self) {
-    return fila::cpp(self)->generateMipmap;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_getGenerateMipmap", self))->generateMipmap;
 }
 
 void FilaIBLPrefilterContextIrradianceFilterOptions_setGenerateMipmap(FilaIBLPrefilterContextIrradianceFilterOptions* self, bool value) {
-    fila::cpp(self)->generateMipmap = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilterOptions_setGenerateMipmap", self))->generateMipmap = value;
 }
 
 FilaIBLPrefilterContextIrradianceFilter* FilaIBLPrefilterContextIrradianceFilter_create_Config(FilaIBLPrefilterContext* context, const FilaIBLPrefilterContextIrradianceFilterConfig* config) {
-    return fila::c(new IBLPrefilterContext::IrradianceFilter(*fila::cpp(context), *fila::cpp(config)));
+    return fila::c(new IBLPrefilterContext::IrradianceFilter(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilter_create_Config", context)), *fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilter_create_Config", config))));
 }
 
 FilaIBLPrefilterContextIrradianceFilter* FilaIBLPrefilterContextIrradianceFilter_create(FilaIBLPrefilterContext* context) {
-    return fila::c(new IBLPrefilterContext::IrradianceFilter(*fila::cpp(context)));
+    return fila::c(new IBLPrefilterContext::IrradianceFilter(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilter_create", context))));
 }
 
 void FilaIBLPrefilterContextIrradianceFilter_destroy(FilaIBLPrefilterContextIrradianceFilter* self) {
@@ -113,11 +113,11 @@ void FilaIBLPrefilterContextIrradianceFilter_destroy(FilaIBLPrefilterContextIrra
 }
 
 FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, const FilaIBLPrefilterContextIrradianceFilterOptions* options, FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture) {
-    return fila::c(fila::cpp(self)->operator()(*fila::cpp(options), fila::cpp(environmentCubemap), fila::cpp(outIrradianceTexture)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilter_invoke_Options_Texture_Texture", self))->operator()(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilter_invoke_Options_Texture_Texture", options)), fila::cpp(environmentCubemap), fila::cpp(outIrradianceTexture)));
 }
 
 FilaTexture* FilaIBLPrefilterContextIrradianceFilter_invoke_Texture_Texture(FilaIBLPrefilterContextIrradianceFilter* self, FilaTexture* environmentCubemap, FilaTexture* outIrradianceTexture) {
-    return fila::c(fila::cpp(self)->operator()(fila::cpp(environmentCubemap), fila::cpp(outIrradianceTexture)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextIrradianceFilter_invoke_Texture_Texture", self))->operator()(fila::cpp(environmentCubemap), fila::cpp(outIrradianceTexture)));
 }
 
 FilaIBLPrefilterContextSpecularFilterConfig* FilaIBLPrefilterContextSpecularFilterConfig_create(void) {
@@ -129,27 +129,27 @@ void FilaIBLPrefilterContextSpecularFilterConfig_destroy(FilaIBLPrefilterContext
 }
 
 uint32_t FilaIBLPrefilterContextSpecularFilterConfig_getSampleCount(const FilaIBLPrefilterContextSpecularFilterConfig* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->sampleCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterConfig_getSampleCount", self))->sampleCount);
 }
 
 void FilaIBLPrefilterContextSpecularFilterConfig_setSampleCount(FilaIBLPrefilterContextSpecularFilterConfig* self, uint32_t value) {
-    fila::cpp(self)->sampleCount = static_cast<uint16_t>(value);
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterConfig_setSampleCount", self))->sampleCount = static_cast<uint16_t>(value);
 }
 
 uint32_t FilaIBLPrefilterContextSpecularFilterConfig_getLevelCount(const FilaIBLPrefilterContextSpecularFilterConfig* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->levelCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterConfig_getLevelCount", self))->levelCount);
 }
 
 void FilaIBLPrefilterContextSpecularFilterConfig_setLevelCount(FilaIBLPrefilterContextSpecularFilterConfig* self, uint32_t value) {
-    fila::cpp(self)->levelCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterConfig_setLevelCount", self))->levelCount = static_cast<uint8_t>(value);
 }
 
 FilaIBLPrefilterContextKernel FilaIBLPrefilterContextSpecularFilterConfig_getKernel(const FilaIBLPrefilterContextSpecularFilterConfig* self) {
-    return static_cast<FilaIBLPrefilterContextKernel>(fila::cpp(self)->kernel);
+    return static_cast<FilaIBLPrefilterContextKernel>(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterConfig_getKernel", self))->kernel);
 }
 
 void FilaIBLPrefilterContextSpecularFilterConfig_setKernel(FilaIBLPrefilterContextSpecularFilterConfig* self, FilaIBLPrefilterContextKernel value) {
-    fila::cpp(self)->kernel = static_cast<IBLPrefilterContext::Kernel>(value);
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterConfig_setKernel", self))->kernel = static_cast<IBLPrefilterContext::Kernel>(value);
 }
 
 FilaIBLPrefilterContextSpecularFilterOptions* FilaIBLPrefilterContextSpecularFilterOptions_create(void) {
@@ -161,43 +161,43 @@ void FilaIBLPrefilterContextSpecularFilterOptions_destroy(FilaIBLPrefilterContex
 }
 
 float FilaIBLPrefilterContextSpecularFilterOptions_getHdrLinear(const FilaIBLPrefilterContextSpecularFilterOptions* self) {
-    return fila::cpp(self)->hdrLinear;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_getHdrLinear", self))->hdrLinear;
 }
 
 void FilaIBLPrefilterContextSpecularFilterOptions_setHdrLinear(FilaIBLPrefilterContextSpecularFilterOptions* self, float value) {
-    fila::cpp(self)->hdrLinear = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_setHdrLinear", self))->hdrLinear = value;
 }
 
 float FilaIBLPrefilterContextSpecularFilterOptions_getHdrMax(const FilaIBLPrefilterContextSpecularFilterOptions* self) {
-    return fila::cpp(self)->hdrMax;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_getHdrMax", self))->hdrMax;
 }
 
 void FilaIBLPrefilterContextSpecularFilterOptions_setHdrMax(FilaIBLPrefilterContextSpecularFilterOptions* self, float value) {
-    fila::cpp(self)->hdrMax = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_setHdrMax", self))->hdrMax = value;
 }
 
 float FilaIBLPrefilterContextSpecularFilterOptions_getLodOffset(const FilaIBLPrefilterContextSpecularFilterOptions* self) {
-    return fila::cpp(self)->lodOffset;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_getLodOffset", self))->lodOffset;
 }
 
 void FilaIBLPrefilterContextSpecularFilterOptions_setLodOffset(FilaIBLPrefilterContextSpecularFilterOptions* self, float value) {
-    fila::cpp(self)->lodOffset = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_setLodOffset", self))->lodOffset = value;
 }
 
 bool FilaIBLPrefilterContextSpecularFilterOptions_getGenerateMipmap(const FilaIBLPrefilterContextSpecularFilterOptions* self) {
-    return fila::cpp(self)->generateMipmap;
+    return fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_getGenerateMipmap", self))->generateMipmap;
 }
 
 void FilaIBLPrefilterContextSpecularFilterOptions_setGenerateMipmap(FilaIBLPrefilterContextSpecularFilterOptions* self, bool value) {
-    fila::cpp(self)->generateMipmap = value;
+    fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilterOptions_setGenerateMipmap", self))->generateMipmap = value;
 }
 
 FilaIBLPrefilterContextSpecularFilter* FilaIBLPrefilterContextSpecularFilter_create_Config(FilaIBLPrefilterContext* context, const FilaIBLPrefilterContextSpecularFilterConfig* config) {
-    return fila::c(new IBLPrefilterContext::SpecularFilter(*fila::cpp(context), *fila::cpp(config)));
+    return fila::c(new IBLPrefilterContext::SpecularFilter(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilter_create_Config", context)), *fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilter_create_Config", config))));
 }
 
 FilaIBLPrefilterContextSpecularFilter* FilaIBLPrefilterContextSpecularFilter_create(FilaIBLPrefilterContext* context) {
-    return fila::c(new IBLPrefilterContext::SpecularFilter(*fila::cpp(context)));
+    return fila::c(new IBLPrefilterContext::SpecularFilter(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilter_create", context))));
 }
 
 void FilaIBLPrefilterContextSpecularFilter_destroy(FilaIBLPrefilterContextSpecularFilter* self) {
@@ -205,15 +205,15 @@ void FilaIBLPrefilterContextSpecularFilter_destroy(FilaIBLPrefilterContextSpecul
 }
 
 FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Options_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, const FilaIBLPrefilterContextSpecularFilterOptions* options, FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture) {
-    return fila::c(fila::cpp(self)->operator()(*fila::cpp(options), fila::cpp(environmentCubemap), fila::cpp(outReflectionsTexture)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilter_invoke_Options_Texture_Texture", self))->operator()(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilter_invoke_Options_Texture_Texture", options)), fila::cpp(environmentCubemap), fila::cpp(outReflectionsTexture)));
 }
 
 FilaTexture* FilaIBLPrefilterContextSpecularFilter_invoke_Texture_Texture(FilaIBLPrefilterContextSpecularFilter* self, FilaTexture* environmentCubemap, FilaTexture* outReflectionsTexture) {
-    return fila::c(fila::cpp(self)->operator()(fila::cpp(environmentCubemap), fila::cpp(outReflectionsTexture)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIBLPrefilterContextSpecularFilter_invoke_Texture_Texture", self))->operator()(fila::cpp(environmentCubemap), fila::cpp(outReflectionsTexture)));
 }
 
 FilaIBLPrefilterContext* FilaIBLPrefilterContext_create(FilaEngine* engine) {
-    return fila::c(new IBLPrefilterContext(*fila::cpp(engine)));
+    return fila::c(new IBLPrefilterContext(*fila::cpp(FILA_NONNULL("FilaIBLPrefilterContext_create", engine))));
 }
 
 void FilaIBLPrefilterContext_destroy(FilaIBLPrefilterContext* self) {

@@ -13,83 +13,83 @@ void FilaAmbientOcclusionOptionsSsct_destroy(FilaAmbientOcclusionOptionsSsct* se
 }
 
 float FilaAmbientOcclusionOptionsSsct_getLightConeRad(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->lightConeRad;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getLightConeRad", self))->lightConeRad;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setLightConeRad(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    fila::cpp(self)->lightConeRad = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setLightConeRad", self))->lightConeRad = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getShadowDistance(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->shadowDistance;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getShadowDistance", self))->shadowDistance;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setShadowDistance(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    fila::cpp(self)->shadowDistance = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setShadowDistance", self))->shadowDistance = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getContactDistanceMax(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->contactDistanceMax;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getContactDistanceMax", self))->contactDistanceMax;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setContactDistanceMax(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    fila::cpp(self)->contactDistanceMax = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setContactDistanceMax", self))->contactDistanceMax = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getIntensity(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->intensity;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getIntensity", self))->intensity;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setIntensity(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    fila::cpp(self)->intensity = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setIntensity", self))->intensity = value;
 }
 
 void FilaAmbientOcclusionOptionsSsct_getLightDirection(const FilaAmbientOcclusionOptionsSsct* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->lightDirection);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getLightDirection", self))->lightDirection);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setLightDirection(FilaAmbientOcclusionOptionsSsct* self, const FilaFloat3* value) {
-    fila::cpp(self)->lightDirection = fila::math<filament::math::float3>(*value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setLightDirection", self))->lightDirection = fila::math<filament::math::float3>(*FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setLightDirection", value));
 }
 
 float FilaAmbientOcclusionOptionsSsct_getDepthBias(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->depthBias;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getDepthBias", self))->depthBias;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setDepthBias(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    fila::cpp(self)->depthBias = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setDepthBias", self))->depthBias = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getDepthSlopeBias(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->depthSlopeBias;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getDepthSlopeBias", self))->depthSlopeBias;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setDepthSlopeBias(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    fila::cpp(self)->depthSlopeBias = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setDepthSlopeBias", self))->depthSlopeBias = value;
 }
 
 uint32_t FilaAmbientOcclusionOptionsSsct_getSampleCount(const FilaAmbientOcclusionOptionsSsct* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->sampleCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getSampleCount", self))->sampleCount);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setSampleCount(FilaAmbientOcclusionOptionsSsct* self, uint32_t value) {
-    fila::cpp(self)->sampleCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setSampleCount", self))->sampleCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaAmbientOcclusionOptionsSsct_getRayCount(const FilaAmbientOcclusionOptionsSsct* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->rayCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getRayCount", self))->rayCount);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setRayCount(FilaAmbientOcclusionOptionsSsct* self, uint32_t value) {
-    fila::cpp(self)->rayCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setRayCount", self))->rayCount = static_cast<uint8_t>(value);
 }
 
 bool FilaAmbientOcclusionOptionsSsct_getEnabled(const FilaAmbientOcclusionOptionsSsct* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_getEnabled", self))->enabled;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setEnabled(FilaAmbientOcclusionOptionsSsct* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsSsct_setEnabled", self))->enabled = value;
 }
 
 FilaAmbientOcclusionOptionsGtao* FilaAmbientOcclusionOptionsGtao_create(void) {
@@ -101,51 +101,51 @@ void FilaAmbientOcclusionOptionsGtao_destroy(FilaAmbientOcclusionOptionsGtao* se
 }
 
 uint32_t FilaAmbientOcclusionOptionsGtao_getSampleSliceCount(const FilaAmbientOcclusionOptionsGtao* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->sampleSliceCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_getSampleSliceCount", self))->sampleSliceCount);
 }
 
 void FilaAmbientOcclusionOptionsGtao_setSampleSliceCount(FilaAmbientOcclusionOptionsGtao* self, uint32_t value) {
-    fila::cpp(self)->sampleSliceCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_setSampleSliceCount", self))->sampleSliceCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaAmbientOcclusionOptionsGtao_getSampleStepsPerSlice(const FilaAmbientOcclusionOptionsGtao* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->sampleStepsPerSlice);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_getSampleStepsPerSlice", self))->sampleStepsPerSlice);
 }
 
 void FilaAmbientOcclusionOptionsGtao_setSampleStepsPerSlice(FilaAmbientOcclusionOptionsGtao* self, uint32_t value) {
-    fila::cpp(self)->sampleStepsPerSlice = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_setSampleStepsPerSlice", self))->sampleStepsPerSlice = static_cast<uint8_t>(value);
 }
 
 float FilaAmbientOcclusionOptionsGtao_getThicknessHeuristic(const FilaAmbientOcclusionOptionsGtao* self) {
-    return fila::cpp(self)->thicknessHeuristic;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_getThicknessHeuristic", self))->thicknessHeuristic;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setThicknessHeuristic(FilaAmbientOcclusionOptionsGtao* self, float value) {
-    fila::cpp(self)->thicknessHeuristic = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_setThicknessHeuristic", self))->thicknessHeuristic = value;
 }
 
 bool FilaAmbientOcclusionOptionsGtao_getUseVisibilityBitmasks(const FilaAmbientOcclusionOptionsGtao* self) {
-    return fila::cpp(self)->useVisibilityBitmasks;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_getUseVisibilityBitmasks", self))->useVisibilityBitmasks;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setUseVisibilityBitmasks(FilaAmbientOcclusionOptionsGtao* self, bool value) {
-    fila::cpp(self)->useVisibilityBitmasks = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_setUseVisibilityBitmasks", self))->useVisibilityBitmasks = value;
 }
 
 float FilaAmbientOcclusionOptionsGtao_getConstThickness(const FilaAmbientOcclusionOptionsGtao* self) {
-    return fila::cpp(self)->constThickness;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_getConstThickness", self))->constThickness;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setConstThickness(FilaAmbientOcclusionOptionsGtao* self, float value) {
-    fila::cpp(self)->constThickness = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_setConstThickness", self))->constThickness = value;
 }
 
 bool FilaAmbientOcclusionOptionsGtao_getLinearThickness(const FilaAmbientOcclusionOptionsGtao* self) {
-    return fila::cpp(self)->linearThickness;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_getLinearThickness", self))->linearThickness;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setLinearThickness(FilaAmbientOcclusionOptionsGtao* self, bool value) {
-    fila::cpp(self)->linearThickness = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptionsGtao_setLinearThickness", self))->linearThickness = value;
 }
 
 FilaAmbientOcclusionOptions* FilaAmbientOcclusionOptions_create(void) {
@@ -157,123 +157,123 @@ void FilaAmbientOcclusionOptions_destroy(FilaAmbientOcclusionOptions* self) {
 }
 
 FilaAmbientOcclusionOptionsAmbientOcclusionType FilaAmbientOcclusionOptions_getAoType(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaAmbientOcclusionOptionsAmbientOcclusionType>(fila::cpp(self)->aoType);
+    return static_cast<FilaAmbientOcclusionOptionsAmbientOcclusionType>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getAoType", self))->aoType);
 }
 
 void FilaAmbientOcclusionOptions_setAoType(FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsAmbientOcclusionType value) {
-    fila::cpp(self)->aoType = static_cast<filament::AmbientOcclusionOptions::AmbientOcclusionType>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setAoType", self))->aoType = static_cast<filament::AmbientOcclusionOptions::AmbientOcclusionType>(value);
 }
 
 float FilaAmbientOcclusionOptions_getRadius(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->radius;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getRadius", self))->radius;
 }
 
 void FilaAmbientOcclusionOptions_setRadius(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->radius = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setRadius", self))->radius = value;
 }
 
 float FilaAmbientOcclusionOptions_getPower(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->power;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getPower", self))->power;
 }
 
 void FilaAmbientOcclusionOptions_setPower(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->power = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setPower", self))->power = value;
 }
 
 float FilaAmbientOcclusionOptions_getBias(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->bias;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getBias", self))->bias;
 }
 
 void FilaAmbientOcclusionOptions_setBias(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->bias = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setBias", self))->bias = value;
 }
 
 float FilaAmbientOcclusionOptions_getResolution(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->resolution;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getResolution", self))->resolution;
 }
 
 void FilaAmbientOcclusionOptions_setResolution(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->resolution = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setResolution", self))->resolution = value;
 }
 
 float FilaAmbientOcclusionOptions_getIntensity(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->intensity;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getIntensity", self))->intensity;
 }
 
 void FilaAmbientOcclusionOptions_setIntensity(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->intensity = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setIntensity", self))->intensity = value;
 }
 
 float FilaAmbientOcclusionOptions_getBilateralThreshold(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->bilateralThreshold;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getBilateralThreshold", self))->bilateralThreshold;
 }
 
 void FilaAmbientOcclusionOptions_setBilateralThreshold(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->bilateralThreshold = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setBilateralThreshold", self))->bilateralThreshold = value;
 }
 
 FilaQualityLevel FilaAmbientOcclusionOptions_getQuality(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaQualityLevel>(fila::cpp(self)->quality);
+    return static_cast<FilaQualityLevel>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getQuality", self))->quality);
 }
 
 void FilaAmbientOcclusionOptions_setQuality(FilaAmbientOcclusionOptions* self, FilaQualityLevel value) {
-    fila::cpp(self)->quality = static_cast<filament::QualityLevel>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setQuality", self))->quality = static_cast<filament::QualityLevel>(value);
 }
 
 FilaQualityLevel FilaAmbientOcclusionOptions_getLowPassFilter(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaQualityLevel>(fila::cpp(self)->lowPassFilter);
+    return static_cast<FilaQualityLevel>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getLowPassFilter", self))->lowPassFilter);
 }
 
 void FilaAmbientOcclusionOptions_setLowPassFilter(FilaAmbientOcclusionOptions* self, FilaQualityLevel value) {
-    fila::cpp(self)->lowPassFilter = static_cast<filament::QualityLevel>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setLowPassFilter", self))->lowPassFilter = static_cast<filament::QualityLevel>(value);
 }
 
 FilaQualityLevel FilaAmbientOcclusionOptions_getUpsampling(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaQualityLevel>(fila::cpp(self)->upsampling);
+    return static_cast<FilaQualityLevel>(fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getUpsampling", self))->upsampling);
 }
 
 void FilaAmbientOcclusionOptions_setUpsampling(FilaAmbientOcclusionOptions* self, FilaQualityLevel value) {
-    fila::cpp(self)->upsampling = static_cast<filament::QualityLevel>(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setUpsampling", self))->upsampling = static_cast<filament::QualityLevel>(value);
 }
 
 bool FilaAmbientOcclusionOptions_getEnabled(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getEnabled", self))->enabled;
 }
 
 void FilaAmbientOcclusionOptions_setEnabled(FilaAmbientOcclusionOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setEnabled", self))->enabled = value;
 }
 
 bool FilaAmbientOcclusionOptions_getBentNormals(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->bentNormals;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getBentNormals", self))->bentNormals;
 }
 
 void FilaAmbientOcclusionOptions_setBentNormals(FilaAmbientOcclusionOptions* self, bool value) {
-    fila::cpp(self)->bentNormals = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setBentNormals", self))->bentNormals = value;
 }
 
 float FilaAmbientOcclusionOptions_getMinHorizonAngleRad(const FilaAmbientOcclusionOptions* self) {
-    return fila::cpp(self)->minHorizonAngleRad;
+    return fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getMinHorizonAngleRad", self))->minHorizonAngleRad;
 }
 
 void FilaAmbientOcclusionOptions_setMinHorizonAngleRad(FilaAmbientOcclusionOptions* self, float value) {
-    fila::cpp(self)->minHorizonAngleRad = value;
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setMinHorizonAngleRad", self))->minHorizonAngleRad = value;
 }
 
 void FilaAmbientOcclusionOptions_getSsct(const FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsSsct* out) {
-    *fila::cpp(out) = fila::cpp(self)->ssct;
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getSsct", self))->ssct;
 }
 
 void FilaAmbientOcclusionOptions_setSsct(FilaAmbientOcclusionOptions* self, const FilaAmbientOcclusionOptionsSsct* value) {
-    fila::cpp(self)->ssct = *fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setSsct", self))->ssct = *fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setSsct", value));
 }
 
 void FilaAmbientOcclusionOptions_getGtao(const FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsGtao* out) {
-    *fila::cpp(out) = fila::cpp(self)->gtao;
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_getGtao", self))->gtao;
 }
 
 void FilaAmbientOcclusionOptions_setGtao(FilaAmbientOcclusionOptions* self, const FilaAmbientOcclusionOptionsGtao* value) {
-    fila::cpp(self)->gtao = *fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setGtao", self))->gtao = *fila::cpp(FILA_NONNULL("FilaAmbientOcclusionOptions_setGtao", value));
 }
 
 } // extern "C"

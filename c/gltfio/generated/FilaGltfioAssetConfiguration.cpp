@@ -13,35 +13,35 @@ void FilaGltfioAssetConfiguration_destroy(FilaGltfioAssetConfiguration* self) {
 }
 
 FilaEngine* FilaGltfioAssetConfiguration_getEngine(const FilaGltfioAssetConfiguration* self) {
-    return fila::c(fila::cpp(self)->engine);
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_getEngine", self))->engine);
 }
 
 void FilaGltfioAssetConfiguration_setEngine(FilaGltfioAssetConfiguration* self, FilaEngine* value) {
-    fila::cpp(self)->engine = fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_setEngine", self))->engine = fila::cpp(value);
 }
 
 FilaGltfioMaterialProvider* FilaGltfioAssetConfiguration_getMaterials(const FilaGltfioAssetConfiguration* self) {
-    return fila::c(fila::cpp(self)->materials);
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_getMaterials", self))->materials);
 }
 
 void FilaGltfioAssetConfiguration_setMaterials(FilaGltfioAssetConfiguration* self, FilaGltfioMaterialProvider* value) {
-    fila::cpp(self)->materials = fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_setMaterials", self))->materials = fila::cpp(value);
 }
 
 FilaUtilsEntityManager* FilaGltfioAssetConfiguration_getEntities(const FilaGltfioAssetConfiguration* self) {
-    return fila::c(fila::cpp(self)->entities);
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_getEntities", self))->entities);
 }
 
 void FilaGltfioAssetConfiguration_setEntities(FilaGltfioAssetConfiguration* self, FilaUtilsEntityManager* value) {
-    fila::cpp(self)->entities = fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_setEntities", self))->entities = fila::cpp(value);
 }
 
 char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfiguration* self) {
-    return fila::cpp(self)->defaultNodeName;
+    return fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_getDefaultNodeName", self))->defaultNodeName;
 }
 
 void FilaGltfioAssetConfiguration_setDefaultNodeName(FilaGltfioAssetConfiguration* self, const char* value) {
-    fila::cpp(self)->defaultNodeName = value ? decltype(fila::cpp(self)->defaultNodeName)(fila::intern(value)) : decltype(fila::cpp(self)->defaultNodeName)();
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_setDefaultNodeName", self))->defaultNodeName = value ? decltype(fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_setDefaultNodeName", self))->defaultNodeName)(fila::intern(value)) : decltype(fila::cpp(FILA_NONNULL("FilaGltfioAssetConfiguration_setDefaultNodeName", self))->defaultNodeName)();
 }
 
 } // extern "C"

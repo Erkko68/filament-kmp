@@ -9,7 +9,7 @@ FilaUtilsEntityManager* FilaUtilsEntityManager_get(void) {
 }
 
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self) {
-    fila::cpp(self)->flushNotifications();
+    fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_flushNotifications", self))->flushNotifications();
 }
 
 uint32_t FilaUtilsEntityManager_getMaxEntityCount(void) {
@@ -17,39 +17,39 @@ uint32_t FilaUtilsEntityManager_getMaxEntityCount(void) {
 }
 
 uint32_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getEntityCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_getEntityCount", self))->getEntityCount());
 }
 
 void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities) {
-    fila::cpp(self)->create(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
+    fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_create_size_t_Entity", self))->create(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(FILA_NONNULL("FilaUtilsEntityManager_create_size_t_Entity", entities)));
 }
 
 FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self) {
-    return utils::Entity::smuggle(fila::cpp(self)->create());
+    return utils::Entity::smuggle(fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_create", self))->create());
 }
 
 void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, const FilaEntity* entities) {
-    fila::cpp(self)->destroy(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(entities));
+    fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_destroy_size_t_Entity", self))->destroy(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(FILA_NONNULL("FilaUtilsEntityManager_destroy_size_t_Entity", entities)));
 }
 
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e) {
-    fila::cpp(self)->destroy(utils::Entity::import(e));
+    fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_destroy_Entity", self))->destroy(utils::Entity::import(e));
 }
 
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e) {
-    return fila::cpp(self)->isAlive(utils::Entity::import(e));
+    return fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_isAlive", self))->isAlive(utils::Entity::import(e));
 }
 
 void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self) {
-    fila::cpp(self)->advanceEpoch();
+    fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_advanceEpoch", self))->advanceEpoch();
 }
 
 void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self) {
-    fila::cpp(self)->reclaimSafeEpochs();
+    fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_reclaimSafeEpochs", self))->reclaimSafeEpochs();
 }
 
 void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out) {
-    *out = fila::cpp(self)->getLatestEpochID();
+    *out = fila::cpp(FILA_NONNULL("FilaUtilsEntityManager_getLatestEpochID", self))->getLatestEpochID();
 }
 
 uint32_t FilaUtilsEntityManager_getIndex(FilaEntity e) {

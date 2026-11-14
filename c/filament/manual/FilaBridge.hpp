@@ -8,6 +8,11 @@
 #include <utils/Slice.h>
 #include <utils/StaticString.h>
 
+#include <utils/Panic.h>
+
+// A failed call is a panic like Filament's own, which every platform reports.
+#define FILA_FAIL(message) PANIC_PRECONDITION("%s", message)
+
 #include "../generated/Bridge.hpp"
 
 namespace fila {

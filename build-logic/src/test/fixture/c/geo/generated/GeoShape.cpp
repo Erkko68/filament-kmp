@@ -5,96 +5,96 @@
 extern "C" {
 
 void GeoShape_addRef(const GeoShape* self) {
-    geo_c::cpp(self)->addRef();
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_addRef", self))->addRef();
 }
 
 void GeoShape_release(const GeoShape* self) {
-    geo_c::cpp(self)->release();
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_release", self))->release();
 }
 
 float GeoShape_GetArea(const GeoShape* self) {
-    return geo_c::cpp(self)->GetArea();
+    return geo_c::cpp(GEO_C_NONNULL("GeoShape_GetArea", self))->GetArea();
 }
 
 GeoKind GeoShape_GetKind(const GeoShape* self) {
-    return static_cast<GeoKind>(geo_c::cpp(self)->GetKind());
+    return static_cast<GeoKind>(geo_c::cpp(GEO_C_NONNULL("GeoShape_GetKind", self))->GetKind());
 }
 
 GeoStyle* GeoShape_GetStyle(GeoShape* self) {
-    return geo_c::c(&geo_c::cpp(self)->GetStyle());
+    return geo_c::c(&geo_c::cpp(GEO_C_NONNULL("GeoShape_GetStyle", self))->GetStyle());
 }
 
 void GeoShape_SetStyle(GeoShape* self, const GeoStyle* style) {
-    geo_c::cpp(self)->SetStyle(*geo_c::cpp(style));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_SetStyle", self))->SetStyle(*geo_c::cpp(GEO_C_NONNULL("GeoShape_SetStyle", style)));
 }
 
 void GeoShape_GetStats(const GeoShape* self, GeoStats* out) {
-    *geo_c::cpp(out) = geo_c::cpp(self)->GetStats();
+    *geo_c::cpp(out) = geo_c::cpp(GEO_C_NONNULL("GeoShape_GetStats", self))->GetStats();
 }
 
 void GeoShape_GetLimits(const GeoShape* self, GeoLimits* out) {
-    *geo_c::cpp(out) = geo_c::cpp(self)->GetLimits();
+    *geo_c::cpp(out) = geo_c::cpp(GEO_C_NONNULL("GeoShape_GetLimits", self))->GetLimits();
 }
 
 GeoPath* GeoShape_GetPath(const GeoShape* self) {
-    return geo_c::c(new geo::Path(geo_c::cpp(self)->GetPath()));
+    return geo_c::c(new geo::Path(geo_c::cpp(GEO_C_NONNULL("GeoShape_GetPath", self))->GetPath()));
 }
 
 void GeoShape_SetLimits(GeoShape* self, const GeoLimits* limits) {
-    geo_c::cpp(self)->SetLimits(*geo_c::cpp(limits));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_SetLimits", self))->SetLimits(*geo_c::cpp(GEO_C_NONNULL("GeoShape_SetLimits", limits)));
 }
 
 void GeoShape_SetName(GeoShape* self, const char* name) {
-    geo_c::cpp(self)->SetName(name);
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_SetName", self))->SetName(name);
 }
 
 const char* GeoShape_GetName(const GeoShape* self) {
-    return (geo_c::cpp(self)->GetName()).c_str();
+    return (geo_c::cpp(GEO_C_NONNULL("GeoShape_GetName", self))->GetName()).c_str();
 }
 
 uint32_t GeoShape_Describe(const GeoShape* self, char* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->Describe(), outCapacity, [&](char x, uint32_t i) { out[i] = x; });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoShape_Describe", self))->Describe(), outCapacity, [&](char x, uint32_t i) { out[i] = x; });
 }
 
 const char* GeoShape_GetLabel(const GeoShape* self) {
-    return (geo_c::cpp(self)->GetLabel()).data();
+    return (geo_c::cpp(GEO_C_NONNULL("GeoShape_GetLabel", self))->GetLabel()).data();
 }
 
 bool GeoShape_GetRadius(const GeoShape* self, float* out) {
-    return geo_c::present(geo_c::cpp(self)->GetRadius(), [&](auto& v) { *out = v; });
+    return geo_c::present(geo_c::cpp(GEO_C_NONNULL("GeoShape_GetRadius", self))->GetRadius(), [&](auto& v) { *out = v; });
 }
 
 void GeoShape_SetRadius(GeoShape* self, const float* radius) {
-    geo_c::cpp(self)->SetRadius(geo_c::optional(radius, [&](auto v) { return v; }));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_SetRadius", self))->SetRadius(geo_c::optional(radius, [&](auto v) { return v; }));
 }
 
 void GeoShape_Move_float_float(GeoShape* self, float dx, float dy) {
-    geo_c::cpp(self)->Move(dx, dy);
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_Move_float_float", self))->Move(dx, dy);
 }
 
 void GeoShape_Move_float2(GeoShape* self, const GeoMathFloat2* delta) {
-    geo_c::cpp(self)->Move(geo_c::math<geo::math::float2>(*delta));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_Move_float2", self))->Move(geo_c::math<geo::math::float2>(*GEO_C_NONNULL("GeoShape_Move_float2", delta)));
 }
 
 void GeoShape_Scale(GeoShape* self, GeoMathFloat3* factors) {
-    geo_c::cpp(self)->Scale(*geo_c::cpp(factors));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_Scale", self))->Scale(*geo_c::cpp(GEO_C_NONNULL("GeoShape_Scale", factors)));
 }
 
 void GeoShape_Normalize(GeoShape* self, GeoMathFloat4* plane) {
-    geo_c::cpp(self)->Normalize(geo_c::InOut<geo::math::float4, GeoMathFloat4>(plane));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_Normalize", self))->Normalize(geo_c::InOut<geo::math::float4, GeoMathFloat4>(GEO_C_NONNULL("GeoShape_Normalize", plane)));
 }
 
 void GeoShape_Project(GeoShape* self, GeoMathFloat4* plane, uint32_t planeCount) {
-    geo_c::cpp(self)->Project(geo_c::Aligned<geo::math::float4, GeoMathFloat4>(plane, planeCount));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_Project", self))->Project(geo_c::Aligned<geo::math::float4, GeoMathFloat4>(plane, planeCount));
 }
 
 void GeoShape_Clip(GeoShape* self, const GeoMathFloat4* planes, uint32_t planesCount, uint32_t count) {
-    geo_c::cpp(self)->Clip(geo_c::Aligned<geo::math::float4, const GeoMathFloat4>(planes, planesCount), static_cast<size_t>(count));
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_Clip", self))->Clip(geo_c::Aligned<geo::math::float4, const GeoMathFloat4>(planes, planesCount), static_cast<size_t>(count));
 }
 
 void GeoShape_DrawSync(GeoShape* self) {
 #if !(GEO_THREADS) && !(GEO_FIBERS)
-    geo_c::cpp(self)->DrawSync();
+    geo_c::cpp(GEO_C_NONNULL("GeoShape_DrawSync", self))->DrawSync();
 #else
     geo_c::unavailable("GeoShape_DrawSync");
 #endif

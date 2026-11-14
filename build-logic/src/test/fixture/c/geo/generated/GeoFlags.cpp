@@ -13,23 +13,23 @@ void GeoFlags_destroy(GeoFlags* self) {
 }
 
 uint32_t GeoFlags_GetId(const GeoFlags* self) {
-    return geo_c::cpp(self)->mId;
+    return geo_c::cpp(GEO_C_NONNULL("GeoFlags_GetId", self))->mId;
 }
 
 uint32_t GeoFlags_GetBits(const GeoFlags* self) {
-    return geo_c::cpp(self)->mBits;
+    return geo_c::cpp(GEO_C_NONNULL("GeoFlags_GetBits", self))->mBits;
 }
 
 void GeoFlags_SetBits(GeoFlags* self, uint32_t value) {
-    geo_c::cpp(self)->mBits = value;
+    geo_c::cpp(GEO_C_NONNULL("GeoFlags_SetBits", self))->mBits = value;
 }
 
 uint32_t GeoFlags_GetTag(const GeoFlags* self, int8_t* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->mTag, outCapacity, [&](auto& x, uint32_t i) { out[i] = static_cast<int8_t>(x); });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoFlags_GetTag", self))->mTag, outCapacity, [&](auto& x, uint32_t i) { out[i] = static_cast<int8_t>(x); });
 }
 
 void GeoFlags_SetTag(GeoFlags* self, const int8_t* value, uint32_t valueCount) {
-    geo_c::assign(geo_c::cpp(self)->mTag, geo_c::items(valueCount, [&](uint32_t i) { return static_cast<char>(value[i]); }));
+    geo_c::assign(geo_c::cpp(GEO_C_NONNULL("GeoFlags_SetTag", self))->mTag, geo_c::items(valueCount, [&](uint32_t i) { return static_cast<char>(value[i]); }));
 }
 
 } // extern "C"

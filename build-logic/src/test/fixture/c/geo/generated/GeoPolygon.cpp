@@ -5,11 +5,11 @@
 extern "C" {
 
 void GeoPolygon_addRef(const GeoPolygon* self) {
-    geo_c::cpp(self)->addRef();
+    geo_c::cpp(GEO_C_NONNULL("GeoPolygon_addRef", self))->addRef();
 }
 
 void GeoPolygon_release(const GeoPolygon* self) {
-    geo_c::cpp(self)->release();
+    geo_c::cpp(GEO_C_NONNULL("GeoPolygon_release", self))->release();
 }
 
 GeoShape* GeoPolygon_asShape(GeoPolygon* self) {
@@ -21,19 +21,19 @@ GeoPolygon* GeoPolygon_Create(uint32_t sides) {
 }
 
 uint32_t GeoPolygon_GetPoints(const GeoPolygon* self, GeoMathFloat2* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->GetPoints(), outCapacity, [&](auto& x, uint32_t i) { out[i] = geo_c::mirror<GeoMathFloat2>(x); });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoPolygon_GetPoints", self))->GetPoints(), outCapacity, [&](auto& x, uint32_t i) { out[i] = geo_c::mirror<GeoMathFloat2>(x); });
 }
 
 void GeoPolygon_SetPoints(GeoPolygon* self, const GeoMathFloat2* points, uint32_t pointsCount) {
-    geo_c::cpp(self)->SetPoints(geo_c::items(pointsCount, [&](uint32_t i) { return geo_c::math<geo::math::float2>(*(points + i)); }));
+    geo_c::cpp(GEO_C_NONNULL("GeoPolygon_SetPoints", self))->SetPoints(geo_c::items(pointsCount, [&](uint32_t i) { return geo_c::math<geo::math::float2>(*GEO_C_NONNULL("GeoPolygon_SetPoints", (points + i))); }));
 }
 
 uint32_t GeoPolygon_GetWeights(const GeoPolygon* self, float* out, uint32_t outCapacity) {
-    return geo_c::copy(geo_c::cpp(self)->GetWeights(), outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+    return geo_c::copy(geo_c::cpp(GEO_C_NONNULL("GeoPolygon_GetWeights", self))->GetWeights(), outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
 }
 
 void GeoPolygon_SetWeights(GeoPolygon* self, const float* weights, uint32_t weightsCount) {
-    geo_c::cpp(self)->SetWeights(geo_c::items(weightsCount, [&](uint32_t i) { return weights[i]; }));
+    geo_c::cpp(GEO_C_NONNULL("GeoPolygon_SetWeights", self))->SetWeights(geo_c::items(weightsCount, [&](uint32_t i) { return weights[i]; }));
 }
 
 } // extern "C"
