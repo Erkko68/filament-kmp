@@ -13,27 +13,27 @@ void FilaAabbCorners_destroy(FilaAabbCorners* self) {
 }
 
 FilaFloat3* FilaAabbCorners_begin(FilaAabbCorners* self) {
-    return fila::c(fila::cpp(self)->begin());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaAabbCorners_begin", self))->begin());
 }
 
 FilaFloat3* FilaAabbCorners_end(FilaAabbCorners* self) {
-    return fila::c(fila::cpp(self)->end());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaAabbCorners_end", self))->end());
 }
 
 FilaFloat3* FilaAabbCorners_data(FilaAabbCorners* self) {
-    return fila::c(fila::cpp(self)->data());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaAabbCorners_data", self))->data());
 }
 
 uint32_t FilaAabbCorners_size(const FilaAabbCorners* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->size());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaAabbCorners_size", self))->size());
 }
 
 uint32_t FilaAabbCorners_getVertices(const FilaAabbCorners* self, FilaFloat3* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->vertices, outCapacity, [&](auto& x, uint32_t i) { out[i] = fila::mirror<FilaFloat3>(x); });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaAabbCorners_getVertices", self))->vertices, outCapacity, [&](auto& x, uint32_t i) { out[i] = fila::mirror<FilaFloat3>(x); });
 }
 
 void FilaAabbCorners_setVertices(FilaAabbCorners* self, const FilaFloat3* value, uint32_t valueCount) {
-    fila::assign(fila::cpp(self)->vertices, fila::items(valueCount, [&](uint32_t i) { return fila::math<filament::math::float3>(*(value + i)); }));
+    fila::assign(fila::cpp(FILA_NONNULL("FilaAabbCorners_setVertices", self))->vertices, fila::items(valueCount, [&](uint32_t i) { return fila::math<filament::math::float3>(*FILA_NONNULL("FilaAabbCorners_setVertices", (value + i))); }));
 }
 
 FilaAabb* FilaAabb_create(void) {
@@ -45,47 +45,47 @@ void FilaAabb_destroy(FilaAabb* self) {
 }
 
 void FilaAabb_center(const FilaAabb* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->center());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaAabb_center", self))->center());
 }
 
 void FilaAabb_extent(const FilaAabb* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->extent());
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaAabb_extent", self))->extent());
 }
 
 bool FilaAabb_isEmpty(const FilaAabb* self) {
-    return fila::cpp(self)->isEmpty();
+    return fila::cpp(FILA_NONNULL("FilaAabb_isEmpty", self))->isEmpty();
 }
 
 void FilaAabb_getCorners(const FilaAabb* self, FilaAabbCorners* out) {
-    *fila::cpp(out) = fila::cpp(self)->getCorners();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaAabb_getCorners", self))->getCorners();
 }
 
 float FilaAabb_contains(const FilaAabb* self, const FilaFloat3* p) {
-    return fila::cpp(self)->contains(fila::math<filament::math::float3>(*p));
+    return fila::cpp(FILA_NONNULL("FilaAabb_contains", self))->contains(fila::math<filament::math::float3>(*FILA_NONNULL("FilaAabb_contains", p)));
 }
 
 void FilaAabb_transform_mat3f_float3_Aabb(const FilaMat3f* m, const FilaFloat3* t, const FilaAabb* box, FilaAabb* out) {
-    *fila::cpp(out) = filament::Aabb::transform(fila::math<filament::math::mat3f>(*m), fila::math<filament::math::float3>(*t), *fila::cpp(box));
+    *fila::cpp(out) = filament::Aabb::transform(fila::math<filament::math::mat3f>(*FILA_NONNULL("FilaAabb_transform_mat3f_float3_Aabb", m)), fila::math<filament::math::float3>(*FILA_NONNULL("FilaAabb_transform_mat3f_float3_Aabb", t)), *fila::cpp(FILA_NONNULL("FilaAabb_transform_mat3f_float3_Aabb", box)));
 }
 
 void FilaAabb_transform_mat4f(const FilaAabb* self, const FilaMat4f* m, FilaAabb* out) {
-    *fila::cpp(out) = fila::cpp(self)->transform(fila::math<filament::math::mat4f>(*m));
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaAabb_transform_mat4f", self))->transform(fila::math<filament::math::mat4f>(*FILA_NONNULL("FilaAabb_transform_mat4f", m)));
 }
 
 void FilaAabb_getMin(const FilaAabb* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->min);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaAabb_getMin", self))->min);
 }
 
 void FilaAabb_setMin(FilaAabb* self, const FilaFloat3* value) {
-    fila::cpp(self)->min = fila::math<filament::math::float3>(*value);
+    fila::cpp(FILA_NONNULL("FilaAabb_setMin", self))->min = fila::math<filament::math::float3>(*FILA_NONNULL("FilaAabb_setMin", value));
 }
 
 void FilaAabb_getMax(const FilaAabb* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->max);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaAabb_getMax", self))->max);
 }
 
 void FilaAabb_setMax(FilaAabb* self, const FilaFloat3* value) {
-    fila::cpp(self)->max = fila::math<filament::math::float3>(*value);
+    fila::cpp(FILA_NONNULL("FilaAabb_setMax", self))->max = fila::math<filament::math::float3>(*FILA_NONNULL("FilaAabb_setMax", value));
 }
 
 } // extern "C"

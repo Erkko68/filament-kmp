@@ -13,43 +13,43 @@ void FilaScreenSpaceReflectionsOptions_destroy(FilaScreenSpaceReflectionsOptions
 }
 
 float FilaScreenSpaceReflectionsOptions_getThickness(const FilaScreenSpaceReflectionsOptions* self) {
-    return fila::cpp(self)->thickness;
+    return fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_getThickness", self))->thickness;
 }
 
 void FilaScreenSpaceReflectionsOptions_setThickness(FilaScreenSpaceReflectionsOptions* self, float value) {
-    fila::cpp(self)->thickness = value;
+    fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_setThickness", self))->thickness = value;
 }
 
 float FilaScreenSpaceReflectionsOptions_getBias(const FilaScreenSpaceReflectionsOptions* self) {
-    return fila::cpp(self)->bias;
+    return fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_getBias", self))->bias;
 }
 
 void FilaScreenSpaceReflectionsOptions_setBias(FilaScreenSpaceReflectionsOptions* self, float value) {
-    fila::cpp(self)->bias = value;
+    fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_setBias", self))->bias = value;
 }
 
 float FilaScreenSpaceReflectionsOptions_getMaxDistance(const FilaScreenSpaceReflectionsOptions* self) {
-    return fila::cpp(self)->maxDistance;
+    return fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_getMaxDistance", self))->maxDistance;
 }
 
 void FilaScreenSpaceReflectionsOptions_setMaxDistance(FilaScreenSpaceReflectionsOptions* self, float value) {
-    fila::cpp(self)->maxDistance = value;
+    fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_setMaxDistance", self))->maxDistance = value;
 }
 
 float FilaScreenSpaceReflectionsOptions_getStride(const FilaScreenSpaceReflectionsOptions* self) {
-    return fila::cpp(self)->stride;
+    return fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_getStride", self))->stride;
 }
 
 void FilaScreenSpaceReflectionsOptions_setStride(FilaScreenSpaceReflectionsOptions* self, float value) {
-    fila::cpp(self)->stride = value;
+    fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_setStride", self))->stride = value;
 }
 
 bool FilaScreenSpaceReflectionsOptions_getEnabled(const FilaScreenSpaceReflectionsOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_getEnabled", self))->enabled;
 }
 
 void FilaScreenSpaceReflectionsOptions_setEnabled(FilaScreenSpaceReflectionsOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaScreenSpaceReflectionsOptions_setEnabled", self))->enabled = value;
 }
 
 } // extern "C"

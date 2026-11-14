@@ -5,7 +5,7 @@
 extern "C" {
 
 FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config) {
-    return fila::c(filament::gltfio::AssetLoader::create(*fila::cpp(config)));
+    return fila::c(filament::gltfio::AssetLoader::create(*fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_create", config))));
 }
 
 void FilaGltfioAssetLoader_destroy(FilaGltfioAssetLoader** loader) {
@@ -13,39 +13,39 @@ void FilaGltfioAssetLoader_destroy(FilaGltfioAssetLoader** loader) {
 }
 
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes) {
-    return fila::c(fila::cpp(self)->createAsset(bytes, numBytes));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_createAsset", self))->createAsset(bytes, numBytes));
 }
 
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createInstancedAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes, FilaGltfioFilamentInstance** instances, uint32_t numInstances) {
-    return fila::c(fila::cpp(self)->createInstancedAsset(bytes, numBytes, reinterpret_cast<filament::gltfio::FilamentInstance**>(instances), static_cast<size_t>(numInstances)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_createInstancedAsset", self))->createInstancedAsset(bytes, numBytes, reinterpret_cast<filament::gltfio::FilamentInstance**>(instances), static_cast<size_t>(numInstances)));
 }
 
 FilaGltfioFilamentInstance* FilaGltfioAssetLoader_createInstance(FilaGltfioAssetLoader* self, FilaGltfioFilamentAsset* asset) {
-    return fila::c(fila::cpp(self)->createInstance(fila::cpp(asset)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_createInstance", self))->createInstance(fila::cpp(asset)));
 }
 
 void FilaGltfioAssetLoader_enableDiagnostics(FilaGltfioAssetLoader* self, bool enable) {
-    fila::cpp(self)->enableDiagnostics(enable);
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_enableDiagnostics", self))->enableDiagnostics(enable);
 }
 
 void FilaGltfioAssetLoader_destroyAsset(FilaGltfioAssetLoader* self, const FilaGltfioFilamentAsset* asset) {
-    fila::cpp(self)->destroyAsset(fila::cpp(asset));
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_destroyAsset", self))->destroyAsset(fila::cpp(asset));
 }
 
 void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self) {
-    fila::cpp(self)->gc();
+    fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_gc", self))->gc();
 }
 
 const FilaMaterial* const* FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* self) {
-    return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(self)->getMaterials());
+    return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_getMaterials", self))->getMaterials());
 }
 
 uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getMaterialsCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_getMaterialsCount", self))->getMaterialsCount());
 }
 
 FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* self) {
-    return fila::c(&fila::cpp(self)->getMaterialProvider());
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGltfioAssetLoader_getMaterialProvider", self))->getMaterialProvider());
 }
 
 } // extern "C"

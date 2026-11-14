@@ -13,43 +13,43 @@ void FilaGeometryTangentSpaceMeshBuilder_destroy(FilaGeometryTangentSpaceMeshBui
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_vertexCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t vertexCount) {
-    return fila::c(&fila::cpp(self)->vertexCount(static_cast<size_t>(vertexCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_vertexCount", self))->vertexCount(static_cast<size_t>(vertexCount)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_normals(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* normals, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->normals(fila::cpp(normals), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_normals", self))->normals(fila::cpp(normals), static_cast<size_t>(stride)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_tangents(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat4* tangents, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->tangents(fila::cpp(tangents), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_tangents", self))->tangents(fila::cpp(tangents), static_cast<size_t>(stride)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_uvs(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat2* uvs, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->uvs(fila::cpp(uvs), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_uvs", self))->uvs(fila::cpp(uvs), static_cast<size_t>(stride)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_positions(FilaGeometryTangentSpaceMeshBuilder* self, const FilaFloat3* positions, uint32_t stride) {
-    return fila::c(&fila::cpp(self)->positions(fila::cpp(positions), static_cast<size_t>(stride)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_positions", self))->positions(fila::cpp(positions), static_cast<size_t>(stride)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangleCount(FilaGeometryTangentSpaceMeshBuilder* self, uint32_t triangleCount) {
-    return fila::c(&fila::cpp(self)->triangleCount(static_cast<size_t>(triangleCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_triangleCount", self))->triangleCount(static_cast<size_t>(triangleCount)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangles_uint3(FilaGeometryTangentSpaceMeshBuilder* self, const FilaUint3* triangles) {
-    return fila::c(&fila::cpp(self)->triangles(fila::cpp(triangles)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_triangles_uint3", self))->triangles(fila::cpp(triangles)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_triangles_ushort3(FilaGeometryTangentSpaceMeshBuilder* self, const FilaUshort3* triangles) {
-    return fila::c(&fila::cpp(self)->triangles(fila::cpp(triangles)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_triangles_ushort3", self))->triangles(fila::cpp(triangles)));
 }
 
 FilaGeometryTangentSpaceMeshBuilder* FilaGeometryTangentSpaceMeshBuilder_algorithm(FilaGeometryTangentSpaceMeshBuilder* self, FilaGeometryTangentSpaceMeshAlgorithm algorithm) {
-    return fila::c(&fila::cpp(self)->algorithm(static_cast<filament::geometry::TangentSpaceMesh::Algorithm>(algorithm)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_algorithm", self))->algorithm(static_cast<filament::geometry::TangentSpaceMesh::Algorithm>(algorithm)));
 }
 
 FilaGeometryTangentSpaceMesh* FilaGeometryTangentSpaceMeshBuilder_build(FilaGeometryTangentSpaceMeshBuilder* self) {
-    return fila::c(fila::cpp(self)->build());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMeshBuilder_build", self))->build());
 }
 
 void FilaGeometryTangentSpaceMesh_destroy(FilaGeometryTangentSpaceMesh* mesh) {
@@ -57,63 +57,63 @@ void FilaGeometryTangentSpaceMesh_destroy(FilaGeometryTangentSpaceMesh* mesh) {
 }
 
 uint32_t FilaGeometryTangentSpaceMesh_getVertexCount(const FilaGeometryTangentSpaceMesh* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getVertexCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getVertexCount", self))->getVertexCount());
 }
 
 void FilaGeometryTangentSpaceMesh_getPositions(const FilaGeometryTangentSpaceMesh* self, FilaFloat3* out_, uint32_t stride) {
-    fila::cpp(self)->getPositions(fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getPositions", self))->getPositions(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getUVs(const FilaGeometryTangentSpaceMesh* self, FilaFloat2* out_, uint32_t stride) {
-    fila::cpp(self)->getUVs(fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getUVs", self))->getUVs(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getQuats_quatf_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuatf* out_, uint32_t stride) {
-    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getQuats_quatf_size_t", self))->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getQuats_short4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaShort4* out_, uint32_t stride) {
-    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getQuats_short4_size_t", self))->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getQuats_quath_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuath* out_, uint32_t stride) {
-    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getQuats_quath_size_t", self))->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getAux_float2_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat2* out_, uint32_t stride) {
-    fila::cpp(self)->getAux<filament::math::float2>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getAux_float2_size_t", self))->getAux<filament::math::float2>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getAux_float3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat3* out_, uint32_t stride) {
-    fila::cpp(self)->getAux<filament::math::float3>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getAux_float3_size_t", self))->getAux<filament::math::float3>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getAux_float4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat4* out_, uint32_t stride) {
-    fila::cpp(self)->getAux<filament::math::float4>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getAux_float4_size_t", self))->getAux<filament::math::float4>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getAux_ushort3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort3* out_, uint32_t stride) {
-    fila::cpp(self)->getAux<filament::math::ushort3>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getAux_ushort3_size_t", self))->getAux<filament::math::ushort3>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 void FilaGeometryTangentSpaceMesh_getAux_ushort4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort4* out_, uint32_t stride) {
-    fila::cpp(self)->getAux<filament::math::ushort4>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getAux_ushort4_size_t", self))->getAux<filament::math::ushort4>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
 }
 
 uint32_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getTriangleCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getTriangleCount", self))->getTriangleCount());
 }
 
 void FilaGeometryTangentSpaceMesh_getTriangles_uint3(const FilaGeometryTangentSpaceMesh* self, FilaUint3* out_) {
-    fila::cpp(self)->getTriangles(fila::cpp(out_));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getTriangles_uint3", self))->getTriangles(fila::cpp(out_));
 }
 
 void FilaGeometryTangentSpaceMesh_getTriangles_ushort3(const FilaGeometryTangentSpaceMesh* self, FilaUshort3* out_) {
-    fila::cpp(self)->getTriangles(fila::cpp(out_));
+    fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_getTriangles_ushort3", self))->getTriangles(fila::cpp(out_));
 }
 
 bool FilaGeometryTangentSpaceMesh_remeshed(const FilaGeometryTangentSpaceMesh* self) {
-    return fila::cpp(self)->remeshed();
+    return fila::cpp(FILA_NONNULL("FilaGeometryTangentSpaceMesh_remeshed", self))->remeshed();
 }
 
 } // extern "C"

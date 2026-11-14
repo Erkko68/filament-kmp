@@ -9,15 +9,15 @@ void FilaToneMapper_destroy(FilaToneMapper* self) {
 }
 
 void FilaToneMapper_invoke(const FilaToneMapper* self, const FilaFloat3* c, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->operator()(fila::math<filament::math::float3>(*c)));
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaToneMapper_invoke", self))->operator()(fila::math<filament::math::float3>(*FILA_NONNULL("FilaToneMapper_invoke", c))));
 }
 
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self) {
-    return fila::cpp(self)->isOneDimensional();
+    return fila::cpp(FILA_NONNULL("FilaToneMapper_isOneDimensional", self))->isOneDimensional();
 }
 
 bool FilaToneMapper_isLDR(const FilaToneMapper* self) {
-    return fila::cpp(self)->isLDR();
+    return fila::cpp(FILA_NONNULL("FilaToneMapper_isLDR", self))->isLDR();
 }
 
 } // extern "C"

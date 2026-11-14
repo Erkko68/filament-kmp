@@ -17,31 +17,31 @@ void FilaImageKtx1Bundle_destroy(FilaImageKtx1Bundle* self) {
 }
 
 bool FilaImageKtx1Bundle_serialize(const FilaImageKtx1Bundle* self, uint8_t* destination, uint32_t numBytes) {
-    return fila::cpp(self)->serialize(destination, numBytes);
+    return fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_serialize", self))->serialize(destination, numBytes);
 }
 
 uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self) {
-    return fila::cpp(self)->getSerializedLength();
+    return fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_getSerializedLength", self))->getSerializedLength();
 }
 
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value) {
-    fila::cpp(self)->setMetadata(key, value);
+    fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_setMetadata", self))->setMetadata(key, value);
 }
 
 bool FilaImageKtx1Bundle_getSphericalHarmonics(FilaImageKtx1Bundle* self, FilaFloat3* result) {
-    return fila::cpp(self)->getSphericalHarmonics(fila::cpp(result));
+    return fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_getSphericalHarmonics", self))->getSphericalHarmonics(fila::cpp(result));
 }
 
 uint32_t FilaImageKtx1Bundle_getNumMipLevels(const FilaImageKtx1Bundle* self) {
-    return fila::cpp(self)->getNumMipLevels();
+    return fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_getNumMipLevels", self))->getNumMipLevels();
 }
 
 uint32_t FilaImageKtx1Bundle_getArrayLength(const FilaImageKtx1Bundle* self) {
-    return fila::cpp(self)->getArrayLength();
+    return fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_getArrayLength", self))->getArrayLength();
 }
 
 bool FilaImageKtx1Bundle_isCubemap(const FilaImageKtx1Bundle* self) {
-    return fila::cpp(self)->isCubemap();
+    return fila::cpp(FILA_NONNULL("FilaImageKtx1Bundle_isCubemap", self))->isCubemap();
 }
 
 } // extern "C"

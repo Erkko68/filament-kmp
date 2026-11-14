@@ -13,11 +13,11 @@ void FilaRenderQuality_destroy(FilaRenderQuality* self) {
 }
 
 FilaQualityLevel FilaRenderQuality_getHdrColorBuffer(const FilaRenderQuality* self) {
-    return static_cast<FilaQualityLevel>(fila::cpp(self)->hdrColorBuffer);
+    return static_cast<FilaQualityLevel>(fila::cpp(FILA_NONNULL("FilaRenderQuality_getHdrColorBuffer", self))->hdrColorBuffer);
 }
 
 void FilaRenderQuality_setHdrColorBuffer(FilaRenderQuality* self, FilaQualityLevel value) {
-    fila::cpp(self)->hdrColorBuffer = static_cast<filament::QualityLevel>(value);
+    fila::cpp(FILA_NONNULL("FilaRenderQuality_setHdrColorBuffer", self))->hdrColorBuffer = static_cast<filament::QualityLevel>(value);
 }
 
 } // extern "C"

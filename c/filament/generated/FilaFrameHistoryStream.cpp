@@ -5,7 +5,7 @@
 extern "C" {
 
 FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_create(const FilaRendererFrameInfo* const* history, uint32_t historyCount, uint32_t* pLastProcessedFrameId) {
-    return fila::c(new filament::FrameHistoryStream::NewFramesRange(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(history[i]); }), pLastProcessedFrameId));
+    return fila::c(new filament::FrameHistoryStream::NewFramesRange(fila::items(historyCount, [&](uint32_t i) { return *fila::cpp(FILA_NONNULL("FilaFrameHistoryStreamNewFramesRange_create", history[i])); }), pLastProcessedFrameId));
 }
 
 void FilaFrameHistoryStreamNewFramesRange_destroy(FilaFrameHistoryStreamNewFramesRange* self) {

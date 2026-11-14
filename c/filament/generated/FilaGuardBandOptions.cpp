@@ -13,11 +13,11 @@ void FilaGuardBandOptions_destroy(FilaGuardBandOptions* self) {
 }
 
 bool FilaGuardBandOptions_getEnabled(const FilaGuardBandOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaGuardBandOptions_getEnabled", self))->enabled;
 }
 
 void FilaGuardBandOptions_setEnabled(FilaGuardBandOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaGuardBandOptions_setEnabled", self))->enabled = value;
 }
 
 } // extern "C"

@@ -17,35 +17,35 @@ FilaToneMapper* FilaGenericToneMapper_asToneMapper(FilaGenericToneMapper* self) 
 }
 
 float FilaGenericToneMapper_getContrast(const FilaGenericToneMapper* self) {
-    return fila::cpp(self)->getContrast();
+    return fila::cpp(FILA_NONNULL("FilaGenericToneMapper_getContrast", self))->getContrast();
 }
 
 float FilaGenericToneMapper_getMidGrayIn(const FilaGenericToneMapper* self) {
-    return fila::cpp(self)->getMidGrayIn();
+    return fila::cpp(FILA_NONNULL("FilaGenericToneMapper_getMidGrayIn", self))->getMidGrayIn();
 }
 
 float FilaGenericToneMapper_getMidGrayOut(const FilaGenericToneMapper* self) {
-    return fila::cpp(self)->getMidGrayOut();
+    return fila::cpp(FILA_NONNULL("FilaGenericToneMapper_getMidGrayOut", self))->getMidGrayOut();
 }
 
 float FilaGenericToneMapper_getHdrMax(const FilaGenericToneMapper* self) {
-    return fila::cpp(self)->getHdrMax();
+    return fila::cpp(FILA_NONNULL("FilaGenericToneMapper_getHdrMax", self))->getHdrMax();
 }
 
 void FilaGenericToneMapper_setContrast(FilaGenericToneMapper* self, float contrast) {
-    fila::cpp(self)->setContrast(contrast);
+    fila::cpp(FILA_NONNULL("FilaGenericToneMapper_setContrast", self))->setContrast(contrast);
 }
 
 void FilaGenericToneMapper_setMidGrayIn(FilaGenericToneMapper* self, float midGrayIn) {
-    fila::cpp(self)->setMidGrayIn(midGrayIn);
+    fila::cpp(FILA_NONNULL("FilaGenericToneMapper_setMidGrayIn", self))->setMidGrayIn(midGrayIn);
 }
 
 void FilaGenericToneMapper_setMidGrayOut(FilaGenericToneMapper* self, float midGrayOut) {
-    fila::cpp(self)->setMidGrayOut(midGrayOut);
+    fila::cpp(FILA_NONNULL("FilaGenericToneMapper_setMidGrayOut", self))->setMidGrayOut(midGrayOut);
 }
 
 void FilaGenericToneMapper_setHdrMax(FilaGenericToneMapper* self, float hdrMax) {
-    fila::cpp(self)->setHdrMax(hdrMax);
+    fila::cpp(FILA_NONNULL("FilaGenericToneMapper_setHdrMax", self))->setHdrMax(hdrMax);
 }
 
 } // extern "C"

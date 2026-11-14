@@ -21,23 +21,23 @@ void FilaFilamatPackage_destroy(FilaFilamatPackage* self) {
 }
 
 uint8_t* FilaFilamatPackage_getData(const FilaFilamatPackage* self) {
-    return fila::cpp(self)->getData();
+    return fila::cpp(FILA_NONNULL("FilaFilamatPackage_getData", self))->getData();
 }
 
 uint32_t FilaFilamatPackage_getSize(const FilaFilamatPackage* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getSize());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaFilamatPackage_getSize", self))->getSize());
 }
 
 uint8_t* FilaFilamatPackage_getEnd(const FilaFilamatPackage* self) {
-    return fila::cpp(self)->getEnd();
+    return fila::cpp(FILA_NONNULL("FilaFilamatPackage_getEnd", self))->getEnd();
 }
 
 void FilaFilamatPackage_setValid(FilaFilamatPackage* self, bool valid) {
-    fila::cpp(self)->setValid(valid);
+    fila::cpp(FILA_NONNULL("FilaFilamatPackage_setValid", self))->setValid(valid);
 }
 
 bool FilaFilamatPackage_isValid(const FilaFilamatPackage* self) {
-    return fila::cpp(self)->isValid();
+    return fila::cpp(FILA_NONNULL("FilaFilamatPackage_isValid", self))->isValid();
 }
 
 } // extern "C"

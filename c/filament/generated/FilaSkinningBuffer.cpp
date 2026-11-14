@@ -13,31 +13,31 @@ void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self) {
 }
 
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_boneCount(FilaSkinningBufferBuilder* self, uint32_t boneCount) {
-    return fila::c(&fila::cpp(self)->boneCount(boneCount));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkinningBufferBuilder_boneCount", self))->boneCount(boneCount));
 }
 
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* self, bool initialize) {
-    return fila::c(&fila::cpp(self)->initialize(initialize));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkinningBufferBuilder_initialize", self))->initialize(initialize));
 }
 
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_name(FilaSkinningBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaSkinningBufferBuilder_name", self))->name(utils::ImmutableCString(name)));
 }
 
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(const FilaSkinningBufferBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaSkinningBufferBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaSkinningBufferBuilder_build", engine))));
 }
 
 void FilaSkinningBuffer_setBones_Bone_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaRenderableManagerBone* transforms, uint32_t count, uint32_t offset) {
-    fila::cpp(self)->setBones(*fila::cpp(engine), fila::cpp(transforms), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(FILA_NONNULL("FilaSkinningBuffer_setBones_Bone_size_t_size_t", self))->setBones(*fila::cpp(FILA_NONNULL("FilaSkinningBuffer_setBones_Bone_size_t_size_t", engine)), fila::cpp(FILA_NONNULL("FilaSkinningBuffer_setBones_Bone_size_t_size_t", transforms)), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaSkinningBuffer_setBones_mat4f_size_t_size_t(FilaSkinningBuffer* self, FilaEngine* engine, const FilaMat4f* transforms, uint32_t count, uint32_t offset) {
-    fila::cpp(self)->setBones(*fila::cpp(engine), fila::cpp(transforms), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(FILA_NONNULL("FilaSkinningBuffer_setBones_mat4f_size_t_size_t", self))->setBones(*fila::cpp(FILA_NONNULL("FilaSkinningBuffer_setBones_mat4f_size_t_size_t", engine)), fila::cpp(FILA_NONNULL("FilaSkinningBuffer_setBones_mat4f_size_t_size_t", transforms)), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 uint32_t FilaSkinningBuffer_getBoneCount(const FilaSkinningBuffer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getBoneCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaSkinningBuffer_getBoneCount", self))->getBoneCount());
 }
 
 } // extern "C"

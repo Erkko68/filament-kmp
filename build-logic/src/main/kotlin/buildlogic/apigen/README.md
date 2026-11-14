@@ -15,6 +15,16 @@ config is [`FilamentApi.kt`](../filament/FilamentApi.kt).
 | `bindings/` | `api-manifest.json` → JNI forwarders, wasm export lists and type tables | `generateBindings` (build dir) |
 | `report/` | what the C and Kotlin APIs bind, and whether it's right | `apiCoverage`, `apiGaps`, `apiVerify` |
 
+The compiler has the last word. `generateCApi` compiles what it wrote against the library's headers, warnings as
+errors: a forwarder clang rejects (a `&&`-qualified method, whatever C++ rule the generator doesn't foresee) is
+written again as a `TODO(handwritten)`, and the task prints clang's error for it. The mirrors' layout is a
+`static_assert` in `Includes.hpp`, checked again on every target the library builds for.
+
+A forwarder checks the pointers C++ reads through: `self`, what C++ takes by reference, and pointers the headers
+declare `_Nonnull`. A NULL one (a destroyed object's handle) aborts naming the function and the parameter, through
+`<PREFIX>_FAIL(message)` when the `c.bridgeHeader` defines it before including `Bridge.hpp` (the library's own
+panic), else on stderr.
+
 [`ApiGen`](ApiGen.kt) runs each stage on what the one before wrote; the tasks only call it. Everything after `c/`
 reads the manifest, not the C++, so a hand-written C function gets its external and glue like a generated one.
 

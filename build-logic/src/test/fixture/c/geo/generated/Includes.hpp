@@ -4,6 +4,7 @@
 #include "../manual/GeoBridge.hpp"
 
 #include <geo/Canvas.h>
+#include <geo/Edge.h>
 #include <geo/Internal.h>
 #include <geo/Shape.h>
 #include "Types.h"
@@ -11,12 +12,17 @@
 namespace geo_c {
 
 GEO_C_TYPE(GeoMathFloat2, geo::math::float2)
+static_assert(sizeof(geo::math::float2) == sizeof(GeoMathFloat2) && alignof(geo::math::float2) <= alignof(GeoMathFloat2), "GeoMathFloat2 doesn't mirror geo::math::float2");
 GEO_C_TYPE(GeoMathFloat3, geo::math::float3)
+static_assert(sizeof(geo::math::float3) == sizeof(GeoMathFloat3) && alignof(geo::math::float3) <= alignof(GeoMathFloat3), "GeoMathFloat3 doesn't mirror geo::math::float3");
 GEO_C_TYPE(GeoMathFloat4, geo::math::float4)
+static_assert(sizeof(geo::math::float4) == sizeof(GeoMathFloat4), "GeoMathFloat4 doesn't mirror geo::math::float4");
 GEO_C_TYPE(GeoBlob, geo::Blob)
 GEO_C_TYPE(GeoBox, geo::Box<float>)
 GEO_C_TYPE(GeoCanvas, geo::Canvas)
 GEO_C_TYPE(GeoCircle, geo::Circle)
+GEO_C_TYPE(GeoEdge, geo::Edge)
+GEO_C_TYPE(GeoFlags, geo::Flags)
 GEO_C_TYPE(GeoLimits, geo::Limits)
 GEO_C_TYPE(GeoPath, geo::Path)
 GEO_C_TYPE(GeoPolygon, geo::Polygon)

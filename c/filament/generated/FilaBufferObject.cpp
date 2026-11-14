@@ -13,27 +13,27 @@ void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self) {
 }
 
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount) {
-    return fila::c(&fila::cpp(self)->size(byteCount));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaBufferObjectBuilder_size", self))->size(byteCount));
 }
 
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType) {
-    return fila::c(&fila::cpp(self)->bindingType(static_cast<filament::backend::BufferObjectBinding>(bindingType)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaBufferObjectBuilder_bindingType", self))->bindingType(static_cast<filament::backend::BufferObjectBinding>(bindingType)));
 }
 
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaBufferObjectBuilder_name", self))->name(utils::ImmutableCString(name)));
 }
 
 FilaBufferObject* FilaBufferObjectBuilder_build(const FilaBufferObjectBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaBufferObjectBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaBufferObjectBuilder_build", engine))));
 }
 
 void FilaBufferObject_setBuffer(FilaBufferObject* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
-    fila::cpp(self)->setBuffer(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+    fila::cpp(FILA_NONNULL("FilaBufferObject_setBuffer", self))->setBuffer(*fila::cpp(FILA_NONNULL("FilaBufferObject_setBuffer", engine)), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
 }
 
 uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getByteCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaBufferObject_getByteCount", self))->getByteCount());
 }
 
 } // extern "C"

@@ -20,11 +20,34 @@
 
 namespace fila {
 
-// Called by a function whose C++ the target's headers leave out (#if guards around the declaration).
-[[noreturn]] inline void unavailable(const char* name) {
-    std::fprintf(stderr, "%s is unavailable on this platform\n", name);
+// Hook: define FILA_FAIL(message) before including this header to report a failed call the library's way.
+#ifndef FILA_FAIL
+#define FILA_FAIL(message) std::fprintf(stderr, "%s\n", message)
+#endif
+
+// A call C++ can't make: says why, and aborts.
+[[noreturn]] inline void fail(const char* function, const char* what) {
+    char message[256];
+    std::snprintf(message, sizeof(message), "%s: %s", function, what);
+    FILA_FAIL(message);
     std::abort();
 }
+
+// Called by a function whose C++ the target's headers leave out (#if guards around the declaration).
+[[noreturn]] inline void unavailable(const char* name) { fail(name, "unavailable on this platform"); }
+
+// C's pointer where C++ takes `this`, a reference or a pointer it declares non-null: a NULL one (a destroyed
+// object's handle) fails by name, where C++ would read through it.
+template<typename T>
+T* nonNull(T* p, const char* function, const char* name) {
+    if (!p) [[unlikely]] {
+        char what[128];
+        std::snprintf(what, sizeof(what), "%s is null", name);
+        fail(function, what);
+    }
+    return p;
+}
+#define FILA_NONNULL(function, p) fila::nonNull(p, function, #p)
 
 // C and C++ types naming one object (a handle, a math mirror): cpp() and c() convert pointers between them.
 #define FILA_TYPE(C, ...) \

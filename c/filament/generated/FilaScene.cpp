@@ -5,55 +5,55 @@
 extern "C" {
 
 void FilaScene_setSkybox(FilaScene* self, FilaSkybox* skybox) {
-    fila::cpp(self)->setSkybox(fila::cpp(skybox));
+    fila::cpp(FILA_NONNULL("FilaScene_setSkybox", self))->setSkybox(fila::cpp(skybox));
 }
 
 FilaSkybox* FilaScene_getSkybox(const FilaScene* self) {
-    return fila::c(fila::cpp(self)->getSkybox());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaScene_getSkybox", self))->getSkybox());
 }
 
 void FilaScene_setIndirectLight(FilaScene* self, FilaIndirectLight* ibl) {
-    fila::cpp(self)->setIndirectLight(fila::cpp(ibl));
+    fila::cpp(FILA_NONNULL("FilaScene_setIndirectLight", self))->setIndirectLight(fila::cpp(ibl));
 }
 
 FilaIndirectLight* FilaScene_getIndirectLight(const FilaScene* self) {
-    return fila::c(fila::cpp(self)->getIndirectLight());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaScene_getIndirectLight", self))->getIndirectLight());
 }
 
 void FilaScene_addEntity(FilaScene* self, FilaEntity entity) {
-    fila::cpp(self)->addEntity(utils::Entity::import(entity));
+    fila::cpp(FILA_NONNULL("FilaScene_addEntity", self))->addEntity(utils::Entity::import(entity));
 }
 
 void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, uint32_t count) {
-    fila::cpp(self)->addEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaScene_addEntities", self))->addEntities(reinterpret_cast<const utils::Entity*>(FILA_NONNULL("FilaScene_addEntities", entities)), static_cast<size_t>(count));
 }
 
 void FilaScene_remove(FilaScene* self, FilaEntity entity) {
-    fila::cpp(self)->remove(utils::Entity::import(entity));
+    fila::cpp(FILA_NONNULL("FilaScene_remove", self))->remove(utils::Entity::import(entity));
 }
 
 void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, uint32_t count) {
-    fila::cpp(self)->removeEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaScene_removeEntities", self))->removeEntities(reinterpret_cast<const utils::Entity*>(FILA_NONNULL("FilaScene_removeEntities", entities)), static_cast<size_t>(count));
 }
 
 void FilaScene_removeAllEntities(FilaScene* self) {
-    fila::cpp(self)->removeAllEntities();
+    fila::cpp(FILA_NONNULL("FilaScene_removeAllEntities", self))->removeAllEntities();
 }
 
 uint32_t FilaScene_getEntityCount(const FilaScene* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getEntityCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaScene_getEntityCount", self))->getEntityCount());
 }
 
 uint32_t FilaScene_getRenderableCount(const FilaScene* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getRenderableCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaScene_getRenderableCount", self))->getRenderableCount());
 }
 
 uint32_t FilaScene_getLightCount(const FilaScene* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getLightCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaScene_getLightCount", self))->getLightCount());
 }
 
 bool FilaScene_hasEntity(const FilaScene* self, FilaEntity entity) {
-    return fila::cpp(self)->hasEntity(utils::Entity::import(entity));
+    return fila::cpp(FILA_NONNULL("FilaScene_hasEntity", self))->hasEntity(utils::Entity::import(entity));
 }
 
 } // extern "C"

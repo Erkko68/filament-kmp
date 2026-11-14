@@ -51,30 +51,55 @@
 namespace fila {
 
 FILA_TYPE(FilaBool2, filament::math::bool2)
+static_assert(sizeof(filament::math::bool2) == sizeof(FilaBool2) && alignof(filament::math::bool2) <= alignof(FilaBool2), "FilaBool2 doesn't mirror filament::math::bool2");
 FILA_TYPE(FilaBool3, filament::math::bool3)
+static_assert(sizeof(filament::math::bool3) == sizeof(FilaBool3) && alignof(filament::math::bool3) <= alignof(FilaBool3), "FilaBool3 doesn't mirror filament::math::bool3");
 FILA_TYPE(FilaBool4, filament::math::bool4)
+static_assert(sizeof(filament::math::bool4) == sizeof(FilaBool4) && alignof(filament::math::bool4) <= alignof(FilaBool4), "FilaBool4 doesn't mirror filament::math::bool4");
 FILA_TYPE(FilaDouble2, filament::math::double2)
+static_assert(sizeof(filament::math::double2) == sizeof(FilaDouble2) && alignof(filament::math::double2) <= alignof(FilaDouble2), "FilaDouble2 doesn't mirror filament::math::double2");
 FILA_TYPE(FilaDouble3, filament::math::double3)
+static_assert(sizeof(filament::math::double3) == sizeof(FilaDouble3) && alignof(filament::math::double3) <= alignof(FilaDouble3), "FilaDouble3 doesn't mirror filament::math::double3");
 FILA_TYPE(FilaDouble4, filament::math::double4)
+static_assert(sizeof(filament::math::double4) == sizeof(FilaDouble4) && alignof(filament::math::double4) <= alignof(FilaDouble4), "FilaDouble4 doesn't mirror filament::math::double4");
 FILA_TYPE(FilaFloat2, filament::math::float2)
+static_assert(sizeof(filament::math::float2) == sizeof(FilaFloat2) && alignof(filament::math::float2) <= alignof(FilaFloat2), "FilaFloat2 doesn't mirror filament::math::float2");
 FILA_TYPE(FilaFloat3, filament::math::float3)
+static_assert(sizeof(filament::math::float3) == sizeof(FilaFloat3) && alignof(filament::math::float3) <= alignof(FilaFloat3), "FilaFloat3 doesn't mirror filament::math::float3");
 FILA_TYPE(FilaFloat4, filament::math::float4)
+static_assert(sizeof(filament::math::float4) == sizeof(FilaFloat4) && alignof(filament::math::float4) <= alignof(FilaFloat4), "FilaFloat4 doesn't mirror filament::math::float4");
 FILA_TYPE(FilaHalf3, filament::math::half3)
+static_assert(sizeof(filament::math::half3) == sizeof(FilaHalf3) && alignof(filament::math::half3) <= alignof(FilaHalf3), "FilaHalf3 doesn't mirror filament::math::half3");
 FILA_TYPE(FilaHalf4, filament::math::half4)
+static_assert(sizeof(filament::math::half4) == sizeof(FilaHalf4) && alignof(filament::math::half4) <= alignof(FilaHalf4), "FilaHalf4 doesn't mirror filament::math::half4");
 FILA_TYPE(FilaInt2, filament::math::int2)
+static_assert(sizeof(filament::math::int2) == sizeof(FilaInt2) && alignof(filament::math::int2) <= alignof(FilaInt2), "FilaInt2 doesn't mirror filament::math::int2");
 FILA_TYPE(FilaInt3, filament::math::int3)
+static_assert(sizeof(filament::math::int3) == sizeof(FilaInt3) && alignof(filament::math::int3) <= alignof(FilaInt3), "FilaInt3 doesn't mirror filament::math::int3");
 FILA_TYPE(FilaInt4, filament::math::int4)
+static_assert(sizeof(filament::math::int4) == sizeof(FilaInt4) && alignof(filament::math::int4) <= alignof(FilaInt4), "FilaInt4 doesn't mirror filament::math::int4");
 FILA_TYPE(FilaMat3f, filament::math::mat3f)
+static_assert(sizeof(filament::math::mat3f) == sizeof(FilaMat3f) && alignof(filament::math::mat3f) <= alignof(FilaMat3f), "FilaMat3f doesn't mirror filament::math::mat3f");
 FILA_TYPE(FilaMat4, filament::math::mat4)
+static_assert(sizeof(filament::math::mat4) == sizeof(FilaMat4) && alignof(filament::math::mat4) <= alignof(FilaMat4), "FilaMat4 doesn't mirror filament::math::mat4");
 FILA_TYPE(FilaMat4f, filament::math::mat4f)
+static_assert(sizeof(filament::math::mat4f) == sizeof(FilaMat4f) && alignof(filament::math::mat4f) <= alignof(FilaMat4f), "FilaMat4f doesn't mirror filament::math::mat4f");
 FILA_TYPE(FilaQuatf, filament::math::quatf)
+static_assert(sizeof(filament::math::quatf) == sizeof(FilaQuatf) && alignof(filament::math::quatf) <= alignof(FilaQuatf), "FilaQuatf doesn't mirror filament::math::quatf");
 FILA_TYPE(FilaQuath, filament::math::quath)
+static_assert(sizeof(filament::math::quath) == sizeof(FilaQuath) && alignof(filament::math::quath) <= alignof(FilaQuath), "FilaQuath doesn't mirror filament::math::quath");
 FILA_TYPE(FilaShort4, filament::math::short4)
+static_assert(sizeof(filament::math::short4) == sizeof(FilaShort4) && alignof(filament::math::short4) <= alignof(FilaShort4), "FilaShort4 doesn't mirror filament::math::short4");
 FILA_TYPE(FilaUint2, filament::math::uint2)
+static_assert(sizeof(filament::math::uint2) == sizeof(FilaUint2) && alignof(filament::math::uint2) <= alignof(FilaUint2), "FilaUint2 doesn't mirror filament::math::uint2");
 FILA_TYPE(FilaUint3, filament::math::uint3)
+static_assert(sizeof(filament::math::uint3) == sizeof(FilaUint3) && alignof(filament::math::uint3) <= alignof(FilaUint3), "FilaUint3 doesn't mirror filament::math::uint3");
 FILA_TYPE(FilaUint4, filament::math::uint4)
+static_assert(sizeof(filament::math::uint4) == sizeof(FilaUint4) && alignof(filament::math::uint4) <= alignof(FilaUint4), "FilaUint4 doesn't mirror filament::math::uint4");
 FILA_TYPE(FilaUshort3, filament::math::ushort3)
+static_assert(sizeof(filament::math::ushort3) == sizeof(FilaUshort3) && alignof(filament::math::ushort3) <= alignof(FilaUshort3), "FilaUshort3 doesn't mirror filament::math::ushort3");
 FILA_TYPE(FilaUshort4, filament::math::ushort4)
+static_assert(sizeof(filament::math::ushort4) == sizeof(FilaUshort4) && alignof(filament::math::ushort4) <= alignof(FilaUshort4), "FilaUshort4 doesn't mirror filament::math::ushort4");
 FILA_TYPE(FilaACESLegacyToneMapper, filament::ACESLegacyToneMapper)
 FILA_TYPE(FilaACESToneMapper, filament::ACESToneMapper)
 FILA_TYPE(FilaAabb, filament::Aabb)

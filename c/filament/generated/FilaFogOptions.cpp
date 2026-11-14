@@ -13,99 +13,99 @@ void FilaFogOptions_destroy(FilaFogOptions* self) {
 }
 
 float FilaFogOptions_getDistance(const FilaFogOptions* self) {
-    return fila::cpp(self)->distance;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getDistance", self))->distance;
 }
 
 void FilaFogOptions_setDistance(FilaFogOptions* self, float value) {
-    fila::cpp(self)->distance = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setDistance", self))->distance = value;
 }
 
 float FilaFogOptions_getCutOffDistance(const FilaFogOptions* self) {
-    return fila::cpp(self)->cutOffDistance;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getCutOffDistance", self))->cutOffDistance;
 }
 
 void FilaFogOptions_setCutOffDistance(FilaFogOptions* self, float value) {
-    fila::cpp(self)->cutOffDistance = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setCutOffDistance", self))->cutOffDistance = value;
 }
 
 float FilaFogOptions_getMaximumOpacity(const FilaFogOptions* self) {
-    return fila::cpp(self)->maximumOpacity;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getMaximumOpacity", self))->maximumOpacity;
 }
 
 void FilaFogOptions_setMaximumOpacity(FilaFogOptions* self, float value) {
-    fila::cpp(self)->maximumOpacity = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setMaximumOpacity", self))->maximumOpacity = value;
 }
 
 float FilaFogOptions_getHeight(const FilaFogOptions* self) {
-    return fila::cpp(self)->height;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getHeight", self))->height;
 }
 
 void FilaFogOptions_setHeight(FilaFogOptions* self, float value) {
-    fila::cpp(self)->height = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setHeight", self))->height = value;
 }
 
 float FilaFogOptions_getHeightFalloff(const FilaFogOptions* self) {
-    return fila::cpp(self)->heightFalloff;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getHeightFalloff", self))->heightFalloff;
 }
 
 void FilaFogOptions_setHeightFalloff(FilaFogOptions* self, float value) {
-    fila::cpp(self)->heightFalloff = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setHeightFalloff", self))->heightFalloff = value;
 }
 
 void FilaFogOptions_getColor(const FilaFogOptions* self, FilaFloat3* out) {
-    *out = fila::mirror<FilaFloat3>(fila::cpp(self)->color);
+    *out = fila::mirror<FilaFloat3>(fila::cpp(FILA_NONNULL("FilaFogOptions_getColor", self))->color);
 }
 
 void FilaFogOptions_setColor(FilaFogOptions* self, const FilaFloat3* value) {
-    fila::cpp(self)->color = fila::math<filament::math::float3>(*value);
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setColor", self))->color = fila::math<filament::math::float3>(*FILA_NONNULL("FilaFogOptions_setColor", value));
 }
 
 float FilaFogOptions_getDensity(const FilaFogOptions* self) {
-    return fila::cpp(self)->density;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getDensity", self))->density;
 }
 
 void FilaFogOptions_setDensity(FilaFogOptions* self, float value) {
-    fila::cpp(self)->density = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setDensity", self))->density = value;
 }
 
 float FilaFogOptions_getInScatteringStart(const FilaFogOptions* self) {
-    return fila::cpp(self)->inScatteringStart;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getInScatteringStart", self))->inScatteringStart;
 }
 
 void FilaFogOptions_setInScatteringStart(FilaFogOptions* self, float value) {
-    fila::cpp(self)->inScatteringStart = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setInScatteringStart", self))->inScatteringStart = value;
 }
 
 float FilaFogOptions_getInScatteringSize(const FilaFogOptions* self) {
-    return fila::cpp(self)->inScatteringSize;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getInScatteringSize", self))->inScatteringSize;
 }
 
 void FilaFogOptions_setInScatteringSize(FilaFogOptions* self, float value) {
-    fila::cpp(self)->inScatteringSize = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setInScatteringSize", self))->inScatteringSize = value;
 }
 
 bool FilaFogOptions_getFogColorFromIbl(const FilaFogOptions* self) {
-    return fila::cpp(self)->fogColorFromIbl;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getFogColorFromIbl", self))->fogColorFromIbl;
 }
 
 void FilaFogOptions_setFogColorFromIbl(FilaFogOptions* self, bool value) {
-    fila::cpp(self)->fogColorFromIbl = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setFogColorFromIbl", self))->fogColorFromIbl = value;
 }
 
 FilaTexture* FilaFogOptions_getSkyColor(const FilaFogOptions* self) {
-    return fila::c(fila::cpp(self)->skyColor);
+    return fila::c(fila::cpp(FILA_NONNULL("FilaFogOptions_getSkyColor", self))->skyColor);
 }
 
 void FilaFogOptions_setSkyColor(FilaFogOptions* self, FilaTexture* value) {
-    fila::cpp(self)->skyColor = fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setSkyColor", self))->skyColor = fila::cpp(value);
 }
 
 bool FilaFogOptions_getEnabled(const FilaFogOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaFogOptions_getEnabled", self))->enabled;
 }
 
 void FilaFogOptions_setEnabled(FilaFogOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaFogOptions_setEnabled", self))->enabled = value;
 }
 
 } // extern "C"

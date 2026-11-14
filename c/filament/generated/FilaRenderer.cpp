@@ -13,11 +13,11 @@ void FilaRendererDisplayInfo_destroy(FilaRendererDisplayInfo* self) {
 }
 
 float FilaRendererDisplayInfo_getRefreshRate(const FilaRendererDisplayInfo* self) {
-    return fila::cpp(self)->refreshRate;
+    return fila::cpp(FILA_NONNULL("FilaRendererDisplayInfo_getRefreshRate", self))->refreshRate;
 }
 
 void FilaRendererDisplayInfo_setRefreshRate(FilaRendererDisplayInfo* self, float value) {
-    fila::cpp(self)->refreshRate = value;
+    fila::cpp(FILA_NONNULL("FilaRendererDisplayInfo_setRefreshRate", self))->refreshRate = value;
 }
 
 FilaRendererFrameInfo* FilaRendererFrameInfo_create(void) {
@@ -29,123 +29,123 @@ void FilaRendererFrameInfo_destroy(FilaRendererFrameInfo* self) {
 }
 
 uint32_t FilaRendererFrameInfo_getFrameId(const FilaRendererFrameInfo* self) {
-    return fila::cpp(self)->frameId;
+    return fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getFrameId", self))->frameId;
 }
 
 void FilaRendererFrameInfo_setFrameId(FilaRendererFrameInfo* self, uint32_t value) {
-    fila::cpp(self)->frameId = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setFrameId", self))->frameId = value;
 }
 
 void FilaRendererFrameInfo_getGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->gpuFrameDuration;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getGpuFrameDuration", self))->gpuFrameDuration;
 }
 
 void FilaRendererFrameInfo_setGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->gpuFrameDuration = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setGpuFrameDuration", self))->gpuFrameDuration = value;
 }
 
 void FilaRendererFrameInfo_getDenoisedGpuFrameDuration(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->denoisedGpuFrameDuration;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getDenoisedGpuFrameDuration", self))->denoisedGpuFrameDuration;
 }
 
 void FilaRendererFrameInfo_setDenoisedGpuFrameDuration(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->denoisedGpuFrameDuration = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setDenoisedGpuFrameDuration", self))->denoisedGpuFrameDuration = value;
 }
 
 void FilaRendererFrameInfo_getBeginFrame(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->beginFrame;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getBeginFrame", self))->beginFrame;
 }
 
 void FilaRendererFrameInfo_setBeginFrame(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->beginFrame = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setBeginFrame", self))->beginFrame = value;
 }
 
 void FilaRendererFrameInfo_getEndFrame(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->endFrame;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getEndFrame", self))->endFrame;
 }
 
 void FilaRendererFrameInfo_setEndFrame(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->endFrame = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setEndFrame", self))->endFrame = value;
 }
 
 void FilaRendererFrameInfo_getBackendBeginFrame(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->backendBeginFrame;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getBackendBeginFrame", self))->backendBeginFrame;
 }
 
 void FilaRendererFrameInfo_setBackendBeginFrame(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->backendBeginFrame = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setBackendBeginFrame", self))->backendBeginFrame = value;
 }
 
 void FilaRendererFrameInfo_getBackendEndFrame(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->backendEndFrame;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getBackendEndFrame", self))->backendEndFrame;
 }
 
 void FilaRendererFrameInfo_setBackendEndFrame(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->backendEndFrame = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setBackendEndFrame", self))->backendEndFrame = value;
 }
 
 void FilaRendererFrameInfo_getGpuFrameComplete(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->gpuFrameComplete;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getGpuFrameComplete", self))->gpuFrameComplete;
 }
 
 void FilaRendererFrameInfo_setGpuFrameComplete(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->gpuFrameComplete = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setGpuFrameComplete", self))->gpuFrameComplete = value;
 }
 
 void FilaRendererFrameInfo_getVsync(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->vsync;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getVsync", self))->vsync;
 }
 
 void FilaRendererFrameInfo_setVsync(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->vsync = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setVsync", self))->vsync = value;
 }
 
 void FilaRendererFrameInfo_getDisplayPresent(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->displayPresent;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getDisplayPresent", self))->displayPresent;
 }
 
 void FilaRendererFrameInfo_setDisplayPresent(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->displayPresent = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setDisplayPresent", self))->displayPresent = value;
 }
 
 void FilaRendererFrameInfo_getPresentDeadline(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->presentDeadline;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getPresentDeadline", self))->presentDeadline;
 }
 
 void FilaRendererFrameInfo_setPresentDeadline(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->presentDeadline = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setPresentDeadline", self))->presentDeadline = value;
 }
 
 void FilaRendererFrameInfo_getDisplayPresentInterval(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->displayPresentInterval;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getDisplayPresentInterval", self))->displayPresentInterval;
 }
 
 void FilaRendererFrameInfo_setDisplayPresentInterval(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->displayPresentInterval = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setDisplayPresentInterval", self))->displayPresentInterval = value;
 }
 
 void FilaRendererFrameInfo_getCompositionToPresentLatency(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->compositionToPresentLatency;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getCompositionToPresentLatency", self))->compositionToPresentLatency;
 }
 
 void FilaRendererFrameInfo_setCompositionToPresentLatency(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->compositionToPresentLatency = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setCompositionToPresentLatency", self))->compositionToPresentLatency = value;
 }
 
 void FilaRendererFrameInfo_getExpectedPresentLatency(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->expectedPresentLatency;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getExpectedPresentLatency", self))->expectedPresentLatency;
 }
 
 void FilaRendererFrameInfo_setExpectedPresentLatency(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->expectedPresentLatency = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setExpectedPresentLatency", self))->expectedPresentLatency = value;
 }
 
 void FilaRendererFrameInfo_getFrameScheduleTime(const FilaRendererFrameInfo* self, int64_t* out) {
-    *out = fila::cpp(self)->frameScheduleTime;
+    *out = fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_getFrameScheduleTime", self))->frameScheduleTime;
 }
 
 void FilaRendererFrameInfo_setFrameScheduleTime(FilaRendererFrameInfo* self, int64_t value) {
-    fila::cpp(self)->frameScheduleTime = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameInfo_setFrameScheduleTime", self))->frameScheduleTime = value;
 }
 
 FilaRendererFrameRateOptions* FilaRendererFrameRateOptions_create(void) {
@@ -157,35 +157,35 @@ void FilaRendererFrameRateOptions_destroy(FilaRendererFrameRateOptions* self) {
 }
 
 float FilaRendererFrameRateOptions_getHeadRoomRatio(const FilaRendererFrameRateOptions* self) {
-    return fila::cpp(self)->headRoomRatio;
+    return fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_getHeadRoomRatio", self))->headRoomRatio;
 }
 
 void FilaRendererFrameRateOptions_setHeadRoomRatio(FilaRendererFrameRateOptions* self, float value) {
-    fila::cpp(self)->headRoomRatio = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_setHeadRoomRatio", self))->headRoomRatio = value;
 }
 
 float FilaRendererFrameRateOptions_getScaleRate(const FilaRendererFrameRateOptions* self) {
-    return fila::cpp(self)->scaleRate;
+    return fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_getScaleRate", self))->scaleRate;
 }
 
 void FilaRendererFrameRateOptions_setScaleRate(FilaRendererFrameRateOptions* self, float value) {
-    fila::cpp(self)->scaleRate = value;
+    fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_setScaleRate", self))->scaleRate = value;
 }
 
 uint32_t FilaRendererFrameRateOptions_getHistory(const FilaRendererFrameRateOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->history);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_getHistory", self))->history);
 }
 
 void FilaRendererFrameRateOptions_setHistory(FilaRendererFrameRateOptions* self, uint32_t value) {
-    fila::cpp(self)->history = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_setHistory", self))->history = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaRendererFrameRateOptions_getInterval(const FilaRendererFrameRateOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->interval);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_getInterval", self))->interval);
 }
 
 void FilaRendererFrameRateOptions_setInterval(FilaRendererFrameRateOptions* self, uint32_t value) {
-    fila::cpp(self)->interval = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaRendererFrameRateOptions_setInterval", self))->interval = static_cast<uint8_t>(value);
 }
 
 FilaRendererClearOptions* FilaRendererClearOptions_create(void) {
@@ -197,171 +197,171 @@ void FilaRendererClearOptions_destroy(FilaRendererClearOptions* self) {
 }
 
 void FilaRendererClearOptions_getClearColor(const FilaRendererClearOptions* self, FilaDouble4* out) {
-    *out = fila::mirror<FilaDouble4>(fila::cpp(self)->clearColor);
+    *out = fila::mirror<FilaDouble4>(fila::cpp(FILA_NONNULL("FilaRendererClearOptions_getClearColor", self))->clearColor);
 }
 
 void FilaRendererClearOptions_setClearColor(FilaRendererClearOptions* self, const FilaDouble4* value) {
-    fila::cpp(self)->clearColor = fila::math<filament::math::double4>(*value);
+    fila::cpp(FILA_NONNULL("FilaRendererClearOptions_setClearColor", self))->clearColor = fila::math<filament::math::double4>(*FILA_NONNULL("FilaRendererClearOptions_setClearColor", value));
 }
 
 uint32_t FilaRendererClearOptions_getClearStencil(const FilaRendererClearOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->clearStencil);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRendererClearOptions_getClearStencil", self))->clearStencil);
 }
 
 void FilaRendererClearOptions_setClearStencil(FilaRendererClearOptions* self, uint32_t value) {
-    fila::cpp(self)->clearStencil = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaRendererClearOptions_setClearStencil", self))->clearStencil = static_cast<uint8_t>(value);
 }
 
 bool FilaRendererClearOptions_getClear(const FilaRendererClearOptions* self) {
-    return fila::cpp(self)->clear;
+    return fila::cpp(FILA_NONNULL("FilaRendererClearOptions_getClear", self))->clear;
 }
 
 void FilaRendererClearOptions_setClear(FilaRendererClearOptions* self, bool value) {
-    fila::cpp(self)->clear = value;
+    fila::cpp(FILA_NONNULL("FilaRendererClearOptions_setClear", self))->clear = value;
 }
 
 bool FilaRendererClearOptions_getDiscard(const FilaRendererClearOptions* self) {
-    return fila::cpp(self)->discard;
+    return fila::cpp(FILA_NONNULL("FilaRendererClearOptions_getDiscard", self))->discard;
 }
 
 void FilaRendererClearOptions_setDiscard(FilaRendererClearOptions* self, bool value) {
-    fila::cpp(self)->discard = value;
+    fila::cpp(FILA_NONNULL("FilaRendererClearOptions_setDiscard", self))->discard = value;
 }
 
 uint32_t FilaRenderer_getFrameInfoHistory(const FilaRenderer* self, uint32_t historySize, FilaRendererFrameInfo* const* out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->getFrameInfoHistory(static_cast<size_t>(historySize)), outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
+    return fila::copy(fila::cpp(FILA_NONNULL("FilaRenderer_getFrameInfoHistory", self))->getFrameInfoHistory(static_cast<size_t>(historySize)), outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
 }
 
 uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getMaxFrameHistorySize());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRenderer_getMaxFrameHistorySize", self))->getMaxFrameHistorySize());
 }
 
 void FilaRenderer_setDisplayInfo(FilaRenderer* self, const FilaRendererDisplayInfo* info) {
-    fila::cpp(self)->setDisplayInfo(*fila::cpp(info));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setDisplayInfo", self))->setDisplayInfo(*fila::cpp(FILA_NONNULL("FilaRenderer_setDisplayInfo", info)));
 }
 
 void FilaRenderer_setFrameRateOptions(FilaRenderer* self, const FilaRendererFrameRateOptions* options) {
-    fila::cpp(self)->setFrameRateOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setFrameRateOptions", self))->setFrameRateOptions(*fila::cpp(FILA_NONNULL("FilaRenderer_setFrameRateOptions", options)));
 }
 
 void FilaRenderer_setClearOptions(FilaRenderer* self, const FilaRendererClearOptions* options) {
-    fila::cpp(self)->setClearOptions(*fila::cpp(options));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setClearOptions", self))->setClearOptions(*fila::cpp(FILA_NONNULL("FilaRenderer_setClearOptions", options)));
 }
 
 void FilaRenderer_getClearOptions(const FilaRenderer* self, FilaRendererClearOptions* out) {
-    *fila::cpp(out) = fila::cpp(self)->getClearOptions();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaRenderer_getClearOptions", self))->getClearOptions();
 }
 
 FilaEngine* FilaRenderer_getEngine(FilaRenderer* self) {
-    return fila::c(fila::cpp(self)->getEngine());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaRenderer_getEngine", self))->getEngine());
 }
 
 void FilaRenderer_setVsyncTime(FilaRenderer* self, uint64_t steadyClockTimeNano) {
-    fila::cpp(self)->setVsyncTime(steadyClockTimeNano);
+    fila::cpp(FILA_NONNULL("FilaRenderer_setVsyncTime", self))->setVsyncTime(steadyClockTimeNano);
 }
 
 void FilaRenderer_skipFrame(FilaRenderer* self, uint64_t vsyncSteadyClockTimeNano) {
-    fila::cpp(self)->skipFrame(vsyncSteadyClockTimeNano);
+    fila::cpp(FILA_NONNULL("FilaRenderer_skipFrame", self))->skipFrame(vsyncSteadyClockTimeNano);
 }
 
 bool FilaRenderer_shouldRenderFrame(const FilaRenderer* self) {
-    return fila::cpp(self)->shouldRenderFrame();
+    return fila::cpp(FILA_NONNULL("FilaRenderer_shouldRenderFrame", self))->shouldRenderFrame();
 }
 
 bool FilaRenderer_beginFrame(FilaRenderer* self, FilaSwapChain* swapChain, uint64_t vsyncSteadyClockTimeNano) {
-    return fila::cpp(self)->beginFrame(fila::cpp(swapChain), vsyncSteadyClockTimeNano);
+    return fila::cpp(FILA_NONNULL("FilaRenderer_beginFrame", self))->beginFrame(fila::cpp(FILA_NONNULL("FilaRenderer_beginFrame", swapChain)), vsyncSteadyClockTimeNano);
 }
 
 void FilaRenderer_setPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns) {
-    fila::cpp(self)->setPresentationTime(monotonic_clock_ns);
+    fila::cpp(FILA_NONNULL("FilaRenderer_setPresentationTime_int64_t", self))->setPresentationTime(monotonic_clock_ns);
 }
 
 void FilaRenderer_setPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock) {
-    fila::cpp(self)->setPresentationTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setPresentationTime_time_point", self))->setPresentationTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
 }
 
 void FilaRenderer_setDesiredPresentationTime_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns) {
-    fila::cpp(self)->setDesiredPresentationTime(monotonic_clock_ns);
+    fila::cpp(FILA_NONNULL("FilaRenderer_setDesiredPresentationTime_int64_t", self))->setDesiredPresentationTime(monotonic_clock_ns);
 }
 
 void FilaRenderer_setDesiredPresentationTime_time_point(FilaRenderer* self, int64_t monotonic_clock) {
-    fila::cpp(self)->setDesiredPresentationTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setDesiredPresentationTime_time_point", self))->setDesiredPresentationTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
 }
 
 void FilaRenderer_setRenderingDeadline_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns) {
-    fila::cpp(self)->setRenderingDeadline(monotonic_clock_ns);
+    fila::cpp(FILA_NONNULL("FilaRenderer_setRenderingDeadline_int64_t", self))->setRenderingDeadline(monotonic_clock_ns);
 }
 
 void FilaRenderer_setRenderingDeadline_time_point(FilaRenderer* self, int64_t monotonic_clock) {
-    fila::cpp(self)->setRenderingDeadline(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setRenderingDeadline_time_point", self))->setRenderingDeadline(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
 }
 
 void FilaRenderer_render(FilaRenderer* self, const FilaView* view) {
-    fila::cpp(self)->render(fila::cpp(view));
+    fila::cpp(FILA_NONNULL("FilaRenderer_render", self))->render(fila::cpp(FILA_NONNULL("FilaRenderer_render", view)));
 }
 
 void FilaRenderer_copyFrame(FilaRenderer* self, FilaSwapChain* dstSwapChain, const FilaViewport* dstViewport, const FilaViewport* srcViewport, uint32_t flags) {
-    fila::cpp(self)->copyFrame(fila::cpp(dstSwapChain), *fila::cpp(dstViewport), *fila::cpp(srcViewport), flags);
+    fila::cpp(FILA_NONNULL("FilaRenderer_copyFrame", self))->copyFrame(fila::cpp(FILA_NONNULL("FilaRenderer_copyFrame", dstSwapChain)), *fila::cpp(FILA_NONNULL("FilaRenderer_copyFrame", dstViewport)), *fila::cpp(FILA_NONNULL("FilaRenderer_copyFrame", srcViewport)), flags);
 }
 
 void FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
-    fila::cpp(self)->readPixels(xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+    fila::cpp(FILA_NONNULL("FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor", self))->readPixels(xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
 void FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, FilaRenderTarget* renderTarget, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
-    fila::cpp(self)->readPixels(fila::cpp(renderTarget), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+    fila::cpp(FILA_NONNULL("FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor", self))->readPixels(fila::cpp(FILA_NONNULL("FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor", renderTarget)), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
 void FilaRenderer_endFrame(FilaRenderer* self) {
-    fila::cpp(self)->endFrame();
+    fila::cpp(FILA_NONNULL("FilaRenderer_endFrame", self))->endFrame();
 }
 
 void FilaRenderer_renderStandaloneView(FilaRenderer* self, const FilaView* view) {
-    fila::cpp(self)->renderStandaloneView(fila::cpp(view));
+    fila::cpp(FILA_NONNULL("FilaRenderer_renderStandaloneView", self))->renderStandaloneView(fila::cpp(FILA_NONNULL("FilaRenderer_renderStandaloneView", view)));
 }
 
 double FilaRenderer_getMaterialTime(const FilaRenderer* self) {
-    return fila::cpp(self)->getMaterialTime();
+    return fila::cpp(FILA_NONNULL("FilaRenderer_getMaterialTime", self))->getMaterialTime();
 }
 
 double FilaRenderer_getUserTime(const FilaRenderer* self) {
-    return fila::cpp(self)->getUserTime();
+    return fila::cpp(FILA_NONNULL("FilaRenderer_getUserTime", self))->getUserTime();
 }
 
 void FilaRenderer_setMaterialTimeEpoch_int64_t(FilaRenderer* self, int64_t monotonic_clock_ns) {
-    fila::cpp(self)->setMaterialTimeEpoch(monotonic_clock_ns);
+    fila::cpp(FILA_NONNULL("FilaRenderer_setMaterialTimeEpoch_int64_t", self))->setMaterialTimeEpoch(monotonic_clock_ns);
 }
 
 void FilaRenderer_setMaterialTimeEpoch_time_point(FilaRenderer* self, int64_t monotonic_clock) {
-    fila::cpp(self)->setMaterialTimeEpoch(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setMaterialTimeEpoch_time_point", self))->setMaterialTimeEpoch(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(monotonic_clock))));
 }
 
 void FilaRenderer_resetUserTime(FilaRenderer* self) {
-    fila::cpp(self)->resetUserTime();
+    fila::cpp(FILA_NONNULL("FilaRenderer_resetUserTime", self))->resetUserTime();
 }
 
 void FilaRenderer_skipNextFrames(FilaRenderer* self, uint32_t frameCount) {
-    fila::cpp(self)->skipNextFrames(static_cast<size_t>(frameCount));
+    fila::cpp(FILA_NONNULL("FilaRenderer_skipNextFrames", self))->skipNextFrames(static_cast<size_t>(frameCount));
 }
 
 uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getFrameToSkipCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRenderer_getFrameToSkipCount", self))->getFrameToSkipCount());
 }
 
 bool FilaRenderer_hasGpuFallenBehind(const FilaRenderer* self) {
-    return fila::cpp(self)->hasGpuFallenBehind();
+    return fila::cpp(FILA_NONNULL("FilaRenderer_hasGpuFallenBehind", self))->hasGpuFallenBehind();
 }
 
 void FilaRenderer_setFrameScheduleTime_time_point(FilaRenderer* self, int64_t time) {
-    fila::cpp(self)->setFrameScheduleTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(time))));
+    fila::cpp(FILA_NONNULL("FilaRenderer_setFrameScheduleTime_time_point", self))->setFrameScheduleTime(std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(time))));
 }
 
 void FilaRenderer_setFrameScheduleTime_uint64_t(FilaRenderer* self, uint64_t timeSteadyClockNano) {
-    fila::cpp(self)->setFrameScheduleTime(timeSteadyClockNano);
+    fila::cpp(FILA_NONNULL("FilaRenderer_setFrameScheduleTime_uint64_t", self))->setFrameScheduleTime(timeSteadyClockNano);
 }
 
 void FilaRenderer_pauseRenderThread(FilaRenderer* self, uint64_t duration_ns) {
-    fila::cpp(self)->pauseRenderThread(duration_ns);
+    fila::cpp(FILA_NONNULL("FilaRenderer_pauseRenderThread", self))->pauseRenderThread(duration_ns);
 }
 
 } // extern "C"

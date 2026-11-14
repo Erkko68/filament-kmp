@@ -176,6 +176,8 @@ class CppMethod(
     /** The header's `#if` condition around the declaration (e.g. `UTILS_HAS_THREADING`), or null. */
     val guard: String? = null,
     val doc: String? = null,
+    /** Takes `...` after its parameters. */
+    val isVariadic: Boolean = false,
 ) {
     val isTemplate get() = templateParameters != null
 
@@ -186,7 +188,7 @@ class CppMethod(
                 ?.let { a -> CppType(t.spelling.replace(Regex("\\b${t.decl!!.substringAfterLast("::")}\\b"), a.spelling), a.decl, a.kind, a.args) } ?: t
         }
         return CppMethod(owner, name, header, mangled, substitute(returns), params.map { CppParam(it.name, substitute(it.type), it.default) },
-            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard, doc = doc)
+            isStatic, isConst, isPublic, isDeprecated, isApi, isOverride, guard = guard, doc = doc, isVariadic = isVariadic)
     }
 
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +

@@ -5,31 +5,31 @@
 extern "C" {
 
 void FilaGltfioAnimator_applyAnimation(const FilaGltfioAnimator* self, uint32_t animationIndex, float time) {
-    fila::cpp(self)->applyAnimation(static_cast<size_t>(animationIndex), time);
+    fila::cpp(FILA_NONNULL("FilaGltfioAnimator_applyAnimation", self))->applyAnimation(static_cast<size_t>(animationIndex), time);
 }
 
 void FilaGltfioAnimator_updateBoneMatrices(FilaGltfioAnimator* self) {
-    fila::cpp(self)->updateBoneMatrices();
+    fila::cpp(FILA_NONNULL("FilaGltfioAnimator_updateBoneMatrices", self))->updateBoneMatrices();
 }
 
 void FilaGltfioAnimator_applyCrossFade(FilaGltfioAnimator* self, uint32_t previousAnimIndex, float previousAnimTime, float alpha) {
-    fila::cpp(self)->applyCrossFade(static_cast<size_t>(previousAnimIndex), previousAnimTime, alpha);
+    fila::cpp(FILA_NONNULL("FilaGltfioAnimator_applyCrossFade", self))->applyCrossFade(static_cast<size_t>(previousAnimIndex), previousAnimTime, alpha);
 }
 
 void FilaGltfioAnimator_resetBoneMatrices(FilaGltfioAnimator* self) {
-    fila::cpp(self)->resetBoneMatrices();
+    fila::cpp(FILA_NONNULL("FilaGltfioAnimator_resetBoneMatrices", self))->resetBoneMatrices();
 }
 
 uint32_t FilaGltfioAnimator_getAnimationCount(const FilaGltfioAnimator* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getAnimationCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioAnimator_getAnimationCount", self))->getAnimationCount());
 }
 
 float FilaGltfioAnimator_getAnimationDuration(const FilaGltfioAnimator* self, uint32_t animationIndex) {
-    return fila::cpp(self)->getAnimationDuration(static_cast<size_t>(animationIndex));
+    return fila::cpp(FILA_NONNULL("FilaGltfioAnimator_getAnimationDuration", self))->getAnimationDuration(static_cast<size_t>(animationIndex));
 }
 
 const char* FilaGltfioAnimator_getAnimationName(const FilaGltfioAnimator* self, uint32_t animationIndex) {
-    return fila::cpp(self)->getAnimationName(static_cast<size_t>(animationIndex));
+    return fila::cpp(FILA_NONNULL("FilaGltfioAnimator_getAnimationName", self))->getAnimationName(static_cast<size_t>(animationIndex));
 }
 
 } // extern "C"

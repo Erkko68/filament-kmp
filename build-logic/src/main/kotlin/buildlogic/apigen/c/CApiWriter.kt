@@ -20,9 +20,13 @@ import buildlogic.apigen.cpp.CppType
  */
 internal class CApiWriter(
     private val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val manual: Set<String> = emptySet(),
+    /** Functions whose forwarder the compiler rejected. */
+    private val broken: Set<String> = emptySet(),
 ) {
     private val names = CNames(config.c, config.naming)
     private val h = names.helpers
+    /** C++'s `this`: C's `self`, which mustn't be NULL. */
+    private val thiz = "$h::cpp(${names.nonNull("self")})"
     private val refs = config.types.refs
     private val templates = Templates(api, config.templates)
     private val records = Records(api, config.types, names, templates, api.apiRecords.mapTo(HashSet()) { it.name })
@@ -91,8 +95,8 @@ internal class CApiWriter(
         }
         // What `_create` and results by value hand C: a reference to give back, in place of `_destroy`.
         if (counted && !templates.uninstantiated(record)) {
-            emit("${self}_addRef", "${record.name}::${refs!!.addRef}()", section) { "void ${self}_addRef(const $self* self)" to "$h::cpp(self)->${refs!!.addRef}();" }
-            emit("${self}_release", "${record.name}::${refs!!.release}()", section) { "void ${self}_release(const $self* self)" to "$h::cpp(self)->${refs!!.release}();" }
+            emit("${self}_addRef", "${record.name}::${refs!!.addRef}()", section) { "void ${self}_addRef(const $self* self)" to "$thiz->${refs!!.addRef}();" }
+            emit("${self}_release", "${record.name}::${refs!!.release}()", section) { "void ${self}_release(const $self* self)" to "$thiz->${refs!!.release}();" }
         }
         if (records.destroys(record)) {
             emit("${self}_destroy", "~${record.name}()", section) {
@@ -154,11 +158,12 @@ internal class CApiWriter(
 
     private fun forwarder(method: CppMethod, name: String, templateArguments: List<String> = emptyList()): Pair<String, String> {
         if (api.records[method.owner]?.let(templates::uninstantiated) == true) throw Unsupported("member of a class template")
+        if (method.isVariadic) throw Unsupported("variadic")
         val returns = bridges.result(method.returns)
         val params = bridge(method.params)
         val const = if (method.isConst) "const " else ""
         val self = if (method.isStatic) null else "$const${names.type(method.owner)}* self"
-        val target = if (method.isStatic) "${templates.cpp(method.owner)}::" else "$h::cpp(self)->"
+        val target = if (method.isStatic) "${templates.cpp(method.owner)}::" else "$thiz->"
         val explicit = if (templateArguments.isEmpty()) "" else templateArguments.joinToString(prefix = "<", postfix = ">")
         val call = "$target${method.name}$explicit(${args(params)})"
         return when {
@@ -176,11 +181,16 @@ internal class CApiWriter(
         val getter = names.getter(record.name, field.name)
         if (getter !in functionNames) emit(getter, cpp, section, doc = field.doc) {
             val result = bridges.result(field.type, lvalue = true)
-            val read = "$h::cpp(self)->${field.name}"
+            val read = "$thiz->${field.name}"
             if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read, "out")
             else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = names.setter(record.name, field.name)
+        if (shape(field.type.spelling).let { it.const && it.indirection.isEmpty() }) {
+            section.declarations.appendLine("// no $setter: const")
+            bindings += Binding(setter, cpp, Status.SKIPPED, "const")
+            return
+        }
         if (records.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
             bindings += Binding(setter, cpp, Status.SKIPPED, "${record.name} is only a result, and C would have to keep the pointer")
@@ -188,7 +198,7 @@ internal class CApiWriter(
         }
         if (setter !in functionNames) emit(setter, cpp, section, doc = field.doc) {
             val param = bridges.fieldParam(field.type)
-            "void $setter(${cParams("$self* self", listOf("value" to param))})" to param.assign("$h::cpp(self)->${field.name}", "value")
+            "void $setter(${cParams("$self* self", listOf("value" to param))})" to param.assign("$thiz->${field.name}", "value")
         }
     }
 
@@ -199,7 +209,10 @@ internal class CApiWriter(
      */
     private fun emit(name: String, cpp: String, section: Section, guard: String? = null, doc: String? = null, build: () -> Pair<String, String>) {
         val (code, reason) = try {
-            build().also { if (name in functionNames) throw Unsupported("$name is already generated for another overload") } to null
+            build().also {
+                if (name in functionNames) throw Unsupported("$name is already generated for another overload")
+                if (name in broken) throw Unsupported(BROKEN)
+            } to null
         } catch (e: Unsupported) {
             null to e.message
         }
@@ -209,7 +222,8 @@ internal class CApiWriter(
             val (signature, body) = code
             functionNames += name
             section.declarations.append(comment(doc)).appendLine("$signature;")
-            val guarded = if (guard == null) "    $body" else "#if $guard\n    $body\n#else\n    $h::unavailable(\"$name\");\n#endif"
+            // The guards name the function they fail in.
+            val guarded = body.replace("${names.nonNull}(", "${names.nonNull}(\"$name\", ").let { if (guard == null) "    $it" else "#if $guard\n    $it\n#else\n    $h::unavailable(\"$name\");\n#endif" }
             section.definitions.appendLine("$signature {\n$guarded\n}\n")
             bindings += Binding(name, cpp, Status.GENERATED)
             return
@@ -273,7 +287,11 @@ internal class CApiWriter(
         text.append(if (module == baseModule) "#include \"${config.c.bridgeHeader ?: "Bridge.hpp"}\"\n" else "#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("\n").append(api.headers.filter { moduleOf(it) == module }.joinToString("") { "#include <$it>\n" })
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
-        if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
+        // The compiler checks the config's mirrors on every target: C's struct is the type's storage, aligned for a cast.
+        if (module == baseModule) bridges.mathTypes.forEach {
+            val align = if (config.types.mirrors.getValue(it).aligned) "" else " && alignof($it) <= alignof(${names.type(it)})"
+            text.appendLine("$typeMacro(${names.type(it)}, $it)\nstatic_assert(sizeof($it) == sizeof(${names.type(it)})$align, \"${names.type(it)} doesn't mirror $it\");")
+        }
         moduleRecords(module).filter { it.accessible }
             .forEach { text.appendLine("$typeMacro(${names.type(it.name)}, ${templates.cpp(it.name)})") }
         return text.append("\n} // namespace $h\n").toString()
@@ -332,7 +350,7 @@ internal class CApiWriter(
 
     /** The helpers every library's forwarders call, in the [CBindings.helpers] namespace. */
     private fun bridge() = checkNotNull(javaClass.getResource("Bridge.hpp")) { "Bridge.hpp isn't on the classpath" }.readText()
-        .replace("APIGEN_TYPE", typeMacro).replace(Regex("""\bapigen\b"""), h)
+        .replace("APIGEN_", "${h.uppercase()}_").replace(Regex("""\bapigen\b"""), h)
 
     private val banner = "// Generated by generateCApi from ${config.name}'s public headers; do not edit."
     private val typeMacro = "${h.uppercase()}_TYPE"
@@ -342,3 +360,6 @@ internal class CApiWriter(
         val RESERVED = setOf("self", "out")
     }
 }
+
+/** Why a function the compiler rejected is a TODO, as its note says. */
+internal const val BROKEN = "the forwarder doesn't compile"

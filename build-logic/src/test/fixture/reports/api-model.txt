@@ -32,7 +32,7 @@ class geo::Shape
   std::string_view{ext:std::string_view} geo::Shape::GetLabel() const
   std::optional<float>{ext:std::optional} geo::Shape::GetRadius() const
   void geo::Shape::SetRadius(std::optional<float>{ext:std::optional} radius)
-  void geo::Shape::Move(float dx, float dy)
+  void geo::Shape::Move(float dx, float dy = 0)
   void geo::Shape::Move(const math::float2 &{ext:geo::math::float2} delta)
   void geo::Shape::Scale(math::float3 &{ext:geo::math::float3} factors)
   void geo::Shape::Normalize(math::float4 &{ext:geo::math::float4} plane)
@@ -87,6 +87,18 @@ class geo::Canvas
   T{geo::Canvas::Convert::T} geo::Canvas::Convert(T{geo::Canvas::Convert::T} value) const
   void geo::Canvas::operator()(float time)
   static Canvas *{geo::Canvas} geo::Canvas::GetDefault()
+struct geo::Flags
+  field const uint32_t mId = 7
+  field uint32_t mBits
+  field char[8] mTag = {}
+class geo::Edge
+  void geo::Edge::Log(const char * format)
+  void geo::Edge::Consume()
+  std::unique_ptr<Edge>{ext:std::unique_ptr} geo::Edge::Clone() const
+  void geo::Edge::Merge(std::unique_ptr<Edge>{ext:std::unique_ptr} other)
+  std::vector<uint8_t>{ext:std::vector} geo::Edge::GetBytes() const
+  void geo::Edge::SetBytes(const std::vector<uint8_t> &{ext:std::vector} bytes)
+  void geo::Edge::Wide(wchar_t c)
 enum geo::Kind : uint8_t { CIRCLE = 0, POLYGON = 5, GROUP = 6 }
 struct geo::detail::Limits
   field float mMin = 0

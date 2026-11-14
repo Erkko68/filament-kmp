@@ -5,7 +5,7 @@
 extern "C" {
 
 float Geo_Distance(const GeoMathFloat2* a, const GeoMathFloat2* b) {
-    return geo::Distance(geo_c::math<geo::math::float2>(*a), geo_c::math<geo::math::float2>(*b));
+    return geo::Distance(geo_c::math<geo::math::float2>(*GEO_C_NONNULL("Geo_Distance", a)), geo_c::math<geo::math::float2>(*GEO_C_NONNULL("Geo_Distance", b)));
 }
 
 void Geo_Reset(void) {

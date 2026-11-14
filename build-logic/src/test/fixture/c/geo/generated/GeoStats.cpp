@@ -13,15 +13,15 @@ void GeoStats_destroy(GeoStats* self) {
 }
 
 const char* GeoStats_GetLabel(const GeoStats* self) {
-    return geo_c::cpp(self)->mLabel;
+    return geo_c::cpp(GEO_C_NONNULL("GeoStats_GetLabel", self))->mLabel;
 }
 
 uint32_t GeoStats_GetCount(const GeoStats* self) {
-    return geo_c::cpp(self)->mCount;
+    return geo_c::cpp(GEO_C_NONNULL("GeoStats_GetCount", self))->mCount;
 }
 
 void GeoStats_SetCount(GeoStats* self, uint32_t value) {
-    geo_c::cpp(self)->mCount = value;
+    geo_c::cpp(GEO_C_NONNULL("GeoStats_SetCount", self))->mCount = value;
 }
 
 } // extern "C"

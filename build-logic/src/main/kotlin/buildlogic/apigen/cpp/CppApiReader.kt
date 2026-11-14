@@ -194,6 +194,7 @@ internal class CppApiReader(private val sources: Sources, private val workDir: F
             templateParameters = templateParameters,
             guard = locationOf[node]?.let { l -> l.header?.let { guards.at(it, l.line) } },
             doc = doc(node),
+            isVariadic = node["variadic"] == true,
         )
     }
 

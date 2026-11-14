@@ -13,155 +13,155 @@ void FilaBloomOptions_destroy(FilaBloomOptions* self) {
 }
 
 FilaTexture* FilaBloomOptions_getDirt(const FilaBloomOptions* self) {
-    return fila::c(fila::cpp(self)->dirt);
+    return fila::c(fila::cpp(FILA_NONNULL("FilaBloomOptions_getDirt", self))->dirt);
 }
 
 void FilaBloomOptions_setDirt(FilaBloomOptions* self, FilaTexture* value) {
-    fila::cpp(self)->dirt = fila::cpp(value);
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setDirt", self))->dirt = fila::cpp(value);
 }
 
 float FilaBloomOptions_getDirtStrength(const FilaBloomOptions* self) {
-    return fila::cpp(self)->dirtStrength;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getDirtStrength", self))->dirtStrength;
 }
 
 void FilaBloomOptions_setDirtStrength(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->dirtStrength = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setDirtStrength", self))->dirtStrength = value;
 }
 
 float FilaBloomOptions_getStrength(const FilaBloomOptions* self) {
-    return fila::cpp(self)->strength;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getStrength", self))->strength;
 }
 
 void FilaBloomOptions_setStrength(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->strength = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setStrength", self))->strength = value;
 }
 
 uint32_t FilaBloomOptions_getResolution(const FilaBloomOptions* self) {
-    return fila::cpp(self)->resolution;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getResolution", self))->resolution;
 }
 
 void FilaBloomOptions_setResolution(FilaBloomOptions* self, uint32_t value) {
-    fila::cpp(self)->resolution = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setResolution", self))->resolution = value;
 }
 
 uint32_t FilaBloomOptions_getLevels(const FilaBloomOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->levels);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaBloomOptions_getLevels", self))->levels);
 }
 
 void FilaBloomOptions_setLevels(FilaBloomOptions* self, uint32_t value) {
-    fila::cpp(self)->levels = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setLevels", self))->levels = static_cast<uint8_t>(value);
 }
 
 FilaBloomOptionsBlendMode FilaBloomOptions_getBlendMode(const FilaBloomOptions* self) {
-    return static_cast<FilaBloomOptionsBlendMode>(fila::cpp(self)->blendMode);
+    return static_cast<FilaBloomOptionsBlendMode>(fila::cpp(FILA_NONNULL("FilaBloomOptions_getBlendMode", self))->blendMode);
 }
 
 void FilaBloomOptions_setBlendMode(FilaBloomOptions* self, FilaBloomOptionsBlendMode value) {
-    fila::cpp(self)->blendMode = static_cast<filament::BloomOptions::BlendMode>(value);
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setBlendMode", self))->blendMode = static_cast<filament::BloomOptions::BlendMode>(value);
 }
 
 bool FilaBloomOptions_getThreshold(const FilaBloomOptions* self) {
-    return fila::cpp(self)->threshold;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getThreshold", self))->threshold;
 }
 
 void FilaBloomOptions_setThreshold(FilaBloomOptions* self, bool value) {
-    fila::cpp(self)->threshold = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setThreshold", self))->threshold = value;
 }
 
 bool FilaBloomOptions_getEnabled(const FilaBloomOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getEnabled", self))->enabled;
 }
 
 void FilaBloomOptions_setEnabled(FilaBloomOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setEnabled", self))->enabled = value;
 }
 
 float FilaBloomOptions_getHighlight(const FilaBloomOptions* self) {
-    return fila::cpp(self)->highlight;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getHighlight", self))->highlight;
 }
 
 void FilaBloomOptions_setHighlight(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->highlight = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setHighlight", self))->highlight = value;
 }
 
 FilaQualityLevel FilaBloomOptions_getQuality(const FilaBloomOptions* self) {
-    return static_cast<FilaQualityLevel>(fila::cpp(self)->quality);
+    return static_cast<FilaQualityLevel>(fila::cpp(FILA_NONNULL("FilaBloomOptions_getQuality", self))->quality);
 }
 
 void FilaBloomOptions_setQuality(FilaBloomOptions* self, FilaQualityLevel value) {
-    fila::cpp(self)->quality = static_cast<filament::QualityLevel>(value);
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setQuality", self))->quality = static_cast<filament::QualityLevel>(value);
 }
 
 bool FilaBloomOptions_getLensFlare(const FilaBloomOptions* self) {
-    return fila::cpp(self)->lensFlare;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getLensFlare", self))->lensFlare;
 }
 
 void FilaBloomOptions_setLensFlare(FilaBloomOptions* self, bool value) {
-    fila::cpp(self)->lensFlare = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setLensFlare", self))->lensFlare = value;
 }
 
 bool FilaBloomOptions_getStarburst(const FilaBloomOptions* self) {
-    return fila::cpp(self)->starburst;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getStarburst", self))->starburst;
 }
 
 void FilaBloomOptions_setStarburst(FilaBloomOptions* self, bool value) {
-    fila::cpp(self)->starburst = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setStarburst", self))->starburst = value;
 }
 
 float FilaBloomOptions_getChromaticAberration(const FilaBloomOptions* self) {
-    return fila::cpp(self)->chromaticAberration;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getChromaticAberration", self))->chromaticAberration;
 }
 
 void FilaBloomOptions_setChromaticAberration(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->chromaticAberration = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setChromaticAberration", self))->chromaticAberration = value;
 }
 
 uint32_t FilaBloomOptions_getGhostCount(const FilaBloomOptions* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->ghostCount);
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaBloomOptions_getGhostCount", self))->ghostCount);
 }
 
 void FilaBloomOptions_setGhostCount(FilaBloomOptions* self, uint32_t value) {
-    fila::cpp(self)->ghostCount = static_cast<uint8_t>(value);
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setGhostCount", self))->ghostCount = static_cast<uint8_t>(value);
 }
 
 float FilaBloomOptions_getGhostSpacing(const FilaBloomOptions* self) {
-    return fila::cpp(self)->ghostSpacing;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getGhostSpacing", self))->ghostSpacing;
 }
 
 void FilaBloomOptions_setGhostSpacing(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->ghostSpacing = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setGhostSpacing", self))->ghostSpacing = value;
 }
 
 float FilaBloomOptions_getGhostThreshold(const FilaBloomOptions* self) {
-    return fila::cpp(self)->ghostThreshold;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getGhostThreshold", self))->ghostThreshold;
 }
 
 void FilaBloomOptions_setGhostThreshold(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->ghostThreshold = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setGhostThreshold", self))->ghostThreshold = value;
 }
 
 float FilaBloomOptions_getHaloThickness(const FilaBloomOptions* self) {
-    return fila::cpp(self)->haloThickness;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getHaloThickness", self))->haloThickness;
 }
 
 void FilaBloomOptions_setHaloThickness(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->haloThickness = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setHaloThickness", self))->haloThickness = value;
 }
 
 float FilaBloomOptions_getHaloRadius(const FilaBloomOptions* self) {
-    return fila::cpp(self)->haloRadius;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getHaloRadius", self))->haloRadius;
 }
 
 void FilaBloomOptions_setHaloRadius(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->haloRadius = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setHaloRadius", self))->haloRadius = value;
 }
 
 float FilaBloomOptions_getHaloThreshold(const FilaBloomOptions* self) {
-    return fila::cpp(self)->haloThreshold;
+    return fila::cpp(FILA_NONNULL("FilaBloomOptions_getHaloThreshold", self))->haloThreshold;
 }
 
 void FilaBloomOptions_setHaloThreshold(FilaBloomOptions* self, float value) {
-    fila::cpp(self)->haloThreshold = value;
+    fila::cpp(FILA_NONNULL("FilaBloomOptions_setHaloThreshold", self))->haloThreshold = value;
 }
 
 } // extern "C"

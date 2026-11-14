@@ -13,11 +13,11 @@ void FilaCamutilsBookmark_destroy(FilaCamutilsBookmark* self) {
 }
 
 void FilaCamutilsBookmark_interpolate(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b, double t, FilaCamutilsBookmark* out) {
-    *fila::cpp(out) = filament::camutils::Bookmark<float>::interpolate(*fila::cpp(a), *fila::cpp(b), t);
+    *fila::cpp(out) = filament::camutils::Bookmark<float>::interpolate(*fila::cpp(FILA_NONNULL("FilaCamutilsBookmark_interpolate", a)), *fila::cpp(FILA_NONNULL("FilaCamutilsBookmark_interpolate", b)), t);
 }
 
 double FilaCamutilsBookmark_duration(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b) {
-    return filament::camutils::Bookmark<float>::duration(*fila::cpp(a), *fila::cpp(b));
+    return filament::camutils::Bookmark<float>::duration(*fila::cpp(FILA_NONNULL("FilaCamutilsBookmark_duration", a)), *fila::cpp(FILA_NONNULL("FilaCamutilsBookmark_duration", b)));
 }
 
 } // extern "C"

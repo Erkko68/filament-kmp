@@ -13,11 +13,11 @@ void FilaStereoscopicOptions_destroy(FilaStereoscopicOptions* self) {
 }
 
 bool FilaStereoscopicOptions_getEnabled(const FilaStereoscopicOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaStereoscopicOptions_getEnabled", self))->enabled;
 }
 
 void FilaStereoscopicOptions_setEnabled(FilaStereoscopicOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaStereoscopicOptions_setEnabled", self))->enabled = value;
 }
 
 } // extern "C"

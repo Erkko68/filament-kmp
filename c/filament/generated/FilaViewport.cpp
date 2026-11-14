@@ -17,47 +17,47 @@ void FilaViewport_destroy(FilaViewport* self) {
 }
 
 bool FilaViewport_empty(const FilaViewport* self) {
-    return fila::cpp(self)->empty();
+    return fila::cpp(FILA_NONNULL("FilaViewport_empty", self))->empty();
 }
 
 int32_t FilaViewport_right(const FilaViewport* self) {
-    return fila::cpp(self)->right();
+    return fila::cpp(FILA_NONNULL("FilaViewport_right", self))->right();
 }
 
 int32_t FilaViewport_top(const FilaViewport* self) {
-    return fila::cpp(self)->top();
+    return fila::cpp(FILA_NONNULL("FilaViewport_top", self))->top();
 }
 
 int32_t FilaViewport_getLeft(const FilaViewport* self) {
-    return fila::cpp(self)->left;
+    return fila::cpp(FILA_NONNULL("FilaViewport_getLeft", self))->left;
 }
 
 void FilaViewport_setLeft(FilaViewport* self, int32_t value) {
-    fila::cpp(self)->left = value;
+    fila::cpp(FILA_NONNULL("FilaViewport_setLeft", self))->left = value;
 }
 
 int32_t FilaViewport_getBottom(const FilaViewport* self) {
-    return fila::cpp(self)->bottom;
+    return fila::cpp(FILA_NONNULL("FilaViewport_getBottom", self))->bottom;
 }
 
 void FilaViewport_setBottom(FilaViewport* self, int32_t value) {
-    fila::cpp(self)->bottom = value;
+    fila::cpp(FILA_NONNULL("FilaViewport_setBottom", self))->bottom = value;
 }
 
 uint32_t FilaViewport_getWidth(const FilaViewport* self) {
-    return fila::cpp(self)->width;
+    return fila::cpp(FILA_NONNULL("FilaViewport_getWidth", self))->width;
 }
 
 void FilaViewport_setWidth(FilaViewport* self, uint32_t value) {
-    fila::cpp(self)->width = value;
+    fila::cpp(FILA_NONNULL("FilaViewport_setWidth", self))->width = value;
 }
 
 uint32_t FilaViewport_getHeight(const FilaViewport* self) {
-    return fila::cpp(self)->height;
+    return fila::cpp(FILA_NONNULL("FilaViewport_getHeight", self))->height;
 }
 
 void FilaViewport_setHeight(FilaViewport* self, uint32_t value) {
-    fila::cpp(self)->height = value;
+    fila::cpp(FILA_NONNULL("FilaViewport_setHeight", self))->height = value;
 }
 
 } // extern "C"

@@ -13,63 +13,63 @@ void FilaMaterialParameterInfo_destroy(FilaMaterialParameterInfo* self) {
 }
 
 const char* FilaMaterialParameterInfo_getName(const FilaMaterialParameterInfo* self) {
-    return fila::cpp(self)->name;
+    return fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getName", self))->name;
 }
 
 bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* self) {
-    return fila::cpp(self)->isSampler;
+    return fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getIsSampler", self))->isSampler;
 }
 
 void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value) {
-    fila::cpp(self)->isSampler = value;
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setIsSampler", self))->isSampler = value;
 }
 
 bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self) {
-    return fila::cpp(self)->isSubpass;
+    return fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getIsSubpass", self))->isSubpass;
 }
 
 void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, bool value) {
-    fila::cpp(self)->isSubpass = value;
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setIsSubpass", self))->isSubpass = value;
 }
 
 FilaUniformType FilaMaterialParameterInfo_getType(const FilaMaterialParameterInfo* self) {
-    return static_cast<FilaUniformType>(fila::cpp(self)->type);
+    return static_cast<FilaUniformType>(fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getType", self))->type);
 }
 
 void FilaMaterialParameterInfo_setType(FilaMaterialParameterInfo* self, FilaUniformType value) {
-    fila::cpp(self)->type = static_cast<filament::backend::UniformType>(value);
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setType", self))->type = static_cast<filament::backend::UniformType>(value);
 }
 
 FilaSamplerType FilaMaterialParameterInfo_getSamplerType(const FilaMaterialParameterInfo* self) {
-    return static_cast<FilaSamplerType>(fila::cpp(self)->samplerType);
+    return static_cast<FilaSamplerType>(fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getSamplerType", self))->samplerType);
 }
 
 void FilaMaterialParameterInfo_setSamplerType(FilaMaterialParameterInfo* self, FilaSamplerType value) {
-    fila::cpp(self)->samplerType = static_cast<filament::backend::SamplerType>(value);
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setSamplerType", self))->samplerType = static_cast<filament::backend::SamplerType>(value);
 }
 
 FilaSubpassType FilaMaterialParameterInfo_getSubpassType(const FilaMaterialParameterInfo* self) {
-    return static_cast<FilaSubpassType>(fila::cpp(self)->subpassType);
+    return static_cast<FilaSubpassType>(fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getSubpassType", self))->subpassType);
 }
 
 void FilaMaterialParameterInfo_setSubpassType(FilaMaterialParameterInfo* self, FilaSubpassType value) {
-    fila::cpp(self)->subpassType = static_cast<filament::backend::SubpassType>(value);
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setSubpassType", self))->subpassType = static_cast<filament::backend::SubpassType>(value);
 }
 
 uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self) {
-    return fila::cpp(self)->count;
+    return fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getCount", self))->count;
 }
 
 void FilaMaterialParameterInfo_setCount(FilaMaterialParameterInfo* self, uint32_t value) {
-    fila::cpp(self)->count = value;
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setCount", self))->count = value;
 }
 
 FilaPrecision FilaMaterialParameterInfo_getPrecision(const FilaMaterialParameterInfo* self) {
-    return static_cast<FilaPrecision>(fila::cpp(self)->precision);
+    return static_cast<FilaPrecision>(fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_getPrecision", self))->precision);
 }
 
 void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, FilaPrecision value) {
-    fila::cpp(self)->precision = static_cast<filament::backend::Precision>(value);
+    fila::cpp(FILA_NONNULL("FilaMaterialParameterInfo_setPrecision", self))->precision = static_cast<filament::backend::Precision>(value);
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_create(void) {
@@ -81,331 +81,331 @@ void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self) {
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size) {
-    return fila::c(&fila::cpp(self)->package(payload, static_cast<size_t>(size)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_package", self))->package(FILA_NONNULL("FilaMaterialBuilder_package", payload), static_cast<size_t>(size)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value) {
-    return fila::c(&fila::cpp(self)->constant<int32_t>(name, value));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_constant_int32_t", self))->constant<int32_t>(FILA_NONNULL("FilaMaterialBuilder_constant_int32_t", name), value));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_constant_float(FilaMaterialBuilder* self, const char* name, float value) {
-    return fila::c(&fila::cpp(self)->constant<float>(name, value));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_constant_float", self))->constant<float>(FILA_NONNULL("FilaMaterialBuilder_constant_float", name), value));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_constant_bool(FilaMaterialBuilder* self, const char* name, bool value) {
-    return fila::c(&fila::cpp(self)->constant<bool>(name, value));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_constant_bool", self))->constant<bool>(FILA_NONNULL("FilaMaterialBuilder_constant_bool", name), value));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount) {
-    return fila::c(&fila::cpp(self)->sphericalHarmonicsBandCount(static_cast<size_t>(shBandCount)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_sphericalHarmonicsBandCount", self))->sphericalHarmonicsBandCount(static_cast<size_t>(shBandCount)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality) {
-    return fila::c(&fila::cpp(self)->shadowSamplingQuality(static_cast<filament::Material::Builder::ShadowSamplingQuality>(quality)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_shadowSamplingQuality", self))->shadowSamplingQuality(static_cast<filament::Material::Builder::ShadowSamplingQuality>(quality)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, FilaMaterialUboBatchingMode uboBatchingMode) {
-    return fila::c(&fila::cpp(self)->uboBatching(static_cast<filament::Material::UboBatchingMode>(uboBatchingMode)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaMaterialBuilder_uboBatching", self))->uboBatching(static_cast<filament::Material::UboBatchingMode>(uboBatchingMode)));
 }
 
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaMaterialBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaMaterialBuilder_build", engine))));
 }
 
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
+    fila::cpp(FILA_NONNULL("FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable", self))->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
+    fila::cpp(FILA_NONNULL("FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable", self))->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
+    fila::cpp(FILA_NONNULL("FilaMaterial_compile_CallbackHandler_Invocable", self))->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* self, const char* name) {
-    return fila::c(fila::cpp(self)->createInstance(name));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaMaterial_createInstance", self))->createInstance(name));
 }
 
 const char* FilaMaterial_getName(const FilaMaterial* self) {
-    return fila::cpp(self)->getName();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_getName", self))->getName();
 }
 
 FilaShading FilaMaterial_getShading(const FilaMaterial* self) {
-    return static_cast<FilaShading>(fila::cpp(self)->getShading());
+    return static_cast<FilaShading>(fila::cpp(FILA_NONNULL("FilaMaterial_getShading", self))->getShading());
 }
 
 FilaInterpolation FilaMaterial_getInterpolation(const FilaMaterial* self) {
-    return static_cast<FilaInterpolation>(fila::cpp(self)->getInterpolation());
+    return static_cast<FilaInterpolation>(fila::cpp(FILA_NONNULL("FilaMaterial_getInterpolation", self))->getInterpolation());
 }
 
 FilaBlendingMode FilaMaterial_getBlendingMode(const FilaMaterial* self) {
-    return static_cast<FilaBlendingMode>(fila::cpp(self)->getBlendingMode());
+    return static_cast<FilaBlendingMode>(fila::cpp(FILA_NONNULL("FilaMaterial_getBlendingMode", self))->getBlendingMode());
 }
 
 FilaVertexDomain FilaMaterial_getVertexDomain(const FilaMaterial* self) {
-    return static_cast<FilaVertexDomain>(fila::cpp(self)->getVertexDomain());
+    return static_cast<FilaVertexDomain>(fila::cpp(FILA_NONNULL("FilaMaterial_getVertexDomain", self))->getVertexDomain());
 }
 
 uint32_t FilaMaterial_getSupportedVariants(const FilaMaterial* self) {
-    return fila::cpp(self)->getSupportedVariants();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_getSupportedVariants", self))->getSupportedVariants();
 }
 
 FilaMaterialDomain FilaMaterial_getMaterialDomain(const FilaMaterial* self) {
-    return static_cast<FilaMaterialDomain>(fila::cpp(self)->getMaterialDomain());
+    return static_cast<FilaMaterialDomain>(fila::cpp(FILA_NONNULL("FilaMaterial_getMaterialDomain", self))->getMaterialDomain());
 }
 
 FilaCullingMode FilaMaterial_getCullingMode(const FilaMaterial* self) {
-    return static_cast<FilaCullingMode>(fila::cpp(self)->getCullingMode());
+    return static_cast<FilaCullingMode>(fila::cpp(FILA_NONNULL("FilaMaterial_getCullingMode", self))->getCullingMode());
 }
 
 FilaTransparencyMode FilaMaterial_getTransparencyMode(const FilaMaterial* self) {
-    return static_cast<FilaTransparencyMode>(fila::cpp(self)->getTransparencyMode());
+    return static_cast<FilaTransparencyMode>(fila::cpp(FILA_NONNULL("FilaMaterial_getTransparencyMode", self))->getTransparencyMode());
 }
 
 bool FilaMaterial_isColorWriteEnabled(const FilaMaterial* self) {
-    return fila::cpp(self)->isColorWriteEnabled();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_isColorWriteEnabled", self))->isColorWriteEnabled();
 }
 
 bool FilaMaterial_isDepthWriteEnabled(const FilaMaterial* self) {
-    return fila::cpp(self)->isDepthWriteEnabled();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_isDepthWriteEnabled", self))->isDepthWriteEnabled();
 }
 
 bool FilaMaterial_isDepthCullingEnabled(const FilaMaterial* self) {
-    return fila::cpp(self)->isDepthCullingEnabled();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_isDepthCullingEnabled", self))->isDepthCullingEnabled();
 }
 
 bool FilaMaterial_isDoubleSided(const FilaMaterial* self) {
-    return fila::cpp(self)->isDoubleSided();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_isDoubleSided", self))->isDoubleSided();
 }
 
 bool FilaMaterial_isAlphaToCoverageEnabled(const FilaMaterial* self) {
-    return fila::cpp(self)->isAlphaToCoverageEnabled();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_isAlphaToCoverageEnabled", self))->isAlphaToCoverageEnabled();
 }
 
 float FilaMaterial_getMaskThreshold(const FilaMaterial* self) {
-    return fila::cpp(self)->getMaskThreshold();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_getMaskThreshold", self))->getMaskThreshold();
 }
 
 bool FilaMaterial_hasShadowMultiplier(const FilaMaterial* self) {
-    return fila::cpp(self)->hasShadowMultiplier();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_hasShadowMultiplier", self))->hasShadowMultiplier();
 }
 
 bool FilaMaterial_hasSpecularAntiAliasing(const FilaMaterial* self) {
-    return fila::cpp(self)->hasSpecularAntiAliasing();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_hasSpecularAntiAliasing", self))->hasSpecularAntiAliasing();
 }
 
 float FilaMaterial_getSpecularAntiAliasingVariance(const FilaMaterial* self) {
-    return fila::cpp(self)->getSpecularAntiAliasingVariance();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_getSpecularAntiAliasingVariance", self))->getSpecularAntiAliasingVariance();
 }
 
 float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* self) {
-    return fila::cpp(self)->getSpecularAntiAliasingThreshold();
+    return fila::cpp(FILA_NONNULL("FilaMaterial_getSpecularAntiAliasingThreshold", self))->getSpecularAntiAliasingThreshold();
 }
 
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* self) {
-    return (fila::cpp(self)->getRequiredAttributes()).getValue();
+    return (fila::cpp(FILA_NONNULL("FilaMaterial_getRequiredAttributes", self))->getRequiredAttributes()).getValue();
 }
 
 FilaRefractionMode FilaMaterial_getRefractionMode(const FilaMaterial* self) {
-    return static_cast<FilaRefractionMode>(fila::cpp(self)->getRefractionMode());
+    return static_cast<FilaRefractionMode>(fila::cpp(FILA_NONNULL("FilaMaterial_getRefractionMode", self))->getRefractionMode());
 }
 
 FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self) {
-    return static_cast<FilaRefractionType>(fila::cpp(self)->getRefractionType());
+    return static_cast<FilaRefractionType>(fila::cpp(FILA_NONNULL("FilaMaterial_getRefractionType", self))->getRefractionType());
 }
 
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self) {
-    return static_cast<FilaReflectionMode>(fila::cpp(self)->getReflectionMode());
+    return static_cast<FilaReflectionMode>(fila::cpp(FILA_NONNULL("FilaMaterial_getReflectionMode", self))->getReflectionMode());
 }
 
 FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self) {
-    return static_cast<FilaFeatureLevel>(fila::cpp(self)->getFeatureLevel());
+    return static_cast<FilaFeatureLevel>(fila::cpp(FILA_NONNULL("FilaMaterial_getFeatureLevel", self))->getFeatureLevel());
 }
 
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getParameterCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaMaterial_getParameterCount", self))->getParameterCount());
 }
 
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name) {
-    return fila::cpp(self)->hasParameter(name);
+    return fila::cpp(FILA_NONNULL("FilaMaterial_hasParameter_char", self))->hasParameter(FILA_NONNULL("FilaMaterial_hasParameter_char", name));
 }
 
 bool FilaMaterial_hasParameter_string_view(const FilaMaterial* self, const char* name) {
-    return fila::cpp(self)->hasParameter(std::string_view(name));
+    return fila::cpp(FILA_NONNULL("FilaMaterial_hasParameter_string_view", self))->hasParameter(std::string_view(name));
 }
 
 bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name) {
-    return fila::cpp(self)->isSampler(name);
+    return fila::cpp(FILA_NONNULL("FilaMaterial_isSampler", self))->isSampler(FILA_NONNULL("FilaMaterial_isSampler", name));
 }
 
 const char* FilaMaterial_getSource(const FilaMaterial* self) {
-    return (fila::cpp(self)->getSource()).data();
+    return (fila::cpp(FILA_NONNULL("FilaMaterial_getSource", self))->getSource()).data();
 }
 
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, const char* samplerName) {
-    return fila::cpp(self)->getParameterTransformName(samplerName);
+    return fila::cpp(FILA_NONNULL("FilaMaterial_getParameterTransformName", self))->getParameterTransformName(FILA_NONNULL("FilaMaterial_getParameterTransformName", samplerName));
 }
 
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler) {
-    fila::cpp(self)->setDefaultParameter(name, fila::cpp(texture), *fila::cpp(sampler));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_Texture_TextureSampler", self))->setDefaultParameter(FILA_NONNULL("FilaMaterial_setDefaultParameter_Texture_TextureSampler", name), fila::cpp(texture), *fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_Texture_TextureSampler", sampler)));
 }
 
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
-    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), fila::math<filament::math::float3>(*color));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_RgbType_float3", self))->setDefaultParameter(FILA_NONNULL("FilaMaterial_setDefaultParameter_RgbType_float3", name), static_cast<filament::RgbType>(type), fila::math<filament::math::float3>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_RgbType_float3", color)));
 }
 
 void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
-    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), fila::math<filament::math::float4>(*color));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_RgbaType_float4", self))->setDefaultParameter(FILA_NONNULL("FilaMaterial_setDefaultParameter_RgbaType_float4", name), static_cast<filament::RgbaType>(type), fila::math<filament::math::float4>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_RgbaType_float4", color)));
 }
 
 void FilaMaterial_setDefaultParameter_float(FilaMaterial* self, const char* name, float value) {
-    fila::cpp(self)->setDefaultParameter<float>(name, value);
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float", self))->setDefaultParameter<float>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float", name), value);
 }
 
 void FilaMaterial_setDefaultParameter_int32_t(FilaMaterial* self, const char* name, int32_t value) {
-    fila::cpp(self)->setDefaultParameter<int32_t>(name, value);
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int32_t", self))->setDefaultParameter<int32_t>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int32_t", name), value);
 }
 
 void FilaMaterial_setDefaultParameter_uint32_t(FilaMaterial* self, const char* name, uint32_t value) {
-    fila::cpp(self)->setDefaultParameter<uint32_t>(name, value);
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint32_t", self))->setDefaultParameter<uint32_t>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint32_t", name), value);
 }
 
 void FilaMaterial_setDefaultParameter_int2(FilaMaterial* self, const char* name, const FilaInt2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int2>(name, fila::math<filament::math::int2>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int2", self))->setDefaultParameter<filament::math::int2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int2", name), fila::math<filament::math::int2>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_int2", value)));
 }
 
 void FilaMaterial_setDefaultParameter_int3(FilaMaterial* self, const char* name, const FilaInt3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int3>(name, fila::math<filament::math::int3>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int3", self))->setDefaultParameter<filament::math::int3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int3", name), fila::math<filament::math::int3>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_int3", value)));
 }
 
 void FilaMaterial_setDefaultParameter_int4(FilaMaterial* self, const char* name, const FilaInt4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int4>(name, fila::math<filament::math::int4>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int4", self))->setDefaultParameter<filament::math::int4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int4", name), fila::math<filament::math::int4>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_int4", value)));
 }
 
 void FilaMaterial_setDefaultParameter_uint2(FilaMaterial* self, const char* name, const FilaUint2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint2>(name, fila::math<filament::math::uint2>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint2", self))->setDefaultParameter<filament::math::uint2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint2", name), fila::math<filament::math::uint2>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_uint2", value)));
 }
 
 void FilaMaterial_setDefaultParameter_uint3(FilaMaterial* self, const char* name, const FilaUint3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint3>(name, fila::math<filament::math::uint3>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint3", self))->setDefaultParameter<filament::math::uint3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint3", name), fila::math<filament::math::uint3>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_uint3", value)));
 }
 
 void FilaMaterial_setDefaultParameter_uint4(FilaMaterial* self, const char* name, const FilaUint4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint4>(name, fila::math<filament::math::uint4>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint4", self))->setDefaultParameter<filament::math::uint4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint4", name), fila::math<filament::math::uint4>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_uint4", value)));
 }
 
 void FilaMaterial_setDefaultParameter_float2(FilaMaterial* self, const char* name, const FilaFloat2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float2>(name, fila::math<filament::math::float2>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float2", self))->setDefaultParameter<filament::math::float2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float2", name), fila::math<filament::math::float2>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_float2", value)));
 }
 
 void FilaMaterial_setDefaultParameter_float3(FilaMaterial* self, const char* name, const FilaFloat3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float3>(name, fila::math<filament::math::float3>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float3", self))->setDefaultParameter<filament::math::float3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float3", name), fila::math<filament::math::float3>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_float3", value)));
 }
 
 void FilaMaterial_setDefaultParameter_float4(FilaMaterial* self, const char* name, const FilaFloat4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float4>(name, fila::math<filament::math::float4>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float4", self))->setDefaultParameter<filament::math::float4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float4", name), fila::math<filament::math::float4>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_float4", value)));
 }
 
 void FilaMaterial_setDefaultParameter_mat3f(FilaMaterial* self, const char* name, const FilaMat3f* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::mat3f>(name, fila::math<filament::math::mat3f>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat3f", self))->setDefaultParameter<filament::math::mat3f>(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat3f", name), fila::math<filament::math::mat3f>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_mat3f", value)));
 }
 
 void FilaMaterial_setDefaultParameter_mat4f(FilaMaterial* self, const char* name, const FilaMat4f* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::mat4f>(name, fila::math<filament::math::mat4f>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat4f", self))->setDefaultParameter<filament::math::mat4f>(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat4f", name), fila::math<filament::math::mat4f>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_mat4f", value)));
 }
 
 void FilaMaterial_setDefaultParameter_bool(FilaMaterial* self, const char* name, bool value) {
-    fila::cpp(self)->setDefaultParameter<bool>(name, value);
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool", self))->setDefaultParameter<bool>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool", name), value);
 }
 
 void FilaMaterial_setDefaultParameter_bool2(FilaMaterial* self, const char* name, const FilaBool2* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool2>(name, fila::math<filament::math::bool2>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool2", self))->setDefaultParameter<filament::math::bool2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool2", name), fila::math<filament::math::bool2>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_bool2", value)));
 }
 
 void FilaMaterial_setDefaultParameter_bool3(FilaMaterial* self, const char* name, const FilaBool3* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool3>(name, fila::math<filament::math::bool3>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool3", self))->setDefaultParameter<filament::math::bool3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool3", name), fila::math<filament::math::bool3>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_bool3", value)));
 }
 
 void FilaMaterial_setDefaultParameter_bool4(FilaMaterial* self, const char* name, const FilaBool4* value) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool4>(name, fila::math<filament::math::bool4>(*value));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool4", self))->setDefaultParameter<filament::math::bool4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool4", name), fila::math<filament::math::bool4>(*FILA_NONNULL("FilaMaterial_setDefaultParameter_bool4", value)));
 }
 
 void FilaMaterial_setDefaultParameter_float_size_t(FilaMaterial* self, const char* name, const float* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<float>(name, values, static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float_size_t", self))->setDefaultParameter<float>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float_size_t", name), FILA_NONNULL("FilaMaterial_setDefaultParameter_float_size_t", values), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_int32_t_size_t(FilaMaterial* self, const char* name, const int32_t* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<int32_t>(name, values, static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int32_t_size_t", self))->setDefaultParameter<int32_t>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int32_t_size_t", name), FILA_NONNULL("FilaMaterial_setDefaultParameter_int32_t_size_t", values), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_uint32_t_size_t(FilaMaterial* self, const char* name, const uint32_t* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<uint32_t>(name, values, static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint32_t_size_t", self))->setDefaultParameter<uint32_t>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint32_t_size_t", name), FILA_NONNULL("FilaMaterial_setDefaultParameter_uint32_t_size_t", values), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_int2_size_t(FilaMaterial* self, const char* name, const FilaInt2* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int2>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int2_size_t", self))->setDefaultParameter<filament::math::int2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int2_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int2_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_int3_size_t(FilaMaterial* self, const char* name, const FilaInt3* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int3>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int3_size_t", self))->setDefaultParameter<filament::math::int3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int3_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int3_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_int4_size_t(FilaMaterial* self, const char* name, const FilaInt4* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::int4>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int4_size_t", self))->setDefaultParameter<filament::math::int4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_int4_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_int4_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_uint2_size_t(FilaMaterial* self, const char* name, const FilaUint2* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint2>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint2_size_t", self))->setDefaultParameter<filament::math::uint2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint2_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint2_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_uint3_size_t(FilaMaterial* self, const char* name, const FilaUint3* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint3>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint3_size_t", self))->setDefaultParameter<filament::math::uint3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint3_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint3_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_uint4_size_t(FilaMaterial* self, const char* name, const FilaUint4* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::uint4>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint4_size_t", self))->setDefaultParameter<filament::math::uint4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint4_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_uint4_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_float2_size_t(FilaMaterial* self, const char* name, const FilaFloat2* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float2>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float2_size_t", self))->setDefaultParameter<filament::math::float2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float2_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float2_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_float3_size_t(FilaMaterial* self, const char* name, const FilaFloat3* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float3>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float3_size_t", self))->setDefaultParameter<filament::math::float3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float3_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float3_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_float4_size_t(FilaMaterial* self, const char* name, const FilaFloat4* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::float4>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float4_size_t", self))->setDefaultParameter<filament::math::float4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_float4_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_float4_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_mat3f_size_t(FilaMaterial* self, const char* name, const FilaMat3f* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::mat3f>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat3f_size_t", self))->setDefaultParameter<filament::math::mat3f>(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat3f_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat3f_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_mat4f_size_t(FilaMaterial* self, const char* name, const FilaMat4f* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::mat4f>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat4f_size_t", self))->setDefaultParameter<filament::math::mat4f>(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat4f_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_mat4f_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_bool_size_t(FilaMaterial* self, const char* name, const bool* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<bool>(name, values, static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool_size_t", self))->setDefaultParameter<bool>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool_size_t", name), FILA_NONNULL("FilaMaterial_setDefaultParameter_bool_size_t", values), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_bool2_size_t(FilaMaterial* self, const char* name, const FilaBool2* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool2>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool2_size_t", self))->setDefaultParameter<filament::math::bool2>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool2_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool2_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_bool3_size_t(FilaMaterial* self, const char* name, const FilaBool3* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool3>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool3_size_t", self))->setDefaultParameter<filament::math::bool3>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool3_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool3_size_t", values)), static_cast<size_t>(count));
 }
 
 void FilaMaterial_setDefaultParameter_bool4_size_t(FilaMaterial* self, const char* name, const FilaBool4* values, uint32_t count) {
-    fila::cpp(self)->setDefaultParameter<filament::math::bool4>(name, fila::cpp(values), static_cast<size_t>(count));
+    fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool4_size_t", self))->setDefaultParameter<filament::math::bool4>(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool4_size_t", name), fila::cpp(FILA_NONNULL("FilaMaterial_setDefaultParameter_bool4_size_t", values)), static_cast<size_t>(count));
 }
 
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self) {
-    return fila::c(fila::cpp(self)->getDefaultInstance());
+    return fila::c(fila::cpp(FILA_NONNULL("FilaMaterial_getDefaultInstance", self))->getDefaultInstance());
 }
 
 } // extern "C"

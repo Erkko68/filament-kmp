@@ -13,11 +13,11 @@ void GeoBox_destroy(GeoBox* self) {
 }
 
 float GeoBox_Get(const GeoBox* self) {
-    return geo_c::cpp(self)->Get();
+    return geo_c::cpp(GEO_C_NONNULL("GeoBox_Get", self))->Get();
 }
 
 void GeoBox_Set(GeoBox* self, float value) {
-    geo_c::cpp(self)->Set(value);
+    geo_c::cpp(GEO_C_NONNULL("GeoBox_Set", self))->Set(value);
 }
 
 } // extern "C"

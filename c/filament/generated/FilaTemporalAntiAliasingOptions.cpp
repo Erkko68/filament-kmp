@@ -13,211 +13,211 @@ void FilaTemporalAntiAliasingOptions_destroy(FilaTemporalAntiAliasingOptions* se
 }
 
 float FilaTemporalAntiAliasingOptions_getFilterWidth(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->filterWidth;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getFilterWidth", self))->filterWidth;
 }
 
 void FilaTemporalAntiAliasingOptions_setFilterWidth(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->filterWidth = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setFilterWidth", self))->filterWidth = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getFeedback(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->feedback;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getFeedback", self))->feedback;
 }
 
 void FilaTemporalAntiAliasingOptions_setFeedback(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->feedback = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setFeedback", self))->feedback = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getLodBias(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->lodBias;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getLodBias", self))->lodBias;
 }
 
 void FilaTemporalAntiAliasingOptions_setLodBias(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->lodBias = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setLodBias", self))->lodBias = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getSharpness(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->sharpness;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getSharpness", self))->sharpness;
 }
 
 void FilaTemporalAntiAliasingOptions_setSharpness(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->sharpness = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setSharpness", self))->sharpness = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getEnabled(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getEnabled", self))->enabled;
 }
 
 void FilaTemporalAntiAliasingOptions_setEnabled(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setEnabled", self))->enabled = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getUpscaling(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->upscaling;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getUpscaling", self))->upscaling;
 }
 
 void FilaTemporalAntiAliasingOptions_setUpscaling(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->upscaling = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setUpscaling", self))->upscaling = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getFilterHistory(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->filterHistory;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getFilterHistory", self))->filterHistory;
 }
 
 void FilaTemporalAntiAliasingOptions_setFilterHistory(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->filterHistory = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setFilterHistory", self))->filterHistory = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getFilterInput(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->filterInput;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getFilterInput", self))->filterInput;
 }
 
 void FilaTemporalAntiAliasingOptions_setFilterInput(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->filterInput = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setFilterInput", self))->filterInput = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getUseYCoCg(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->useYCoCg;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getUseYCoCg", self))->useYCoCg;
 }
 
 void FilaTemporalAntiAliasingOptions_setUseYCoCg(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->useYCoCg = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setUseYCoCg", self))->useYCoCg = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getHdr(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->hdr;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getHdr", self))->hdr;
 }
 
 void FilaTemporalAntiAliasingOptions_setHdr(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->hdr = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setHdr", self))->hdr = value;
 }
 
 FilaTemporalAntiAliasingOptionsBoxType FilaTemporalAntiAliasingOptions_getBoxType(const FilaTemporalAntiAliasingOptions* self) {
-    return static_cast<FilaTemporalAntiAliasingOptionsBoxType>(fila::cpp(self)->boxType);
+    return static_cast<FilaTemporalAntiAliasingOptionsBoxType>(fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getBoxType", self))->boxType);
 }
 
 void FilaTemporalAntiAliasingOptions_setBoxType(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsBoxType value) {
-    fila::cpp(self)->boxType = static_cast<filament::TemporalAntiAliasingOptions::BoxType>(value);
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setBoxType", self))->boxType = static_cast<filament::TemporalAntiAliasingOptions::BoxType>(value);
 }
 
 FilaTemporalAntiAliasingOptionsBoxClipping FilaTemporalAntiAliasingOptions_getBoxClipping(const FilaTemporalAntiAliasingOptions* self) {
-    return static_cast<FilaTemporalAntiAliasingOptionsBoxClipping>(fila::cpp(self)->boxClipping);
+    return static_cast<FilaTemporalAntiAliasingOptionsBoxClipping>(fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getBoxClipping", self))->boxClipping);
 }
 
 void FilaTemporalAntiAliasingOptions_setBoxClipping(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsBoxClipping value) {
-    fila::cpp(self)->boxClipping = static_cast<filament::TemporalAntiAliasingOptions::BoxClipping>(value);
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setBoxClipping", self))->boxClipping = static_cast<filament::TemporalAntiAliasingOptions::BoxClipping>(value);
 }
 
 FilaTemporalAntiAliasingOptionsJitterPattern FilaTemporalAntiAliasingOptions_getJitterPattern(const FilaTemporalAntiAliasingOptions* self) {
-    return static_cast<FilaTemporalAntiAliasingOptionsJitterPattern>(fila::cpp(self)->jitterPattern);
+    return static_cast<FilaTemporalAntiAliasingOptionsJitterPattern>(fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getJitterPattern", self))->jitterPattern);
 }
 
 void FilaTemporalAntiAliasingOptions_setJitterPattern(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsJitterPattern value) {
-    fila::cpp(self)->jitterPattern = static_cast<filament::TemporalAntiAliasingOptions::JitterPattern>(value);
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setJitterPattern", self))->jitterPattern = static_cast<filament::TemporalAntiAliasingOptions::JitterPattern>(value);
 }
 
 float FilaTemporalAntiAliasingOptions_getVarianceGamma(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->varianceGamma;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getVarianceGamma", self))->varianceGamma;
 }
 
 void FilaTemporalAntiAliasingOptions_setVarianceGamma(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->varianceGamma = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setVarianceGamma", self))->varianceGamma = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getPreventFlickering(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->preventFlickering;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getPreventFlickering", self))->preventFlickering;
 }
 
 void FilaTemporalAntiAliasingOptions_setPreventFlickering(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->preventFlickering = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setPreventFlickering", self))->preventFlickering = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getHistoryReprojection(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->historyReprojection;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getHistoryReprojection", self))->historyReprojection;
 }
 
 void FilaTemporalAntiAliasingOptions_setHistoryReprojection(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->historyReprojection = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setHistoryReprojection", self))->historyReprojection = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->motionAdaptiveHistory;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getMotionAdaptiveHistory", self))->motionAdaptiveHistory;
 }
 
 void FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->motionAdaptiveHistory = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setMotionAdaptiveHistory", self))->motionAdaptiveHistory = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->motionDeltaThreshold;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getMotionDeltaThreshold", self))->motionDeltaThreshold;
 }
 
 void FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->motionDeltaThreshold = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setMotionDeltaThreshold", self))->motionDeltaThreshold = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getMinBoxStrength(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->minBoxStrength;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getMinBoxStrength", self))->minBoxStrength;
 }
 
 void FilaTemporalAntiAliasingOptions_setMinBoxStrength(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->minBoxStrength = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setMinBoxStrength", self))->minBoxStrength = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getMinAlphaStrength(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->minAlphaStrength;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getMinAlphaStrength", self))->minAlphaStrength;
 }
 
 void FilaTemporalAntiAliasingOptions_setMinAlphaStrength(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->minAlphaStrength = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setMinAlphaStrength", self))->minAlphaStrength = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getSkyDepthThreshold(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->skyDepthThreshold;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getSkyDepthThreshold", self))->skyDepthThreshold;
 }
 
 void FilaTemporalAntiAliasingOptions_setSkyDepthThreshold(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->skyDepthThreshold = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setSkyDepthThreshold", self))->skyDepthThreshold = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getMotionHoldFrames(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->motionHoldFrames;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getMotionHoldFrames", self))->motionHoldFrames;
 }
 
 void FilaTemporalAntiAliasingOptions_setMotionHoldFrames(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->motionHoldFrames = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setMotionHoldFrames", self))->motionHoldFrames = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getDepthDisocclusion(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->depthDisocclusion;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getDepthDisocclusion", self))->depthDisocclusion;
 }
 
 void FilaTemporalAntiAliasingOptions_setDepthDisocclusion(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->depthDisocclusion = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setDepthDisocclusion", self))->depthDisocclusion = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->disocclusionDepthThreshold;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getDisocclusionDepthThreshold", self))->disocclusionDepthThreshold;
 }
 
 void FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold(FilaTemporalAntiAliasingOptions* self, float value) {
-    fila::cpp(self)->disocclusionDepthThreshold = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setDisocclusionDepthThreshold", self))->disocclusionDepthThreshold = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->disocclusionHistoryNeighborhood;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getDisocclusionHistoryNeighborhood", self))->disocclusionHistoryNeighborhood;
 }
 
 void FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->disocclusionHistoryNeighborhood = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setDisocclusionHistoryNeighborhood", self))->disocclusionHistoryNeighborhood = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getExactLanczosSupport(const FilaTemporalAntiAliasingOptions* self) {
-    return fila::cpp(self)->exactLanczosSupport;
+    return fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_getExactLanczosSupport", self))->exactLanczosSupport;
 }
 
 void FilaTemporalAntiAliasingOptions_setExactLanczosSupport(FilaTemporalAntiAliasingOptions* self, bool value) {
-    fila::cpp(self)->exactLanczosSupport = value;
+    fila::cpp(FILA_NONNULL("FilaTemporalAntiAliasingOptions_setExactLanczosSupport", self))->exactLanczosSupport = value;
 }
 
 } // extern "C"

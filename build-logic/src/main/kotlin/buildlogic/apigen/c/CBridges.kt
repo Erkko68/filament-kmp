@@ -20,7 +20,10 @@ internal class CBridges(
     val callbackTypes = sortedMapOf<String, String>()
 
     /** [type] as a parameter: [CBridge.convert] turns the C argument into C++'s. */
-    fun param(type: CppType) = of(type, result = false)
+    fun param(type: CppType, stored: Boolean = false) = of(type, result = false, stored = stored).let { bridge ->
+        // A pointer C++ declares `_Nonnull`, which C passes as it is.
+        if (type.spelling.trim().endsWith(NONNULL) && bridge.c.endsWith("*") && bridge.extra.isEmpty()) bridge.guarded(names::nonNull) else bridge
+    }
 
     /**
      * [type] as the value a field setter stores. The field keeps it past the call, so a C string it would only borrow
@@ -34,12 +37,13 @@ internal class CBridges(
     }
 
     /** [type] as a return value: [CBridge.convert] turns C++'s result into C's. [lvalue]: it outlives the call (a field). */
-    fun result(type: CppType, lvalue: Boolean = false) = of(type, result = true, lvalue)
+    fun result(type: CppType, lvalue: Boolean = false, stored: Boolean = false) = of(type, result = true, lvalue, stored)
 
     /** The integer typedef of an enum too wide for a C enum (whose enumerators are ints), or null. */
     fun wideEnumType(enum: CppEnum) = if (enum.constants.all { it.second.bitLength() < 32 }) null else CAbi.byValue(enum.underlying ?: "uint64_t")
 
-    private fun of(type: CppType, result: Boolean, lvalue: Boolean = false): CBridge {
+    /** [stored]: an array's element. */
+    private fun of(type: CppType, result: Boolean, lvalue: Boolean = false, stored: Boolean = false): CBridge {
         val shape = shape(type.spelling)
         if (shape.indirection == listOf("*", "*")) return pointers(type, shape, result)
         if (shape.indirection.size > 1) throw Unsupported("${type.spelling}: pointer to pointer")
@@ -59,7 +63,7 @@ internal class CBridges(
             if (indirection != null || aliased.indirection.size > 1) throw Unsupported("${type.spelling}: alias of a pointer")
             indirection = aliased.indirection.single()
         }
-        val bridge = DirectBridges(config, names, const, indirection, result, lvalue)
+        val bridge = DirectBridges(config, names, const, indirection, result, lvalue, stored)
         if (isArray(target)) return sequence(target, bridge)
         if (target.kind == Kind.TEMPLATE_PARAMETER) {
             val argument = templates.argument(target.decl!!) ?: throw Unsupported("${type.spelling}: template parameter")
@@ -74,6 +78,7 @@ internal class CBridges(
         return when {
             decl in config.allSequences -> sequence(target, bridge)
             decl == "std::optional" -> optional(target, bridge)
+            decl == "std::unique_ptr" -> unique(target, bridge)
             decl == "std::function" && lastAlias != null -> function(lastAlias, target.args.single(), bridge)
             refs != null && decl in refs.pointers -> ref(target, bridge)
             decl in config.results -> fallible(target, bridge)
@@ -117,6 +122,18 @@ internal class CBridges(
         }
     }
 
+    /** A std::unique_ptr crosses as the pointer it owns: C gives up the one it passes, and `_destroy`s a result. */
+    private fun unique(type: CppType, bridge: DirectBridges): CBridge {
+        if (bridge.indirection != null && (bridge.result || bridge.indirection != "&&")) throw Unsupported("${type.spelling}: by reference")
+        val pointee = type.args.singleOrNull() ?: throw Unsupported("${type.spelling}: custom deleter")
+        val record = handle(pointee)
+        if (!records.owned(record)) throw Unsupported("${type.spelling}: C can't destroy a ${record.name}")
+        val const = if (shape(pointee.spelling).const) "const " else ""
+        val c = "$const${names.type(record.name)}*"
+        return if (bridge.result) CBridge(c, { "$h::c(($it).release())" })
+        else CBridge(c, { "std::unique_ptr<$const${templates.cpp(record.name)}>($h::cpp($it))" })
+    }
+
     /**
      * A result type ([TypeTables.results]) is its value, or NULL (false, for a value C copies out) when it holds an
      * error, whose message is then copied into `outError` up to its capacity, NUL-terminated.
@@ -135,7 +152,7 @@ internal class CBridges(
     /**
      * A sequence ([TypeTables.sequences], std::vector, std::array) or array. C passes an array and its count;
      * `items` converts it to whichever the callee takes. A result fills C's array up to its capacity and returns how
-     * many there are. Math elements are contiguous mirrors; value records, the handles C created to copy into.
+     * many there are. Builtin elements keep their width (a `std::vector<uint8_t>` is a `uint8_t*`). Math elements are contiguous mirrors; value records, the handles C created to copy into.
      */
     private fun sequence(type: CppType, bridge: DirectBridges): CBridge {
         if (!bridge.byValue && !bridge.result && !bridge.const && type.decl == "std::array") return updated(type)
@@ -147,7 +164,7 @@ internal class CBridges(
             shape(element.spelling).indirection.isEmpty()
         // A view's elements outlive it, as an lvalue's do.
         val lvalue = bridge.lvalue || bridge.indirection == "&" || type.decl in config.views
-        val e = if (bridge.result) result(element, lvalue) else param(element)
+        val e = if (bridge.result) result(element, lvalue, stored = true) else param(element, stored = true)
         if (e.extra.isNotEmpty()) throw Unsupported("${type.spelling}: elements C passes in pieces")
         if (!bridge.result) {
             val items = if (mirror || e.c.endsWith("*")) "${e.c}${if (mirror) "" else " const*"}" else "const ${e.c}*"
@@ -168,7 +185,7 @@ internal class CBridges(
     /** A std::array the callee changes (by pointer or reference): C's array goes in, and gets the changes back. */
     private fun updated(type: CppType): CBridge {
         val element = type.args.first()
-        val (p, r) = param(element) to result(element)
+        val (p, r) = param(element, stored = true) to result(element, stored = true)
         if (listOf(p, r).any { it.out || it.extra.isNotEmpty() || it.c.endsWith("*") }) throw Unsupported("${type.spelling}: elements C passes by pointer")
         return CBridge("${p.c}*", { n ->
             "$h::updated(${n}Count, [&](uint32_t i) { return ${p.convert("$n[i]")}; }, [&](auto x, uint32_t i) { $n[i] = ${r.convert("x")}; })"
@@ -242,3 +259,5 @@ internal class CBridges(
         return CBridge(name, { it })
     }
 }
+
+private const val NONNULL = "_Nonnull"

@@ -17,59 +17,59 @@ void FilaColorTransferFunction_destroy(FilaColorTransferFunction* self) {
 }
 
 double FilaColorTransferFunction_getA(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->a;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getA", self))->a;
 }
 
 void FilaColorTransferFunction_setA(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->a = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setA", self))->a = value;
 }
 
 double FilaColorTransferFunction_getB(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->b;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getB", self))->b;
 }
 
 void FilaColorTransferFunction_setB(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->b = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setB", self))->b = value;
 }
 
 double FilaColorTransferFunction_getC(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->c;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getC", self))->c;
 }
 
 void FilaColorTransferFunction_setC(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->c = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setC", self))->c = value;
 }
 
 double FilaColorTransferFunction_getD(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->d;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getD", self))->d;
 }
 
 void FilaColorTransferFunction_setD(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->d = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setD", self))->d = value;
 }
 
 double FilaColorTransferFunction_getE(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->e;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getE", self))->e;
 }
 
 void FilaColorTransferFunction_setE(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->e = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setE", self))->e = value;
 }
 
 double FilaColorTransferFunction_getF(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->f;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getF", self))->f;
 }
 
 void FilaColorTransferFunction_setF(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->f = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setF", self))->f = value;
 }
 
 double FilaColorTransferFunction_getG(const FilaColorTransferFunction* self) {
-    return fila::cpp(self)->g;
+    return fila::cpp(FILA_NONNULL("FilaColorTransferFunction_getG", self))->g;
 }
 
 void FilaColorTransferFunction_setG(FilaColorTransferFunction* self, double value) {
-    fila::cpp(self)->g = value;
+    fila::cpp(FILA_NONNULL("FilaColorTransferFunction_setG", self))->g = value;
 }
 
 } // extern "C"

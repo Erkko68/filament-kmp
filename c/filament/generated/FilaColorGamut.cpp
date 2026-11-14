@@ -5,11 +5,11 @@
 extern "C" {
 
 FilaColorGamut* FilaColorGamut_create_Primaries(const FilaColorPrimaries* primaries) {
-    return fila::c(new filament::color::Gamut(*fila::cpp(primaries)));
+    return fila::c(new filament::color::Gamut(*fila::cpp(FILA_NONNULL("FilaColorGamut_create_Primaries", primaries))));
 }
 
 FilaColorGamut* FilaColorGamut_create_float2_float2_float2(const FilaFloat2* r, const FilaFloat2* g, const FilaFloat2* b) {
-    return fila::c(new filament::color::Gamut(fila::math<filament::math::float2>(*r), fila::math<filament::math::float2>(*g), fila::math<filament::math::float2>(*b)));
+    return fila::c(new filament::color::Gamut(fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorGamut_create_float2_float2_float2", r)), fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorGamut_create_float2_float2_float2", g)), fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorGamut_create_float2_float2_float2", b))));
 }
 
 void FilaColorGamut_destroy(FilaColorGamut* self) {
@@ -17,7 +17,7 @@ void FilaColorGamut_destroy(FilaColorGamut* self) {
 }
 
 void FilaColorGamut_getPrimaries(const FilaColorGamut* self, FilaColorPrimaries* out) {
-    *fila::cpp(out) = fila::cpp(self)->getPrimaries();
+    *fila::cpp(out) = fila::cpp(FILA_NONNULL("FilaColorGamut_getPrimaries", self))->getPrimaries();
 }
 
 } // extern "C"

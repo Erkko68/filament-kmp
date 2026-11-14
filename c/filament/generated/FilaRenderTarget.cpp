@@ -13,51 +13,51 @@ void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* self) {
 }
 
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_texture(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTexture* texture) {
-    return fila::c(&fila::cpp(self)->texture(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), fila::cpp(texture)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_texture", self))->texture(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), fila::cpp(texture)));
 }
 
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t level) {
-    return fila::c(&fila::cpp(self)->mipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<uint8_t>(level)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_mipLevel", self))->mipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<uint8_t>(level)));
 }
 
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_face(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, FilaTextureCubemapFace face) {
-    return fila::c(&fila::cpp(self)->face(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<filament::backend::TextureCubemapFace>(face)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_face", self))->face(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<filament::backend::TextureCubemapFace>(face)));
 }
 
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layer) {
-    return fila::c(&fila::cpp(self)->layer(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), layer));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_layer", self))->layer(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), layer));
 }
 
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* self, FilaRenderTargetAttachmentPoint attachment, uint32_t layerCount, uint32_t baseLayer) {
-    return fila::c(&fila::cpp(self)->multiview(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<uint8_t>(layerCount), static_cast<uint8_t>(baseLayer)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_multiview", self))->multiview(static_cast<filament::RenderTarget::AttachmentPoint>(attachment), static_cast<uint8_t>(layerCount), static_cast<uint8_t>(baseLayer)));
 }
 
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* self, uint32_t samples) {
-    return fila::c(&fila::cpp(self)->samples(static_cast<uint8_t>(samples)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_samples", self))->samples(static_cast<uint8_t>(samples)));
 }
 
 FilaRenderTarget* FilaRenderTargetBuilder_build(const FilaRenderTargetBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaRenderTargetBuilder_build", engine))));
 }
 
 FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
-    return fila::c(fila::cpp(self)->getTexture(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaRenderTarget_getTexture", self))->getTexture(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
 }
 
 uint32_t FilaRenderTarget_getMipLevel(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
-    return static_cast<uint32_t>(fila::cpp(self)->getMipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRenderTarget_getMipLevel", self))->getMipLevel(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
 }
 
 FilaTextureCubemapFace FilaRenderTarget_getFace(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
-    return static_cast<FilaTextureCubemapFace>(fila::cpp(self)->getFace(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
+    return static_cast<FilaTextureCubemapFace>(fila::cpp(FILA_NONNULL("FilaRenderTarget_getFace", self))->getFace(static_cast<filament::RenderTarget::AttachmentPoint>(attachment)));
 }
 
 uint32_t FilaRenderTarget_getLayer(const FilaRenderTarget* self, FilaRenderTargetAttachmentPoint attachment) {
-    return fila::cpp(self)->getLayer(static_cast<filament::RenderTarget::AttachmentPoint>(attachment));
+    return fila::cpp(FILA_NONNULL("FilaRenderTarget_getLayer", self))->getLayer(static_cast<filament::RenderTarget::AttachmentPoint>(attachment));
 }
 
 uint32_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getSupportedColorAttachmentsCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaRenderTarget_getSupportedColorAttachmentsCount", self))->getSupportedColorAttachmentsCount());
 }
 
 } // extern "C"

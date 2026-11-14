@@ -13,27 +13,27 @@ void FilaColorPrimaries_destroy(FilaColorPrimaries* self) {
 }
 
 void FilaColorPrimaries_getR(const FilaColorPrimaries* self, FilaFloat2* out) {
-    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->r);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(FILA_NONNULL("FilaColorPrimaries_getR", self))->r);
 }
 
 void FilaColorPrimaries_setR(FilaColorPrimaries* self, const FilaFloat2* value) {
-    fila::cpp(self)->r = fila::math<filament::math::float2>(*value);
+    fila::cpp(FILA_NONNULL("FilaColorPrimaries_setR", self))->r = fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorPrimaries_setR", value));
 }
 
 void FilaColorPrimaries_getG(const FilaColorPrimaries* self, FilaFloat2* out) {
-    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->g);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(FILA_NONNULL("FilaColorPrimaries_getG", self))->g);
 }
 
 void FilaColorPrimaries_setG(FilaColorPrimaries* self, const FilaFloat2* value) {
-    fila::cpp(self)->g = fila::math<filament::math::float2>(*value);
+    fila::cpp(FILA_NONNULL("FilaColorPrimaries_setG", self))->g = fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorPrimaries_setG", value));
 }
 
 void FilaColorPrimaries_getB(const FilaColorPrimaries* self, FilaFloat2* out) {
-    *out = fila::mirror<FilaFloat2>(fila::cpp(self)->b);
+    *out = fila::mirror<FilaFloat2>(fila::cpp(FILA_NONNULL("FilaColorPrimaries_getB", self))->b);
 }
 
 void FilaColorPrimaries_setB(FilaColorPrimaries* self, const FilaFloat2* value) {
-    fila::cpp(self)->b = fila::math<filament::math::float2>(*value);
+    fila::cpp(FILA_NONNULL("FilaColorPrimaries_setB", self))->b = fila::math<filament::math::float2>(*FILA_NONNULL("FilaColorPrimaries_setB", value));
 }
 
 } // extern "C"

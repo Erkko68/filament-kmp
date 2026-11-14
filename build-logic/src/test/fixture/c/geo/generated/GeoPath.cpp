@@ -9,7 +9,7 @@ void GeoPath_destroy(GeoPath* self) {
 }
 
 float GeoPath_GetLength(const GeoPath* self) {
-    return geo_c::cpp(self)->GetLength();
+    return geo_c::cpp(GEO_C_NONNULL("GeoPath_GetLength", self))->GetLength();
 }
 
 } // extern "C"

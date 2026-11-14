@@ -13,39 +13,39 @@ void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self) {
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount) {
-    return fila::c(&fila::cpp(self)->indexCount(indexCount));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndexBufferBuilder_indexCount", self))->indexCount(indexCount));
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType) {
-    return fila::c(&fila::cpp(self)->bufferType(static_cast<filament::IndexBuffer::IndexType>(indexType)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndexBufferBuilder_bufferType", self))->bufferType(static_cast<filament::IndexBuffer::IndexType>(indexType)));
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name) {
-    return fila::c(&fila::cpp(self)->name(utils::ImmutableCString(name)));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndexBufferBuilder_name", self))->name(utils::ImmutableCString(name)));
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_async(FilaIndexBufferBuilder* self, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user) {
-    return fila::c(&fila::cpp(self)->async(fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
+    return fila::c(&fila::cpp(FILA_NONNULL("FilaIndexBufferBuilder_async", self))->async(fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user));
 }
 
 FilaIndexBuffer* FilaIndexBufferBuilder_build(const FilaIndexBufferBuilder* self, FilaEngine* engine) {
-    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
+    return fila::c(fila::cpp(FILA_NONNULL("FilaIndexBufferBuilder_build", self))->build(*fila::cpp(FILA_NONNULL("FilaIndexBufferBuilder_build", engine))));
 }
 
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
-    fila::cpp(self)->setBuffer(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+    fila::cpp(FILA_NONNULL("FilaIndexBuffer_setBuffer", self))->setBuffer(*fila::cpp(FILA_NONNULL("FilaIndexBuffer_setBuffer", engine)), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
 }
 
 uint32_t FilaIndexBuffer_setBufferAsync(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset, FilaCallbackHandler* handler, FilaIndexBufferAsyncCompletionCallback callback, void* user) {
-    return fila::cpp(self)->setBufferAsync(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset, fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
+    return fila::cpp(FILA_NONNULL("FilaIndexBuffer_setBufferAsync", self))->setBufferAsync(*fila::cpp(FILA_NONNULL("FilaIndexBuffer_setBufferAsync", engine)), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset, fila::cpp(handler), callback ? filament::IndexBuffer::AsyncCompletionCallback([=](auto a0, auto a1, auto a2) { callback(fila::c(a0), a1, static_cast<FilaAsyncCallStatus>(a2)); }) : nullptr, user);
 }
 
 uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getIndexCount());
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaIndexBuffer_getIndexCount", self))->getIndexCount());
 }
 
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self) {
-    return fila::cpp(self)->isCreationComplete();
+    return fila::cpp(FILA_NONNULL("FilaIndexBuffer_isCreationComplete", self))->isCreationComplete();
 }
 
 } // extern "C"

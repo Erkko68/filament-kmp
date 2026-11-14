@@ -13,11 +13,11 @@ void FilaMotionVectorsOptions_destroy(FilaMotionVectorsOptions* self) {
 }
 
 bool FilaMotionVectorsOptions_getEnabled(const FilaMotionVectorsOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaMotionVectorsOptions_getEnabled", self))->enabled;
 }
 
 void FilaMotionVectorsOptions_setEnabled(FilaMotionVectorsOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaMotionVectorsOptions_setEnabled", self))->enabled = value;
 }
 
 } // extern "C"

@@ -13,43 +13,43 @@ void FilaVignetteOptions_destroy(FilaVignetteOptions* self) {
 }
 
 float FilaVignetteOptions_getMidPoint(const FilaVignetteOptions* self) {
-    return fila::cpp(self)->midPoint;
+    return fila::cpp(FILA_NONNULL("FilaVignetteOptions_getMidPoint", self))->midPoint;
 }
 
 void FilaVignetteOptions_setMidPoint(FilaVignetteOptions* self, float value) {
-    fila::cpp(self)->midPoint = value;
+    fila::cpp(FILA_NONNULL("FilaVignetteOptions_setMidPoint", self))->midPoint = value;
 }
 
 float FilaVignetteOptions_getRoundness(const FilaVignetteOptions* self) {
-    return fila::cpp(self)->roundness;
+    return fila::cpp(FILA_NONNULL("FilaVignetteOptions_getRoundness", self))->roundness;
 }
 
 void FilaVignetteOptions_setRoundness(FilaVignetteOptions* self, float value) {
-    fila::cpp(self)->roundness = value;
+    fila::cpp(FILA_NONNULL("FilaVignetteOptions_setRoundness", self))->roundness = value;
 }
 
 float FilaVignetteOptions_getFeather(const FilaVignetteOptions* self) {
-    return fila::cpp(self)->feather;
+    return fila::cpp(FILA_NONNULL("FilaVignetteOptions_getFeather", self))->feather;
 }
 
 void FilaVignetteOptions_setFeather(FilaVignetteOptions* self, float value) {
-    fila::cpp(self)->feather = value;
+    fila::cpp(FILA_NONNULL("FilaVignetteOptions_setFeather", self))->feather = value;
 }
 
 void FilaVignetteOptions_getColor(const FilaVignetteOptions* self, FilaFloat4* out) {
-    *out = fila::mirror<FilaFloat4>(fila::cpp(self)->color);
+    *out = fila::mirror<FilaFloat4>(fila::cpp(FILA_NONNULL("FilaVignetteOptions_getColor", self))->color);
 }
 
 void FilaVignetteOptions_setColor(FilaVignetteOptions* self, const FilaFloat4* value) {
-    fila::cpp(self)->color = fila::math<filament::math::float4>(*value);
+    fila::cpp(FILA_NONNULL("FilaVignetteOptions_setColor", self))->color = fila::math<filament::math::float4>(*FILA_NONNULL("FilaVignetteOptions_setColor", value));
 }
 
 bool FilaVignetteOptions_getEnabled(const FilaVignetteOptions* self) {
-    return fila::cpp(self)->enabled;
+    return fila::cpp(FILA_NONNULL("FilaVignetteOptions_getEnabled", self))->enabled;
 }
 
 void FilaVignetteOptions_setEnabled(FilaVignetteOptions* self, bool value) {
-    fila::cpp(self)->enabled = value;
+    fila::cpp(FILA_NONNULL("FilaVignetteOptions_setEnabled", self))->enabled = value;
 }
 
 } // extern "C"
