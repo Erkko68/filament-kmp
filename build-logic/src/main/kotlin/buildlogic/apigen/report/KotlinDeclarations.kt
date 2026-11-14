@@ -17,6 +17,20 @@ internal class KotlinDeclarations(private val sources: String) {
      */
     fun defaults(qualified: String): Map<String, String>? = find(qualified, ::defaults)?.first()
 
+    /**
+     * The default arguments, by parameter, of each function [name] (its first letter in either case) that the Kotlin
+     * class the C++ [qualified] name maps to declares itself, a nested class's aside.
+     */
+    fun arguments(qualified: String, name: String): List<Map<String, String>> = scope(qualified).orEmpty().flatMap { body ->
+        Regex("""\bfun\s+(?:<[^>]*>\s*)?(?i:${name.first()})${Regex.escape(name.drop(1))}\s*\(""").findAll(body)
+            // Its own: inside the class's braces and no others.
+            .filter { m -> body.substring(0, m.range.first).let { before -> before.count { it == '{' } - before.count { it == '}' } } == 1 }
+            .map { m ->
+                split(body.substring(m.range.last + 1, closing(body, m.range.last)), ',')
+                    .mapNotNull { ARGUMENT.matchEntire(it.trim()) }.associate { it.groupValues[1] to it.groupValues[2].trim() }
+            }
+    }
+
     private fun scope(qualified: String): List<String>? = find(qualified, ::bodies)
 
     /**
@@ -99,6 +113,8 @@ internal class KotlinDeclarations(private val sources: String) {
     private companion object {
         val NEXT_DECLARATION = Regex("""\b(?:class|object|interface|fun|val|var|typealias)\b""")
         val BODY_OR_SUPERTYPE = setOf('{', ':')
+        /** A parameter with a default: the name, its type, `=` and the default. */
+        val ARGUMENT = Regex("""(?:vararg\s+)?(\w+)\s*:[^=]*=(?!=)\s*(.+)""", RegexOption.DOT_MATCHES_ALL)
         /** A property with a default: annotations and modifiers, `var` or `val`, the name, any type, `=` and the default. */
         val PROPERTY = Regex("""(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:private|internal|public|protected|override|open|lateinit|const)\s+)*(?:var|val)\s+(\w+)\s*(?::[^=]*)?=(?!=)\s*(.+)""", RegexOption.DOT_MATCHES_ALL)
     }

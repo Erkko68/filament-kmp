@@ -92,7 +92,7 @@ public:
     std::optional<float> GetRadius() const;
     void SetRadius(std::optional<float> radius);
 
-    void Move(float dx, float dy);
+    void Move(float dx, float dy = 0);
     void Move(const math::float2& delta);
     void Scale(math::float3& factors);
     void Normalize(math::float4& plane);

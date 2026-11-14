@@ -16,6 +16,9 @@ class Canvas {
 
 class Shape internal constructor(internal val handle: NativePointer) {
     val kind: Kind get() = GeoShape_GetKind(handle).let { value -> Kind.entries.first { it.value == value } }
+
+    // C++'s default argument: apiVerify compares it.
+    fun move(dx: Float, dy: Float = 0f) = GeoShape_Move_float_float(handle, dx, dy)
 }
 
 enum class Kind(internal val value: Int) { CIRCLE(0), POLYGON(5) }

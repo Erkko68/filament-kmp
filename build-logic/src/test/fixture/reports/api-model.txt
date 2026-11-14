@@ -32,7 +32,7 @@ class geo::Shape
   std::string_view{ext:std::string_view} geo::Shape::GetLabel() const
   std::optional<float>{ext:std::optional} geo::Shape::GetRadius() const
   void geo::Shape::SetRadius(std::optional<float>{ext:std::optional} radius)
-  void geo::Shape::Move(float dx, float dy)
+  void geo::Shape::Move(float dx, float dy = 0)
   void geo::Shape::Move(const math::float2 &{ext:geo::math::float2} delta)
   void geo::Shape::Scale(math::float3 &{ext:geo::math::float3} factors)
   void geo::Shape::Normalize(math::float4 &{ext:geo::math::float4} plane)

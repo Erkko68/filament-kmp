@@ -1,6 +1,7 @@
 package buildlogic.apigen
 
 import buildlogic.apigen.report.KotlinDeclarations
+import buildlogic.apigen.report.argumentsCheck
 import buildlogic.apigen.report.defaultsCheck
 import buildlogic.apigen.report.enumCheck
 import buildlogic.apigen.report.kotlinApiSources
@@ -48,6 +49,16 @@ class FixtureTest {
             ),
             defaultsCheck(api, wrong, GEO_API.naming).wrong,
         )
+    }
+
+    @Test
+    fun `apiVerify finds a Kotlin default argument that isn't C++'s`() {
+        val api = ApiGen(GEO_API, FIXTURE, temporaryDir()).api()
+        val check = argumentsCheck(api, KotlinDeclarations(kotlinApiSources(FIXTURE.resolve("kotlin"))))
+        assertEquals(1 to emptyList(), check.checked to check.wrong)
+        // A nested class's function isn't Shape's.
+        val wrong = KotlinDeclarations("class Shape {\n fun move(dx: Float, dy: Float = 1f) {}\n class Other { fun move(dy: Float = 2f) {} }\n}")
+        assertEquals(listOf("geo::Shape::Move(dy) is 0 in C++, 1f in Kotlin"), argumentsCheck(api, wrong).wrong)
     }
 
     /** What the tasks write, the glue and the model report in place of the build dir. */

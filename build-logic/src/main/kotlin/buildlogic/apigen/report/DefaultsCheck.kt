@@ -26,6 +26,26 @@ internal fun defaultsCheck(api: CppApi, declarations: KotlinDeclarations, naming
     return Check(checked, wrong)
 }
 
+/**
+ * Checks the default arguments of the hand-written Kotlin functions against C++'s: a parameter of a function named as
+ * a C++ method of the class it mirrors, itself named as one of that method's defaulted parameters, must default to the
+ * same value as one of the method's overloads does. Compared as [defaultsCheck] compares.
+ */
+internal fun argumentsCheck(api: CppApi, declarations: KotlinDeclarations): Check {
+    var checked = 0
+    val wrong = api.surface.mapNotNull { api.records[it] }.flatMap { record ->
+        record.methods.filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.any { it.default != null } }.groupBy { it.name }.flatMap { (name, overloads) ->
+            val defaults = overloads.flatMap { it.params }.filter { it.default != null }.groupBy({ it.name }) { it.default!! }
+            declarations.arguments(record.name, name).flatMap { it.entries }.mapNotNull { (parameter, kotlin) ->
+                val same = defaults[parameter]?.map { matches(it, kotlin) }?.takeIf { null !in it } ?: return@mapNotNull null
+                checked++
+                "${record.name}::$name($parameter) is ${defaults.getValue(parameter).joinToString(" or ")} in C++, $kotlin in Kotlin".takeIf { true !in same }
+            }
+        }
+    }
+    return Check(checked, wrong.distinct())
+}
+
 /** Whether [kotlin] spells the value of [cpp]; null when the two can't be compared. */
 private fun matches(cpp: CppValue, kotlin: String): Boolean? = when (cpp) {
     is CppValue.Literal -> literal(cpp.text, kotlin)
