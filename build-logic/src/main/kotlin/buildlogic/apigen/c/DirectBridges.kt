@@ -11,6 +11,8 @@ import buildlogic.apigen.TypeTables
 class DirectBridges internal constructor(
     private val config: TypeTables, private val names: CNames,
     val const: Boolean, val indirection: String?, val result: Boolean, val lvalue: Boolean,
+    /** An array's element, in memory: a builtin keeps its width. */
+    private val stored: Boolean = false,
 ) {
     private val h = names.helpers
     val byValue = indirection == null || (indirection == "&" && const)
@@ -42,8 +44,8 @@ class DirectBridges internal constructor(
     fun builtin(spelled: String): CBridge {
         val base = spelled.removePrefix("std::")
         if (byValue) {
-            val cType = CAbi.byValue(base)
-            return CBridge(cType, if (cType == base) { v -> v } else cast(cType, base), out = result && CAbi.returnsThroughPointer(cType))
+            val cType = if (stored) CAbi.stored(base) else CAbi.byValue(base)
+            return CBridge(cType, if (cType == base) { v -> v } else cast(cType, base), out = result && !stored && CAbi.returnsThroughPointer(cType))
         }
         CAbi.checkPointee(base)
         return when {

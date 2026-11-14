@@ -6,6 +6,8 @@
 #include "geo/generated/GeoBox.h"
 #include "geo/generated/GeoCanvas.h"
 #include "geo/generated/GeoCircle.h"
+#include "geo/generated/GeoEdge.h"
+#include "geo/generated/GeoFlags.h"
 #include "geo/generated/GeoGeo.h"
 #include "geo/generated/GeoLimits.h"
 #include "geo/generated/GeoPath.h"

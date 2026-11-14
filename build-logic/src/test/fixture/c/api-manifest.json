@@ -44,6 +44,23 @@
 {"name":"GeoCircle_release","returns":"void","params":[["self","ptr"]]},
 {"name":"GeoCircle_asShape","returns":"ptr","params":[["self","ptr"]]}
 ],
+"geo/generated/GeoEdge.h": [
+{"name":"GeoEdge_create","returns":"ptr","params":[]},
+{"name":"GeoEdge_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoEdge_Clone","returns":"ptr","params":[["self","ptr"]]},
+{"name":"GeoEdge_Merge","returns":"void","params":[["self","ptr"],["other","ptr"]]},
+{"name":"GeoEdge_GetBytes","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoEdge_SetBytes","returns":"void","params":[["self","ptr"],["bytes","ptr"],["bytesCount","i32"]]}
+],
+"geo/generated/GeoFlags.h": [
+{"name":"GeoFlags_create","returns":"ptr","params":[]},
+{"name":"GeoFlags_destroy","returns":"void","params":[["self","ptr"]]},
+{"name":"GeoFlags_GetId","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoFlags_GetBits","returns":"i32","params":[["self","ptr"]]},
+{"name":"GeoFlags_SetBits","returns":"void","params":[["self","ptr"],["value","i32"]]},
+{"name":"GeoFlags_GetTag","returns":"i32","params":[["self","ptr"],["out","ptr"],["outCapacity","i32"]]},
+{"name":"GeoFlags_SetTag","returns":"void","params":[["self","ptr"],["value","ptr"],["valueCount","i32"]]}
+],
 "geo/generated/GeoGeo.h": [
 {"name":"Geo_Distance","returns":"f32","params":[["a","ptr"],["b","ptr"]]},
 {"name":"Geo_Reset","returns":"void","params":[]}

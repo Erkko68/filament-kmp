@@ -9,10 +9,10 @@ package buildlogic.apigen.c
  */
 internal object CAbi {
     /** The C type standing in for the builtin [cpp] by value. */
-    fun byValue(cpp: String): String {
-        val fixed = FIXED[cpp.removePrefix("std::")] ?: throw Unsupported("$cpp: no fixed-width C type")
-        return WIDENED[fixed] ?: fixed
-    }
+    fun byValue(cpp: String) = stored(cpp).let { WIDENED[it] ?: it }
+
+    /** The C type of a builtin [cpp] in memory, an array's element: nothing passes it, so it keeps its width. */
+    fun stored(cpp: String) = FIXED[cpp.removePrefix("std::")] ?: throw Unsupported("$cpp: no fixed-width C type")
 
     /** Pointers keep the C++ spelling, so its width must be the same on every target. */
     fun checkPointee(cpp: String) {

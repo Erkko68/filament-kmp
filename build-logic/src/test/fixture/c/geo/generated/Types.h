@@ -20,6 +20,8 @@ typedef struct GeoBlob GeoBlob;
 typedef struct GeoBox GeoBox;
 typedef struct GeoCanvas GeoCanvas;
 typedef struct GeoCircle GeoCircle;
+typedef struct GeoEdge GeoEdge;
+typedef struct GeoFlags GeoFlags;
 typedef struct GeoLimits GeoLimits;
 typedef struct GeoPath GeoPath;
 typedef struct GeoPolygon GeoPolygon;

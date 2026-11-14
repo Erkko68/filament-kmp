@@ -2,6 +2,7 @@ package buildlogic.apigen
 
 import buildlogic.apigen.bindings.bindingFiles
 import buildlogic.apigen.c.CApi
+import buildlogic.apigen.c.BROKEN
 import buildlogic.apigen.c.CApiWriter
 import buildlogic.apigen.c.CManifest
 import buildlogic.apigen.cpp.CppApi
@@ -53,21 +54,37 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
         return api
     }
 
-    /** The c stage: [api] in C, less the functions the [manualHeaders] declare. */
-    fun cApi(api: CppApi = api()): CApi {
+    /**
+     * The c stage: [api] in C, less the functions the [manualHeaders] declare. The [broken] ones, whose forwarder the
+     * compiler rejected, become TODOs: by default the ones the generated headers on disk say were.
+     */
+    fun cApi(api: CppApi = api(), broken: Set<String> = brokenOnDisk()): CApi {
         val function = Regex("""\b(${Regex.escape(config.c.prefix)}\w+)\s*\(""")
         val manual = manualHeaders().flatMap { function.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
-        return CApiWriter(api, config, apiHeaders, manual).write()
+        return CApiWriter(api, config, apiHeaders, manual, broken).write()
     }
+
+    private fun brokenOnDisk() = generatedDirs().flatMap { it.listFiles { f -> f.extension == "h" }.orEmpty().toList() }
+        .flatMap { BROKEN_NOTE.findAll(it.readText()).map { m -> m.groupValues[1] } }.toSet()
 
     /** [CApi.files] on disk, in place of the generated dirs. */
     fun cFiles(c: CApi) = GeneratedFiles(cDir, generatedDirs(), c.files)
 
-    /** Writes the C API and the manifest of what its headers declare, once it compiles. */
-    fun generateCApi(): CApi = cApi().also { c ->
-        cFiles(c).write()
-        checkCompiles(c.files.keys.map(cDir::resolve))
+    /**
+     * Writes the C API and the manifest of what its headers declare, once it compiles. The compiler has the last
+     * word on what C++ allows: a forwarder it rejects is written again as a TODO.
+     */
+    fun generateCApi(): CApi {
+        val api = api()
+        var c = cApi(api, emptySet()).also { cFiles(it).write() }
+        val broken = checkCompiles(c.files.keys.map(cDir::resolve))
+        if (broken.isNotEmpty()) {
+            println("${broken.size} forwarders don't compile, left as TODO(handwritten):\n" + broken.entries.joinToString("\n") { (name, error) -> "  $name: $error" })
+            c = cApi(api, broken.keys).also { cFiles(it).write() }
+            check(checkCompiles(c.files.keys.map(cDir::resolve)).isEmpty()) { "Generated C API still doesn't compile without ${broken.keys}" }
+        }
         manifestFile.writeText(manifest().json())
+        return c
     }
 
     /** The functions the C headers on disk declare, generated and hand-written. */
@@ -95,18 +112,37 @@ internal class ApiGen(val config: ApiGenConfig, projectDir: File, workDir: File)
 
     /**
      * Checks the generated headers among [files] parse as C, and the forwarders compile against the library's headers,
-     * a module at a time as the build compiles them: one can't lean on another's includes.
+     * a module at a time as the build compiles them: one can't lean on another's includes. Returns the forwarders that
+     * don't, each with the compiler's error; fails on an error outside one, and on a warning: clang's default ones are
+     * dangling pointers and the like.
      */
-    fun checkCompiles(files: Collection<File>) {
-        compile("headers.c", files.filter { it.extension == "h" }, listOf("clang", "-x", "c", "-std=c11"))
+    fun checkCompiles(files: Collection<File>): Map<String, String> {
+        compile("headers.c", files.filter { it.extension == "h" }, listOf("clang", "-x", "c", "-std=c11", "-Werror"))?.let { error("Generated C headers don't parse:\n$it") }
+        val broken = LinkedHashMap<String, String>()
         files.filter { it.extension == "cpp" }.groupBy { it.parentFile.parentFile.name }.forEach { (module, forwarders) ->
-            compile("$module.cpp", forwarders, listOf("clang++", "-std=${config.sources.std}") + config.sources.clangArgs + listOf("-I", includeDir.path))
+            val command = listOf("clang++", "-std=${config.sources.std}", "-Werror", "-ferror-limit=0") + config.sources.clangArgs + listOf("-I", includeDir.path)
+            val errors = compile("$module.cpp", forwarders, command) ?: return@forEach
+            val paths = forwarders.associateBy { it.path }
+            // An error and the notes after it: the first place among them in a forwarder names the one to blame.
+            errors.split(Regex("""(?m)^(?=.*: (fatal )?error: )""")).filter { ": error: " in it || ": fatal error: " in it }.forEach { diagnostic ->
+                val (file, line) = DIAGNOSTIC.findAll(diagnostic).firstNotNullOfOrNull { m -> paths[m.groupValues[1]]?.let { it to m.groupValues[2].toInt() } }
+                    ?: error("Generated C API doesn't compile ($module.cpp):\n$errors")
+                val signature = file.readLines().take(line).last { it.endsWith(" {") && !it[0].isWhitespace() }
+                broken.putIfAbsent(Regex("""(\w+)\(""").find(signature)!!.groupValues[1], diagnostic.lineSequence().first().substringAfter("error: "))
+            }
         }
+        return broken
     }
 
-    private fun compile(unit: String, sources: List<File>, command: List<String>) {
+    /** clang's errors for a unit including [sources], or null when it compiles. */
+    private fun compile(unit: String, sources: List<File>, command: List<String>): String? {
         val file = workDir.apply { mkdirs() }.resolve(unit).apply { writeText(sources.joinToString("") { "#include \"${it.absolutePath}\"\n" }) }
         val (exit, errors) = clang(command + listOf("-fsyntax-only", file.path), workDir)
-        check(exit == 0) { "Generated C API doesn't compile ($unit):\n$errors" }
+        return errors.takeIf { exit != 0 }
+    }
+
+    private companion object {
+        val BROKEN_NOTE = Regex("""// TODO\(handwritten\) (\w+): .*\n//     ${Regex.escape(BROKEN)}""")
+        val DIAGNOSTIC = Regex("""(?m)^(.+?):(\d+):\d+: """)
     }
 }

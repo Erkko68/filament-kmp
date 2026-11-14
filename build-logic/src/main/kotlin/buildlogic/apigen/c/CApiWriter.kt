@@ -20,6 +20,8 @@ import buildlogic.apigen.cpp.CppType
  */
 internal class CApiWriter(
     private val api: CppApi, private val config: ApiGenConfig, private val apiHeaders: ApiHeaders, private val manual: Set<String> = emptySet(),
+    /** Functions whose forwarder the compiler rejected. */
+    private val broken: Set<String> = emptySet(),
 ) {
     private val names = CNames(config.c, config.naming)
     private val h = names.helpers
@@ -154,6 +156,7 @@ internal class CApiWriter(
 
     private fun forwarder(method: CppMethod, name: String, templateArguments: List<String> = emptyList()): Pair<String, String> {
         if (api.records[method.owner]?.let(templates::uninstantiated) == true) throw Unsupported("member of a class template")
+        if (method.isVariadic) throw Unsupported("variadic")
         val returns = bridges.result(method.returns)
         val params = bridge(method.params)
         val const = if (method.isConst) "const " else ""
@@ -181,6 +184,11 @@ internal class CApiWriter(
             else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = names.setter(record.name, field.name)
+        if (shape(field.type.spelling).let { it.const && it.indirection.isEmpty() }) {
+            section.declarations.appendLine("// no $setter: const")
+            bindings += Binding(setter, cpp, Status.SKIPPED, "const")
+            return
+        }
         if (records.getterOnly(record, field)) {
             section.declarations.appendLine("// no $setter: ${record.name} is only a result, and C would have to keep the pointer")
             bindings += Binding(setter, cpp, Status.SKIPPED, "${record.name} is only a result, and C would have to keep the pointer")
@@ -199,7 +207,10 @@ internal class CApiWriter(
      */
     private fun emit(name: String, cpp: String, section: Section, guard: String? = null, doc: String? = null, build: () -> Pair<String, String>) {
         val (code, reason) = try {
-            build().also { if (name in functionNames) throw Unsupported("$name is already generated for another overload") } to null
+            build().also {
+                if (name in functionNames) throw Unsupported("$name is already generated for another overload")
+                if (name in broken) throw Unsupported(BROKEN)
+            } to null
         } catch (e: Unsupported) {
             null to e.message
         }
@@ -273,7 +284,11 @@ internal class CApiWriter(
         text.append(if (module == baseModule) "#include \"${config.c.bridgeHeader ?: "Bridge.hpp"}\"\n" else "#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("\n").append(api.headers.filter { moduleOf(it) == module }.joinToString("") { "#include <$it>\n" })
         text.append("#include \"Types.h\"\n\nnamespace $h {\n\n")
-        if (module == baseModule) bridges.mathTypes.forEach { text.appendLine("$typeMacro(${names.type(it)}, $it)") }
+        // The compiler checks the config's mirrors on every target: C's struct is the type's storage, aligned for a cast.
+        if (module == baseModule) bridges.mathTypes.forEach {
+            val align = if (config.types.mirrors.getValue(it).aligned) "" else " && alignof($it) <= alignof(${names.type(it)})"
+            text.appendLine("$typeMacro(${names.type(it)}, $it)\nstatic_assert(sizeof($it) == sizeof(${names.type(it)})$align, \"${names.type(it)} doesn't mirror $it\");")
+        }
         moduleRecords(module).filter { it.accessible }
             .forEach { text.appendLine("$typeMacro(${names.type(it.name)}, ${templates.cpp(it.name)})") }
         return text.append("\n} // namespace $h\n").toString()
@@ -342,3 +357,6 @@ internal class CApiWriter(
         val RESERVED = setOf("self", "out")
     }
 }
+
+/** Why a function the compiler rejected is a TODO, as its note says. */
+internal const val BROKEN = "the forwarder doesn't compile"
