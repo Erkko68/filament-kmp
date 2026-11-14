@@ -10,6 +10,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Fixed
+- **No flip at the top or bottom of an orbit** (`filament-compose`): above ~88° the view snapped upside down and stopped turning.
+
 ## [0.10.0] — 2026-11-12
 
 Filament 1.80.1, and `filament-compose` screens load with far less UI stall: textures and HDR environments decode off the main thread.
