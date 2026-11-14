@@ -361,10 +361,17 @@ internal data class CameraSnapshot(
     val scaling: LensScaling,
 ) {
     fun applyTo(camera: FilamentCamera, aspect: Double) {
+        // Up perpendicular to the gaze, as camutils' getLookAt: Filament's lookAt swaps an up within ~0.8° of the
+        // gaze for another axis (mat3 lookTo), flipping the view near the poles.
+        val gx = (target.x - eye.x).toDouble(); val gy = (target.y - eye.y).toDouble(); val gz = (target.z - eye.z).toDouble()
+        val g2 = gx * gx + gy * gy + gz * gz
+        val k = if (g2 > 0.0) (up.x * gx + up.y * gy + up.z * gz) / g2 else 0.0
+        var ux = up.x - gx * k; var uy = up.y - gy * k; var uz = up.z - gz * k
+        if (ux * ux + uy * uy + uz * uz < 1e-12) { ux = up.x.toDouble(); uy = up.y.toDouble(); uz = up.z.toDouble() }
         camera.lookAt(
             eye.x.toDouble(), eye.y.toDouble(), eye.z.toDouble(),
             target.x.toDouble(), target.y.toDouble(), target.z.toDouble(),
-            up.x.toDouble(), up.y.toDouble(), up.z.toDouble(),
+            ux, uy, uz,
         )
         when (val p = projection) {
             is Projection.Perspective  -> camera.setProjection(p.fovDegrees, aspect, p.near, p.far, p.fovDirection)

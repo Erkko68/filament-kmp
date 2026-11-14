@@ -5,6 +5,9 @@ import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.utils.Float4
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -40,6 +43,15 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         assertEquals(3.0, pos[0], 1e-4)
         assertEquals(4.0, pos[1], 1e-4)
         assertEquals(5.0, pos[2], 1e-4)
+    }
+
+    /** Near the pole the orbit allows (89.9°) the screen's up still leans away from the eye, not flipped to +Z. */
+    @Test
+    fun upKeepsItsRollNearThePole() {
+        val camera = newCamera()
+        val phi = PI / 2 - 0.002
+        snapshot(eye = Position(0f, (10 * sin(phi)).toFloat(), (10 * cos(phi)).toFloat())).applyTo(camera, aspect = 1.0)
+        assertTrue(camera.getUpVector()[2] < -0.99f, "up was ${camera.getUpVector().toList()}")
     }
 
     @Test
