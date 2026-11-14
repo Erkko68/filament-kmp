@@ -17,6 +17,9 @@ class Canvas {
 class Shape internal constructor(internal val handle: NativePointer) {
     val kind: Kind get() = GeoShape_GetKind(handle).let { value -> Kind.entries.first { it.value == value } }
 
+    // C++ takes a reference: apiVerify checks Kotlin takes no null.
+    fun setStyle(style: Style) = Unit
+
     // C++'s default argument: apiVerify compares it.
     fun move(dx: Float, dy: Float = 0f) = GeoShape_Move_float_float(handle, dx, dy)
 }

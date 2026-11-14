@@ -36,7 +36,8 @@ internal fun argumentsCheck(api: CppApi, declarations: KotlinDeclarations): Chec
     val wrong = api.surface.mapNotNull { api.records[it] }.flatMap { record ->
         record.methods.filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.any { it.default != null } }.groupBy { it.name }.flatMap { (name, overloads) ->
             val defaults = overloads.flatMap { it.params }.filter { it.default != null }.groupBy({ it.name }) { it.default!! }
-            declarations.arguments(record.name, name).flatMap { it.entries }.mapNotNull { (parameter, kotlin) ->
+            declarations.parameters(record.name, name).flatten().mapNotNull { p ->
+                val (parameter, kotlin) = p.name to (p.default ?: return@mapNotNull null)
                 val same = defaults[parameter]?.map { matches(it, kotlin) }?.takeIf { null !in it } ?: return@mapNotNull null
                 checked++
                 "${record.name}::$name($parameter) is ${defaults.getValue(parameter).joinToString(" or ")} in C++, $kotlin in Kotlin".takeIf { true !in same }

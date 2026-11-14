@@ -22,7 +22,7 @@ internal class CBridges(
     /** [type] as a parameter: [CBridge.convert] turns the C argument into C++'s. */
     fun param(type: CppType, stored: Boolean = false) = of(type, result = false, stored = stored).let { bridge ->
         // A pointer C++ declares `_Nonnull`, which C passes as it is.
-        if (NONNULL in type.spelling.substringAfterLast('*') && bridge.c.endsWith("*") && bridge.extra.isEmpty()) bridge.guarded(names::nonNull) else bridge
+        if (type.spelling.trim().endsWith(NONNULL) && bridge.c.endsWith("*") && bridge.extra.isEmpty()) bridge.guarded(names::nonNull) else bridge
     }
 
     /**

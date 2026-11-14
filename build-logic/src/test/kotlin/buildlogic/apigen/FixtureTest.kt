@@ -5,6 +5,7 @@ import buildlogic.apigen.report.argumentsCheck
 import buildlogic.apigen.report.defaultsCheck
 import buildlogic.apigen.report.enumCheck
 import buildlogic.apigen.report.kotlinApiSources
+import buildlogic.apigen.report.nullabilityCheck
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
@@ -59,6 +60,15 @@ class FixtureTest {
         // A nested class's function isn't Shape's.
         val wrong = KotlinDeclarations("class Shape {\n fun move(dx: Float, dy: Float = 1f) {}\n class Other { fun move(dy: Float = 2f) {} }\n}")
         assertEquals(listOf("geo::Shape::Move(dy) is 0 in C++, 1f in Kotlin"), argumentsCheck(api, wrong).wrong)
+    }
+
+    @Test
+    fun `apiVerify finds a Kotlin null where C++ takes a reference`() {
+        val api = ApiGen(GEO_API, FIXTURE, temporaryDir()).api()
+        val check = nullabilityCheck(api, KotlinDeclarations(kotlinApiSources(FIXTURE.resolve("kotlin"))))
+        assertEquals(1 to emptyList(), check.checked to check.wrong)
+        val wrong = KotlinDeclarations("class Shape {\n fun setStyle(style: Style?) {}\n fun setName(name: String?) {}\n}")
+        assertEquals(listOf("geo::Shape::SetStyle(style) is const Style & in C++, Style? in Kotlin"), nullabilityCheck(api, wrong).wrong)
     }
 
     /** What the tasks write, the glue and the model report in place of the build dir. */
