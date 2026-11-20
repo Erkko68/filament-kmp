@@ -53,6 +53,7 @@ geometry/SurfaceOrientation.h
 -utils::EntityManager::registerWatermark
 -utils::EntityManager::rebindWatermark
 -utils::EntityManager::unregisterWatermark
+-utils::EntityManager::getEntity
 -utils::EntityManager::registerChangeCallback
 -utils::EntityManager::unregisterChangeCallback
 # Covered by feature(name, value) and getChildren().
@@ -93,7 +94,7 @@ gltfio/*.h
 # Driven by ResourceLoader and AssetLoader, or only for writing a C++ MaterialProvider.
 -filament::gltfio::TextureProvider::.*
 -filament::gltfio::processShaderString
--filament::gltfio::MaterialKey::padding
+-filament::gltfio::MaterialKey::padding\d*
 -filament::gltfio::NodeManager
 -filament::gltfio::TrsTransformManager
 # Lives in libgltfio (JIT via filamat), which only desktop prebuilds; every platform links gltfio_core.

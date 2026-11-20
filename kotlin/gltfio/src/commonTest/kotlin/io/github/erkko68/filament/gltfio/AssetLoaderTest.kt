@@ -77,7 +77,7 @@ class AssetLoaderTest : GltfioTestFixture() {
         load(TestGlb.getDuckGlbBytes())
         val compiled = loader.materials.map { it.name }
         load(TestGlb.getDuckGlbBytes())
-        assertEquals(listOf("base_lit_opaque"), compiled)
+        assertEquals(listOf("base_lit_opaque_nocc"), compiled)
         assertEquals(compiled, loader.materials.map { it.name })
         assertEquals(provider.materials.map { it.nativeObject }, loader.materials.map { it.nativeObject })
     }

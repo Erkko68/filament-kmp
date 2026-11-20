@@ -2386,7 +2386,13 @@ typedef enum FilaUserVariantFilterBit {
     FILA_USER_VARIANT_FILTER_BIT_SHADOW_RECEIVER = 4,
     /** Skinning */
     FILA_USER_VARIANT_FILTER_BIT_SKINNING = 8,
-    /** Fog */
+    /**
+     * Fog
+     *
+     * \note Since fog was migrated to specialization constants, filtering this bit no longer
+     * removes shader variants. It removes the fog code (and its sampler) from offline compiled
+     * materials (.filamat), and prevents fog specializations from being compiled at runtime.
+     */
     FILA_USER_VARIANT_FILTER_BIT_FOG = 16,
     /** Variance shadow maps */
     FILA_USER_VARIANT_FILTER_BIT_VSM = 32,
@@ -3220,6 +3226,14 @@ typedef enum FilaTextureFormat {
     FILA_TEXTURE_FORMAT_RGB_BPTC_UNSIGNED_FLOAT = 106,
     FILA_TEXTURE_FORMAT_RGBA_BPTC_UNORM = 107,
     FILA_TEXTURE_FORMAT_SRGB_ALPHA_BPTC_UNORM = 108,
+    FILA_TEXTURE_FORMAT_R16 = 109,
+    FILA_TEXTURE_FORMAT_R16_SNORM = 110,
+    FILA_TEXTURE_FORMAT_RG16 = 111,
+    FILA_TEXTURE_FORMAT_RG16_SNORM = 112,
+    FILA_TEXTURE_FORMAT_RGB16 = 113,
+    FILA_TEXTURE_FORMAT_RGB16_SNORM = 114,
+    FILA_TEXTURE_FORMAT_RGBA16 = 115,
+    FILA_TEXTURE_FORMAT_RGBA16_SNORM = 116,
 } FilaTextureFormat;
 
 // filament::backend::TextureSwizzle

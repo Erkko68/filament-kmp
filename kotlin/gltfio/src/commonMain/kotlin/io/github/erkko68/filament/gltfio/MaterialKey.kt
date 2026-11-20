@@ -19,7 +19,7 @@ enum class AlphaMode {
  * MaterialKey holds a set of boolean flags and texture coordinates that describe the
  * properties of a glTF material. MaterialProvider uses this to determine which material
  * to create or select. Key properties include texture presence, shading model, alpha mode,
- * and advanced features like clearcoat and transmission.
+ * and advanced features like clearcoat, transmission and iridescence.
  *
  * @see MaterialProvider
  */
@@ -114,6 +114,32 @@ data class MaterialKey(
     var hasRetroreflectionTexture: Boolean = false,
     /** glTF texcoord set index for the retroreflection texture. */
     var retroreflectionUV: Int = 0,
+    /** Iridescence is enabled (`KHR_materials_iridescence`). */
+    var hasIridescence: Boolean = false,
+    /** An iridescence intensity texture is bound. */
+    var hasIridescenceTexture: Boolean = false,
+    /** glTF texcoord set index for the iridescence texture. */
+    var iridescenceUV: Int = 0,
+    /** An iridescence thickness texture is bound. */
+    var hasIridescenceThicknessTexture: Boolean = false,
+    /** glTF texcoord set index for the iridescence thickness texture. */
+    var iridescenceThicknessUV: Int = 0,
+    /** Anisotropy is enabled (`KHR_materials_anisotropy`). */
+    var hasAnisotropy: Boolean = false,
+    /** An anisotropy texture is bound. */
+    var hasAnisotropyTexture: Boolean = false,
+    /** glTF texcoord set index for the anisotropy texture. */
+    var anisotropyUV: Int = 0,
+    /** Diffuse transmission is enabled (`KHR_materials_diffuse_transmission`). */
+    var hasDiffuseTransmission: Boolean = false,
+    /** A diffuse transmission texture is bound. */
+    var hasDiffuseTransmissionTexture: Boolean = false,
+    /** glTF texcoord set index for the diffuse transmission texture. */
+    var diffuseTransmissionUV: Int = 0,
+    /** A diffuse transmission color texture is bound. */
+    var hasDiffuseTransmissionColorTexture: Boolean = false,
+    /** glTF texcoord set index for the diffuse transmission color texture. */
+    var diffuseTransmissionColorUV: Int = 0,
 ) {
     /** [hasMetallicRoughnessTexture] under its specular-glossiness name: the same bit in C++'s union. */
     var hasSpecularGlossinessTexture: Boolean
@@ -210,6 +236,19 @@ internal fun MaterialKey.writeTo(k: NativePointer) {
     FilaGltfioMaterialKey_setHasRetroreflection(k, hasRetroreflection)
     FilaGltfioMaterialKey_setHasRetroreflectionTexture(k, hasRetroreflectionTexture)
     FilaGltfioMaterialKey_setRetroreflectionUV(k, retroreflectionUV)
+    FilaGltfioMaterialKey_setHasIridescence(k, hasIridescence)
+    FilaGltfioMaterialKey_setHasIridescenceTexture(k, hasIridescenceTexture)
+    FilaGltfioMaterialKey_setIridescenceUV(k, iridescenceUV)
+    FilaGltfioMaterialKey_setHasIridescenceThicknessTexture(k, hasIridescenceThicknessTexture)
+    FilaGltfioMaterialKey_setIridescenceThicknessUV(k, iridescenceThicknessUV)
+    FilaGltfioMaterialKey_setHasAnisotropy(k, hasAnisotropy)
+    FilaGltfioMaterialKey_setHasAnisotropyTexture(k, hasAnisotropyTexture)
+    FilaGltfioMaterialKey_setAnisotropyUV(k, anisotropyUV)
+    FilaGltfioMaterialKey_setHasDiffuseTransmission(k, hasDiffuseTransmission)
+    FilaGltfioMaterialKey_setHasDiffuseTransmissionTexture(k, hasDiffuseTransmissionTexture)
+    FilaGltfioMaterialKey_setDiffuseTransmissionUV(k, diffuseTransmissionUV)
+    FilaGltfioMaterialKey_setHasDiffuseTransmissionColorTexture(k, hasDiffuseTransmissionColorTexture)
+    FilaGltfioMaterialKey_setDiffuseTransmissionColorUV(k, diffuseTransmissionColorUV)
 }
 
 @PublishedApi
@@ -259,4 +298,17 @@ internal fun MaterialKey.readFrom(k: NativePointer) {
     hasRetroreflection = FilaGltfioMaterialKey_getHasRetroreflection(k)
     hasRetroreflectionTexture = FilaGltfioMaterialKey_getHasRetroreflectionTexture(k)
     retroreflectionUV = FilaGltfioMaterialKey_getRetroreflectionUV(k)
+    hasIridescence = FilaGltfioMaterialKey_getHasIridescence(k)
+    hasIridescenceTexture = FilaGltfioMaterialKey_getHasIridescenceTexture(k)
+    iridescenceUV = FilaGltfioMaterialKey_getIridescenceUV(k)
+    hasIridescenceThicknessTexture = FilaGltfioMaterialKey_getHasIridescenceThicknessTexture(k)
+    iridescenceThicknessUV = FilaGltfioMaterialKey_getIridescenceThicknessUV(k)
+    hasAnisotropy = FilaGltfioMaterialKey_getHasAnisotropy(k)
+    hasAnisotropyTexture = FilaGltfioMaterialKey_getHasAnisotropyTexture(k)
+    anisotropyUV = FilaGltfioMaterialKey_getAnisotropyUV(k)
+    hasDiffuseTransmission = FilaGltfioMaterialKey_getHasDiffuseTransmission(k)
+    hasDiffuseTransmissionTexture = FilaGltfioMaterialKey_getHasDiffuseTransmissionTexture(k)
+    diffuseTransmissionUV = FilaGltfioMaterialKey_getDiffuseTransmissionUV(k)
+    hasDiffuseTransmissionColorTexture = FilaGltfioMaterialKey_getHasDiffuseTransmissionColorTexture(k)
+    diffuseTransmissionColorUV = FilaGltfioMaterialKey_getDiffuseTransmissionColorUV(k)
 }

@@ -21,6 +21,7 @@ extern "C" {
 // skipped void utils::EntityManager::unregisterWatermark(std::atomic<uint64_t> * _Nonnull watermark)
 // skipped void utils::EntityManager::rebindWatermark(const std::atomic<uint64_t> * _Nonnull oldW, std::atomic<uint64_t> * _Nonnull newW, ImmutableCString newName, const PagedArenaBitset * _Nullable newEntityBitset, Mutex * _Nullable newEntityBitsetLock)
 // skipped uint64_t utils::EntityManager::getMissedGarbage(std::vector<const PagedArenaBitset *> & out, uint64_t readerWatermark)
+// skipped Entity utils::EntityManager::getEntity(Entity::Type index) const
 /**
  * @brief Gets a reference to the global EntityManager singleton.
  * @note It is recommended to cache this reference locally to bypass lookups.
@@ -85,9 +86,10 @@ void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self);
  */
 void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out);
 /**
- * @brief Use carefully, several entities can have the same index.
+ * @brief Use carefully, several entities can have the same index across time (never
+ *        simultaneously while alive or pending EBR reclamation).
  * @param e The entity to query.
- * @return The entity index.
+ * @return The 17-bit entity index.
  */
 uint32_t FilaUtilsEntityManager_getIndex(FilaEntity e);
 

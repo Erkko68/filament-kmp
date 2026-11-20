@@ -2476,9 +2476,11 @@ public final class io/github/erkko68/filament/Texture$InternalFormat : java/lang
 	public static final field ETC2_SRGB8 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field ETC2_SRGB8_A1 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R11F_G11F_B10F Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field R16 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R16F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R16I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R16UI Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field R16_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R32F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R32I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field R32UI Lio/github/erkko68/filament/Texture$InternalFormat;
@@ -2488,9 +2490,11 @@ public final class io/github/erkko68/filament/Texture$InternalFormat : java/lang
 	public static final field R8_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RED_GREEN_RGTC2 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RED_RGTC1 Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field RG16 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG16F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG16I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG16UI Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field RG16_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG32F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG32I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG32UI Lio/github/erkko68/filament/Texture$InternalFormat;
@@ -2499,9 +2503,11 @@ public final class io/github/erkko68/filament/Texture$InternalFormat : java/lang
 	public static final field RG8UI Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RG8_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB10_A2 Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field RGB16 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB16F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB16I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB16UI Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field RGB16_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB32F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB32I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB32UI Lio/github/erkko68/filament/Texture$InternalFormat;
@@ -2512,9 +2518,11 @@ public final class io/github/erkko68/filament/Texture$InternalFormat : java/lang
 	public static final field RGB8UI Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB8_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGB9_E5 Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field RGBA16 Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGBA16F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGBA16I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGBA16UI Lio/github/erkko68/filament/Texture$InternalFormat;
+	public static final field RGBA16_SNORM Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGBA32F Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGBA32I Lio/github/erkko68/filament/Texture$InternalFormat;
 	public static final field RGBA32UI Lio/github/erkko68/filament/Texture$InternalFormat;
