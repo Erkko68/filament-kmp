@@ -388,4 +388,108 @@ void FilaGltfioMaterialKey_setRetroreflectionUV(FilaGltfioMaterialKey* self, uin
     fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setRetroreflectionUV", self))->retroreflectionUV = static_cast<uint8_t>(value);
 }
 
+bool FilaGltfioMaterialKey_getHasIridescenceTexture(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasIridescenceTexture", self))->hasIridescenceTexture;
+}
+
+void FilaGltfioMaterialKey_setHasIridescenceTexture(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasIridescenceTexture", self))->hasIridescenceTexture = value;
+}
+
+uint32_t FilaGltfioMaterialKey_getIridescenceUV(const FilaGltfioMaterialKey* self) {
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getIridescenceUV", self))->iridescenceUV);
+}
+
+void FilaGltfioMaterialKey_setIridescenceUV(FilaGltfioMaterialKey* self, uint32_t value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setIridescenceUV", self))->iridescenceUV = static_cast<uint8_t>(value);
+}
+
+bool FilaGltfioMaterialKey_getHasIridescenceThicknessTexture(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasIridescenceThicknessTexture", self))->hasIridescenceThicknessTexture;
+}
+
+void FilaGltfioMaterialKey_setHasIridescenceThicknessTexture(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasIridescenceThicknessTexture", self))->hasIridescenceThicknessTexture = value;
+}
+
+uint32_t FilaGltfioMaterialKey_getIridescenceThicknessUV(const FilaGltfioMaterialKey* self) {
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getIridescenceThicknessUV", self))->iridescenceThicknessUV);
+}
+
+void FilaGltfioMaterialKey_setIridescenceThicknessUV(FilaGltfioMaterialKey* self, uint32_t value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setIridescenceThicknessUV", self))->iridescenceThicknessUV = static_cast<uint8_t>(value);
+}
+
+bool FilaGltfioMaterialKey_getHasIridescence(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasIridescence", self))->hasIridescence;
+}
+
+void FilaGltfioMaterialKey_setHasIridescence(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasIridescence", self))->hasIridescence = value;
+}
+
+uint32_t FilaGltfioMaterialKey_getAnisotropyUV(const FilaGltfioMaterialKey* self) {
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getAnisotropyUV", self))->anisotropyUV);
+}
+
+void FilaGltfioMaterialKey_setAnisotropyUV(FilaGltfioMaterialKey* self, uint32_t value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setAnisotropyUV", self))->anisotropyUV = static_cast<uint8_t>(value);
+}
+
+bool FilaGltfioMaterialKey_getHasAnisotropyTexture(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasAnisotropyTexture", self))->hasAnisotropyTexture;
+}
+
+void FilaGltfioMaterialKey_setHasAnisotropyTexture(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasAnisotropyTexture", self))->hasAnisotropyTexture = value;
+}
+
+uint32_t FilaGltfioMaterialKey_getDiffuseTransmissionUV(const FilaGltfioMaterialKey* self) {
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getDiffuseTransmissionUV", self))->diffuseTransmissionUV);
+}
+
+void FilaGltfioMaterialKey_setDiffuseTransmissionUV(FilaGltfioMaterialKey* self, uint32_t value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setDiffuseTransmissionUV", self))->diffuseTransmissionUV = static_cast<uint8_t>(value);
+}
+
+bool FilaGltfioMaterialKey_getHasAnisotropy(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasAnisotropy", self))->hasAnisotropy;
+}
+
+void FilaGltfioMaterialKey_setHasAnisotropy(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasAnisotropy", self))->hasAnisotropy = value;
+}
+
+uint32_t FilaGltfioMaterialKey_getDiffuseTransmissionColorUV(const FilaGltfioMaterialKey* self) {
+    return static_cast<uint32_t>(fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getDiffuseTransmissionColorUV", self))->diffuseTransmissionColorUV);
+}
+
+void FilaGltfioMaterialKey_setDiffuseTransmissionColorUV(FilaGltfioMaterialKey* self, uint32_t value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setDiffuseTransmissionColorUV", self))->diffuseTransmissionColorUV = static_cast<uint8_t>(value);
+}
+
+bool FilaGltfioMaterialKey_getHasDiffuseTransmissionTexture(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasDiffuseTransmissionTexture", self))->hasDiffuseTransmissionTexture;
+}
+
+void FilaGltfioMaterialKey_setHasDiffuseTransmissionTexture(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasDiffuseTransmissionTexture", self))->hasDiffuseTransmissionTexture = value;
+}
+
+bool FilaGltfioMaterialKey_getHasDiffuseTransmissionColorTexture(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasDiffuseTransmissionColorTexture", self))->hasDiffuseTransmissionColorTexture;
+}
+
+void FilaGltfioMaterialKey_setHasDiffuseTransmissionColorTexture(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasDiffuseTransmissionColorTexture", self))->hasDiffuseTransmissionColorTexture = value;
+}
+
+bool FilaGltfioMaterialKey_getHasDiffuseTransmission(const FilaGltfioMaterialKey* self) {
+    return fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_getHasDiffuseTransmission", self))->hasDiffuseTransmission;
+}
+
+void FilaGltfioMaterialKey_setHasDiffuseTransmission(FilaGltfioMaterialKey* self, bool value) {
+    fila::cpp(FILA_NONNULL("FilaGltfioMaterialKey_setHasDiffuseTransmission", self))->hasDiffuseTransmission = value;
+}
+
 } // extern "C"

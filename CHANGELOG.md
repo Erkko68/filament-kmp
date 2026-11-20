@@ -10,6 +10,16 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+> [!WARNING]
+> **Recompile your materials** — `MATERIAL_VERSION` 80 → 81. Any `.filamat` you ship must be rebuilt with 1.81.0's `matc`; the engine rejects blobs from another version. The built-in `StandardMaterial`s ship recompiled.
+
+### Added
+- **16-bit normalized `Texture.InternalFormat`s** (`filament`): `R16`, `RG16`, `RGB16`, `RGBA16` and their `_SNORM` variants, new in Filament 1.81.0.
+- **`MaterialKey` iridescence, anisotropy and diffuse transmission fields** (`gltfio`), for the glTF extensions Filament 1.81.0 now supports.
+
+### Changed
+- **Filament 1.81.0** upstream; `MATERIAL_VERSION` is now 81, so recompile every `.filamat` with matc 1.81.0.
+
 ### Fixed
 - **No flip at the top or bottom of an orbit** (`filament-compose`): above ~88° the view snapped upside down and stopped turning.
 

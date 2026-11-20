@@ -291,3 +291,81 @@ internal external fun FilaGltfioMaterialKey_getRetroreflectionUV(self: NativePoi
 
 @ExternalSymbolName("FilaGltfioMaterialKey_setRetroreflectionUV")
 internal external fun FilaGltfioMaterialKey_setRetroreflectionUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasIridescenceTexture")
+internal external fun FilaGltfioMaterialKey_getHasIridescenceTexture(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasIridescenceTexture")
+internal external fun FilaGltfioMaterialKey_setHasIridescenceTexture(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getIridescenceUV")
+internal external fun FilaGltfioMaterialKey_getIridescenceUV(self: NativePointer): Int
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setIridescenceUV")
+internal external fun FilaGltfioMaterialKey_setIridescenceUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasIridescenceThicknessTexture")
+internal external fun FilaGltfioMaterialKey_getHasIridescenceThicknessTexture(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasIridescenceThicknessTexture")
+internal external fun FilaGltfioMaterialKey_setHasIridescenceThicknessTexture(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getIridescenceThicknessUV")
+internal external fun FilaGltfioMaterialKey_getIridescenceThicknessUV(self: NativePointer): Int
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setIridescenceThicknessUV")
+internal external fun FilaGltfioMaterialKey_setIridescenceThicknessUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasIridescence")
+internal external fun FilaGltfioMaterialKey_getHasIridescence(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasIridescence")
+internal external fun FilaGltfioMaterialKey_setHasIridescence(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getAnisotropyUV")
+internal external fun FilaGltfioMaterialKey_getAnisotropyUV(self: NativePointer): Int
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setAnisotropyUV")
+internal external fun FilaGltfioMaterialKey_setAnisotropyUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasAnisotropyTexture")
+internal external fun FilaGltfioMaterialKey_getHasAnisotropyTexture(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasAnisotropyTexture")
+internal external fun FilaGltfioMaterialKey_setHasAnisotropyTexture(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getDiffuseTransmissionUV")
+internal external fun FilaGltfioMaterialKey_getDiffuseTransmissionUV(self: NativePointer): Int
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setDiffuseTransmissionUV")
+internal external fun FilaGltfioMaterialKey_setDiffuseTransmissionUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasAnisotropy")
+internal external fun FilaGltfioMaterialKey_getHasAnisotropy(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasAnisotropy")
+internal external fun FilaGltfioMaterialKey_setHasAnisotropy(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getDiffuseTransmissionColorUV")
+internal external fun FilaGltfioMaterialKey_getDiffuseTransmissionColorUV(self: NativePointer): Int
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setDiffuseTransmissionColorUV")
+internal external fun FilaGltfioMaterialKey_setDiffuseTransmissionColorUV(self: NativePointer, value: Int)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasDiffuseTransmissionTexture")
+internal external fun FilaGltfioMaterialKey_getHasDiffuseTransmissionTexture(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasDiffuseTransmissionTexture")
+internal external fun FilaGltfioMaterialKey_setHasDiffuseTransmissionTexture(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasDiffuseTransmissionColorTexture")
+internal external fun FilaGltfioMaterialKey_getHasDiffuseTransmissionColorTexture(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasDiffuseTransmissionColorTexture")
+internal external fun FilaGltfioMaterialKey_setHasDiffuseTransmissionColorTexture(self: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaGltfioMaterialKey_getHasDiffuseTransmission")
+internal external fun FilaGltfioMaterialKey_getHasDiffuseTransmission(self: NativePointer): Boolean
+
+@ExternalSymbolName("FilaGltfioMaterialKey_setHasDiffuseTransmission")
+internal external fun FilaGltfioMaterialKey_setHasDiffuseTransmission(self: NativePointer, value: Boolean)

@@ -105,7 +105,35 @@ bool FilaGltfioMaterialKey_getHasRetroreflectionTexture(const FilaGltfioMaterial
 void FilaGltfioMaterialKey_setHasRetroreflectionTexture(FilaGltfioMaterialKey* self, bool value);
 uint32_t FilaGltfioMaterialKey_getRetroreflectionUV(const FilaGltfioMaterialKey* self);
 void FilaGltfioMaterialKey_setRetroreflectionUV(FilaGltfioMaterialKey* self, uint32_t value);
-// skipped filament::gltfio::MaterialKey::padding
+bool FilaGltfioMaterialKey_getHasIridescenceTexture(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasIridescenceTexture(FilaGltfioMaterialKey* self, bool value);
+uint32_t FilaGltfioMaterialKey_getIridescenceUV(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setIridescenceUV(FilaGltfioMaterialKey* self, uint32_t value);
+bool FilaGltfioMaterialKey_getHasIridescenceThicknessTexture(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasIridescenceThicknessTexture(FilaGltfioMaterialKey* self, bool value);
+uint32_t FilaGltfioMaterialKey_getIridescenceThicknessUV(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setIridescenceThicknessUV(FilaGltfioMaterialKey* self, uint32_t value);
+bool FilaGltfioMaterialKey_getHasIridescence(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasIridescence(FilaGltfioMaterialKey* self, bool value);
+uint32_t FilaGltfioMaterialKey_getAnisotropyUV(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setAnisotropyUV(FilaGltfioMaterialKey* self, uint32_t value);
+bool FilaGltfioMaterialKey_getHasAnisotropyTexture(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasAnisotropyTexture(FilaGltfioMaterialKey* self, bool value);
+uint32_t FilaGltfioMaterialKey_getDiffuseTransmissionUV(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setDiffuseTransmissionUV(FilaGltfioMaterialKey* self, uint32_t value);
+bool FilaGltfioMaterialKey_getHasAnisotropy(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasAnisotropy(FilaGltfioMaterialKey* self, bool value);
+uint32_t FilaGltfioMaterialKey_getDiffuseTransmissionColorUV(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setDiffuseTransmissionColorUV(FilaGltfioMaterialKey* self, uint32_t value);
+bool FilaGltfioMaterialKey_getHasDiffuseTransmissionTexture(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasDiffuseTransmissionTexture(FilaGltfioMaterialKey* self, bool value);
+bool FilaGltfioMaterialKey_getHasDiffuseTransmissionColorTexture(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasDiffuseTransmissionColorTexture(FilaGltfioMaterialKey* self, bool value);
+bool FilaGltfioMaterialKey_getHasDiffuseTransmission(const FilaGltfioMaterialKey* self);
+void FilaGltfioMaterialKey_setHasDiffuseTransmission(FilaGltfioMaterialKey* self, bool value);
+// skipped filament::gltfio::MaterialKey::padding: filament::gltfio::MaterialKey::padding\d*
+// skipped filament::gltfio::MaterialKey::padding2: filament::gltfio::MaterialKey::padding\d*
+// skipped filament::gltfio::MaterialKey::padding3: filament::gltfio::MaterialKey::padding\d*
 
 
 #ifdef __cplusplus
