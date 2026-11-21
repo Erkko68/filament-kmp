@@ -19,12 +19,13 @@ import java.util.function.Supplier;
  * <p>Search order:
  * <ol>
  *   <li>{@code filament.library.path} system property — load from that directory as-is.</li>
+ *   <li>{@code System.loadLibrary} — a copy the app ships on {@code java.library.path}; a sandboxed
+ *       macOS app (Mac App Store) loads no library written at run time.</li>
  *   <li>JAR resource {@code natives/<platform>-<arch>/} — extracted once into a
  *       content-hash-keyed cache dir under {@code filament.data.path}
  *       (default {@code ~/.filament-kmp}), then reused across JVM starts. Extraction is
  *       guarded by a cross-process file lock; cache dirs for older builds are purged after
  *       {@code filament.data.cleanup.days} (default 30, {@code <= 0} disables).</li>
- *   <li>{@code System.loadLibrary} — dev fallback for a lib on {@code java.library.path}.</li>
  * </ol>
  *
  * <p>Desktop only: Android loads the library from the APK with {@code System.loadLibrary}.
@@ -62,19 +63,22 @@ public final class FilamentLoader {
             return;
         }
 
-        String resourcePath = "/natives/" + platformArch() + "/" + libFileName;
-        if (FilamentLoader.class.getResource(resourcePath) == null) {
-            // Dev fallback: allow a manually placed library on java.library.path.
-            try {
-                System.loadLibrary(LIB_NAME);
-                return;
-            } catch (UnsatisfiedLinkError e) {
-                throw new FileNotFoundException("Native library not found in resources: "
-                        + resourcePath + " (and loadLibrary failed: " + e.getMessage() + ")");
-            }
+        // Second try: a copy the app ships on java.library.path.
+        UnsatisfiedLinkError notShipped;
+        try {
+            System.loadLibrary(LIB_NAME);
+            return;
+        } catch (UnsatisfiedLinkError e) {
+            notShipped = e;
         }
 
-        // Second try: extract-once into a cache dir keyed by the library's content hash,
+        String resourcePath = "/natives/" + platformArch() + "/" + libFileName;
+        if (FilamentLoader.class.getResource(resourcePath) == null) {
+            throw new FileNotFoundException("Native library not found in resources: "
+                    + resourcePath + " (and loadLibrary failed: " + notShipped.getMessage() + ")");
+        }
+
+        // Third try: extract-once into a cache dir keyed by the library's content hash,
         // so a rebuilt lib (new hash) never collides with a cached one.
         File cacheRoot = new File(System.getProperty("filament.data.path",
                 System.getProperty("user.home") + File.separator + ".filament-kmp"));
