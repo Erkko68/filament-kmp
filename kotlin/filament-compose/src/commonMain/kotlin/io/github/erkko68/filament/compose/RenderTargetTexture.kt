@@ -136,6 +136,8 @@ fun rememberRenderTargetTexture(
     val gate = rememberPausedFrameGate(renderingEnabled, 1, target)
     FilamentRenderLoop(gate.loopEnabled(renderingEnabled)) {
         renderer.renderStandaloneView(view)
+        // Only endFrame/skipFrame run Engine::gc; without it destroyed entities are never recycled.
+        renderer.skipFrame()
         gate.delivered(paused = !renderingEnabled)
     }
 
