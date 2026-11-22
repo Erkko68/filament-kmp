@@ -24,6 +24,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Desktop loads a `libfilament-c` shipped on `java.library.path` first**, before extracting the JAR's; sandboxed macOS apps load no library written at run time.
 - **`rememberRenderTargetTexture` recycles destroyed entities** (`filament-compose`): it never ran Filament's end-of-frame GC, so a scene rebuilding meshes ran the process out of entities.
 - **Linux natives load on glibc 2.38 again** (`desktop`): 0.10.0's were built on a runner that made them need glibc 2.43; Linux natives are now built on Ubuntu 24.04.
+- **macOS natives load on macOS 11 again** (`desktop`): 0.10.0's needed macOS 26, the build runner's own version; CI now checks every desktop native's minimum OS.
 - **No flip at the top or bottom of an orbit** (`filament-compose`): above ~88° the view snapped upside down and stopped turning.
 
 ## [0.10.0] — 2026-11-12

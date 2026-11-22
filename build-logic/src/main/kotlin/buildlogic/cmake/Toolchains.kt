@@ -3,13 +3,16 @@ package buildlogic.cmake
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.FilamentTarget.*
 import buildlogic.platform.IOS_DEPLOYMENT_TARGET
+import buildlogic.platform.MACOS_DEPLOYMENT_TARGET
 import org.gradle.api.file.Directory
 
 /** CMake toolchain arguments per target. Android's come from :android, which knows the SDK's NDK. */
 fun FilamentTarget.toolchainArguments(root: Directory): List<String> = when (this) {
     IOS_ARM64 -> ios("iphoneos")
     IOS_SIMULATOR_ARM64 -> ios("iphonesimulator")
-    MACOS_ARM64 -> listOf("-DCMAKE_OSX_SYSROOT=macosx", "-DCMAKE_OSX_ARCHITECTURES=arm64")
+    // Unset, the minimum macOS is the build machine's own version.
+    MACOS_ARM64 -> listOf("-DCMAKE_OSX_SYSROOT=macosx", "-DCMAKE_OSX_ARCHITECTURES=arm64",
+        "-DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOS_DEPLOYMENT_TARGET")
     // The prebuilts are clang/libc++ builds; see c/cmake/Platform.cmake.
     LINUX_X64, LINUX_ARM64 -> listOf("-DCMAKE_C_COMPILER=clang", "-DCMAKE_CXX_COMPILER=clang++")
     WASM -> listOf("-DCMAKE_TOOLCHAIN_FILE=${emsdkDir(root)}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")

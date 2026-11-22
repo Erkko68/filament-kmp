@@ -46,12 +46,9 @@ jobs:
       - name: Build libfilament-c
         shell: bash
         run: ./gradlew :desktop:cmakeBuild
-      - name: Check libfilament-c's runtime needs (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          ! readelf -d desktop/build/filament-c/*/libfilament-c.so | grep -E 'NEEDED.*(libc\+\+|libunwind)'
-          # glibc 2.38 is the floor upstream's Linux libs set; a newer runner raises it silently
-          ! readelf --dyn-syms desktop/build/filament-c/*/libfilament-c.so | grep -E 'GLIBC_2\.(39|[4-9][0-9])'
+      - name: Check libfilament-c's minimum OS
+        shell: bash
+        run: ./gradlew :desktop:checkOsFloor
       - uses: actions/upload-artifact@v7
         with:
           name: c-${{ matrix.target }}

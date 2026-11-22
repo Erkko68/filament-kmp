@@ -1,4 +1,5 @@
 import buildlogic.filament.registerCApiBuild
+import buildlogic.platform.CheckOsFloorTask
 import buildlogic.platform.FilamentTarget
 import org.gradle.nativeplatform.MachineArchitecture
 import org.gradle.nativeplatform.OperatingSystemFamily
@@ -30,6 +31,16 @@ val cmakeBuild = registerCApiBuild("cmakeBuild", FilamentTarget.host()) {
     arguments.add("-DJNI_HOME=${System.getProperty("java.home").replace('\\', '/')}")
     targets.add("filament-c-jni")
 }
+
+// Run by CI and publish on every desktop runner: the build machine otherwise sets the minimum OS.
+val checkOsFloor = tasks.register<CheckOsFloorTask>("checkOsFloor") {
+    group = "verification"
+    description = "Fails if libfilament-c needs a newer OS than its floor."
+    target.set(FilamentTarget.host())
+    libraryDir.set(cmakeBuild.flatMap { it.outputDir })
+    cmakeBuildDir.set(cmakeBuild.flatMap { it.buildDir })
+}
+tasks.named("check") { dependsOn(checkOsFloor) }
 
 // The host's libfilament-c, for its runtime-<os>-<arch> jar.
 configurations.consumable("hostNatives")
