@@ -58,6 +58,12 @@ enum class FilamentTarget(val id: String, val release: Pair<String, String>?) {
 /** Minimum iOS version of the C API and of the Kotlin/Native binaries that link it. */
 const val IOS_DEPLOYMENT_TARGET = "15.0"
 
+/** Minimum macOS of the desktop library: upstream's own deployment target, and skiko's. */
+const val MACOS_DEPLOYMENT_TARGET = "11.0"
+
+/** Minimum glibc of the Linux desktop library: upstream's Linux libraries already need 2.38. */
+const val LINUX_MIN_GLIBC = "2.38"
+
 /** Name of the root task that fills `prebuilts/<id>/lib`. */
 val FilamentTarget.prebuiltsTask: String get() = ":prebuilts_$id"
 
