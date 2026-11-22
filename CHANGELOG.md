@@ -20,11 +20,15 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ### Changed
 - **Filament 1.81.0** upstream; `MATERIAL_VERSION` is now 81, so recompile every `.filamat` with matc 1.81.0.
 
+## [0.10.1] — 2026-11-22
+
+Desktop natives load on older systems again: 0.7.0–0.10.0 needed macOS 26, and 0.10.0's Linux x64 natives needed glibc 2.43.
+
 ### Fixed
 - **Desktop loads a `libfilament-c` shipped on `java.library.path` first**, before extracting the JAR's; sandboxed macOS apps load no library written at run time.
 - **`rememberRenderTargetTexture` recycles destroyed entities** (`filament-compose`): it never ran Filament's end-of-frame GC, so a scene rebuilding meshes ran the process out of entities.
 - **Linux natives load on glibc 2.38 again** (`desktop`): 0.10.0's were built on a runner that made them need glibc 2.43; Linux natives are now built on Ubuntu 24.04.
-- **macOS natives load on macOS 11 again** (`desktop`): 0.10.0's needed macOS 26, the build runner's own version; CI now checks every desktop native's minimum OS.
+- **macOS natives load on macOS 11 again** (`desktop`): 0.7.0–0.10.0's needed macOS 26, the build runner's own version; CI now checks every desktop native's minimum OS.
 - **No flip at the top or bottom of an orbit** (`filament-compose`): above ~88° the view snapped upside down and stopped turning.
 
 ## [0.10.0] — 2026-11-12
@@ -668,7 +672,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.10.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.10.1...HEAD
+[0.10.1]: https://github.com/Erkko68/filament-kmp/compare/0.10.0...0.10.1
 [0.10.0]: https://github.com/Erkko68/filament-kmp/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/Erkko68/filament-kmp/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/Erkko68/filament-kmp/compare/0.7.3...0.8.0
