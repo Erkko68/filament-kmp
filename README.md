@@ -52,7 +52,7 @@ Every platform runs on **one C API generated from Filament's C++ headers**, and 
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL, over JNI (`libfilament-c` per platform)
 - **Web (JS & Wasm)** — WebGL 2.0, the C API compiled to wasm with Emscripten (`filament-kmp.wasm`)
 
-**JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts need **JDK 17+**, like Compose Desktop.
+**JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts need **JDK 17+**, like Compose Desktop. Their natives need **macOS 11+**, **glibc 2.38+** (Ubuntu 24.04, Fedora 39, Debian 13) or **Windows 10+**.
 
 **Upgrading from 0.6.0?** The API now follows Filament's C++ headers and the native runtimes changed on every platform; follow the **[migration guide](docs/migration/from-0.6.0.md)**.
 
