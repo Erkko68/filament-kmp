@@ -10,6 +10,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-11-23
+
+Filament 1.81.0.
+
 > [!WARNING]
 > **Recompile your materials** — `MATERIAL_VERSION` 80 → 81. Any `.filamat` you ship must be rebuilt with 1.81.0's `matc`; the engine rejects blobs from another version. The built-in `StandardMaterial`s ship recompiled.
 
@@ -672,7 +676,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.10.1...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/Erkko68/filament-kmp/compare/0.10.1...0.11.0
 [0.10.1]: https://github.com/Erkko68/filament-kmp/compare/0.10.0...0.10.1
 [0.10.0]: https://github.com/Erkko68/filament-kmp/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/Erkko68/filament-kmp/compare/0.8.0...0.9.0
